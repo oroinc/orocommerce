@@ -1,0 +1,34 @@
+{
+    "name": "oro/b2b",
+    "description": "Oro B2B Package",
+    "homepage": "https://github.com/laboro/b2b.git",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Oro, Inc",
+            "homepage": "http://www.orocrm.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packagist.orocrm.com"
+        }
+    ],
+    "require": {
+        "oro/platform": "1.x-dev"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    },
+    "autoload": {
+        "psr-0": {
+            "OroB2B\\Component": "src/",
+            "OroB2B\\Bundle": "src/"
+        }
+    }
+}
