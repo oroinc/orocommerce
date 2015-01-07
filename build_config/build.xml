@@ -20,7 +20,7 @@ Additional targets:
     unit-tests-coverage:
         clean prepare install run-unit-tests-with-coverage
     code-standards:
-        clean prepare install run-code-standards
+        clean prepare run-code-standards
 
 Build artefacts are created within the "build" directory. All normally
 generated reports and logs can be found in "build/reports"
@@ -88,7 +88,7 @@ The following parameters are accepted:
 
     <target name="unit-tests-coverage" depends="clean,prepare,install,run-unit-tests-with-coverage"/>
 
-    <target name="code-standards" depends="clean,prepare,install,run-code-standards"/>
+    <target name="code-standards" depends="clean,prepare,run-code-standards"/>
 
     <!-- END High Level Targets -->
 
