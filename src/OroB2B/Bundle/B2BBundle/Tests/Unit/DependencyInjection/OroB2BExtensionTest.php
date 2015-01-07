@@ -17,4 +17,9 @@ class OroB2BExtensionTest extends \PHPUnit_Framework_TestCase
             $extension
         );
     }
+
+    public function testLoad()
+    {
+        $this->markTestSkipped("Is this method testable?");
+    }
 }
