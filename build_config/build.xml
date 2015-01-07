@@ -5,12 +5,22 @@
         <echo>
 Default target "main" executes the following sequence:
     clean:
+    prepare:
+        prepare-report-dir
     install:
         install-dependencies
     run:
         run-unit-tests
         run-code-standards
     wrap-up:
+
+Additional targets:
+    unit-tests:
+        clean prepare install run-unit-tests
+    unit-tests-coverage:
+        clean prepare install run-unit-tests-with-coverage
+    code-standards:
+        clean prepare install run-code-standards
 
 Build artefacts are created within the "build" directory. All normally
 generated reports and logs can be found in "build/reports"
@@ -22,6 +32,8 @@ The following parameters are accepted:
     - testpath (can be used to run tests within specific directory only)
         If running on Bamboo, set value for the "testpath" variable.
         If running locally, use ant -Dtestpath=./path/to/subdirectory
+    - developer (doesn't do full cleanup of installed dependencies)
+        Example: ant -Ddeveloper=true
         </echo>
     </target>
 
@@ -47,17 +59,44 @@ The following parameters are accepted:
         <isset property="env.bamboo_testpath"/>
     </condition>
 
-    <target name="main" depends="clean,install,run,wrap-up"/>
+    <!-- High Level Targets START -->
+
+    <target name="main" depends="clean,prepare,install,run,wrap-up"/>
 
     <target name="clean">
         <delete dir="${builddir}"/>
+        <if>
+            <not>
+                <equals arg1="${developer}" arg2="true"/>
+            </not>
+            <then>
+                <delete file="${basedir}/composer.lock"/>
+                <delete dir="${basedir}/vendor"/>
+            </then>
+        </if>
     </target>
+
+    <target name="prepare" depends="prepare-reportdir"/>
 
     <target name="install" depends="install-dependencies"/>
 
     <target name="run" depends="run-unit-tests,run-code-standards"/>
 
     <target name="wrap-up"/>
+
+    <target name="unit-tests" depends="clean,prepare,install,run-unit-tests"/>
+
+    <target name="unit-tests-coverage" depends="clean,prepare,install,run-unit-tests-with-coverage"/>
+
+    <target name="code-standards" depends="clean,prepare,install,run-code-standards"/>
+
+    <!-- END High Level Targets -->
+
+
+    <!-- Create reportdir, otherwise phpcs will complain -->
+    <target name="prepare-reportdir">
+        <mkdir dir="${reportdir}"/>
+    </target>
 
     <!-- Installing external dependencies -->
     <target name="install-dependencies">
