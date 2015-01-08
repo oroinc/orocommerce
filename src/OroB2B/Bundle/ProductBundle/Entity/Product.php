@@ -4,12 +4,42 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
+
 /**
  * @ORM\Table(name="orob2b_product")
  * @ORM\Entity
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-briefcase"
+ *          },
+ *          "ownership"={
+ *              "owner_type"="BUSINESS_UNIT",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="business_unit_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          }
+ *      }
+ * )
  * @ORM\HasLifecycleCallbacks()
+ * TODO: Add routeName="orob2b_product_index", routeView="orob2b_product_view" after routes will be created
  */
-class Product
+class Product extends ExtendProduct implements OrganizationAwareInterface
 {
     /**
      * @ORM\Id
@@ -22,6 +52,13 @@ class Product
      * @var string
      *
      * @ORM\Column(type="string", length=255, unique=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $sku;
 
@@ -29,6 +66,13 @@ class Product
      * @var \DateTime $createdAt
      *
      * @ORM\Column(type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.created_at"
+     *          }
+     *      }
+     * )
      */
     protected $createdAt;
 
@@ -36,11 +80,41 @@ class Product
      * @var \DateTime $updatedAt
      *
      * @ORM\Column(type="datetime")
+     * @ConfigField(
+     *      defaultValues={
+     *          "entity"={
+     *              "label"="oro.ui.updated_at"
+     *          }
+     *      }
+     * )
      */
     protected $updatedAt;
 
     /**
-     * @return mixed
+     * @var BusinessUnit
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\BusinessUnit")
+     * @ORM\JoinColumn(name="business_unit_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $owner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+
+    /**
+     * @return int
      */
     public function getId()
     {
@@ -76,7 +150,7 @@ class Product
 
     /**
      * @param \DateTime $createdAt
-     * @return $this
+     * @return Product
      */
     public function setCreatedAt($createdAt)
     {
@@ -95,7 +169,7 @@ class Product
 
     /**
      * @param \DateTime $updatedAt
-     * @return $this
+     * @return Product
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -105,7 +179,45 @@ class Product
     }
 
     /**
-     * Pre persist event listener
+     * @return BusinessUnit
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param BusinessUnit $owningBusinessUnit
+     * @return Product
+     */
+    public function setOwner($owningBusinessUnit)
+    {
+        $this->owner = $owningBusinessUnit;
+
+        return $this;
+    }
+
+    /**
+     * @param OrganizationInterface $organization
+     * @return Product
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return OrganizationInterface
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * Pre persist event handler
      *
      * @ORM\PrePersist
      */

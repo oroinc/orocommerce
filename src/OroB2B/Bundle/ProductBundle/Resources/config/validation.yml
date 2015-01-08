@@ -1,0 +1,12 @@
+OroB2B\Bundle\ProductBundle\Entity\Product:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: sku
+    properties:
+        sku:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
