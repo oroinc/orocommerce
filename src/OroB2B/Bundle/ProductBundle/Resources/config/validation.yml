@@ -5,6 +5,7 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         sku:
             - NotBlank: ~
             - Length:
+                min: 3
                 max: 255
         owner:
             - NotBlank: ~
