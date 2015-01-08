@@ -49,10 +49,13 @@ class Product
 
     /**
      * @param mixed $id
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
     }
 
     /**
@@ -65,10 +68,13 @@ class Product
 
     /**
      * @param string $sku
+     * @return $this
      */
     public function setSku($sku)
     {
         $this->sku = $sku;
+
+        return $this;
     }
 
     /**
