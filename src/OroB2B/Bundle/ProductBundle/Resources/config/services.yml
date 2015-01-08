@@ -1,0 +1,5 @@
+parameters:
+    orob2b_product.product.class: OroB2B\Bundle\ProductBundle\Entity\Product
+
+services:
+

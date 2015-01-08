@@ -1,0 +1,4 @@
+orob2b_product:
+    resource:     "@OroB2BProductBundle/Controller/ProductController.php"
+    type:         annotation
+    prefix:       /product
