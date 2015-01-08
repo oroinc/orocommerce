@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\EmailBundle\Tests\Unit\ReflectionUtil;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductTest extends \PHPUnit_Framework_TestCase
@@ -26,11 +27,19 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime('now');
 
         return [
-            'id'        => ['id', 1, 1],
             'sku'       => ['sku', 'sku-test-01', 'sku-test-01'],
             'createdAt' => ['createdAt', $now, $now],
             'updatedAt' => ['updatedAt', $now, $now],
         ];
+    }
+
+    public function testGetId()
+    {
+        $productId = 123;
+        $product = new Product();
+        $this->assertNull($product->getId());
+        ReflectionUtil::setId($product, $productId);
+        $this->assertEquals($productId, $product->getId());
     }
 
     public function testPrePersist()
