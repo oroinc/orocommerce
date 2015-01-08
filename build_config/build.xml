@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<project name="Oro B2B Project" basedir=".." default="main">
+
+    <target name="help">
+        <echo>
+Default target "main" executes the following sequence:
+    clean:
+    prepare:
+        prepare-report-dir
+    install:
+        install-dependencies
+    run:
+        run-unit-tests
+        run-code-standards
+    wrap-up:
+
+Additional targets:
+    unit-tests:
+        clean prepare install run-unit-tests
+    unit-tests-coverage:
+        clean prepare install run-unit-tests-with-coverage
+    code-standards:
+        clean prepare run-code-standards
+
+Build artefacts are created within the "build" directory. All normally
+generated reports and logs can be found in "build/reports"
+
+The following parameters are accepted:
+    - testsuite to be executed:
+        If running on Bamboo, set value for the "testsuite" variable.
+        If running locally, use ant -Dtestsuite="Some Other Suite"
+    - testpath (can be used to run tests within specific directory only)
+        If running on Bamboo, set value for the "testpath" variable.
+        If running locally, use ant -Dtestpath=./path/to/subdirectory
+    - developer (doesn't do full cleanup of installed dependencies)
+        Example: ant -Ddeveloper=true
+        </echo>
+    </target>
+
+    <!-- Include Ant-Contrib to use "if", "var" and other goodies. -->
+    <taskdef resource="net/sf/antcontrib/antlib.xml">
+        <classpath>
+            <pathelement location="/usr/share/java/lib/ant-contrib-0.3.jar"/>
+            <!-- RedHat/CentOS/Fedora -->
+            <pathelement location="/usr/share/java/ant/ant-contrib.jar"/>
+        </classpath>
+    </taskdef>
+
+    <property environment="env"/>
+
+    <property name="builddir" value="${basedir}/build"/>
+    <property name="confdir" value="${basedir}/build_config"/>
+    <property name="reportdir" value="${basedir}/build/reports"/>
+
+    <condition property="testsuite" value="${env.bamboo_testsuite}">
+        <isset property="env.bamboo_testsuite"/>
+    </condition>
+    <condition property="testpath" value="${env.bamboo_testpath}" else="${basedir}/src">
+        <isset property="env.bamboo_testpath"/>
+    </condition>
+
+    <!-- High Level Targets START -->
+
+    <target name="main" depends="clean,prepare,install,run,wrap-up"/>
+
+    <target name="clean">
+        <delete dir="${builddir}"/>
+        <if>
+            <not>
+                <equals arg1="${developer}" arg2="true"/>
+            </not>
+            <then>
+                <delete file="${basedir}/composer.lock"/>
+                <delete dir="${basedir}/vendor"/>
+            </then>
+        </if>
+    </target>
+
+    <target name="prepare" depends="prepare-reportdir"/>
+
+    <target name="install" depends="install-dependencies"/>
+
+    <target name="run" depends="run-unit-tests,run-code-standards"/>
+
+    <target name="wrap-up"/>
+
+    <target name="unit-tests" depends="clean,prepare,install,run-unit-tests"/>
+
+    <target name="unit-tests-coverage" depends="clean,prepare,install,run-unit-tests-with-coverage"/>
+
+    <target name="code-standards" depends="clean,prepare,run-code-standards"/>
+
+    <!-- END High Level Targets -->
+
+
+    <!-- Create reportdir, otherwise phpcs will complain -->
+    <target name="prepare-reportdir">
+        <mkdir dir="${reportdir}"/>
+    </target>
+
+    <!-- Installing external dependencies -->
+    <target name="install-dependencies">
+        <exec dir="${basedir}" executable="composer" failonerror="true">
+            <arg line="install --prefer-dist --no-dev"/>
+        </exec>
+        <copy file="${basedir}/composer.lock" todir="${builddir}"/>
+    </target>
+
+    <!-- PHPUnit tests -->
+    <macrodef name="phpunit">
+        <attribute name="suite" default="Project Unit Tests"/>
+        <attribute name="withcodecoverage" default="false"/>
+        <sequential>
+            <if>
+                <equals arg1="@{withcodecoverage}" arg2="true"/>
+                <then>
+                    <var name="codecoverage" value="-dxdebug.coverage_enable=1 --coverage-php ${reportdir}/coverage.cov"/>
+                </then>
+                <else>
+                    <var name="codecoverage" value="-dxdebug.coverage_enable=0"/>
+                </else>
+            </if>
+            <exec dir="${basedir}" executable="phpunit" failonerror="true">
+                <arg line="-c phpunit.xml.dist"/>
+                <arg value="-dxdebug.default_enable=0"/>
+                <arg value="--verbose"/>
+                <arg value="--stderr"/>
+                <arg line="--log-junit ${reportdir}/phpunit.xml"/>
+                <arg line="--testsuite ${testsuite}"/>
+                <arg value="${codecoverage}"/>
+                <arg value="${testpath}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <target name="run-unit-tests-with-coverage">
+        <phpunit withcodecoverage="true"/>
+    </target>
+
+    <target name="run-unit-tests">
+        <phpunit/>
+    </target>
+
+
+    <!-- Check code standards -->
+    <target name="run-code-standards" depends="run-phpcs,run-phpmd,run-phpcpd">
+        <!--<parallel>
+            <antcall target="run-phpcs"/>
+            <antcall target="run-phpmd"/>
+            <antcall target="run-phpcpd"/>
+        </parallel>-->
+    </target>
+
+    <target name="run-phpcs">
+        <exec dir="${basedir}" executable="phpcs" failonerror="true">
+            <arg line="--encoding=utf-8 --extensions=php --standard=${confdir}/phpcs.xml --report=checkstyle
+                      --report-file=${reportdir}/phpcs.xml ${testpath}"/>
+        </exec>
+    </target>
+
+    <target name="run-phpmd">
+        <exec dir="${basedir}" executable="phpmd" failonerror="true">
+            <arg line="${testpath} xml ${confdir}/phpmd.xml --reportfile ${reportdir}/phpmd.xml"/>
+        </exec>
+    </target>
+
+    <target name="run-phpcpd">
+        <exec dir="${basedir}" executable="phpcpd" failonerror="true">
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${testpath}"/>
+        </exec>
+    </target>
+
+</project>

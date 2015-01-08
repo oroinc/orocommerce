@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<ruleset name="OroInc">
+    <description>Oro Inc. coding standard.</description>
+    <!-- Include the whole PSR-2 standard -->
+    <rule ref="PSR2"/>
+</ruleset>
