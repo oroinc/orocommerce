@@ -1,0 +1,9 @@
+orob2b:
+    product:
+        entity_label: Product
+        entity_plural_label: Products
+        entity_description: Represents product information
+        id.label: Id
+        sku.label: SKU
+        owner.label: Owner
+        organization.label: Organization
