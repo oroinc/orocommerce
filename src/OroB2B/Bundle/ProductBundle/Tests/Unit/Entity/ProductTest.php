@@ -26,7 +26,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime('now');
 
         return [
-            'id'        => ['id', 1, 1],
+            // 'id'        => ['id', 1, 1],
             'sku'       => ['sku', 'sku-test-01', 'sku-test-01'],
             'createdAt' => ['createdAt', $now, $now],
             'updatedAt' => ['updatedAt', $now, $now],
