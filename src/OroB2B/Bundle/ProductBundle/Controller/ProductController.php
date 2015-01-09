@@ -19,7 +19,7 @@ class ProductController extends Controller
      * @Acl(
      *      id="orob2b_product_view",
      *      type="entity",
-     *      class="OroUserBundle:User",
+     *      class="OroB2BProductBundle:Product",
      *      permission="VIEW"
      * )
      *
@@ -36,6 +36,8 @@ class ProductController extends Controller
      * @Route("/", name="orob2b_product_index")
      * @Template
      * @AclAncestor("orob2b_product_view")
+     *
+     * @return array
      */
     public function indexAction()
     {
