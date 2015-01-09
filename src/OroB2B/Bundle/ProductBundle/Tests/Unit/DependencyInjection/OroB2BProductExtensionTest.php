@@ -10,7 +10,7 @@ class OroB2BProductExtensionTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     protected $expectedParameters = [
-        'orob2b_product.product.class'
+        'orob2b_product.product.class' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
     ];
 
     public function testLoad()
@@ -34,12 +34,9 @@ class OroB2BProductExtensionTest extends \PHPUnit_Framework_TestCase
         $extension = new OroB2BProductExtension();
         $extension->load([], $container);
 
-        foreach ($this->expectedParameters as $parameterName) {
+        foreach ($this->expectedParameters as $parameterName => $parameterValue) {
             $this->assertArrayHasKey($parameterName, $actualParameters);
-            $this->assertNotEmpty($actualParameters[$parameterName]);
-            if ($parameterName == 'orob2b_product.product.class') {
-                $this->assertEquals('OroB2B\Bundle\ProductBundle\Entity\Product', $actualParameters[$parameterName]);
-            }
+            $this->assertEquals($parameterValue, $actualParameters[$parameterName]);
         }
     }
 }
