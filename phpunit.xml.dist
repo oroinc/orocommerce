@@ -17,6 +17,9 @@
         <testsuite name="Project Unit Tests">
             <directory suffix="Test.php">src/OroB2B/*/*/Tests/Unit</directory>
         </testsuite>
+        <testsuite name="Project Functional Tests">
+            <directory suffix="Test.php">src/OroB2B/*/*/Tests/Functional</directory>
+        </testsuite>
     </testsuites>
 
     <!--
