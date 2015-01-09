@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductTest extends \PHPUnit_Framework_TestCase
@@ -25,9 +27,11 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime('now');
 
         return [
-            'sku'       => ['sku', 'sku-test-01'],
-            'createdAt' => ['createdAt', $now],
-            'updatedAt' => ['updatedAt', $now],
+            'sku'          => ['sku', 'sku-test-01'],
+            'owner'        => ['owner', new User()],
+            'organization' => ['organization', new Organization()],
+            'createdAt'    => ['createdAt', $now],
+            'updatedAt'    => ['updatedAt', $now],
         ];
     }
 
