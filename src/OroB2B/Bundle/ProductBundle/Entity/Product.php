@@ -16,6 +16,8 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\Table(name="orob2b_product")
  * @ORM\Entity
  * @Config(
+ *      routeName="orob2b_product_index",
+ *      routeView="orob2b_product_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
@@ -37,7 +39,6 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
- * TODO: Add routeName="orob2b_product_index", routeView="orob2b_product_view" after routes will be created
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface
 {
