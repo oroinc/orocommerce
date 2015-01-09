@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\EmailBundle\Tests\Unit\ReflectionUtil;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductTest extends \PHPUnit_Framework_TestCase
@@ -11,15 +10,14 @@ class ProductTest extends \PHPUnit_Framework_TestCase
      * @dataProvider flatPropertiesDataProvider
      * @param string $property
      * @param mixed $value
-     * @param mixed $expected
      */
-    public function testGetSet($property, $value, $expected)
+    public function testGetSet($property, $value)
     {
         $product = new Product();
 
         $this->assertNull(call_user_func_array([$product, 'get' . ucfirst($property)], []));
         call_user_func_array(array($product, 'set' . ucfirst($property)), array($value));
-        $this->assertEquals($expected, call_user_func_array([$product, 'get' . ucfirst($property)], []));
+        $this->assertEquals($value, call_user_func_array([$product, 'get' . ucfirst($property)], []));
     }
 
     public function flatPropertiesDataProvider()
@@ -27,9 +25,9 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $now = new \DateTime('now');
 
         return [
-            'sku'       => ['sku', 'sku-test-01', 'sku-test-01'],
-            'createdAt' => ['createdAt', $now, $now],
-            'updatedAt' => ['updatedAt', $now, $now],
+            'sku'       => ['sku', 'sku-test-01'],
+            'createdAt' => ['createdAt', $now],
+            'updatedAt' => ['updatedAt', $now],
         ];
     }
 
@@ -38,7 +36,12 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $productId = 123;
         $product = new Product();
         $this->assertNull($product->getId());
-        ReflectionUtil::setId($product, $productId);
+
+        $class = new \ReflectionClass($product);
+        $prop = $class->getProperty('id');
+        $prop->setAccessible(true);
+        $prop->setValue($product, $productId);
+
         $this->assertEquals($productId, $product->getId());
     }
 
@@ -47,6 +50,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
         $product->prePersist();
         $this->assertInstanceOf('\DateTime', $product->getCreatedAt());
+        $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
     }
 
     public function testPreUpdate()

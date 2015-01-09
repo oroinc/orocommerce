@@ -18,7 +18,7 @@ class OroB2BProductExtensionTest extends \PHPUnit_Framework_TestCase
         $actualParameters  = [];
 
         $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter'])
+            ->setMethods(['setParameter'])
             ->getMock();
 
         $container->expects($this->any())
@@ -37,6 +37,9 @@ class OroB2BProductExtensionTest extends \PHPUnit_Framework_TestCase
         foreach ($this->expectedParameters as $parameterName) {
             $this->assertArrayHasKey($parameterName, $actualParameters);
             $this->assertNotEmpty($actualParameters[$parameterName]);
+            if ($parameterName == 'orob2b_product.product.class') {
+                $this->assertEquals('OroB2B\Bundle\ProductBundle\Entity\Product', $actualParameters[$parameterName]);
+            }
         }
     }
 }
