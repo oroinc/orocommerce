@@ -1,0 +1,62 @@
+datagrid:
+    products-grid:
+        extended_entity_name: %orob2b_product.product.class%
+        options:
+            entityHint: product
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_product_view
+            type: orm
+            query:
+                select:
+                    - product.id
+                    - product.sku
+                    - product.createdAt
+                    - product.updatedAt
+                from:
+                    - { table: %orob2b_product.product.class%, alias: product }
+        columns:
+            sku:
+                label: orob2b.product.sku.label
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: orob2b_product_view
+                params:
+                    - id
+        sorters:
+            columns:
+                sku:
+                    data_name: product.sku
+                createdAt:
+                    data_name: product.createdAt
+                updatedAt:
+                    data_name: product.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                sku:
+                    type: string
+                    data_name: product.sku
+                createdAt:
+                    type: datetime
+                    data_name: product.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: product.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_product_view
+                rowAction:     true

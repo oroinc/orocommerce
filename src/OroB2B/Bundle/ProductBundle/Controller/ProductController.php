@@ -39,21 +39,6 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
-        // TODO: remove after grid implementation
-        $securityFacade = $this->get('oro_security.security_facade');
-        $entityManager = $this->getDoctrine()->getManager();
-
-        /** @var \Oro\Bundle\UserBundle\Entity\User $user */
-        $user = $securityFacade->getLoggedUser();
-
-        $product = new Product();
-        $product->setSku(uniqid('sku-'))
-            ->setOwner($user->getOwner())
-            ->setOrganization($user->getOrganization());
-
-        $entityManager->persist($product);
-        $entityManager->flush($product);
-
         return [
             'entity_class' => $this->container->getParameter('orob2b_product.product.class')
         ];
