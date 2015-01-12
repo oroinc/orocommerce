@@ -65,7 +65,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var \DateTime $createdAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -79,7 +79,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var \DateTime $updatedAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
