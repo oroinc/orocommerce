@@ -7,3 +7,8 @@ orob2b:
         sku.label: SKU
         owner.label: Owner
         organization.label: Organization
+
+        menu:
+            products_tab.label: Product management
+            products_list.description: List of existing products
+            shortcut_products_list.description: Show list of existing products

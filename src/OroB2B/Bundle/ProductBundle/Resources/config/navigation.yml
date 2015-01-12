@@ -1,0 +1,35 @@
+oro_menu_config:
+    items:
+        products_tab:
+            label:           'orob2b.product.menu.products_tab.label'
+            uri:             '#'
+            extras:
+                icon:        icon-briefcase
+                position:    10
+
+        products_list:
+            label:           'orob2b.product.entity_plural_label'
+            route:           'orob2b_product_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_product/']
+                description: 'orob2b.product.menu.products_list.description'
+
+        shortcut_products_list:
+            label:           'orob2b.product.entity_plural_label'
+            route:           'orob2b_product_index'
+            extras:
+                description: 'orob2b.product.menu.shortcut_products_list.description'
+
+    tree:
+        application_menu:
+            children:
+                products_tab:
+                    children:
+                        products_list: ~
+        shortcuts:
+            children:
+                shortcut_products_list: ~
+
+oro_titles:
+    orob2b_product_index: ~
