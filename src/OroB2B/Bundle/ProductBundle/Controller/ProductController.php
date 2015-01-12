@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -25,7 +24,7 @@ class ProductController extends Controller
      * )
      *
      * @param Product $product
-     * @return Response
+     * @return array
      */
     public function viewAction(Product $product)
     {
