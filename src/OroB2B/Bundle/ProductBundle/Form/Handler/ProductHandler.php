@@ -52,13 +52,4 @@ class ProductHandler
 
         return false;
     }
-
-    /**
-     * @param Product $entity
-     */
-    protected function onSuccess(Product $entity)
-    {
-        $this->manager->persist($entity);
-        $this->manager->flush();
-    }
 }
