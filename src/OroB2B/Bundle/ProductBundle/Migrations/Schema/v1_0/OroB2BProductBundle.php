@@ -11,7 +11,7 @@ class OroB2BProductBundle implements Migration
     const TABLE_NAME = 'orob2b_product';
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
@@ -29,13 +29,13 @@ class OroB2BProductBundle implements Migration
      */
     protected function createOrob2BProductTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_product');
+        $table = $schema->createTable(self::TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('sku', 'string', ['length' => 255]);
-        $table->addColumn('createdAt', 'datetime', []);
-        $table->addColumn('updatedAt', 'datetime', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku'], 'UNIQ_5F9796C9F9038C4');
         $table->addIndex(['business_unit_owner_id'], 'IDX_5F9796C959294170', []);
@@ -49,7 +49,7 @@ class OroB2BProductBundle implements Migration
      */
     protected function addOrob2BProductForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_product');
+        $table = $schema->getTable(self::TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
