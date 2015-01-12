@@ -7,7 +7,7 @@
         'entity': entity,
         'indexPath': path('orob2b_product_index'),
         'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-        'entityTitle': null|default('N/A'|trans)
+        'entityTitle': entity.sku|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
