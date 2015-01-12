@@ -18,3 +18,6 @@ orob2b:
 
         widgets:
             product_information: Product Information
+
+        controller:
+            product.saved.message: Product saved

@@ -33,7 +33,6 @@ class ProductController extends Controller
         ];
     }
 
-
     /**
      * @Route("/info/{id}", name="orob2b_product_info", requirements={"id"="\d+"})
      * @Template
@@ -61,5 +60,58 @@ class ProductController extends Controller
         return [
             'entity_class' => $this->container->getParameter('orob2b_product.product.class')
         ];
+    }
+
+    /**
+     * Create product form
+     *
+     * @Route("/create", name="orob2b_product_create")
+     * @Template("OroB2BProductBundle:Product:update.html.twig")
+     * @Acl(
+     *      id="orob2b_product_create",
+     *      type="entity",
+     *      class="OroB2BProductBundle:Product",
+     *      permission="CREATE"
+     * )
+     */
+    public function createAction()
+    {
+        return $this->update(new Product());
+    }
+
+    /**
+     * Edit product form
+     *
+     * @Route("/update/{id}", name="orob2b_product_update", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_product_update",
+     *      type="entity",
+     *      class="OroB2BProductBundle:Product",
+     *      permission="EDIT"
+     * )
+     * @param Product $product
+     * @return array
+     */
+    public function updateAction(Product $product)
+    {
+        return $this->update($product);
+    }
+
+    protected function update(Product $product)
+    {
+        if ($this->get('orob2b_product.form.handler.product')->process($product)) {
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
+            );
+
+            return $this->redirect($this->generateUrl('orob2b_product_index'));
+        }
+
+        return array(
+            'entity' => $product,
+            'form' => $this->get('orob2b_product.form.product')->createView(),
+        );
     }
 }

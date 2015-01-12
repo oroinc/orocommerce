@@ -1,0 +1,9 @@
+parameters:
+    orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
+
+services:
+    # Product form types
+    orob2b_product.form.type.product:
+        class: %orob2b_product.form.type.product.class%
+        tags:
+            - { name: form.type, alias: orob2b_product }
