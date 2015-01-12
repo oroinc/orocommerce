@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -16,6 +15,7 @@ class ProductController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_product_view", requirements={"id"="\d+"})
+     * @Template
      * @Acl(
      *      id="orob2b_product_view",
      *      type="entity",
@@ -24,12 +24,29 @@ class ProductController extends Controller
      * )
      *
      * @param Product $product
-     * @return Response
+     * @return array
      */
     public function viewAction(Product $product)
     {
-        // TODO: Implement view action in scope of https://magecore.atlassian.net/browse/BB-250
-        return new Response($product->getSku());
+        return [
+            'entity' => $product
+        ];
+    }
+
+
+    /**
+     * @Route("/info/{id}", name="orob2b_product_info", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("orob2b_product_view")
+     *
+     * @param Product $product
+     * @return array
+     */
+    public function infoAction(Product $product)
+    {
+        return [
+            'product' => $product
+        ];
     }
 
     /**
