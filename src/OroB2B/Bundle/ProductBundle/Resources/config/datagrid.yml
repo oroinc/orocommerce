@@ -2,11 +2,11 @@ datagrid:
     products-grid:
         extended_entity_name: %orob2b_product.product.class%
         options:
-            entityHint: product
+            entityHint:        product
             entity_pagination: true
         source:
             acl_resource: orob2b_product_view
-            type: orm
+            type:         orm
             query:
                 select:
                     - product.id
@@ -17,17 +17,17 @@ datagrid:
                     - { table: %orob2b_product.product.class%, alias: product }
         columns:
             sku:
-                label: orob2b.product.sku.label
+                label:         orob2b.product.sku.label
             createdAt:
-                label: oro.ui.created_at
+                label:         oro.ui.created_at
                 frontend_type: datetime
             updatedAt:
-                label: oro.ui.updated_at
+                label:         oro.ui.updated_at
                 frontend_type: datetime
         properties:
             id: ~
             view_link:
-                type: url
+                type:  url
                 route: orob2b_product_view
                 params:
                     - id
@@ -44,13 +44,13 @@ datagrid:
         filters:
             columns:
                 sku:
-                    type: string
+                    type:      string
                     data_name: product.sku
                 createdAt:
-                    type: datetime
+                    type:      datetime
                     data_name: product.createdAt
                 updatedAt:
-                    type: datetime
+                    type:      datetime
                     data_name: product.updatedAt
         actions:
             view:
