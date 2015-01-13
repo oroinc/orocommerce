@@ -90,6 +90,8 @@ The following parameters are accepted:
 
     <target name="code-standards" depends="clean,prepare,run-code-standards"/>
 
+    <target name="functional-tests" depends="install-dependencies,init_db,install-b2b-test"/>
+
     <!-- END High Level Targets -->
 
 
@@ -104,6 +106,26 @@ The following parameters are accepted:
             <arg line="install --prefer-dist --no-dev"/>
         </exec>
         <copy file="${basedir}/composer.lock" todir="${builddir}"/>
+    </target>
+
+    <target name="init_db">
+        <sql
+            classpath="/usr/share/java/mysql-connector-java-5.1.12.jar"
+            driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://127.0.0.1:3306/mysql"
+            userid="mysql"
+            password="mysql"
+            autocommit="true">
+            DROP DATABASE IF EXISTS b2b_test;
+            CREATE DATABASE b2b_test;
+        </sql>
+    </target>
+
+    <!-- Install B2B app in test environment  -->
+    <target name="install-b2b-test" depends="install-dependencies">
+        <exec dir="${basedir}" executable="php" failonerror="true">
+            <arg line="app/console oro:install --env=test --user-name=admin --user-email=admin@example.com --user-firstname=John --user-lastname=Doe --user-password=admin --sample-data=n --organization-name=OroB2B --no-interaction" />
+        </exec>
     </target>
 
     <!-- PHPUnit tests -->
