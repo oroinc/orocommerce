@@ -31,6 +31,10 @@ datagrid:
                 route: orob2b_product_view
                 params:
                     - id
+            update_link:
+                type: url
+                route: orob2b_product_update
+                params: [ id ]
         sorters:
             columns:
                 sku:
@@ -60,3 +64,9 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
                 rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_product_update

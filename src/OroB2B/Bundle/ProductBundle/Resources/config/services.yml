@@ -1,5 +1,19 @@
 parameters:
     orob2b_product.product.class: OroB2B\Bundle\ProductBundle\Entity\Product
+    orob2b_product.form.handler.product.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductHandler
 
 services:
+    orob2b_product.form.product:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["orob2b_product_form", "orob2b_product"]
+
+    orob2b_product.form.handler.product:
+        class: %orob2b_product.form.handler.product.class%
+        scope: request
+        arguments:
+            - @orob2b_product.form.product
+            - @request
+            - @doctrine.orm.entity_manager
 
