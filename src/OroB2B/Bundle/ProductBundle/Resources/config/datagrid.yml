@@ -38,7 +38,7 @@ datagrid:
             delete_link:
                 type: url
                 route: orob2b_api_delete_product
-                params: [id]
+                params: [ id ]
         sorters:
             columns:
                 sku:
