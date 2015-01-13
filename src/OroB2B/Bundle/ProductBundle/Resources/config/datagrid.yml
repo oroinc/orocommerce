@@ -35,6 +35,10 @@ datagrid:
                 type: url
                 route: orob2b_product_update
                 params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_delete_product
+                params: [ id ]
         sorters:
             columns:
                 sku:
@@ -70,3 +74,9 @@ datagrid:
                 link:          update_link
                 icon:          edit
                 acl_resource:  orob2b_product_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_product_delete

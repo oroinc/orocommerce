@@ -1,6 +1,7 @@
 parameters:
     orob2b_product.product.class: OroB2B\Bundle\ProductBundle\Entity\Product
     orob2b_product.form.handler.product.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductHandler
+    orob2b_product.product.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
     orob2b_product.form.product:
@@ -17,3 +18,9 @@ services:
             - @request
             - @doctrine.orm.entity_manager
 
+    orob2b_product.product.manager.api:
+        class: %orob2b_product.product.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_product.product.class%
+            - @doctrine.orm.entity_manager

@@ -2,3 +2,11 @@ orob2b_product:
     resource:     "@OroB2BProductBundle/Controller/ProductController.php"
     type:         annotation
     prefix:       /product
+
+orob2b_product_bundle_api:
+    resource:     "@OroB2BProductBundle/Resources/config/oro/routing_api.yml"
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
