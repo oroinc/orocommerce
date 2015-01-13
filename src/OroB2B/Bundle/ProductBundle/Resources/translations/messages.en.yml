@@ -12,3 +12,9 @@ orob2b:
             products_tab.label: Product management
             products_list.description: List of existing products
             shortcut_products_list.description: Show list of existing products
+
+        sections:
+            general: General
+
+        widgets:
+            product_information: Product Information
