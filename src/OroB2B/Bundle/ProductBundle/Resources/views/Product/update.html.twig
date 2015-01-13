@@ -20,7 +20,7 @@
             'entity':      form.vars.value,
             'indexPath':   path('orob2b_product_index'),
             'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-            'entityTitle': form.vars.value.sku|default('N/A')
+            'entityTitle': form.vars.value.sku|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}

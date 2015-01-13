@@ -45,7 +45,7 @@ class ProductHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->product  = new Product();
+        $this->product = new Product();
         $this->handler = new ProductHandler($this->form, $this->request, $this->manager);
     }
 
@@ -85,7 +85,6 @@ class ProductHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('submit')
             ->with($this->request);
 
-        $this->assertEquals($isValid, $this->form->isValid());
         $this->assertEquals($isProcessed, $this->handler->process($this->product));
     }
 
