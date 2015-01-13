@@ -7,7 +7,11 @@
 
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_product_index')) }}
-    {{ UI.saveAndCloseButton('Save'|trans) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if form.vars.value.id or resource_granted('orob2b_product_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
 {% block pageHeader %}

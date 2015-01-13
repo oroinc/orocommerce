@@ -100,18 +100,23 @@ class ProductController extends Controller
 
     protected function update(Product $product)
     {
-        if ($this->get('orob2b_product.form.handler.product')->process($product)) {
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
-            );
-
-            return $this->redirect($this->generateUrl('orob2b_product_index'));
-        }
-
-        return array(
-            'entity' => $product,
-            'form' => $this->get('orob2b_product.form.product')->createView(),
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $product,
+            $this->get('orob2b_product.form.product'),
+            function (Product $product) {
+                return array(
+                    'route' => 'orob2b_product_update',
+                    'parameters' => array('id' => $product->getId())
+                );
+            },
+            function (Product $product) {
+                return array(
+                    'route' => 'orob2b_product_view',
+                    'parameters' => array('id' => $product->getId())
+                );
+            },
+            $this->get('translator')->trans('orob2b.product.controller.product.saved.message'),
+            $this->get('orob2b_product.form.handler.product')
         );
     }
 }
