@@ -2,3 +2,12 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set gridName = 'products-grid' %}
 {% set pageTitle = 'orob2b.product.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_product_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_product_create'),
+            'entity_label': 'orob2b.product.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

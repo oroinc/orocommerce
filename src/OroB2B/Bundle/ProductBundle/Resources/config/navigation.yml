@@ -1,25 +1,32 @@
 oro_menu_config:
     items:
         products_tab:
-            label: 'orob2b.product.menu.products_tab.label'
-            uri:   '#'
+            label:           'orob2b.product.menu.products_tab.label'
+            uri:             '#'
             extras:
-                icon: icon-briefcase
-                position: 10
+                icon:        icon-briefcase
+                position:    10
 
         products_list:
-            label: 'orob2b.product.entity_plural_label'
-            route: 'orob2b_product_index'
+            label:           'orob2b.product.entity_plural_label'
+            route:           'orob2b_product_index'
             extras:
                 position:    10
                 routes:      ['/^orob2b_product/']
                 description: 'orob2b.product.menu.products_list.description'
 
         shortcut_products_list:
-            label: 'orob2b.product.entity_plural_label'
-            route: 'orob2b_product_index'
+            label:           'orob2b.product.entity_plural_label'
+            route:           'orob2b_product_index'
             extras:
                 description: 'orob2b.product.menu.shortcut_products_list.description'
+
+        shortcut_new_contact:
+            label:           'orob2b.product.menu.shortcut_new_product.label'
+            route:           'orob2b_product_create'
+            extras:
+                description:    'orob2b.product.menu.shortcut_new_product.description'
+                isCustomAction: true
 
     tree:
         application_menu:
@@ -30,6 +37,10 @@ oro_menu_config:
         shortcuts:
             children:
                 shortcut_products_list: ~
+                shortcut_new_contact:   ~
 
 oro_titles:
     orob2b_product_index: ~
+    orob2b_product_view:   '%%sku%%'
+    orob2b_product_update: '%%sku%% - Edit'
+    orob2b_product_create: 'Create Product'
