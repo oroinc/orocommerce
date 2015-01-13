@@ -1,0 +1,13 @@
+OroB2B\Bundle\ProductBundle\Entity\Product:
+    alias:                          orob2b_product
+    title_fields:                   [sku]
+    route:
+        name:                       orob2b_product_view
+        parameters:
+            id:                     id
+    search_template:                OroB2BProductBundle:Product:searchResult.html.twig
+    fields:
+        -
+            name:                   sku
+            target_type:            text
+            target_fields:          [sku]
