@@ -6,7 +6,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductTypeTest extends \PHPUnit_Framework_TestCase
 {
-
     /**
      * @var ProductType
      */
@@ -36,7 +35,13 @@ class ProductTypeTest extends \PHPUnit_Framework_TestCase
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with($this->isType('array'));
+            ->with(
+                [
+                    'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+                    'intention' => 'product',
+                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+                ]
+            );
 
         $this->type->setDefaultOptions($resolver);
     }

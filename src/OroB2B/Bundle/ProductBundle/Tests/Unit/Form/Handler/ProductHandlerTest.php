@@ -45,7 +45,6 @@ class ProductHandlerTest extends \PHPUnit_Framework_TestCase
         $this->manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
-
         $this->product  = new Product();
         $this->handler = new ProductHandler($this->form, $this->request, $this->manager);
     }
@@ -56,6 +55,8 @@ class ProductHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->product);
 
+        $this->request->setMethod('GET');
+
         $this->form->expects($this->never())
             ->method('submit');
 
@@ -65,12 +66,18 @@ class ProductHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider supportedMethods
      * @param string $method
+     * @param boolean $isValid
+     * @param boolean $isProcessed
      */
-    public function testProcessSupportedRequest($method)
+    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->product);
+
+        $this->form->expects($this->any())
+            ->method('isValid')
+            ->will($this->returnValue($isValid));
 
         $this->request->setMethod($method);
 
@@ -78,15 +85,32 @@ class ProductHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('submit')
             ->with($this->request);
 
-        $this->assertFalse($this->handler->process($this->product));
+        $this->assertEquals($isValid, $this->form->isValid());
+        $this->assertEquals($isProcessed, $this->handler->process($this->product));
     }
 
+    /**
+     * @return array
+     */
     public function supportedMethods()
     {
-        return array(
-            array('POST'),
-            array('PUT')
-        );
+        return [
+            'post valid' => [
+                'method' => 'POST',
+                'isValid' => true,
+                'isProcessed' => true
+            ],
+            'put valid' => [
+                'method' => 'PUT',
+                'isValid' => true,
+                'isProcessed' => true
+            ],
+            'invalid' => [
+                'method' => 'POST',
+                'isValid' => false,
+                'isProcessed' => false
+            ],
+        ];
     }
 
     public function testProcessValidData()

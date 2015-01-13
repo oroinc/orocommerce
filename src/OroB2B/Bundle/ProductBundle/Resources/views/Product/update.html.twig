@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A')} }) %}
+{% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A'|trans)} }) %}
 
 {% set formAction = form.vars.value.id ? path('orob2b_product_update', { 'id': form.vars.value.id }) : path('orob2b_product_create')  %}
 
@@ -52,9 +52,9 @@
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'Additional'|trans,
             'subblocks': [{
-            'title': '',
-            'useSpan': false,
-            'data' : additionalData
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
             }]
         }] ) %}
     {% endif %}
