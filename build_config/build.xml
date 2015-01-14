@@ -45,6 +45,7 @@
     <property name="builddir" value="${basedir}/build"/>
     <property name="confdir" value="${basedir}/build_config"/>
     <property name="reportdir" value="${basedir}/build/reports"/>
+    <property name="srcdir" value="${basedir}/src"/>
 
     <property name="appdir" value="${basedir}/app"/>
     <condition property="exists.appdir">
@@ -475,19 +476,19 @@
     <target name="run-phpcs">
         <exec dir="${basedir}" executable="phpcs" failonerror="true">
             <arg line="--encoding=utf-8 --extensions=php --standard=${confdir}/phpcs.xml --report=checkstyle
-                      --report-file=${reportdir}/phpcs.xml ${testpath}"/>
+                      --report-file=${reportdir}/phpcs.xml ${srcdir}"/>
         </exec>
     </target>
 
     <target name="run-phpmd">
         <exec dir="${basedir}" executable="phpmd" failonerror="true">
-            <arg line="${testpath} xml ${confdir}/phpmd.xml --reportfile ${reportdir}/phpmd.xml"/>
+            <arg line="${srcdir} xml ${confdir}/phpmd.xml --reportfile ${reportdir}/phpmd.xml"/>
         </exec>
     </target>
 
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
-            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${testpath}"/>
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${srcdir}"/>
         </exec>
     </target>
 
