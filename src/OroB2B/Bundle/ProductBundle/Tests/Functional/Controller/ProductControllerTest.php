@@ -89,7 +89,7 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('SKU-001-updated - Products - Product management', $crawler->html());
+        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $crawler->html());
 
         return $id;
     }
