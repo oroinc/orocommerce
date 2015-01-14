@@ -1,40 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<project name="Oro B2B Project" basedir=".." default="main">
+<project name="Oro B2B Project" basedir=".." default="help">
 
-    <target name="help">
-        <echo>
-Default target "main" executes the following sequence:
-    clean:
-    prepare:
-        prepare-report-dir
-    install:
-        install-dependencies
-    run:
-        run-unit-tests
-        run-code-standards
-    wrap-up:
-
-Additional targets:
-    unit-tests:
-        clean prepare install run-unit-tests
-    unit-tests-coverage:
-        clean prepare install run-unit-tests-with-coverage
-    code-standards:
-        clean prepare run-code-standards
-
-Build artefacts are created within the "build" directory. All normally
-generated reports and logs can be found in "build/reports"
-
-The following parameters are accepted:
-    - testsuite to be executed:
-        If running on Bamboo, set value for the "testsuite" variable.
-        If running locally, use ant -Dtestsuite="Some Other Suite"
-    - testpath (can be used to run tests within specific directory only)
-        If running on Bamboo, set value for the "testpath" variable.
-        If running locally, use ant -Dtestpath=./path/to/subdirectory
-    - developer (doesn't do full cleanup of installed dependencies)
-        Example: ant -Ddeveloper=true
-        </echo>
+    <target name="help" description="Print additional usage instructions.">
+        <echo>Main targets:</echo>
+        <echo/>
+        <echo> unit-tests           Run unit tests.</echo>
+        <echo>                      (clean prepare-reportdir install-dependencies run-unit-tests)</echo>
+        <echo> unit-tests-coverage  Run unit tests with code coverage collection enabled.</echo>
+        <echo>                      (clean prepare-reportdir install-dependencies run-unit-tests-with-coverage)</echo>
+        <echo> code-standards       Run code standards checks.</echo>
+        <echo>                      (clean prepare-reportdir run-code-standards)</echo>
+        <echo> functional-tests     Run functional tests.</echo>
+        <echo>                      (clean prepare install install-admin-fixture run-functional-tests)</echo>
+        <echo/>
+        <echo>Build artifacts are created within the "build" directory. All normally</echo>
+        <echo>generated reports and logs can be found in "build/reports"</echo>
+        <echo/>
+        <echo>Supported parameters:</echo>
+        <echo/>
+        <echo> testsuite    A test suite to be executed:</echo>
+        <echo>              If running on Bamboo, set value for the "testsuite" variable.</echo>
+        <echo>              If running locally, use ant -Dtestsuite="Some Other Suite"</echo>
+        <echo> testpath     Can be used to run tests contained within a specific directory.</echo>
+        <echo>              If running on Bamboo, set value for the "testpath" variable.</echo>
+        <echo>              If running locally, use ant -Dtestpath=./path/to/subdirectory</echo>
+        <echo>              PHPUnit limitation - when testpath is set, testsuite value is ignored.</echo>
+        <echo> depclean     Do full cleanup of installed dependencies.</echo>
+        <echo>              Disabled by default unless Bamboo is detected.</echo>
+        <echo>              To perform full cleanup when running locally do ant -Ddepclean=true</echo>
+        <echo/>
     </target>
 
     <!-- Include Ant-Contrib to use "if", "var" and other goodies. -->
@@ -51,121 +45,427 @@ The following parameters are accepted:
     <property name="builddir" value="${basedir}/build"/>
     <property name="confdir" value="${basedir}/build_config"/>
     <property name="reportdir" value="${basedir}/build/reports"/>
+    <property name="srcdir" value="${basedir}/src"/>
 
-    <condition property="testsuite" value="${env.bamboo_testsuite}">
+    <property name="appdir" value="${basedir}/app"/>
+    <condition property="exists.appdir">
+        <available file="${appdir}" type="dir"/>
+    </condition>
+    <property name="cachedir" value="${appdir}/cache"/>
+
+    <!-- The following values can be set directly, or in Bamboo. -->
+    <!-- Use the short property name for ant, e.g. and -Dtestsuite="Some Other Suite". -->
+    <!-- Use the short property name in Bamboo as well, e.g. something will be passed in as env.bamboo_something. -->
+    <condition property="buildid" value="${env.bamboo_buildResultKey}" else="buildid">
+        <isset property="env.bamboo_buildResultKey"/>
+    </condition>
+
+    <!-- Location of the PHPUnit config file -->
+    <condition property="testconfig" value="${env.bamboo_testconfig}">
+        <isset property="env.bamboo_testconfig"/>
+    </condition>
+    <condition property="testconfig" value="${confdir}/phpunit.xml">
+        <available file="${confdir}/phpunit.xml" type="file"/>
+    </condition>
+    <condition property="testconfig" value="${confdir}/phpunit.xml.dist">
+        <available file="${confdir}/phpunit.xml.dist" type="file"/>
+    </condition>
+    <condition property="testconfig" value="${basedir}/phpunit.xml">
+        <available file="${basedir}/phpunit.xml" type="file"/>
+    </condition>
+    <condition property="testconfig" value="${basedir}/phpunit.xml.dist">
+        <available file="${basedir}/phpunit.xml.dist" type="file"/>
+    </condition>
+    <condition property="testconfig" value="${appdir}/phpunit.xml">
+        <available file="${appdir}/phpunit.xml" type="file"/>
+    </condition>
+    <condition property="testconfig" value="${appdir}/phpunit.xml.dist">
+        <available file="${appdir}/phpunit.xml.dist" type="file"/>
+    </condition>
+
+    <condition property="testsuite" value="${env.bamboo_testsuite}" else="Project Unit Tests">
         <isset property="env.bamboo_testsuite"/>
     </condition>
-    <condition property="testpath" value="${env.bamboo_testpath}" else="${basedir}/src">
+
+    <condition property="testpath" value="${env.bamboo_testpath}" else="">
         <isset property="env.bamboo_testpath"/>
     </condition>
 
+    <!-- Application environment (e.g. prod, test, dev) -->
+    <condition property="run.env" value="${env.bamboo_env}" else="test">
+        <isset property="env.bamboo_env"/>
+    </condition>
+
+    <!-- Do not install the application (e.g. when running installer tests) -->
+    <condition property="run.noappinstall" value="true">
+        <isset property="env.bamboo_noappinstall"/>
+    </condition>
+    <condition property="run.noappinstall" value="true">
+        <isset property="noappinstall"/>
+    </condition>
+
+    <!-- Database parameters -->
+    <condition property="db.type" value="${env.bamboo_dbtype}" else="mysql">
+        <isset property="env.bamboo_dbtype"/>
+    </condition>
+    <condition property="db.driver" value="pdo_mysql">
+        <equals arg1="${db.type}" arg2="mysql"/>
+    </condition>
+    <condition property="db.driver" value="pdo_pgsql">
+        <equals arg1="${db.type}" arg2="pgsql"/>
+    </condition>
+    <condition property="db.host" value="${env.bamboo_dbhost}" else="127.0.0.1">
+        <isset property="env.bamboo_dbhost"/>
+    </condition>
+    <condition property="db.port" value="${env.bamboo_dbport}" else="3306">
+        <isset property="env.bamboo_dbport"/>
+    </condition>
+    <condition property="db.user" value="${env.bamboo_dbuser}" else="mysql">
+        <isset property="env.bamboo_dbuser"/>
+    </condition>
+    <condition property="db.pass" value="${env.bamboo_dbpass}" else="mysql">
+        <isset property="env.bamboo_dbpass"/>
+    </condition>
+    <condition property="db.name" value="${env.bamboo_dbname}" else="${buildid}">
+        <isset property="env.bamboo_dbname"/>
+    </condition>
+
+    <!-- Run PHPUnit in the process isolation mode. Slow! -->
+    <condition property="processisolation" value="${env.bamboo_processisolation}" else="">
+        <isset property="env.bamboo_processisolation"/>
+    </condition>
+
+    <!-- Set full dependency cleanup flag  -->
+    <condition property="depclean" value="true">
+        <isset property="env.bamboo_buildKey"/>
+    </condition>
+
+
     <!-- High Level Targets START -->
 
-    <target name="main" depends="clean,prepare,install,run,wrap-up"/>
+    <extension-point name="main" depends="clean,prepare,install,run,wrap-up"/>
 
-    <target name="clean">
-        <delete dir="${builddir}"/>
+    <target name="clean" depends="clean-cache">
+        <delete dir="${builddir}" quiet="true"/>
         <if>
-            <not>
-                <equals arg1="${developer}" arg2="true"/>
-            </not>
+            <equals arg1="${depclean}" arg2="true"/>
             <then>
-                <delete file="${basedir}/composer.lock"/>
-                <delete dir="${basedir}/vendor"/>
+                <delete file="${basedir}/composer.lock" quiet="true"/>
+                <delete dir="${basedir}/vendor" quiet="true"/>
             </then>
         </if>
     </target>
 
-    <target name="prepare" depends="prepare-reportdir"/>
+    <target name="clean-cache">
+        <for list="${run.env}" param="iterate">
+            <sequential>
+                <delete dir="${cachedir}/@{iterate}" quiet="true"/>
+            </sequential>
+        </for>
 
-    <target name="install" depends="install-dependencies"/>
+    </target>
 
-    <target name="run" depends="run-unit-tests,run-code-standards"/>
+    <extension-point name="prepare" depends="clean"/>
 
-    <target name="wrap-up"/>
+    <extension-point name="install" depends="prepare"/>
 
-    <target name="unit-tests" depends="clean,prepare,install,run-unit-tests"/>
+    <extension-point name="run" depends="install,run-all-tests"/>
 
-    <target name="unit-tests-coverage" depends="clean,prepare,install,run-unit-tests-with-coverage"/>
+    <extension-point name="run-all-tests"/>
 
-    <target name="code-standards" depends="clean,prepare,run-code-standards"/>
+    <extension-point name="wrap-up" depends="run"/>
 
-    <target name="functional-tests" depends="install-dependencies,init_db,install-b2b-test"/>
+    <target name="unit-tests" depends="clean,prepare-reportdir,install-dependencies,run-unit-tests" description="Run unit tests."/>
+
+    <target name="unit-tests-coverage" depends="clean,prepare-reportdir,install-dependencies,run-unit-tests-with-coverage" description="Run unit tests with code coverage collection enabled."/>
+
+    <target name="code-standards" depends="clean,prepare-reportdir,run-code-standards" description="Run code standards checks."/>
+
+    <target name="functional-tests" depends="clean,prepare,install,install-admin-fixture,run-functional-tests" description="Run functional tests."/>
 
     <!-- END High Level Targets -->
 
 
     <!-- Create reportdir, otherwise phpcs will complain -->
-    <target name="prepare-reportdir">
+    <target name="prepare-reportdir" extensionOf="prepare">
         <mkdir dir="${reportdir}"/>
     </target>
 
+    <!-- Create database -->
+    <!-- TODO: create separate databases per environment (except dev?) -->
+    <target name="prepare-db" extensionOf="prepare">
+        <if>
+            <equals arg1="${db.type}" arg2="mysql"/>
+            <then>
+                <echo>Creating ${db.name} database in ${db.type}...</echo>
+                <path id="classpath.mysqldriver">
+                    <fileset dir="/usr/share/java/">
+                        <include name="postgresql-9.3-1101.jdbc41.jar"/>
+                        <!-- RedHat/CentOS/Fedora -->
+                        <include name="mysql-connector-java.jar"/>
+                        <include name="mysql-connector-java-*.jar"/>
+                    </fileset>
+                </path>
+                <sql driver="com.mysql.jdbc.Driver"
+                    classpathref="classpath.mysqldriver"
+                    url="jdbc:mysql://${db.host}:${db.port}/"
+                    userid="${db.user}"
+                    password="${db.pass}"
+                    autocommit="true">
+                    DROP DATABASE IF EXISTS `${db.name}`;
+                    CREATE DATABASE `${db.name}`;
+                </sql>
+            </then>
+            <elseif>
+                <!-- TODO: Check if it works -->
+                <equals arg1="${db.type}" arg2="pgsql"/>
+                <then>
+                    <echo>Installing ${db.type}...</echo>
+                    <path id="classpath.mysqldriver">
+                        <fileset dir="/usr/share/java/">
+                            <include name="postgresql-9.3-1101.jdbc41.jar"/>
+                            <!-- RedHat/CentOS/Fedora -->
+                            <include name="postgresql-jdbc.jar"/>
+                            <include name="postgresql-*.jdbc*.jar"/>
+                        </fileset>
+                    </path>
+                    <exec dir="${basedir}" executable="psql" failonerror="true">
+                        <arg line="-h ${db.host} -U postgres -c 'UPDATE pg_database SET datallowconn = TRUE;'" />
+                    </exec>
+                    <exec dir="${basedir}" executable="psql" failonerror="true">
+                        <arg line="-h ${db.host} -U postgres -c 'CREATE EXTENSION IF NOT EXISTS &quot;uuid-ossp&quot;;' -d template0" />
+                    </exec>
+                    <sql driver="org.postgresql.Driver"
+                        classpath="/usr/share/java/postgresql-9.3-1101.jdbc41.jar"
+                        url="jdbc:postgresql://${db.host}/template0"
+                        userid="${db.user}"
+                        password="${db.pass}"
+                        autocommit="true">
+                        DROP DATABASE IF EXISTS ${db.name};
+                        CREATE DATABASE ${db.name} WITH lc_collate = 'C' template = template0;
+                    </sql>
+                </then>
+            </elseif>
+            <else>
+            </else>
+        </if>
+        <echo>${db.name} database successfully created.</echo>
+    </target>
+
     <!-- Installing external dependencies -->
-    <target name="install-dependencies">
+    <target name="install-dependencies" extensionOf="install">
         <exec dir="${basedir}" executable="composer" failonerror="true">
             <arg line="install --prefer-dist --no-dev"/>
         </exec>
         <copy file="${basedir}/composer.lock" todir="${builddir}"/>
     </target>
 
-    <target name="init_db">
-        <sql
-            classpath="/usr/share/java/mysql-connector-java-5.1.12.jar"
-            driver="com.mysql.jdbc.Driver"
-            url="jdbc:mysql://127.0.0.1:3306/mysql"
-            userid="mysql"
-            password="mysql"
-            autocommit="true">
-            DROP DATABASE IF EXISTS b2b_test;
-            CREATE DATABASE b2b_test;
-        </sql>
+    <!-- Install app in all environments -->
+    <target name="install-app" depends="prepare-db,install-dependencies" if="exists.appdir" unless="${run.noappinstall}" extensionOf="install">
+        <for list="${run.env}" param="iterate">
+            <sequential>
+                <echo>Installing the application for @{iterate} environment...</echo>
+                <appconfig env="@{iterate}"/>
+                <oroinstall env="@{iterate}"/>
+            </sequential>
+        </for>
     </target>
 
-    <!-- Install B2B app in test environment  -->
-    <target name="install-b2b-test" depends="install-dependencies">
-        <exec dir="${basedir}" executable="php" failonerror="true">
-            <arg line="app/console oro:install --env=test --user-name=admin --user-email=admin@example.com --user-firstname=John --user-lastname=Doe --user-password=admin --sample-data=n --organization-name=OroB2B --no-interaction" />
-        </exec>
+    <target name="install-admin-fixture">
+        <for list="${run.env}" param="iterate">
+            <sequential>
+                <exec dir="${basedir}" executable="php" failonerror="true">
+                    <arg line="app/console doctrine:fixture:load --no-debug --append --no-interaction --env=@{iterate} --fixtures src/Oro/src/Oro/Bundle/TestFrameworkBundle/Fixtures" />
+                </exec>
+            </sequential>
+        </for>
     </target>
 
-    <!-- PHPUnit tests -->
-    <macrodef name="phpunit">
-        <attribute name="suite" default="Project Unit Tests"/>
-        <attribute name="withcodecoverage" default="false"/>
+    <!-- Create an application configuration file -->
+    <macrodef name="appconfig">
+        <attribute name="env"/>
+        <attribute name="database-driver" default="pdo_mysql"/>
+        <attribute name="database-host" default="${db.host}"/>
+        <attribute name="database-port" default="${db.port}"/>
+        <attribute name="database-name" default="${db.name}"/>
+        <attribute name="database-user" default="${db.user}"/>
+        <attribute name="database-password" default="${db.pass}"/>
+        <attribute name="mailer-transport" default="smtp"/>
+        <attribute name="mailer-host" default="127.0.0.1"/>
+        <attribute name="mailer-port" default="null"/>
+        <attribute name="mailer-encryption" default="null"/>
+        <attribute name="mailer-user" default="null"/>
+        <attribute name="mailer-password" default="null"/>
+        <attribute name="websocket-host" default="127.0.0.1"/>
+        <attribute name="websocket-port" default="8080"/>
+        <attribute name="session-handler" default="null"/>
+        <attribute name="locale" default="en"/>
+        <attribute name="secret" default="ThisTokenIsNotSoSecretChangeIt"/>
+        <attribute name="installed" default="~"/>
         <sequential>
             <if>
-                <equals arg1="@{withcodecoverage}" arg2="true"/>
+                <equals arg1="@{env}" arg2="prod"/>
                 <then>
-                    <var name="codecoverage" value="-dxdebug.coverage_enable=1 --coverage-php ${reportdir}/coverage.cov"/>
+                    <var name="appconfig.filename" value="${appdir}/config/parameters.yml"/>
                 </then>
                 <else>
-                    <var name="codecoverage" value="-dxdebug.coverage_enable=0"/>
+                    <var name="appconfig.filename" value="${appdir}/config/parameters_@{env}.yml"/>
                 </else>
             </if>
-            <exec dir="${basedir}" executable="phpunit" failonerror="true">
-                <arg line="-c phpunit.xml.dist"/>
-                <arg value="-dxdebug.default_enable=0"/>
-                <arg value="--verbose"/>
-                <arg value="--stderr"/>
-                <arg line="--log-junit ${reportdir}/phpunit.xml"/>
-                <arg line="--testsuite ${testsuite}"/>
-                <arg value="${codecoverage}"/>
-                <arg value="${testpath}"/>
+            <delete file="${appconfig.filename}" quiet="true"/>
+            <echo file="${appconfig.filename}" append="true">parameters:${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    database_driver: @{database-driver}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    database_host: @{database-host}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    database_port: @{database-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    database_name: @{database-name}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    database_user: @{database-user}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    database_password: @{database-password}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    mailer_transport: @{mailer-transport}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    mailer_host: @{mailer-host}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    mailer_port: @{mailer-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    mailer_encryption: @{mailer-encryption}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    mailer_user: @{mailer-user}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    mailer_password: @{mailer-password}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_host: @{websocket-host}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_port: @{websocket-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    session_handler: @{session-handler}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    locale: @{locale}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    secret: @{secret}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    installed: @{installed}${line.separator}</echo>
+        </sequential>
+    </macrodef>
+
+    <!-- Install an application with the console installer -->
+    <macrodef name="oroinstall">
+        <attribute name="env"/>
+        <attribute name="user-name" default="admin"/>
+        <attribute name="user-email" default="admin@example.com"/>
+        <attribute name="user-firstname" default="John"/>
+        <attribute name="user-lastname" default="Doe"/>
+        <attribute name="user-password" default="admin"/>
+        <attribute name="sample-data" default="n"/>
+        <attribute name="organization-name" default="Oro Inc."/>
+        <sequential>
+            <exec dir="${basedir}" executable="php" failonerror="true">
+                <arg line="app/console oro:install"/>
+                <arg line="--env=@{env}"/>
+                <arg line="--user-name=@{user-name}"/>
+                <arg line="--user-email=&quot;@{user-email}&quot;"/>
+                <arg line="--user-firstname=&quot;@{user-firstname}&quot;"/>
+                <arg line="--user-lastname=&quot;@{user-lastname}&quot;"/>
+                <arg line="--user-password=&quot;@{user-password}&quot;"/>
+                <arg line="--sample-data=@{sample-data}"/>
+                <arg line="--organization-name=&quot;@{organization-name}&quot;"/>
+                <arg line="--no-interaction" />
             </exec>
         </sequential>
     </macrodef>
 
+    <!-- PHPUnit tests -->
+    <macrodef name="phpunit">
+        <attribute name="suite" default="${testsuite}"/>
+        <attribute name="codecoverage" default="false"/>
+        <attribute name="processisolation" default="false"/>
+        <attribute name="config" default="${testconfig}"/>
+        <attribute name="debug" default="${debug}"/>
+        <sequential>
+            <if>
+                <equals arg1="@{codecoverage}" arg2="true"/>
+                <then>
+                    <var name="phpunit.codecoverage" value="-dxdebug.coverage_enable=1 --coverage-php ${reportdir}/coverage.cov"/>
+                </then>
+                <else>
+                    <var name="phpunit.codecoverage" value="-dxdebug.coverage_enable=0"/>
+                </else>
+            </if>
+            <if>
+                <or>
+                    <equals arg1="@{processisolation}" arg2="true"/>
+                    <equals arg1="${processisolation}" arg2="true"/>
+                </or>
+                <then>
+                    <var name="phpunit.processisolation" value="--process-isolation"/>
+                </then>
+                <else>
+                    <var name="phpunit.processisolation" value=""/>
+                </else>
+            </if>
+            <if>
+                <equals arg1="@{debug}" arg2="true"/>
+                <then>
+                    <var name="phpunit.debug" value="--debug"/>
+                </then>
+                <else>
+                    <var name="phpunit.debug" value=""/>
+                </else>
+            </if>
+            <!-- If phpunit fails because of a Fatal Error, re-run it with process isolation. -->
+            <!-- NB: Due to properties immutability if works only for the first phpunit run in the ant script. -->
+            <trycatch>
+                <try>
+                    <exec dir="${basedir}" executable="phpunit" failonerror="true" resultproperty="phpunit.exitcode">
+                        <arg line="-c @{config}"/>
+                        <arg value="-dxdebug.default_enable=0"/>
+                        <arg value="--verbose"/>
+                        <arg value="--stderr"/>
+                        <arg value="${phpunit.processisolation}"/>
+                        <arg value="${phpunit.debug}"/>
+                        <arg line="--log-junit ${reportdir}/phpunit.xml"/>
+                        <arg line="--testsuite &quot;@{suite}&quot;"/>
+                        <arg value="${phpunit.codecoverage}"/>
+                        <arg value="${testpath}"/>
+                    </exec>
+                </try>
+                <catch>
+                    <if>
+                        <and>
+                            <not>
+                                <!-- Exit code 1 is the result of normal phpunit completion (with failing tests). -->
+                                <!-- A different exit code is most likely because of a Fatal Error. -->
+                                <equals arg1="${phpunit.exitcode}" arg2="1"/>
+                            </not>
+                            <!-- Not running the second time, if first time was with process isolation already. -->
+                            <equals arg1="${phpunit.processisolation}" arg2=""/>
+                        </and>
+                        <then>
+                            <echo/>
+                            <echo>PHPUnit returned ${phpunit.exitcode}, is it a Fatal Error?</echo><echo/>
+                            <echo>Re-running PHPUnit test suite in process-isolation mode.</echo><echo/>
+                            <exec dir="${basedir}" executable="phpunit" failonerror="true">
+                                <arg line="-c @{config}"/>
+                                <arg value="-dxdebug.default_enable=0"/>
+                                <arg value="--verbose"/>
+                                <arg value="--stderr"/>
+                                <!-- Use process isolation -->
+                                <arg value="--process-isolation"/>
+                                <arg value="${phpunit.debug}"/>
+                                <arg line="--log-junit ${reportdir}/phpunit.xml"/>
+                                <arg line="--testsuite &quot;@{suite}&quot;"/>
+                                <arg value="${phpunit.codecoverage}"/>
+                                <arg value="${testpath}"/>
+                            </exec>
+                        </then>
+                    </if>
+                    <fail message="PHPUnit tests failed."/>
+                </catch>
+            </trycatch>
+        </sequential>
+    </macrodef>
+
     <target name="run-unit-tests-with-coverage">
-        <phpunit withcodecoverage="true"/>
+        <phpunit codecoverage="true"/>
     </target>
 
-    <target name="run-unit-tests">
+    <target name="run-unit-tests" extensionOf="run-all-tests">
         <phpunit/>
     </target>
 
+    <target name="run-functional-tests" extensionOf="run-all-tests">
+        <phpunit suite="Project B2B Functional Tests"/>
+    </target>
 
     <!-- Check code standards -->
-    <target name="run-code-standards" depends="run-phpcs,run-phpmd,run-phpcpd">
+    <target name="run-code-standards" depends="run-phpcs,run-phpmd,run-phpcpd" extensionOf="run-all-tests">
         <!--<parallel>
             <antcall target="run-phpcs"/>
             <antcall target="run-phpmd"/>
@@ -176,19 +476,19 @@ The following parameters are accepted:
     <target name="run-phpcs">
         <exec dir="${basedir}" executable="phpcs" failonerror="true">
             <arg line="--encoding=utf-8 --extensions=php --standard=${confdir}/phpcs.xml --report=checkstyle
-                      --report-file=${reportdir}/phpcs.xml ${testpath}"/>
+                      --report-file=${reportdir}/phpcs.xml ${srcdir}"/>
         </exec>
     </target>
 
     <target name="run-phpmd">
         <exec dir="${basedir}" executable="phpmd" failonerror="true">
-            <arg line="${testpath} xml ${confdir}/phpmd.xml --reportfile ${reportdir}/phpmd.xml"/>
+            <arg line="${srcdir} xml ${confdir}/phpmd.xml --reportfile ${reportdir}/phpmd.xml"/>
         </exec>
     </target>
 
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
-            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${testpath}"/>
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${srcdir}"/>
         </exec>
     </target>
 
