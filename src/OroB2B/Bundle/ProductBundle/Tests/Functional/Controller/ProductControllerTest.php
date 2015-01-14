@@ -31,12 +31,12 @@ class ProductControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
-        $organization = $this->getContainer()->get('security.context')->getToken()->getOrganizationContext()->getId();
+        $businessUnit = $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
-        $form['orob2b_product_form[owner]'] = $organization;
+        $form['orob2b_product_form[owner]'] = $businessUnit;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
