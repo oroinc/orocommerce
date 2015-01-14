@@ -461,7 +461,7 @@
     </target>
 
     <target name="run-functional-tests" extensionOf="run-all-tests">
-        <phpunit suite="Project Functional Tests"/>
+        <phpunit suite="Project B2B Functional Tests"/>
     </target>
 
     <!-- Check code standards -->
