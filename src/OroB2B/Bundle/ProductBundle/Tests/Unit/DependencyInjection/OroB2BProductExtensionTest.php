@@ -2,41 +2,29 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 use OroB2B\Bundle\ProductBundle\DependencyInjection\OroB2BProductExtension;
 
-class OroB2BProductExtensionTest extends \PHPUnit_Framework_TestCase
+class OroB2BProductExtensionTest extends ExtensionTestCase
 {
-    /**
-     * @var array
-     */
-    protected $expectedParameters = [
-        'orob2b_product.product.class' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
-    ];
 
     public function testLoad()
     {
-        $actualParameters  = [];
+        $this->loadExtension(new OroB2BProductExtension());
 
-        $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setParameter'])
-            ->getMock();
+        $expectedParameters = [
+            'orob2b_product.product.class',
+            'orob2b_product.form.handler.product.class',
+            'orob2b_product.product.manager.api.class',
 
-        $container->expects($this->any())
-            ->method('setParameter')
-            ->will(
-                $this->returnCallback(
-                    function ($name, $value) use (&$actualParameters) {
-                        $actualParameters[$name] = $value;
-                    }
-                )
-            );
+        ];
+        $this->assertParametersLoaded($expectedParameters);
 
-        $extension = new OroB2BProductExtension();
-        $extension->load([], $container);
-
-        foreach ($this->expectedParameters as $parameterName => $parameterValue) {
-            $this->assertArrayHasKey($parameterName, $actualParameters);
-            $this->assertEquals($parameterValue, $actualParameters[$parameterName]);
-        }
+        $expectedDefinitions = [
+            'orob2b_product.form.product',
+            'orob2b_product.form.handler.product',
+            'orob2b_product.product.manager.api',
+        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 }
