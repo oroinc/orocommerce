@@ -1,0 +1,4 @@
+orob2b_attribute:
+    resource:     "@OroB2BAttributeBundle/Controller/AttributeController.php"
+    type:         annotation
+    prefix:       /attribute

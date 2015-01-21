@@ -1,0 +1,4 @@
+parameters:
+    orob2b_website.website.class: OroB2B\Bundle\WebsiteBundle\Entity\Website
+
+services:

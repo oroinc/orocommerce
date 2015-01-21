@@ -1,0 +1,4 @@
+orob2b_website:
+    resource:     "@OroB2BWebsiteBundle/Controller/WebsiteController.php"
+    type:         annotation
+    prefix:       /website
