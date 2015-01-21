@@ -21,7 +21,7 @@ oro_menu_config:
             extras:
                 description: 'orob2b.product.menu.shortcut_products_list.description'
 
-        shortcut_new_contact:
+        shortcut_new_product:
             label:           'orob2b.product.menu.shortcut_new_product.label'
             route:           'orob2b_product_create'
             extras:
