@@ -1,0 +1,80 @@
+<?php
+
+namespace OroB2B\Bundle\WebsiteBundle\Migrations\Schema\v1_0;
+
+use Doctrine\DBAL\Schema\Schema;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
+class OroB2BWebsiteBundle implements Migration
+{
+    const TABLE_NAME = 'orob2b_website';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function up(Schema $schema, QueryBag $queries)
+    {
+        /** Tables generation **/
+        $this->createOrob2BRelatedWebsiteTable($schema);
+        $this->createOrob2BWebsiteTable($schema);
+
+        /** Foreign keys generation **/
+        $this->addOrob2BRelatedWebsiteForeignKeys($schema);
+
+    }
+    /**
+     * Create orob2b_related_website table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BRelatedWebsiteTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_related_website');
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('related_website_id', 'integer', []);
+        $table->setPrimaryKey(['website_id', 'related_website_id']);
+        $table->addIndex(['website_id'], 'IDX_8E360C7418F45C82', []);
+        $table->addIndex(['related_website_id'], 'IDX_8E360C7492395432', []);
+    }
+
+    /**
+     * Create orob2b_website table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BWebsiteTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_website');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('name', 'string', ['length' => 255]);
+        $table->addColumn('url', 'string', ['length' => 255]);
+        $table->addColumn('createdAt', 'datetime', []);
+        $table->addColumn('updatedAt', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['name'], 'UNIQ_CBB2CF835E237E06');
+        $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
+    }
+
+    /**
+     * Add orob2b_related_website foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BRelatedWebsiteForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_related_website');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['related_website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+}
