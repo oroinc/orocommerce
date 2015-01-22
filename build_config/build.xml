@@ -18,13 +18,14 @@
         <echo/>
         <echo>Supported parameters:</echo>
         <echo/>
-        <echo> testsuite    A test suite to be executed:</echo>
-        <echo>              If running on Bamboo, set value for the "testsuite" variable.</echo>
-        <echo>              If running locally, use ant -Dtestsuite="Some Other Suite"</echo>
-        <echo> testpath     Can be used to run tests contained within a specific directory.</echo>
-        <echo>              If running on Bamboo, set value for the "testpath" variable.</echo>
+        <echo> testsuite    A test suite to be executed. "Project Unit Tests" and "Project Functional Tests" are </echo>
+        <echo>              default values for 'run-unit-tests' and 'run-functional-tests' targets respectively.</echo>
+        <echo>              If running on Bamboo, override by defining 'testsuite' variable, e.g. "My Tests".</echo>
+        <echo>              If running locally, use ant -Dtestsuite="My Tests"</echo>
+        <echo> testpath     Can be used to run tests contained within a specific directory only.</echo>
+        <echo>              If running on Bamboo, set value for the 'testpath' variable.</echo>
         <echo>              If running locally, use ant -Dtestpath=./path/to/subdirectory</echo>
-        <echo>              PHPUnit limitation - when testpath is set, testsuite value is ignored.</echo>
+        <echo>              PHPUnit limitation - when 'testpath' is set, 'testsuite' value is ignored.</echo>
         <echo> depclean     Do full cleanup of installed dependencies.</echo>
         <echo>              Disabled by default unless Bamboo is detected.</echo>
         <echo>              To perform full cleanup when running locally do ant -Ddepclean=true</echo>
@@ -409,7 +410,12 @@
                     <var name="phpunit.suite" value="@{suite}"/>
                 </else>
             </if>
+
+            <!-- Strip enclosing double quotes -->
+            <propertyregex property="phpunit.suite" override="true" input="${phpunit.suite}" regexp="^&quot;(.*)&quot;$" replace="\1"/>
+
             <echo>Test suite &quot;${phpunit.suite}&quot;:</echo><echo/>
+
             <!-- If phpunit fails because of a Fatal Error, re-run it with process isolation. -->
             <!-- NB: Due to properties immutability if works only for the first phpunit run in the ant script. -->
             <trycatch>
@@ -423,7 +429,7 @@
                         <arg value="${phpunit.debug}"/>
                         <arg line="--log-junit ${reportdir}/phpunit.xml"/>
                         <arg line="--testsuite &quot;${phpunit.suite}&quot;"/>
-                        <arg value="${phpunit.codecoverage}"/>
+                        <arg line="${phpunit.codecoverage}"/>
                         <arg value="${testpath}"/>
                     </exec>
                 </try>
@@ -457,7 +463,7 @@
                                 <arg value="${phpunit.debug}"/>
                                 <arg line="--log-junit ${reportdir}/phpunit.xml"/>
                                 <arg line="--testsuite &quot;${phpunit.suite}&quot;"/>
-                                <arg value="${phpunit.codecoverage}"/>
+                                <arg line="${phpunit.codecoverage}"/>
                                 <arg value="${testpath}"/>
                             </exec>
                         </then>
@@ -469,7 +475,7 @@
     </macrodef>
 
     <target name="run-unit-tests-with-coverage">
-        <phpunit codecoverage="true"/>
+        <phpunit codecoverage="true" suite="${testsuite}" defaultsuite="Project Unit Tests"/>
     </target>
 
     <target name="run-unit-tests" extensionOf="run-all-tests">
