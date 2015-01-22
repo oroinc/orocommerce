@@ -83,7 +83,7 @@
         <available file="${appdir}/phpunit.xml.dist" type="file"/>
     </condition>
 
-    <condition property="testsuite" value="${env.bamboo_testsuite}" else="Project Unit Tests">
+    <condition property="testsuite" value="${env.bamboo_testsuite}" else="">
         <isset property="env.bamboo_testsuite"/>
     </condition>
 
@@ -363,7 +363,8 @@
 
     <!-- PHPUnit tests -->
     <macrodef name="phpunit">
-        <attribute name="suite" default="${testsuite}"/>
+        <attribute name="suite" default=""/>
+        <attribute name="defaultsuite" default="${testsuite}"/>
         <attribute name="codecoverage" default="false"/>
         <attribute name="processisolation" default="false"/>
         <attribute name="config" default="${testconfig}"/>
@@ -399,6 +400,16 @@
                     <var name="phpunit.debug" value=""/>
                 </else>
             </if>
+            <if>
+                <equals arg1="@{suite}" arg2=""/>
+                <then>
+                    <var name="phpunit.suite" value="@{defaultsuite}"/>
+                </then>
+                <else>
+                    <var name="phpunit.suite" value="@{suite}"/>
+                </else>
+            </if>
+            <echo>Test suite &quot;${phpunit.suite}&quot;:</echo><echo/>
             <!-- If phpunit fails because of a Fatal Error, re-run it with process isolation. -->
             <!-- NB: Due to properties immutability if works only for the first phpunit run in the ant script. -->
             <trycatch>
@@ -411,7 +422,7 @@
                         <arg value="${phpunit.processisolation}"/>
                         <arg value="${phpunit.debug}"/>
                         <arg line="--log-junit ${reportdir}/phpunit.xml"/>
-                        <arg line="--testsuite &quot;@{suite}&quot;"/>
+                        <arg line="--testsuite &quot;${phpunit.suite}&quot;"/>
                         <arg value="${phpunit.codecoverage}"/>
                         <arg value="${testpath}"/>
                     </exec>
@@ -420,17 +431,22 @@
                     <if>
                         <and>
                             <not>
-                                <!-- Exit code 1 is the result of normal phpunit completion (with failing tests). -->
-                                <!-- A different exit code is most likely because of a Fatal Error. -->
-                                <equals arg1="${phpunit.exitcode}" arg2="1"/>
+                                <or>
+                                    <!-- Exit code 1 means normal phpunit completion with failing tests). -->
+                                    <equals arg1="${phpunit.exitcode}" arg2="1"/>
+                                    <!-- Exit code 2 means normal phpunit completion (with exceptions). -->
+                                    <equals arg1="${phpunit.exitcode}" arg2="2"/>
+                                    <!-- A different exit code is most likely because of a fatal or parse error. -->
+                                </or>
                             </not>
                             <!-- Not running the second time, if first time was with process isolation already. -->
                             <equals arg1="${phpunit.processisolation}" arg2=""/>
                         </and>
                         <then>
-                            <echo/>
+                            <echo/><echo>================================================================</echo><echo/>
                             <echo>PHPUnit returned ${phpunit.exitcode}, is it a Fatal Error?</echo><echo/>
-                            <echo>Re-running PHPUnit test suite in process-isolation mode.</echo><echo/>
+                            <echo>Re-running PHPUnit test suite in process-isolation mode:</echo>
+                            <echo/><echo>================================================================</echo><echo/>
                             <exec dir="${basedir}" executable="phpunit" failonerror="true">
                                 <arg line="-c @{config}"/>
                                 <arg value="-dxdebug.default_enable=0"/>
@@ -440,7 +456,7 @@
                                 <arg value="--process-isolation"/>
                                 <arg value="${phpunit.debug}"/>
                                 <arg line="--log-junit ${reportdir}/phpunit.xml"/>
-                                <arg line="--testsuite &quot;@{suite}&quot;"/>
+                                <arg line="--testsuite &quot;${phpunit.suite}&quot;"/>
                                 <arg value="${phpunit.codecoverage}"/>
                                 <arg value="${testpath}"/>
                             </exec>
@@ -457,11 +473,11 @@
     </target>
 
     <target name="run-unit-tests" extensionOf="run-all-tests">
-        <phpunit/>
+        <phpunit suite="${testsuite}" defaultsuite="Project Unit Tests"/>
     </target>
 
     <target name="run-functional-tests" extensionOf="run-all-tests">
-        <phpunit suite="Project B2B Functional Tests"/>
+        <phpunit suite="${testsuite}" defaultsuite="Project Functional Tests"/>
     </target>
 
     <!-- Check code standards -->
