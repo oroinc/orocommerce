@@ -1,4 +1,4 @@
-OroB2B\Bundle\WebsiteBundle\Entity\website:
+OroB2B\Bundle\WebsiteBundle\Entity\Website:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [ name, url ]
