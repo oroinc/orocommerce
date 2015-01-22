@@ -3,8 +3,9 @@
 namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class CalendarEventTest extends \PHPUnit_Framework_TestCase
+class LocaleTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetId()
     {
@@ -94,6 +95,61 @@ class CalendarEventTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($localeTwo, $actual->toArray());
         $this->assertContains($localeThree, $actual->toArray());
         $this->assertNotContains($localeOne, $actual->toArray());
+    }
+
+    public function testLocaleWebsites()
+    {
+        // Create websites
+        $websiteOne = new Website();
+        $websiteOne->setName('Website One');
+        $websiteOne->setUrl('www.website-one.com');
+
+        $websiteTwo = new Website();
+        $websiteTwo->setName('Website Two');
+        $websiteTwo->setUrl('www.website-two.com');
+
+        $websiteThree = new Website();
+        $websiteThree->setName('Website Three');
+        $websiteThree->setUrl('www.website-three.com');
+
+        // Create locale
+        $currentLocale = new Locale();
+        $currentLocale->setCode('en_US');
+
+        // reset websites for current locale
+        $this->assertSame($currentLocale, $currentLocale->resetWebsites([$websiteOne, $websiteTwo]));
+        $actual = $currentLocale->getWebsites();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$websiteOne, $websiteTwo], $actual->toArray());
+
+        /** @var Website $website */
+        foreach ($actual as $website) {
+            $this->assertContains($website, $currentLocale->getWebsites());
+        }
+
+        // add websites to current locale
+        $this->assertSame($currentLocale, $currentLocale->addWebsite($websiteTwo));
+        $actual = $currentLocale->getWebsites();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$websiteOne, $websiteTwo], $actual->toArray());
+
+        $this->assertSame($currentLocale, $currentLocale->addWebsite($websiteThree));
+        $actual = $currentLocale->getWebsites();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$websiteOne, $websiteTwo, $websiteThree], $actual->toArray());
+
+        /** @var Website $website */
+        foreach ($actual as $website) {
+            $this->assertContains($website, $currentLocale->getWebsites());
+        }
+
+        // remove websites from current locale
+        $this->assertSame($currentLocale, $currentLocale->removeWebsite($websiteOne));
+        $actual = $currentLocale->getWebsites();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertContains($websiteTwo, $actual->toArray());
+        $this->assertContains($websiteThree, $actual->toArray());
+        $this->assertNotContains($websiteOne, $actual->toArray());
     }
 
     public function testPrePersist()

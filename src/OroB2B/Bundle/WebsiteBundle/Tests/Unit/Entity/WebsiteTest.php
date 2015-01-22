@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteTest extends \PHPUnit_Framework_TestCase
@@ -100,6 +101,59 @@ class WebsiteTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($firstWebsite, $secondWebsiteRelatedSites);
 
         $this->assertEmpty($thirdWebsite->getRelatedWebsites()->toArray());
+    }
+
+    public function testWebsiteLocales()
+    {
+        // Create locales
+        $localeOne = new Locale();
+        $localeOne->setCode('es_MX');
+
+        $localeTwo = new Locale();
+        $localeTwo->setCode('en_GB');
+
+        $localeThree = new Locale();
+        $localeThree->setCode('en_AU');
+
+        // Create website
+        $currentWebsite = new Website();
+        $currentWebsite->setName('Current Website');
+        $currentWebsite->setUrl('www.current-website.com');
+
+        // reset locales for current website
+        $this->assertSame($currentWebsite, $currentWebsite->resetLocales([$localeOne, $localeTwo]));
+        $actual = $currentWebsite->getLocales();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$localeOne, $localeTwo], $actual->toArray());
+
+        /** @var Locale $locale */
+        foreach ($actual as $locale) {
+            $this->assertContains($locale, $currentWebsite->getLocales());
+        }
+
+        // add locales to current website
+        $this->assertSame($currentWebsite, $currentWebsite->addLocale($localeTwo));
+        $actual = $currentWebsite->getLocales();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$localeOne, $localeTwo], $actual->toArray());
+
+        $this->assertSame($currentWebsite, $currentWebsite->addLocale($localeThree));
+        $actual = $currentWebsite->getLocales();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$localeOne, $localeTwo, $localeThree], $actual->toArray());
+
+        /** @var Locale $locale */
+        foreach ($actual as $locale) {
+            $this->assertContains($locale, $currentWebsite->getLocales());
+        }
+
+        // remove locales from current website
+        $this->assertSame($currentWebsite, $currentWebsite->removeLocale($localeOne));
+        $actual = $currentWebsite->getLocales();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertContains($localeTwo, $actual->toArray());
+        $this->assertContains($localeThree, $actual->toArray());
+        $this->assertNotContains($localeOne, $actual->toArray());
     }
 
     public function testPrePersist()

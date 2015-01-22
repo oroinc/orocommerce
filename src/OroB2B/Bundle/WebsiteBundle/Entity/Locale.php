@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\WebsiteBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -32,14 +31,19 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 class Locale
 {
     /**
+     * @ORM\ManyToMany(targetEntity="Website", mappedBy="locales")
+     */
+    private $websites;
+
+    /**
      * @ORM\OneToMany(targetEntity="Locale", mappedBy="$parentLocale")
-     **/
+     */
     private $childLocales;
 
     /**
      * @ORM\ManyToOne(targetEntity="Locale", inversedBy="$childLocales")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
-     **/
+     */
     private $parentLocale;
 
     /**
@@ -94,6 +98,7 @@ class Locale
     public function __construct()
     {
         $this->childLocales = new ArrayCollection();
+        $this->websites = new ArrayCollection();
     }
 
     /**
@@ -164,7 +169,7 @@ class Locale
     /**
      * Get child locales
      *
-     * @return Collection|Locale[]
+     * @return ArrayCollection|Locale[]
      */
     public function getChildLocales()
     {
@@ -174,7 +179,7 @@ class Locale
     /**
      * Set children locales
      *
-     * @param Collection|Locale[] $locales
+     * @param ArrayCollection|Locale[] $locales
      *
      * @return Locale
      */
@@ -259,5 +264,61 @@ class Locale
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Get websites with current locales
+     *
+     * @return ArrayCollection|Website[]
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
+    }
+
+    /**
+     * Set website for current locales
+     *
+     * @param ArrayCollection|Locale[] $websites
+     *
+     * @return Locale
+     */
+    public function resetWebsites($websites)
+    {
+        $this->websites->clear();
+
+        foreach ($websites as $website) {
+            $this->addWebsite($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return Locale
+     */
+    public function addWebsite(Website $website)
+    {
+        if (!$this->websites->contains($website)) {
+            $this->websites->add($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return Website
+     */
+    public function removeWebsite(Website $website)
+    {
+        if ($this->websites->contains($website)) {
+            $this->websites->removeElement($website);
+        }
+
+        return $this;
     }
 }

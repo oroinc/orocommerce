@@ -19,11 +19,13 @@ class OroB2BWebsiteBundle implements Migration
         $this->createOrob2BLocaleTable($schema);
         $this->createOrob2BRelatedWebsiteTable($schema);
         $this->createOrob2BWebsiteTable($schema);
+        $this->createOrob2BWebsitesLocalesTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BLocaleForeignKeys($schema);
         $this->addOrob2BRelatedWebsiteForeignKeys($schema);
         $this->addOrob2BWebsiteForeignKeys($schema);
+        $this->addOrob2BWebsitesLocalesForeignKeys($schema);
     }
 
     /**
@@ -79,6 +81,21 @@ class OroB2BWebsiteBundle implements Migration
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
         $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
         $table->addIndex(['organization_id'], 'IDX_CBB2CF8332C8A3DE', []);
+    }
+
+    /**
+     * Create orob2b_websites_locales table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BWebsitesLocalesTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_websites_locales');
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('locale_id', 'integer', []);
+        $table->setPrimaryKey(['website_id', 'locale_id']);
+        $table->addIndex(['website_id'], 'IDX_EB4D58FE18F45C82', []);
+        $table->addIndex(['locale_id'], 'IDX_EB4D58FEE559DFD1', []);
     }
 
     /**
@@ -138,6 +155,28 @@ class OroB2BWebsiteBundle implements Migration
             ['business_unit_owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_websites_locales foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BWebsitesLocalesForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_websites_locales');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_locale'),
+            ['locale_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }
