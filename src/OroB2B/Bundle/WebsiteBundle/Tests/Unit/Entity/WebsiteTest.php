@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteTest extends \PHPUnit_Framework_TestCase
@@ -27,6 +29,8 @@ class WebsiteTest extends \PHPUnit_Framework_TestCase
         return [
             'name'         => ['name', 'test'],
             'url'          => ['url', 'www.test.com'],
+            'owner'        => ['owner', new User()],
+            'organization' => ['organization', new Organization()],
             'createdAt'    => ['createdAt', $now],
             'updatedAt'    => ['updatedAt', $now],
         ];
