@@ -23,6 +23,7 @@ class OroB2BWebsiteBundle implements Migration
         /** Foreign keys generation **/
         $this->addOrob2BLocaleForeignKeys($schema);
         $this->addOrob2BRelatedWebsiteForeignKeys($schema);
+        $this->addOrob2BWebsiteForeignKeys($schema);
     }
 
     /**
@@ -67,6 +68,8 @@ class OroB2BWebsiteBundle implements Migration
     {
         $table = $schema->createTable('orob2b_website');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('url', 'string', ['length' => 255]);
         $table->addColumn('createdAt', 'datetime', []);
@@ -74,6 +77,8 @@ class OroB2BWebsiteBundle implements Migration
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['name'], 'UNIQ_CBB2CF835E237E06');
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
+        $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
+        $table->addIndex(['organization_id'], 'IDX_CBB2CF8332C8A3DE', []);
     }
 
     /**
@@ -111,6 +116,28 @@ class OroB2BWebsiteBundle implements Migration
             ['related_website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_website foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BWebsiteForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_website');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_business_unit'),
+            ['business_unit_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }
