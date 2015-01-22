@@ -7,6 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 /**
  * @ORM\Table(name="orob2b_website")
@@ -115,6 +118,29 @@ class Website
         $this->inversedWebsites = new ArrayCollection();
         $this->relatedWebsites = new ArrayCollection();
     }
+
+    /**
+     * @var BusinessUnit
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\BusinessUnit")
+     * @ORM\JoinColumn(name="business_unit_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $owner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     /**
      * @return mixed
@@ -243,6 +269,44 @@ class Website
         }
 
         return $this;
+    }
+
+    /**
+     * @return BusinessUnit
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param BusinessUnit $owningBusinessUnit
+     * @return Website
+     */
+    public function setOwner($owningBusinessUnit)
+    {
+        $this->owner = $owningBusinessUnit;
+
+        return $this;
+    }
+
+    /**
+     * @param OrganizationInterface $organization
+     * @return Website
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return OrganizationInterface
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 
     /**
