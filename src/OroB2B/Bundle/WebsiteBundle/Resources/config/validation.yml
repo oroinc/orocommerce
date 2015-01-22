@@ -1,4 +1,4 @@
-OroB2B\Bundle\WebsiteBundle\Entity\website:
+OroB2B\Bundle\WebsiteBundle\Entity\Website:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [ name, url ]
@@ -15,3 +15,13 @@ OroB2B\Bundle\WebsiteBundle\Entity\website:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+
+OroB2B\Bundle\WebsiteBundle\Entity\Locale:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 2
+                max: 10
