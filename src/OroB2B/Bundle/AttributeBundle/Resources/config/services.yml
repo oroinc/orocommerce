@@ -1,0 +1,4 @@
+parameters:
+    orob2b_attribute.attribute.class: OroB2B\Bundle\AttributeBundle\Entity\Attribute
+
+services:
