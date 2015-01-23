@@ -11,6 +11,10 @@
     ],
     "repositories": [
         {
+            "type": "vcs",
+            "url": "https://github.com/laboro/platform.git"
+        },
+        {
             "type": "composer",
             "url": "http://packagist.orocrm.com"
         }
