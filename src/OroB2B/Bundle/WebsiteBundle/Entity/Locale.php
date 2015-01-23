@@ -36,12 +36,12 @@ class Locale
     private $websites;
 
     /**
-     * @ORM\OneToMany(targetEntity="Locale", mappedBy="$parentLocale")
+     * @ORM\OneToMany(targetEntity="Locale", mappedBy="parentLocale")
      */
     private $childLocales;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Locale", inversedBy="$childLocales")
+     * @ORM\ManyToOne(targetEntity="Locale", inversedBy="childLocales")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
     private $parentLocale;
