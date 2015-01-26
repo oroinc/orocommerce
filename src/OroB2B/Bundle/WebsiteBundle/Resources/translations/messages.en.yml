@@ -1,0 +1,10 @@
+orob2b:
+    website:
+        entity_label: Website
+        entity_plural_label: Websites
+        entity_description: Represents website information
+        id.label: Id
+        name.label: Name
+        url.label: URL
+        owner.label: Owner
+        organization.label: Organization
