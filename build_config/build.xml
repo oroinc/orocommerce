@@ -18,13 +18,14 @@
         <echo/>
         <echo>Supported parameters:</echo>
         <echo/>
-        <echo> testsuite    A test suite to be executed:</echo>
-        <echo>              If running on Bamboo, set value for the "testsuite" variable.</echo>
-        <echo>              If running locally, use ant -Dtestsuite="Some Other Suite"</echo>
-        <echo> testpath     Can be used to run tests contained within a specific directory.</echo>
-        <echo>              If running on Bamboo, set value for the "testpath" variable.</echo>
+        <echo> testsuite    A test suite to be executed. "Project Unit Tests" and "Project Functional Tests" are </echo>
+        <echo>              default values for 'run-unit-tests' and 'run-functional-tests' targets respectively.</echo>
+        <echo>              If running on Bamboo, override by defining 'testsuite' variable, e.g. "My Tests".</echo>
+        <echo>              If running locally, use ant -Dtestsuite="My Tests"</echo>
+        <echo> testpath     Can be used to run tests contained within a specific directory only.</echo>
+        <echo>              If running on Bamboo, set value for the 'testpath' variable.</echo>
         <echo>              If running locally, use ant -Dtestpath=./path/to/subdirectory</echo>
-        <echo>              PHPUnit limitation - when testpath is set, testsuite value is ignored.</echo>
+        <echo>              PHPUnit limitation - when 'testpath' is set, 'testsuite' value is ignored.</echo>
         <echo> depclean     Do full cleanup of installed dependencies.</echo>
         <echo>              Disabled by default unless Bamboo is detected.</echo>
         <echo>              To perform full cleanup when running locally do ant -Ddepclean=true</echo>
@@ -83,7 +84,7 @@
         <available file="${appdir}/phpunit.xml.dist" type="file"/>
     </condition>
 
-    <condition property="testsuite" value="${env.bamboo_testsuite}" else="Project Unit Tests">
+    <condition property="testsuite" value="${env.bamboo_testsuite}" else="">
         <isset property="env.bamboo_testsuite"/>
     </condition>
 
@@ -363,7 +364,8 @@
 
     <!-- PHPUnit tests -->
     <macrodef name="phpunit">
-        <attribute name="suite" default="${testsuite}"/>
+        <attribute name="suite" default=""/>
+        <attribute name="defaultsuite" default="${testsuite}"/>
         <attribute name="codecoverage" default="false"/>
         <attribute name="processisolation" default="false"/>
         <attribute name="config" default="${testconfig}"/>
@@ -399,6 +401,21 @@
                     <var name="phpunit.debug" value=""/>
                 </else>
             </if>
+            <if>
+                <equals arg1="@{suite}" arg2=""/>
+                <then>
+                    <var name="phpunit.suite" value="@{defaultsuite}"/>
+                </then>
+                <else>
+                    <var name="phpunit.suite" value="@{suite}"/>
+                </else>
+            </if>
+
+            <!-- Strip enclosing double quotes -->
+            <propertyregex property="phpunit.suite" override="true" input="${phpunit.suite}" regexp="^&quot;(.*)&quot;$" replace="\1"/>
+
+            <echo>Test suite &quot;${phpunit.suite}&quot;:</echo><echo/>
+
             <!-- If phpunit fails because of a Fatal Error, re-run it with process isolation. -->
             <!-- NB: Due to properties immutability if works only for the first phpunit run in the ant script. -->
             <trycatch>
@@ -411,8 +428,8 @@
                         <arg value="${phpunit.processisolation}"/>
                         <arg value="${phpunit.debug}"/>
                         <arg line="--log-junit ${reportdir}/phpunit.xml"/>
-                        <arg line="--testsuite &quot;@{suite}&quot;"/>
-                        <arg value="${phpunit.codecoverage}"/>
+                        <arg line="--testsuite &quot;${phpunit.suite}&quot;"/>
+                        <arg line="${phpunit.codecoverage}"/>
                         <arg value="${testpath}"/>
                     </exec>
                 </try>
@@ -420,17 +437,22 @@
                     <if>
                         <and>
                             <not>
-                                <!-- Exit code 1 is the result of normal phpunit completion (with failing tests). -->
-                                <!-- A different exit code is most likely because of a Fatal Error. -->
-                                <equals arg1="${phpunit.exitcode}" arg2="1"/>
+                                <or>
+                                    <!-- Exit code 1 means normal phpunit completion with failing tests). -->
+                                    <equals arg1="${phpunit.exitcode}" arg2="1"/>
+                                    <!-- Exit code 2 means normal phpunit completion (with exceptions). -->
+                                    <equals arg1="${phpunit.exitcode}" arg2="2"/>
+                                    <!-- A different exit code is most likely because of a fatal or parse error. -->
+                                </or>
                             </not>
                             <!-- Not running the second time, if first time was with process isolation already. -->
                             <equals arg1="${phpunit.processisolation}" arg2=""/>
                         </and>
                         <then>
-                            <echo/>
+                            <echo/><echo>================================================================</echo><echo/>
                             <echo>PHPUnit returned ${phpunit.exitcode}, is it a Fatal Error?</echo><echo/>
-                            <echo>Re-running PHPUnit test suite in process-isolation mode.</echo><echo/>
+                            <echo>Re-running PHPUnit test suite in process-isolation mode:</echo>
+                            <echo/><echo>================================================================</echo><echo/>
                             <exec dir="${basedir}" executable="phpunit" failonerror="true">
                                 <arg line="-c @{config}"/>
                                 <arg value="-dxdebug.default_enable=0"/>
@@ -440,8 +462,8 @@
                                 <arg value="--process-isolation"/>
                                 <arg value="${phpunit.debug}"/>
                                 <arg line="--log-junit ${reportdir}/phpunit.xml"/>
-                                <arg line="--testsuite &quot;@{suite}&quot;"/>
-                                <arg value="${phpunit.codecoverage}"/>
+                                <arg line="--testsuite &quot;${phpunit.suite}&quot;"/>
+                                <arg line="${phpunit.codecoverage}"/>
                                 <arg value="${testpath}"/>
                             </exec>
                         </then>
@@ -453,15 +475,15 @@
     </macrodef>
 
     <target name="run-unit-tests-with-coverage">
-        <phpunit codecoverage="true"/>
+        <phpunit codecoverage="true" suite="${testsuite}" defaultsuite="Project Unit Tests"/>
     </target>
 
     <target name="run-unit-tests" extensionOf="run-all-tests">
-        <phpunit/>
+        <phpunit suite="${testsuite}" defaultsuite="Project Unit Tests"/>
     </target>
 
     <target name="run-functional-tests" extensionOf="run-all-tests">
-        <phpunit suite="Project B2B Functional Tests"/>
+        <phpunit suite="${testsuite}" defaultsuite="Project Functional Tests"/>
     </target>
 
     <!-- Check code standards -->
