@@ -14,12 +14,34 @@ class OroB2BWebsiteBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
+        $this->createOrob2BLocaleTable($schema);
         $this->createOrob2BRelatedWebsiteTable($schema);
         $this->createOrob2BWebsiteTable($schema);
+        $this->createOrob2BWebsitesLocalesTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOrob2BLocaleForeignKeys($schema);
         $this->addOrob2BRelatedWebsiteForeignKeys($schema);
         $this->addOrob2BWebsiteForeignKeys($schema);
+        $this->addOrob2BWebsitesLocalesForeignKeys($schema);
+    }
+
+    /**
+     * Create orob2b_locale table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BLocaleTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_locale');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
+        $table->addColumn('code', 'string', ['length' => 64]);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['code'], 'UNIQ_4F6E51C677153098');
+        $table->addIndex(['parent_id'], 'IDX_4F6E51C6727ACA70', []);
     }
 
     /**
@@ -57,6 +79,37 @@ class OroB2BWebsiteBundle implements Migration
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
         $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
         $table->addIndex(['organization_id'], 'IDX_CBB2CF8332C8A3DE', []);
+    }
+
+    /**
+     * Create orob2b_websites_locales table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BWebsitesLocalesTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_websites_locales');
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('locale_id', 'integer', []);
+        $table->setPrimaryKey(['website_id', 'locale_id']);
+        $table->addIndex(['website_id'], 'IDX_EB4D58FE18F45C82', []);
+        $table->addIndex(['locale_id'], 'IDX_EB4D58FEE559DFD1', []);
+    }
+
+    /**
+     * Add orob2b_locale foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BLocaleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_locale');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_locale'),
+            ['parent_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
     }
 
     /**
@@ -100,6 +153,28 @@ class OroB2BWebsiteBundle implements Migration
             ['business_unit_owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_websites_locales foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BWebsitesLocalesForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_websites_locales');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_locale'),
+            ['locale_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_website'),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

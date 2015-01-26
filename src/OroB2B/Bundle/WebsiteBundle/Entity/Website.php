@@ -35,6 +35,14 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 class Website
 {
     /**
+     * @var Collection|Locale[]
+     *
+     * @ORM\ManyToMany(targetEntity="Locale", inversedBy="websites")
+     * @ORM\JoinTable(name="orob2b_websites_locales")
+     */
+    protected $locales;
+
+    /**
      * @var Collection|Website[]
      *
      * @ORM\ManyToMany(targetEntity="Website", mappedBy="relatedWebsites")
@@ -52,7 +60,7 @@ class Website
      *          @ORM\JoinColumn(name="related_website_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
-     **/
+     */
     protected $relatedWebsites;
 
     /**
@@ -335,5 +343,61 @@ class Website
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Get website locales
+     *
+     * @return ArrayCollection|Locale[]
+     */
+    public function getLocales()
+    {
+        return $this->locales;
+    }
+
+    /**
+     * Set website locales
+     *
+     * @param ArrayCollection|Locale[] $locales
+     *
+     * @return Website
+     */
+    public function resetLocales($locales)
+    {
+        $this->locales->clear();
+
+        foreach ($locales as $locale) {
+            $this->addLocale($locale);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Locale $locale
+     *
+     * @return Website
+     */
+    public function addLocale(Locale $locale)
+    {
+        if (!$this->locales->contains($locale)) {
+            $this->locales->add($locale);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Locale $locale
+     *
+     * @return Website
+     */
+    public function removeLocale(Locale $locale)
+    {
+        if ($this->locales->contains($locale)) {
+            $this->locales->removeElement($locale);
+        }
+
+        return $this;
     }
 }
