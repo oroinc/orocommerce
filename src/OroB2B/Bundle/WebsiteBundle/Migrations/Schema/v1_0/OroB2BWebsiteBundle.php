@@ -8,8 +8,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroB2BWebsiteBundle implements Migration
 {
-    const TABLE_NAME = 'orob2b_website';
-
     /**
      * {@inheritdoc}
      */
@@ -52,8 +50,8 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('url', 'string', ['length' => 255]);
-        $table->addColumn('createdAt', 'datetime', []);
-        $table->addColumn('updatedAt', 'datetime', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['name'], 'UNIQ_CBB2CF835E237E06');
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');

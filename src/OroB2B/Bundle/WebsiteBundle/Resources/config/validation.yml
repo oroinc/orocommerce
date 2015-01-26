@@ -1,7 +1,7 @@
 OroB2B\Bundle\WebsiteBundle\Entity\Website:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: [ name, url ]
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: url
     properties:
         name:
             - NotBlank: ~

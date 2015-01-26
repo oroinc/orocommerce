@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WebsiteBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -34,11 +35,15 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 class Website
 {
     /**
+     * @var Collection|Website[]
+     *
      * @ORM\ManyToMany(targetEntity="Website", mappedBy="relatedWebsites")
      */
     protected $inversedWebsites;
 
     /**
+     * @var Collection|Website[]
+     *
      * @ORM\ManyToMany(targetEntity="Website", inversedBy="inversedWebsites")
      * @ORM\JoinTable(
      *      name="orob2b_related_website",
@@ -51,6 +56,8 @@ class Website
     protected $relatedWebsites;
 
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -88,7 +95,7 @@ class Website
     /**
      * @var \DateTime $createdAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -102,7 +109,7 @@ class Website
     /**
      * @var \DateTime $updatedAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -112,12 +119,6 @@ class Website
      * )
      */
     protected $updatedAt;
-
-    public function __construct()
-    {
-        $this->inversedWebsites = new ArrayCollection();
-        $this->relatedWebsites = new ArrayCollection();
-    }
 
     /**
      * @var BusinessUnit
@@ -142,8 +143,14 @@ class Website
      */
     protected $organization;
 
+    public function __construct()
+    {
+        $this->inversedWebsites = new ArrayCollection();
+        $this->relatedWebsites = new ArrayCollection();
+    }
+
     /**
-     * @return mixed
+     * @return int
      */
     public function getId()
     {
@@ -227,7 +234,7 @@ class Website
     }
 
     /**
-     * @return ArrayCollection
+     * @return Collection|Website[]
      */
     public function getRelatedWebsites()
     {
