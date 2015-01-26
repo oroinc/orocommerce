@@ -155,6 +155,7 @@ class Website
     {
         $this->inversedWebsites = new ArrayCollection();
         $this->relatedWebsites = new ArrayCollection();
+        $this->locales = new ArrayCollection();
     }
 
     /**
