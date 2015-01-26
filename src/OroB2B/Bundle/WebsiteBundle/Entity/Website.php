@@ -35,7 +35,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 class Website
 {
     /**
-     * @var Collection|Website[]
+     * @var Collection|Locale[]
      *
      * @ORM\ManyToMany(targetEntity="Locale", inversedBy="websites")
      * @ORM\JoinTable(name="orob2b_websites_locales")
@@ -43,6 +43,8 @@ class Website
     protected $locales;
 
     /**
+     * @var Collection|Website[]
+     *
      * @ORM\ManyToMany(targetEntity="Website", mappedBy="relatedWebsites")
      */
     protected $inversedWebsites;
