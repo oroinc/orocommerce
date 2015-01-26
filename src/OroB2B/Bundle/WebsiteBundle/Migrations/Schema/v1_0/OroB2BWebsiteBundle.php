@@ -38,9 +38,9 @@ class OroB2BWebsiteBundle implements Migration
         $table = $schema->createTable('orob2b_locale');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-        $table->addColumn('code', 'string', ['length' => 10]);
-        $table->addColumn('createdAt', 'datetime', []);
-        $table->addColumn('updatedAt', 'datetime', []);
+        $table->addColumn('code', 'string', ['length' => 64]);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_4F6E51C677153098');
         $table->addIndex(['parent_id'], 'IDX_4F6E51C6727ACA70', []);

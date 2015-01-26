@@ -37,7 +37,7 @@ class Website
      * @ORM\ManyToMany(targetEntity="Locale", inversedBy="websites")
      * @ORM\JoinTable(name="orob2b_websites_locales")
      */
-    private $locales;
+    protected $locales;
 
     /**
      * @ORM\ManyToMany(targetEntity="Website", mappedBy="relatedWebsites")
