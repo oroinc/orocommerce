@@ -8,9 +8,13 @@ orob2b:
         url.label: URL
         owner.label: Owner
         organization.label: Organization
-    locale:
-        entity_label: Locale
-        entity_plural_label: Locales
-        entity_description: Represents locale information
-        id.label: Id
-        code.label: Code
+
+        locale:
+            entity_label: Locale
+            entity_plural_label: Locales
+            entity_description: Represents locale information
+            id.label: Id
+            code.label: Code
+            child_locales.label: Child locales
+            parent_locale.label: Parent locale
+            websites.label: Website

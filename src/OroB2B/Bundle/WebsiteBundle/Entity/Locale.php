@@ -79,7 +79,7 @@ class Locale
     /**
      * @var \DateTime $createdAt
      *
-     * @ORM\Column(name="created_at"type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
