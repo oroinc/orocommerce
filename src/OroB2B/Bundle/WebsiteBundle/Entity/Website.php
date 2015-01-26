@@ -17,6 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_website_index",
+ *      routeView="orob2b_website_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

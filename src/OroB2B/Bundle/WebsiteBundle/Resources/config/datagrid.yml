@@ -1,0 +1,68 @@
+datagrid:
+    websites-grid:
+        options:
+            entityHint:        website
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_website_view
+            type:         orm
+            query:
+                select:
+                    - website
+        columns:
+            name:
+                label:         orob2b.website.name.label
+            url:
+                label:         orob2b.website.url.label
+            locales:
+                label:         orob2b.website.locales.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BWebsiteBundle:Website:Property/locales.html.twig
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_website_view
+                params:
+                    - id
+        sorters:
+            columns:
+                name:
+                    data_name: website.name
+                url:
+                    data_name: website.url
+                createdAt:
+                    data_name: website.createdAt
+                updatedAt:
+                    data_name: website.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: website.name
+                url:
+                    type:      string
+                    data_name: website.url
+                createdAt:
+                    type:      datetime
+                    data_name: website.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: website.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_website_view
+                rowAction:     true
