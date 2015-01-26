@@ -35,10 +35,12 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 class Website
 {
     /**
+     * @var Collection|Locale[]
+     *
      * @ORM\ManyToMany(targetEntity="Locale", inversedBy="websites")
      * @ORM\JoinTable(name="orob2b_websites_locales")
      */
-    private $locales;
+    protected $locales;
 
     /**
      * @var Collection|Website[]
