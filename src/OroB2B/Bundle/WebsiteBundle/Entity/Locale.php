@@ -13,7 +13,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="orob2b_locale")
  * @ORM\Entity
  * @Config(
- *      routeName="orob2b_locale_index",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-flag"
