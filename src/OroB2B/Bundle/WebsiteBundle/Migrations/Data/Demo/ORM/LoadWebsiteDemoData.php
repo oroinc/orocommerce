@@ -83,7 +83,6 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         $organization = $user->getOrganization();
 
         // Create locales sample with relationship between locales
-
         $localesRegistry = [];
         foreach ($this->locales as $item) {
             $locale = new Locale();
@@ -118,12 +117,14 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
 
         $manager->flush();
 
-        //Create website sharing relationship
+        // Create website sharing relationship
         foreach ($this->webSites as $webSite) {
             $site = $this->getWebsiteByName($manager, $webSite['name']);
-            foreach ($webSite['sharing'] as $siteName) {
-                $relatedWebsite = $this->getWebsiteByName($manager, $siteName);
-                $site->addRelatedWebsite($relatedWebsite);
+            if ($webSite['sharing']) {
+                foreach ($webSite['sharing'] as $siteName) {
+                    $relatedWebsite = $this->getWebsiteByName($manager, $siteName);
+                    $site->addRelatedWebsite($relatedWebsite);
+                }
             }
         }
 
@@ -162,7 +163,7 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         $locale = $manager->getRepository('OroB2BWebsiteBundle:Locale')->findOneBy(['code' => $code]);
 
         if (!$locale) {
-            throw new \LogicException(sprintf('There are no locales with code "%s" .', $code));
+            throw new \LogicException(sprintf('There is no locale with code "%s" .', $code));
         }
 
         return $locale;
@@ -178,7 +179,7 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         $website = $manager->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => $name]);
 
         if (!$website) {
-            throw new \LogicException(sprintf('There are no locales with name "%s" .', $name));
+            throw new \LogicException(sprintf('There is no website with name "%s" .', $name));
         }
 
         return $website;

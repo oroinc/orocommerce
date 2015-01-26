@@ -7,5 +7,16 @@ orob2b:
         name.label: Name
         url.label: URL
         owner.label: Owner
-        locales.label: Locales
         organization.label: Organization
+        inversed_websites.label: Inversed websites
+        related_websites.label: Related websites
+
+        locale:
+            entity_label: Locale
+            entity_plural_label: Locales
+            entity_description: Represents locale information
+            id.label: Id
+            code.label: Code
+            child_locales.label: Child locales
+            parent_locale.label: Parent locale
+            websites.label: Website

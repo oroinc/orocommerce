@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WebsiteBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -12,7 +13,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="orob2b_locale")
  * @ORM\Entity
  * @Config(
- *      routeName="orob2b_locale_index",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-flag"
@@ -31,22 +31,30 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 class Locale
 {
     /**
+     * @var Website
+     *
      * @ORM\ManyToMany(targetEntity="Website", mappedBy="locales")
      */
-    private $websites;
+    protected $websites;
 
     /**
+     * @var Collection|Locale[]
+     *
      * @ORM\OneToMany(targetEntity="Locale", mappedBy="parentLocale")
      */
-    private $childLocales;
+    protected $childLocales;
 
     /**
+     * @var Locale
+     *
      * @ORM\ManyToOne(targetEntity="Locale", inversedBy="childLocales")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")
      */
-    private $parentLocale;
+    protected $parentLocale;
 
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -56,7 +64,7 @@ class Locale
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=10, unique=true)
+     * @ORM\Column(type="string", length=64, unique=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -70,7 +78,7 @@ class Locale
     /**
      * @var \DateTime $createdAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -84,7 +92,7 @@ class Locale
     /**
      * @var \DateTime $updatedAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -169,7 +177,7 @@ class Locale
     /**
      * Get child locales
      *
-     * @return ArrayCollection|Locale[]
+     * @return Collection|Locale[]
      */
     public function getChildLocales()
     {
@@ -179,7 +187,7 @@ class Locale
     /**
      * Set children locales
      *
-     * @param ArrayCollection|Locale[] $locales
+     * @param Collection|Locale[] $locales
      *
      * @return Locale
      */
@@ -246,30 +254,9 @@ class Locale
     }
 
     /**
-     * Pre persist event listener
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
      * Get websites with current locales
      *
-     * @return ArrayCollection|Website[]
+     * @return Collection|Website[]
      */
     public function getWebsites()
     {
@@ -279,7 +266,7 @@ class Locale
     /**
      * Set website for current locales
      *
-     * @param ArrayCollection|Locale[] $websites
+     * @param Collection|Locale[] $websites
      *
      * @return Locale
      */
@@ -320,5 +307,26 @@ class Locale
         }
 
         return $this;
+    }
+
+    /**
+     * Pre persist event listener
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 }
