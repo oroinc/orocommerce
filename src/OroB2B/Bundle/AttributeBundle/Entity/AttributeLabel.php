@@ -1,29 +1,26 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace OroB2B\Bundle\AttributeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @ORM\Table(name="orob2b_attribute_options")
+ * @ORM\Table(name="orob2b_attribute_labels")
  * @ORM\Entity
  * @Config(
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class AttributeOption
+class AttributeLabel
 {
     /**
      * @var int
@@ -37,7 +34,7 @@ class AttributeOption
     /**
      * @var Attribute
      *
-     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="options", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="labels")
      * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $attribute;
@@ -45,15 +42,15 @@ class AttributeOption
     /**
      * @var Locale
      *
-     * @ORM\ManyToOne(targetEntity="Locale", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Locale")
      * @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $locale;
 
     /**
-     * @var string $value
+     * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -62,12 +59,12 @@ class AttributeOption
      *      }
      * )
      */
-    protected $value;
+    protected $label;
 
     /**
-     * @var int $order
+     * @var string
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=64)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -76,7 +73,7 @@ class AttributeOption
      *      }
      * )
      */
-    protected $order;
+    protected $fallback;
 
     /**
      * @var \DateTime $createdAt
@@ -117,33 +114,49 @@ class AttributeOption
     /**
      * @return string
      */
-    public function getValue()
+    public function getFallback()
     {
-        return $this->value;
+        return $this->fallback;
     }
 
     /**
-     * @param string $value
+     * @param string $fallback
      */
-    public function setValue($value)
+    public function setFallback($fallback)
     {
-        $this->value = $value;
+        $this->fallback = $fallback;
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getOrder()
+    public function getLabel()
     {
-        return $this->order;
+        return $this->label;
     }
 
     /**
-     * @param int $order
+     * @param string $label
      */
-    public function setOrder($order)
+    public function setLabel($label)
     {
-        $this->order = $order;
+        $this->label = $label;
+    }
+
+    /**
+     * @return Attribute
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * @param Attribute $attribute
+     */
+    public function setAttribute($attribute)
+    {
+        $this->attribute = $attribute;
     }
 
     /**
@@ -161,25 +174,6 @@ class AttributeOption
     public function setLocale(Locale $locale)
     {
         $this->locale = $locale;
-
-        return $this;
-    }
-
-    /**
-     * @return Attribute
-     */
-    public function getAttribute()
-    {
-        return $this->attribute;
-    }
-
-    /**
-     * @param Attribute $attribute
-     * @return $this
-     */
-    public function setAttribute(Attribute $attribute)
-    {
-        $this->attribute = $attribute;
 
         return $this;
     }

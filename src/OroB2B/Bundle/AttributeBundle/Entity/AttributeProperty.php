@@ -1,11 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace OroB2B\Bundle\AttributeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Table(name="orob2b_attribute_property")
@@ -14,10 +15,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
  *          }
  *      }
  * )
@@ -37,7 +34,7 @@ class AttributeProperty
     /**
      * @var Attribute
      *
-     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="properties", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="properties")
      * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $attribute;
@@ -45,7 +42,7 @@ class AttributeProperty
     /**
      * @var Website
      *
-     * @ORM\ManyToOne(targetEntity="Website", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $website;
@@ -67,6 +64,20 @@ class AttributeProperty
     /**
      * @var boolean
      *
+     * @ORM\Column(name="in_product_list", type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $inProductList = false;
+
+    /**
+     * @var boolean
+     *
      * @ORM\Column(name="use_in_sorting", type="boolean")
      * @ConfigField(
      *      defaultValues={
@@ -77,6 +88,20 @@ class AttributeProperty
      * )
      */
     protected $useInSorting = false;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="use_for_search", type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $useForSearch = false;
 
     /**
      * @var boolean
@@ -132,7 +157,7 @@ class AttributeProperty
      *      }
      * )
      */
-    protected $inheritance;
+    protected $fallback;
 
     /**
      * @var \DateTime $createdAt
@@ -192,6 +217,25 @@ class AttributeProperty
     /**
      * @return boolean
      */
+    public function isInProductList()
+    {
+        return $this->inProductList;
+    }
+
+    /**
+     * @param boolean $inProductList
+     * @return $this
+     */
+    public function setInProductList($inProductList)
+    {
+        $this->inProductList = $inProductList;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
     public function isUseInSorting()
     {
         return $this->useInSorting;
@@ -204,6 +248,25 @@ class AttributeProperty
     public function setUseInSorting($useInSorting)
     {
         $this->useInSorting = (bool)$useInSorting;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isUseForSearch()
+    {
+        return $this->useForSearch;
+    }
+
+    /**
+     * @param boolean $useForSearch
+     * @return $this
+     */
+    public function setUseForSearch($useForSearch)
+    {
+        $this->useForSearch = $useForSearch;
 
         return $this;
     }
@@ -268,18 +331,18 @@ class AttributeProperty
     /**
      * @return string
      */
-    public function getInheritance()
+    public function getFallback()
     {
-        return $this->inheritance;
+        return $this->fallback;
     }
 
     /**
-     * @param string $inheritance
+     * @param string $fallback
      * @return $this
      */
-    public function setInheritance($inheritance)
+    public function setFallback($fallback)
     {
-        $this->inheritance = $inheritance;
+        $this->fallback = $fallback;
 
         return $this;
     }

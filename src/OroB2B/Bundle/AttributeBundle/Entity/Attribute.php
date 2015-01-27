@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace OroB2B\Bundle\AttributeBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -19,10 +19,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
  *          }
  *      }
  * )
@@ -42,7 +38,7 @@ class Attribute
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64, unique=true)
+     * @ORM\Column(type="string", length=64)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -70,7 +66,7 @@ class Attribute
     /**
      * @var string
      *
-     * @ORM\Column(name="sharing_type", type="string", length=64, unique=true)
+     * @ORM\Column(name="sharing_type", type="string", length=64)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -84,7 +80,7 @@ class Attribute
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -196,28 +192,28 @@ class Attribute
     /**
      * @var Collection|AttributeProperty[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeProperty", mappedBy="attribute")
+     * @ORM\OneToMany(targetEntity="AttributeProperty", mappedBy="attribute", cascade={"ALL"})
      */
     protected $properties;
 
     /**
      * @var Collection|AttributeLabel[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeLabel", mappedBy="attribute")
+     * @ORM\OneToMany(targetEntity="AttributeLabel", mappedBy="attribute", cascade={"ALL"})
      */
     protected $labels;
 
     /**
      * @var Collection|AttributeDefaultValue[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeDefaultValue", mappedBy="attribute")
+     * @ORM\OneToMany(targetEntity="AttributeDefaultValue", mappedBy="attribute", cascade={"ALL"})
      */
     protected $defaultValues;
 
     /**
      * @var Collection|AttributeOption[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeOption", mappedBy="attribute")
+     * @ORM\OneToMany(targetEntity="AttributeOption", mappedBy="attribute", cascade={"ALL"})
      */
     protected $options;
 
@@ -470,7 +466,7 @@ class Attribute
      */
     public function getLabels()
     {
-        return $this->properties;
+        return $this->labels;
     }
 
     /**
@@ -582,7 +578,7 @@ class Attribute
      */
     public function getOptions()
     {
-        return $this->defaultValues;
+        return $this->options;
     }
 
     /**
@@ -592,12 +588,12 @@ class Attribute
      *
      * @return $this
      */
-    public function resetAttributeOptions($options)
+    public function resetOptions($options)
     {
-        $this->defaultValues->clear();
+        $this->options->clear();
 
         foreach ($options as $option) {
-            $this->addDefaultValue($option);
+            $this->addOption($option);
         }
 
         return $this;
@@ -608,7 +604,7 @@ class Attribute
      *
      * @return $this
      */
-    public function addAttributeOption(AttributeOption $option)
+    public function addOption(AttributeOption $option)
     {
         if (!$this->options->contains($option)) {
             $this->options->add($option);
@@ -622,7 +618,7 @@ class Attribute
      *
      * @return $this
      */
-    public function removeAttributeOption(AttributeOption $option)
+    public function removeOption(AttributeOption $option)
     {
         if ($this->options->contains($option)) {
             $this->options->removeElement($option);

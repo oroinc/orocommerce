@@ -1,11 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace OroB2B\Bundle\AttributeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @ORM\Table(name="orob2b_attribute_default_values")
@@ -14,10 +15,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
  *          }
  *      }
  * )
@@ -37,7 +34,7 @@ class AttributeDefaultValue
     /**
      * @var Attribute
      *
-     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="defaultValues", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="defaultValues")
      * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $attribute;
@@ -45,12 +42,18 @@ class AttributeDefaultValue
     /**
      * @var Locale
      *
-     * @ORM\ManyToOne(targetEntity="Locale", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Locale")
      * @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $locale;
 
-    protected $attributeOptionId;
+    /**
+     * @var AttributeOption
+     *
+     * @ORM\ManyToOne(targetEntity="AttributeOption")
+     * @ORM\JoinColumn(name="option_id", referencedColumnName="id", onDelete="CASCADE")
+     **/
+    protected $option;
 
     /**
      * @var int
@@ -74,14 +77,14 @@ class AttributeDefaultValue
     protected $float;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     protected $datetime;
 
     /**
-     * @var \DateTime $createdAt
+     * @var string
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -99,10 +102,10 @@ class AttributeDefaultValue
      *      }
      * )
      */
-    protected $inheritance;
+    protected $fallback;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
@@ -116,7 +119,7 @@ class AttributeDefaultValue
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -146,11 +149,33 @@ class AttributeDefaultValue
     }
 
     /**
+     * @param int $integer
+     * @return $this
+     */
+    public function setInteger($integer)
+    {
+        $this->integer = $integer;
+
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getString()
     {
         return $this->string;
+    }
+
+    /**
+     * @param int $string
+     * @return $this
+     */
+    public function setString($string)
+    {
+        $this->string = $string;
+
+        return $this;
     }
 
     /**
@@ -162,11 +187,33 @@ class AttributeDefaultValue
     }
 
     /**
+     * @param float $float
+     * @return $this
+     */
+    public function setFloat($float)
+    {
+        $this->float = $float;
+
+        return $this;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getDatetime()
     {
         return $this->datetime;
+    }
+
+    /**
+     * @param \DateTime $datetime
+     * @return $this
+     */
+    public function setDatetime($datetime)
+    {
+        $this->datetime = $datetime;
+
+        return $this;
     }
 
     /**
@@ -178,11 +225,33 @@ class AttributeDefaultValue
     }
 
     /**
+     * @param \DateTime $text
+     * @return $this
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
-    public function getInheritance()
+    public function getFallback()
     {
-        return $this->inheritance;
+        return $this->fallback;
+    }
+
+    /**
+     * @param string $fallback
+     * @return $this
+     */
+    public function setFallback($fallback)
+    {
+        $this->fallback = $fallback;
+
+        return $this;
     }
 
     /**
@@ -219,6 +288,25 @@ class AttributeDefaultValue
     public function setLocale(Locale $locale)
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * @return AttributeOption
+     */
+    public function getOption()
+    {
+        return $this->option;
+    }
+
+    /**
+     * @param AttributeOption $option
+     * @return $this
+     */
+    public function setOption(AttributeOption $option)
+    {
+        $this->option = $option;
 
         return $this;
     }

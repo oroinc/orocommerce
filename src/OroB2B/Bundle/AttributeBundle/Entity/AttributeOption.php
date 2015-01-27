@@ -1,29 +1,26 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Entity;
+namespace OroB2B\Bundle\AttributeBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @ORM\Table(name="orob2b_attribute_labels")
+ * @ORM\Table(name="orob2b_attribute_options")
  * @ORM\Entity
  * @Config(
  *      defaultValues={
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "security"={
- *              "type"="ACL",
- *              "group_name"=""
  *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class AttributeLabel
+class AttributeOption
 {
     /**
      * @var int
@@ -37,23 +34,23 @@ class AttributeLabel
     /**
      * @var Attribute
      *
-     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="labels", cascade={"ALL"})
-     * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="options")
+     * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
      **/
     protected $attribute;
 
     /**
      * @var Locale
      *
-     * @ORM\ManyToOne(targetEntity="Locale", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Locale")
      * @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $locale;
 
     /**
-     * @var string
+     * @var string $value
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -62,10 +59,24 @@ class AttributeLabel
      *      }
      * )
      */
-    protected $label;
+    protected $value;
 
     /**
-     * @var string
+     * @var int $order
+     *
+     * @ORM\Column(type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $order;
+
+    /**
+     * @var string $fallback
      *
      * @ORM\Column(type="string", length=64)
      * @ConfigField(
@@ -76,7 +87,7 @@ class AttributeLabel
      *      }
      * )
      */
-    protected $inheritance;
+    protected $fallback;
 
     /**
      * @var \DateTime $createdAt
@@ -117,49 +128,33 @@ class AttributeLabel
     /**
      * @return string
      */
-    public function getInheritance()
+    public function getValue()
     {
-        return $this->inheritance;
+        return $this->value;
     }
 
     /**
-     * @param string $inheritance
+     * @param string $value
      */
-    public function setInheritance($inheritance)
+    public function setValue($value)
     {
-        $this->inheritance = $inheritance;
+        $this->value = $value;
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getLabel()
+    public function getOrder()
     {
-        return $this->label;
+        return $this->order;
     }
 
     /**
-     * @param string $label
+     * @param int $order
      */
-    public function setLabel($label)
+    public function setOrder($order)
     {
-        $this->label = $label;
-    }
-
-    /**
-     * @return Attribute
-     */
-    public function getAttribute()
-    {
-        return $this->attribute;
-    }
-
-    /**
-     * @param Attribute $attribute
-     */
-    public function setAttribute($attribute)
-    {
-        $this->attribute = $attribute;
+        $this->order = $order;
     }
 
     /**
@@ -177,6 +172,44 @@ class AttributeLabel
     public function setLocale(Locale $locale)
     {
         $this->locale = $locale;
+
+        return $this;
+    }
+
+    /**
+     * @return Attribute
+     */
+    public function getAttribute()
+    {
+        return $this->attribute;
+    }
+
+    /**
+     * @param Attribute $attribute
+     * @return $this
+     */
+    public function setAttribute(Attribute $attribute)
+    {
+        $this->attribute = $attribute;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFallback()
+    {
+        return $this->fallback;
+    }
+
+    /**
+     * @param string $fallback
+     * @return $this
+     */
+    public function setFallback($fallback)
+    {
+        $this->fallback = $fallback;
 
         return $this;
     }
