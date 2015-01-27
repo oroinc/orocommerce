@@ -24,9 +24,10 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
     /**
      * @param array $inputOptions
      * @param array $expectedOptions
+     * @param mixed $submittedData
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(array $inputOptions, array $expectedOptions)
+    public function testSubmit(array $inputOptions, array $expectedOptions, $submittedData)
     {
         $form = $this->factory->create($this->formType, null, $inputOptions);
 
@@ -37,9 +38,8 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
         }
 
         $this->assertNull($form->getData());
-        $testChoice = current(array_keys($expectedOptions['choices']));
-        $form->submit($testChoice);
-        $this->assertEquals($testChoice, $form->getData());
+        $form->submit($submittedData);
+        $this->assertEquals($submittedData, $form->getData());
     }
 
     /**
@@ -57,6 +57,7 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                         FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.system_attribute',
                     ],
                 ],
+                'submittedData' => FallbackType::SYSTEM,
             ],
             'parent locale' => [
                 'inputOptions' => [
@@ -70,6 +71,7 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                         FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.system_attribute',
                     ],
                 ],
+                'submittedData' => FallbackType::PARENT_LOCALE,
             ],
             'custom choices' => [
                 'inputOptions' => [
@@ -78,6 +80,7 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'choices' => [0 => '0', 1 => '1'],
                 ],
+                'submittedData' => null,
             ],
         ];
     }
