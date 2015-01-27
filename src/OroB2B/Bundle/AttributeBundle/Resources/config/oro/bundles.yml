@@ -1,2 +1,2 @@
 bundles:
-    - OroB2B\Bundle\AttributeBundle\OroB2BAttributeBundle
+    - { name: OroB2B\Bundle\AttributeBundle\OroB2BAttributeBundle, priority: 10 }

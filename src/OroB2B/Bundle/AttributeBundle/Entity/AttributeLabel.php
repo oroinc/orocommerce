@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @ORM\Table(name="orob2b_attribute_labels")
+ * @ORM\Table(name="orob2b_attribute_label")
  * @ORM\Entity
  * @Config(
  *      defaultValues={
