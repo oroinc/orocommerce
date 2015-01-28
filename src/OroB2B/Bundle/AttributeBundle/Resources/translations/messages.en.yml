@@ -1,7 +1,9 @@
 orob2b:
     attribute:
-          form:
-              fallback:
-                  none: 'None'
-                  parent_locale: 'Parent locale value'
-                  system_attribute: 'System value'
+        form:
+            fallback:
+                none: 'None'
+                parent_locale: 'Parent locale value'
+                default: 'Default value'
+
+            fallback_to: 'fallback to'

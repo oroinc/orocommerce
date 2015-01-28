@@ -40,7 +40,7 @@ class AttributePropertyFallbackType extends AbstractType
                 'enabled_fallbacks'  => [],
                 'existing_fallbacks' => [
                     FallbackType::PARENT_LOCALE => 'orob2b.attribute.form.fallback.parent_locale',
-                    FallbackType::SYSTEM        => 'orob2b.attribute.form.fallback.system_attribute',
+                    FallbackType::SYSTEM        => 'orob2b.attribute.form.fallback.default',
                 ],
             ]
         );

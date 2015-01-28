@@ -1,0 +1,20 @@
+{% block orob2b_attribute_fallback_value_widget %}
+    {{ form_errors(form.value) }}
+    {{ form_errors(form.fallback) }}
+
+    {% set valueContainer = form.value.vars.id ~ '_value_container' %}
+
+    <table>
+        <tr>
+            <td><div id="{{ valueContainer }}">{{ form_widget(form.value) }}</div></td>
+            <td>{{ 'orob2b.attribute.form.fallback_to'|trans }}</td>
+            <td>
+                {{ form_widget(form.fallback, {'attr': {
+                    'style': 'width:120px;',
+                    'data-page-component-module': 'orob2battribute/js/app/components/fallback-value-component',
+                    'data-page-component-options': {'value-container': '#' ~ valueContainer}|json_encode
+                }}) }}
+            </td>
+        <tr>
+    </table>
+{% endblock %}
