@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -48,6 +47,10 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
     public function testSubmit(array $options, $defaultData, $viewData, $submittedData, $expectedData)
     {
         $form = $this->factory->create($this->formType, $defaultData, $options);
+
+        $formConfig = $form->getConfig();
+        $this->assertNull($formConfig->getOption('data_class'));
+        $this->assertEquals(AttributePropertyFallbackType::NAME, $formConfig->getOption('fallback_form_type'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());

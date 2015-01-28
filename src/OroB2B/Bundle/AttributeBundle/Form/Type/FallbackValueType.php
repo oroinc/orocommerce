@@ -31,9 +31,8 @@ class FallbackValueType extends AbstractType
 
         $resolver->setDefaults([
             'data_class'         => null,
-            'empty_data'         => null,
             'form_options'       => [],
-            'fallback_form_type' => 'orob2b_attribute_property_fallback',
+            'fallback_form_type' => AttributePropertyFallbackType::NAME,
             'enabled_fallbacks'  => [],
         ]);
     }
