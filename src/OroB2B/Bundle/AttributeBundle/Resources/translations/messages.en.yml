@@ -6,4 +6,4 @@ orob2b:
                 parent_locale: 'Parent locale value'
                 default: 'Default value'
 
-            fallback_to: 'fallback to'
+        default: 'Default'

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\DataTransfromer;
+namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\DataTransformer;
 
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\FallbackValueTransformer;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;

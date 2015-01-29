@@ -26,14 +26,14 @@ class FallbackValueType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired([
-            'form_type',
+            'type',
         ]);
 
         $resolver->setDefaults([
-            'data_class'         => null,
-            'form_options'       => [],
-            'fallback_form_type' => AttributePropertyFallbackType::NAME,
-            'enabled_fallbacks'  => [],
+            'data_class'        => null,
+            'options'           => [],
+            'fallback_type'     => AttributePropertyFallbackType::NAME,
+            'enabled_fallbacks' => [],
         ]);
     }
 
@@ -45,12 +45,12 @@ class FallbackValueType extends AbstractType
         $builder
             ->add(
                 'value',
-                $options['form_type'],
-                array_merge($options['form_options'], ['required' => false])
+                $options['type'],
+                array_merge($options['options'], ['required' => false])
             )
             ->add(
                 'fallback',
-                $options['fallback_form_type'],
+                $options['fallback_type'],
                 ['enabled_fallbacks' => $options['enabled_fallbacks'], 'required' => false]
             );
 

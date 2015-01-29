@@ -24,7 +24,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     protected function getExtensions()
     {
@@ -50,7 +50,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
 
         $formConfig = $form->getConfig();
         $this->assertNull($formConfig->getOption('data_class'));
-        $this->assertEquals(AttributePropertyFallbackType::NAME, $formConfig->getOption('fallback_form_type'));
+        $this->assertEquals(AttributePropertyFallbackType::NAME, $formConfig->getOption('fallback_type'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
@@ -64,8 +64,8 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
         return [
             'percent with value' => [
                 'options' => [
-                    'form_type'    => 'percent',
-                    'form_options' => ['type' => 'integer'],
+                    'type'    => 'percent',
+                    'options' => ['type' => 'integer'],
                 ],
                 'defaultData'   => 25,
                 'viewData'      => ['value' => 25, 'fallback' => null],
@@ -74,7 +74,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
             ],
             'text with fallback' => [
                 'options' => [
-                    'form_type'         => 'text',
+                    'type'         => 'text',
                     'enabled_fallbacks' => [FallbackType::PARENT_LOCALE]
                 ],
                 'defaultData'   => new FallbackType(FallbackType::SYSTEM),
@@ -84,7 +84,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
             ],
             'integer as null' => [
                 'options' => [
-                    'form_type' => 'integer',
+                    'type' => 'integer',
                 ],
                 'defaultData'   => null,
                 'viewData'      => ['value' => null, 'fallback' => null],
