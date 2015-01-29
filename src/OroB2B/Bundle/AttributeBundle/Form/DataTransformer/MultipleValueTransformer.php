@@ -66,8 +66,12 @@ class MultipleValueTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($value, 'array');
         }
 
-        if (!isset($value[$this->defaultField]) || !isset($value[$this->collectionField])) {
-            throw new TransformationFailedException('Value does not contain default or collection value');
+        if (!isset($value[$this->defaultField])) {
+            throw new TransformationFailedException('Value does not contain default value');
+        }
+
+        if (!isset($value[$this->collectionField])) {
+            throw new TransformationFailedException('Value does not contain collection value');
         }
 
         $result = $value[$this->collectionField];

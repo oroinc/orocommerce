@@ -127,10 +127,19 @@ class MultipleValueTransformerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
-     * @expectedExceptionMessage Value does not contain default or collection value
+     * @expectedExceptionMessage Value does not contain default value
      */
-    public function testReverseTransformNoRequiredDataException()
+    public function testReverseTransformNoDefaultDataException()
     {
         $this->transformer->reverseTransform([]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
+     * @expectedExceptionMessage Value does not contain collection value
+     */
+    public function testReverseTransformNoCollectionDataException()
+    {
+        $this->transformer->reverseTransform([self::FIELD_DEFAULT => 'default string']);
     }
 }
