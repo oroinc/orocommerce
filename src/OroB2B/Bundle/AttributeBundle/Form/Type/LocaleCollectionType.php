@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -82,6 +84,12 @@ class LocaleCollectionType extends AbstractType
                 ]
             );
         }
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $filledData = $this->fillDefaultData($data);
+            $event->setData($filledData);
+        });
     }
 
     /**
@@ -101,5 +109,29 @@ class LocaleCollectionType extends AbstractType
         }
 
         return $this->locales;
+    }
+
+    /**
+     * @param mixed $data
+     * @return array
+     */
+    public function fillDefaultData($data)
+    {
+        if (!$data) {
+            $data = [];
+        }
+
+        foreach ($this->getLocales() as $locale) {
+            $localeId = $locale->getId();
+            if (!isset($data[$localeId])) {
+                if ($locale->getParentLocale()) {
+                    $data[$localeId] = new FallbackType(FallbackType::PARENT_LOCALE);
+                } else {
+                    $data[$localeId] = new FallbackType(FallbackType::SYSTEM);
+                }
+            }
+        }
+
+        return $data;
     }
 }

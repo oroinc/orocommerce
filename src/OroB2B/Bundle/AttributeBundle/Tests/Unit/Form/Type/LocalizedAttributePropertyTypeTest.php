@@ -67,7 +67,9 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
+        foreach ($viewData as $field => $data) {
+            $this->assertEquals($data, $form->get($field)->getViewData());
+        }
 
         $form->submit($submittedData);
         $this->assertEquals($expectedData, $form->getData());
@@ -82,11 +84,18 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
             'text with null data' => [
                 'options' => ['type' => 'text'],
                 'defaultData' => null,
-                'viewData' => null,
+                'viewData' => [
+                    LocalizedAttributePropertyType::FIELD_DEFAULT => null,
+                    LocalizedAttributePropertyType::FIELD_LOCALES => [
+                        1 => new FallbackType(FallbackType::SYSTEM),
+                        2 => new FallbackType(FallbackType::PARENT_LOCALE),
+                        3 => new FallbackType(FallbackType::PARENT_LOCALE),
+                    ]
+                ],
                 'submittedData' => null,
                 'expectedData' => null,
             ],
-            'percent with valid data' => [
+            'percent with full data' => [
                 'options' => ['type' => 'percent', 'options' => ['type' => 'integer']],
                 'defaultData' => [
                     null => 5,

@@ -2,7 +2,7 @@ orob2b:
     attribute:
         form:
             fallback:
-                none: 'None'
+                empty: 'Choose fallback...'
                 parent_locale: 'Parent locale value'
                 default: 'Default value'
 
