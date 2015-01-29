@@ -8,6 +8,7 @@ orob2b:
         url.label: URL
         owner.label: Owner
         organization.label: Organization
+        locales.label: Locales
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
 
