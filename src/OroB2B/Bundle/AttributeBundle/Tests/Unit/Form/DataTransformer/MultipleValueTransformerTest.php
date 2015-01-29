@@ -71,6 +71,15 @@ class MultipleValueTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
+     * @expectedExceptionMessage Expected argument of type "array", "DateTime" given
+     */
+    public function testTransformUnexpectedTypeException()
+    {
+        $this->transformer->transform(new \DateTime());
+    }
+
+    /**
      * @param mixed $input
      * @param mixed $expected
      * @dataProvider reverseTransformDataProvider
@@ -105,5 +114,23 @@ class MultipleValueTransformerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
+     * @expectedExceptionMessage Expected argument of type "array", "DateTime" given
+     */
+    public function testReverseTransformUnexpectedTypeException()
+    {
+        $this->transformer->reverseTransform(new \DateTime());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
+     * @expectedExceptionMessage Value does not contain default or collection value
+     */
+    public function testReverseTransformNoRequiredDataException()
+    {
+        $this->transformer->reverseTransform([]);
     }
 }
