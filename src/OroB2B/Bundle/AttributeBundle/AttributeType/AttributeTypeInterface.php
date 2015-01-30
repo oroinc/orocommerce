@@ -15,7 +15,7 @@ interface AttributeTypeInterface
     public function getName();
 
     /**
-     * Gets attribute type data type
+     * Gets attribute type data field
      *
      * @return string
      */
@@ -40,7 +40,7 @@ interface AttributeTypeInterface
      *
      * @return bool
      */
-    public function isPossibleContainHtml();
+    public function isContainHtml();
 
     /**
      * Checks is this attribute type can be used for search

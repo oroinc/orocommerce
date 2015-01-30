@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class AttributeProviderPass implements CompilerPassInterface
 {
-    const ATTRIBUTE_TYPE_TAG   = 'orob2b_attribute.attribute_type';
+    const ATTRIBUTE_TYPE_TAG = 'orob2b_attribute.attribute_type';
     const ATTRIBUTE_TYPE_REGISTRY = 'orob2b_attribute.attribute_type.registry';
 
     /**

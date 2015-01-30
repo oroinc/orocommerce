@@ -7,7 +7,7 @@ class AttributeTypeRegistry
     /**
      * Collection of attribute types
      *
-     * @var array
+     * @var AttributeTypeInterface[]
      */
     protected $attributeTypes;
 
@@ -24,7 +24,7 @@ class AttributeTypeRegistry
     /**
      * Get all registered attribute type
      *
-     * @return array
+     * @return AttributeTypeInterface[]
      */
     public function getTypes()
     {
