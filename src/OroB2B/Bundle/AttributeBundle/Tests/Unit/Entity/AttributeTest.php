@@ -66,6 +66,10 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testAttributeRelations()
     {
         // Create websites

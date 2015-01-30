@@ -18,6 +18,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Attribute
 {

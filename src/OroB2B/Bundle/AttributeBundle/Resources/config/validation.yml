@@ -15,4 +15,4 @@ OroB2B\Bundle\AttributeBundle\Entity\Attribute:
         sharingType:
             - NotBlank: ~
             - Choice:
-                choices: [Website, Group, Global]
+                choices: [website, group, global]
