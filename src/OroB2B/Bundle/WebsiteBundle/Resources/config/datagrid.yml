@@ -9,6 +9,8 @@ datagrid:
             query:
                 select:
                     - website
+                from:
+                    - { table: %orob2b_website.website.class%, alias: website }
         columns:
             name:
                 label:         orob2b.website.name.label
