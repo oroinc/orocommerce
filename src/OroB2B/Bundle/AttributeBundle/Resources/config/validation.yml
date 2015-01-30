@@ -1,0 +1,18 @@
+OroB2B\Bundle\AttributeBundle\Entity\Attribute:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 255
+        type:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 64
+        sharingType:
+            - NotBlank: ~
+            - Choice:
+                choices: [website, group, global]
