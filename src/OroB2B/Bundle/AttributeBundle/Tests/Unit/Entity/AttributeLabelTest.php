@@ -41,13 +41,9 @@ class AttributeLabelTest extends \PHPUnit_Framework_TestCase
      */
     public function flatPropertiesDataProvider()
     {
-        $now = new \DateTime('now');
-
         return [
-            'label'        => ['label', 'Test label'],
-            'fallback'     => ['fallback', 'website'],
-            'created_at'   => ['createdAt', $now],
-            'updated_at'   => ['updatedAt', $now],
+            'value'        => ['value', 'Test label'],
+            'fallback'     => ['fallback', 'website']
         ];
     }
 
@@ -72,27 +68,5 @@ class AttributeLabelTest extends \PHPUnit_Framework_TestCase
         $label->setAttribute($attribute);
 
         $this->assertEquals($attribute, $label->getAttribute());
-    }
-
-    public function testPrePersist()
-    {
-        $locale = new AttributeLabel();
-
-        $this->assertNull($locale->getCreatedAt());
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->prePersist();
-        $this->assertInstanceOf('\DateTime', $locale->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $locale = new AttributeLabel();
-
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->preUpdate();
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
     }
 }

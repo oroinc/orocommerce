@@ -7,7 +7,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_attribute")
@@ -16,13 +15,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
 class Attribute
 {
@@ -39,13 +34,6 @@ class Attribute
      * @var string
      *
      * @ORM\Column(type="string", length=64)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $type;
 
@@ -53,13 +41,6 @@ class Attribute
      * @var string
      *
      * @ORM\Column(type="string", length=255, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $code;
 
@@ -67,27 +48,13 @@ class Attribute
      * @var string
      *
      * @ORM\Column(name="sharing_type", type="string", length=64)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $sharingType;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $validation;
 
@@ -95,13 +62,6 @@ class Attribute
      * @var boolean
      *
      * @ORM\Column(name="contain_html", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $containHtml = false;
 
@@ -109,13 +69,6 @@ class Attribute
      * @var boolean
      *
      * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $localized = false;
 
@@ -123,27 +76,13 @@ class Attribute
      * @var boolean
      *
      * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $system = false;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(name="unique_flag", type="boolean")
      */
     protected $unique = false;
 
@@ -151,69 +90,34 @@ class Attribute
      * @var boolean
      *
      * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $required = false;
 
     /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
-
-    /**
      * @var Collection|AttributeProperty[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeProperty", mappedBy="attribute", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="AttributeProperty", mappedBy="attribute", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $properties;
 
     /**
      * @var Collection|AttributeLabel[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeLabel", mappedBy="attribute", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="AttributeLabel", mappedBy="attribute", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $labels;
 
     /**
      * @var Collection|AttributeDefaultValue[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeDefaultValue", mappedBy="attribute", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="AttributeDefaultValue", mappedBy="attribute", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $defaultValues;
 
     /**
      * @var Collection|AttributeOption[]
      *
-     * @ORM\OneToMany(targetEntity="AttributeOption", mappedBy="attribute", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="AttributeOption", mappedBy="attribute", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $options;
 
@@ -440,6 +344,7 @@ class Attribute
     {
         if (!$this->properties->contains($property)) {
             $this->properties->add($property);
+            $property->setAttribute($this);
         }
 
         return $this;
@@ -496,6 +401,7 @@ class Attribute
     {
         if (!$this->labels->contains($label)) {
             $this->labels->add($label);
+            $label->setAttribute($this);
         }
 
         return $this;
@@ -552,6 +458,7 @@ class Attribute
     {
         if (!$this->defaultValues->contains($value)) {
             $this->defaultValues->add($value);
+            $value->setAttribute($this);
         }
 
         return $this;
@@ -608,6 +515,7 @@ class Attribute
     {
         if (!$this->options->contains($option)) {
             $this->options->add($option);
+            $option->setAttribute($this);
         }
 
         return $this;
@@ -625,64 +533,5 @@ class Attribute
         }
 
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Pre persist event listener
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 }

@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\AttributeBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
@@ -13,12 +12,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
  * @ORM\Entity
  * @Config(
  *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
+ *          "entity"={
+ *              "icon"="icon-briefcase"
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
 class AttributeLabel
 {
@@ -51,57 +49,15 @@ class AttributeLabel
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
-    protected $label;
+    protected $value;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     protected $fallback;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @return int
@@ -121,26 +77,32 @@ class AttributeLabel
 
     /**
      * @param string $fallback
+     * @return $this
      */
     public function setFallback($fallback)
     {
         $this->fallback = $fallback;
+
+        return $this;
     }
 
     /**
      * @return string
      */
-    public function getLabel()
+    public function getValue()
     {
-        return $this->label;
+        return $this->value;
     }
 
     /**
-     * @param string $label
+     * @param string $value
+     * @return $this
      */
-    public function setLabel($label)
+    public function setValue($value)
     {
-        $this->label = $label;
+        $this->value = $value;
+
+        return $this;
     }
 
     /**
@@ -153,10 +115,13 @@ class AttributeLabel
 
     /**
      * @param Attribute $attribute
+     * @return $this
      */
     public function setAttribute($attribute)
     {
         $this->attribute = $attribute;
+
+        return $this;
     }
 
     /**
@@ -176,64 +141,5 @@ class AttributeLabel
         $this->locale = $locale;
 
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Pre persist event listener
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 }

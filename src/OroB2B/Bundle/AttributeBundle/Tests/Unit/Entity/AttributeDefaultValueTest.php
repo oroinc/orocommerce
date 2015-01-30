@@ -42,17 +42,13 @@ class AttributeDefaultValueTest extends \PHPUnit_Framework_TestCase
      */
     public function flatPropertiesDataProvider()
     {
-        $now = new \DateTime('now');
-
         return [
             'integer'    => ['integer', 3],
             'string'     => ['string', 'string'],
             'float'      => ['float', 3.14],
-            'datetime'   => ['datetime', $now],
+            'datetime'   => ['datetime', new \DateTime('now')],
             'text'       => ['text', 'text'],
-            'fallback'   => ['fallback', 'website'],
-            'created_at' => ['createdAt', $now],
-            'updated_at' => ['updatedAt', $now],
+            'fallback'   => ['fallback', 'website']
         ];
     }
 
@@ -94,27 +90,5 @@ class AttributeDefaultValueTest extends \PHPUnit_Framework_TestCase
         $defaultValue->setAttribute($attribute);
 
         $this->assertEquals($attribute, $defaultValue->getAttribute());
-    }
-
-    public function testPrePersist()
-    {
-        $locale = new AttributeDefaultValue();
-
-        $this->assertNull($locale->getCreatedAt());
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->prePersist();
-        $this->assertInstanceOf('\DateTime', $locale->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $locale = new AttributeDefaultValue();
-
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->preUpdate();
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
     }
 }

@@ -53,8 +53,6 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
 
     public function flatPropertiesDataProvider()
     {
-        $now = new \DateTime('now');
-
         return [
             'type'         => ['type', 'testType'],
             'code'         => ['code', 'testCode'],
@@ -64,9 +62,7 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
             'localized'    => ['localized', true],
             'system'       => ['system', false],
             'unique'       => ['unique', false],
-            'required'     => ['required', false],
-            'created_at'   => ['createdAt', $now],
-            'updated_at'   => ['updatedAt', $now],
+            'required'     => ['required', false]
         ];
     }
 
@@ -97,15 +93,15 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
 
         // Create attribute labels
         $labelOne = new AttributeLabel();
-        $labelOne->setLabel('Attribute 01');
+        $labelOne->setValue('Attribute 01');
         $labelOne->setLocale($localeOne);
 
         $labelTwo = new AttributeLabel();
-        $labelTwo->setLabel('Attribute 02');
+        $labelTwo->setValue('Attribute 02');
         $labelTwo->setLocale($localeTwo);
 
         $labelThree = new AttributeLabel();
-        $labelThree->setLabel('Attribute 03');
+        $labelThree->setValue('Attribute 03');
         $labelThree->setLocale($localeThree);
 
         // Create attribute
@@ -289,27 +285,5 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
         $this->assertContains($defaultValueTwo, $actual->toArray());
         $this->assertContains($defaultValueThree, $actual->toArray());
         $this->assertNotContains($defaultValueOne, $actual->toArray());
-    }
-
-    public function testPrePersist()
-    {
-        $locale = new Attribute();
-
-        $this->assertNull($locale->getCreatedAt());
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->prePersist();
-        $this->assertInstanceOf('\DateTime', $locale->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $locale = new Attribute();
-
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->preUpdate();
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
     }
 }

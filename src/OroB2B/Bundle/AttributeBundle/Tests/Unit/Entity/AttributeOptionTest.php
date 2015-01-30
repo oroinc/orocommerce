@@ -41,14 +41,10 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
      */
     public function flatPropertiesDataProvider()
     {
-        $now = new \DateTime('now');
-
         return [
             'value'      => ['value', 'test'],
             'order'      => ['order', 5],
-            'fallback'   => ['fallback', 'website'],
-            'created_at' => ['createdAt', $now],
-            'updated_at' => ['updatedAt', $now],
+            'fallback'   => ['fallback', 'website']
         ];
     }
 
@@ -72,27 +68,5 @@ class AttributeOptionTest extends \PHPUnit_Framework_TestCase
         $option->setAttribute($attribute);
 
         $this->assertEquals($attribute, $option->getAttribute());
-    }
-
-    public function testPrePersist()
-    {
-        $locale = new AttributeOption();
-
-        $this->assertNull($locale->getCreatedAt());
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->prePersist();
-        $this->assertInstanceOf('\DateTime', $locale->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $locale = new AttributeOption();
-
-        $this->assertNull($locale->getUpdatedAt());
-
-        $locale->preUpdate();
-        $this->assertInstanceOf('\DateTime', $locale->getUpdatedAt());
     }
 }

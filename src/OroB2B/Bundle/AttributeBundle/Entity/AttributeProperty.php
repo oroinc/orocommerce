@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\AttributeBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -13,12 +12,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity
  * @Config(
  *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
+ *          "entity"={
+ *              "icon"="icon-briefcase"
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
 class AttributeProperty
 {
@@ -51,13 +49,6 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="on_product_view", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $onProductView = false;
 
@@ -65,13 +56,6 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="in_product_list", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $inProductList = false;
 
@@ -79,13 +63,6 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="use_in_sorting", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $useInSorting = false;
 
@@ -93,13 +70,6 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="use_for_search", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $useForSearch = false;
 
@@ -107,13 +77,6 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="on_advanced_search", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $onAdvancedSearch = false;
 
@@ -121,13 +84,6 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="on_product_comparison", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $onProductComparison = false;
 
@@ -135,57 +91,15 @@ class AttributeProperty
      * @var boolean
      *
      * @ORM\Column(name="in_filters", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $inFilters = false;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     protected $fallback;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @return int
@@ -383,64 +297,5 @@ class AttributeProperty
         $this->website = $website;
 
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Pre persist event listener
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 }

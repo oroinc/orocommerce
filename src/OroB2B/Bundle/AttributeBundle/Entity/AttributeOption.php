@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\AttributeBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
@@ -13,12 +12,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
  * @ORM\Entity
  * @Config(
  *      defaultValues={
- *          "dataaudit"={
- *              "auditable"=true
+ *          "entity"={
+ *              "icon"="icon-briefcase"
  *          }
  *      }
  * )
- * @ORM\HasLifecycleCallbacks()
  */
 class AttributeOption
 {
@@ -35,7 +33,7 @@ class AttributeOption
      * @var Attribute
      *
      * @ORM\ManyToOne(targetEntity="Attribute", inversedBy="options")
-     * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="attribute_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $attribute;
 
@@ -50,72 +48,23 @@ class AttributeOption
     /**
      * @var string $value
      *
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(type="string", length=255)
      */
     protected $value;
 
     /**
      * @var int $order
      *
-     * @ORM\Column(type="integer")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(name="order_value", type="integer")
      */
     protected $order;
 
     /**
      * @var string $fallback
      *
-     * @ORM\Column(type="string", length=64)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     protected $fallback;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @return int
@@ -135,10 +84,13 @@ class AttributeOption
 
     /**
      * @param string $value
+     * @return $this
      */
     public function setValue($value)
     {
         $this->value = $value;
+
+        return $this;
     }
 
     /**
@@ -151,10 +103,13 @@ class AttributeOption
 
     /**
      * @param int $order
+     * @return $this
      */
     public function setOrder($order)
     {
         $this->order = $order;
+
+        return $this;
     }
 
     /**
@@ -212,64 +167,5 @@ class AttributeOption
         $this->fallback = $fallback;
 
         return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Pre persist event listener
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 }
