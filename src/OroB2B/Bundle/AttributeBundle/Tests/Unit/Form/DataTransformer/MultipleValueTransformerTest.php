@@ -113,6 +113,20 @@ class MultipleValueTransformerTest extends \PHPUnit_Framework_TestCase
                     2    => new FallbackType(FallbackType::SYSTEM),
                 ],
             ],
+            'valid data with null values' => [
+                'input' => [
+                    self::FIELD_DEFAULT => null,
+                    self::FIELD_VALUES => [
+                        1 => null,
+                        2 => null,
+                    ]
+                ],
+                'expected'    => [
+                    null => null,
+                    1    => null,
+                    2    => null,
+                ],
+            ],
         ];
     }
 
