@@ -1,4 +1,7 @@
 parameters:
     orob2b_attribute.attribute.class: OroB2B\Bundle\AttributeBundle\Entity\Attribute
+    orob2b_attribute.attribute_type.registry.class: OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry
 
 services:
+    orob2b_attribute.attribute_type.registry:
+        class: %orob2b_attribute.attribute_type.registry.class%
