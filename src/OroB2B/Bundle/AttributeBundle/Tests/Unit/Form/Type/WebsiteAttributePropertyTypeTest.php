@@ -10,14 +10,14 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
+class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var LocalizedAttributePropertyType
+     * @var WebsiteAttributePropertyType
      */
     protected $formType;
 
@@ -32,7 +32,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
 
         parent::setUp();
 
-        $this->formType = new LocalizedAttributePropertyType();
+        $this->formType = new WebsiteAttributePropertyType();
     }
 
     /**
@@ -45,7 +45,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                 [
                     AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
                     FallbackValueType::NAME => new FallbackValueType(),
-                    LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
+                    WebsiteCollectionType::NAME => new WebsiteCollectionType($this->registry),
                 ],
                 []
             )
@@ -85,11 +85,11 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                 'options' => ['type' => 'text'],
                 'defaultData' => null,
                 'viewData' => [
-                    LocalizedAttributePropertyType::FIELD_DEFAULT => null,
-                    LocalizedAttributePropertyType::FIELD_LOCALES => [
+                    WebsiteAttributePropertyType::FIELD_DEFAULT => null,
+                    WebsiteAttributePropertyType::FIELD_WEBSITES => [
                         1 => new FallbackType(FallbackType::SYSTEM),
-                        2 => new FallbackType(FallbackType::PARENT_LOCALE),
-                        3 => new FallbackType(FallbackType::PARENT_LOCALE),
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                        3 => new FallbackType(FallbackType::SYSTEM),
                     ]
                 ],
                 'submittedData' => null,
@@ -100,35 +100,35 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                     3    => null,
                 ],
             ],
-            'percent with full data' => [
-                'options' => ['type' => 'percent', 'options' => ['type' => 'integer']],
+            'checkbox with full data' => [
+                'options' => ['type' => 'checkbox', 'options' => ['value' => 't']],
                 'defaultData' => [
-                    null => 5,
-                    1    => 10,
+                    null => true,
+                    1    => false,
                     2    => new FallbackType(FallbackType::SYSTEM),
-                    3    => new FallbackType(FallbackType::PARENT_LOCALE),
+                    3    => new FallbackType(FallbackType::SYSTEM),
                 ],
                 'viewData' => [
-                    LocalizedAttributePropertyType::FIELD_DEFAULT => 5,
-                    LocalizedAttributePropertyType::FIELD_LOCALES => [
-                        1 => 10,
+                    WebsiteAttributePropertyType::FIELD_DEFAULT => 't',
+                    WebsiteAttributePropertyType::FIELD_WEBSITES => [
+                        1 => '',
                         2 => new FallbackType(FallbackType::SYSTEM),
-                        3 => new FallbackType(FallbackType::PARENT_LOCALE),
+                        3 => new FallbackType(FallbackType::SYSTEM),
                     ]
                 ],
                 'submittedData' => [
-                    LocalizedAttributePropertyType::FIELD_DEFAULT => '10',
-                    LocalizedAttributePropertyType::FIELD_LOCALES => [
-                        1 => ['value' => '', 'fallback' => FallbackType::SYSTEM],
-                        2 => ['value' => '5', 'fallback' => ''],
-                        3 => ['value' => '', 'fallback' => FallbackType::PARENT_LOCALE],
+                    WebsiteAttributePropertyType::FIELD_DEFAULT => 't',
+                    WebsiteAttributePropertyType::FIELD_WEBSITES => [
+                        1 => ['fallback' => FallbackType::SYSTEM],
+                        2 => ['fallback' => ''],
+                        3 => ['fallback' => FallbackType::SYSTEM],
                     ]
                 ],
                 'expectedData' => [
-                    null => 10,
+                    null => true,
                     1    => new FallbackType(FallbackType::SYSTEM),
-                    2    => 5,
-                    3    => new FallbackType(FallbackType::PARENT_LOCALE),
+                    2    => false,
+                    3    => new FallbackType(FallbackType::SYSTEM),
                 ],
             ],
         ];
@@ -145,18 +145,14 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
             ->getMockForAbstractClass();
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($this->getLocales()));
+            ->will($this->returnValue($this->getWebsites()));
 
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
         $queryBuilder->expects($this->once())
-            ->method('leftJoin')
-            ->with('locale.parentLocale', 'parentLocale')
-            ->will($this->returnSelf());
-        $queryBuilder->expects($this->once())
             ->method('addOrderBy')
-            ->with('locale.id', 'ASC')
+            ->with('website.id', 'ASC')
             ->will($this->returnSelf());
         $queryBuilder->expects($this->once())
             ->method('getQuery')
@@ -167,53 +163,49 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
             ->getMock();
         $repository->expects($this->once())
             ->method('createQueryBuilder')
-            ->with('locale')
+            ->with('website')
             ->will($this->returnValue($queryBuilder));
 
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BWebsiteBundle:Locale')
+            ->with('OroB2BWebsiteBundle:Website')
             ->will($this->returnValue($repository));
     }
 
     /**
-     * @return Locale[]
+     * @return Website[]
      */
-    protected function getLocales()
+    protected function getWebsites()
     {
-        $en   = $this->createLocale(1, 'en');
-        $enUs = $this->createLocale(2, 'en_US', $en);
-        $enCa = $this->createLocale(3, 'en_CA', $en);
+        $first  = $this->createWebsite(1, 'first');
+        $second = $this->createWebsite(2, 'second');
+        $third  = $this->createWebsite(3, 'third');
 
-        return [$en, $enUs, $enCa];
+        return [$first, $second, $third];
     }
 
     /**
      * @param int $id
-     * @param string $code
-     * @param Locale|null $parentLocale
-     * @return Locale
+     * @param string $name
+     * @return Website
      */
-    protected function createLocale($id, $code, $parentLocale = null)
+    protected function createWebsite($id, $name)
     {
-        $website = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Locale')
+        $website = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Website')
             ->disableOriginalConstructor()
             ->getMock();
         $website->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($id));
         $website->expects($this->any())
-            ->method('getCode')
-            ->will($this->returnValue($code));
-        $website->expects($this->any())
-            ->method('getParentLocale')
-            ->will($this->returnValue($parentLocale));
+            ->method('getName')
+            ->will($this->returnValue($name));
 
         return $website;
     }
 
     public function testGetName()
     {
-        $this->assertEquals(LocalizedAttributePropertyType::NAME, $this->formType->getName());
+        $this->assertEquals(WebsiteAttributePropertyType::NAME, $this->formType->getName());
     }
 }

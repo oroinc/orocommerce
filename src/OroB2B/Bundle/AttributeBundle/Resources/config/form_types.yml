@@ -3,6 +3,8 @@ parameters:
     orob2b_attribute.form.type.fallback_value.class: OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType
     orob2b_attribute.form.type.locale_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType
     orob2b_attribute.form.type.localized_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType
+    orob2b_attribute.form.type.website_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType
+    orob2b_attribute.form.type.website_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType
 
 services:
     orob2b_attribute.form.type.attribute_property_fallback:
@@ -26,3 +28,15 @@ services:
         class: %orob2b_attribute.form.type.localized_attribute_property.class%
         tags:
             - { name: form.type, alias: orob2b_attribute_localized_property }
+
+    orob2b_attribute.form.type.website_collection:
+        class: %orob2b_attribute.form.type.website_collection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_attribute_website_collection }
+
+    orob2b_attribute.form.type.website_attribute_property:
+        class: %orob2b_attribute.form.type.website_attribute_property.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_website_property }
