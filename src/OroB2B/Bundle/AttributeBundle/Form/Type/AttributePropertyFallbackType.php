@@ -46,7 +46,7 @@ class AttributePropertyFallbackType extends AbstractType
         );
 
         $resolver->setNormalizers(
-            array(
+            [
                 'choices' => function (Options $options, $value) {
                     if (!empty($value)) {
                         return $value;
@@ -64,7 +64,7 @@ class AttributePropertyFallbackType extends AbstractType
 
                     return $choices;
                 }
-            )
+            ]
         );
     }
 }
