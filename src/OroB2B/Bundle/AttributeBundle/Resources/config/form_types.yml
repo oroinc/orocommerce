@@ -1,8 +1,28 @@
 parameters:
     orob2b_attribute.form.type.attribute_property_fallback.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType
+    orob2b_attribute.form.type.fallback_value.class: OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType
+    orob2b_attribute.form.type.locale_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType
+    orob2b_attribute.form.type.localized_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType
 
 services:
     orob2b_attribute.form.type.attribute_property_fallback:
         class: %orob2b_attribute.form.type.attribute_property_fallback.class%
         tags:
             - { name: form.type, alias: orob2b_attribute_property_fallback }
+
+    orob2b_attribute.form.type.fallback_value:
+        class: %orob2b_attribute.form.type.fallback_value.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_fallback_value }
+
+    orob2b_attribute.form.type.locale_collection:
+        class: %orob2b_attribute.form.type.locale_collection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_attribute_locale_collection }
+
+    orob2b_attribute.form.type.localized_attribute_property:
+        class: %orob2b_attribute.form.type.localized_attribute_property.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_localized_property }

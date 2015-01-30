@@ -36,11 +36,11 @@ class AttributePropertyFallbackType extends AbstractType
         $resolver->setDefaults(
             [
                 'required'           => false,
-                'empty_value'        => 'orob2b.attribute.form.fallback.none',
+                'empty_value'        => 'orob2b.attribute.form.fallback.empty',
                 'enabled_fallbacks'  => [],
                 'existing_fallbacks' => [
+                    FallbackType::SYSTEM        => 'orob2b.attribute.form.fallback.default',
                     FallbackType::PARENT_LOCALE => 'orob2b.attribute.form.fallback.parent_locale',
-                    FallbackType::SYSTEM        => 'orob2b.attribute.form.fallback.system_attribute',
                 ],
             ]
         );

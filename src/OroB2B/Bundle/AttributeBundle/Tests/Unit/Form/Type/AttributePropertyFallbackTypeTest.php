@@ -52,9 +52,9 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'required' => false,
-                    'empty_value' => 'orob2b.attribute.form.fallback.none',
+                    'empty_value' => 'orob2b.attribute.form.fallback.empty',
                     'choices' => [
-                        FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.system_attribute',
+                        FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.default',
                     ],
                 ],
                 'submittedData' => FallbackType::SYSTEM,
@@ -65,10 +65,10 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'required' => false,
-                    'empty_value' => 'orob2b.attribute.form.fallback.none',
+                    'empty_value' => 'orob2b.attribute.form.fallback.empty',
                     'choices' => [
                         FallbackType::PARENT_LOCALE => 'orob2b.attribute.form.fallback.parent_locale',
-                        FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.system_attribute',
+                        FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.default',
                     ],
                 ],
                 'submittedData' => FallbackType::PARENT_LOCALE,
