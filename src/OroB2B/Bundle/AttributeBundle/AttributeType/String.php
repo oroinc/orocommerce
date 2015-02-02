@@ -2,36 +2,18 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
-class String implements AttributeTypeInterface
+class String extends AbstractAttributeType
 {
     const NAME = 'string';
-    const DATA_TYPE_FIELD = 'string';
-    const FORM_TYPE = 'text';
+    protected $dataTypeField = 'string';
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataTypeField()
-    {
-        return self::DATA_TYPE_FIELD;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormParameters(array $options = null)
+    public function getFormParameters()
     {
         return [
-          'type'  => self::FORM_TYPE,
-          'options'  => $options
+          'type'  => 'text'
         ];
     }
 
@@ -49,13 +31,5 @@ class String implements AttributeTypeInterface
     public function isUsedForSearch()
     {
         return true;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isUsedInFilters()
-    {
-        return false;
     }
 }

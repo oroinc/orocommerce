@@ -2,53 +2,19 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
-class Boolean implements AttributeTypeInterface
+class Boolean extends AbstractAttributeType
 {
     const NAME = 'boolean';
-    const DATA_TYPE_FIELD = 'integer';
-    const FORM_TYPE = 'checkbox';
+    protected $dataTypeField = 'integer';
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDataTypeField()
-    {
-        return self::DATA_TYPE_FIELD;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormParameters(array $options = null)
+    public function getFormParameters()
     {
         return [
-          'type'  => self::FORM_TYPE,
-          'options'  => $options
+          'type'  => 'checkbox'
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isContainHtml()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isUsedForSearch()
-    {
-        return false;
     }
 
     /**
