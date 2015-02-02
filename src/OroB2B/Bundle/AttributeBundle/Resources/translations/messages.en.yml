@@ -2,8 +2,16 @@ orob2b:
     attribute:
         form:
             fallback:
-                empty: 'Choose fallback...'
+                empty:         'Choose fallback...'
                 parent_locale: 'Parent locale value'
-                default: 'Default value'
-
+                default:       'Default value'
+            attribute_type:
+                empty:    'Choose attribute type...'
+                integer:  'Integer'
+                float:    'Float'
+                boolean:  'Boolean'
+                string:   'String'
+                text:     'Text'
+                date:     'Date'
+                datetime: 'DateTime'
         default: 'Default'
