@@ -1,0 +1,5 @@
+'This value should contain only latin letters.': 'This value should contain only latin letters.'
+'This value should contain only latin letters and numbers.': 'This value should contain only latin letters and numbers.'
+'This value should contain only latin letters, numbers and symbols "-._~".': 'This value should contain only latin letters, numbers and symbols "-._~".'
+'This value should be decimal number.': 'This value should be decimal number.'
+'This value should be integer number.': 'This value should be integer number.'
