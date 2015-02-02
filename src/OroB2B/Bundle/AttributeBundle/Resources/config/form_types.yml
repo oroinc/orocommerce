@@ -6,6 +6,8 @@ parameters:
     orob2b_attribute.form.type.website_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType
     orob2b_attribute.form.type.website_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType
 
+    orob2b_attribute.form.extension.integer.class: OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
+
 services:
     orob2b_attribute.form.type.attribute_property_fallback:
         class: %orob2b_attribute.form.type.attribute_property_fallback.class%
@@ -40,3 +42,8 @@ services:
         class: %orob2b_attribute.form.type.website_attribute_property.class%
         tags:
             - { name: form.type, alias: orob2b_attribute_website_property }
+
+    orob2b_attribute.form.extension.integer:
+        class: %orob2b_attribute.form.extension.integer.class%
+        tags:
+            - { name: form.type_extension, alias: integer }
