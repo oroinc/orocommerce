@@ -31,9 +31,10 @@ interface AttributeTypeInterface
      *      ]
      * ]
      *
+     * @param array $options
      * @return array
      */
-    public function getFormParameters();
+    public function getFormParameters(array $options = null);
 
     /**
      * Checks is this attribute type may contain HTML
