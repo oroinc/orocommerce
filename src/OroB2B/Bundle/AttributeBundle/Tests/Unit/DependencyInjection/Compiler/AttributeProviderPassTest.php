@@ -50,13 +50,13 @@ class AttributeProviderPassTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $service1Definition->expects($this->once())
             ->method('setPublic')
-            ->will($this->returnValue(false));
+            ->with(false);
 
         $service2Definition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
             ->getMock();
         $service2Definition->expects($this->once())
             ->method('setPublic')
-            ->will($this->returnValue(false));
+            ->with(false);
 
         $serviceIds = [
             'service1' => [],
