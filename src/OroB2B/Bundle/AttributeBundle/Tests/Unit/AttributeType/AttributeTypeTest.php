@@ -40,13 +40,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new Integer(),
                 'expected' => [
                     'name' => Integer::NAME,
-                    'typeField' => Integer::DATA_TYPE_FIELD,
+                    'typeField' => 'integer',
                     'isContainHtml' => false,
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type'  => Integer::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'integer'
                     ]
                 ]
             ],
@@ -54,16 +53,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new Integer(),
                 'expected' => [
                     'name' => Integer::NAME,
-                    'typeField' => Integer::DATA_TYPE_FIELD,
+                    'typeField' => 'integer',
                     'isContainHtml' => false,
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type'  => Integer::FORM_TYPE,
-                        'options'  => [
-                            'data' => 0,
-                            'precision' => 0
-                        ]
+                        'type'  => 'integer'
                     ]
                 ],
                 'options' => [
@@ -75,13 +70,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new Boolean(),
                 'expected' => [
                     'name' => Boolean::NAME,
-                    'typeField' => Boolean::DATA_TYPE_FIELD,
+                    'typeField' => 'integer',
                     'isContainHtml' => false,
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type'  => Boolean::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'checkbox'
                     ]
                 ]
             ],
@@ -89,13 +83,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new Float(),
                 'expected' => [
                     'name' => Float::NAME,
-                    'typeField' => Float::DATA_TYPE_FIELD,
+                    'typeField' => 'float',
                     'isContainHtml' => false,
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type'  => Float::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'number'
                     ]
                 ]
             ],
@@ -103,13 +96,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new String(),
                 'expected' => [
                     'name' => String::NAME,
-                    'typeField' => String::DATA_TYPE_FIELD,
+                    'typeField' => 'string',
                     'isContainHtml' => true,
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => false,
                     'formParameters' => [
-                        'type'  => String::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'text'
                     ]
                 ]
             ],
@@ -117,13 +109,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new Text(),
                 'expected' => [
                     'name' => Text::NAME,
-                    'typeField' => Text::DATA_TYPE_FIELD,
+                    'typeField' => 'text',
                     'isContainHtml' => true,
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => false,
                     'formParameters' => [
-                        'type'  => Text::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'text'
                     ]
                 ]
             ],
@@ -131,13 +122,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new Date(),
                 'expected' => [
                     'name' => Date::NAME,
-                    'typeField' => Date::DATA_TYPE_FIELD,
+                    'typeField' => 'datetime',
                     'isContainHtml' => false,
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => false,
                     'formParameters' => [
-                        'type'  => Date::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'oro_date'
                     ]
                 ]
             ],
@@ -145,13 +135,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attributeType' => new DateTime(),
                 'expected' => [
                     'name' => DateTime::NAME,
-                    'typeField' => DateTime::DATA_TYPE_FIELD,
+                    'typeField' => 'datetime',
                     'isContainHtml' => false,
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => false,
                     'formParameters' => [
-                        'type'  => DateTime::FORM_TYPE,
-                        'options'  => null
+                        'type'  => 'oro_datetime'
                     ]
                 ]
             ]
