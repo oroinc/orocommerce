@@ -41,14 +41,16 @@ class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFinishView(FormView $view, array $options)
     {
-        $formMock = $this->getMockBuilder('Symfony\Component\Form\Form')
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension->finishView($view, $formMock, $options);
+        $this->extension->finishView($view, $form, $options);
 
         if (!empty($view->vars['type'])) {
             $this->assertTrue($view->vars['type'] === self::TYPE);
+        } else {
+            $this->assertArrayNotHasKey('type', $view->vars);
         }
     }
 
@@ -60,8 +62,8 @@ class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
                 'option' => array('type' => self::TYPE)
             ),
             'without type' => array(
-                'view'   => $this->createView(false),
-                'option' => array('type' => false)
+                'view'   => $this->createView(),
+                'option' => array('type' => null)
             )
         );
     }
