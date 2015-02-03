@@ -1,6 +1,7 @@
 parameters:
     orob2b_attribute.form.type.attribute_property_fallback.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType
     orob2b_attribute.form.type.fallback_value.class: OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType
+    orob2b_attribute.form.type.attribute_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType
     orob2b_attribute.form.type.locale_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType
     orob2b_attribute.form.type.localized_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType
     orob2b_attribute.form.type.website_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType
@@ -18,6 +19,13 @@ services:
         class: %orob2b_attribute.form.type.fallback_value.class%
         tags:
             - { name: form.type, alias: orob2b_attribute_fallback_value }
+
+    orob2b_attribute.form.type.attribute_type:
+        class: %orob2b_attribute.form.type.attribute_type.class%
+        arguments:
+            - @orob2b_attribute.attribute_type.registry
+        tags:
+            - { name: form.type, alias: orob2b_attribute_type }
 
     orob2b_attribute.form.type.locale_collection:
         class: %orob2b_attribute.form.type.locale_collection.class%
