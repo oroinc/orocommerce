@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use OroB2B\Bundle\AttributeBundle\AttributeType\Boolean;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Float;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Integer;
@@ -10,7 +12,6 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class AttributeTypeTypeTest extends FormIntegrationTestCase
 {
@@ -40,13 +41,13 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
         $registry->expects($this->any())
             ->method('getTypes')
             ->will($this->returnValue([
-                'integer' => new Integer(),
-                'float' => new Float(),
-                'string' => new String(),
-                'boolean' => new Boolean(),
-                'text' => new Text(),
-                'date' => new Date(),
-                'datetime' => new DateTime()
+                Integer::NAME => new Integer(),
+                Float::NAME => new Float(),
+                String::NAME => new String(),
+                Boolean::NAME => new Boolean(),
+                Text::NAME => new Text(),
+                Date::NAME => new Date(),
+                DateTime::NAME => new DateTime()
             ]));
 
         $this->formType = new AttributeTypeType($registry);
