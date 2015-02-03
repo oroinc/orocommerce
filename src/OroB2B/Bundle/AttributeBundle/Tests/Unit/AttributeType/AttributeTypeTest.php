@@ -10,6 +10,14 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Letters;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Url;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
 
 class AttributeTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +34,8 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['isUsedForSearch'], $type->isUsedForSearch());
         $this->assertEquals($expected['isUsedInFilters'], $type->isUsedInFilters());
         $this->assertEquals($expected['formParameters'], $type->getFormParameters());
+        $this->assertEquals($expected['requiredConstraints'], $type->getRequiredConstraints());
+        $this->assertEquals($expected['optionalConstraints'], $type->getOptionalConstraints());
     }
 
     /**
@@ -45,6 +55,13 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => true,
                     'formParameters' => [
                         'type'  => 'integer'
+                    ],
+                    'requiredConstraints' => [
+                        new IntegerConstraint()
+                    ],
+                    'optionalConstraints' => [
+                        new GreaterThanZero(),
+                        new Decimal()
                     ]
                 ]
             ],
@@ -58,7 +75,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => true,
                     'formParameters' => [
                         'type'  => 'checkbox'
-                    ]
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => []
                 ]
             ],
             'float' => [
@@ -71,6 +90,14 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => true,
                     'formParameters' => [
                         'type'  => 'number'
+                    ],
+                    'requiredConstraints' => [
+                        new Decimal()
+                    ],
+                    'optionalConstraints' => [
+                        new GreaterThanZero(),
+                        new Decimal(),
+                        new Integer()
                     ]
                 ]
             ],
@@ -84,6 +111,16 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => false,
                     'formParameters' => [
                         'type'  => 'text'
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [
+                        new Letters(),
+                        new Alphanumeric(),
+                        new UrlSafe(),
+                        new Decimal(),
+                        new IntegerConstraint(),
+                        new Email(),
+                        new Url()
                     ]
                 ]
             ],
@@ -97,6 +134,16 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => false,
                     'formParameters' => [
                         'type'  => 'textarea'
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [
+                        new Letters(),
+                        new Alphanumeric(),
+                        new UrlSafe(),
+                        new Decimal(),
+                        new IntegerConstraint(),
+                        new Email(),
+                        new Url()
                     ]
                 ]
             ],
@@ -110,7 +157,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => false,
                     'formParameters' => [
                         'type'  => 'oro_date'
-                    ]
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => []
                 ]
             ],
             'datetime' => [
@@ -123,7 +172,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedInFilters' => false,
                     'formParameters' => [
                         'type'  => 'oro_datetime'
-                    ]
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => []
                 ]
             ]
         ];

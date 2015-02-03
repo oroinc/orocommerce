@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
+
 class Float extends AbstractAttributeType
 {
     const NAME = 'float';
@@ -23,5 +26,27 @@ class Float extends AbstractAttributeType
     public function isUsedInFilters()
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequiredConstraints()
+    {
+        return [
+            new Decimal()
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptionalConstraints()
+    {
+        return [
+            new GreaterThanZero(),
+            new Decimal(),
+            new Integer()
+        ];
     }
 }

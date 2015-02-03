@@ -2,6 +2,10 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\AttributeConstraintInterface;
+
+use Symfony\Component\Validator\Constraint;
+
 /**
  * Provides an interface of an attribute type
  */
@@ -35,6 +39,20 @@ interface AttributeTypeInterface
      * @return array
      */
     public function getFormParameters();
+
+    /**
+     * Gets required validation constraints
+     *
+     * @return Constraint[]
+     */
+    public function getRequiredConstraints();
+
+    /**
+     * Gets optional validation constraints
+     *
+     * @return AttributeConstraintInterface[]
+     */
+    public function getOptionalConstraints();
 
     /**
      * Checks is this attribute type may contain HTML

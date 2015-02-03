@@ -16,4 +16,20 @@ class Date extends AbstractAttributeType
           'type' => 'oro_date'
         ];
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequiredConstraints()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptionalConstraints()
+    {
+        return [];
+    }
 }
