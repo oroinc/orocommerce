@@ -73,6 +73,10 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
                 'data' => '10.4565',
                 'correct' => true
             ],
+            'string float with grouping' => [
+                'data' => '12,210.4565',
+                'correct' => true
+            ],
             'null' => [
                 'data' => null,
                 'correct' => true

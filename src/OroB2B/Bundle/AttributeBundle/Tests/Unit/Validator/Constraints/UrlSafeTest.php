@@ -69,7 +69,6 @@ class UrlSafeTest extends \PHPUnit_Framework_TestCase
                 'data' => 'Abc/test',
                 'correct' => false
             ],
-
         ];
     }
 

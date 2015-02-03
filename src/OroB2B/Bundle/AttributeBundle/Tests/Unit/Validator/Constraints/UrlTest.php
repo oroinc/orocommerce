@@ -69,7 +69,6 @@ class UrlTest extends \PHPUnit_Framework_TestCase
                 'data' => '_Abc/test',
                 'correct' => false
             ],
-
         ];
     }
 }

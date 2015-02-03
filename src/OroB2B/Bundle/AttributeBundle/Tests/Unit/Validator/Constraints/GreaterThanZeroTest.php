@@ -70,6 +70,10 @@ class GreaterThanZeroTest extends \PHPUnit_Framework_TestCase
                 'data' => 20,
                 'correct' => true
             ],
+            'zero' => [
+                'data' => 0,
+                'correct' => false
+            ],
             'not correct' => [
                 'data' => -20,
                 'correct' => false
