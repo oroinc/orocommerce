@@ -23,6 +23,7 @@ interface AttributeTypeInterface
 
     /**
      * Gets form parameters
+     * Key 'type' is required, key 'options' is optional
      * e.g. [
      *      'type'  => 'integer',
      *      'options' => [
