@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
+use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeDefaultValue;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
@@ -10,60 +11,25 @@ use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AttributeTest extends \PHPUnit_Framework_TestCase
+class AttributeTest extends EntityTestCase
 {
-    public function testGetId()
+
+    public function testProperties()
     {
-        $attributeId = 1;
-        $attribute = new Attribute();
-        $this->assertNull($attribute->getId());
-
-        $class = new \ReflectionClass($attribute);
-        $prop = $class->getProperty('id');
-        $prop->setAccessible(true);
-        $prop->setValue($attribute, $attributeId);
-
-        $this->assertEquals($attributeId, $attribute->getId());
-    }
-
-    /**
-     * @dataProvider flatPropertiesDataProvider
-     * @param string $property
-     * @param mixed $value
-     */
-    public function testGetSet($property, $value)
-    {
-        $attribute = new Attribute();
-
-        call_user_func_array([$attribute, 'set' . ucfirst($property)], [$value]);
-
-        $this->assertEquals(
-            $value,
-            call_user_func_array(
-                [
-                    $attribute,
-                    method_exists($attribute, 'get' . ucfirst($property))
-                        ? 'get' . ucfirst($property)
-                        : 'is' . ucfirst($property)
-                ],
-                []
-            )
-        );
-    }
-
-    public function flatPropertiesDataProvider()
-    {
-        return [
-            'type'         => ['type', 'testType'],
-            'code'         => ['code', 'testCode'],
-            'sharing_type' => ['sharingType', 'website'],
-            'validation'   => ['validation', 'alphanumeric'],
-            'contain_html' => ['containHtml', true],
-            'localized'    => ['localized', true],
-            'system'       => ['system', false],
-            'unique'       => ['unique', false],
-            'required'     => ['required', false]
+        $properties = [
+            ['id', 1],
+            ['type', 'testType'],
+            ['code', 'testCode'],
+            ['sharingType', 'website'],
+            ['validation', 'alphanumeric'],
+            ['containHtml', true],
+            ['localized', true],
+            ['system', false],
+            ['unique', false],
+            ['required', false],
         ];
+
+        $this->assertPropertyAccessors(new Attribute(), $properties);
     }
 
     /**
