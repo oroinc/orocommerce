@@ -6,13 +6,14 @@ abstract class AbstractAttributeType implements AttributeTypeInterface
 {
     /**
      * Name of attribute type.
-     * These constant must be defined in descendant classes.
+     * This constant must be defined in descendant classes.
      */
     const NAME = '';
 
     /**
      * Field for data type mapping.
-     * These parameter must be defined in descendant classes.
+     * This parameter must be defined in descendant classes.
+     *
      * @var string
      */
     protected $dataTypeField = '';

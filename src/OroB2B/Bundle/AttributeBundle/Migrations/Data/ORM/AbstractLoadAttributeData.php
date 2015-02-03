@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM;
 
-use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
-use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
 
 abstract class AbstractLoadAttributeData extends AbstractFixture implements ContainerAwareInterface
 {
