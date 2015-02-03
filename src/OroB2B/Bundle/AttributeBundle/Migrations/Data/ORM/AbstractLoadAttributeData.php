@@ -4,13 +4,14 @@ namespace OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-class AbstractLoadAttributeData extends AbstractFixture implements ContainerAwareInterface
+abstract class AbstractLoadAttributeData extends AbstractFixture implements ContainerAwareInterface
 {
     /**
      * @var array
@@ -54,7 +55,9 @@ class AbstractLoadAttributeData extends AbstractFixture implements ContainerAwar
             $manager->persist($attribute);
         }
 
-        $manager->flush();
-        $manager->clear();
+        if (!empty($this->attributes)) {
+            $manager->flush();
+            $manager->clear();
+        }
     }
 }

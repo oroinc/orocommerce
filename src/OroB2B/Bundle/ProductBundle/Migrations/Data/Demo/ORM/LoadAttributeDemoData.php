@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM;
+namespace OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 
 use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM\AbstractLoadAttributeData;
@@ -23,7 +23,7 @@ class LoadAttributeDemoData extends AbstractLoadAttributeData
         [
             'code' => 'productScale',
             'type' => String::NAME,
-            'localized' => true,
+            'localized' => false,
             'system' => false,
             'required' => false,
             'unique' => false,

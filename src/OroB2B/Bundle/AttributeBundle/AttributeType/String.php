@@ -13,7 +13,7 @@ class String extends AbstractAttributeType
     public function getFormParameters()
     {
         return [
-          'type'  => 'text'
+          'type' => 'text'
         ];
     }
 

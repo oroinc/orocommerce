@@ -13,7 +13,7 @@ class Integer extends AbstractAttributeType
     public function getFormParameters()
     {
         return [
-          'type'  => 'integer'
+          'type' => 'integer'
         ];
     }
 

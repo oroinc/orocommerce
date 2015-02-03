@@ -13,7 +13,7 @@ class Text extends AbstractAttributeType
     public function getFormParameters(array $options = null)
     {
         return [
-          'type'  => 'text'
+          'type' => 'textarea'
         ];
     }
 

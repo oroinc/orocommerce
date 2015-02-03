@@ -13,7 +13,7 @@ class Boolean extends AbstractAttributeType
     public function getFormParameters()
     {
         return [
-          'type'  => 'checkbox'
+          'type' => 'checkbox'
         ];
     }
 
