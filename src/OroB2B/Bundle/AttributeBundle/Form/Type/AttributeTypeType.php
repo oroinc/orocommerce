@@ -44,22 +44,22 @@ class AttributeTypeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $this->getChoices();
-
         $resolver->setDefaults(
             [
-                'required' => true,
                 'empty_value' => 'orob2b.attribute.form.attribute_type.empty',
                 'choices' => $this->getChoices()
             ]
         );
     }
 
+    /**
+     * @return array
+     */
     protected function getChoices()
     {
         $choices = [];
         foreach ($this->registry->getTypes() as $type) {
-            $choices[$type->getName()] = 'orob2b.attribute.attribute_type.' . $type->getName();
+            $choices[$type->getName()] = 'orob2b.attribute.form.attribute_type.' . $type->getName();
         }
 
         return $choices;

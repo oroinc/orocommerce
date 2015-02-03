@@ -23,13 +23,13 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
      * @var array
      */
     protected $types = [
-        'integer' => 'orob2b.attribute.attribute_type.integer',
-        'float' => 'orob2b.attribute.attribute_type.float',
-        'string' => 'orob2b.attribute.attribute_type.string',
-        'boolean' => 'orob2b.attribute.attribute_type.boolean',
-        'text' => 'orob2b.attribute.attribute_type.text',
-        'date' => 'orob2b.attribute.attribute_type.date',
-        'datetime' => 'orob2b.attribute.attribute_type.datetime'
+        Integer::NAME,
+        Float::NAME,
+        String::NAME,
+        Boolean::NAME,
+        Text::NAME,
+        Date::NAME,
+        DateTime::NAME
     ];
 
     protected function setUp()
@@ -47,7 +47,6 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
                 'text' => new Text(),
                 'date' => new Date(),
                 'datetime' => new DateTime()
-
             ]));
 
         $this->formType = new AttributeTypeType($registry);
@@ -79,13 +78,18 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $choices = [];
+        foreach ($this->types as $type) {
+            $choices[$type] = 'orob2b.attribute.form.attribute_type.'. $type;
+        }
+
         return [
             'submit integer' => [
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'required' => true,
                     'empty_value' => 'orob2b.attribute.form.attribute_type.empty',
-                    'choices' => $this->types
+                    'choices' => $choices
                 ],
                 'submittedData' => Integer::NAME,
             ]
