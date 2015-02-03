@@ -2,48 +2,24 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
+use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class LocaleTest extends \PHPUnit_Framework_TestCase
+class LocaleTest extends EntityTestCase
 {
-    public function testGetId()
+
+    public function testProperties()
     {
-        $localeId = 1;
-        $locale = new Locale();
-        $this->assertNull($locale->getId());
-
-        $class = new \ReflectionClass($locale);
-        $prop = $class->getProperty('id');
-        $prop->setAccessible(true);
-        $prop->setValue($locale, $localeId);
-
-        $this->assertEquals($localeId, $locale->getId());
-    }
-
-    /**
-     * @dataProvider flatPropertiesDataProvider
-     * @param string $property
-     * @param mixed $value
-     */
-    public function testGetSet($property, $value)
-    {
-        $locale = new Locale();
-
-        $this->assertNull(call_user_func_array([$locale, 'get' . ucfirst($property)], []));
-        call_user_func_array(array($locale, 'set' . ucfirst($property)), array($value));
-        $this->assertEquals($value, call_user_func_array([$locale, 'get' . ucfirst($property)], []));
-    }
-
-    public function flatPropertiesDataProvider()
-    {
-        $now = new \DateTime('now');
-
-        return [
-            'code'         => ['code', 'test'],
-            'createdAt'    => ['createdAt', $now],
-            'updatedAt'    => ['updatedAt', $now],
+        $now = new \DateTimeImmutable('now');
+        $properties = [
+            ['id', 1],
+            ['code', 'test'],
+            ['createdAt', $now, false],
+            ['updatedAt', $now, false],
         ];
+
+        $this->assertPropertyAccessors(new Locale(), $properties);
     }
 
     public function testChildLocales()
