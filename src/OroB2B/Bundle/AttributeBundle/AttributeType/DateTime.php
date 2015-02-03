@@ -13,7 +13,7 @@ class DateTime extends AbstractAttributeType
     public function getFormParameters()
     {
         return [
-          'type'  => 'oro_datetime'
+          'type' => 'oro_datetime'
         ];
     }
 }

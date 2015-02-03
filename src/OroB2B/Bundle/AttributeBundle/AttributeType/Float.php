@@ -13,7 +13,7 @@ class Float extends AbstractAttributeType
     public function getFormParameters()
     {
         return [
-          'type'  => 'number'
+          'type' => 'number'
         ];
     }
 

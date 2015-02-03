@@ -4,7 +4,18 @@ namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 abstract class AbstractAttributeType implements AttributeTypeInterface
 {
+    /**
+     * Name of attribute type.
+     * This constant must be defined in descendant classes.
+     */
     const NAME = '';
+
+    /**
+     * Field for data type mapping.
+     * This parameter must be defined in descendant classes.
+     *
+     * @var string
+     */
     protected $dataTypeField = '';
 
     /**

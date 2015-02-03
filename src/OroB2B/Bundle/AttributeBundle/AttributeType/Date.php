@@ -13,7 +13,7 @@ class Date extends AbstractAttributeType
     public function getFormParameters()
     {
         return [
-          'type'  => 'oro_date'
+          'type' => 'oro_date'
         ];
     }
 }

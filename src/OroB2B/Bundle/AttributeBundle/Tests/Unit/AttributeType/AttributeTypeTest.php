@@ -16,17 +16,16 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider attributeTypeDataProvider
      * @param AttributeTypeInterface $type
-     * @param array $options
      * @param array $expected
      */
-    public function testAttributeTypes(AttributeTypeInterface $type, array $expected, array $options = null)
+    public function testAttributeTypes(AttributeTypeInterface $type, array $expected)
     {
         $this->assertEquals($expected['name'], $type->getName());
         $this->assertEquals($expected['typeField'], $type->getDataTypeField());
         $this->assertEquals($expected['isContainHtml'], $type->isContainHtml());
         $this->assertEquals($expected['isUsedForSearch'], $type->isUsedForSearch());
         $this->assertEquals($expected['isUsedInFilters'], $type->isUsedInFilters());
-        $this->assertEquals($expected['formParameters'], $type->getFormParameters($options));
+        $this->assertEquals($expected['formParameters'], $type->getFormParameters());
     }
 
     /**
@@ -36,7 +35,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
     public function attributeTypeDataProvider()
     {
         return [
-            'integer without options' => [
+            'integer' => [
                 'attributeType' => new Integer(),
                 'expected' => [
                     'name' => Integer::NAME,
@@ -47,23 +46,6 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'formParameters' => [
                         'type'  => 'integer'
                     ]
-                ]
-            ],
-            'integer with options' => [
-                'attributeType' => new Integer(),
-                'expected' => [
-                    'name' => Integer::NAME,
-                    'typeField' => 'integer',
-                    'isContainHtml' => false,
-                    'isUsedForSearch' => false,
-                    'isUsedInFilters' => true,
-                    'formParameters' => [
-                        'type'  => 'integer'
-                    ]
-                ],
-                'options' => [
-                    'data' => 0,
-                    'precision' => 0
                 ]
             ],
             'boolean' => [
@@ -114,7 +96,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => false,
                     'formParameters' => [
-                        'type'  => 'text'
+                        'type'  => 'textarea'
                     ]
                 ]
             ],

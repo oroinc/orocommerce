@@ -10,10 +10,10 @@ class Text extends AbstractAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFormParameters(array $options = null)
+    public function getFormParameters()
     {
         return [
-          'type'  => 'text'
+          'type' => 'textarea'
         ];
     }
 

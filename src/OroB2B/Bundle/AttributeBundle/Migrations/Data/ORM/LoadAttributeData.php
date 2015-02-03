@@ -14,7 +14,7 @@ class LoadAttributeData extends AbstractLoadAttributeData
         [
             'code' => 'sku',
             'type' => String::NAME,
-            'localized' => true,
+            'localized' => false,
             'system' => true,
             'required' => true,
             'unique' => true,
@@ -23,6 +23,7 @@ class LoadAttributeData extends AbstractLoadAttributeData
         [
             'code' => 'weight',
             'type' => Float::NAME,
+            'localized' => true,
             'system' => true,
             'required' => false,
             'unique' => false,
@@ -31,6 +32,7 @@ class LoadAttributeData extends AbstractLoadAttributeData
         [
             'code' => 'title',
             'type' => String::NAME,
+            'localized' => true,
             'system' => true,
             'required' => false,
             'unique' => false,
