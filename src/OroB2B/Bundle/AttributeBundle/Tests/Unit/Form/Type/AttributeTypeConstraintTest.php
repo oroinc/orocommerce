@@ -89,11 +89,10 @@ class AttributeTypeConstraintTest extends FormIntegrationTestCase
                     'empty_value' => 'orob2b.attribute.form.attribute_type_constraint.none',
                     'choices' => [
                         GreaterThanZero::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.greater_than_zero',
-                        Decimal::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.decimal',
                         IntegerConstraint::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.integer'
                     ]
                 ],
-                'submittedData' => Decimal::ALIAS,
+                'submittedData' => GreaterThanZero::ALIAS,
             ],
             'submit none' => [
                 'inputOptions' => [
@@ -142,17 +141,21 @@ class AttributeTypeConstraintTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
-     */
     public function testUnexpectedType()
     {
+        $this->setExpectedException(
+            '\Symfony\Component\Form\Exception\UnexpectedTypeException',
+            'Expected argument of type "OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface or string",'
+            . ' "integer" given'
+        );
+
         $form = $this->factory->create($this->formType, null, ['attribute_type' => 10]);
         $form->getData();
     }
 
     /**
      * @expectedException \LogicException
+     * @expectedExceptionMessage Attribute type name "not correct" is not exist in attribute type registry.
      */
     public function testNotExistAttributeType()
     {
