@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\AttributeConstraintInterface;
-
 use Symfony\Component\Validator\Constraint;
+
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\AttributeConstraintInterface;
 
 /**
  * Provides an interface of an attribute type
@@ -50,7 +50,7 @@ interface AttributeTypeInterface
     /**
      * Gets optional validation constraints
      *
-     * @return AttributeConstraintInterface[]
+     * @return Constraint[]|AttributeConstraintInterface[]
      */
     public function getOptionalConstraints();
 

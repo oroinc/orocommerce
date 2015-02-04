@@ -24,20 +24,4 @@ class Boolean extends AbstractAttributeType
     {
         return true;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequiredConstraints()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptionalConstraints()
-    {
-        return [];
-    }
 }

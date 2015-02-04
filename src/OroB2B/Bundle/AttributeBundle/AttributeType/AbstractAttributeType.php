@@ -62,4 +62,20 @@ abstract class AbstractAttributeType implements AttributeTypeInterface
     {
         return false;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRequiredConstraints()
+    {
+        return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOptionalConstraints()
+    {
+        return [];
+    }
 }

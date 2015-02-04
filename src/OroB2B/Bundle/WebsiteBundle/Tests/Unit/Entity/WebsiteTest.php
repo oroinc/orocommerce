@@ -4,51 +4,27 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class WebsiteTest extends \PHPUnit_Framework_TestCase
+class WebsiteTest extends EntityTestCase
 {
-    /**
-     * @dataProvider flatPropertiesDataProvider
-     * @param string $property
-     * @param mixed $value
-     */
-    public function testGetSet($property, $value)
+
+    public function testProperties()
     {
-        $website = new Website();
-
-        $this->assertNull(call_user_func_array([$website, 'get' . ucfirst($property)], []));
-        call_user_func_array(array($website, 'set' . ucfirst($property)), array($value));
-        $this->assertEquals($value, call_user_func_array([$website, 'get' . ucfirst($property)], []));
-    }
-
-    public function flatPropertiesDataProvider()
-    {
-        $now = new \DateTime('now');
-
-        return [
-            'name'         => ['name', 'test'],
-            'url'          => ['url', 'www.test.com'],
-            'owner'        => ['owner', new User()],
-            'organization' => ['organization', new Organization()],
-            'createdAt'    => ['createdAt', $now],
-            'updatedAt'    => ['updatedAt', $now],
+        $now = new \DateTimeImmutable('now');
+        $properties = [
+            ['id', 1],
+            ['name', 'test'],
+            ['url', 'www.test.com'],
+            ['owner', new User()],
+            ['organization', new Organization()],
+            ['createdAt', $now, false],
+            ['updatedAt', $now, false],
         ];
-    }
 
-    public function testGetId()
-    {
-        $websiteId = 1;
-        $website = new Website();
-        $this->assertNull($website->getId());
-
-        $class = new \ReflectionClass($website);
-        $prop = $class->getProperty('id');
-        $prop->setAccessible(true);
-        $prop->setValue($website, $websiteId);
-
-        $this->assertEquals($websiteId, $website->getId());
+        $this->assertPropertyAccessors(new Website(), $properties);
     }
 
     public function testWebsiteRelationships()

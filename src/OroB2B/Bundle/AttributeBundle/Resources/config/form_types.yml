@@ -7,6 +7,7 @@ parameters:
     orob2b_attribute.form.type.localized_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType
     orob2b_attribute.form.type.website_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType
     orob2b_attribute.form.type.website_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType
+    orob2b_attribute.form.type.init.class: OroB2B\Bundle\AttributeBundle\Form\Type\InitAttributeType
 
     orob2b_attribute.form.extension.integer.class: OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
 
@@ -58,6 +59,11 @@ services:
         class: %orob2b_attribute.form.type.website_attribute_property.class%
         tags:
             - { name: form.type, alias: orob2b_attribute_website_property }
+
+    orob2b_attribute.form.type.init:
+        class: %orob2b_attribute.form.type.init.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_init }
 
     orob2b_attribute.form.extension.integer:
         class: %orob2b_attribute.form.extension.integer.class%

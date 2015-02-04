@@ -46,7 +46,6 @@ class Float extends AbstractAttributeType
     {
         return [
             new GreaterThanZero(),
-            new Decimal(),
             new IntegerConstraint()
         ];
     }
