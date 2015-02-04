@@ -44,14 +44,6 @@ class String extends AbstractAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getRequiredConstraints()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getOptionalConstraints()
     {
         return [

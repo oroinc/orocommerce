@@ -16,20 +16,4 @@ class DateTime extends AbstractAttributeType
           'type' => 'oro_datetime'
         ];
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getRequiredConstraints()
-    {
-        return [];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOptionalConstraints()
-    {
-        return [];
-    }
 }
