@@ -2,34 +2,18 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
 
-abstract class AbstractLoadAttributeData extends AbstractFixture implements ContainerAwareInterface
+abstract class AbstractLoadAttributeData extends AbstractFixture
 {
     /**
      * @var array
      */
     protected $attributes = [];
-
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritdoc}

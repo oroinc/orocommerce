@@ -1,0 +1,13 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'orob2b-attribute-grid' %}
+{% set pageTitle = 'orob2b.attribute.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_attribute_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_attribute_create'),
+            'entity_label': 'orob2b.attribute.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

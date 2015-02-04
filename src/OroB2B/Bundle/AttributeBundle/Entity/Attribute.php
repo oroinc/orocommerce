@@ -12,6 +12,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @ORM\Table(name="orob2b_attribute")
  * @ORM\Entity
  * @Config(
+ *      routeName="orob2b_attribute_index",
+ *      routeView="orob2b_attribute_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"

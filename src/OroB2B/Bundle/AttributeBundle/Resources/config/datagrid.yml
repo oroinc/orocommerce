@@ -1,0 +1,140 @@
+datagrid:
+
+    orob2b-attribute-grid:
+        extended_entity_name: %orob2b_attribute.attribute.entity.class%
+        options:
+            entityHint:        attribute
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_attribute_view
+            type:         orm
+            query:
+                select:
+                    - attribute.id
+                    - attribute.type
+                    - attribute.code
+                    - attribute.sharingType
+                    - attribute.validation
+                    - attribute.containHtml
+                    - attribute.localized
+                    - attribute.system
+                    - attribute.unique
+                    - attribute.required
+                from:
+                    - { table: %orob2b_attribute.attribute.entity.class%, alias: attribute }
+        columns:
+            type:
+                label:         orob2b.attribute.type.label
+                frontend_type: select
+                choices:       @orob2b_attribute.attribute_type.registry->getChoices
+            code:
+                label:         orob2b.attribute.code.label
+            sharingType:
+                label:         orob2b.attribute.sharingType.label
+                frontend_type: select
+                choices:       @orob2b_attribute.attribute.scope.provider->getChoices
+            validation:
+                label:         orob2b.attribute.validation.label
+                frontend_type: select
+                choices:       @orob2b_attribute.attribute.scope.provider->getChoices
+            containHtml:
+                label:         orob2b.attribute.containHtml.label
+                frontend_type: boolean
+            localized:
+                label:         orob2b.attribute.localized.label
+                frontend_type: boolean
+            system:
+                label:         orob2b.attribute.system.label
+                frontend_type: boolean
+            unique:
+                label:         orob2b.attribute.unique.label
+                frontend_type: boolean
+            required:
+                label:         orob2b.attribute.required.label
+                frontend_type: boolean
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_attribute_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_attribute_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_delete_attribute
+                params: [ id ]
+        sorters:
+            columns:
+                type:
+                    data_name: attribute.type
+                code:
+                    data_name: attribute.code
+                sharingType:
+                    data_name: attribute.sharingType
+                validation:
+                    data_name: attribute.validation
+                containHtml:
+                    data_name: attribute.containHtml
+                localized:
+                    data_name: attribute.localized
+                system:
+                    data_name: attribute.system
+                unique:
+                    data_name: attribute.unique
+                required:
+                    data_name: attribute.required
+            default:
+                code: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                type:
+                    type:      string
+                    data_name: attribute.type
+                code:
+                    type:      string
+                    data_name: attribute.code
+                sharingType:
+                    type:      string
+                    data_name: attribute.sharingType
+                validation:
+                    type:      boolean
+                    data_name: attribute.validation
+                containHtml:
+                    type:      boolean
+                    data_name: attribute.containHtml
+                localized:
+                    type:      boolean
+                    data_name: attribute.localized
+                system:
+                    type:      boolean
+                    data_name: attribute.system
+                unique:
+                    type:      boolean
+                    data_name: attribute.unique
+                required:
+                    type:      boolean
+                    data_name: attribute.required
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_attribute_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_attribute_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_attribute_delete
+        action_configuration:  @orob2b_attribute.datagrid.attribute.helper->getActionConfigurationClosure
