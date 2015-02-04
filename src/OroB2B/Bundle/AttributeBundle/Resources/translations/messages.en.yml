@@ -14,6 +14,16 @@ orob2b:
                 text:     'Text'
                 date:     'Date'
                 datetime: 'DateTime'
+            attribute_type_constraint:
+                none:              'None'
+                alphanumeric:      'Alphanumeric'
+                decimal:           'Decimal Number'
+                email:             'Email'
+                greater_than_zero: 'Greater than Zero'
+                integer:           'Integer Number'
+                letters:           'Letters'
+                url:               'URL'
+                url_safe:          'URL Safe Characters'
             create:
                 continue: 'Continue'
             section:

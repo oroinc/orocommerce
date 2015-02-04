@@ -60,7 +60,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         new IntegerConstraint()
                     ],
                     'optionalConstraints' => [
-                        new GreaterThanZero(),
+                        new GreaterThanZero()
                     ]
                 ]
             ],
@@ -95,7 +95,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     ],
                     'optionalConstraints' => [
                         new GreaterThanZero(),
-                        new Integer()
+                        new IntegerConstraint()
                     ]
                 ]
             ],
