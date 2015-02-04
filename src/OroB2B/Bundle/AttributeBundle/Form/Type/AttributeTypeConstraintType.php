@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
-use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
-use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
+use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 
 class AttributeTypeConstraintType extends AbstractType
 {
@@ -68,9 +68,7 @@ class AttributeTypeConstraintType extends AbstractType
                         $constraints = $options['attribute_type']->getOptionalConstraints();
                     } elseif (is_string($options['attribute_type'])) {
                         $attributeType = $this->attributeTypeRegistry->getTypeByName($options['attribute_type']);
-                        if (!empty($attributeType)) {
-                            $constraints = $attributeType->getOptionalConstraints();
-                        } else {
+                        if (!$attributeType) {
                             throw new \LogicException(
                                 sprintf(
                                     'Attribute type name "%s" is not exist in attribute type registry.',
@@ -78,6 +76,7 @@ class AttributeTypeConstraintType extends AbstractType
                                 )
                             );
                         }
+                        $constraints = $attributeType->getOptionalConstraints();
                     } else {
                         throw new UnexpectedTypeException(
                             $options['attribute_type'],

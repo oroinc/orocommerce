@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Letters;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Url;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 use OroB2B\Bundle\AttributeBundle\AttributeType\Boolean;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
@@ -22,7 +22,7 @@ use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
 
-class AttributeTypeConstraintTest extends FormIntegrationTestCase
+class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var AttributeTypeConstraintType
