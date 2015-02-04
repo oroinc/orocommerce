@@ -1,0 +1,38 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+
+{% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A'|trans)} }) %}
+
+{% set formAction = path('orob2b_attribute_create')  %}
+
+{% block navButtons %}
+    {{ UI.cancelButton(path('orob2b_attribute_index')) }}
+    {{ UI.buttonType({'type': 'submit', 'class': 'btn-success', 'label': 'orob2b.attribute.form.create.continue'|trans}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.attribute.entity_label'|trans}) %}
+    {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'attribute-init' %}
+
+    {% set dataBlocks = [{
+        'title': 'orob2b.attribute.form.section.main'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'data': [
+                form_row(form.code),
+                form_row(form.type),
+                form_row(form.localized)
+            ]
+        }]
+    }] %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

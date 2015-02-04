@@ -1,12 +1,5 @@
 oro_menu_config:
     items:
-        websites_tab:
-            label:           'orob2b.website.menu.websites_tab.label'
-            uri:             '#'
-            extras:
-                icon:        icon-briefcase
-                position:    10
-
         websites_list:
             label:           'orob2b.website.entity_plural_label'
             route:           'orob2b_website_index'

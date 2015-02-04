@@ -21,3 +21,7 @@ orob2b:
             child_locales.label: Child locales
             parent_locale.label: Parent locale
             websites.label: Website
+
+        menu:
+            websites_list.description: List of websites
+            shortcut_websites_list.description: Show list of websites

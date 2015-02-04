@@ -15,7 +15,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
- *          }
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)

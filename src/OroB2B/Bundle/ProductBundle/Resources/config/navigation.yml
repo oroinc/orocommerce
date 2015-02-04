@@ -37,7 +37,7 @@ oro_menu_config:
         shortcuts:
             children:
                 shortcut_products_list: ~
-                shortcut_new_contact:   ~
+                shortcut_new_product:   ~
 
 oro_titles:
     orob2b_product_index: ~
