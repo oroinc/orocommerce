@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
 
@@ -46,7 +47,7 @@ class Float extends AbstractAttributeType
         return [
             new GreaterThanZero(),
             new Decimal(),
-            new Integer()
+            new IntegerConstraint()
         ];
     }
 }

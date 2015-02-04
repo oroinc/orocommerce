@@ -97,7 +97,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'optionalConstraints' => [
                         new GreaterThanZero(),
                         new Decimal(),
-                        new Integer()
+                        new IntegerConstraint()
                     ]
                 ]
             ],
