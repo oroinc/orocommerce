@@ -11,7 +11,7 @@ class LocaleTest extends EntityTestCase
 
     public function testProperties()
     {
-        $now = new \DateTimeImmutable('now');
+        $now = new \DateTime('now');
         $properties = [
             ['id', 1],
             ['code', 'test'],

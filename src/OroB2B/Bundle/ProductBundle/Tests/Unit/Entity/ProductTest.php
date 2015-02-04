@@ -12,7 +12,7 @@ class ProductTest extends EntityTestCase
 
     public function testProperties()
     {
-        $now = new \DateTimeImmutable('now');
+        $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
             ['sku', 'sku-test-01'],

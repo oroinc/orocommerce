@@ -28,7 +28,7 @@ class AttributeDefaultValueTest extends EntityTestCase
             ['integer', 3],
             ['string', 'string'],
             ['float', 3.9999],
-            ['datetime', new \DateTimeImmutable('now')],
+            ['datetime', new \DateTime('now')],
             ['text', 'text'],
             ['fallback', 'website'],
             ['locale', $locale, false],
