@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
+
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -23,6 +25,14 @@ class AttributeTypeConstraintType extends AbstractType
     protected $attributeTypeRegistry;
 
     /**
+     * @param AttributeTypeRegistry $registry
+     */
+    public function __construct(AttributeTypeRegistry $registry)
+    {
+        $this->attributeTypeRegistry = $registry;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
@@ -36,14 +46,6 @@ class AttributeTypeConstraintType extends AbstractType
     public function getParent()
     {
         return 'choice';
-    }
-
-    /**
-     * @param AttributeTypeRegistry $registry
-     */
-    public function __construct(AttributeTypeRegistry $registry)
-    {
-        $this->attributeTypeRegistry = $registry;
     }
 
     /**
@@ -66,14 +68,26 @@ class AttributeTypeConstraintType extends AbstractType
                         $constraints = $options['attribute_type']->getOptionalConstraints();
                     } elseif (is_string($options['attribute_type'])) {
                         $attributeType = $this->attributeTypeRegistry->getTypeByName($options['attribute_type']);
-                        $constraints = $attributeType->getOptionalConstraints();
+                        if (!empty($attributeType)) {
+                            $constraints = $attributeType->getOptionalConstraints();
+                        } else {
+                            throw new \LogicException(
+                                sprintf(
+                                    'Attribute type name "%s" is not exist in attribute type registry.',
+                                    $options['attribute_type']
+                                )
+                            );
+                        }
+                    } else {
+                        throw new UnexpectedTypeException(
+                            $options['attribute_type'],
+                            'OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface or string'
+                        );
                     }
 
-                    if (isset($constraints)) {
-                        foreach ($constraints as $choice) {
-                            $choices[$choice->getAlias()] = 'orob2b.attribute.form.attribute_type_constraint.'
-                                . $choice->getAlias();
-                        }
+                    foreach ($constraints as $choice) {
+                        $choices[$choice->getAlias()] = 'orob2b.attribute.form.attribute_type_constraint.'
+                            . $choice->getAlias();
                     }
 
                     return $choices;

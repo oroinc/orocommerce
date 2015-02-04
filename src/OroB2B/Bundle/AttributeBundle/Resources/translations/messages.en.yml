@@ -19,7 +19,7 @@ orob2b:
                 alphanumeric:      'Alphanumeric'
                 decimal:           'Decimal Number'
                 email:             'Email'
-                greater_than_zero: 'Greater a Zero'
+                greater_than_zero: 'Greater than Zero'
                 integer:           'Integer Number'
                 letters:           'Letters'
                 url:               'URL'

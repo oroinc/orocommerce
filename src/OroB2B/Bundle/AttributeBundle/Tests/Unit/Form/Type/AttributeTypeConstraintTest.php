@@ -54,10 +54,6 @@ class AttributeTypeConstraintTest extends FormIntegrationTestCase
         $this->formType = new AttributeTypeConstraintType($this->registry);
     }
 
-    protected $constraintsChoices = [
-
-    ];
-
     /**
      * @param array $inputOptions
      * @param array $expectedOptions
@@ -144,6 +140,24 @@ class AttributeTypeConstraintTest extends FormIntegrationTestCase
                 'submittedData' => null,
             ],
         ];
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\UnexpectedTypeException
+     */
+    public function testUnexpectedType()
+    {
+        $form = $this->factory->create($this->formType, null, ['attribute_type' => 10]);
+        $form->getData();
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testNotExistAttributeType()
+    {
+        $form = $this->factory->create($this->formType, null, ['attribute_type' => 'not correct']);
+        $form->getData();
     }
 
     public function testGetName()
