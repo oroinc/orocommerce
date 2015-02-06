@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM;
 
+use OroB2B\Bundle\AttributeBundle\Model\SharingType;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -45,7 +46,7 @@ abstract class AbstractLoadAttributeData extends AbstractFixture implements Cont
             $attribute = new Attribute();
             $attribute->setCode($item['code']);
             $attribute->setType($item['type']);
-            $attribute->setSharingType('global');
+            $attribute->setSharingType(SharingType::GENERAL);
             $attribute->setLocalized($item['localized']);
             $attribute->setSystem($item['system']);
             $attribute->setRequired($item['required']);

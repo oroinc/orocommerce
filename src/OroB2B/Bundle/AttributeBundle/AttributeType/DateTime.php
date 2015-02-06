@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+
 class DateTime extends AbstractAttributeType
 {
     const NAME = 'datetime';
@@ -10,7 +12,7 @@ class DateTime extends AbstractAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFormParameters()
+    public function getFormParameters(Attribute $attribute)
     {
         return [
           'type' => 'oro_datetime'

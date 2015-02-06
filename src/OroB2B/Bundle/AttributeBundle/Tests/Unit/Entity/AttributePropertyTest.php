@@ -22,13 +22,8 @@ class AttributePropertyTest extends EntityTestCase
             ['id', 1],
             ['attribute', $attribute, false],
             ['website', $website, false],
-            ['inFilters', true],
-            ['useForSearch', true],
-            ['useInSorting', true],
-            ['onProductComparison', true],
-            ['onProductView', true],
-            ['inProductList', false],
-            ['onAdvancedSearch', false],
+            ['field', AttributeProperty::FIELD_ON_PRODUCT_VIEW],
+            ['value', true],
             ['fallback', 'website'],
         ];
 

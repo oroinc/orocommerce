@@ -8,7 +8,15 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @ORM\Table(name="orob2b_attribute_label")
+ * @ORM\Table(
+ *      name="orob2b_attribute_label",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="attribute_label_unique_idx",
+ *              columns={"attribute_id", "locale_id"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity
  * @Config(
  *      defaultValues={
@@ -48,7 +56,7 @@ class AttributeLabel
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $value;
 

@@ -10,6 +10,7 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
@@ -22,20 +23,42 @@ use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
 class AttributeTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider attributeTypeDataProvider
      * @param AttributeTypeInterface $type
      * @param array $expected
+     * @param Attribute|null $attribute
+     * @dataProvider attributeTypeDataProvider
      */
-    public function testAttributeTypes(AttributeTypeInterface $type, array $expected)
-    {
+    public function testAttributeTypes(
+        AttributeTypeInterface $type,
+        array $expected,
+        Attribute $attribute = null,
+        array $normalizationData = []
+    ) {
+        if (!$attribute) {
+            $attribute = new Attribute();
+        }
+
         $this->assertEquals($expected['name'], $type->getName());
         $this->assertEquals($expected['typeField'], $type->getDataTypeField());
         $this->assertEquals($expected['isContainHtml'], $type->isContainHtml());
         $this->assertEquals($expected['isUsedForSearch'], $type->isUsedForSearch());
         $this->assertEquals($expected['isUsedInFilters'], $type->isUsedInFilters());
-        $this->assertEquals($expected['formParameters'], $type->getFormParameters());
+        $this->assertEquals($expected['formParameters'], $type->getFormParameters($attribute));
         $this->assertEquals($expected['requiredConstraints'], $type->getRequiredConstraints());
         $this->assertEquals($expected['optionalConstraints'], $type->getOptionalConstraints());
+        $this->assertEquals($expected['canBeUnique'], $type->canBeUnique());
+        $this->assertEquals($expected['canBeRequired'], $type->canBeRequired());
+
+        if (!empty($normalizationData['normalize'])) {
+            foreach ($normalizationData['normalize'] as $from => $to) {
+                $this->assertEquals($to, $type->normalize($from));
+            }
+        }
+        if (!empty($normalizationData['denormalize'])) {
+            foreach ($normalizationData['denormalize'] as $from => $to) {
+                $this->assertEquals($to, $type->denormalize($from));
+            }
+        }
     }
 
     /**
@@ -44,6 +67,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function attributeTypeDataProvider()
     {
+        $htmlAttribute = new Attribute();
+        $htmlAttribute->setContainHtml(true);
+
         return [
             'integer' => [
                 'attributeType' => new Integer(),
@@ -54,14 +80,17 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => false,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type'  => 'integer'
+                        'type' => 'integer',
+                        'options' => ['type' => 'text'],
                     ],
                     'requiredConstraints' => [
                         new IntegerConstraint()
                     ],
                     'optionalConstraints' => [
                         new GreaterThanZero()
-                    ]
+                    ],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
                 ]
             ],
             'boolean' => [
@@ -76,8 +105,22 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type'  => 'checkbox'
                     ],
                     'requiredConstraints' => [],
-                    'optionalConstraints' => []
-                ]
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => false,
+                ],
+                'attribute' => null,
+                'normalizationData' => [
+                    'normalize' => [
+                        0 => false,
+                        1 => true,
+                    ],
+                   'denormalize' => [
+                       '' => 0,
+                       '0' => 0,
+                       '1' => 1,
+                   ],
+                ],
             ],
             'float' => [
                 'attributeType' => new Float(),
@@ -96,7 +139,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'optionalConstraints' => [
                         new GreaterThanZero(),
                         new IntegerConstraint()
-                    ]
+                    ],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
                 ]
             ],
             'string' => [
@@ -119,10 +164,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         new IntegerConstraint(),
                         new Email(),
                         new Url()
-                    ]
+                    ],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
                 ]
             ],
-            'text' => [
+            'text not localized' => [
                 'attributeType' => new Text(),
                 'expected' => [
                     'name' => Text::NAME,
@@ -131,7 +178,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => false,
                     'formParameters' => [
-                        'type'  => 'textarea'
+                        'type' => 'textarea',
                     ],
                     'requiredConstraints' => [],
                     'optionalConstraints' => [
@@ -142,8 +189,36 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         new IntegerConstraint(),
                         new Email(),
                         new Url()
-                    ]
+                    ],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
                 ]
+            ],
+            'text localized' => [
+                'attributeType' => new Text(),
+                'expected' => [
+                    'name' => Text::NAME,
+                    'typeField' => 'text',
+                    'isContainHtml' => true,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => false,
+                    'formParameters' => [
+                        'type' => 'oro_rich_text',
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [
+                        new Letters(),
+                        new Alphanumeric(),
+                        new UrlSafe(),
+                        new Decimal(),
+                        new IntegerConstraint(),
+                        new Email(),
+                        new Url()
+                    ],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $htmlAttribute
             ],
             'date' => [
                 'attributeType' => new Date(),
@@ -157,7 +232,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type'  => 'oro_date'
                     ],
                     'requiredConstraints' => [],
-                    'optionalConstraints' => []
+                    'optionalConstraints' => [],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
                 ]
             ],
             'datetime' => [
@@ -172,7 +249,9 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type'  => 'oro_datetime'
                     ],
                     'requiredConstraints' => [],
-                    'optionalConstraints' => []
+                    'optionalConstraints' => [],
+                    'canBeUnique' => true,
+                    'canBeRequired' => true,
                 ]
             ]
         ];

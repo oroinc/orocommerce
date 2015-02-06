@@ -14,6 +14,10 @@ orob2b:
                 text:     'Text'
                 date:     'Date'
                 datetime: 'DateTime'
+            sharing_type:
+                general:  'Global'
+                group:    'Sharing Group'
+                website:  'Website'
             attribute_type_constraint:
                 none:              'None'
                 alphanumeric:      'Alphanumeric'
@@ -27,7 +31,9 @@ orob2b:
             create:
                 continue: 'Continue'
             section:
-                main: 'Main parameters'
+                main: 'Main Parameters'
+                data: 'Attribute Data'
+                additional: 'Additional Properties'
         default: 'Default'
 
         menu:
@@ -36,11 +42,14 @@ orob2b:
             shortcut_new_attribute.description: 'Create new attribute entity'
             shortcut_attributes_list.description: 'Show list of existing attributes'
 
+        controller:
+            attribute.saved.message: 'Attribute saved'
+
         entity_label: 'Attribute'
         entity_plural_label: 'Attributes'
         entity_description: 'Represents product attribute data'
         code.label: 'Code'
-        contain_html.label: 'Contain HTML'
+        contain_html.label: 'May contain HTML'
         default_values.label: 'Default value'
         id.label: 'ID'
         labels.label: 'Label'
@@ -48,7 +57,7 @@ orob2b:
         options.label: 'Attribute Options'
         properties.label: 'Attribute Properties'
         required.label: 'Required'
-        sharing_type.label: 'Sharing type'
+        sharing_type.label: 'Value sharing'
         system.label: 'System'
         type.label: 'Type'
         unique.label: 'Unique'
@@ -96,12 +105,16 @@ orob2b:
             entity_description: 'Represents attribute property value'
             fallback.label: 'Fallback'
             id.label: 'ID'
-            in_filters.label: 'Show in filters'
-            in_product_list.label: 'Show in product list'
-            on_advanced_search.label: 'Show on advanced search'
-            on_product_comparison.label: 'Show on product comparison'
-            on_product_view.label: 'Show on product view'
-            use_for_search.label: 'Use for search'
-            use_in_sorting.label: 'Use in sorting'
+            field.label: 'Field'
+            value.label: 'Value'
             attribute.label: 'Attribute'
             website.label: 'Website'
+
+            fields:
+                use_in_filters: 'Use in filters'
+                in_product_listing: 'Show in product listing'
+                on_advanced_search: 'Show on advanced search'
+                on_product_comparison: 'Show on product comparison'
+                on_product_view: 'Show on product view'
+                use_for_search: 'Use for search'
+                use_in_sorting: 'Use in sorting'

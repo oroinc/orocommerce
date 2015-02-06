@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 use Symfony\Component\Validator\Constraint;
 
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\AttributeConstraintInterface;
 
 /**
@@ -36,9 +37,10 @@ interface AttributeTypeInterface
      *      ]
      * ]
      *
+     * @param Attribute $attribute
      * @return array
      */
-    public function getFormParameters();
+    public function getFormParameters(Attribute $attribute);
 
     /**
      * Gets required validation constraints
@@ -74,4 +76,34 @@ interface AttributeTypeInterface
      * @return bool
      */
     public function isUsedInFilters();
+
+    /**
+     * Checks is this attribute can be unique
+     *
+     * @return bool
+     */
+    public function canBeUnique();
+
+    /**
+     * Checks is this attribute can be required
+     *
+     * @return bool
+     */
+    public function canBeRequired();
+
+    /**
+     * Convert data from database representation to attribute type value
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function normalize($value);
+
+    /**
+     * Convert data from attribute type value to database representation
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public function denormalize($value);
 }

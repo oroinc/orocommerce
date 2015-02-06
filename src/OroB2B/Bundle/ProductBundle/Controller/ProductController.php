@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -73,6 +74,7 @@ class ProductController extends Controller
      *      class="OroB2BProductBundle:Product",
      *      permission="CREATE"
      * )
+     * @return array|RedirectResponse
      */
     public function createAction()
     {
@@ -91,13 +93,17 @@ class ProductController extends Controller
      *      permission="EDIT"
      * )
      * @param Product $product
-     * @return array
+     * @return array|RedirectResponse
      */
     public function updateAction(Product $product)
     {
         return $this->update($product);
     }
 
+    /**
+     * @param Product $product
+     * @return array|RedirectResponse
+     */
     protected function update(Product $product)
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(

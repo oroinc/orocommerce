@@ -23,6 +23,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Attribute
 {
@@ -323,6 +324,40 @@ class Attribute
     }
 
     /**
+     * @param string $field
+     * @return Collection|AttributeProperty[]
+     */
+    public function getPropertiesByField($field)
+    {
+        return $this->properties->filter(function (AttributeProperty $property) use ($field) {
+            return $property->getField() == $field;
+        });
+    }
+
+    /**
+     * @param string $field
+     * @param int|null $websiteId
+     * @return AttributeProperty|null
+     */
+    public function getPropertyByFieldAndWebsiteId($field, $websiteId)
+    {
+        $properties = $this->properties->filter(function (AttributeProperty $property) use ($field, $websiteId) {
+            if ($property->getField() != $field) {
+                return false;
+            }
+
+            $website = $property->getWebsite();
+            if ($website) {
+                return $website->getId() == $websiteId;
+            } else {
+                return empty($websiteId);
+            }
+        });
+
+        return $properties->count() ? $properties->first() : null;
+    }
+
+    /**
      * Set properties for current attribute
      *
      * @param Collection|AttributeProperty[] $properties
@@ -380,6 +415,24 @@ class Attribute
     }
 
     /**
+     * @param int|null $localeId
+     * @return AttributeLabel|null
+     */
+    public function getLabelByLocaleId($localeId)
+    {
+        $labels = $this->labels->filter(function (AttributeLabel $label) use ($localeId) {
+            $locale = $label->getLocale();
+            if ($locale) {
+                return $locale->getId() == $localeId;
+            } else {
+                return empty($localeId);
+            }
+        });
+
+        return $labels->count() ? $labels->first() : null;
+    }
+
+    /**
      * Set labels for current attribute
      *
      * @param Collection|AttributeLabel[] $labels
@@ -434,6 +487,24 @@ class Attribute
     public function getDefaultValues()
     {
         return $this->defaultValues;
+    }
+
+    /**
+     * @param int|null $localeId
+     * @return AttributeDefaultValue|null
+     */
+    public function getDefaultValueByLocaleId($localeId)
+    {
+        $values = $this->defaultValues->filter(function (AttributeDefaultValue $value) use ($localeId) {
+            $locale = $value->getLocale();
+            if ($locale) {
+                return $locale->getId() == $localeId;
+            } else {
+                return empty($localeId);
+            }
+        });
+
+        return $values->count() ? $values->first() : null;
     }
 
     /**

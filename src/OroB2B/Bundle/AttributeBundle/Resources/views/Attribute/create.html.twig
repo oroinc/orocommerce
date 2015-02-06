@@ -2,7 +2,7 @@
 
 {% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A'|trans)} }) %}
 
-{% set formAction = path('orob2b_attribute_create')  %}
+{% set formAction = path('orob2b_attribute_init')  %}
 
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_attribute_index')) }}
@@ -24,7 +24,7 @@
             'data': [
                 form_row(form.code),
                 form_row(form.type),
-                form_row(form.localized)
+                form_row(form.localized),
             ]
         }]
     }] %}

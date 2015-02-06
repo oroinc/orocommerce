@@ -34,5 +34,6 @@ oro_menu_config:
 
 oro_titles:
     orob2b_attribute_index:  ~
-    orob2b_attribute_init:   'Create Attribute'
     orob2b_attribute_create: 'Create Attribute'
+    orob2b_attribute_init:   'Create Attribute'
+    orob2b_attribute_update: '%%code%% - Edit'

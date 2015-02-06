@@ -84,11 +84,12 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('attribute_id', 'integer', ['notnull' => false]);
         $table->addColumn('locale_id', 'integer', ['notnull' => false]);
-        $table->addColumn('value', 'string', ['length' => 255]);
+        $table->addColumn('value', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['attribute_id'], 'IDX_587CF949B6E62EFA', []);
         $table->addIndex(['locale_id'], 'IDX_587CF949E559DFD1', []);
+        $table->addUniqueIndex(['attribute_id', 'locale_id'], 'attribute_label_unique_idx');
     }
 
     /**
@@ -108,6 +109,7 @@ class OroB2BAttributeBundle implements Migration
         $table->setPrimaryKey(['id']);
         $table->addIndex(['attribute_id'], 'IDX_B5688EBAB6E62EFA', []);
         $table->addIndex(['locale_id'], 'IDX_B5688EBAE559DFD1', []);
+        $table->addUniqueIndex(['attribute_id', 'locale_id'], 'attribute_option_unique_idx');
     }
 
     /**
@@ -121,17 +123,13 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('attribute_id', 'integer', ['notnull' => false]);
-        $table->addColumn('on_product_view', 'boolean', []);
-        $table->addColumn('use_in_sorting', 'boolean', []);
-        $table->addColumn('on_advanced_search', 'boolean', []);
-        $table->addColumn('on_product_comparison', 'boolean', []);
-        $table->addColumn('in_filters', 'boolean', []);
+        $table->addColumn('field', 'string', ['length' => 64]);
+        $table->addColumn('value', 'boolean', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
-        $table->addColumn('in_product_list', 'boolean', []);
-        $table->addColumn('use_for_search', 'boolean', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['attribute_id'], 'IDX_D3FF0DBBB6E62EFA', []);
         $table->addIndex(['website_id'], 'IDX_D3FF0DBB18F45C82', []);
+        $table->addUniqueIndex(['attribute_id', 'website_id', 'field'], 'attribute_property_unique_idx');
     }
 
     /**
