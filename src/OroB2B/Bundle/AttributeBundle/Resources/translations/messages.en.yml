@@ -1,24 +1,24 @@
 orob2b:
     attribute:
-        entity_label: Attribute
-        entity_plural_label: Attributes
-        entity_description: Represents attribute information
-        id.label: Id
-        type.label:         Type
-        code.label:         Code
-        sharingType.label:  Sharing
-        sharing_type.label: 'Sharing type'
-        validation.label:   Validation
-        containHtml.label:  Contains HTML
-        localized.label:    Localized
-        system.label:       System
-        unique.label:       Unique
-        required.label:     Required
-        default_values.label: 'Default value'
-        labels.label:       'Label'
-        options.label:      'Attribute Options'
-        properties.label:   'Attribute Properties'
-        default: 'Default'
+        entity_label:           Attribute
+        entity_plural_label:    Attributes
+        entity_description:     Represents attribute information
+        id.label:               Id
+        type.label:             Type
+        code.label:             Code
+        sharingType.label:      Sharing
+        sharing_type.label:     Sharing type
+        validation.label:       Validation
+        containHtml.label:      Contains HTML
+        localized.label:        Localized
+        system.label:           System
+        unique.label:           Unique
+        required.label:         Required
+        default_values.label:   Default value
+        labels.label:           Label
+        options.label:          Attribute Options
+        properties.label:       Attribute Properties
+        default:                Default
 
         form:
             fallback:
@@ -143,3 +143,6 @@ orob2b:
                 xxxxxx:     Xxxxxx
                 yyyyyy:     Yyyyyy
                 zzzzzz:     Zzzzzz
+
+        controller:
+            attribute.saved.message: Attribute has been saved

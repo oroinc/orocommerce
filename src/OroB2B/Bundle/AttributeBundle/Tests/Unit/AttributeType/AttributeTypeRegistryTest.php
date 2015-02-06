@@ -57,5 +57,4 @@ class AttributeTypeRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertArrayHasKey(self::ATTRIBUTE_TYPE_NAME, $this->registry->getChoices());
     }
-
 }
