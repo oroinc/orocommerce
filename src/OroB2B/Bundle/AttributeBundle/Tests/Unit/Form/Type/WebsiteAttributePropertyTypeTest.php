@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -46,6 +47,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
                     AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     WebsiteCollectionType::NAME => new WebsiteCollectionType($this->registry),
+                    CheckboxTypeStub::NAME => new CheckboxTypeStub(),
                 ],
                 []
             )
@@ -101,7 +103,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'checkbox with full data' => [
-                'options' => ['type' => 'checkbox', 'options' => ['value' => 't']],
+                'options' => ['type' => CheckboxTypeStub::NAME, 'options' => ['value' => 't']],
                 'defaultData' => [
                     null => true,
                     1    => false,

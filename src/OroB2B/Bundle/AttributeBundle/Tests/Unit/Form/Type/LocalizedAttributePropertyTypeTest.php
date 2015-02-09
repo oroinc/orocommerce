@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\PercentTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -46,6 +47,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                     AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
+                    PercentTypeStub::NAME => new PercentTypeStub(),
                 ],
                 []
             )
@@ -101,7 +103,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'percent with full data' => [
-                'options' => ['type' => 'percent', 'options' => ['type' => 'integer']],
+                'options' => ['type' => PercentTypeStub::NAME, 'options' => ['type' => 'integer']],
                 'defaultData' => [
                     null => 5,
                     1    => 10,
