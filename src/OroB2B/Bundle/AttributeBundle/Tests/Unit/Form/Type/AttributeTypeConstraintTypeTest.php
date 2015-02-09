@@ -38,7 +38,13 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->registry = $this->getMock('OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry');
+        /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->registry = $this->getMockBuilder('OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry')
+            ->setConstructorArgs([$translator])
+            ->getMock();
+
         $this->registry->expects($this->any())
             ->method('getTypeByName')
             ->will($this->returnValueMap([

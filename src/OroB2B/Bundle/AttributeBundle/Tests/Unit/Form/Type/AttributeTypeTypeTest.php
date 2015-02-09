@@ -37,7 +37,13 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $registry = $this->getMock('OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry');
+        /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $registry = $this->getMockBuilder('OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry')
+            ->setConstructorArgs([$translator])
+            ->getMock();
+
         $registry->expects($this->any())
             ->method('getTypes')
             ->will($this->returnValue([
@@ -49,6 +55,8 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
                 Date::NAME => new Date(),
                 DateTime::NAME => new DateTime()
             ]));
+
+        /** @var \OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry $registry */
 
         $this->formType = new AttributeTypeType($registry);
     }

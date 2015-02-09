@@ -34,6 +34,7 @@ orob2b:
                 main: 'Main Parameters'
                 data: 'Attribute Data'
                 additional: 'Additional Properties'
+                
         default: 'Default'
 
         menu:
@@ -41,6 +42,9 @@ orob2b:
             shortcut_new_attribute.label: 'Create new attribute'
             shortcut_new_attribute.description: 'Create new attribute entity'
             shortcut_attributes_list.description: 'Show list of existing attributes'
+            
+        sections:
+            general: General
 
         controller:
             attribute.saved.message: 'Attribute saved'
