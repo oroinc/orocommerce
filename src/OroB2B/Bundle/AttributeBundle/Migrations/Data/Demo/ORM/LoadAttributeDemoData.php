@@ -10,15 +10,13 @@ class LoadAttributeDemoData extends AbstractLoadAttributeData
     public function __construct()
     {
         // TODO: Why don't we have an attribute factory that could be used?
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Boolean');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Date');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\DateTime');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Float');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Integer');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\String');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Text');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Boolean');
-        $this->arrtibutes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Boolean');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Boolean');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Date');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\DateTime');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Float');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Integer');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\String');
+        $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Text');
     }
 
     /**
