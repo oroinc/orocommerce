@@ -3,7 +3,4 @@
     <description>Oro Inc. coding standard.</description>
     <!-- Include the whole PSR-2 standard -->
     <rule ref="PSR2"/>
-    <rule ref="PSR1.Classes.ClassDeclaration.MultipleClasses">
-        <exclude-pattern>*Test.php</exclude-pattern>
-    </rule>
 </ruleset>

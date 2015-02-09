@@ -7,6 +7,9 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 
 class AttributeTypeRegistryTest extends \PHPUnit_Framework_TestCase
 {
+
+    const ATTRIBUTE_TYPE_NAME = 'test';
+
     /**
      * @var AttributeTypeRegistry
      */
@@ -26,9 +29,12 @@ class AttributeTypeRegistryTest extends \PHPUnit_Framework_TestCase
         $this->attributeTypeMock
             ->expects($this->any())
             ->method('getName')
-            ->will($this->returnValue('test'));
+            ->will($this->returnValue(self::ATTRIBUTE_TYPE_NAME));
 
-        $this->registry = new AttributeTypeRegistry();
+        /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->registry = new AttributeTypeRegistry($translator);
         $this->registry->addType($this->attributeTypeMock);
     }
 
@@ -39,11 +45,16 @@ class AttributeTypeRegistryTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTypeByNameResult()
     {
-        $this->assertEquals($this->attributeTypeMock, $this->registry->getTypeByName('test'));
+        $this->assertEquals($this->attributeTypeMock, $this->registry->getTypeByName(self::ATTRIBUTE_TYPE_NAME));
     }
 
     public function testGetTypes()
     {
         $this->assertContains($this->attributeTypeMock, $this->registry->getTypes());
+    }
+
+    public function testGetChoices()
+    {
+        $this->assertArrayHasKey(self::ATTRIBUTE_TYPE_NAME, $this->registry->getChoices());
     }
 }

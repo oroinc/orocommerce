@@ -1,0 +1,17 @@
+{#
+    Available variables:
+    * entity       - attribute entity OroB2B\Bundle\AttributeBundle\Entity\Attribute or null
+    * indexer_item - indexer item Oro\Bundle\SearchBundle\Query\Result\Item
+#}
+{% extends 'OroSearchBundle:Search:searchResultItem.html.twig' %}
+
+{% set showImage = false %}
+
+{% set recordUrl = indexer_item.recordUrl %}
+{% set title = indexer_item.recordTitle %}
+
+{% set entityType = 'orob2b.attribute.entity_label'|trans %}
+
+{% set entityInfo = [
+    {'title': 'orob2b_attribute.attribute.system.label'|trans, 'value': entity.system ? 'Yes'|trans : 'No'|trans},
+] %}

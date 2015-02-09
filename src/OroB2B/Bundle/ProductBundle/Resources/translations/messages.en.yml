@@ -22,4 +22,4 @@ orob2b:
             product_information: Product Information
 
         controller:
-            product.saved.message: Product saved
+            product.saved.message: Product has been saved

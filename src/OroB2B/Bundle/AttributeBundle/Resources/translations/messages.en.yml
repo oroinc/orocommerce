@@ -1,5 +1,25 @@
 orob2b:
     attribute:
+        entity_label:           Attribute
+        entity_plural_label:    Attributes
+        entity_description:     Represents attribute information
+        id.label:               Id
+        type.label:             Type
+        code.label:             Code
+        sharingType.label:      Sharing
+        sharing_type.label:     Sharing type
+        validation.label:       Validation
+        containHtml.label:      Contains HTML
+        localized.label:        Localized
+        system.label:           System
+        unique.label:           Unique
+        required.label:         Required
+        default_values.label:   Default value
+        labels.label:           Label
+        options.label:          Attribute Options
+        properties.label:       Attribute Properties
+        default:                Default
+
         form:
             fallback:
                 empty:         'Choose fallback...'
@@ -28,31 +48,18 @@ orob2b:
                 continue: 'Continue'
             section:
                 main: 'Main parameters'
-        default: 'Default'
 
         menu:
-            attributes_list.description: 'List of existing product attributes'
-            shortcut_new_attribute.label: 'Create new attribute'
-            shortcut_new_attribute.description: 'Create new attribute entity'
-            shortcut_attributes_list.description: 'Show list of existing attributes'
+            attribute_list.description: List of existing attributes
+            shortcut_new_attribute.label: Create new attribute
+            shortcut_new_attribute.description: Create new attribute
+            shortcut_attribute_list.description: Show list of existing attributes
 
-        entity_label: 'Attribute'
-        entity_plural_label: 'Attributes'
-        entity_description: 'Represents product attribute data'
-        code.label: 'Code'
-        contain_html.label: 'Contain HTML'
-        default_values.label: 'Default value'
-        id.label: 'ID'
-        labels.label: 'Label'
-        localized.label: 'Localized'
-        options.label: 'Attribute Options'
-        properties.label: 'Attribute Properties'
-        required.label: 'Required'
-        sharing_type.label: 'Sharing type'
-        system.label: 'System'
-        type.label: 'Type'
-        unique.label: 'Unique'
-        validation.label: 'Validation'
+        sections:
+            general: General
+
+        widgets:
+            attribute_information: Attribute Information
 
         attributedefaultvalue:
             entity_label: 'Attribute default value'
@@ -105,3 +112,37 @@ orob2b:
             use_in_sorting.label: 'Use in sorting'
             attribute.label: 'Attribute'
             website.label: 'Website'
+
+        attribute:
+
+            scope:
+                global:     Global
+                shared:     Shared
+                website:    Website
+
+            type:
+                boolean:    Boolean
+                date:       Date
+                datetime:   DateTime
+                float:      Float
+                integer:    Integer
+                string:     String
+                text:       Text
+
+                smallint:   SmallInt
+                bigint:     BigInt
+                time:       Time
+                percent:    Percent
+                enum:       Select
+                multiEnum:  Multi-Select
+                file:       File
+                image:      Image
+                optionSet:  Option Set
+
+            validation:
+                xxxxxx:     Xxxxxx
+                yyyyyy:     Yyyyyy
+                zzzzzz:     Zzzzzz
+
+        controller:
+            attribute.saved.message: Attribute has been saved
