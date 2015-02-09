@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -14,6 +13,7 @@ use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
 
 class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
 {
@@ -74,6 +74,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
         }
 
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 

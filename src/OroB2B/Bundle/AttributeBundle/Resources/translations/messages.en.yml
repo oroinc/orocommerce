@@ -28,7 +28,7 @@ orob2b:
 
         form:
             fallback:
-                empty:         'Choose fallback...'
+                empty:         'Custom value'
                 parent_locale: 'Parent locale value'
                 default:       'Default value'
 
