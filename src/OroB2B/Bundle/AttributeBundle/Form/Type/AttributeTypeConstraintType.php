@@ -54,7 +54,7 @@ class AttributeTypeConstraintType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setRequired(['attribute_type']);
-        $resolver->setDefaults(['empty_value' => 'orob2b.attribute.form.attribute_type_constraint.none']);
+        $resolver->setDefaults(['empty_value' => 'orob2b.attribute.attribute_type_constraint.none']);
         $resolver->setNormalizers(
             [
                 'choices' => function (Options $options, $value) {
@@ -85,7 +85,7 @@ class AttributeTypeConstraintType extends AbstractType
                     }
 
                     foreach ($constraints as $choice) {
-                        $choices[$choice->getAlias()] = 'orob2b.attribute.form.attribute_type_constraint.'
+                        $choices[$choice->getAlias()] = 'orob2b.attribute.attribute_type_constraint.'
                             . $choice->getAlias();
                     }
 

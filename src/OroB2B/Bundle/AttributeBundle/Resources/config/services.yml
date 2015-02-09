@@ -27,8 +27,6 @@ services:
 
     orob2b_attribute.attribute_type.registry:
         class: %orob2b_attribute.attribute_type.registry.class%
-        arguments:
-            - @translator
 
     orob2b_attribute.attribute_integer:
         class: %orob2b_attribute.attribute_type.integer.class%
@@ -58,6 +56,3 @@ services:
         class: %orob2b_attribute.attribute_type.datetime.class%
         tags:
             - { name: orob2b_attribute.attribute_type }
-
-    orob2b_attribute.datagrid.attribute.helper:
-        class: %orob2b_attribute.datagrid.attribute.helper.class%

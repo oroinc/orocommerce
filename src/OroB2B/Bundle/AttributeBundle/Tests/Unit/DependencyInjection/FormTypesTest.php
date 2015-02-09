@@ -22,7 +22,7 @@ class FormTypesTest extends ExtensionTestCase
             'orob2b_attribute.form.type.localized_attribute_property.class',
             'orob2b_attribute.form.type.website_collection.class',
             'orob2b_attribute.form.type.website_attribute_property.class',
-            'orob2b_attribute.form.type.init.class',
+            'orob2b_attribute.form.type.create.class',
             'orob2b_attribute.form.extension.integer.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
@@ -37,7 +37,7 @@ class FormTypesTest extends ExtensionTestCase
             'orob2b_attribute.form.type.localized_attribute_property',
             'orob2b_attribute.form.type.website_collection',
             'orob2b_attribute.form.type.website_attribute_property',
-            'orob2b_attribute.form.type.init',
+            'orob2b_attribute.form.type.create',
             'orob2b_attribute.form.extension.integer',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AttributeBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -103,40 +102,6 @@ class AttributeController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_attribute_update", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="orob2b_attribute_update",
-     *      type="entity",
-     *      class="OroB2BAttributeBundle:Attribute",
-     *      permission="EDIT"
-     * )
-     * @param \OroB2B\Bundle\AttributeBundle\Entity\Attribute $attribute
-     * @return array
-     */
-    public function updateAction(Attribute $attribute)
-    {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $attribute,
-            $this->get('orob2b_attribute.form.attribute'),
-            function (Attribute $attribute) {
-                return array(
-                    'route' => 'orob2b_attribute_update',
-                    'parameters' => array('id' => $attribute->getId())
-                );
-            },
-            function (Attribute $attribute) {
-                return array(
-                    'route' => 'orob2b_attribute_view',
-                    'parameters' => array('id' => $attribute->getId())
-                );
-            },
-            $this->get('translator')->trans('orob2b.attribute.controller.attribute.saved.message'),
-            $this->get('orob2b_attribute.form.handler.attribute')
-        );
-    }
-
-    /**
      * @Route("/", name="orob2b_attribute_index")
      * @Template
      * @Acl(
@@ -204,8 +169,8 @@ class AttributeController extends Controller
             function (Attribute $attribute) {
                 return ['route' => 'orob2b_attribute_update', 'parameters' => ['id' => $attribute->getId()]];
             },
-            function () {
-                return ['route' => 'orob2b_attribute_index'];
+            function (Attribute $attribute) {
+                return ['route' => 'orob2b_attribute_view', 'parameters' => ['id' => $attribute->getId()]];
             },
             $this->get('translator')->trans('orob2b.attribute.controller.attribute.saved.message'),
             $handler

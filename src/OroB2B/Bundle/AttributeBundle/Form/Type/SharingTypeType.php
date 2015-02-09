@@ -34,7 +34,7 @@ class SharingTypeType extends AbstractType
     {
         $choices = [];
         foreach (SharingType::getTypes() as $type) {
-            $choices[$type] = 'orob2b.attribute.form.sharing_type.' . $type;
+            $choices[$type] = 'orob2b.attribute.sharing_type.' . $type;
         }
 
         $resolver->setDefaults(['empty_value' => false, 'choices' => $choices]);

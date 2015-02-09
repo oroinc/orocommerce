@@ -38,11 +38,7 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-
         $this->registry = $this->getMockBuilder('OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry')
-            ->setConstructorArgs([$translator])
             ->getMock();
 
         $this->registry->expects($this->any())
@@ -92,10 +88,10 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
                     'attribute_type' => new Float()
                 ],
                 'expectedOptions' => [
-                    'empty_value' => 'orob2b.attribute.form.attribute_type_constraint.none',
+                    'empty_value' => 'orob2b.attribute.attribute_type_constraint.none',
                     'choices' => [
-                        GreaterThanZero::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.greater_than_zero',
-                        IntegerConstraint::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.integer'
+                        GreaterThanZero::ALIAS => 'orob2b.attribute.attribute_type_constraint.greater_than_zero',
+                        IntegerConstraint::ALIAS => 'orob2b.attribute.attribute_type_constraint.integer'
                     ]
                 ],
                 'submittedData' => GreaterThanZero::ALIAS,
@@ -105,7 +101,7 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
                     'attribute_type' => new Boolean()
                 ],
                 'expectedOptions' => [
-                    'empty_value' => 'orob2b.attribute.form.attribute_type_constraint.none',
+                    'empty_value' => 'orob2b.attribute.attribute_type_constraint.none',
                     'choices' => []
                 ],
                 'submittedData' => null,
@@ -115,15 +111,15 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
                     'attribute_type' => Text::NAME
                 ],
                 'expectedOptions' => [
-                    'empty_value' => 'orob2b.attribute.form.attribute_type_constraint.none',
+                    'empty_value' => 'orob2b.attribute.attribute_type_constraint.none',
                     'choices' => [
-                        Letters::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.letters',
-                        Alphanumeric::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.alphanumeric',
-                        UrlSafe::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.url_safe',
-                        Decimal::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.decimal',
-                        IntegerConstraint::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.integer',
-                        Email::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.email',
-                        Url::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.url'
+                        Letters::ALIAS => 'orob2b.attribute.attribute_type_constraint.letters',
+                        Alphanumeric::ALIAS => 'orob2b.attribute.attribute_type_constraint.alphanumeric',
+                        UrlSafe::ALIAS => 'orob2b.attribute.attribute_type_constraint.url_safe',
+                        Decimal::ALIAS => 'orob2b.attribute.attribute_type_constraint.decimal',
+                        IntegerConstraint::ALIAS => 'orob2b.attribute.attribute_type_constraint.integer',
+                        Email::ALIAS => 'orob2b.attribute.attribute_type_constraint.email',
+                        Url::ALIAS => 'orob2b.attribute.attribute_type_constraint.url'
                     ]
                 ],
                 'submittedData' => Alphanumeric::ALIAS,
@@ -132,14 +128,14 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [
                     'attribute_type' => new Integer(),
                     'choices' => [
-                        GreaterThanZero::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.greater_than_zero',
-                        Decimal::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.decimal'
+                        GreaterThanZero::ALIAS => 'orob2b.attribute.attribute_type_constraint.greater_than_zero',
+                        Decimal::ALIAS => 'orob2b.attribute.attribute_type_constraint.decimal'
                     ],
                 ],
                 'expectedOptions' => [
                     'choices' => [
-                        GreaterThanZero::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.greater_than_zero',
-                        Decimal::ALIAS => 'orob2b.attribute.form.attribute_type_constraint.decimal'
+                        GreaterThanZero::ALIAS => 'orob2b.attribute.attribute_type_constraint.greater_than_zero',
+                        Decimal::ALIAS => 'orob2b.attribute.attribute_type_constraint.decimal'
                     ],
                 ],
                 'submittedData' => null,

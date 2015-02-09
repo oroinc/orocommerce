@@ -1,40 +1,40 @@
 orob2b:
     attribute:
+        attribute_type:
+            empty:    'Choose attribute type...'
+            integer:  'Integer'
+            float:    'Float'
+            boolean:  'Boolean'
+            string:   'String'
+            text:     'Text'
+            date:     'Date'
+            datetime: 'DateTime'
+        sharing_type:
+            general:  'Global'
+            group:    'Sharing Group'
+            website:  'Website'
+        attribute_type_constraint:
+            none:              'None'
+            alphanumeric:      'Alphanumeric'
+            decimal:           'Decimal Number'
+            email:             'Email'
+            greater_than_zero: 'Greater than Zero'
+            integer:           'Integer Number'
+            letters:           'Letters'
+            url:               'URL'
+            url_safe:          'URL Safe Characters'
+            required:          'Required'
+            unique:            'Unique'
+
         form:
             fallback:
                 empty:         'Choose fallback...'
                 parent_locale: 'Parent locale value'
                 default:       'Default value'
-            attribute_type:
-                empty:    'Choose attribute type...'
-                integer:  'Integer'
-                float:    'Float'
-                boolean:  'Boolean'
-                string:   'String'
-                text:     'Text'
-                date:     'Date'
-                datetime: 'DateTime'
-            sharing_type:
-                general:  'Global'
-                group:    'Sharing Group'
-                website:  'Website'
-            attribute_type_constraint:
-                none:              'None'
-                alphanumeric:      'Alphanumeric'
-                decimal:           'Decimal Number'
-                email:             'Email'
-                greater_than_zero: 'Greater than Zero'
-                integer:           'Integer Number'
-                letters:           'Letters'
-                url:               'URL'
-                url_safe:          'URL Safe Characters'
+
             create:
                 continue: 'Continue'
-            section:
-                main: 'Main Parameters'
-                data: 'Attribute Data'
-                additional: 'Additional Properties'
-                
+
         default: 'Default'
 
         menu:
@@ -43,11 +43,17 @@ orob2b:
             shortcut_new_attribute.description: 'Create new attribute entity'
             shortcut_attributes_list.description: 'Show list of existing attributes'
             
-        sections:
-            general: General
+        section:
+            general: 'General Information'
+            data: 'Attribute Data'
+            additional: 'Additional Properties'
 
         controller:
-            attribute.saved.message: 'Attribute saved'
+            attribute:
+                saved.message: 'Attribute saved'
+
+        widgets:
+            attribute_information: Attribute Information
 
         entity_label: 'Attribute'
         entity_plural_label: 'Attributes'

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class AttributeTypeType extends AbstractType
@@ -14,6 +15,14 @@ class AttributeTypeType extends AbstractType
      * @var AttributeTypeRegistry
      */
     protected $registry;
+
+    /**
+     * @param AttributeTypeRegistry $registry
+     */
+    public function __construct(AttributeTypeRegistry $registry)
+    {
+        $this->registry = $registry;
+    }
 
     /**
      * {@inheritdoc}
@@ -32,21 +41,13 @@ class AttributeTypeType extends AbstractType
     }
 
     /**
-     * @param AttributeTypeRegistry $registry
-     */
-    public function __construct(AttributeTypeRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
             [
-                'empty_value' => 'orob2b.attribute.form.attribute_type.empty',
+                'empty_value' => 'orob2b.attribute.attribute_type.empty',
                 'choices' => $this->getChoices()
             ]
         );
@@ -59,7 +60,7 @@ class AttributeTypeType extends AbstractType
     {
         $choices = [];
         foreach ($this->registry->getTypes() as $type) {
-            $choices[$type->getName()] = 'orob2b.attribute.form.attribute_type.' . $type->getName();
+            $choices[$type->getName()] = 'orob2b.attribute.attribute_type.' . $type->getName();
         }
 
         return $choices;

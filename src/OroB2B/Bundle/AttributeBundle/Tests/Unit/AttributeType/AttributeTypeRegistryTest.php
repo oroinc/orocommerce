@@ -52,9 +52,4 @@ class AttributeTypeRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContains($this->attributeTypeMock, $this->registry->getTypes());
     }
-
-    public function testGetChoices()
-    {
-        $this->assertArrayHasKey(self::ATTRIBUTE_TYPE_NAME, $this->registry->getChoices());
-    }
 }

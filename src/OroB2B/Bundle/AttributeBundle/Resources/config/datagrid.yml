@@ -11,8 +11,8 @@ datagrid:
             query:
                 select:
                     - attribute.id
-                    - attribute.type
                     - attribute.code
+                    - attribute.type
                     - attribute.sharingType
                     - attribute.validation
                     - attribute.containHtml
@@ -23,34 +23,31 @@ datagrid:
                 from:
                     - { table: %orob2b_attribute.attribute.entity.class%, alias: attribute }
         columns:
-            type:
-                label:         orob2b.attribute.type.label
-                frontend_type: select
-                choices:       @orob2b_attribute.attribute_type.registry->getChoices
             code:
                 label:         orob2b.attribute.code.label
+            type:
+                label:         orob2b.attribute.type.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BAttributeBundle:Attribute:Datagrid/type.html.twig
             sharingType:
-                label:         orob2b.attribute.sharingType.label
-                frontend_type: select
-                choices:       @orob2b_attribute.attribute.scope.provider->getChoices
+                label:         orob2b.attribute.sharing_type.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BAttributeBundle:Attribute:Datagrid/sharingType.html.twig
             validation:
                 label:         orob2b.attribute.validation.label
-                frontend_type: select
-                choices:       @orob2b_attribute.attribute.scope.provider->getChoices
+                type:          twig
+                frontend_type: html
+                template:      OroB2BAttributeBundle:Attribute:Datagrid/validation.html.twig
             containHtml:
-                label:         orob2b.attribute.containHtml.label
+                label:         orob2b.attribute.contain_html.label
                 frontend_type: boolean
             localized:
                 label:         orob2b.attribute.localized.label
                 frontend_type: boolean
             system:
                 label:         orob2b.attribute.system.label
-                frontend_type: boolean
-            unique:
-                label:         orob2b.attribute.unique.label
-                frontend_type: boolean
-            required:
-                label:         orob2b.attribute.required.label
                 frontend_type: boolean
         properties:
             id: ~
@@ -68,40 +65,35 @@ datagrid:
                 params: [ id ]
         sorters:
             columns:
-                type:
-                    data_name: attribute.type
                 code:
                     data_name: attribute.code
+                type:
+                    data_name: attribute.type
                 sharingType:
                     data_name: attribute.sharingType
-                validation:
-                    data_name: attribute.validation
                 containHtml:
                     data_name: attribute.containHtml
                 localized:
                     data_name: attribute.localized
                 system:
                     data_name: attribute.system
-                unique:
-                    data_name: attribute.unique
-                required:
-                    data_name: attribute.required
             default:
-                code: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                code: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
-                type:
-                    type:      string
-                    data_name: attribute.type
                 code:
                     type:      string
                     data_name: attribute.code
+                type:
+                    type:      choice
+                    data_name: attribute.type
+                    options:
+                        field_type: orob2b_attribute_type
                 sharingType:
-                    type:      string
+                    type:      choice
                     data_name: attribute.sharingType
-                validation:
-                    type:      boolean
-                    data_name: attribute.validation
+                    options:
+                        field_type: orob2b_attribute_sharing_type
                 containHtml:
                     type:      boolean
                     data_name: attribute.containHtml
@@ -111,12 +103,6 @@ datagrid:
                 system:
                     type:      boolean
                     data_name: attribute.system
-                unique:
-                    type:      boolean
-                    data_name: attribute.unique
-                required:
-                    type:      boolean
-                    data_name: attribute.required
         actions:
             view:
                 type:          navigate
@@ -137,4 +123,4 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_attribute_delete
-        action_configuration:  @orob2b_attribute.datagrid.attribute.helper->getActionConfigurationClosure
+        action_configuration:  ['OroB2B\Bundle\AttributeBundle\Datagrid\AttributeHelper', 'getActionConfiguration']
