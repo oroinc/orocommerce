@@ -163,6 +163,16 @@ class AttributeTransformerHelper
      */
     public function setDefaultValue(Attribute $attribute, AttributeTypeInterface $attributeType, $value)
     {
+        $isLocalizedValue = is_array($value) && array_key_exists(null, $value);
+
+        // normalize value
+        if ($isLocalizedValue && !$attribute->isLocalized()) {
+            $value = $value[null];
+        } elseif (!$isLocalizedValue && $attribute->isLocalized()) {
+            $value = [null => $value];
+        }
+
+        // set value
         if ($attribute->isLocalized()) {
             foreach ($value as $localeId => $itemValue) {
                 $this->setDefaultValueByField($attribute, $attributeType, $localeId, $itemValue);

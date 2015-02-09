@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -182,6 +184,32 @@ class UpdateAttributeType extends AbstractType
                 array_merge($formOptions, ['label' => 'orob2b.attribute.default_values.label', 'required' => false])
             );
         }
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    protected function onPreSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $data = $event->getData();
+
+        $isLocalizedForm = $form->get('defaultValue')->getConfig()->getType()->getName()
+            == LocalizedAttributePropertyType::NAME;
+        $isLocalizedValue = is_array($data['defaultValue'])
+            && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $data['defaultValue'])
+                || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $data['defaultValue']));
+
+        // normalize value
+        if (!$isLocalizedForm && $isLocalizedValue) {
+            $data['defaultValue'] = $data['defaultValue'][LocalizedAttributePropertyType::FIELD_DEFAULT];
+        } elseif ($isLocalizedForm && !$isLocalizedValue) {
+            $data['defaultValue'] = [LocalizedAttributePropertyType::FIELD_DEFAULT => $data['defaultValue']];
+        }
+
+        $event->setData($data);
     }
 
     /**

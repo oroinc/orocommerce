@@ -19,7 +19,7 @@
             'entity_label': 'orob2b.attribute.entity_label'|trans
         }) }}
     {% endif %}
-    {% if resource_granted('DELETE', entity) %}
+    {% if not entity.system and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_delete_attribute', {'id': entity.id}),
             'dataRedirect': path('orob2b_attribute_index'),
