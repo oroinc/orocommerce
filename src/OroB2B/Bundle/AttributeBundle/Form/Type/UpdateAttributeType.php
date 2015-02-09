@@ -200,7 +200,7 @@ class UpdateAttributeType extends AbstractType
             == LocalizedAttributePropertyType::NAME;
         $isLocalizedValue = is_array($data['defaultValue'])
             && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $data['defaultValue'])
-                || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $data['defaultValue']));
+            || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $data['defaultValue']));
 
         // normalize value
         if (!$isLocalizedForm && $isLocalizedValue) {
