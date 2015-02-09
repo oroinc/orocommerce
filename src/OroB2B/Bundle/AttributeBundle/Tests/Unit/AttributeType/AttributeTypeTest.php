@@ -49,15 +49,22 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['canBeUnique'], $type->canBeUnique());
         $this->assertEquals($expected['canBeRequired'], $type->canBeRequired());
 
+        $testValue = 'test';
+
         if (!empty($normalizationData['normalize'])) {
             foreach ($normalizationData['normalize'] as $from => $to) {
                 $this->assertEquals($to, $type->normalize($from));
             }
+        } else {
+            $this->assertEquals($testValue, $type->normalize($testValue));
         }
+
         if (!empty($normalizationData['denormalize'])) {
             foreach ($normalizationData['denormalize'] as $from => $to) {
                 $this->assertEquals($to, $type->denormalize($from));
             }
+        } else {
+            $this->assertEquals($testValue, $type->denormalize($testValue));
         }
     }
 

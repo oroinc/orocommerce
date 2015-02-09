@@ -5,11 +5,12 @@ namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Handler;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
-use OroB2B\Bundle\AttributeBundle\Form\Handler\AttributeHandler;
+use OroB2B\Bundle\AttributeBundle\Form\Handler\UpdateAttributeHandler;
+use OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
+class UpdateAttributeHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
@@ -27,7 +28,7 @@ class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
-     * @var AttributeHandler
+     * @var UpdateAttributeHandler
      */
     protected $handler;
 
@@ -46,7 +47,7 @@ class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->attribute = new Attribute();
-        $this->handler = new AttributeHandler($this->form, $this->request, $this->manager);
+        $this->handler = new UpdateAttributeHandler($this->form, $this->request, $this->manager);
     }
 
     public function testProcessUnsupportedRequest()
@@ -65,12 +66,15 @@ class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider supportedMethods
+     * @param array $request
      * @param string $method
      * @param boolean $isValid
      * @param boolean $isProcessed
      */
-    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
+    public function testProcessSupportedRequest(array $request, $method, $isValid, $isProcessed)
     {
+        $this->request->request->add($request);
+
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->attribute);
@@ -81,7 +85,7 @@ class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->request->setMethod($method);
 
-        $this->form->expects($this->once())
+        $this->form->expects($this->any())
             ->method('submit')
             ->with($this->request);
 
@@ -95,18 +99,27 @@ class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'post valid' => [
+                'request' => [UpdateAttributeType::NAME => []],
                 'method' => 'POST',
                 'isValid' => true,
                 'isProcessed' => true
             ],
             'put valid' => [
+                'request' => [UpdateAttributeType::NAME => []],
                 'method' => 'PUT',
                 'isValid' => true,
                 'isProcessed' => true
             ],
             'invalid' => [
+                'request' => [UpdateAttributeType::NAME => []],
                 'method' => 'POST',
                 'isValid' => false,
+                'isProcessed' => false
+            ],
+            'no request' => [
+                'request' => [],
+                'method' => 'POST',
+                'isValid' => true,
                 'isProcessed' => false
             ],
         ];
@@ -118,6 +131,7 @@ class AttributeHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($this->attribute);
 
+        $this->request->request->set(UpdateAttributeType::NAME, []);
         $this->request->setMethod('POST');
 
         $this->form->expects($this->once())

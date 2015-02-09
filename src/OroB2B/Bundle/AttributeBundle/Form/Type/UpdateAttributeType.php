@@ -191,14 +191,14 @@ class UpdateAttributeType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    protected function onPreSubmit(FormEvent $event)
+    public function onPreSubmit(FormEvent $event)
     {
         $form = $event->getForm();
         $data = $event->getData();
 
         $isLocalizedForm = $form->get('defaultValue')->getConfig()->getType()->getName()
             == LocalizedAttributePropertyType::NAME;
-        $isLocalizedValue = is_array($data['defaultValue'])
+        $isLocalizedValue = isset($data['defaultValue']) && is_array($data['defaultValue'])
             && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $data['defaultValue'])
             || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $data['defaultValue']));
 
