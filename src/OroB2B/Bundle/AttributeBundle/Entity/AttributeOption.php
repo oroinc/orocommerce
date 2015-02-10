@@ -121,7 +121,7 @@ class AttributeOption
     }
 
     /**
-     * @return Locale
+     * @return Locale|null
      */
     public function getLocale()
     {
@@ -129,10 +129,10 @@ class AttributeOption
     }
 
     /**
-     * @param Locale $locale
+     * @param Locale|null $locale
      * @return $this
      */
-    public function setLocale(Locale $locale)
+    public function setLocale(Locale $locale = null)
     {
         $this->locale = $locale;
 

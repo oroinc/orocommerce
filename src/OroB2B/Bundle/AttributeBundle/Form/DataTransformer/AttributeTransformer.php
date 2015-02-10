@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -107,8 +108,17 @@ class AttributeTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($value, 'Attribute');
         }
 
+        $attributeType = $value->getType();
+        if (!$attributeType) {
+            throw new TransformationFailedException('Attribute type is not defined');
+        }
+
+        $type = $this->typeRegistry->getTypeByName($attributeType);
+        if (!$type) {
+            throw new TransformationFailedException(sprintf('Attribute type "%s" does not exist', $attributeType));
+        }
+
         $accessor = $this->helper->getPropertyAccessor();
-        $type = $this->typeRegistry->getTypeByName($value->getType());
         $result = [];
 
         foreach ($this->plainFields as $field) {
@@ -151,8 +161,13 @@ class AttributeTransformer implements DataTransformerInterface
             }
         }
 
-        $this->helper->setLabels($this->attribute, $value['label']);
-        $this->helper->setDefaultValue($this->attribute, $type, $value['defaultValue']);
+        if (array_key_exists('label', $value)) {
+            $this->helper->setLabels($this->attribute, $value['label']);
+        }
+
+        if (array_key_exists('defaultValue', $value)) {
+            $this->helper->setDefaultValue($this->attribute, $type, $value['defaultValue']);
+        }
 
         foreach ($this->websiteFields as $field => $data) {
             if (array_key_exists($field, $value)) {
