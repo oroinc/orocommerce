@@ -69,9 +69,11 @@ class AttributeProperty
     protected $field;
 
     /**
-     * @var boolean
+     * Boolean value stored as int to allow PDO save null values
      *
-     * @ORM\Column(name="value", type="boolean", nullable=true)
+     * @var int
+     *
+     * @ORM\Column(name="value", type="smallint", nullable=true)
      */
     protected $value;
 
@@ -114,7 +116,11 @@ class AttributeProperty
      */
     public function isValue()
     {
-        return $this->value;
+        if (null === $this->value) {
+            return null;
+        }
+
+        return !empty($this->value);
     }
 
     /**
@@ -123,7 +129,11 @@ class AttributeProperty
      */
     public function setValue($value)
     {
-        $this->value = $value;
+        if (null === $value) {
+            $this->value = null;
+        } else {
+            $this->value = $value ? 1 : 0;
+        }
 
         return $this;
     }

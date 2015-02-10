@@ -48,6 +48,10 @@ class Boolean extends AbstractAttributeType
      */
     public function normalize($value)
     {
+        if (null === $value) {
+            return $value;
+        }
+
         return (bool)$value;
     }
 
@@ -56,6 +60,10 @@ class Boolean extends AbstractAttributeType
      */
     public function denormalize($value)
     {
+        if (null === $value) {
+            return $value;
+        }
+
         return !empty($value) ? 1 : 0;
     }
 }
