@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -17,8 +17,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AttributeControllerTest extends WebTestCase
 {
-    const TEST_CODE = 'test_code';
-
     /**
      * @var array|Locale[]
      */
@@ -33,6 +31,16 @@ class AttributeControllerTest extends WebTestCase
      * @var string
      */
     protected $grid = 'orob2b-attribute-grid';
+
+    /**
+     * @var string
+     */
+    protected $formCreate = 'orob2b_attribute_create';
+    
+    /**
+     * @var string
+     */
+    protected $formUpdate = 'orob2b_attribute_update';
 
     protected function setUp()
     {
@@ -51,30 +59,26 @@ class AttributeControllerTest extends WebTestCase
         }
     }
 
-    public function testIndex()
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_attribute_index'));
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($this->grid, $crawler->html());
-    }
-
     /**
      * @dataProvider testAttributesDataProvider
      * @param string $type
      * @param string $code
+     * @param boolean $localized
      * @param string $label
      * @param string $data
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function testAttributes($type, $code, $label, $data)
+    public function testAttributes($type, $code, $localized, $label, $data)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_attribute_create'));
+        $crawler = $this->client->request('GET', $this->getUrl("$this->formCreate"));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Continue')->form();
-        $form['orob2b_attribute_create[code]'] = $code;
-        $form['orob2b_attribute_create[type]'] = $type;
+        $form["$this->formCreate[code]"] = $code;
+        $form["$this->formCreate[type]"] = $type;
+        $form["$this->formCreate[localized]"] = $localized;
 
         // Submit attribute create first step
         $this->client->followRedirects(true);
@@ -89,42 +93,38 @@ class AttributeControllerTest extends WebTestCase
         // Check form values
         $formValues = $form->getValues();
 
-        $this->assertContains($code, $formValues['orob2b_attribute_update[code]']);
-        $this->assertContains($type, $formValues['orob2b_attribute_update[type]']);
-        $this->assertEmpty($formValues['orob2b_attribute_update[label][default]']);
+        $this->assertContains($code, $formValues["$this->formUpdate[code]"]);
+        $this->assertContains($type, $formValues["$this->formUpdate[type]"]);
+        $this->assertEmpty($formValues["$this->formUpdate[label][default]"]);
 
-        foreach ($this->localeRegistry as $locale) {
-            $localeId = $locale->getId();
-            $this->assertEmpty($formValues["orob2b_attribute_update[label][locales][$localeId][value]"]);
-            $this->assertEquals('', $formValues["orob2b_attribute_update[label][locales][$localeId][value]"]);
+        // Check labels
+        $this->assertLocalize($formValues, 'label');
 
-            if ($locale->getParentLocale()) {
-                $this->assertContains(
-                    FallbackType::PARENT_LOCALE,
-                    $formValues["orob2b_attribute_update[label][locales][$localeId][fallback]"]
-                );
-            } else {
-                $this->assertContains(
-                    FallbackType::SYSTEM,
-                    $formValues["orob2b_attribute_update[label][locales][$localeId][fallback]"]
-                );
-            }
+        if ($localized) {
+            // Check defaultValue for available locales
+            $this->assertLocalize($formValues, 'defaultValue');
         }
 
-        $attributeTypes = $this->getAttributeTypeByName($formValues['orob2b_attribute_update[type]']);
+        $attributeTypes = $this->getAttributeTypeByName($formValues["$this->formUpdate[type]"]);
         $attributeProperties = $this->getAttributeTypePropertyFields($attributeTypes);
         foreach ($attributeProperties as $attributeProperty) {
-            foreach ($this->websiteRegistry as $website) {
-                $siteId = $website->getId();
-                $this->assertContains(
-                    'system',
-                    $formValues["orob2b_attribute_update[$attributeProperty][websites][$siteId][fallback]"]
-                );
+            if (in_array($attributeProperty, array('onProductView'))) {
+                $this->assertEquals(true, $formValues["$this->formUpdate[$attributeProperty][default]"]);
+            }
+
+            if ($attributeProperty !== 'containHtml') {
+                foreach ($this->websiteRegistry as $website) {
+                    $siteId = $website->getId();
+                    $this->assertContains(
+                        'system',
+                        $formValues["$this->formUpdate[$attributeProperty][websites][$siteId][fallback]"]
+                    );
+                }
             }
         }
 
         // Set default label
-        $form['orob2b_attribute_update[label][default]'] = $label;
+        $form["$this->formUpdate[label][default]"] = $label;
 
         // Submit attribute create second step
         $crawler = $this->client->submit($form);
@@ -145,25 +145,109 @@ class AttributeControllerTest extends WebTestCase
             $locale = $this->localeRegistry[$localeName];
             $localeId = $locale->getId();
             foreach ($localeValue as $name => $value) {
-                $form["orob2b_attribute_update[label][locales][$localeId][$name]"] = $value;
+                $form["$this->formUpdate[label][locales][$localeId][$name]"] = $value;
             }
 
         }
 
-        $form['orob2b_attribute_update[defaultValue]'] = $data['defaultValue'];
+        if ($localized) {
+            $form["$this->formUpdate[defaultValue][default]"] = $data['defaultValue'];
+            foreach ($data['localeDefaultValue'] as $localeName => $localeValue) {
+                $locale = $this->localeRegistry[$localeName];
+                $localeId = $locale->getId();
+                foreach ($localeValue as $name => $value) {
+                    $form["$this->formUpdate[defaultValue][locales][$localeId][$name]"] = $value;
+                }
+            }
+        } else {
+            $form["$this->formUpdate[defaultValue]"] = $data['defaultValue'];
+        }
 
         foreach ($data['additional'] as $attributePropertyName => $attributePropertyData) {
             foreach ($attributePropertyData as $siteName => $siteValue) {
                 $website = $this->websiteRegistry[$siteName];
                 $siteId = $website->getId();
                 foreach ($siteValue as $name => $value) {
-                    $form["orob2b_attribute_update[$attributePropertyName][websites][$siteId][$name]"] = $value;
+                    $form["$this->formUpdate[$attributePropertyName][websites][$siteId][$name]"] = $value;
                 }
             }
         }
 
-        // Submit attribute update
+        // Submit attribute update and stay on page
+        $form->setValues(['input_action' => 'save_and_stay']);
         $crawler = $this->client->submit($form);
+        $this->assertContains("$code - Edit - Attributes - Product management", $crawler->html());
+        $this->assertContains("Attribute saved", $crawler->html());
+
+        $form = $crawler->selectButton('Save and Close')->form();
+        $formValues = $form->getValues();
+
+        foreach ($data['label'] as $localeName => $localeValue) {
+            $locale = $this->localeRegistry[$localeName];
+            $localeId = $locale->getId();
+            foreach ($localeValue as $name => $value) {
+                $this->assertEquals($value, $formValues["$this->formUpdate[label][locales][$localeId][$name]"]);
+            }
+        }
+
+        if ($localized) {
+            $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue][default]"]);
+            foreach ($data['localeDefaultValue'] as $localeName => $localeValue) {
+                $locale = $this->localeRegistry[$localeName];
+                $localeId = $locale->getId();
+                foreach ($localeValue as $name => $value) {
+                    $this->assertEquals(
+                        $value,
+                        $formValues["$this->formUpdate[defaultValue][locales][$localeId][$name]"]
+                    );
+                }
+            }
+        } else {
+            $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue]"]);
+        }
+
+        foreach ($data['additional'] as $attributePropertyName => $attributePropertyData) {
+            foreach ($attributePropertyData as $siteName => $siteValue) {
+                $website = $this->websiteRegistry[$siteName];
+                $siteId = $website->getId();
+                foreach ($siteValue as $name => $value) {
+                    if ($value) {
+                        $this->assertEquals(
+                            $value,
+                            $formValues["$this->formUpdate[$attributePropertyName][websites][$siteId][$name]"]
+                        );
+                    }
+                }
+            }
+        }
+
+        // Go to attribute grid
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_attribute_index'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains($this->grid, $crawler->html());
+
+        // Remove current attribute
+        $response = $this->client->requestGrid(
+            $this->grid,
+            [$this->grid . '[_filter][code][value]' => $code]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+        $this->assertEquals($code, $result['code']);
+
+        $attributeId = (int)$result['id'];
+
+        $this->client->request('DELETE', $this->getUrl('orob2b_api_delete_attribute', ['id' => $attributeId]));
+
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+
+        $this->client->request('GET', $this->getUrl('orob2b_attribute_view', ['id' => $attributeId]));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
     /**
@@ -173,9 +257,101 @@ class AttributeControllerTest extends WebTestCase
     public function testAttributesDataProvider()
     {
         return [
-            'integer' => [
+            'integer localized' => [
                 'name' => 'integer',
                 'code' => 'code01',
+                'localized' => true,
+                'label' => 'Integer attribute label',
+                'data' => [
+                    'label' => [
+                        'en_US' => [
+                            'value' => null,
+                            'fallback' => FallbackType::SYSTEM
+                        ],
+                        'en_CA' => [
+                            'value' => 'Canada integer attribute label',
+                            'fallback' => null
+                        ]
+                    ],
+                    'defaultValue' => '100',
+                    'localeDefaultValue' => [
+                        'en_US' => [
+                            'value' => null,
+                            'fallback' => FallbackType::SYSTEM
+                        ],
+                        'en_CA' => [
+                            'value' => '200',
+                            'fallback' => null
+                        ]
+                    ],
+                    'additional' => [
+                        'onProductView' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'inProductListing' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInSorting' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onAdvancedSearch' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onProductComparison' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInFilters' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'integer not localized' => [
+                'name' => 'integer',
+                'code' => 'code01',
+                'localized' => false,
                 'label' => 'Integer attribute label',
                 'data' => [
                     'label' => [
@@ -192,8 +368,149 @@ class AttributeControllerTest extends WebTestCase
                     'additional' => [
                         'onProductView' => [
                             'US' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'inProductListing' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInSorting' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onAdvancedSearch' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onProductComparison' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInFilters' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'float localized' => [
+                'name' => 'float',
+                'code' => 'code02',
+                'localized' => true,
+                'label' => 'Float attribute label',
+                'data' => [
+                    'label' => [
+                        'en_US' => [
+                            'value' => null,
+                            'fallback' => FallbackType::SYSTEM
+                        ],
+                        'en_CA' => [
+                            'value' => null,
+                            'fallback' => FallbackType::SYSTEM
+                        ]
+                    ],
+                    'defaultValue' => '3.10',
+                    'localeDefaultValue' => [
+                        'en_US' => [
+                            'value' => '3.14',
+                            'fallback' => null
+                        ],
+                        'en_CA' => [
+                            'value' => null,
+                            'fallback' => FallbackType::PARENT_LOCALE
+                        ]
+                    ],
+                    'additional' => [
+                        'onProductView' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                        'inProductListing' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInSorting' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onAdvancedSearch' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onProductComparison' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInFilters' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
                             ],
                             'Canada' => [
                                 'value' => false,
@@ -203,9 +520,10 @@ class AttributeControllerTest extends WebTestCase
                     ]
                 ]
             ],
-            'float' => [
+            'float not localized' => [
                 'name' => 'float',
                 'code' => 'code02',
+                'localized' => false,
                 'label' => 'Float attribute label',
                 'data' => [
                     'label' => [
@@ -222,20 +540,162 @@ class AttributeControllerTest extends WebTestCase
                     'additional' => [
                         'onProductView' => [
                             'US' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ],
                             'Canada' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                        'inProductListing' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInSorting' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onAdvancedSearch' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onProductComparison' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInFilters' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
                             ]
                         ]
                     ]
                 ]
             ],
-            'boolean' => [
+            'boolean localized' => [
                 'name' => 'boolean',
                 'code' => 'code03',
+                'localized' => true,
+                'label' => 'Boolean attribute label',
+                'data' => [
+                    'label' => [
+                        'en_US' => [
+                            'value' => 'US boolean attribute label',
+                            'fallback' => null
+                        ],
+                        'en_CA' => [
+                            'value' => null,
+                            'fallback' => FallbackType::PARENT_LOCALE
+                        ]
+                    ],
+                    'defaultValue' => true,
+                    'localeDefaultValue' => [
+                        'en_US' => [
+                            'value' => true,
+                            'fallback' => null
+                        ],
+                        'en_CA' => [
+                            'value' => true,
+                            'fallback' => null
+                        ]
+                    ],
+                    'additional' => [
+                        'onProductView' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'inProductListing' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInSorting' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onAdvancedSearch' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onProductComparison' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInFilters' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'boolean not localized' => [
+                'name' => 'boolean',
+                'code' => 'code03',
+                'localized' => false,
                 'label' => 'Boolean attribute label',
                 'data' => [
                     'label' => [
@@ -259,13 +719,64 @@ class AttributeControllerTest extends WebTestCase
                                 'value' => false,
                                 'fallback' => null
                             ]
+                        ],
+                        'inProductListing' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInSorting' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onAdvancedSearch' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => FallbackType::SYSTEM
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'onProductComparison' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
+                        ],
+                        'useInFilters' => [
+                            'US' => [
+                                'value' => false,
+                                'fallback' => null
+                            ],
+                            'Canada' => [
+                                'value' => false,
+                                'fallback' => null
+                            ]
                         ]
                     ]
                 ]
             ],
-            'string' => [
+            'string not localized' => [
                 'name' => 'string',
                 'code' => 'code04',
+                'localized' => false,
                 'label' => 'String attribute label',
                 'data' => [
                     'label' => [
@@ -282,20 +793,21 @@ class AttributeControllerTest extends WebTestCase
                     'additional' => [
                         'onProductView' => [
                             'US' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ],
                             'Canada' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ]
                         ]
                     ]
                 ]
             ],
-            'text' => [
+            'text not localized' => [
                 'name' => 'text',
                 'code' => 'code05',
+                'localized' => false,
                 'label' => 'Text attribute label',
                 'data' => [
                     'label' => [
@@ -312,71 +824,73 @@ class AttributeControllerTest extends WebTestCase
                     'additional' => [
                         'onProductView' => [
                             'US' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ],
                             'Canada' => [
-                                'value' => true,
-                                'fallback' => FallbackType::SYSTEM
+                                'value' => false,
+                                'fallback' => null
                             ]
                         ]
                     ]
                 ]
             ],
-            'date' => [
+            'date not localized' => [
                 'name' => 'date',
                 'code' => 'code06',
+                'localized' => false,
                 'label' => 'Date attribute label',
                 'data' => [
                     'label' => [
                         'en_US' => [
-                            'value' => null,
+                            'value' => false,
                             'fallback' => FallbackType::SYSTEM
                         ],
                         'en_CA' => [
-                            'value' => null,
+                            'value' => false,
                             'fallback' => FallbackType::SYSTEM
                         ]
                     ],
-                    'defaultValue' => '2000-01-01 00:00:00',
+                    'defaultValue' => '2000-01-01',
                     'additional' => [
                         'onProductView' => [
                             'US' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ],
                             'Canada' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ]
                         ]
                     ]
                 ]
             ],
-            'datetime' => [
+            'datetime not localized' => [
                 'name' => 'datetime',
                 'code' => 'code07',
+                'localized' => false,
                 'label' => 'Datetime attribute label',
                 'data' => [
                     'label' => [
                         'en_US' => [
-                            'value' => null,
+                            'value' => false,
                             'fallback' => FallbackType::SYSTEM
                         ],
                         'en_CA' => [
-                            'value' => null,
+                            'value' => false,
                             'fallback' => FallbackType::SYSTEM
                         ]
                     ],
-                    'defaultValue' => '2000-01-01 10:11:12',
+                    'defaultValue' => '2000-01-01T08:11:12Z',
                     'additional' => [
                         'onProductView' => [
                             'US' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ],
                             'Canada' => [
-                                'value' => true,
+                                'value' => false,
                                 'fallback' => FallbackType::SYSTEM
                             ]
                         ]
@@ -386,38 +900,30 @@ class AttributeControllerTest extends WebTestCase
         ];
     }
 
-//    /**
-//     * @depends testUpdate
-//     * @param int $id
-//     * @return int
-//     */
-//    public function testView($id)
-//    {
-//        $crawler = $this->client->request('GET', $this->getUrl('orob2b_attribute_view', ['id' => $id]));
-//
-//        $result = $this->client->getResponse();
-//        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-//        $this->assertContains(/* some code . */' - Attributes - Product Management', $crawler->html());
-//
-//        return $id;
-//    }
+    /**
+     * @param array $formValues
+     * @param string $scope
+     */
+    protected function assertLocalize(array $formValues, $scope)
+    {
+        foreach ($this->localeRegistry as $locale) {
+            $localeId = $locale->getId();
+            $fallback = $formValues["$this->formUpdate[$scope][locales][$localeId][fallback]"];
+            $value = isset($formValues["$this->formUpdate[$scope][locales][$localeId][value]"])
+                ? $formValues["$this->formUpdate[$scope][locales][$localeId][value]"]
+                : '';
 
-//    /**
-//     * @depends testView
-//     * @param int $id
-//     */
-//    public function testDelete($id)
-//    {
-//        $this->client->request('DELETE', $this->getUrl('orob2b_api_delete_attribute', ['id' => $id]));
-//
-//        $result = $this->client->getResponse();
-//        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-//
-//        $this->client->request('GET', $this->getUrl('orob2b_attribute_view', ['id' => $id]));
-//
-//        $result = $this->client->getResponse();
-//        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-//    }
+            if ($value) {
+                $this->assertEmpty($value);
+            }
+
+            if ($locale->getParentLocale()) {
+                $this->assertContains(FallbackType::PARENT_LOCALE, $fallback);
+            } else {
+                $this->assertContains(FallbackType::SYSTEM, $fallback);
+            }
+        }
+    }
 
     /**
      * @return array|Website[]
@@ -485,7 +991,7 @@ class AttributeControllerTest extends WebTestCase
         ];
 
         if ($attributeType->isContainHtml()) {
-            //$fields[] = 'containHtml';
+            $fields[] = 'containHtml';
         }
 
         if ($attributeType->isUsedForSearch()) {
