@@ -9,7 +9,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AttributePropertyTest extends EntityTestCase
 {
-
     public function testProperties()
     {
         $website = new Website();
@@ -24,6 +23,7 @@ class AttributePropertyTest extends EntityTestCase
             ['website', $website, false],
             ['field', AttributeProperty::FIELD_ON_PRODUCT_VIEW],
             ['value', true],
+            ['value', null],
             ['fallback', 'website'],
         ];
 

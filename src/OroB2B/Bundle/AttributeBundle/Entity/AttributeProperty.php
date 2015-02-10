@@ -123,7 +123,7 @@ class AttributeProperty
      */
     public function setValue($value)
     {
-        $this->value = (bool)$value;
+        $this->value = $value;
 
         return $this;
     }

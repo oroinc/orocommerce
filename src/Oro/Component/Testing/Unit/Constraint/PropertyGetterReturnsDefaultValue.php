@@ -47,7 +47,8 @@ class PropertyGetterReturnsDefaultValue extends \PHPUnit_Framework_Constraint
         return sprintf(
             'getter %s for property %s of entity %s returns its default value',
             $this->getterName,
-            $this->propertyName
+            $this->propertyName,
+            get_class($other)
         );
     }
 
