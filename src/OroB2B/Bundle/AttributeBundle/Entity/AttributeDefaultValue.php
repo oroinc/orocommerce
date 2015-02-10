@@ -180,7 +180,7 @@ class AttributeDefaultValue
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
     public function getText()
     {
@@ -188,7 +188,7 @@ class AttributeDefaultValue
     }
 
     /**
-     * @param \DateTime $text
+     * @param string $text
      * @return $this
      */
     public function setText($text)

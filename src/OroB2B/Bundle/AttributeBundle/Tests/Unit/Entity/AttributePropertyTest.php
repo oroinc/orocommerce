@@ -22,6 +22,7 @@ class AttributePropertyTest extends EntityTestCase
             ['id', 1],
             ['attribute', $attribute, false],
             ['website', $website, false],
+            ['website', null],
             ['field', AttributeProperty::FIELD_ON_PRODUCT_VIEW],
             ['value', true],
             ['value', null],

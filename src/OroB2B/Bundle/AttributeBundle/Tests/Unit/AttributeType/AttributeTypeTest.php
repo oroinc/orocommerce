@@ -119,10 +119,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attribute' => null,
                 'normalizationData' => [
                     'normalize' => [
+                        null => null,
                         0 => false,
                         1 => true,
                     ],
                    'denormalize' => [
+                       null => null,
                        '' => 0,
                        '0' => 0,
                        '1' => 1,

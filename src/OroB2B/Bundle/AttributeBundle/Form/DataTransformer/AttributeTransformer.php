@@ -108,16 +108,7 @@ class AttributeTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($value, 'Attribute');
         }
 
-        $attributeType = $value->getType();
-        if (!$attributeType) {
-            throw new TransformationFailedException('Attribute type is not defined');
-        }
-
-        $type = $this->typeRegistry->getTypeByName($attributeType);
-        if (!$type) {
-            throw new TransformationFailedException(sprintf('Attribute type "%s" does not exist', $attributeType));
-        }
-
+        $type = $this->getAttributeType($value);
         $accessor = $this->helper->getPropertyAccessor();
         $result = [];
 
@@ -152,8 +143,8 @@ class AttributeTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($value, 'array');
         }
 
+        $type = $this->getAttributeType($this->attribute);
         $accessor = $this->helper->getPropertyAccessor();
-        $type = $this->typeRegistry->getTypeByName($this->attribute->getType());
 
         foreach ($this->plainFields as $field) {
             if (array_key_exists($field, $value)) {
@@ -176,5 +167,24 @@ class AttributeTransformer implements DataTransformerInterface
         }
 
         return $this->attribute;
+    }
+
+    /**
+     * @param Attribute $attribute
+     * @return AttributeTypeInterface
+     */
+    protected function getAttributeType(Attribute $attribute)
+    {
+        $type = $attribute->getType();
+        if (!$type) {
+            throw new TransformationFailedException('Attribute type is not defined');
+        }
+
+        $typeObject = $this->typeRegistry->getTypeByName($type);
+        if (!$typeObject) {
+            throw new TransformationFailedException(sprintf('Unknown attribute type "%s"', $type));
+        }
+
+        return $typeObject;
     }
 }
