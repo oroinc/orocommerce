@@ -22,16 +22,16 @@
         <tr>
             <td>{{ form.default.vars.label|trans }}</td>
             <td>
-                {{ form_errors(form.default) }}
                 {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for locale in form.locales %}
         <tr>
             <td>{{ locale.vars.label|trans }}</td>
             <td>
-                {{ form_errors(locale) }}
                 {{ form_widget(locale) }}
+                {{ form_errors(locale) }}
             </td>
         </tr>
         {% endfor %}
@@ -43,16 +43,16 @@
         <tr>
             <td>{{ form.default.vars.label|trans }}</td>
             <td>
-                {{ form_errors(form.default) }}
                 {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for website in form.websites %}
             <tr>
                 <td>{{ website.vars.label|trans }}</td>
                 <td>
-                    {{ form_errors(website) }}
                     {{ form_widget(website) }}
+                    {{ form_errors(website) }}
                 </td>
             </tr>
         {% endfor %}

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -107,8 +108,8 @@ class AttributeTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($value, 'Attribute');
         }
 
+        $type = $this->getAttributeType($value);
         $accessor = $this->helper->getPropertyAccessor();
-        $type = $this->typeRegistry->getTypeByName($value->getType());
         $result = [];
 
         foreach ($this->plainFields as $field) {
@@ -142,8 +143,8 @@ class AttributeTransformer implements DataTransformerInterface
             throw new UnexpectedTypeException($value, 'array');
         }
 
+        $type = $this->getAttributeType($this->attribute);
         $accessor = $this->helper->getPropertyAccessor();
-        $type = $this->typeRegistry->getTypeByName($this->attribute->getType());
 
         foreach ($this->plainFields as $field) {
             if (array_key_exists($field, $value)) {
@@ -151,8 +152,13 @@ class AttributeTransformer implements DataTransformerInterface
             }
         }
 
-        $this->helper->setLabels($this->attribute, $value['label']);
-        $this->helper->setDefaultValue($this->attribute, $type, $value['defaultValue']);
+        if (array_key_exists('label', $value)) {
+            $this->helper->setLabels($this->attribute, $value['label']);
+        }
+
+        if (array_key_exists('defaultValue', $value)) {
+            $this->helper->setDefaultValue($this->attribute, $type, $value['defaultValue']);
+        }
 
         foreach ($this->websiteFields as $field => $data) {
             if (array_key_exists($field, $value)) {
@@ -161,5 +167,24 @@ class AttributeTransformer implements DataTransformerInterface
         }
 
         return $this->attribute;
+    }
+
+    /**
+     * @param Attribute $attribute
+     * @return AttributeTypeInterface
+     */
+    protected function getAttributeType(Attribute $attribute)
+    {
+        $type = $attribute->getType();
+        if (!$type) {
+            throw new TransformationFailedException('Attribute type is not defined');
+        }
+
+        $typeObject = $this->typeRegistry->getTypeByName($type);
+        if (!$typeObject) {
+            throw new TransformationFailedException(sprintf('Unknown attribute type "%s"', $type));
+        }
+
+        return $typeObject;
     }
 }

@@ -119,7 +119,6 @@ class AttributeTransformerHelper
     public function getDefaultValue(Attribute $attribute, AttributeTypeInterface $attributeType)
     {
         $dataField = $attributeType->getDataTypeField();
-        $result = null;
 
         if ($attribute->isLocalized()) {
             $result = [];

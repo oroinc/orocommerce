@@ -32,6 +32,7 @@ class AttributeDefaultValueTest extends EntityTestCase
             ['text', 'text'],
             ['fallback', 'website'],
             ['locale', $locale, false],
+            ['locale', null],
             ['attribute', $attribute, false],
             ['option', $option, false],
         ];

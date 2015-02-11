@@ -124,7 +124,7 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('attribute_id', 'integer', ['notnull' => false]);
         $table->addColumn('field', 'string', ['length' => 64]);
-        $table->addColumn('value', 'boolean', ['notnull' => false]);
+        $table->addColumn('value', 'smallint', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['attribute_id'], 'IDX_D3FF0DBBB6E62EFA', []);

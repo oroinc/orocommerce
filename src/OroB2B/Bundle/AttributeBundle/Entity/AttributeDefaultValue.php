@@ -180,7 +180,7 @@ class AttributeDefaultValue
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
     public function getText()
     {
@@ -188,7 +188,7 @@ class AttributeDefaultValue
     }
 
     /**
-     * @param \DateTime $text
+     * @param string $text
      * @return $this
      */
     public function setText($text)
@@ -237,7 +237,7 @@ class AttributeDefaultValue
     }
 
     /**
-     * @return Locale
+     * @return Locale|null
      */
     public function getLocale()
     {
@@ -245,10 +245,10 @@ class AttributeDefaultValue
     }
 
     /**
-     * @param Locale $locale
+     * @param Locale|null $locale
      * @return $this
      */
-    public function setLocale(Locale $locale)
+    public function setLocale(Locale $locale = null)
     {
         $this->locale = $locale;
 

@@ -60,6 +60,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
         $this->assertEquals($viewData, $form->getViewData());
 
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 

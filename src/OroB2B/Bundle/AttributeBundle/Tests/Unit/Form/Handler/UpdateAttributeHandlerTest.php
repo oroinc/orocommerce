@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Form\Handler\UpdateAttributeHandler;
 use OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class UpdateAttributeHandlerTest extends \PHPUnit_Framework_TestCase
 {

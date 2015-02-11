@@ -24,6 +24,7 @@ class AttributeOptionTest extends EntityTestCase
             ['order', 5],
             ['fallback', 'website'],
             ['locale', $locale, false],
+            ['locale', null],
             ['attribute', $attribute, false],
         ];
 

@@ -69,9 +69,11 @@ class AttributeProperty
     protected $field;
 
     /**
-     * @var boolean
+     * Boolean value stored as int to allow PDO save null values
      *
-     * @ORM\Column(name="value", type="boolean", nullable=true)
+     * @var int
+     *
+     * @ORM\Column(name="value", type="smallint", nullable=true)
      */
     protected $value;
 
@@ -91,7 +93,7 @@ class AttributeProperty
     }
 
     /**
-     * @return boolean
+     * @return string
      */
     public function getField()
     {
@@ -99,7 +101,7 @@ class AttributeProperty
     }
 
     /**
-     * @param boolean $field
+     * @param string $field
      * @return $this
      */
     public function setField($field)
@@ -114,7 +116,11 @@ class AttributeProperty
      */
     public function isValue()
     {
-        return $this->value;
+        if (null === $this->value) {
+            return null;
+        }
+
+        return !empty($this->value);
     }
 
     /**
@@ -123,7 +129,11 @@ class AttributeProperty
      */
     public function setValue($value)
     {
-        $this->value = (bool)$value;
+        if (null === $value) {
+            $this->value = null;
+        } else {
+            $this->value = $value ? 1 : 0;
+        }
 
         return $this;
     }
@@ -167,7 +177,7 @@ class AttributeProperty
     }
 
     /**
-     * @return Website
+     * @return Website|null
      */
     public function getWebsite()
     {
@@ -175,10 +185,10 @@ class AttributeProperty
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 

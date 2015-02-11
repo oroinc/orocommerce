@@ -39,6 +39,7 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
 
         $this->assertNull($form->getData());
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($submittedData, $form->getData());
     }
 
