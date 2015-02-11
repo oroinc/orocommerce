@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Integer;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
@@ -16,20 +18,29 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Locale[]
      */
-    protected static $locales = [];
+    protected $locales = [];
 
     /**
      * @var Website[]
      */
-    protected static $websites = [];
+    protected $websites = [];
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     */
     protected $managerRegistry;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AttributeTypeRegistry
+     */
     protected $typeRegistry;
 
     protected function setUp()
@@ -37,12 +48,12 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
         $localeRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $localeRepository->expects($this->any())
             ->method('find')
-            ->will($this->returnValueMap([[1, self::getLocale(1)], [2, self::getLocale(2)]]));
+            ->will($this->returnValueMap([[1, $this->getLocale(1)], [2, $this->getLocale(2)]]));
 
         $websiteRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
         $websiteRepository->expects($this->any())
             ->method('find')
-            ->will($this->returnValueMap([[1, self::getWebsite(1)], [2, self::getWebsite(2)]]));
+            ->will($this->returnValueMap([[1, $this->getWebsite(1)], [2, $this->getWebsite(2)]]));
 
         $repositoriesMap = [
             ['OroB2BWebsiteBundle:Locale', null, $localeRepository],
@@ -186,6 +197,7 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function reverseTransformDataProvider()
     {
@@ -406,7 +418,7 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @return Locale
      */
-    protected static function createLocale($id)
+    protected function createLocale($id)
     {
         $locale = new Locale();
 
@@ -421,20 +433,20 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @return Locale
      */
-    protected static function getLocale($id)
+    protected function getLocale($id)
     {
-        if (empty(self::$locales[$id])) {
-            self::$locales[$id] = self::createLocale($id);
+        if (empty($this->locales[$id])) {
+            $this->locales[$id] = $this->createLocale($id);
         }
 
-        return self::$locales[$id];
+        return $this->locales[$id];
     }
 
     /**
      * @param int $id
      * @return Website
      */
-    protected static function createWebsite($id)
+    protected function createWebsite($id)
     {
         $locale = new Website();
 
@@ -449,13 +461,13 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @return Website
      */
-    protected static function getWebsite($id)
+    protected function getWebsite($id)
     {
-        if (empty(self::$websites[$id])) {
-            self::$websites[$id] = self::createWebsite($id);
+        if (empty($this->websites[$id])) {
+            $this->websites[$id] = $this->createWebsite($id);
         }
 
-        return self::$websites[$id];
+        return $this->websites[$id];
     }
 
     /**
@@ -468,7 +480,7 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $locale = null;
         if ($localeId) {
-            $locale = self::getLocale($localeId);
+            $locale = $this->getLocale($localeId);
         }
 
         $label = new AttributeLabel();
@@ -488,7 +500,7 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $locale = null;
         if ($localeId) {
-            $locale = self::getLocale($localeId);
+            $locale = $this->getLocale($localeId);
         }
 
         $defaultValue = new AttributeDefaultValue();
@@ -509,7 +521,7 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $website = null;
         if ($websiteId) {
-            $website = self::getWebsite($websiteId);
+            $website = $this->getWebsite($websiteId);
         }
 
         $property = new AttributeProperty();

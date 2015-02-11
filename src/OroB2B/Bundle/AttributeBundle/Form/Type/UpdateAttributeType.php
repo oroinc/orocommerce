@@ -198,18 +198,35 @@ class UpdateAttributeType extends AbstractType
 
         $isLocalizedForm = $form->get('defaultValue')->getConfig()->getType()->getName()
             == LocalizedAttributePropertyType::NAME;
-        $isLocalizedValue = isset($data['defaultValue']) && is_array($data['defaultValue'])
-            && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $data['defaultValue'])
-            || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $data['defaultValue']));
+        $isLocalizedValue = array_key_exists('defaultValue', $data)
+            && $this->isLocalizedValue($data['defaultValue']);
 
         // normalize value
+        $defaultValue = null;
         if (!$isLocalizedForm && $isLocalizedValue) {
-            $data['defaultValue'] = $data['defaultValue'][LocalizedAttributePropertyType::FIELD_DEFAULT];
+            if (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $data['defaultValue'])) {
+                $defaultValue = $data['defaultValue'][LocalizedAttributePropertyType::FIELD_DEFAULT];
+            }
+            $data['defaultValue'] = $defaultValue;
         } elseif ($isLocalizedForm && !$isLocalizedValue) {
-            $data['defaultValue'] = [LocalizedAttributePropertyType::FIELD_DEFAULT => $data['defaultValue']];
+            if (array_key_exists('defaultValue', $data)) {
+                $defaultValue = $data['defaultValue'];
+            }
+            $data['defaultValue'] = [LocalizedAttributePropertyType::FIELD_DEFAULT => $defaultValue];
         }
 
         $event->setData($data);
+    }
+
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isLocalizedValue($value)
+    {
+        return is_array($value)
+            && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $value)
+            || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $value));
     }
 
     /**

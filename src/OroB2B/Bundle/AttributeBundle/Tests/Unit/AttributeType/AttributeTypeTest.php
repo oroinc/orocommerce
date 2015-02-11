@@ -52,19 +52,19 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
         $testValue = 'test';
 
         if (!empty($normalizationData['normalize'])) {
-            foreach ($normalizationData['normalize'] as $from => $to) {
-                $this->assertEquals($to, $type->normalize($from));
+            foreach ($normalizationData['normalize'] as $value) {
+                $this->assertSame($value['to'], $type->normalize($value['from']));
             }
         } else {
-            $this->assertEquals($testValue, $type->normalize($testValue));
+            $this->assertSame($testValue, $type->normalize($testValue));
         }
 
         if (!empty($normalizationData['denormalize'])) {
-            foreach ($normalizationData['denormalize'] as $from => $to) {
-                $this->assertEquals($to, $type->denormalize($from));
+            foreach ($normalizationData['denormalize'] as $value) {
+                $this->assertSame($value['to'], $type->denormalize($value['from']));
             }
         } else {
-            $this->assertEquals($testValue, $type->denormalize($testValue));
+            $this->assertSame($testValue, $type->denormalize($testValue));
         }
     }
 
@@ -119,15 +119,15 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'attribute' => null,
                 'normalizationData' => [
                     'normalize' => [
-                        null => null,
-                        0 => false,
-                        1 => true,
+                        ['from' => null, 'to' => null],
+                        ['from' => 0, 'to' => false],
+                        ['from' => 1, 'to' => true],
                     ],
                    'denormalize' => [
-                       null => null,
-                       '' => 0,
-                       '0' => 0,
-                       '1' => 1,
+                       ['from' => null, 'to' => null],
+                       ['from' => '', 'to' => 0],
+                       ['from' => '0', 'to' => 0],
+                       ['from' => '1', 'to' => 1],
                    ],
                 ],
             ],
