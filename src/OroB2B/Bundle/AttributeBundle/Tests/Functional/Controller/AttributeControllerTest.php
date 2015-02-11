@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\AttributeBundle\Model\SharingType;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -14,6 +17,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @outputBuffering enabled
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class AttributeControllerTest extends WebTestCase
 {
@@ -64,13 +68,15 @@ class AttributeControllerTest extends WebTestCase
      * @param string $type
      * @param string $code
      * @param boolean $localized
+     * @param string $sharingGroup
+     * @param array $validation
      * @param string $label
      * @param string $data
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    public function testAttributes($type, $code, $localized, $label, $data)
+    public function testAttributes($type, $code, $localized, $sharingGroup, $validation, $label, $data)
     {
         $crawler = $this->client->request('GET', $this->getUrl("$this->formCreate"));
 
@@ -123,7 +129,7 @@ class AttributeControllerTest extends WebTestCase
             }
         }
 
-        // Set default label
+        // Set default label. This field is required.
         $form["$this->formUpdate[label][default]"] = $label;
 
         // Submit attribute create second step
@@ -140,6 +146,14 @@ class AttributeControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
+
+        // Set sharing type
+        $form["$this->formUpdate[sharingType]"] = $sharingGroup;
+
+        // Set validation
+        foreach ($validation as $key => $value) {
+            $form["$this->formUpdate[$key]"] = $value;
+        }
 
         foreach ($data['label'] as $localeName => $localeValue) {
             $locale = $this->localeRegistry[$localeName];
@@ -181,6 +195,16 @@ class AttributeControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
+
+        // Check sharing type
+        $this->assertEquals($sharingGroup, $formValues["$this->formUpdate[sharingType]"]);
+
+        // Check validation
+        foreach ($validation as $key => $value) {
+            if ($value) {
+                $this->assertEquals($value, $formValues["$this->formUpdate[$key]"]);
+            }
+        }
 
         foreach ($data['label'] as $localeName => $localeValue) {
             $locale = $this->localeRegistry[$localeName];
@@ -261,6 +285,12 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'integer',
                 'code' => 'code01',
                 'localized' => true,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [
+                    'required' => true,
+                    'unique' => false,
+                    'validation' => GreaterThanZero::ALIAS,
+                ],
                 'label' => 'Integer attribute label',
                 'data' => [
                     'label' => [
@@ -352,6 +382,12 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'integer',
                 'code' => 'code01',
                 'localized' => false,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [
+                    'required' => true,
+                    'unique' => true,
+                    'validation' => GreaterThanZero::ALIAS,
+                ],
                 'label' => 'Integer attribute label',
                 'data' => [
                     'label' => [
@@ -433,6 +469,12 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'float',
                 'code' => 'code02',
                 'localized' => true,
+                'sharingGroup' => SharingType::GROUP,
+                'validation' => [
+                    'required' => false,
+                    'unique' => false,
+                    'validation' => null,
+                ],
                 'label' => 'Float attribute label',
                 'data' => [
                     'label' => [
@@ -524,6 +566,12 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'float',
                 'code' => 'code02',
                 'localized' => false,
+                'sharingGroup' => SharingType::WEBSITE,
+                'validation' => [
+                    'required' => false,
+                    'unique' => false,
+                    'validation' => IntegerConstraint::ALIAS,
+                ],
                 'label' => 'Float attribute label',
                 'data' => [
                     'label' => [
@@ -605,6 +653,8 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'boolean',
                 'code' => 'code03',
                 'localized' => true,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [],
                 'label' => 'Boolean attribute label',
                 'data' => [
                     'label' => [
@@ -696,6 +746,8 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'boolean',
                 'code' => 'code03',
                 'localized' => false,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [],
                 'label' => 'Boolean attribute label',
                 'data' => [
                     'label' => [
@@ -777,6 +829,12 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'string',
                 'code' => 'code04',
                 'localized' => false,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [
+                    'required' => true,
+                    'unique' => true,
+                    'validation' => null,
+                ],
                 'label' => 'String attribute label',
                 'data' => [
                     'label' => [
@@ -808,6 +866,12 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'text',
                 'code' => 'code05',
                 'localized' => false,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [
+                    'required' => true,
+                    'unique' => true,
+                    'validation' => null,
+                ],
                 'label' => 'Text attribute label',
                 'data' => [
                     'label' => [
@@ -839,6 +903,11 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'date',
                 'code' => 'code06',
                 'localized' => false,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [
+                    'required' => true,
+                    'unique' => true
+                ],
                 'label' => 'Date attribute label',
                 'data' => [
                     'label' => [
@@ -870,6 +939,11 @@ class AttributeControllerTest extends WebTestCase
                 'name' => 'datetime',
                 'code' => 'code07',
                 'localized' => false,
+                'sharingGroup' => SharingType::GENERAL,
+                'validation' => [
+                    'required' => true,
+                    'unique' => false
+                ],
                 'label' => 'Datetime attribute label',
                 'data' => [
                     'label' => [
