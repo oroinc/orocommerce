@@ -93,7 +93,7 @@ class AttributeProperty
     }
 
     /**
-     * @return boolean
+     * @return string
      */
     public function getField()
     {
@@ -101,7 +101,7 @@ class AttributeProperty
     }
 
     /**
-     * @param boolean $field
+     * @param string $field
      * @return $this
      */
     public function setField($field)

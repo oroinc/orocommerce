@@ -34,13 +34,13 @@ class AttributeController extends Controller
     public function createAction()
     {
         $request = $this->getRequest();
-        $initForm = $this->createForm(CreateAttributeType::NAME);
+        $createForm = $this->createForm(CreateAttributeType::NAME);
         if ($request->getMethod() == 'POST') {
-            $initForm->submit($request);
+            $createForm->submit($request);
         }
 
         return [
-            'form' => $initForm->createView()
+            'form' => $createForm->createView()
         ];
     }
 
