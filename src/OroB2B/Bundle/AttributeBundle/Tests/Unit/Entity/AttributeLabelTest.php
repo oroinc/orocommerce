@@ -23,6 +23,7 @@ class AttributeLabelTest extends EntityTestCase
             ['value', 'Test label'],
             ['fallback', 'website'],
             ['locale', $locale, false],
+            ['locale', null],
             ['attribute', $attribute, false],
         ];
 

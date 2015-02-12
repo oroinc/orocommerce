@@ -8,7 +8,15 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Table(name="orob2b_attribute_property")
+ * @ORM\Table(
+ *      name="orob2b_attribute_property",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="attribute_property_unique_idx",
+ *              columns={"attribute_id", "website_id", "field"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity
  * @Config(
  *      defaultValues={
@@ -20,6 +28,14 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AttributeProperty
 {
+    const FIELD_ON_PRODUCT_VIEW       = 'on_product_view';
+    const FIELD_IN_PRODUCT_LISTING    = 'in_product_listing';
+    const FIELD_USE_IN_SORTING        = 'use_in_sorting';
+    const FIELD_USE_FOR_SEARCH        = 'use_for_search';
+    const FIELD_ON_ADVANCED_SEARCH    = 'on_advanced_search';
+    const FIELD_ON_PRODUCT_COMPARISON = 'on_product_comparison';
+    const FIELD_USE_IN_FILTERS        = 'use_in_filters';
+
     /**
      * @var int
      *
@@ -46,53 +62,20 @@ class AttributeProperty
     protected $website;
 
     /**
-     * @var boolean
+     * @var string
      *
-     * @ORM\Column(name="on_product_view", type="boolean")
+     * @ORM\Column(name="field", type="string", length=64)
      */
-    protected $onProductView = false;
+    protected $field;
 
     /**
-     * @var boolean
+     * Boolean value stored as int to allow PDO save null values
      *
-     * @ORM\Column(name="in_product_list", type="boolean")
-     */
-    protected $inProductList = false;
-
-    /**
-     * @var boolean
+     * @var int
      *
-     * @ORM\Column(name="use_in_sorting", type="boolean")
+     * @ORM\Column(name="value", type="smallint", nullable=true)
      */
-    protected $useInSorting = false;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="use_for_search", type="boolean")
-     */
-    protected $useForSearch = false;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="on_advanced_search", type="boolean")
-     */
-    protected $onAdvancedSearch = false;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="on_product_comparison", type="boolean")
-     */
-    protected $onProductComparison = false;
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="in_filters", type="boolean")
-     */
-    protected $inFilters = false;
+    protected $value;
 
     /**
      * @var string
@@ -110,20 +93,20 @@ class AttributeProperty
     }
 
     /**
-     * @return boolean
+     * @return string
      */
-    public function isOnProductView()
+    public function getField()
     {
-        return $this->onProductView;
+        return $this->field;
     }
 
     /**
-     * @param boolean $onProductView
+     * @param string $field
      * @return $this
      */
-    public function setOnProductView($onProductView)
+    public function setField($field)
     {
-        $this->onProductView = (bool)$onProductView;
+        $this->field = $field;
 
         return $this;
     }
@@ -131,113 +114,26 @@ class AttributeProperty
     /**
      * @return boolean
      */
-    public function isInProductList()
+    public function isValue()
     {
-        return $this->inProductList;
+        if (null === $this->value) {
+            return null;
+        }
+
+        return !empty($this->value);
     }
 
     /**
-     * @param boolean $inProductList
+     * @param boolean $value
      * @return $this
      */
-    public function setInProductList($inProductList)
+    public function setValue($value)
     {
-        $this->inProductList = $inProductList;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isUseInSorting()
-    {
-        return $this->useInSorting;
-    }
-
-    /**
-     * @param boolean $useInSorting
-     * @return $this
-     */
-    public function setUseInSorting($useInSorting)
-    {
-        $this->useInSorting = (bool)$useInSorting;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isUseForSearch()
-    {
-        return $this->useForSearch;
-    }
-
-    /**
-     * @param boolean $useForSearch
-     * @return $this
-     */
-    public function setUseForSearch($useForSearch)
-    {
-        $this->useForSearch = $useForSearch;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isOnAdvancedSearch()
-    {
-        return $this->onAdvancedSearch;
-    }
-
-    /**
-     * @param boolean $onAdvancedSearch
-     * @return $this
-     */
-    public function setOnAdvancedSearch($onAdvancedSearch)
-    {
-        $this->onAdvancedSearch = (bool)$onAdvancedSearch;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isOnProductComparison()
-    {
-        return $this->onProductComparison;
-    }
-
-    /**
-     * @param boolean $onProductComparison
-     * @return $this
-     */
-    public function setOnProductComparison($onProductComparison)
-    {
-        $this->onProductComparison = (bool)$onProductComparison;
-
-        return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isInFilters()
-    {
-        return $this->inFilters;
-    }
-
-    /**
-     * @param boolean $inFilters
-     * @return $this
-     */
-    public function setInFilters($inFilters)
-    {
-        $this->inFilters = (bool)$inFilters;
+        if (null === $value) {
+            $this->value = null;
+        } else {
+            $this->value = $value ? 1 : 0;
+        }
 
         return $this;
     }
@@ -281,7 +177,7 @@ class AttributeProperty
     }
 
     /**
-     * @return Website
+     * @return Website|null
      */
     public function getWebsite()
     {
@@ -289,10 +185,10 @@ class AttributeProperty
     }
 
     /**
-     * @param Website $website
+     * @param Website|null $website
      * @return $this
      */
-    public function setWebsite(Website $website)
+    public function setWebsite(Website $website = null)
     {
         $this->website = $website;
 

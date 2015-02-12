@@ -1,17 +1,17 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% oro_title_set({params : {"%title%": form.vars.value.title|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%code%": form.vars.value.code|default('N/A'|trans)} }) %}
 
-{% set formAction = form.vars.value.id ? path('orob2b_attribute_update', { 'id': form.vars.value.id }) : path('orob2b_attribute_create')  %}
+{% set formAction = entity.id ? path('orob2b_attribute_update', { 'id': entity.id }) : path('orob2b_attribute_init') %}
 
 {% block navButtons %}
-    {% if form.vars.value.id and resource_granted('DELETE', form.vars.value) %}
+    {% if entity.id and not entity.system and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_delete_attribute', {'id': form.vars.value.id}),
+            'dataUrl': path('orob2b_api_delete_attribute', {'id': entity.id}),
             'dataRedirect': path('orob2b_attribute_index'),
             'aCss': 'no-hash remove-button',
-            'dataId': form.vars.value.id,
+            'dataId': entity.id,
             'id': 'btn-remove-attribute',
             'entity_label': 'orob2b.attribute.entity_label'|trans,
         }) }}
@@ -19,19 +19,19 @@
     {% endif %}
     {{ UI.cancelButton(path('orob2b_attribute_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if form.vars.value.id or resource_granted('orob2b_attribute_update') %}
+    {% if entity.id or resource_granted('orob2b_attribute_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
 {% block pageHeader %}
-    {% if form.vars.value.id %}
+    {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      form.vars.value,
             'indexPath':   path('orob2b_attribute_index'),
             'indexLabel': 'orob2b.attribute.entity_plural_label'|trans,
-            'entityTitle': form.vars.value.title|default('N/A'|trans)
+            'entityTitle': entity.code|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
@@ -43,32 +43,63 @@
 {% block content_data %}
     {% set id = 'attribute-edit' %}
 
-    {% set dataBlocks = [{
-            'title': 'General'|trans,
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.attribute.section.general'|trans,
             'class': 'active',
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_row(form.title)
-                ]
-            }]
-        }]
-    %}
-
-    {% set additionalData = [] %}
-    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
-        {% set additionalData = additionalData|merge([form_row(child)]) %}
-    {% endfor %}
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'Additional'|trans,
-            'subblocks': [{
-                'title': '',
-                'useSpan': false,
-                'data' : additionalData
-            }]
-        }] ) %}
-    {% endif %}
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.codeDisabled),
+                        form_row(form.typeDisabled),
+                        form_row(form.code),
+                        form_row(form.type),
+                        form_row(form.localized),
+                        form_row(form.sharingType),
+                        form.required is defined ? form_row(form.required) : null,
+                        form.unique is defined ? form_row(form.unique) : null,
+                        form.validation is defined ? form_row(form.validation) : null,
+                    ]
+                },
+                {
+                    'data': [
+                        form_row(form.label),
+                    ]
+                },
+            ]
+        },
+        {
+            'title': 'orob2b.attribute.section.data'|trans,
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.defaultValue),
+                    ]
+                },
+            ]
+        },
+        {
+            'title': 'orob2b.attribute.section.additional'|trans,
+            'subblocks': [
+                {
+                    'data': [
+                        form.containHtml is defined ? form_row(form.containHtml) : null,
+                        form_row(form.onProductView),
+                        form_row(form.inProductListing),
+                        form_row(form.useInSorting),
+                    ]
+                },
+                {
+                    'data': [
+                        form.useForSearch is defined ? form_row(form.useForSearch) : null,
+                        form_row(form.onAdvancedSearch),
+                        form_row(form.onProductComparison),
+                        form.useInFilters is defined ? form_row(form.useInFilters) : null,
+                    ]
+                },
+            ]
+        },
+    ] %}
 
     {% set data = {
         'formErrors': form_errors(form),

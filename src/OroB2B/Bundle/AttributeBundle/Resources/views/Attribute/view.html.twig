@@ -19,7 +19,7 @@
             'entity_label': 'orob2b.attribute.entity_label'|trans
         }) }}
     {% endif %}
-    {% if resource_granted('DELETE', entity) %}
+    {% if not entity.system and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_delete_attribute', {'id': entity.id}),
             'dataRedirect': path('orob2b_attribute_index'),
@@ -30,6 +30,18 @@
         }) }}
     {% endif %}
 {% endblock navButtons %}
+
+{% block breadcrumbs %}
+    {{ parent() }}
+
+    {% if entity.system %}
+        <div class="pull-left">
+            <div class="badge badge-disabled status-disabled">
+                <i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.attribute.system.label'|trans }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock breadcrumbs %}
 
 {% block stats %}{% endblock stats %}
 
@@ -46,7 +58,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.attribute.sections.general'|trans,
+            'title': 'orob2b.attribute.section.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }

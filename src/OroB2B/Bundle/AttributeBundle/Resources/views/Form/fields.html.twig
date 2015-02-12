@@ -1,7 +1,4 @@
 {% block orob2b_attribute_fallback_value_widget %}
-    {{ form_errors(form.value) }}
-    {{ form_errors(form.fallback) }}
-
     {% set valueContainer = form.value.vars.id ~ '_value_container' %}
 
     <table>
@@ -15,6 +12,9 @@
             </td>
         <tr>
     </table>
+
+    {{ form_errors(form.value) }}
+    {{ form_errors(form.fallback) }}
 {% endblock %}
 
 {% block orob2b_attribute_localized_property_widget %}
@@ -22,16 +22,16 @@
         <tr>
             <td>{{ form.default.vars.label|trans }}</td>
             <td>
-                {{ form_errors(form.default) }}
                 {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for locale in form.locales %}
         <tr>
             <td>{{ locale.vars.label|trans }}</td>
             <td>
-                {{ form_errors(locale) }}
                 {{ form_widget(locale) }}
+                {{ form_errors(locale) }}
             </td>
         </tr>
         {% endfor %}
@@ -43,16 +43,16 @@
         <tr>
             <td>{{ form.default.vars.label|trans }}</td>
             <td>
-                {{ form_errors(form.default) }}
                 {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for website in form.websites %}
             <tr>
                 <td>{{ website.vars.label|trans }}</td>
                 <td>
-                    {{ form_errors(website) }}
                     {{ form_widget(website) }}
+                    {{ form_errors(website) }}
                 </td>
             </tr>
         {% endfor %}

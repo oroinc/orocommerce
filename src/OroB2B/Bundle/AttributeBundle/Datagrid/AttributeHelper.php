@@ -6,18 +6,18 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 
 class AttributeHelper
 {
-
     /**
      * Disables delete action for system attributes
      *
-     * @return callable
+     * @param ResultRecordInterface $record
+     * @return array
      */
-    public function getActionConfigurationClosure()
+    public static function getActionConfiguration(ResultRecordInterface $record)
     {
-        return function (ResultRecordInterface $record) {
-            if ($record->getValue('system')) {
-                return array('delete' => false);
-            }
-        };
+        $isSystem = $record->getValue('system');
+
+        return [
+            'delete' => empty($isSystem)
+        ];
     }
 }

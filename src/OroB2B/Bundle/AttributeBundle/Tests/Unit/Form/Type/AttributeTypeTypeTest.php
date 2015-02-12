@@ -37,11 +37,7 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \Symfony\Component\Translation\TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-
         $registry = $this->getMockBuilder('OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry')
-            ->setConstructorArgs([$translator])
             ->getMock();
 
         $registry->expects($this->any())
@@ -79,6 +75,7 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
 
         $this->assertNull($form->getData());
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($submittedData, $form->getData());
     }
 
@@ -89,7 +86,7 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
     {
         $choices = [];
         foreach ($this->types as $type) {
-            $choices[$type] = 'orob2b.attribute.form.attribute_type.'. $type;
+            $choices[$type] = 'orob2b.attribute.attribute_type.'. $type;
         }
 
         return [
@@ -97,7 +94,7 @@ class AttributeTypeTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'required' => true,
-                    'empty_value' => 'orob2b.attribute.form.attribute_type.empty',
+                    'empty_value' => 'orob2b.attribute.attribute_type.empty',
                     'choices' => $choices
                 ],
                 'submittedData' => Integer::NAME,

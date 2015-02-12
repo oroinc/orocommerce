@@ -8,13 +8,18 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType;
 
-class AttributeHandler
+class UpdateAttributeHandler
 {
-    /** @var Request */
+    /**
+     * @var Request
+     */
     protected $request;
 
-    /** @var ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     protected $manager;
 
     /**
@@ -30,8 +35,6 @@ class AttributeHandler
     }
 
     /**
-     * Process form
-     *
      * @param Attribute $attribute
      * @return bool True on successful processing, false otherwise
      */
@@ -39,7 +42,9 @@ class AttributeHandler
     {
         $this->form->setData($attribute);
 
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+        if ($this->request->request->has(UpdateAttributeType::NAME)
+            && in_array($this->request->getMethod(), array('POST', 'PUT'))
+        ) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {

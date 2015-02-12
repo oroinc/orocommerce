@@ -256,4 +256,138 @@ class AttributeTest extends EntityTestCase
         $this->assertContains($defaultValueThree, $actual->toArray());
         $this->assertNotContains($defaultValueOne, $actual->toArray());
     }
+
+    public function testGetLabelByLocaleId()
+    {
+        $defaultLabel = new AttributeLabel();
+        $defaultLabel->setValue('default');
+
+        $firstLocale = $this->createLocale(1);
+        $firstLocaleLabel = new AttributeLabel();
+        $firstLocaleLabel->setValue('first')
+            ->setLocale($firstLocale);
+
+        $secondLocale = $this->createLocale(2);
+        $secondLocaleLabel = new AttributeLabel();
+        $secondLocaleLabel->setValue('second')
+            ->setLocale($secondLocale);
+
+        $attribute = new Attribute();
+        $attribute->resetLabels([$defaultLabel, $firstLocaleLabel, $secondLocaleLabel]);
+
+        $this->assertEquals($defaultLabel, $attribute->getLabelByLocaleId(null));
+        $this->assertEquals($firstLocaleLabel, $attribute->getLabelByLocaleId($firstLocale->getId()));
+        $this->assertEquals($secondLocaleLabel, $attribute->getLabelByLocaleId($secondLocale->getId()));
+        $this->assertNull($attribute->getLabelByLocaleId(42));
+    }
+
+    public function testGetDefaultValueByLocaleId()
+    {
+        $defaultValue = new AttributeDefaultValue();
+        $defaultValue->setString('default');
+
+        $firstLocale = $this->createLocale(1);
+        $firstLocaleValue = new AttributeDefaultValue();
+        $firstLocaleValue->setString('first')
+            ->setLocale($firstLocale);
+
+        $secondLocale = $this->createLocale(2);
+        $secondLocaleValue = new AttributeDefaultValue();
+        $secondLocaleValue->setString('second')
+            ->setLocale($secondLocale);
+
+        $attribute = new Attribute();
+        $attribute->resetDefaultValues([$defaultValue, $firstLocaleValue, $secondLocaleValue]);
+
+        $this->assertEquals($defaultValue, $attribute->getDefaultValueByLocaleId(null));
+        $this->assertEquals($firstLocaleValue, $attribute->getDefaultValueByLocaleId($firstLocale->getId()));
+        $this->assertEquals($secondLocaleValue, $attribute->getDefaultValueByLocaleId($secondLocale->getId()));
+        $this->assertNull($attribute->getDefaultValueByLocaleId(42));
+    }
+
+    public function testGetPropertiesByFieldAndGetPropertyByFieldAndWebsiteId()
+    {
+        $firstWebsite = $this->createWebsite(1);
+        $secondWebsite = $this->createWebsite(2);
+
+        $onViewDefault = new AttributeProperty();
+        $onViewDefault->setField(AttributeProperty::FIELD_ON_PRODUCT_VIEW);
+
+        $onViewFirst = new AttributeProperty();
+        $onViewFirst->setField(AttributeProperty::FIELD_ON_PRODUCT_VIEW)
+            ->setWebsite($firstWebsite);
+
+        $inFiltersDefault = new AttributeProperty();
+        $inFiltersDefault->setField(AttributeProperty::FIELD_USE_IN_FILTERS);
+
+        $inFiltersFirst = new AttributeProperty();
+        $inFiltersFirst->setField(AttributeProperty::FIELD_USE_IN_FILTERS)
+            ->setWebsite($firstWebsite);
+
+        $inFiltersSecond = new AttributeProperty();
+        $inFiltersSecond->setField(AttributeProperty::FIELD_USE_IN_FILTERS)
+            ->setWebsite($secondWebsite);
+
+        $attribute = new Attribute();
+        $attribute->resetProperties(
+            [$onViewDefault, $onViewFirst, $inFiltersDefault, $inFiltersFirst, $inFiltersSecond]
+        );
+
+        $this->assertEquals(
+            [$onViewDefault, $onViewFirst],
+            array_values($attribute->getPropertiesByField(AttributeProperty::FIELD_ON_PRODUCT_VIEW)->toArray())
+        );
+        $this->assertEquals(
+            [$inFiltersDefault, $inFiltersFirst, $inFiltersSecond],
+            array_values($attribute->getPropertiesByField(AttributeProperty::FIELD_USE_IN_FILTERS)->toArray())
+        );
+        $this->assertEmpty(
+            $attribute->getPropertiesByField(AttributeProperty::FIELD_USE_IN_SORTING)->toArray()
+        );
+
+        $this->assertEquals(
+            $onViewDefault,
+            $attribute->getPropertyByFieldAndWebsiteId(AttributeProperty::FIELD_ON_PRODUCT_VIEW, null)
+        );
+        $this->assertEquals(
+            $inFiltersSecond,
+            $attribute->getPropertyByFieldAndWebsiteId(AttributeProperty::FIELD_USE_IN_FILTERS, $secondWebsite->getId())
+        );
+        $this->assertNull(
+            $attribute->getPropertyByFieldAndWebsiteId(AttributeProperty::FIELD_USE_IN_SORTING, $firstWebsite->getId())
+        );
+        $this->assertNull(
+            $attribute->getPropertyByFieldAndWebsiteId(AttributeProperty::FIELD_ON_PRODUCT_VIEW, 42)
+        );
+    }
+
+    /**
+     * @param int $id
+     * @return Locale
+     */
+    protected function createLocale($id)
+    {
+        $locale = new Locale();
+
+        $reflection = new \ReflectionProperty(get_class($locale), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($locale, $id);
+
+        return $locale;
+    }
+
+    /**
+     * @param int $id
+     * @return Website
+     */
+    protected function createWebsite($id)
+    {
+        $locale = new Website();
+
+        $reflection = new \ReflectionProperty(get_class($locale), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($locale, $id);
+
+        return $locale;
+    }
 }

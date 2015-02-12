@@ -2,7 +2,7 @@
 
 {% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A'|trans)} }) %}
 
-{% set formAction = path('orob2b_attribute_create')  %}
+{% set formAction = path('orob2b_attribute_init')  %}
 
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_attribute_index')) }}
@@ -18,13 +18,13 @@
     {% set id = 'attribute-init' %}
 
     {% set dataBlocks = [{
-        'title': 'orob2b.attribute.form.section.main'|trans,
+        'title': 'orob2b.attribute.section.general'|trans,
         'class': 'active',
         'subblocks': [{
             'data': [
                 form_row(form.code),
                 form_row(form.type),
-                form_row(form.localized)
+                form_row(form.localized),
             ]
         }]
     }] %}

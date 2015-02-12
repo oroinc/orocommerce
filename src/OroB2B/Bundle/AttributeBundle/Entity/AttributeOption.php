@@ -8,7 +8,15 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @ORM\Table(name="orob2b_attribute_option")
+ * @ORM\Table(
+ *      name="orob2b_attribute_option",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="attribute_option_unique_idx",
+ *              columns={"attribute_id", "locale_id"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity
  * @Config(
  *      defaultValues={
@@ -113,7 +121,7 @@ class AttributeOption
     }
 
     /**
-     * @return Locale
+     * @return Locale|null
      */
     public function getLocale()
     {
@@ -121,10 +129,10 @@ class AttributeOption
     }
 
     /**
-     * @param Locale $locale
+     * @param Locale|null $locale
      * @return $this
      */
-    public function setLocale(Locale $locale)
+    public function setLocale(Locale $locale = null)
     {
         $this->locale = $locale;
 

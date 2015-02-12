@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+
 class Boolean extends AbstractAttributeType
 {
     const NAME = 'boolean';
@@ -10,7 +12,7 @@ class Boolean extends AbstractAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFormParameters()
+    public function getFormParameters(Attribute $attribute)
     {
         return [
           'type' => 'checkbox'
@@ -23,5 +25,45 @@ class Boolean extends AbstractAttributeType
     public function isUsedInFilters()
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeUnique()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeRequired()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value)
+    {
+        if (null === $value) {
+            return $value;
+        }
+
+        return (bool)$value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value)
+    {
+        if (null === $value) {
+            return $value;
+        }
+
+        return !empty($value) ? 1 : 0;
     }
 }

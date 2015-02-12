@@ -8,6 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextTypeStub;
 
 class FallbackValueTypeTest extends FormIntegrationTestCase
 {
@@ -30,7 +31,10 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
     {
         return [
             new PreloadedExtension(
-                [AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType()],
+                [
+                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    TextTypeStub::NAME => new TextTypeStub(),
+                ],
                 []
             )
         ];
@@ -56,6 +60,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
         $this->assertEquals($viewData, $form->getViewData());
 
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -74,7 +79,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
             ],
             'text with fallback' => [
                 'options' => [
-                    'type'         => 'text',
+                    'type'              => TextTypeStub::NAME,
                     'enabled_fallbacks' => [FallbackType::PARENT_LOCALE]
                 ],
                 'defaultData'   => new FallbackType(FallbackType::SYSTEM),

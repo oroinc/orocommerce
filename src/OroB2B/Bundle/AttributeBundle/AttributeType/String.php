@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
@@ -18,7 +19,7 @@ class String extends AbstractAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFormParameters()
+    public function getFormParameters(Attribute $attribute)
     {
         return [
           'type' => 'text'

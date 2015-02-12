@@ -6,36 +6,37 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class AttributeType extends AbstractType
+class CreateAttributeType extends AbstractType
 {
+    const NAME = 'orob2b_attribute_create';
+
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', 'text', ['required' => true, 'label' => 'orob2b.attribute.title.label'])
-        ;
+            ->add('code', 'text', ['label' => 'orob2b.attribute.code.label'])
+            ->add('type', AttributeTypeType::NAME, ['label' => 'orob2b.attribute.type.label'])
+            ->add('localized', 'checkbox', ['label' => 'orob2b.attribute.localized.label', 'required' => false]);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\AttributeBundle\Entity\Attribute',
-            'intention' => 'attribute',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'validation_groups' => ['Create']
         ]);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
-        return 'orob2b_attribute';
+        return self::NAME;
     }
 }

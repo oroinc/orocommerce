@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
+use OroB2B\Bundle\AttributeBundle\Model\SharingType;
 
 abstract class AbstractLoadAttributeData extends AbstractFixture
 {
@@ -29,7 +30,7 @@ abstract class AbstractLoadAttributeData extends AbstractFixture
             $attribute = new Attribute();
             $attribute->setCode($item['code']);
             $attribute->setType($item['type']);
-            $attribute->setSharingType('global');
+            $attribute->setSharingType(SharingType::GENERAL);
             $attribute->setLocalized($item['localized']);
             $attribute->setSystem($item['system']);
             $attribute->setRequired($item['required']);

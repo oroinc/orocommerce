@@ -2,23 +2,19 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Validator\Constraints\Length;
-use Symfony\Component\Validator\Constraints\NotBlank;
-
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\InitAttributeType;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
+use OroB2B\Bundle\AttributeBundle\Form\Type\CreateAttributeType;
 
-class InitAttributeTypeTest extends \PHPUnit_Framework_TestCase
+class CreateAttributeTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var InitAttributeType
+     * @var CreateAttributeType
      */
     protected $formType;
 
     protected function setUp()
     {
-        $this->formType = new InitAttributeType();
+        $this->formType = new CreateAttributeType();
     }
 
     public function testBuildForm()
@@ -27,15 +23,12 @@ class InitAttributeTypeTest extends \PHPUnit_Framework_TestCase
             [
                 'code',
                 'text',
-                [
-                    'label' => 'orob2b.attribute.code.label',
-                    'constraints' => [new NotBlank(), new Length(['min' => 3, 'max' => 255]), new Alphanumeric()]
-                ]
+                ['label' => 'orob2b.attribute.code.label']
             ],
             [
                 'type',
                 AttributeTypeType::NAME,
-                ['label' => 'orob2b.attribute.type.label', 'constraints' => [new NotBlank()]]
+                ['label' => 'orob2b.attribute.type.label']
             ],
             [
                 'localized',
@@ -55,8 +48,23 @@ class InitAttributeTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType->buildForm($formBuilder, []);
     }
 
+    public function testSetDefaultOptions()
+    {
+        $expectedDefaults = [
+            'data_class' => 'OroB2B\Bundle\AttributeBundle\Entity\Attribute',
+            'validation_groups' => ['Create']
+        ];
+
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with($expectedDefaults);
+
+        $this->formType->setDefaultOptions($resolver);
+    }
+
     public function testGetName()
     {
-        $this->assertEquals(InitAttributeType::NAME, $this->formType->getName());
+        $this->assertEquals(CreateAttributeType::NAME, $this->formType->getName());
     }
 }

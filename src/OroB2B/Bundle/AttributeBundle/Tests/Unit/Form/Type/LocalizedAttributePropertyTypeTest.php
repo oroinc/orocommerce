@@ -13,6 +13,7 @@ use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\PercentTypeStub;
 
 class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
 {
@@ -46,6 +47,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                     AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
+                    PercentTypeStub::NAME => new PercentTypeStub(),
                 ],
                 []
             )
@@ -72,6 +74,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
         }
 
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -101,7 +104,7 @@ class LocalizedAttributePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'percent with full data' => [
-                'options' => ['type' => 'percent', 'options' => ['type' => 'integer']],
+                'options' => ['type' => PercentTypeStub::NAME, 'options' => ['type' => 'integer']],
                 'defaultData' => [
                     null => 5,
                     1    => 10,

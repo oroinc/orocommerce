@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
+use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
 
@@ -13,10 +14,11 @@ class Integer extends AbstractAttributeType
     /**
      * {@inheritdoc}
      */
-    public function getFormParameters()
+    public function getFormParameters(Attribute $attribute)
     {
         return [
-          'type' => 'integer'
+            'type' => 'integer',
+            'options' => ['type' => 'text']
         ];
     }
 

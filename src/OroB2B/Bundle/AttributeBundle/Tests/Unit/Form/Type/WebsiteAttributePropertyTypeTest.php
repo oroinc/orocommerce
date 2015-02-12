@@ -13,6 +13,7 @@ use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
 
 class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
 {
@@ -46,6 +47,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
                     AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     WebsiteCollectionType::NAME => new WebsiteCollectionType($this->registry),
+                    CheckboxTypeStub::NAME => new CheckboxTypeStub(),
                 ],
                 []
             )
@@ -72,6 +74,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
         }
 
         $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -101,7 +104,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
                 ],
             ],
             'checkbox with full data' => [
-                'options' => ['type' => 'checkbox', 'options' => ['value' => 't']],
+                'options' => ['type' => CheckboxTypeStub::NAME, 'options' => ['value' => 't']],
                 'defaultData' => [
                     null => true,
                     1    => false,

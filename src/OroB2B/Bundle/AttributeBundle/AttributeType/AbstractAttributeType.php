@@ -37,11 +37,6 @@ abstract class AbstractAttributeType implements AttributeTypeInterface
     /**
      * {@inheritdoc}
      */
-    abstract public function getFormParameters();
-
-    /**
-     * {@inheritdoc}
-     */
     public function isContainHtml()
     {
         return false;
@@ -77,5 +72,37 @@ abstract class AbstractAttributeType implements AttributeTypeInterface
     public function getOptionalConstraints()
     {
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeUnique()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeRequired()
+    {
+        return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function normalize($value)
+    {
+        return $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function denormalize($value)
+    {
+        return $value;
     }
 }
