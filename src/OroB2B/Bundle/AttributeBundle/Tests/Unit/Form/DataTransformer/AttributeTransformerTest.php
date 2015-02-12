@@ -141,6 +141,9 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
                         1 => 2,
                         2 => new FallbackType(FallbackType::PARENT_LOCALE),
                     ],
+                    'useForSearch' => [
+                        null => false,
+                    ],
                     'onProductView' => [
                         null => false,
                         1 => true,
@@ -165,9 +168,6 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
                         null => true,
                         1 => false,
                         2 => new FallbackType(FallbackType::SYSTEM),
-                    ],
-                    'useForSearch' => [
-                        null => false,
                     ],
                     'useInFilters' => [
                         null => false,
