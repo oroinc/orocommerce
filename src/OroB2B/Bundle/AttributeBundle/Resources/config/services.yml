@@ -1,7 +1,6 @@
 parameters:
     orob2b_attribute.attribute.entity.class:          OroB2B\Bundle\AttributeBundle\Entity\Attribute
     orob2b_attribute.attribute.manager.api.class:     Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_attribute.attribute.scope.provider.class:  OroB2B\Bundle\AttributeBundle\Attribute\ScopeProvider
     orob2b_attribute.attribute_type.registry.class:   OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry
     orob2b_attribute.attribute_type.integer.class:    OroB2B\Bundle\AttributeBundle\AttributeType\Integer
     orob2b_attribute.attribute_type.float.class:      OroB2B\Bundle\AttributeBundle\AttributeType\Float
@@ -19,11 +18,6 @@ services:
         arguments:
             - %orob2b_attribute.attribute.entity.class%
             - @doctrine.orm.entity_manager
-
-    orob2b_attribute.attribute.scope.provider:
-        class: %orob2b_attribute.attribute.scope.provider.class%
-        arguments:
-            - @translator
 
     orob2b_attribute.attribute_type.registry:
         class: %orob2b_attribute.attribute_type.registry.class%
