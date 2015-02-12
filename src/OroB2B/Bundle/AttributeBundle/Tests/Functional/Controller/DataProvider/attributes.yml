@@ -1,0 +1,493 @@
+'integer localized':
+    name: integer
+    code: code01
+    localized: true
+    sharingGroup: general
+    validation:
+        required: true
+        unique: false
+        validation: greater_than_zero
+    label: 'Integer attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: 'Canada integer attribute label'
+                fallback: null
+        defaultValue: '100'
+        localeDefaultValue:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: '200'
+                fallback: null
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'integer not localized':
+    name: integer
+    code: code01
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+        unique: true
+        validation: greater_than_zero
+    label: 'Integer attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: 'Canada integer attribute label'
+                fallback: null
+        defaultValue: '100'
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'float localized':
+    name: float
+    code: code02
+    localized: true
+    sharingGroup: group
+    validation:
+        required: false
+        unique: false
+        validation: null
+    label: 'Float attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: null
+                fallback: system
+        defaultValue: '3.10'
+        localeDefaultValue:
+            en_US:
+                value: '3.14'
+                fallback: null
+            en_CA:
+                value: null
+                fallback: parent_locale
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+'float not localized':
+    name: float
+    code: code02
+    localized: false
+    sharingGroup: website
+    validation:
+        required: false
+        unique: false
+        validation: integer
+    label: 'Float attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: null
+                fallback: system
+        defaultValue: '100.55'
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+'boolean localized':
+    name: boolean
+    code: code03
+    localized: true
+    sharingGroup: general
+    validation: {  }
+    label: 'Boolean attribute label'
+    data:
+        label:
+            en_US:
+                value: 'US boolean attribute label'
+                fallback: null
+            en_CA:
+                value: null
+                fallback: parent_locale
+        defaultValue: true
+        localeDefaultValue:
+            en_US:
+                value: true
+                fallback: null
+            en_CA:
+                value: true
+                fallback: null
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+'boolean not localized':
+    name: boolean
+    code: code03
+    localized: false
+    sharingGroup: general
+    validation: {  }
+    label: 'Boolean attribute label'
+    data:
+        label:
+            en_US:
+                value: 'US boolean attribute label'
+                fallback: null
+            en_CA:
+                value: null
+                fallback: parent_locale
+        defaultValue: true
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+'string not localized':
+    name: string
+    code: code04
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+        unique: true
+        validation: null
+    label: 'String attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: null
+                fallback: system
+        defaultValue: 'Some string'
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'text not localized':
+    name: text
+    code: code05
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+        unique: true
+        validation: null
+    label: 'Text attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: null
+                fallback: system
+        defaultValue: '<p>Text <b>with HTML</b>.</p>'
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+'date not localized':
+    name: date
+    code: code06
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+        unique: true
+    label: 'Date attribute label'
+    data:
+        label:
+            en_US:
+                value: false
+                fallback: system
+            en_CA:
+                value: false
+                fallback: system
+        defaultValue: '2000-01-01'
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'datetime not localized':
+    name: datetime
+    code: code07
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+        unique: false
+    label: 'Datetime attribute label'
+    data:
+        label:
+            en_US:
+                value: false
+                fallback: system
+            en_CA:
+                value: false
+                fallback: system
+        defaultValue: '2000-01-01T08:11:12Z'
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
