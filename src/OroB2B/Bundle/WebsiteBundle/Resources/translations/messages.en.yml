@@ -1,0 +1,27 @@
+orob2b:
+    website:
+        entity_label: Website
+        entity_plural_label: Websites
+        entity_description: Represents website information
+        id.label: Id
+        name.label: Name
+        url.label: URL
+        owner.label: Owner
+        organization.label: Organization
+        locales.label: Locales
+        inversed_websites.label: Inversed websites
+        related_websites.label: Related websites
+
+        locale:
+            entity_label: Locale
+            entity_plural_label: Locales
+            entity_description: Represents locale information
+            id.label: Id
+            code.label: Code
+            child_locales.label: Child locales
+            parent_locale.label: Parent locale
+            websites.label: Website
+
+        menu:
+            websites_list.description: List of websites
+            shortcut_websites_list.description: Show list of websites

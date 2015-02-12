@@ -43,7 +43,7 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Product saved", $crawler->html());
+        $this->assertContains("Product has been saved", $crawler->html());
     }
 
     /**
@@ -73,7 +73,7 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Product saved", $crawler->html());
+        $this->assertContains("Product has been saved", $crawler->html());
 
         return $id;
     }

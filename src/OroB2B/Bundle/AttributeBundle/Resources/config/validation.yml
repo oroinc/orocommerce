@@ -1,0 +1,26 @@
+OroB2B\Bundle\AttributeBundle\Entity\Attribute:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: code
+            groups: [Default, Create]
+    properties:
+        code:
+            - NotBlank:
+                groups: [Default, Create, Update]
+            - Length:
+                min: 3
+                max: 255
+                groups: [Default, Create, Update]
+        type:
+            - NotBlank:
+                groups: [Default, Create, Update]
+            - Length:
+                min: 3
+                max: 64
+                groups: [Default, Create, Update]
+        sharingType:
+            - NotBlank:
+                groups: [Default, Update]
+            - Choice:
+                callback: [OroB2B\Bundle\AttributeBundle\Model\SharingType, getTypes]
+                groups: [Default, Update]

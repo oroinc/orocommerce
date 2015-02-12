@@ -1,0 +1,13 @@
+OroB2B\Bundle\AttributeBundle\Entity\Attribute:
+    alias:          orob2b_attribute
+    title_fields:   [title]
+    route:
+        name:   orob2b_attribute_view
+        parameters:
+            id: id
+    search_template:    OroB2BAttributeBundle:Attribute:searchResult.html.twig
+    fields:
+        -
+            name:                   title
+            target_type:            text
+            target_fields:          [title]

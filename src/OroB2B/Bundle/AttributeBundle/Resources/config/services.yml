@@ -1,0 +1,52 @@
+parameters:
+    orob2b_attribute.attribute.entity.class:          OroB2B\Bundle\AttributeBundle\Entity\Attribute
+    orob2b_attribute.attribute.manager.api.class:     Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_attribute.attribute_type.registry.class:   OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry
+    orob2b_attribute.attribute_type.integer.class:    OroB2B\Bundle\AttributeBundle\AttributeType\Integer
+    orob2b_attribute.attribute_type.float.class:      OroB2B\Bundle\AttributeBundle\AttributeType\Float
+    orob2b_attribute.attribute_type.boolean.class:    OroB2B\Bundle\AttributeBundle\AttributeType\Boolean
+    orob2b_attribute.attribute_type.string.class:     OroB2B\Bundle\AttributeBundle\AttributeType\String
+    orob2b_attribute.attribute_type.text.class:       OroB2B\Bundle\AttributeBundle\AttributeType\Text
+    orob2b_attribute.attribute_type.date.class:       OroB2B\Bundle\AttributeBundle\AttributeType\Date
+    orob2b_attribute.attribute_type.datetime.class:   OroB2B\Bundle\AttributeBundle\AttributeType\DateTime
+    orob2b_attribute.datagrid.attribute.helper.class: OroB2B\Bundle\AttributeBundle\Datagrid\AttributeHelper
+
+services:
+    orob2b_attribute.attribute.manager.api:
+        class:  %orob2b_attribute.attribute.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_attribute.attribute.entity.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_attribute.attribute_type.registry:
+        class: %orob2b_attribute.attribute_type.registry.class%
+
+    orob2b_attribute.attribute_integer:
+        class: %orob2b_attribute.attribute_type.integer.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }
+    orob2b_attribute.attribute_float:
+        class: %orob2b_attribute.attribute_type.float.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }
+    orob2b_attribute.attribute_boolean:
+        class: %orob2b_attribute.attribute_type.boolean.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }
+    orob2b_attribute.attribute_string:
+        class: %orob2b_attribute.attribute_type.string.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }
+    orob2b_attribute.attribute_text:
+        class: %orob2b_attribute.attribute_type.text.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }
+    orob2b_attribute.attribute_date:
+        class: %orob2b_attribute.attribute_type.date.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }
+    orob2b_attribute.attribute_datetime:
+        class: %orob2b_attribute.attribute_type.datetime.class%
+        tags:
+            - { name: orob2b_attribute.attribute_type }

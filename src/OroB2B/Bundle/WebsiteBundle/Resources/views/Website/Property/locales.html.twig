@@ -1,0 +1,8 @@
+{% set locales = record.getValue('locales').toArray() %}
+
+{% set localeCodes = [] %}
+{% for locale in locales %}
+    {% set localeCodes = localeCodes|merge([locale.code]) %}
+{% endfor %}
+
+{{ localeCodes|join(', ') }}

@@ -1,0 +1,3 @@
+orob2b_attribute_api:
+    resource: "@OroB2BAttributeBundle/Controller/Api/Rest/AttributeController.php"
+    type:     rest

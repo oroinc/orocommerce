@@ -81,14 +81,16 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
     public static function assertPropertyAccessors($instance, $properties)
     {
         foreach ($properties as $property) {
+            $testInstance = clone $instance;
+
             $propertyName = $property[0];
             $testValue = $property[1];
             $testDefaultValue = isset($property[2]) ? $property[2] : true;
 
             if ($testDefaultValue) {
-                self::assertPropertyGetterReturnsDefaultValue($instance, $propertyName);
+                self::assertPropertyGetterReturnsDefaultValue($testInstance, $propertyName);
             }
-            self::assertPropertyGetterReturnsSetValue($instance, $propertyName, $testValue);
+            self::assertPropertyGetterReturnsSetValue($testInstance, $propertyName, $testValue);
         }
     }
 }

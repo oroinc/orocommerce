@@ -1,0 +1,86 @@
+parameters:
+    orob2b_attribute.form.type.attribute_property_fallback.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType
+    orob2b_attribute.form.type.fallback_value.class: OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType
+    orob2b_attribute.form.type.attribute_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType
+    orob2b_attribute.form.type.sharing_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\SharingTypeType
+    orob2b_attribute.form.type.attribute_type_constraint.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeConstraintType
+    orob2b_attribute.form.type.locale_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType
+    orob2b_attribute.form.type.localized_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType
+    orob2b_attribute.form.type.website_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType
+    orob2b_attribute.form.type.website_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType
+    orob2b_attribute.form.type.create.class: OroB2B\Bundle\AttributeBundle\Form\Type\CreateAttributeType
+    orob2b_attribute.form.type.update.class: OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType
+
+    orob2b_attribute.form.extension.integer.class: OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
+
+services:
+    orob2b_attribute.form.type.attribute_property_fallback:
+        class: %orob2b_attribute.form.type.attribute_property_fallback.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_property_fallback }
+
+    orob2b_attribute.form.type.fallback_value:
+        class: %orob2b_attribute.form.type.fallback_value.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_fallback_value }
+
+    orob2b_attribute.form.type.attribute_type:
+        class: %orob2b_attribute.form.type.attribute_type.class%
+        arguments:
+            - @orob2b_attribute.attribute_type.registry
+        tags:
+            - { name: form.type, alias: orob2b_attribute_type }
+
+    orob2b_attribute.form.type.sharing_type:
+        class: %orob2b_attribute.form.type.sharing_type.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_sharing_type }
+
+    orob2b_attribute.form.type.attribute_type_constraint:
+        class: %orob2b_attribute.form.type.attribute_type_constraint.class%
+        arguments:
+            - @orob2b_attribute.attribute_type.registry
+        tags:
+            - { name: form.type, alias: orob2b_attribute_type_constraint }
+
+    orob2b_attribute.form.type.locale_collection:
+        class: %orob2b_attribute.form.type.locale_collection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_attribute_locale_collection }
+
+    orob2b_attribute.form.type.localized_attribute_property:
+        class: %orob2b_attribute.form.type.localized_attribute_property.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_localized_property }
+
+    orob2b_attribute.form.type.website_collection:
+        class: %orob2b_attribute.form.type.website_collection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_attribute_website_collection }
+
+    orob2b_attribute.form.type.website_attribute_property:
+        class: %orob2b_attribute.form.type.website_attribute_property.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_website_property }
+
+    orob2b_attribute.form.type.create:
+        class: %orob2b_attribute.form.type.create.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_create }
+
+    orob2b_attribute.form.type.update:
+        class: %orob2b_attribute.form.type.update.class%
+        arguments:
+            - @doctrine
+            - @orob2b_attribute.attribute_type.registry
+        tags:
+            - { name: form.type, alias: orob2b_attribute_update }
+
+    orob2b_attribute.form.extension.integer:
+        class: %orob2b_attribute.form.extension.integer.class%
+        tags:
+            - { name: form.type_extension, alias: integer }

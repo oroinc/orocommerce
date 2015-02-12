@@ -1,0 +1,16 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.attribute.code.label'|trans, attribute.code) }}
+            {{ UI.renderProperty('orob2b.attribute.type.label'|trans, ('orob2b.attribute.attribute_type.' ~ attribute.type)|trans) }}
+            {{ UI.renderProperty('orob2b.attribute.localized.label'|trans, attribute.localized ? 'Yes'|trans : 'No'|trans) }}
+            {{ UI.renderProperty('orob2b.attribute.sharing_type.label'|trans, ('orob2b.attribute.sharing_type.' ~ attribute.sharingType)|trans) }}
+            {{ UI.renderProperty('orob2b.attribute.required.label'|trans, attribute.required ? 'Yes'|trans : 'No'|trans) }}
+            {{ UI.renderProperty('orob2b.attribute.unique.label'|trans, attribute.unique ? 'Yes'|trans : 'No'|trans) }}
+            {{ UI.renderProperty('orob2b.attribute.validation.label'|trans, attribute.validation ? ('orob2b.attribute.attribute_type_constraint.' ~ attribute.validation)|trans : null) }}
+            {{ UI.renderProperty('orob2b.attribute.contain_html.label'|trans, attribute.containHtml ? 'Yes'|trans : 'No'|trans) }}
+        </div>
+    </div>
+</div>
