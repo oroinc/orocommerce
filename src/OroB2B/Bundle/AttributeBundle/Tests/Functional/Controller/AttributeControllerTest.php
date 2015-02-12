@@ -64,7 +64,7 @@ class AttributeControllerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testAttributesDataProvider
+     * @dataProvider attributesDataProvider
      * @param string $type
      * @param string $code
      * @param boolean $localized
@@ -285,7 +285,7 @@ class AttributeControllerTest extends WebTestCase
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testAttributesDataProvider()
+    public function attributesDataProvider()
     {
         return Yaml::parse(
             file_get_contents(__DIR__ . str_replace('/', DIRECTORY_SEPARATOR, '/DataProvider/attributes.yml'))
