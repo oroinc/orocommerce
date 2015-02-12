@@ -24,6 +24,7 @@ class AttributeProviderPass implements CompilerPassInterface
         $attributeTypeTaggedServices = $container->findTaggedServiceIds(self::ATTRIBUTE_TYPE_TAG);
 
         foreach ($attributeTypeTaggedServices as $id => $tags) {
+            $container->getDefinition($id)->setPublic(false);
             $registry->addMethodCall('addType', [new Reference($id)]);
         }
     }

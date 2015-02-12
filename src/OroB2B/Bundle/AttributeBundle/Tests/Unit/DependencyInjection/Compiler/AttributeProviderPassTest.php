@@ -37,14 +37,26 @@ class AttributeProviderPassTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $definition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
+        $registryDefinition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
             ->getMock();
-        $definition->expects($this->at(0))
+        $registryDefinition->expects($this->at(0))
             ->method('addMethodCall')
             ->with($this->equalTo('addType'), $this->equalTo([new Reference('service1')]));
-        $definition->expects($this->at(1))
+        $registryDefinition->expects($this->at(1))
             ->method('addMethodCall')
             ->with($this->equalTo('addType'), $this->equalTo([new Reference('service2')]));
+
+        $service1Definition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
+            ->getMock();
+        $service1Definition->expects($this->once())
+            ->method('setPublic')
+            ->with(false);
+
+        $service2Definition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
+            ->getMock();
+        $service2Definition->expects($this->once())
+            ->method('setPublic')
+            ->with(false);
 
         $serviceIds = [
             'service1' => [],
@@ -56,10 +68,18 @@ class AttributeProviderPassTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('orob2b_attribute.attribute_type.registry'))
             ->will($this->returnValue(true));
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->exactly(3))
             ->method('getDefinition')
-            ->with($this->equalTo('orob2b_attribute.attribute_type.registry'))
-            ->will($this->returnValue($definition));
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['orob2b_attribute.attribute_type.registry', $registryDefinition],
+                        ['service1', $service1Definition],
+                        ['service2', $service2Definition],
+                    ]
+                )
+            );
+
         $this->container->expects($this->once())
             ->method('findTaggedServiceIds')
             ->with($this->equalTo('orob2b_attribute.attribute_type'))
