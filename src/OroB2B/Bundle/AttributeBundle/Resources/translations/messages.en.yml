@@ -1,14 +1,16 @@
 orob2b:
     attribute:
         attribute_type:
-            empty:    'Choose attribute type...'
-            integer:  'Integer'
-            float:    'Float'
-            boolean:  'Boolean'
-            string:   'String'
-            text:     'Text'
-            date:     'Date'
-            datetime: 'DateTime'
+            empty:          'Choose attribute type...'
+            integer:        'Integer'
+            float:          'Float'
+            boolean:        'Boolean'
+            string:         'String'
+            text:           'Text'
+            date:           'Date'
+            datetime:       'DateTime'
+            select:         'Select'
+            multiselect:    'Multi-Select'
         sharing_type:
             general:  'Global'
             group:    'Sharing Group'
