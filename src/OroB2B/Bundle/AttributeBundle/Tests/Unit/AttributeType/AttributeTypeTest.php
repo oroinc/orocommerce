@@ -6,6 +6,9 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Boolean;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Integer;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Float;
+use OroB2B\Bundle\AttributeBundle\AttributeType\MultiSelect;
+use OroB2B\Bundle\AttributeBundle\AttributeType\OptionAttributeTypeInterface;
+use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
@@ -23,7 +26,7 @@ use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
 class AttributeTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param AttributeTypeInterface $type
+     * @param AttributeTypeInterface|OptionAttributeTypeInterface $type
      * @param array $expected
      * @param Attribute|null $attribute
      * @dataProvider attributeTypeDataProvider
@@ -48,6 +51,10 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['optionalConstraints'], $type->getOptionalConstraints());
         $this->assertEquals($expected['canBeUnique'], $type->canBeUnique());
         $this->assertEquals($expected['canBeRequired'], $type->canBeRequired());
+
+        if (isset($expected['defaultFormParameters'])) {
+            $this->assertEquals($expected['defaultFormParameters'], $type->getDefaultValueFormParameters($attribute));
+        }
 
         $testValue = 'test';
 
@@ -76,6 +83,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
     {
         $htmlAttribute = new Attribute();
         $htmlAttribute->setContainHtml(true);
+
+        $localizedAttribute = new Attribute();
+        $localizedAttribute->setLocalized(true);
+
+        $notLocalizedAttribute = new Attribute();
+        $notLocalizedAttribute->setLocalized(false);
 
         return [
             'integer' => [
@@ -262,7 +275,97 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'canBeUnique' => true,
                     'canBeRequired' => true,
                 ]
-            ]
+            ],
+            'select not localized' => [
+                'attributeType' => new Select(),
+                'expected' => [
+                    'name' => Select::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => 'entity',
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => 'options_not_localized',
+                        'options' => [],
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $notLocalizedAttribute
+            ],
+            'select localized' => [
+                'attributeType' => new Select(),
+                'expected' => [
+                    'name' => Select::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => 'entity',
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => 'options_localized',
+                        'options' => [],
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $localizedAttribute
+            ],
+            'multiselect not localized' => [
+                'attributeType' => new MultiSelect(),
+                'expected' => [
+                    'name' => MultiSelect::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => 'entity',
+                        ['multiple' => true]
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => 'options_multiple_not_localized',
+                        'options' => [],
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $notLocalizedAttribute
+            ],
+            'multiselect localized' => [
+                'attributeType' => new MultiSelect(),
+                'expected' => [
+                    'name' => MultiSelect::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => 'entity',
+                        ['multiple' => true]
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => 'options_multiple_localized',
+                        'options' => [],
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $localizedAttribute
+            ],
         ];
     }
 }
