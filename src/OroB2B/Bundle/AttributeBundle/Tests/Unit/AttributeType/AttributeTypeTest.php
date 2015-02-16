@@ -29,6 +29,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
      * @param AttributeTypeInterface|OptionAttributeTypeInterface $type
      * @param array $expected
      * @param Attribute|null $attribute
+     * @param array $normalizationData
      * @dataProvider attributeTypeDataProvider
      */
     public function testAttributeTypes(
