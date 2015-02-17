@@ -12,11 +12,6 @@ class AttributeTypeRegistry
     protected $attributeTypes;
 
     /**
-     * @var array
-     */
-    protected $typeChoices = [];
-
-    /**
      * Add form type to registry
      *
      * @param AttributeTypeInterface $attributeType
