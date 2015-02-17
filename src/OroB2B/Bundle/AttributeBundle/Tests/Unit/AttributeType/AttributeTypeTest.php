@@ -14,6 +14,8 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
@@ -285,7 +287,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type' => 'entity',
+                        'type' => SelectAttributeTypeType::NAME,
                     ],
                     'defaultFormParameters' => [
                         'type' => 'options_not_localized',
@@ -307,7 +309,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type' => 'entity',
+                        'type' => SelectAttributeTypeType::NAME
                     ],
                     'defaultFormParameters' => [
                         'type' => 'options_localized',
@@ -329,8 +331,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type' => 'entity',
-                        ['multiple' => true]
+                        'type' => MultiSelectAttributeTypeType::NAME
                     ],
                     'defaultFormParameters' => [
                         'type' => 'options_multiple_not_localized',
@@ -352,8 +353,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'isUsedForSearch' => true,
                     'isUsedInFilters' => true,
                     'formParameters' => [
-                        'type' => 'entity',
-                        ['multiple' => true]
+                        'type' => MultiSelectAttributeTypeType::NAME
                     ],
                     'defaultFormParameters' => [
                         'type' => 'options_multiple_localized',
