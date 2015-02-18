@@ -109,7 +109,6 @@ class OroB2BAttributeBundle implements Migration
         $table->setPrimaryKey(['id']);
         $table->addIndex(['attribute_id'], 'IDX_B5688EBAB6E62EFA', []);
         $table->addIndex(['locale_id'], 'IDX_B5688EBAE559DFD1', []);
-        $table->addUniqueIndex(['attribute_id', 'locale_id'], 'attribute_option_unique_idx');
     }
 
     /**
