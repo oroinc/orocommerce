@@ -7,6 +7,7 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextTypeStub;
+
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -17,7 +18,7 @@ class CheckboxFallbackValueTypeTest extends FormIntegrationTestCase
     const LOCALE_ID = 1;
 
     /**
-     * @var FallbackValueTypeTest
+     * @var CheckboxFallbackValueType
      */
     protected $formType;
 
@@ -97,14 +98,14 @@ class CheckboxFallbackValueTypeTest extends FormIntegrationTestCase
                 'defaultData'   => [],
                 'viewData'      => [],
                 'submittedData' => [
-                    'extend_value' => 1,
+                    'extend_value' => true,
                     'fallback_value' => [
                         'value' => 'some_test',
                         'fallback' => ''
                     ]
                 ],
                 'expectedData'  => [
-                    'extend_value' => 1,
+                    'extend_value' => true,
                     'fallback_value' => 'some_test'
                 ],
             ],
@@ -122,14 +123,13 @@ class CheckboxFallbackValueTypeTest extends FormIntegrationTestCase
                     'fallback_value' => 'test'
                 ],
                 'submittedData' => [
-                    'extend_value' => null,
                     'fallback_value' => [
                         'value' => '',
                         'fallback' => FallbackType::PARENT_LOCALE
                     ]
                 ],
                 'expectedData'  => [
-                    'extend_value' => null,
+                    'extend_value' => false,
                     'fallback_value' => new FallbackType(FallbackType::PARENT_LOCALE)
                 ],
             ]
@@ -139,5 +139,10 @@ class CheckboxFallbackValueTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(CheckboxFallbackValueType::NAME, $this->formType->getName());
+    }
+
+    public function testGetParent()
+    {
+        $this->assertEquals(HiddenFallbackValueType::NAME, $this->formType->getParent());
     }
 }

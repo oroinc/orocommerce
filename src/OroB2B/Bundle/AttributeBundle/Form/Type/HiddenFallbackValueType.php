@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -15,11 +16,17 @@ class HiddenFallbackValueType extends AbstractType
     const EXTEND_VALUE = 'extend_value';
     const FALLBACK_VALUE = 'fallback_value';
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return self::NAME;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
