@@ -11,6 +11,8 @@ OroB2B\Bundle\AttributeBundle\Entity\Attribute:
                 min: 3
                 max: 255
                 groups: [Default, Create, Update]
+            - OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric:
+                groups: [Default, Create, Update]
         type:
             - NotBlank:
                 groups: [Default, Create, Update]

@@ -13,6 +13,7 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\Helper\AttributeTransformerHelper;
+use OroB2B\Bundle\AttributeBundle\AttributeType\OptionAttributeTypeInterface;
 
 class AttributeTransformer implements DataTransformerInterface
 {
@@ -117,7 +118,12 @@ class AttributeTransformer implements DataTransformerInterface
         }
 
         $result['label'] = $this->helper->getLabels($value);
-        $result['defaultValue'] = $this->helper->getDefaultValue($value, $type);
+
+        if ($type instanceof OptionAttributeTypeInterface) {
+            $result['defaultOptions'] = $this->helper->getDefaultOptions($value);
+        } else {
+            $result['defaultValue'] = $this->helper->getDefaultValue($value, $type);
+        }
 
         foreach ($this->websiteFields as $field => $data) {
             $propertyData = $this->helper->getPropertyValues($value, $data['name']);
@@ -156,9 +162,7 @@ class AttributeTransformer implements DataTransformerInterface
             $this->helper->setLabels($this->attribute, $value['label']);
         }
 
-        if (array_key_exists('defaultValue', $value)) {
-            $this->helper->setDefaultValue($this->attribute, $type, $value['defaultValue']);
-        }
+        $this->reverseTransformDefaults($value, $type);
 
         foreach ($this->websiteFields as $field => $data) {
             if (array_key_exists($field, $value)) {
@@ -167,6 +171,21 @@ class AttributeTransformer implements DataTransformerInterface
         }
 
         return $this->attribute;
+    }
+
+    /**
+     * @param array $value
+     * @param AttributeTypeInterface $type
+     */
+    protected function reverseTransformDefaults(array $value, AttributeTypeInterface $type)
+    {
+        if (array_key_exists('defaultValue', $value)) {
+            $this->helper->setDefaultValue($this->attribute, $type, $value['defaultValue']);
+        }
+
+        if (array_key_exists('defaultOptions', $value)) {
+            $this->helper->setDefaultOptions($this->attribute, $value['defaultOptions']);
+        }
     }
 
     /**

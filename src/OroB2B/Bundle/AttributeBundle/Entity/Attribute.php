@@ -126,6 +126,7 @@ class Attribute
      * @var Collection|AttributeOption[]
      *
      * @ORM\OneToMany(targetEntity="AttributeOption", mappedBy="attribute", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OrderBy({"order" = "ASC"})
      */
     protected $options;
 
@@ -493,11 +494,11 @@ class Attribute
 
     /**
      * @param int|null $localeId
-     * @return AttributeDefaultValue|null
+     * @return AttributeDefaultValue[]|Collection
      */
-    public function getDefaultValueByLocaleId($localeId)
+    public function getDefaultValuesByLocaleId($localeId)
     {
-        $values = $this->defaultValues->filter(function (AttributeDefaultValue $value) use ($localeId) {
+        return $this->defaultValues->filter(function (AttributeDefaultValue $value) use ($localeId) {
             $locale = $value->getLocale();
             if ($locale) {
                 return $locale->getId() == $localeId;
@@ -505,9 +506,40 @@ class Attribute
                 return empty($localeId);
             }
         });
+    }
+
+    /**
+     * @param int|null $localeId
+     * @return AttributeDefaultValue|null
+     */
+    public function getDefaultValueByLocaleId($localeId)
+    {
+        $values = $this->getDefaultValuesByLocaleId($localeId);
 
         return $values->count() ? $values->first() : null;
     }
+
+    /**
+     * @param int|null $localeId
+     * @param int $optionId
+     * @return AttributeDefaultValue|null
+     */
+    public function getDefaultValueByLocaleIdAndOptionId($localeId, $optionId)
+    {
+        $values = $this->getDefaultValuesByLocaleId($localeId);
+
+        $values = $values->filter(function (AttributeDefaultValue $value) use ($optionId) {
+            $option = $value->getOption();
+            if (!$option || !$option->getId()) {
+                return false;
+            }
+
+            return $option->getId() == $optionId;
+        });
+
+        return $values->count() ? $values->first() : null;
+    }
+
 
     /**
      * Set default values for current attribute
@@ -564,6 +596,24 @@ class Attribute
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @param int $optionId
+     * @return AttributeOption|null
+     */
+    public function getOptionById($optionId)
+    {
+        $options = $this->options->filter(function (AttributeOption $option) use ($optionId) {
+            $currentOptionId = $option->getId();
+            if (!$currentOptionId) {
+                return false;
+            }
+
+            return $currentOptionId == $optionId;
+        });
+
+        return $options->count() ? $options->first() : null;
     }
 
     /**

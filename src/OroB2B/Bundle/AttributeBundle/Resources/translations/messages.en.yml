@@ -66,7 +66,7 @@ orob2b:
         id.label:               'ID'
         labels.label:           'Label'
         localized.label:        'Localized'
-        options.label:          'Attribute Options'
+        options.label:          'Options'
         properties.label:       'Attribute Properties'
         required.label:         'Required'
         sharing_type.label:     'Value sharing'
