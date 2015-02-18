@@ -12,7 +12,7 @@ parameters:
     orob2b_attribute.form.type.website_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType
     orob2b_attribute.form.type.create.class: OroB2B\Bundle\AttributeBundle\Form\Type\CreateAttributeType
     orob2b_attribute.form.type.update.class: OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType
-
+    orob2b_attribute.form.type.option_row.class: OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType
     orob2b_attribute.form.extension.integer.class: OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
 
 services:
@@ -96,3 +96,8 @@ services:
         class: %orob2b_attribute.form.extension.integer.class%
         tags:
             - { name: form.type_extension, alias: integer }
+
+    orob2b_attribute.form.type.option_row:
+        class: %orob2b_attribute.form.type.option_row.class%
+        tags:
+            - { name: form.type, alias: orob2b_option_row }
