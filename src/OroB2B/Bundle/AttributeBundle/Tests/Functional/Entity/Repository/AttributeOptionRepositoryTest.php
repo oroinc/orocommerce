@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 use OroB2B\Bundle\AttributeBundle\Entity\Repository\AttributeOptionRepository;
 use OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadSelectAttributeWithOptions;
