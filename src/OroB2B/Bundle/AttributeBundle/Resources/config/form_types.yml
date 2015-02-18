@@ -1,6 +1,8 @@
 parameters:
     orob2b_attribute.form.type.attribute_property_fallback.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType
     orob2b_attribute.form.type.fallback_value.class: OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType
+    orob2b_attribute.form.type.hidden_fallback.class: OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType
+    orob2b_attribute.form.type.checkbox_fallback.class: OroB2B\Bundle\AttributeBundle\Form\Type\CheckboxFallbackValueType
     orob2b_attribute.form.type.attribute_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType
     orob2b_attribute.form.type.sharing_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\SharingTypeType
     orob2b_attribute.form.type.attribute_type_constraint.class: OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeConstraintType
@@ -25,6 +27,16 @@ services:
         class: %orob2b_attribute.form.type.fallback_value.class%
         tags:
             - { name: form.type, alias: orob2b_attribute_fallback_value }
+
+    orob2b_attribute.form.type.hidden_fallback:
+        class: %orob2b_attribute.form.type.hidden_fallback.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_hidden_fallback }
+
+    orob2b_attribute.form.type.checkbox_fallback:
+        class: %orob2b_attribute.form.type.checkbox_fallback.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_checkbox_fallback }
 
     orob2b_attribute.form.type.attribute_type:
         class: %orob2b_attribute.form.type.attribute_type.class%
