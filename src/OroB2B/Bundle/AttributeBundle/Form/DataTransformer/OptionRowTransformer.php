@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Form\DataTransformer;
 
+use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
 use Symfony\Component\Form\DataTransformerInterface;
 
 class OptionRowTransformer implements DataTransformerInterface
@@ -27,19 +29,21 @@ class OptionRowTransformer implements DataTransformerInterface
         }
 
         $result = [];
-        $result['order'] = $value['order'];
-        $result['master_option_id'] = $value['master_option_id'];
+        $result[OptionRowType::ORDER] = $value[OptionRowType::ORDER];
+        $result[OptionRowType::MASTER_OPTION_ID] = $value[OptionRowType::MASTER_OPTION_ID];
         if (!empty($value['data'])) {
             foreach ($value['data'] as $localeId => $data) {
                 if (null == $localeId) {
-                    $result['default'] = $data['value'];
-                    $result['is_default'] = $data['is_default'];
+                    $result[OptionRowType::DEFAULT_VALUE] = $data['value'];
+                    $result[OptionRowType::IS_DEFAULT] = $data[OptionRowType::IS_DEFAULT];
                 } else {
                     if ($this->localized) {
-                        $result['locales'][$localeId]['fallback_value'] = $data['value'];
-                        $result['locales'][$localeId]['extend_value'] = $data['is_default'];
+                        $result[OptionRowType::LOCALES][$localeId][HiddenFallbackValueType::FALLBACK_VALUE]
+                            = $data['value'];
+                        $result[OptionRowType::LOCALES][$localeId][HiddenFallbackValueType::EXTEND_VALUE]
+                            = $data[OptionRowType::IS_DEFAULT];
                     } else {
-                        $result['locales'][$localeId] = $data['value'];
+                        $result[OptionRowType::LOCALES][$localeId] = $data['value'];
                     }
                 }
             }
@@ -58,26 +62,27 @@ class OptionRowTransformer implements DataTransformerInterface
         }
 
         $result = [
-            'master_option_id' => $value['master_option_id'],
-            'order' => $value['order'],
+            OptionRowType::MASTER_OPTION_ID => $value[OptionRowType::MASTER_OPTION_ID],
+            OptionRowType::ORDER => $value[OptionRowType::ORDER],
             'data' => [
-              null => [
-                  'value' => $value['default'],
-                  'is_default' => $value['is_default']
-              ]
+                null => [
+                  'value' => $value[OptionRowType::DEFAULT_VALUE],
+                  OptionRowType::IS_DEFAULT => $value[OptionRowType::IS_DEFAULT]
+                ]
             ]
         ];
 
-        $localeValues = $value['locales'];
+        $localeValues = $value[OptionRowType::LOCALES];
         if (!empty($localeValues)) {
             foreach ($localeValues as $localeId => $localeValue) {
                 if ($this->localized) {
-                    $result['data'][$localeId]['value'] = $localeValue['fallback_value'];
-                    $result['data'][$localeId]['is_default'] = $localeValue['extend_value'];
+                    $result['data'][$localeId]['value'] = $localeValue[HiddenFallbackValueType::FALLBACK_VALUE];
+                    $result['data'][$localeId][OptionRowType::IS_DEFAULT]
+                        = $localeValue[HiddenFallbackValueType::EXTEND_VALUE];
                 } else {
                     $result['data'][$localeId] = [
                         'value' => $localeValue,
-                        'is_default' => false
+                        OptionRowType::IS_DEFAULT => false
                     ];
                 }
             }

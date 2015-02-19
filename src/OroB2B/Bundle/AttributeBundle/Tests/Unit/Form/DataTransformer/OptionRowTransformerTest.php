@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\DataTransformer;
 
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\OptionRowTransformer;
+use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 
 class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
@@ -33,25 +35,25 @@ class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
             'not localized with data' => [
                 'localized' => false,
                 'input' => [
-                    'master_option_id' => null,
-                    'order' => 5,
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
                     'data' => [
                         null => [
                             'value' => 'default value',
-                            'is_default' => true
+                            OptionRowType::IS_DEFAULT => true
                         ],
                         1 => [
                             'value' => new FallbackType(FallbackType::SYSTEM),
-                            'is_default' => false
+                            OptionRowType::IS_DEFAULT => false
                         ]
                     ]
                 ],
                 'expected' => [
-                    'master_option_id' => null,
-                    'order' => 5,
-                    'default' => 'default value',
-                    'is_default' => true,
-                    'locales' => [
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
+                    OptionRowType::DEFAULT_VALUE => 'default value',
+                    OptionRowType::IS_DEFAULT => true,
+                    OptionRowType::LOCALES => [
                         1 => new FallbackType(FallbackType::SYSTEM)
                     ]
                 ],
@@ -64,28 +66,28 @@ class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
             'localized with data' => [
                 'localized' => true,
                 'input' => [
-                    'master_option_id' => null,
-                    'order' => 5,
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
                     'data' => [
                         null => [
                             'value' => 'default value',
-                            'is_default' => true
+                            OptionRowType::IS_DEFAULT => true
                         ],
                         1 => [
                             'value' => new FallbackType(FallbackType::SYSTEM),
-                            'is_default' => false
+                            OptionRowType::IS_DEFAULT => false
                         ]
                     ]
                 ],
                 'expected' => [
-                    'master_option_id' => null,
-                    'order' => 5,
-                    'default' => 'default value',
-                    'is_default' => true,
-                    'locales' => [
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
+                    OptionRowType::DEFAULT_VALUE => 'default value',
+                    OptionRowType::IS_DEFAULT => true,
+                    OptionRowType::LOCALES => [
                         1 => [
-                            'fallback_value' => new FallbackType(FallbackType::SYSTEM),
-                            'extend_value' => false
+                            HiddenFallbackValueType::FALLBACK_VALUE => new FallbackType(FallbackType::SYSTEM),
+                            HiddenFallbackValueType::EXTEND_VALUE => false
                         ]
                     ]
                 ],
@@ -119,25 +121,25 @@ class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
             'not localized with data' => [
                 'localized' => false,
                 'input' => [
-                    'master_option_id' => null,
-                    'order' => 5,
-                    'default' => 'default value',
-                    'is_default' => true,
-                    'locales' => [
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
+                    OptionRowType::DEFAULT_VALUE => 'default value',
+                    OptionRowType::IS_DEFAULT => true,
+                    OptionRowType::LOCALES => [
                         1 => new FallbackType(FallbackType::SYSTEM)
                     ]
                 ],
                 'expected' => [
-                    'master_option_id' => null,
-                    'order' => 5,
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
                     'data' => [
                         null => [
                             'value' => 'default value',
-                            'is_default' => true
+                            OptionRowType::IS_DEFAULT => true
                         ],
                         1 => [
                             'value' => new FallbackType(FallbackType::SYSTEM),
-                            'is_default' => false
+                            OptionRowType::IS_DEFAULT => false
                         ]
                     ]
                 ]
@@ -150,28 +152,28 @@ class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
             'localized with data' => [
                 'localized' => true,
                 'input' => [
-                    'master_option_id' => null,
-                    'order' => 5,
-                    'default' => 'default value',
-                    'is_default' => true,
-                    'locales' => [
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
+                    OptionRowType::DEFAULT_VALUE => 'default value',
+                    OptionRowType::IS_DEFAULT => true,
+                    OptionRowType::LOCALES => [
                         1 => [
-                            'fallback_value' => new FallbackType(FallbackType::SYSTEM),
-                            'extend_value' => false
+                            HiddenFallbackValueType::FALLBACK_VALUE => new FallbackType(FallbackType::SYSTEM),
+                            HiddenFallbackValueType::EXTEND_VALUE => false
                         ]
                     ]
                 ],
                 'expected' => [
-                    'master_option_id' => null,
-                    'order' => 5,
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 5,
                     'data' => [
                         null => [
                             'value' => 'default value',
-                            'is_default' => true
+                            OptionRowType::IS_DEFAULT => true
                         ],
                         1 => [
                             'value' => new FallbackType(FallbackType::SYSTEM),
-                            'is_default' => false
+                            OptionRowType::IS_DEFAULT => false
                         ]
                     ]
                 ]

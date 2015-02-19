@@ -62,7 +62,7 @@ class OptionRowType extends AbstractType
             )
         ;
 
-        $localized = $options['value_type'] != 'orob2b_attribute_fallback_value';
+        $localized = $options['value_type'] != FallbackValueType::NAME;
         $builder->addViewTransformer(new OptionRowTransformer($localized));
     }
 

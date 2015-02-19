@@ -273,7 +273,6 @@ class OptionRowTypeTest extends AbstractLocalizedType
         ];
     }
 
-
     public function testGetName()
     {
         $this->assertEquals(OptionRowType::NAME, $this->formType->getName());
