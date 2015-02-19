@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Form\DataTransformer;
 
+use Symfony\Component\Form\DataTransformerInterface;
+
 use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
-use Symfony\Component\Form\DataTransformerInterface;
 
 class OptionRowTransformer implements DataTransformerInterface
 {
