@@ -232,7 +232,12 @@ class AttributeOption
             }
         });
 
-        return $options->count() ? $options->first() : null;
+        $count = $options->count();
+        if ($count > 1) {
+            throw new \LogicException('Several related attribute options found by the same locale ID.');
+        }
+
+        return $count > 0 ? $options->first() : null;
     }
 
     /**

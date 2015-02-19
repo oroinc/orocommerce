@@ -357,7 +357,12 @@ class Attribute
             }
         });
 
-        return $properties->count() ? $properties->first() : null;
+        $count = $properties->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute properties found by the same field and locale ID.');
+        }
+
+        return $count > 0 ? $properties->first() : null;
     }
 
     /**
@@ -432,7 +437,12 @@ class Attribute
             }
         });
 
-        return $labels->count() ? $labels->first() : null;
+        $count = $labels->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute labels found by the same locale ID.');
+        }
+
+        return $count > 0 ? $labels->first() : null;
     }
 
     /**
@@ -496,7 +506,7 @@ class Attribute
      * @param int|null $localeId
      * @return AttributeDefaultValue[]|Collection
      */
-    public function getDefaultValuesByLocaleId($localeId)
+    protected function getDefaultValuesByLocaleId($localeId)
     {
         return $this->defaultValues->filter(function (AttributeDefaultValue $value) use ($localeId) {
             $locale = $value->getLocale();
@@ -537,7 +547,12 @@ class Attribute
             return $option->getId() == $optionId;
         });
 
-        return $values->count() ? $values->first() : null;
+        $count = $values->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute default values found by the same locale ID and option ID.');
+        }
+
+        return $count > 0 ? $values->first() : null;
     }
 
 
@@ -613,7 +628,12 @@ class Attribute
             return $currentOptionId == $optionId;
         });
 
-        return $options->count() ? $options->first() : null;
+        $count = $options->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute options found by the same option ID.');
+        }
+
+        return $count > 0 ? $options->first() : null;
     }
 
     /**
