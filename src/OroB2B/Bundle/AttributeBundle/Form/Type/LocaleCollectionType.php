@@ -86,15 +86,18 @@ class LocaleCollectionType extends AbstractType
             );
         }
 
-        // use any locale field to resolve default data
-        $locale = $this->getLocales()[0];
-        $localeField = $builder->get($locale->getId());
+        $locales = $this->getLocales();
+        if ($locales) {
+            // use any locale field to resolve default data
+            $locale = $locales[0];
+            $localeField = $builder->get($locale->getId());
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($localeField) {
-            $data = $event->getData();
-            $filledData = $this->fillDefaultData($data, $localeField);
-            $event->setData($filledData);
-        });
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($localeField) {
+                $data = $event->getData();
+                $filledData = $this->fillDefaultData($data, $localeField);
+                $event->setData($filledData);
+            });
+        }
     }
 
     /**
