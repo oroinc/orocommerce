@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
@@ -10,6 +11,7 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionsCollectionType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\IntegerType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextType;
+
 use Symfony\Component\Form\Extension\Core\CoreExtension;
 use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Form\PreloadedExtension;

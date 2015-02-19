@@ -14,7 +14,9 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedMultiselectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedMultiselectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
@@ -335,7 +337,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type' => MultiSelectAttributeTypeType::NAME
                     ],
                     'defaultFormParameters' => [
-                        'type' => 'options_multiple_not_localized',
+                        'type' => NotLocalizedMultiselectCollectionType::NAME,
                         'options' => [],
                     ],
                     'requiredConstraints' => [],
@@ -357,7 +359,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type' => MultiSelectAttributeTypeType::NAME
                     ],
                     'defaultFormParameters' => [
-                        'type' => 'options_multiple_localized',
+                        'type' => LocalizedMultiselectCollectionType::NAME,
                         'options' => [],
                     ],
                     'requiredConstraints' => [],
