@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
-use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\OptionRowTransformer;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\OptionRowTransformer;
+use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer;
 
 class OptionRowType extends AbstractType
 {

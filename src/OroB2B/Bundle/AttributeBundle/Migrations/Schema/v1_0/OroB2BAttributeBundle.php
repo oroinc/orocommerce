@@ -101,15 +101,16 @@ class OroB2BAttributeBundle implements Migration
     {
         $table = $schema->createTable('orob2b_attribute_option');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('master_option_id', 'integer', ['notnull' => false]);
         $table->addColumn('attribute_id', 'integer', ['notnull' => false]);
         $table->addColumn('locale_id', 'integer', ['notnull' => false]);
-        $table->addColumn('value', 'string', ['length' => 255]);
+        $table->addColumn('value', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('order_value', 'integer', []);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['master_option_id'], 'IDX_B72BFBE8D45BBE22', []);
         $table->addIndex(['attribute_id'], 'IDX_B5688EBAB6E62EFA', []);
         $table->addIndex(['locale_id'], 'IDX_B5688EBAE559DFD1', []);
-        $table->addUniqueIndex(['attribute_id', 'locale_id'], 'attribute_option_unique_idx');
     }
 
     /**
@@ -190,6 +191,12 @@ class OroB2BAttributeBundle implements Migration
     protected function addOrob2BAttributeOptionForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_attribute_option');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_attribute_option'),
+            ['master_option_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_attribute'),
             ['attribute_id'],
