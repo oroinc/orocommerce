@@ -265,6 +265,9 @@ class DefaultsTransformerHelper
 
         if (!$defaultValue) {
             $defaultValue = new AttributeDefaultValue();
+            if ($localeId) {
+                $defaultValue->setLocale($this->databaseHelper->findLocale($localeId));
+            }
         }
 
         $defaultValue->setOption($option);

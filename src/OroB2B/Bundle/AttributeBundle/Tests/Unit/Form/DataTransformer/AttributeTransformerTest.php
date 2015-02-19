@@ -6,10 +6,12 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Integer;
+use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeDefaultValue;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
+use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeTransformer;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
@@ -68,6 +70,7 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
         $this->typeRegistry = new AttributeTypeRegistry();
         $this->typeRegistry->addType(new Text());
         $this->typeRegistry->addType(new Integer());
+        $this->typeRegistry->addType(new Select());
     }
 
     /**
@@ -92,6 +95,9 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
             ->setType(Text::NAME);
 
         $fullAttribute = $this->getFullAttribute();
+
+        $optionAttribute = $this->getOptionAttribute();
+        $optionAttribute->addDefaultValue($this->createDefaultValue(null));
 
         return [
             'null' => [
@@ -176,6 +182,83 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            'option attribute' => [
+                'model' => $optionAttribute,
+                'view' => [
+                    'code' => 'select',
+                    'type' => Select::NAME,
+                    'localized' => false,
+                    'containHtml' => false,
+                    'sharingType' => null,
+                    'required' => false,
+                    'unique' => false,
+                    'validation' => null,
+                    'label' => [],
+                    'defaultOptions' => [
+                        [
+                            'master_option_id' => 1,
+                            'order' => 1,
+                            'data' => [
+                                null => ['value' => 'default_1', 'is_default' => true],
+                                1    => ['value' => new FallbackType(FallbackType::SYSTEM), 'is_default' => false],
+                                2    => ['value' => 'second_1', 'is_default' => true],
+                            ]
+                        ],
+                        [
+                            'master_option_id' => null,
+                            'order' => 2,
+                            'data' => [
+                                null => ['value' => 'default_3', 'is_default' => false],
+                                1    => ['value' => 'first_3', 'is_default' => false],
+                                2    => [
+                                    'value' => new FallbackType(FallbackType::PARENT_LOCALE),
+                                    'is_default' => false
+                                ],
+                            ]
+                        ],
+                        [
+                            'master_option_id' => 4,
+                            'order' => 2,
+                            'data' => [
+                                null => ['value' => 'default_2', 'is_default' => false],
+                                1    => ['value' => 'first_2', 'is_default' => true],
+                                2    => ['value' => 'second_2', 'is_default' => false],
+                            ]
+                        ],
+                    ],
+                    'onProductView' => [
+                        null => false,
+                        1 => true,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'inProductListing' => [
+                        null => true,
+                        1 => false,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'useInSorting' => [
+                        null => false,
+                        1 => true,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'onAdvancedSearch' => [
+                        null => true,
+                        1 => false,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'onProductComparison' => [
+                        null => true,
+                        1 => false,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'useForSearch' => [null => false],
+                    'useInFilters' => [
+                        null => false,
+                        1 => true,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -192,7 +275,21 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
         }
 
         $transformer = new AttributeTransformer($this->managerRegistry, $this->typeRegistry, $attribute);
-        $this->assertEquals($model, $transformer->reverseTransform($view));
+        $actualModel = $transformer->reverseTransform($view);
+
+        if ($model && $actualModel) {
+            // collections should be compared without keys influence
+            $model->resetLabels($model->getLabels()->toArray());
+            $model->resetProperties($model->getProperties()->toArray());
+            $model->resetDefaultValues($model->getDefaultValues()->toArray());
+            $model->resetOptions($model->getOptions()->toArray());
+            $actualModel->resetLabels($actualModel->getLabels()->toArray());
+            $actualModel->resetProperties($actualModel->getProperties()->toArray());
+            $actualModel->resetDefaultValues($actualModel->getDefaultValues()->toArray());
+            $actualModel->resetOptions($actualModel->getOptions()->toArray());
+        }
+
+        $this->assertEquals($model, $actualModel);
     }
 
     /**
@@ -230,6 +327,13 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
 
         $notLocalizedInputAttribute = new Attribute();
         $notLocalizedInputAttribute->setType(Text::NAME);
+
+        // option attribute data
+        $optionAttribute = $this->getOptionAttribute();
+
+        $optionInputAttribute = new Attribute();
+        $optionInputAttribute->setType(Select::NAME);
+        $optionInputAttribute->resetOptions($optionAttribute->getOptions());
 
         return [
             'null' => [
@@ -327,6 +431,83 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'model' => $notLocalizedAttribute,
                 'attribute' => $notLocalizedInputAttribute,
+            ],
+            'option attribute' => [
+                'view'  => [
+                    'code' => 'select',
+                    'type' => Select::NAME,
+                    'localized' => false,
+                    'containHtml' => false,
+                    'sharingType' => null,
+                    'required' => false,
+                    'unique' => false,
+                    'validation' => null,
+                    'label' => [],
+                    'defaultOptions' => [
+                        [
+                            'master_option_id' => 1,
+                            'order' => 1,
+                            'data' => [
+                                null => ['value' => 'default_1', 'is_default' => true],
+                                1    => ['value' => new FallbackType(FallbackType::SYSTEM), 'is_default' => false],
+                                2    => ['value' => 'second_1', 'is_default' => true],
+                            ]
+                        ],
+                        [
+                            'master_option_id' => null,
+                            'order' => 2,
+                            'data' => [
+                                null => ['value' => 'default_3', 'is_default' => false],
+                                1    => ['value' => 'first_3', 'is_default' => false],
+                                2    => [
+                                    'value' => new FallbackType(FallbackType::PARENT_LOCALE),
+                                    'is_default' => false
+                                ],
+                            ]
+                        ],
+                        [
+                            'master_option_id' => 4,
+                            'order' => 2,
+                            'data' => [
+                                null => ['value' => 'default_2', 'is_default' => false],
+                                1    => ['value' => 'first_2', 'is_default' => true],
+                                2    => ['value' => 'second_2', 'is_default' => false],
+                            ]
+                        ],
+                    ],
+                    'onProductView' => [
+                        null => false,
+                        1 => true,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'inProductListing' => [
+                        null => true,
+                        1 => false,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'useInSorting' => [
+                        null => false,
+                        1 => true,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'onAdvancedSearch' => [
+                        null => true,
+                        1 => false,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'onProductComparison' => [
+                        null => true,
+                        1 => false,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                    'useInFilters' => [
+                        null => false,
+                        1 => true,
+                        2 => new FallbackType(FallbackType::SYSTEM),
+                    ],
+                ],
+                'model' => $optionAttribute,
+                'attribute' => $optionInputAttribute,
             ],
         ];
     }
@@ -511,6 +692,31 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param int $id
+     * @param int $localeId
+     * @param string|null $fallback
+     * @return AttributeOption
+     */
+    protected function createOption($id, $localeId, $fallback = null)
+    {
+        $locale = null;
+        if ($localeId) {
+            $locale = $this->getLocale($localeId);
+        }
+
+        $option = new AttributeOption();
+
+        $reflection = new \ReflectionProperty(get_class($option), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($option, $id);
+
+        $option->setLocale($locale)
+            ->setFallback($fallback);
+
+        return $option;
+    }
+
+    /**
      * @param int|null $websiteId
      * @param string $field
      * @param bool $value
@@ -579,5 +785,75 @@ class AttributeTransformerTest extends \PHPUnit_Framework_TestCase
             );
 
         return $fullAttribute;
+    }
+
+    /**
+     * @return Attribute
+     */
+    protected function getOptionAttribute()
+    {
+        $firstGroupDefaultOption = $this->createOption(1, null)->setOrder(1)->setValue('default_1');
+        $firstGroupFirstOption = $this->createOption(2, 1)->setOrder(1)->setFallback(FallbackType::SYSTEM);
+        $firstGroupSecondOption = $this->createOption(3, 2)->setOrder(1)->setValue('second_1');
+        $firstGroupDefaultOption
+            ->addRelatedOption($firstGroupFirstOption)
+            ->addRelatedOption($firstGroupSecondOption);
+
+        $secondGroupDefaultOption = $this->createOption(4, null)->setOrder(2)->setValue('default_2');
+        $secondGroupFirstOption = $this->createOption(5, 1)->setOrder(2)->setValue('first_2');
+        $secondGroupSecondOption = $this->createOption(6, 2)->setOrder(2)->setValue('second_2');
+        $secondGroupDefaultOption->addRelatedOption($secondGroupFirstOption)
+            ->addRelatedOption($secondGroupSecondOption);
+
+        $thirdGroupDefaultOption = $this->createOption(null, null)->setOrder(2)->setValue('default_3');
+        $thirdGroupFirstOption = $this->createOption(null, 1)->setOrder(2)->setValue('first_3');
+        $thirdGroupSecondOption = $this->createOption(null, 2)->setOrder(2)->setFallback(FallbackType::PARENT_LOCALE);
+        $thirdGroupDefaultOption->addRelatedOption($thirdGroupFirstOption)
+            ->addRelatedOption($thirdGroupSecondOption);
+
+        $optionAttribute = new Attribute();
+        $optionAttribute->setCode('select')
+            ->setType(Select::NAME)
+            ->resetOptions([
+                $firstGroupDefaultOption,
+                $firstGroupFirstOption,
+                $firstGroupSecondOption,
+                $secondGroupDefaultOption,
+                $secondGroupFirstOption,
+                $secondGroupSecondOption,
+                $thirdGroupDefaultOption,
+                $thirdGroupFirstOption,
+                $thirdGroupSecondOption,
+            ])
+            ->addDefaultValue($this->createDefaultValue(null)->setOption($firstGroupDefaultOption))
+            ->addDefaultValue($this->createDefaultValue(2)->setOption($firstGroupSecondOption))
+            ->addDefaultValue($this->createDefaultValue(1)->setOption($secondGroupFirstOption))
+            ->addProperty($this->createProperty(null, AttributeProperty::FIELD_ON_PRODUCT_VIEW, false))
+            ->addProperty($this->createProperty(1, AttributeProperty::FIELD_ON_PRODUCT_VIEW, true))
+            ->addProperty(
+                $this->createProperty(2, AttributeProperty::FIELD_ON_PRODUCT_VIEW, null, FallbackType::SYSTEM)
+            )->addProperty($this->createProperty(null, AttributeProperty::FIELD_IN_PRODUCT_LISTING, true))
+            ->addProperty($this->createProperty(1, AttributeProperty::FIELD_IN_PRODUCT_LISTING, false))
+            ->addProperty(
+                $this->createProperty(2, AttributeProperty::FIELD_IN_PRODUCT_LISTING, null, FallbackType::SYSTEM)
+            )->addProperty($this->createProperty(null, AttributeProperty::FIELD_USE_IN_SORTING, false))
+            ->addProperty($this->createProperty(1, AttributeProperty::FIELD_USE_IN_SORTING, true))
+            ->addProperty(
+                $this->createProperty(2, AttributeProperty::FIELD_USE_IN_SORTING, null, FallbackType::SYSTEM)
+            )->addProperty($this->createProperty(null, AttributeProperty::FIELD_ON_ADVANCED_SEARCH, true))
+            ->addProperty($this->createProperty(1, AttributeProperty::FIELD_ON_ADVANCED_SEARCH, false))
+            ->addProperty(
+                $this->createProperty(2, AttributeProperty::FIELD_ON_ADVANCED_SEARCH, null, FallbackType::SYSTEM)
+            )->addProperty($this->createProperty(null, AttributeProperty::FIELD_ON_PRODUCT_COMPARISON, true))
+            ->addProperty($this->createProperty(1, AttributeProperty::FIELD_ON_PRODUCT_COMPARISON, false))
+            ->addProperty(
+                $this->createProperty(2, AttributeProperty::FIELD_ON_PRODUCT_COMPARISON, null, FallbackType::SYSTEM)
+            )->addProperty($this->createProperty(null, AttributeProperty::FIELD_USE_IN_FILTERS, false))
+            ->addProperty($this->createProperty(1, AttributeProperty::FIELD_USE_IN_FILTERS, true))
+            ->addProperty(
+                $this->createProperty(2, AttributeProperty::FIELD_USE_IN_FILTERS, null, FallbackType::SYSTEM)
+            );
+
+        return $optionAttribute;
     }
 }

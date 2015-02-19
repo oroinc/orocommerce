@@ -361,6 +361,50 @@ class AttributeTest extends EntityTestCase
         );
     }
 
+    public function testGetDefaultValueByLocaleIdAndOptionId()
+    {
+        $firstLocale = $this->createLocale(1);
+        $secondLocale = $this->createLocale(2);
+
+        $nullOption = $this->createAttributeOption(null);
+        $firstOption = $this->createAttributeOption(1);
+        $secondOption = $this->createAttributeOption(2);
+
+        $nullDefaultValue = new AttributeDefaultValue();
+        $nullDefaultValue->setLocale($firstLocale)
+            ->setOption($nullOption);
+
+        $firstDefaultValue = new AttributeDefaultValue();
+        $firstDefaultValue->setLocale($firstLocale)
+            ->setOption($firstOption);
+
+        $secondDefaultValue = new AttributeDefaultValue();
+        $secondDefaultValue->setLocale($secondLocale)
+            ->setOption($secondOption);
+
+        $attribute = new Attribute();
+        $attribute->resetDefaultValues([$nullDefaultValue, $firstDefaultValue, $secondDefaultValue]);
+
+        $this->assertEquals($firstDefaultValue, $attribute->getDefaultValueByLocaleIdAndOptionId(1, 1));
+        $this->assertEquals($secondDefaultValue, $attribute->getDefaultValueByLocaleIdAndOptionId(2, 2));
+        $this->assertNull($attribute->getDefaultValueByLocaleIdAndOptionId(1, 2));
+        $this->assertNull($attribute->getDefaultValueByLocaleIdAndOptionId(2, 1));
+    }
+
+    public function testGetOptionById()
+    {
+        $nullOption = $this->createAttributeOption(null);
+        $firstOption = $this->createAttributeOption(1);
+        $secondOption = $this->createAttributeOption(2);
+
+        $attribute = new Attribute();
+        $attribute->resetOptions([$nullOption, $firstOption, $secondOption]);
+
+        $this->assertEquals($firstOption, $attribute->getOptionById(1));
+        $this->assertEquals($secondOption, $attribute->getOptionById(2));
+        $this->assertNull($attribute->getOptionById(3));
+    }
+
     /**
      * @param int $id
      * @return Locale
@@ -382,12 +426,27 @@ class AttributeTest extends EntityTestCase
      */
     protected function createWebsite($id)
     {
-        $locale = new Website();
+        $website = new Website();
 
-        $reflection = new \ReflectionProperty(get_class($locale), 'id');
+        $reflection = new \ReflectionProperty(get_class($website), 'id');
         $reflection->setAccessible(true);
-        $reflection->setValue($locale, $id);
+        $reflection->setValue($website, $id);
 
-        return $locale;
+        return $website;
+    }
+
+    /**
+     * @param int $id
+     * @return AttributeOption
+     */
+    protected function createAttributeOption($id)
+    {
+        $option = new AttributeOption();
+
+        $reflection = new \ReflectionProperty(get_class($option), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($option, $id);
+
+        return $option;
     }
 }

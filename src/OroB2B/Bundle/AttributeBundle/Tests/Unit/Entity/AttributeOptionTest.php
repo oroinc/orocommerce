@@ -18,6 +18,10 @@ class AttributeOptionTest extends EntityTestCase
         $attribute = new Attribute();
         $attribute->setType('select');
 
+        $masterOption = new AttributeOption();
+        $masterOption->setAttribute($attribute)
+            ->setValue('master');
+
         $properties = [
             ['id', 1],
             ['value', 'test'],
@@ -26,8 +30,77 @@ class AttributeOptionTest extends EntityTestCase
             ['locale', $locale, false],
             ['locale', null],
             ['attribute', $attribute, false],
+            ['masterOption', $masterOption],
+            ['masterOption', null],
         ];
 
         $this->assertPropertyAccessors(new AttributeOption(), $properties);
+    }
+
+    public function testAddAndRemoveRelatedOption()
+    {
+        $masterOption = new AttributeOption();
+        $masterOption->setValue('master');
+
+        $firstOption = new AttributeOption();
+        $firstOption->setValue('first');
+
+        $secondOption = new AttributeOption();
+        $secondOption->setValue('second');
+
+        $thirdOption = new AttributeOption();
+        $thirdOption->setValue('third');
+
+        $masterOption->addRelatedOption($firstOption);
+        $masterOption->addRelatedOption($firstOption);
+        $masterOption->addRelatedOption($secondOption);
+        $masterOption->addRelatedOption($thirdOption);
+        $masterOption->removeRelatedOption($firstOption);
+        $masterOption->removeRelatedOption($firstOption);
+
+        $this->assertEquals([$secondOption, $thirdOption], array_values($masterOption->getRelatedOptions()->toArray()));
+    }
+
+    public function testGetRelatedOptionByLocaleId()
+    {
+        $firstLocale = $this->createLocale(1);
+        $secondLocale = $this->createLocale(2);
+
+        $masterOption = new AttributeOption();
+        $masterOption->setValue('master');
+
+        $nullOption = new AttributeOption();
+        $nullOption->setValue('null');
+
+        $firstOption = new AttributeOption();
+        $firstOption->setLocale($firstLocale)
+            ->setValue('first');
+
+        $secondOption = new AttributeOption();
+        $secondOption->setLocale($secondLocale)
+            ->setValue('second');
+
+        $masterOption->addRelatedOption($nullOption)
+            ->addRelatedOption($firstOption)
+            ->addRelatedOption($secondOption);
+
+        $this->assertEquals($firstOption, $masterOption->getRelatedOptionByLocaleId(1));
+        $this->assertEquals($secondOption, $masterOption->getRelatedOptionByLocaleId(2));
+        $this->assertEquals($nullOption, $masterOption->getRelatedOptionByLocaleId(null));
+    }
+
+    /**
+     * @param int $id
+     * @return Locale
+     */
+    protected function createLocale($id)
+    {
+        $locale = new Locale();
+
+        $reflection = new \ReflectionProperty(get_class($locale), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($locale, $id);
+
+        return $locale;
     }
 }

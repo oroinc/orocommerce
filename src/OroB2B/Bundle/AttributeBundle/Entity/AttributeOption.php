@@ -204,7 +204,9 @@ class AttributeOption
     public function setMasterOption(AttributeOption $option = null)
     {
         $this->masterOption = $option;
-        $this->attribute = $option->getAttribute();
+        if ($option) {
+            $this->attribute = $option->getAttribute();
+        }
 
         return $this;
     }
