@@ -11,7 +11,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @ORM\Table(name="orob2b_attribute_option")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AttributeBundle\Entity\Repository\AttributeOptionRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={

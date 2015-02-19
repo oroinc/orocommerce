@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 
 class Select extends AbstractAttributeType implements OptionAttributeTypeInterface
 {
@@ -14,9 +15,8 @@ class Select extends AbstractAttributeType implements OptionAttributeTypeInterfa
      */
     public function getFormParameters(Attribute $attribute)
     {
-        // TODO: set correct form parameters during implementation of https://magecore.atlassian.net/browse/BB-303
         return [
-            'type' => 'entity'
+            'type' => SelectAttributeTypeType::NAME
         ];
     }
 
