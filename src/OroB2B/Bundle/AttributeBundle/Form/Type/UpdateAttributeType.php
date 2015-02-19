@@ -18,6 +18,7 @@ use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeTransformer;
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeDisabledFieldsTransformer;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
+use OroB2B\Bundle\AttributeBundle\AttributeType\OptionAttributeTypeInterface;
 
 class UpdateAttributeType extends AbstractType
 {
@@ -60,7 +61,11 @@ class UpdateAttributeType extends AbstractType
 
         $this->addMainFields($builder);
         $this->addValidationFields($builder, $attributeType);
-        $this->addDefaultValueField($builder, $attribute, $attributeType);
+        if ($attributeType instanceof OptionAttributeTypeInterface) {
+            $this->addDefaultOptionsField($builder, $attribute, $attributeType);
+        } else {
+            $this->addDefaultValueField($builder, $attribute, $attributeType);
+        }
         $this->addPropertyFields($builder, $attributeType);
         $builder->addViewTransformer(new AttributeTransformer($this->managerRegistry, $this->typeRegistry, $attribute));
 
@@ -227,6 +232,31 @@ class UpdateAttributeType extends AbstractType
         return is_array($value)
             && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $value)
             || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $value));
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param Attribute $attribute
+     * @param OptionAttributeTypeInterface $attributeType
+     */
+    protected function addDefaultOptionsField(
+        FormBuilderInterface $builder,
+        Attribute $attribute,
+        OptionAttributeTypeInterface $attributeType
+    ) {
+        $formParameters = $attributeType->getDefaultValueFormParameters($attribute);
+        if (empty($formParameters['type'])) {
+            throw new LogicException(sprintf('Form type is required for attribute type "%s"', $attribute->getType()));
+        }
+
+        $formType = $formParameters['type'];
+        $formOptions = !empty($formParameters['options']) ? $formParameters['options'] : [];
+
+        $builder->add(
+            'defaultOptions',
+            $formType,
+            array_merge($formOptions, ['label' => 'orob2b.attribute.options.label', 'required' => false])
+        );
     }
 
     /**

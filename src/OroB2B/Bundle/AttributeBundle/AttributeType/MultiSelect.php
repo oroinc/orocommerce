@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType;
 
 class MultiSelect extends AbstractAttributeType implements OptionAttributeTypeInterface
 {
@@ -14,10 +15,8 @@ class MultiSelect extends AbstractAttributeType implements OptionAttributeTypeIn
      */
     public function getFormParameters(Attribute $attribute)
     {
-        // TODO: set correct form parameters during implementation of https://magecore.atlassian.net/browse/BB-303
         return [
-            'type' => 'entity',
-            ['multiple' => true]
+            'type' => MultiSelectAttributeTypeType::NAME
         ];
     }
 

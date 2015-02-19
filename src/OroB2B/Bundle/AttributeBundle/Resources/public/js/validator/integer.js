@@ -10,7 +10,7 @@ define([
     return [
         'OroB2B\\Bundle\\AttributeBundle\\Validator\\Constraints\\Integer',
         function(value, element, param) {
-            param.pattern = '/^[0-9\\' + groupingSeparator + ']*$/';
+            param.pattern = '/^[0-9\\+\\-\\' + groupingSeparator + ']*$/';
             return regexConstraint[1].call(this, value, element, param);
         },
         regexConstraint[2]

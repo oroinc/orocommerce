@@ -12,6 +12,8 @@ parameters:
     orob2b_attribute.form.type.website_attribute_property.class: OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType
     orob2b_attribute.form.type.create.class: OroB2B\Bundle\AttributeBundle\Form\Type\CreateAttributeType
     orob2b_attribute.form.type.update.class: OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType
+    orob2b_attribute.form.type.select_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType
+    orob2b_attribute.form.type.multiselect_type.class: OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType
     orob2b_attribute.form.type.option_row.class: OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType
     orob2b_attribute.form.extension.integer.class: OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
 
@@ -84,6 +86,16 @@ services:
         tags:
             - { name: form.type, alias: orob2b_attribute_create }
 
+    orob2b_attribute.form.select_type.create:
+        class: %orob2b_attribute.form.type.select_type.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_select_type }
+
+    orob2b_attribute.form.multiselect_type.create:
+        class: %orob2b_attribute.form.type.multiselect_type.class%
+        tags:
+            - { name: form.type, alias: orob2b_attribute_multiselect_type }
+
     orob2b_attribute.form.type.update:
         class: %orob2b_attribute.form.type.update.class%
         arguments:
@@ -92,12 +104,12 @@ services:
         tags:
             - { name: form.type, alias: orob2b_attribute_update }
 
-    orob2b_attribute.form.extension.integer:
-        class: %orob2b_attribute.form.extension.integer.class%
-        tags:
-            - { name: form.type_extension, alias: integer }
-
     orob2b_attribute.form.type.option_row:
         class: %orob2b_attribute.form.type.option_row.class%
         tags:
             - { name: form.type, alias: orob2b_option_row }
+
+    orob2b_attribute.form.extension.integer:
+        class: %orob2b_attribute.form.extension.integer.class%
+        tags:
+            - { name: form.type_extension, alias: integer }
