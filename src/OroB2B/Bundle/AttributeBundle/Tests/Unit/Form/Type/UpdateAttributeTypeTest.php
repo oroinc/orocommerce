@@ -31,6 +31,8 @@ use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeDisabledFieldsTr
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeTransformer;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
+use OroB2B\Bundle\AttributeBundle\AttributeType\MultiSelect;
+use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -69,6 +71,8 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         $this->typeRegistry->addType(new Integer());
         $this->typeRegistry->addType(new Float());
         $this->typeRegistry->addType(new Boolean());
+        $this->typeRegistry->addType(new Select());
+        $this->typeRegistry->addType(new MultiSelect());
 
         $this->formType = new UpdateAttributeType($this->managerRegistry, $this->typeRegistry);
     }
@@ -247,6 +251,22 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
 
         $booleanLocalizedAttribute = new Attribute();
         $booleanLocalizedAttribute->setType(Boolean::NAME)
+            ->setLocalized(true);
+
+        $selectNotLocalizedAttribute = new Attribute();
+        $selectNotLocalizedAttribute->setType(Select::NAME)
+            ->setLocalized(false);
+
+        $selectLocalizedAttribute = new Attribute();
+        $selectLocalizedAttribute->setType(Select::NAME)
+            ->setLocalized(true);
+
+        $multiSelectNotLocalizedAttribute = new Attribute();
+        $multiSelectNotLocalizedAttribute->setType(MultiSelect::NAME)
+            ->setLocalized(false);
+
+        $multiSelectLocalizedAttribute = new Attribute();
+        $multiSelectLocalizedAttribute->setType(MultiSelect::NAME)
             ->setLocalized(true);
 
         return [
@@ -478,6 +498,126 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $addDisabledFieldsTransformer
                 ]
             ],
+            'select not localized' => [
+                'attribute' => $selectNotLocalizedAttribute,
+                'expectedCalls' => [
+                    $addCode,
+                    $addType,
+                    $addLocalized,
+                    $addSharingType,
+                    $addLabel,
+                    $addRequired,
+                    [
+                        'defaultOptions',
+                        'options_not_localized',
+                        [
+                            'label' => 'orob2b.attribute.options.label',
+                            'required' => false,
+                        ]
+                    ],
+                    $addOnProductView,
+                    $addInProductListing,
+                    $addUseInSorting,
+                    $addOnAdvancedSearch,
+                    $addOnProductComparison,
+                    $addUseForSearch,
+                    $addUseInFilters,
+                    $this->addAttributeTransformer($selectNotLocalizedAttribute),
+                    $addCodeDisabled,
+                    $addTypeDisabled,
+                    $addDisabledFieldsTransformer
+                ]
+            ],
+            'select localized' => [
+                'attribute' => $selectLocalizedAttribute,
+                'expectedCalls' => [
+                    $addCode,
+                    $addType,
+                    $addLocalized,
+                    $addSharingType,
+                    $addLabel,
+                    $addRequired,
+                    [
+                        'defaultOptions',
+                        'options_localized',
+                        [
+                            'label' => 'orob2b.attribute.options.label',
+                            'required' => false,
+                        ]
+                    ],
+                    $addOnProductView,
+                    $addInProductListing,
+                    $addUseInSorting,
+                    $addOnAdvancedSearch,
+                    $addOnProductComparison,
+                    $addUseForSearch,
+                    $addUseInFilters,
+                    $this->addAttributeTransformer($selectLocalizedAttribute),
+                    $addCodeDisabled,
+                    $addTypeDisabled,
+                    $addDisabledFieldsTransformer
+                ]
+            ],
+            'multiselect not localized' => [
+                'attribute' => $multiSelectNotLocalizedAttribute,
+                'expectedCalls' => [
+                    $addCode,
+                    $addType,
+                    $addLocalized,
+                    $addSharingType,
+                    $addLabel,
+                    $addRequired,
+                    [
+                        'defaultOptions',
+                        'options_multiple_not_localized',
+                        [
+                            'label' => 'orob2b.attribute.options.label',
+                            'required' => false,
+                        ]
+                    ],
+                    $addOnProductView,
+                    $addInProductListing,
+                    $addUseInSorting,
+                    $addOnAdvancedSearch,
+                    $addOnProductComparison,
+                    $addUseForSearch,
+                    $addUseInFilters,
+                    $this->addAttributeTransformer($multiSelectNotLocalizedAttribute),
+                    $addCodeDisabled,
+                    $addTypeDisabled,
+                    $addDisabledFieldsTransformer
+                ]
+            ],
+            'multiselect localized' => [
+                'attribute' => $multiSelectLocalizedAttribute,
+                'expectedCalls' => [
+                    $addCode,
+                    $addType,
+                    $addLocalized,
+                    $addSharingType,
+                    $addLabel,
+                    $addRequired,
+                    [
+                        'defaultOptions',
+                        'options_multiple_localized',
+                        [
+                            'label' => 'orob2b.attribute.options.label',
+                            'required' => false,
+                        ]
+                    ],
+                    $addOnProductView,
+                    $addInProductListing,
+                    $addUseInSorting,
+                    $addOnAdvancedSearch,
+                    $addOnProductComparison,
+                    $addUseForSearch,
+                    $addUseInFilters,
+                    $this->addAttributeTransformer($multiSelectLocalizedAttribute),
+                    $addCodeDisabled,
+                    $addTypeDisabled,
+                    $addDisabledFieldsTransformer
+                ]
+            ],
         ];
     }
 
@@ -510,7 +650,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Symfony\Component\Form\Exception\LogicException
      * @expectedExceptionMessage Form type is required for attribute type "invalid"
      */
-    public function testBuildFormNoFormTypeException()
+    public function testBuildFormNoFormTypeScalarException()
     {
         $type = 'invalid';
 
@@ -521,6 +661,37 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($type));
         $invalidAttributeType->expects($this->any())
             ->method('getFormParameters')
+            ->will($this->returnValue([]));
+
+        $this->typeRegistry->addType($invalidAttributeType);
+
+        $attribute = new Attribute();
+        $attribute->setType($type);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder->expects($this->any())
+            ->method('add')
+            ->willReturnSelf();
+        $this->formType->buildForm($builder, ['data' => $attribute]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\LogicException
+     * @expectedExceptionMessage Form type is required for attribute type "invalid"
+     */
+    public function testBuildFormNoFormTypeOptionsException()
+    {
+        $type = 'invalid';
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|AttributeTypeInterface $invalidAttributeType */
+        $invalidAttributeType
+            = $this->getMock('OroB2B\Bundle\AttributeBundle\AttributeType\OptionAttributeTypeInterface');
+        $invalidAttributeType->expects($this->any())
+            ->method('getName')
+            ->will($this->returnValue($type));
+        $invalidAttributeType->expects($this->any())
+            ->method('getDefaultValueFormParameters')
             ->will($this->returnValue([]));
 
         $this->typeRegistry->addType($invalidAttributeType);
