@@ -90,6 +90,26 @@ class AttributeOptionTest extends EntityTestCase
     }
 
     /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Several related attribute options found by the same locale ID.
+     */
+    public function testGetRelatedOptionByLocaleIdException()
+    {
+        $locale = $this->createLocale(1);
+
+        $firstOption = new AttributeOption();
+        $firstOption->setLocale($locale);
+
+        $secondOption = new AttributeOption();
+        $secondOption->setLocale($locale);
+
+        $masterOption = new AttributeOption();
+        $masterOption->addRelatedOption($firstOption)
+            ->addRelatedOption($secondOption);
+        $masterOption->getRelatedOptionByLocaleId(1);
+    }
+
+    /**
      * @param int $id
      * @return Locale
      */
