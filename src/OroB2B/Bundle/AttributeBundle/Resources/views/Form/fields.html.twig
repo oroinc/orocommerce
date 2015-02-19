@@ -7,7 +7,8 @@
             <td>
                 {{ form_widget(form.fallback, {'attr': {
                     'data-page-component-module': 'orob2battribute/js/app/components/fallback-value-component',
-                    'data-page-component-options': {'value-container': '#' ~ valueContainer}|json_encode
+                    'data-page-component-options': {'value-container': '#' ~ valueContainer}|json_encode,
+                    'class': 'fallback'
                 }}) }}
             </td>
         <tr>
@@ -56,5 +57,65 @@
                 </td>
             </tr>
         {% endfor %}
+    </table>
+{% endblock %}
+
+
+{% block orob2b_options_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
+    {{ block('oro_collection_widget') }}
+{% endblock %}
+
+{% block orob2b_option_row_widget %}
+    {{ form_widget(form.master_option_id) }}
+    {{ form_errors(form.master_option_id) }}
+    <table>
+        <tr>
+            <td>{{ form.default.vars.label|trans }}</td>
+            <td>
+                {% if form.vars.is_default_type == 'hidden' %}
+                    <input type="radio" name="default" />
+                {% endif %}
+                {{ form_widget(form.is_default) }}
+                {{ form_errors(form.is_default) }}
+            </td>
+            <td>
+                {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
+            </td>
+        </tr>
+        {% for localeId, locale in form.locales %}
+            <tr>
+                <td>{{ locale.vars.label|trans }}</td>
+                <td>
+                    {% if locale.extend_value is defined %}
+                        {% if locale.vars.extend_value_type == 'hidden' %}
+                            <input type="radio" name="default_{{ localeId }}" />
+                        {% endif %}
+                        {{ form_widget(locale.extend_value) }}
+                        {{ form_errors(locale.extend_value) }}
+                    {% else %}
+                        &nbsp;
+                    {% endif %}
+                </td>
+                <td>
+                    {% if locale.fallback_value is defined %}
+                        {{ form_widget(locale.fallback_value) }}
+                        {{ form_errors(locale.fallback_value) }}
+                    {% else %}
+                        {{ form_widget(locale) }}
+                        {{ form_errors(locale) }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>{{ form.order.vars.label|trans }}</td>
+            <td>&nbsp;</td>
+            <td>
+                {{ form_widget(form.order) }}
+                {{ form_errors(form.order) }}
+            </td>
+        </tr>
     </table>
 {% endblock %}

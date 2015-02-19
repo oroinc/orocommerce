@@ -38,6 +38,7 @@ orob2b:
                 continue: 'Continue'
 
         default: 'Default'
+        order:   'Order'
 
         menu:
             attributes_list.description:            'List of existing product attributes'
