@@ -11,10 +11,7 @@ use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
 use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
-use OroB2B\Bundle\AttributeBundle\Entity\AttributeDefaultValue;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class AttributeTransformerHelper
 {
@@ -24,16 +21,23 @@ class AttributeTransformerHelper
     protected $propertyAccessor;
 
     /**
-     * @var ManagerRegistry
+     * @var DatabaseTransformerHelper
      */
-    protected $managerRegistry;
+    protected $databaseHelper;
+
+    /**
+     * @var DefaultsTransformerHelper
+     */
+    protected $defaultsHelper;
 
     /**
      * @param ManagerRegistry $managerRegistry
      */
     public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->managerRegistry = $managerRegistry;
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->databaseHelper = new DatabaseTransformerHelper($managerRegistry);
+        $this->defaultsHelper = new DefaultsTransformerHelper($this->propertyAccessor, $this->databaseHelper);
     }
 
     /**
@@ -41,29 +45,7 @@ class AttributeTransformerHelper
      */
     public function getPropertyAccessor()
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
         return $this->propertyAccessor;
-    }
-
-    /**
-     * @param int $localeId
-     * @return Locale|null
-     */
-    protected function findLocale($localeId)
-    {
-        return $this->managerRegistry->getRepository('OroB2BWebsiteBundle:Locale')->find($localeId);
-    }
-
-    /**
-     * @param int $websiteId
-     * @return Website|null
-     */
-    protected function findWebsite($websiteId)
-    {
-        return $this->managerRegistry->getRepository('OroB2BWebsiteBundle:Website')->find($websiteId);
     }
 
     /**
@@ -97,7 +79,7 @@ class AttributeTransformerHelper
             if (!$attributeLabel) {
                 $attributeLabel = new AttributeLabel();
                 if ($localeId) {
-                    $attributeLabel->setLocale($this->findLocale($localeId));
+                    $attributeLabel->setLocale($this->databaseHelper->findLocale($localeId));
                 }
                 $attribute->addLabel($attributeLabel);
             }
@@ -118,41 +100,7 @@ class AttributeTransformerHelper
      */
     public function getDefaultValue(Attribute $attribute, AttributeTypeInterface $attributeType)
     {
-        $dataField = $attributeType->getDataTypeField();
-
-        if ($attribute->isLocalized()) {
-            $result = [];
-            foreach ($attribute->getDefaultValues() as $defaultValue) {
-                $localeId = $defaultValue->getLocale() ? $defaultValue->getLocale()->getId() : null;
-                $fallback = $defaultValue->getFallback();
-                if ($fallback) {
-                    $result[$localeId] = new FallbackType($fallback);
-                } else {
-                    $result[$localeId]
-                        = $attributeType->normalize($this->getDefaultValueByField($defaultValue, $dataField));
-                }
-            }
-        } else {
-            $defaultValue = $attribute->getDefaultValueByLocaleId(null);
-            $result = $attributeType->normalize($this->getDefaultValueByField($defaultValue, $dataField));
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param AttributeDefaultValue|null $defaultValue
-     * @param string $field
-     * @return mixed
-     */
-    protected function getDefaultValueByField($defaultValue, $field)
-    {
-        $accessor = $this->getPropertyAccessor();
-        if ($defaultValue) {
-            return $accessor->getValue($defaultValue, $field);
-        } else {
-            return null;
-        }
+        return $this->defaultsHelper->getDefaultValue($attribute, $attributeType);
     }
 
     /**
@@ -162,56 +110,25 @@ class AttributeTransformerHelper
      */
     public function setDefaultValue(Attribute $attribute, AttributeTypeInterface $attributeType, $value)
     {
-        $isLocalizedValue = is_array($value) && array_key_exists(null, $value);
-
-        // normalize value
-        if ($isLocalizedValue && !$attribute->isLocalized()) {
-            $value = $value[null];
-        } elseif (!$isLocalizedValue && $attribute->isLocalized()) {
-            $value = [null => $value];
-        }
-
-        // set value
-        if ($attribute->isLocalized()) {
-            foreach ($value as $localeId => $itemValue) {
-                $this->setDefaultValueByField($attribute, $attributeType, $localeId, $itemValue);
-            }
-        } else {
-            $this->setDefaultValueByField($attribute, $attributeType, null, $value);
-        }
+        $this->defaultsHelper->setDefaultValue($attribute, $attributeType, $value);
     }
 
     /**
      * @param Attribute $attribute
-     * @param AttributeTypeInterface $attributeType
-     * @param int|null $localeId
-     * @param mixed $value
+     * @return array
      */
-    protected function setDefaultValueByField(
-        Attribute $attribute,
-        AttributeTypeInterface $attributeType,
-        $localeId,
-        $value
-    ) {
-        $accessor = $this->getPropertyAccessor();
-        $field = $attributeType->getDataTypeField();
+    public function getDefaultOptions(Attribute $attribute)
+    {
+        return $this->defaultsHelper->getDefaultOptions($attribute);
+    }
 
-        $defaultValue = $attribute->getDefaultValueByLocaleId($localeId);
-        if (!$defaultValue) {
-            $defaultValue = new AttributeDefaultValue();
-            if ($localeId) {
-                $defaultValue->setLocale($this->findLocale($localeId));
-            }
-            $attribute->addDefaultValue($defaultValue);
-        }
-
-        if ($value instanceof FallbackType) {
-            $accessor->setValue($defaultValue, $field, null);
-            $defaultValue->setFallback($value->getType());
-        } else {
-            $accessor->setValue($defaultValue, $field, $attributeType->denormalize($value));
-            $defaultValue->setFallback(null);
-        }
+    /**
+     * @param Attribute $attribute
+     * @param array $options
+     */
+    public function setDefaultOptions(Attribute $attribute, array $options)
+    {
+        $this->defaultsHelper->setDefaultOptions($attribute, $options);
     }
 
     /**
@@ -248,7 +165,7 @@ class AttributeTransformerHelper
                 $attributeProperty = new AttributeProperty();
                 $attributeProperty->setField($field);
                 if ($websiteId) {
-                    $attributeProperty->setWebsite($this->findWebsite($websiteId));
+                    $attributeProperty->setWebsite($this->databaseHelper->findWebsite($websiteId));
                 }
                 $attribute->addProperty($attributeProperty);
             }
