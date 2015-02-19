@@ -526,7 +526,12 @@ class Attribute
     {
         $values = $this->getDefaultValuesByLocaleId($localeId);
 
-        return $values->count() ? $values->first() : null;
+        $count = $values->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute default values found by the same locale ID.');
+        }
+
+        return $count > 0 ? $values->first() : null;
     }
 
     /**
