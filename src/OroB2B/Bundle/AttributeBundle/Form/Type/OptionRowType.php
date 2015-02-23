@@ -39,7 +39,11 @@ class OptionRowType extends AbstractType
             ->add(
                 self::DEFAULT_VALUE,
                 'text',
-                ['label' => 'orob2b.attribute.default', 'constraints' => [new NotBlank()]]
+                [
+                    'label' => 'orob2b.attribute.default',
+                    'constraints' => [new NotBlank()],
+                    'validation_groups' => ['Default'],
+                ]
             )
             ->add(self::IS_DEFAULT, $options['is_default_type'], ['required' => false])
             ->add(
@@ -48,7 +52,8 @@ class OptionRowType extends AbstractType
                 [
                     'label' => 'orob2b.attribute.order',
                     'type' => 'text',
-                    'constraints' => [new NotBlank(), new Integer()]
+                    'constraints' => [new NotBlank(), new Integer()],
+                    'validation_groups' => ['Default']
                 ]
             )
             ->add(
@@ -57,7 +62,7 @@ class OptionRowType extends AbstractType
                 [
                     'type' => 'text',
                     'value_type' => $options['value_type'],
-                    'options' => ['constraints' => [new NotBlank()]]
+                    'options' => ['constraints' => [new NotBlank()], 'validation_groups' => ['Default']]
                 ]
             )
         ;

@@ -14,6 +14,10 @@ class IntegerType extends ParentIntegerType
     {
         parent::setDefaultOptions($resolver);
 
-        $resolver->setDefaults(['type' => null, 'constraints' => []]);
+        $resolver->setDefaults([
+            'type' => null,
+            'constraints' => [],
+            'validation_groups' => ['Default'],
+        ]);
     }
 }
