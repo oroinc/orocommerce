@@ -67,16 +67,26 @@
 {% endblock %}
 
 {% block orob2b_option_row_widget %}
+    {% set groupContainer = '#' ~ form.parent.vars.id ~ '_collection' %}
+
     {{ form_widget(form.master_option_id) }}
     {{ form_errors(form.master_option_id) }}
     <table>
         <tr>
             <td>{{ form.default.vars.label|trans }}</td>
             <td>
+                {% set attr = {} %}
                 {% if form.vars.is_default_type == 'hidden' %}
-                    <input type="radio" name="default" />
+                    {% set hiddenClass = 'hidden-default' %}
+                    {% set attr = attr|merge({'class' : hiddenClass}) %}
+                    <input
+                        type="radio"
+                        name="default"
+                        data-page-component-module="orob2battribute/js/app/components/select-default-value-component"
+                        data-page-component-options="{{ {'class' : hiddenClass, 'group-container' : groupContainer}|json_encode }}"
+                    />
                 {% endif %}
-                {{ form_widget(form.is_default) }}
+                {{ form_widget(form.is_default, { 'attr' : attr }) }}
                 {{ form_errors(form.is_default) }}
             </td>
             <td>
@@ -89,10 +99,18 @@
                 <td>{{ locale.vars.label|trans }}</td>
                 <td>
                     {% if locale.extend_value is defined %}
+                        {% set attr = {} %}
                         {% if locale.vars.extend_value_type == 'hidden' %}
-                            <input type="radio" name="default_{{ localeId }}" />
+                            {% set hiddenClass = 'hidden-locale-' ~ localeId %}
+                            {% set attr = attr|merge({'class' : hiddenClass}) %}
+                            <input
+                                type="radio"
+                                name="default_{{ localeId }}"
+                                data-page-component-module="orob2battribute/js/app/components/select-default-value-component"
+                                data-page-component-options="{{ {'class' : hiddenClass, 'group-container' : groupContainer}|json_encode }}"
+                            />
                         {% endif %}
-                        {{ form_widget(locale.extend_value) }}
+                        {{ form_widget(locale.extend_value, { 'attr' : attr }) }}
                         {{ form_errors(locale.extend_value) }}
                     {% else %}
                         &nbsp;
