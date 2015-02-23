@@ -15,8 +15,10 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedMultiselectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedSelectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedMultiselectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
@@ -293,8 +295,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type' => SelectAttributeTypeType::NAME,
                     ],
                     'defaultFormParameters' => [
-                        'type' => 'options_not_localized',
-                        'options' => [],
+                        'type' => NotLocalizedSelectCollectionType::NAME,
                     ],
                     'requiredConstraints' => [],
                     'optionalConstraints' => [],
@@ -315,8 +316,7 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         'type' => SelectAttributeTypeType::NAME
                     ],
                     'defaultFormParameters' => [
-                        'type' => 'options_localized',
-                        'options' => [],
+                        'type' => LocalizedSelectCollectionType::NAME,
                     ],
                     'requiredConstraints' => [],
                     'optionalConstraints' => [],
@@ -338,7 +338,6 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     ],
                     'defaultFormParameters' => [
                         'type' => NotLocalizedMultiselectCollectionType::NAME,
-                        'options' => [],
                     ],
                     'requiredConstraints' => [],
                     'optionalConstraints' => [],
@@ -360,7 +359,6 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     ],
                     'defaultFormParameters' => [
                         'type' => LocalizedMultiselectCollectionType::NAME,
-                        'options' => [],
                     ],
                     'requiredConstraints' => [],
                     'optionalConstraints' => [],

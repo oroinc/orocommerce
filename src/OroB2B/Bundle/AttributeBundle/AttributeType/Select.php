@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedSelectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 
 class Select extends AbstractAttributeType implements OptionAttributeTypeInterface
@@ -25,16 +27,13 @@ class Select extends AbstractAttributeType implements OptionAttributeTypeInterfa
      */
     public function getDefaultValueFormParameters(Attribute $attribute)
     {
-        // TODO: set correct form parameters during implementation of https://magecore.atlassian.net/browse/BB-301
         if ($attribute->isLocalized()) {
             return [
-                'type' => 'options_localized',
-                'options' => []
+                'type' => LocalizedSelectCollectionType::NAME
             ];
         } else {
             return [
-                'type' => 'options_not_localized',
-                'options' => []
+                'type' => NotLocalizedSelectCollectionType::NAME
             ];
         }
     }

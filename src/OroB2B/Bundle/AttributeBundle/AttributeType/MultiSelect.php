@@ -30,12 +30,10 @@ class MultiSelect extends AbstractAttributeType implements OptionAttributeTypeIn
         if ($attribute->isLocalized()) {
             return [
                 'type' => LocalizedMultiselectCollectionType::NAME,
-                'options' => []
             ];
         } else {
             return [
                 'type' => NotLocalizedMultiselectCollectionType::NAME,
-                'options' => []
             ];
         }
     }

@@ -18,6 +18,8 @@ parameters:
     orob2b_attribute.form.type.options_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\OptionsCollectionType
     orob2b_attribute.form.type.not_localized_multiselect_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedMultiselectCollectionType
     orob2b_attribute.form.type.localized_multiselect_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedMultiselectCollectionType
+    orob2b_attribute.form.type.not_localized_select_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType
+    orob2b_attribute.form.type.localized_select_collection.class: OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedSelectCollectionType
 
     orob2b_attribute.form.extension.integer.class: OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
 
@@ -132,3 +134,13 @@ services:
         class: %orob2b_attribute.form.type.localized_multiselect_collection.class%
         tags:
             - { name: form.type, alias: orob2b_localized_multiselect_collection }
+
+    orob2b_attribute.form.type.not_localized_select_collection:
+        class: %orob2b_attribute.form.type.not_localized_select_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_not_localized_select_collection }
+
+    orob2b_attribute.form.type.localized_select_collection:
+        class: %orob2b_attribute.form.type.localized_select_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_localized_select_collection }

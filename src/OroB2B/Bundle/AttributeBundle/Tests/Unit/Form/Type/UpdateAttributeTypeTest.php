@@ -35,6 +35,8 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\MultiSelect;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedMultiselectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedMultiselectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedSelectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -511,7 +513,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $addRequired,
                     [
                         'defaultOptions',
-                        'options_not_localized',
+                        NotLocalizedSelectCollectionType::NAME,
                         [
                             'label' => 'orob2b.attribute.options.label',
                             'required' => false,
@@ -541,7 +543,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $addRequired,
                     [
                         'defaultOptions',
-                        'options_localized',
+                        LocalizedSelectCollectionType::NAME,
                         [
                             'label' => 'orob2b.attribute.options.label',
                             'required' => false,
