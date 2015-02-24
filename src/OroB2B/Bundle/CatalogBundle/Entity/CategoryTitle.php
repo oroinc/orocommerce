@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+
 /**
  * @ORM\Table(name="orob2b_catalog_category_title")
  * @ORM\Entity
@@ -29,6 +31,14 @@ class CategoryTitle
      * @ORM\JoinColumn(name="catalog_id", referencedColumnName="id", onDelete="CASCADE")
      **/
     protected $category;
+
+    /**
+     * @var Locale
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Locale")
+     * @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $locale;
 
     /**
      * @var string
@@ -61,12 +71,31 @@ class CategoryTitle
     }
 
     /**
-     * @param Category $category
+     * @param Category|null $category
      * @return $this
      */
-    public function setCategory($category)
+    public function setCategory(Category $category = null)
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return Locale|null
+     */
+    public function getLocale()
+    {
+        return $this->locale;
+    }
+
+    /**
+     * @param Locale|null $locale
+     * @return $this
+     */
+    public function setLocale(Locale $locale = null)
+    {
+        $this->locale = $locale;
 
         return $this;
     }

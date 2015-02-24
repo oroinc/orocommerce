@@ -50,7 +50,7 @@ class Category
      * @var integer
      *
      * @Gedmo\TreeLeft
-     * @ORM\Column(name="left", type="integer")
+     * @ORM\Column(name="tree_left", type="integer")
      */
     protected $left;
 
@@ -58,7 +58,7 @@ class Category
      * @var integer
      *
      * @Gedmo\TreeLevel
-     * @ORM\Column(name="level", type="integer")
+     * @ORM\Column(name="tree_level", type="integer")
      */
     protected $level;
 
@@ -66,7 +66,7 @@ class Category
      * @var integer
      *
      * @Gedmo\TreeRight
-     * @ORM\Column(name="right", type="integer")
+     * @ORM\Column(name="tree_right", type="integer")
      */
     protected $right;
 
@@ -74,7 +74,7 @@ class Category
      * @var integer
      *
      * @Gedmo\TreeRoot
-     * @ORM\Column(name="root", type="integer", nullable=true)
+     * @ORM\Column(name="tree_root", type="integer", nullable=true)
      */
     protected $root;
 
@@ -259,10 +259,10 @@ class Category
     }
 
     /**
-     * @param Category $parentCategory
+     * @param Category|null $parentCategory
      * @return $this
      */
-    public function setParentCategory($parentCategory)
+    public function setParentCategory(Category $parentCategory = null)
     {
         $this->parentCategory = $parentCategory;
 
