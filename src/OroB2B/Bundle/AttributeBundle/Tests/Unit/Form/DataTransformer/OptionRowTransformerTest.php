@@ -32,6 +32,14 @@ class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
                 'input' => null,
                 'expected' => [],
             ],
+            'not localized partial data' => [
+                'localized' => false,
+                'input' => [],
+                'expected' => [
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 0,
+                ],
+            ],
             'not localized with data' => [
                 'localized' => false,
                 'input' => [
@@ -62,6 +70,14 @@ class OptionRowTransformerTest extends \PHPUnit_Framework_TestCase
                 'localized' => true,
                 'input' => null,
                 'expected' => [],
+            ],
+            'localized partial data' => [
+                'localized' => true,
+                'input' => [],
+                'expected' => [
+                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::ORDER => 0,
+                ],
             ],
             'localized with data' => [
                 'localized' => true,
