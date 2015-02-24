@@ -34,7 +34,7 @@ class AttributeControllerTest extends WebTestCase
     /**
      * @var array
      */
-    protected $selectType = ['select', 'multiselect'];
+    protected $selectTypes = ['select', 'multiselect'];
 
     /**
      * @var string
@@ -636,6 +636,6 @@ class AttributeControllerTest extends WebTestCase
      */
     protected function isSelectType($type)
     {
-        return in_array($type, $this->selectType);
+        return in_array($type, $this->selectTypes);
     }
 }
