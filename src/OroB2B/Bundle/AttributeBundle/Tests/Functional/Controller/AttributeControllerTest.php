@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Yaml\Yaml;
 
@@ -12,6 +11,7 @@ use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 
 /**
  * @outputBuffering enabled
@@ -113,7 +113,7 @@ class AttributeControllerTest extends WebTestCase
         // Check labels
         $this->assertLocalize($formValues, 'label');
 
-        if ($localized && !in_array($type, $this->selectType)) {
+        if ($localized && !$this->isSelectType($type)) {
             // Check defaultValue for available locales
             $this->assertLocalize($formValues, 'defaultValue');
         } elseif (array_key_exists("$this->formUpdate[defaultValue]", $formValues)) {
@@ -146,7 +146,7 @@ class AttributeControllerTest extends WebTestCase
         // Set default label. This field is required.
         $form["$this->formUpdate[label][default]"] = $label;
 
-        if (in_array($type, $this->selectType)) {
+        if ($this->isSelectType($type)) {
             // Set default for options. By default exists only one option
             foreach (array_slice($data['options'], 0, 1) as $key => $option) {
                 $form["$this->formUpdate[defaultOptions][$key][default]"] = $option['default'];
@@ -162,8 +162,9 @@ class AttributeControllerTest extends WebTestCase
         $this->assertContains("Attribute saved", $crawler->html());
 
         // Add second option for select and multiselect
-        if (in_array($type, $this->selectType)) {
-            $em = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+        if ($this->isSelectType($type)) {
+            $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BAttributeBundle:Attribute');
+
             $attribute = $this->getContainer()->get('doctrine')
                 ->getRepository('OroB2BAttributeBundle:Attribute')
                 ->findOneBy(['code' => 'color']);
@@ -308,7 +309,6 @@ class AttributeControllerTest extends WebTestCase
 
     /**
      * @return array
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function attributesDataProvider()
     {
@@ -426,7 +426,7 @@ class AttributeControllerTest extends WebTestCase
      */
     protected function setLocalizedData($type, array $data, Form &$form)
     {
-        if (in_array($type, $this->selectType)) {
+        if ($this->isSelectType($type)) {
             $this->setSelectTypeLocalizedData($data, $form);
         } else {
             $this->setScalarTypeLocalizedData($data, $form);
@@ -440,7 +440,7 @@ class AttributeControllerTest extends WebTestCase
      */
     protected function setNotLocalizedData($type, array $data, Form &$form)
     {
-        if (in_array($type, $this->selectType)) {
+        if ($this->isSelectType($type)) {
             $this->setSelectTypeNotLocalizedData($data, $form);
         } else {
             $form["$this->formUpdate[defaultValue]"] = $data['defaultValue'];
@@ -454,7 +454,7 @@ class AttributeControllerTest extends WebTestCase
      */
     protected function assertLocalizedData($type, array $data, array $formValues)
     {
-        if (in_array($type, $this->selectType)) {
+        if ($this->isSelectType($type)) {
             $this->assertSelectTypeLocalizedData($data, $formValues);
         } else {
             $this->assertScalarTypeLocalizedData($data, $formValues);
@@ -468,7 +468,7 @@ class AttributeControllerTest extends WebTestCase
      */
     protected function assertNotLocalizedData($type, array $data, array $formValues)
     {
-        if (in_array($type, $this->selectType)) {
+        if ($this->isSelectType($type)) {
             $this->assertSelectTypeNotLocalizedData($data, $formValues);
         } else {
             $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue]"]);
@@ -628,5 +628,14 @@ class AttributeControllerTest extends WebTestCase
                 );
             }
         }
+    }
+
+    /**
+     * @param string $type
+     * @return bool
+     */
+    protected function isSelectType($type)
+    {
+        return in_array($type, $this->selectType);
     }
 }
