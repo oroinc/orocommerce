@@ -48,7 +48,7 @@ define(function (require) {
             }
 
             this.hidden = this.radio.parent().find('input.' + this.class).first();
-            if (!this.hidden) {
+            if (!this.hidden.length) {
                 return;
             }
 
@@ -57,6 +57,9 @@ define(function (require) {
                 return;
             }
             this.groupContainer = $(groupContainer);
+            if (!this.groupContainer.length) {
+                return;
+            }
 
             // sync radio button with hidden
             if (this.hidden.val()) {
@@ -86,14 +89,10 @@ define(function (require) {
          * @private
          */
         _onRadioClick: function() {
-            var checked = this.radio.prop('checked');
-            if (checked) {
-                this.groupContainer.find('input.' + this.class).each(function(){
-                    $(this).val('');
-                });
-                this.hidden.val(checked ? '1' : '');
-            }
-
+            this.groupContainer.find('input.' + this.class).each(function(){
+                $(this).val('');
+            });
+            this.hidden.val('1');
         }
     });
 
