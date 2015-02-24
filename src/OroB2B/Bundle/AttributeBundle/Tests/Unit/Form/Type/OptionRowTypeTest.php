@@ -92,11 +92,13 @@ class OptionRowTypeTest extends AbstractLocalizedType
                 'options' => [
                     'value_type' => 'orob2b_attribute_hidden_fallback'
                 ],
-                'defaultData' => null,
+                'defaultData' => [
+                    OptionRowType::ORDER => 0,
+                ],
                 'viewData' => [
                     OptionRowType::DEFAULT_VALUE => null,
                     OptionRowType::IS_DEFAULT => null,
-                    OptionRowType::ORDER => null,
+                    OptionRowType::ORDER => 0,
                     OptionRowType::MASTER_OPTION_ID => null,
                     OptionRowType::LOCALES => [
                         1 => ['fallback_value' => new FallbackType(FallbackType::SYSTEM)],
@@ -134,7 +136,9 @@ class OptionRowTypeTest extends AbstractLocalizedType
             ],
             'option without submitted data' => [
                 'options' => [],
-                'defaultData' => null,
+                'defaultData' => [
+                    OptionRowType::ORDER => 0,
+                ],
                 'viewData' => [],
                 'submittedData' => null,
                 'expectedData' => [
@@ -162,11 +166,13 @@ class OptionRowTypeTest extends AbstractLocalizedType
             ],
             'option without data' => [
                 'options' => [],
-                'defaultData' => null,
+                'defaultData' => [
+                    OptionRowType::ORDER => 0,
+                ],
                 'viewData' => [
                     OptionRowType::DEFAULT_VALUE => null,
                     OptionRowType::IS_DEFAULT => null,
-                    OptionRowType::ORDER => null,
+                    OptionRowType::ORDER => 0,
                     OptionRowType::MASTER_OPTION_ID => null,
                     OptionRowType::LOCALES => [
                         1 => new FallbackType(FallbackType::SYSTEM),
@@ -205,8 +211,8 @@ class OptionRowTypeTest extends AbstractLocalizedType
             'option with data' => [
                 'options' => [],
                 'defaultData' => [
-                    OptionRowType::MASTER_OPTION_ID => null,
-                    'order' => '5',
+                    OptionRowType::MASTER_OPTION_ID => 1,
+                    'order' => 5,
                     'data' => [
                         null => [
                             'value' => 'default value',
@@ -230,7 +236,7 @@ class OptionRowTypeTest extends AbstractLocalizedType
                     OptionRowType::DEFAULT_VALUE => 'default value',
                     OptionRowType::IS_DEFAULT => true,
                     OptionRowType::ORDER => 5,
-                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::MASTER_OPTION_ID => 1,
                     OptionRowType::LOCALES => [
                         1 => new FallbackType(FallbackType::SYSTEM),
                         2 => new FallbackType(FallbackType::PARENT_LOCALE),
@@ -240,7 +246,7 @@ class OptionRowTypeTest extends AbstractLocalizedType
                 'submittedData' => [
                     OptionRowType::DEFAULT_VALUE => 'new default value',
                     OptionRowType::ORDER => '15',
-                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::MASTER_OPTION_ID => '1',
                     OptionRowType::LOCALES => [
                         1 => ['value' => '', 'fallback' => FallbackType::SYSTEM],
                         2 => ['value' => 'en_US value', 'fallback' => ''],
@@ -248,7 +254,7 @@ class OptionRowTypeTest extends AbstractLocalizedType
                     ]
                 ],
                 'expectedData' => [
-                    OptionRowType::MASTER_OPTION_ID => null,
+                    OptionRowType::MASTER_OPTION_ID => 1,
                     'order' => '15',
                     'data' => [
                         null => [

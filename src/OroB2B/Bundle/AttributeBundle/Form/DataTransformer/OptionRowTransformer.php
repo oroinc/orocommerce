@@ -30,8 +30,17 @@ class OptionRowTransformer implements DataTransformerInterface
         }
 
         $result = [];
-        $result[OptionRowType::ORDER] = $value[OptionRowType::ORDER];
-        $result[OptionRowType::MASTER_OPTION_ID] = $value[OptionRowType::MASTER_OPTION_ID];
+
+        $result[OptionRowType::ORDER] = 0;
+        if (isset($value[OptionRowType::ORDER])) {
+            $result[OptionRowType::ORDER] = $value[OptionRowType::ORDER];
+        }
+
+        $result[OptionRowType::MASTER_OPTION_ID] = null;
+        if (isset($value[OptionRowType::MASTER_OPTION_ID])) {
+            $result[OptionRowType::MASTER_OPTION_ID] = $value[OptionRowType::MASTER_OPTION_ID];
+        }
+
         if (!empty($value['data'])) {
             foreach ($value['data'] as $localeId => $data) {
                 if (null == $localeId) {

@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -53,7 +55,7 @@ class OptionRowType extends AbstractType
                     'label' => 'orob2b.attribute.order',
                     'type' => 'text',
                     'constraints' => [new NotBlank(), new Integer()],
-                    'validation_groups' => ['Default']
+                    'validation_groups' => ['Default'],
                 ]
             )
             ->add(
@@ -64,8 +66,18 @@ class OptionRowType extends AbstractType
                     'value_type' => $options['value_type'],
                     'options' => ['constraints' => [new NotBlank()], 'validation_groups' => ['Default']]
                 ]
-            )
-        ;
+            );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            if (!$data) {
+                $data = [];
+            }
+            if (!isset($data[self::ORDER])) {
+                $data[self::ORDER] = 0;
+            }
+            $event->setData($data);
+        });
 
         $localized = $options['value_type'] != FallbackValueType::NAME;
         $builder->addViewTransformer(new OptionRowTransformer($localized));
