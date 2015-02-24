@@ -1,0 +1,15 @@
+orob2b:
+    catalog:
+        category:
+            entity_label:         'Category'
+            entity_plural_label:  'Categories'
+            id.label:             'ID'
+            titles.label:         'Titles'
+
+        categorytitle:
+            entity_label:         'Category title'
+            entity_plural_label:  'Category titles'
+            id.label:             'ID'
+            fallback.label:       'Fallback'
+            value.label:          'Value'
+            category.label:       'Category'

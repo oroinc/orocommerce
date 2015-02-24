@@ -1,0 +1,4 @@
+parameters:
+    orob2b_catalog.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
+
+services:
