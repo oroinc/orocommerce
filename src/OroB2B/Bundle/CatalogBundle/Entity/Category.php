@@ -6,12 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Gedmo\Mapping\Annotation as Gedmo;
+
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
+ * @Gedmo\Tree(type="nested")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -44,6 +47,55 @@ class Category
     protected $titles;
 
     /**
+     * @var integer
+     *
+     * @Gedmo\TreeLeft
+     * @ORM\Column(name="left", type="integer")
+     */
+    protected $left;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeLevel
+     * @ORM\Column(name="level", type="integer")
+     */
+    protected $level;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRight
+     * @ORM\Column(name="right", type="integer")
+     */
+    protected $right;
+
+    /**
+     * @var integer
+     *
+     * @Gedmo\TreeRoot
+     * @ORM\Column(name="root", type="integer", nullable=true)
+     */
+    protected $root;
+
+    /**
+     * @var Category
+     *
+     * @Gedmo\TreeParent
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="childCategories")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $parentCategory;
+
+    /**
+     * @var Collection|Category[]
+     *
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"ALL"})
+     * @ORM\OrderBy({"left" = "ASC"})
+     */
+    protected $childCategories;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -74,6 +126,7 @@ class Category
     public function __construct()
     {
         $this->titles = new ArrayCollection();
+        $this->childCategories = new ArrayCollection();
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
@@ -116,6 +169,136 @@ class Category
     {
         if ($this->titles->contains($title)) {
             $this->titles->removeElement($title);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLeft()
+    {
+        return $this->left;
+    }
+
+    /**
+     * @param int $left
+     * @return $this
+     */
+    public function setLeft($left)
+    {
+        $this->left = $left;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLevel()
+    {
+        return $this->level;
+    }
+
+    /**
+     * @param int $level
+     * @return $this
+     */
+    public function setLevel($level)
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRight()
+    {
+        return $this->right;
+    }
+
+    /**
+     * @param int $right
+     * @return $this
+     */
+    public function setRight($right)
+    {
+        $this->right = $right;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRoot()
+    {
+        return $this->root;
+    }
+
+    /**
+     * @param int $root
+     * @return $this
+     */
+    public function setRoot($root)
+    {
+        $this->root = $root;
+
+        return $this;
+    }
+
+    /**
+     * @return Category
+     */
+    public function getParentCategory()
+    {
+        return $this->parentCategory;
+    }
+
+    /**
+     * @param Category $parentCategory
+     * @return $this
+     */
+    public function setParentCategory($parentCategory)
+    {
+        $this->parentCategory = $parentCategory;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Category[]
+     */
+    public function getChildCategories()
+    {
+        return $this->titles;
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function addChildCategory(Category $category)
+    {
+        if (!$this->childCategories->contains($category)) {
+            $this->childCategories->add($category);
+            $category->setParentCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function removeChildCategory(Category $category)
+    {
+        if ($this->childCategories->contains($category)) {
+            $this->childCategories->removeElement($category);
         }
 
         return $this;
