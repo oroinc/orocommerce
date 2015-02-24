@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Yaml\Yaml;
 
@@ -16,6 +17,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  * @outputBuffering enabled
  * @dbIsolation
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class AttributeControllerTest extends WebTestCase
 {
@@ -28,6 +30,11 @@ class AttributeControllerTest extends WebTestCase
      * @var array|Website[]
      */
     protected $websiteRegistry = [];
+
+    /**
+     * @var array
+     */
+    protected $selectType = ['select', 'multiselect'];
 
     /**
      * @var string
@@ -106,7 +113,7 @@ class AttributeControllerTest extends WebTestCase
         // Check labels
         $this->assertLocalize($formValues, 'label');
 
-        if ($localized) {
+        if ($localized && !in_array($type, $this->selectType)) {
             // Check defaultValue for available locales
             $this->assertLocalize($formValues, 'defaultValue');
         } elseif (array_key_exists("$this->formUpdate[defaultValue]", $formValues)) {
@@ -139,12 +146,47 @@ class AttributeControllerTest extends WebTestCase
         // Set default label. This field is required.
         $form["$this->formUpdate[label][default]"] = $label;
 
+        if (in_array($type, $this->selectType)) {
+            // Set default for options. By default exists only one option
+            foreach (array_slice($data['options'], 0, 1) as $key => $option) {
+                $form["$this->formUpdate[defaultOptions][$key][default]"] = $option['default'];
+                $form["$this->formUpdate[defaultOptions][$key][order]"] = $option['order'];
+            }
+        }
+
         // Submit attribute create second step
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains("Attribute saved", $crawler->html());
+
+        // Add second option for select and multiselect
+        if (in_array($type, $this->selectType)) {
+            $em = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+            $attribute = $this->getContainer()->get('doctrine')
+                ->getRepository('OroB2BAttributeBundle:Attribute')
+                ->findOneBy(['code' => 'color']);
+
+            $masterOption = new AttributeOption();
+            $masterOption->setValue('Black');
+            $masterOption->setOrder(100);
+
+            $attribute->addOption($masterOption);
+
+            $locales = $this->getLocales();
+            foreach ($locales as $locale) {
+                $option = new AttributeOption();
+                $option->setLocale($locale);
+                $option->setFallback(FallbackType::SYSTEM);
+                $option->setOrder($masterOption->getOrder());
+                $attribute->addOption($option);
+
+                $masterOption->addRelatedOption($option);
+            }
+
+            $em->flush($attribute);
+        }
 
         $edit = $crawler->filter('.pull-right .edit-button')->link();
         $crawler = $this->client->click($edit);
@@ -172,16 +214,9 @@ class AttributeControllerTest extends WebTestCase
         }
 
         if ($localized) {
-            $form["$this->formUpdate[defaultValue][default]"] = $data['defaultValue'];
-            foreach ($data['localeDefaultValue'] as $localeName => $localeValue) {
-                $locale = $this->localeRegistry[$localeName];
-                $localeId = $locale->getId();
-                foreach ($localeValue as $name => $value) {
-                    $form["$this->formUpdate[defaultValue][locales][$localeId][$name]"] = $value;
-                }
-            }
+            $this->setLocalizedData($type, $data, $form);
         } else {
-            $form["$this->formUpdate[defaultValue]"] = $data['defaultValue'];
+            $this->setNotLocalizedData($type, $data, $form);
         }
 
         foreach ($data['additional'] as $attributePropertyName => $attributePropertyData) {
@@ -222,19 +257,9 @@ class AttributeControllerTest extends WebTestCase
         }
 
         if ($localized) {
-            $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue][default]"]);
-            foreach ($data['localeDefaultValue'] as $localeName => $localeValue) {
-                $locale = $this->localeRegistry[$localeName];
-                $localeId = $locale->getId();
-                foreach ($localeValue as $name => $value) {
-                    $this->assertEquals(
-                        $value,
-                        $formValues["$this->formUpdate[defaultValue][locales][$localeId][$name]"]
-                    );
-                }
-            }
+            $this->assertLocalizedData($type, $data, $formValues);
         } else {
-            $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue]"]);
+            $this->assertNotLocalizedData($type, $data, $formValues);
         }
 
         foreach ($data['additional'] as $attributePropertyName => $attributePropertyData) {
@@ -392,5 +417,216 @@ class AttributeControllerTest extends WebTestCase
         }
 
         return $fields;
+    }
+
+    /**
+     * @param string $type
+     * @param array $data
+     * @param Form $form
+     */
+    protected function setLocalizedData($type, array $data, Form &$form)
+    {
+        if (in_array($type, $this->selectType)) {
+            $this->setSelectTypeLocalizedData($data, $form);
+        } else {
+            $this->setScalarTypeLocalizedData($data, $form);
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param array $data
+     * @param Form $form
+     */
+    protected function setNotLocalizedData($type, array $data, Form &$form)
+    {
+        if (in_array($type, $this->selectType)) {
+            $this->setSelectTypeNotLocalizedData($data, $form);
+        } else {
+            $form["$this->formUpdate[defaultValue]"] = $data['defaultValue'];
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param array $data
+     * @param array $formValues
+     */
+    protected function assertLocalizedData($type, array $data, array $formValues)
+    {
+        if (in_array($type, $this->selectType)) {
+            $this->assertSelectTypeLocalizedData($data, $formValues);
+        } else {
+            $this->assertScalarTypeLocalizedData($data, $formValues);
+        }
+    }
+
+    /**
+     * @param string $type
+     * @param array $data
+     * @param array $formValues
+     */
+    protected function assertNotLocalizedData($type, array $data, array $formValues)
+    {
+        if (in_array($type, $this->selectType)) {
+            $this->assertSelectTypeNotLocalizedData($data, $formValues);
+        } else {
+            $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue]"]);
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param Form $form
+     */
+    protected function setSelectTypeLocalizedData(array $data, Form &$form)
+    {
+        foreach ($data['options'] as $key => $option) {
+            $form["$this->formUpdate[defaultOptions][$key][default]"] = $option['default'];
+            $form["$this->formUpdate[defaultOptions][$key][order]"] = $option['order'];
+            $form["$this->formUpdate[defaultOptions][$key][is_default]"] = $option['is_default'];
+            foreach ($option['locales'] as $localeName => $localeValue) {
+                $locale = $this->localeRegistry[$localeName];
+                $localeId = $locale->getId();
+                foreach ($localeValue as $name => $value) {
+                    if ($name == 'extend_value') {
+                        $form["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"] = $value;
+                    } else {
+                        $form["$this->formUpdate[defaultOptions][$key]"
+                        . "[locales][$localeId][fallback_value][$name]"] = $value;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param Form $form
+     */
+    protected function setScalarTypeLocalizedData(array $data, Form &$form)
+    {
+        $form["$this->formUpdate[defaultValue][default]"] = $data['defaultValue'];
+        foreach ($data['localeDefaultValue'] as $localeName => $localeValue) {
+            $locale = $this->localeRegistry[$localeName];
+            $localeId = $locale->getId();
+            foreach ($localeValue as $name => $value) {
+                $form["$this->formUpdate[defaultValue][locales][$localeId][$name]"] = $value;
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param Form $form
+     */
+    protected function setSelectTypeNotLocalizedData(array $data, Form &$form)
+    {
+        foreach ($data['options'] as $key => $option) {
+            $form["$this->formUpdate[defaultOptions][$key][default]"] = $option['default'];
+            $form["$this->formUpdate[defaultOptions][$key][order]"] = $option['order'];
+            $form["$this->formUpdate[defaultOptions][$key][is_default]"] = $option['is_default'];
+            foreach ($option['locales'] as $localeName => $localeValue) {
+                $locale = $this->localeRegistry[$localeName];
+                $localeId = $locale->getId();
+                foreach ($localeValue as $name => $value) {
+                    $form["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"] = $value;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param array $formValues
+     */
+    protected function assertSelectTypeNotLocalizedData(array $data, array $formValues)
+    {
+        foreach ($data['options'] as $key => $option) {
+            $this->assertEquals(
+                $option['default'],
+                $formValues["$this->formUpdate[defaultOptions][$key][default]"]
+            );
+            $this->assertEquals(
+                $option['order'],
+                $formValues["$this->formUpdate[defaultOptions][$key][order]"]
+            );
+
+            $this->assertEquals(
+                $option['is_default'],
+                $formValues["$this->formUpdate[defaultOptions][$key][is_default]"]
+            );
+
+            foreach ($option['locales'] as $localeName => $localeValue) {
+                $locale = $this->localeRegistry[$localeName];
+                $localeId = $locale->getId();
+                foreach ($localeValue as $name => $value) {
+                    $this->assertEquals(
+                        $value,
+                        $formValues["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"]
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param array $formValues
+     */
+    protected function assertSelectTypeLocalizedData(array $data, array $formValues)
+    {
+        foreach ($data['options'] as $key => $option) {
+            $this->assertEquals(
+                $option['default'],
+                $formValues["$this->formUpdate[defaultOptions][$key][default]"]
+            );
+            $this->assertEquals(
+                $option['order'],
+                $formValues["$this->formUpdate[defaultOptions][$key][order]"]
+            );
+            $this->assertEquals(
+                $option['is_default'],
+                $formValues["$this->formUpdate[defaultOptions][$key][is_default]"]
+            );
+            foreach ($option['locales'] as $localeName => $localeValue) {
+                $locale = $this->localeRegistry[$localeName];
+                $localeId = $locale->getId();
+                foreach ($localeValue as $name => $value) {
+                    if ($name == 'extend_value') {
+                        $this->assertEquals(
+                            $value,
+                            $formValues["$this->formUpdate[defaultOptions][$key]"
+                            . "[locales][$localeId][$name]"]
+                        );
+                    } else {
+                        $this->assertEquals(
+                            $value,
+                            $formValues["$this->formUpdate[defaultOptions][$key]"
+                            . "[locales][$localeId][fallback_value][$name]"]
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param array $data
+     * @param array $formValues
+     */
+    protected function assertScalarTypeLocalizedData(array $data, array $formValues)
+    {
+        $this->assertEquals($data['defaultValue'], $formValues["$this->formUpdate[defaultValue][default]"]);
+        foreach ($data['localeDefaultValue'] as $localeName => $localeValue) {
+            $locale = $this->localeRegistry[$localeName];
+            $localeId = $locale->getId();
+            foreach ($localeValue as $name => $value) {
+                $this->assertEquals(
+                    $value,
+                    $formValues["$this->formUpdate[defaultValue][locales][$localeId][$name]"]
+                );
+            }
+        }
     }
 }
