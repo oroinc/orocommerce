@@ -1,0 +1,7 @@
+parameters:
+#    oro_b2_b_validation.example.class: OroB2B\Bundle\ValidationBundle\Example
+
+services:
+#    oro_b2_b_validation.example:
+#        class: %oro_b2_b_validation.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

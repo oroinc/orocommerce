@@ -16,17 +16,9 @@ orob2b:
             group:    'Sharing Group'
             website:  'Website'
         attribute_type_constraint:
-            none:              'None'
-            alphanumeric:      'Alphanumeric'
-            decimal:           'Decimal Number'
-            email:             'Email'
-            greater_than_zero: 'Greater than Zero'
-            integer:           'Integer Number'
-            letters:           'Letters'
-            url:               'URL'
-            url_safe:          'URL Safe Characters'
-            required:          'Required'
-            unique:            'Unique'
+            none:     'None'
+            required: 'Required'
+            unique:   'Unique'
 
         form:
             create:
