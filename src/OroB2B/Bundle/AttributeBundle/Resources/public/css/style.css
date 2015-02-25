@@ -1,0 +1,28 @@
+.oro-options-collection.oro-item-collection > div {
+      position: relative;
+      padding: 10px 15px 0 0;
+      margin: 0 0 20px;
+      border: 1px solid #e6e6e6;
+      background: #f8f8f8;
+      border-radius: 4px;
+}
+
+.oro-options-collection.oro-item-collection .add-list-item {
+    margin-left: 183px;
+}
+
+.oro-options-collection.oro-item-collection .removeRow {
+    position: absolute;
+    width: 28px;
+    top: 4px;
+    right: 4px;
+    text-decoration: none;
+}
+
+.oro-options-collection.oro-item-collection :after {
+     color: #bbb;
+ }
+
+.oro-options-collection.oro-item-collection select.fallback {
+    width: 160px !important;
+}

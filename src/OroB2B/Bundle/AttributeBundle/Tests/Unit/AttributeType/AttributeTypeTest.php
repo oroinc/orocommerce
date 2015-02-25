@@ -6,11 +6,20 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Boolean;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Integer;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Float;
+use OroB2B\Bundle\AttributeBundle\AttributeType\MultiSelect;
+use OroB2B\Bundle\AttributeBundle\AttributeType\OptionAttributeTypeInterface;
+use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
+use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedMultiselectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedSelectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedMultiselectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType;
+use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
@@ -23,9 +32,10 @@ use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
 class AttributeTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param AttributeTypeInterface $type
+     * @param AttributeTypeInterface|OptionAttributeTypeInterface $type
      * @param array $expected
      * @param Attribute|null $attribute
+     * @param array $normalizationData
      * @dataProvider attributeTypeDataProvider
      */
     public function testAttributeTypes(
@@ -48,6 +58,10 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['optionalConstraints'], $type->getOptionalConstraints());
         $this->assertEquals($expected['canBeUnique'], $type->canBeUnique());
         $this->assertEquals($expected['canBeRequired'], $type->canBeRequired());
+
+        if (isset($expected['defaultFormParameters'])) {
+            $this->assertEquals($expected['defaultFormParameters'], $type->getDefaultValueFormParameters($attribute));
+        }
 
         $testValue = 'test';
 
@@ -76,6 +90,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
     {
         $htmlAttribute = new Attribute();
         $htmlAttribute->setContainHtml(true);
+
+        $localizedAttribute = new Attribute();
+        $localizedAttribute->setLocalized(true);
+
+        $notLocalizedAttribute = new Attribute();
+        $notLocalizedAttribute->setLocalized(false);
 
         return [
             'integer' => [
@@ -262,7 +282,91 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                     'canBeUnique' => true,
                     'canBeRequired' => true,
                 ]
-            ]
+            ],
+            'select not localized' => [
+                'attributeType' => new Select(),
+                'expected' => [
+                    'name' => Select::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => SelectAttributeTypeType::NAME,
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => NotLocalizedSelectCollectionType::NAME,
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $notLocalizedAttribute
+            ],
+            'select localized' => [
+                'attributeType' => new Select(),
+                'expected' => [
+                    'name' => Select::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => SelectAttributeTypeType::NAME
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => LocalizedSelectCollectionType::NAME,
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $localizedAttribute
+            ],
+            'multiselect not localized' => [
+                'attributeType' => new MultiSelect(),
+                'expected' => [
+                    'name' => MultiSelect::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => MultiSelectAttributeTypeType::NAME
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => NotLocalizedMultiselectCollectionType::NAME,
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $notLocalizedAttribute
+            ],
+            'multiselect localized' => [
+                'attributeType' => new MultiSelect(),
+                'expected' => [
+                    'name' => MultiSelect::NAME,
+                    'typeField' => 'options',
+                    'isContainHtml' => false,
+                    'isUsedForSearch' => true,
+                    'isUsedInFilters' => true,
+                    'formParameters' => [
+                        'type' => MultiSelectAttributeTypeType::NAME
+                    ],
+                    'defaultFormParameters' => [
+                        'type' => LocalizedMultiselectCollectionType::NAME,
+                    ],
+                    'requiredConstraints' => [],
+                    'optionalConstraints' => [],
+                    'canBeUnique' => false,
+                    'canBeRequired' => true,
+                ],
+                'attribute' => $localizedAttribute
+            ],
         ];
     }
 }

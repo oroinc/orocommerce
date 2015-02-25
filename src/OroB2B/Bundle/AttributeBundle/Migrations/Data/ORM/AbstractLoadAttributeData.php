@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
+use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 use OroB2B\Bundle\AttributeBundle\Model\SharingType;
 
 abstract class AbstractLoadAttributeData extends AbstractFixture
@@ -36,6 +37,16 @@ abstract class AbstractLoadAttributeData extends AbstractFixture
             $attribute->setRequired($item['required']);
             $attribute->setUnique($item['unique']);
             $attribute->addLabel($label);
+
+            if (isset($item['options'])) {
+                foreach ($item['options'] as $optionItem) {
+                    $masterOption = new AttributeOption();
+                    $masterOption->setValue($optionItem['value']);
+                    $masterOption->setOrder($optionItem['order']);
+
+                    $attribute->addOption($masterOption);
+                }
+            }
 
             $manager->persist($attribute);
         }

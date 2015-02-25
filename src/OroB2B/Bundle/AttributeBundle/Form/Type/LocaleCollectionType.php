@@ -57,6 +57,7 @@ class LocaleCollectionType extends AbstractType
             'options'           => [],
             'fallback_type'     => AttributePropertyFallbackType::NAME,
             'enabled_fallbacks' => [],
+            'value_type' => FallbackValueType::NAME
         ]);
     }
 
@@ -74,7 +75,7 @@ class LocaleCollectionType extends AbstractType
 
             $builder->add(
                 $locale->getId(),
-                FallbackValueType::NAME,
+                $options['value_type'],
                 [
                     'label'             => $locale->getCode(),
                     'type'              => $options['type'],
@@ -85,11 +86,18 @@ class LocaleCollectionType extends AbstractType
             );
         }
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $data = $event->getData();
-            $filledData = $this->fillDefaultData($data);
-            $event->setData($filledData);
-        });
+        $locales = $this->getLocales();
+        if ($locales) {
+            // use any locale field to resolve default data
+            $locale = $locales[0];
+            $localeField = $builder->get($locale->getId());
+
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($localeField) {
+                $data = $event->getData();
+                $filledData = $this->fillDefaultData($data, $localeField);
+                $event->setData($filledData);
+            });
+        }
     }
 
     /**
@@ -113,9 +121,10 @@ class LocaleCollectionType extends AbstractType
 
     /**
      * @param mixed $data
+     * @param FormBuilderInterface $form
      * @return array
      */
-    public function fillDefaultData($data)
+    public function fillDefaultData($data, FormBuilderInterface $form)
     {
         if (!$data) {
             $data = [];
@@ -128,6 +137,11 @@ class LocaleCollectionType extends AbstractType
                     $data[$localeId] = new FallbackType(FallbackType::PARENT_LOCALE);
                 } else {
                     $data[$localeId] = new FallbackType(FallbackType::SYSTEM);
+                }
+                if ($form->hasOption('default_callback')) {
+                    /** @var \Closure $defaultCallback */
+                    $defaultCallback = $form->getOption('default_callback');
+                    $data[$localeId] = $defaultCallback($data[$localeId]);
                 }
             }
         }

@@ -1,14 +1,16 @@
 orob2b:
     attribute:
         attribute_type:
-            empty:    'Choose attribute type...'
-            integer:  'Integer'
-            float:    'Float'
-            boolean:  'Boolean'
-            string:   'String'
-            text:     'Text'
-            date:     'Date'
-            datetime: 'DateTime'
+            empty:          'Choose attribute type...'
+            integer:        'Integer'
+            float:          'Float'
+            boolean:        'Boolean'
+            string:         'String'
+            text:           'Text'
+            date:           'Date'
+            datetime:       'DateTime'
+            select:         'Select'
+            multiselect:    'Multi-Select'
         sharing_type:
             general:  'Global'
             group:    'Sharing Group'
@@ -36,6 +38,7 @@ orob2b:
                 continue: 'Continue'
 
         default: 'Default'
+        order:   'Order'
 
         menu:
             attributes_list.description:            'List of existing product attributes'
@@ -64,7 +67,7 @@ orob2b:
         id.label:               'ID'
         labels.label:           'Label'
         localized.label:        'Localized'
-        options.label:          'Attribute Options'
+        options.label:          'Options'
         properties.label:       'Attribute Properties'
         required.label:         'Required'
         sharing_type.label:     'Value sharing'

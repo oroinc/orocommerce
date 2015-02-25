@@ -73,7 +73,8 @@
             'subblocks': [
                 {
                     'data': [
-                        form_row(form.defaultValue),
+                        form.defaultValue is defined ? form_row(form.defaultValue) : null,
+                        form.defaultOptions is defined ? form_row(form.defaultOptions) : null,
                     ]
                 },
             ]

@@ -11,7 +11,7 @@ define([
     return [
         'OroB2B\\Bundle\\AttributeBundle\\Validator\\Constraints\\Decimal',
         function(value, element, param) {
-            param.pattern = '/^[0-9\\' + groupingSeparator + '\\' + decimalSeparator + ']*$/';
+            param.pattern = '/^[0-9\\+\\-\\' + groupingSeparator + '\\' + decimalSeparator + ']*$/';
             return regexConstraint[1].call(this, value, element, param);
         },
         regexConstraint[2]
