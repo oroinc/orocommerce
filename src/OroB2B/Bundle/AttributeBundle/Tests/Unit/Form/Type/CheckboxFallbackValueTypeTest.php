@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextTypeStub;
@@ -37,7 +37,7 @@ class CheckboxFallbackValueTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     HiddenFallbackValueType::NAME => new HiddenFallbackValueType(),
-                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     TextTypeStub::NAME => new TextTypeStub()
                 ],
@@ -60,7 +60,7 @@ class CheckboxFallbackValueTypeTest extends FormIntegrationTestCase
 
         $formConfig = $form->getConfig();
         $this->assertNull($formConfig->getOption('data_class'));
-        $this->assertEquals(AttributePropertyFallbackType::NAME, $formConfig->getOption('fallback_type'));
+        $this->assertEquals(FallbackPropertyType::NAME, $formConfig->getOption('fallback_type'));
         $fallbackType = new FallbackType(FallbackType::SYSTEM);
 
         /** @var \Closure $callback */

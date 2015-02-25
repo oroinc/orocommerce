@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Model;
 
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 

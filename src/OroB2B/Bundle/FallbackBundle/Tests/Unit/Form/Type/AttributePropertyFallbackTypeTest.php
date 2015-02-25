@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var AttributePropertyFallbackType
+     * @var FallbackPropertyType
      */
     protected $formType;
 
@@ -18,7 +18,7 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new AttributePropertyFallbackType();
+        $this->formType = new FallbackPropertyType();
     }
 
     /**
@@ -88,7 +88,7 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(AttributePropertyFallbackType::NAME, $this->formType->getName());
+        $this->assertEquals(FallbackPropertyType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()

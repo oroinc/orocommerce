@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -55,7 +57,7 @@ class HiddenFallbackValueType extends AbstractType
         $resolver->setDefaults([
             'data_class' => null,
             'options' => [],
-            'fallback_type'     => AttributePropertyFallbackType::NAME,
+            'fallback_type'     => FallbackPropertyType::NAME,
             'enabled_fallbacks' => [],
             'extend_value_type' => 'hidden',
             'default_callback' => function (FallbackType $fallbackType) {

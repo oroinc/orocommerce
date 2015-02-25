@@ -1,3 +1,14 @@
 parameters:
+    orob2b_fallback.form.type.fallback_property.class: OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType
+    orob2b_fallback.form.type.fallback_value.class: OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType
 
 services:
+    orob2b_fallback.form.type.fallback_property:
+        class: %orob2b_fallback.form.type.fallback_property.class%
+        tags:
+            - { name: form.type, alias: orob2b_fallback_property }
+
+    orob2b_fallback.form.type.fallback_value:
+        class: %orob2b_fallback.form.type.fallback_value.class%
+        tags:
+            - { name: form.type, alias: orob2b_fallback_value }

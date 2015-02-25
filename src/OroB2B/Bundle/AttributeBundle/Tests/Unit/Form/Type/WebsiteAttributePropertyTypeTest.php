@@ -7,8 +7,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType;
@@ -44,7 +44,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     WebsiteCollectionType::NAME => new WebsiteCollectionType($this->registry),
                     CheckboxTypeStub::NAME => new CheckboxTypeStub(),

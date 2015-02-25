@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType;
@@ -35,7 +35,7 @@ class LocalizedAttributePropertyTypeTest extends AbstractLocalizedType
         return [
             new PreloadedExtension(
                 [
-                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
                     PercentTypeStub::NAME => new PercentTypeStub(),

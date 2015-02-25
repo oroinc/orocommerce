@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextTypeStub;
 
@@ -32,7 +32,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType(),
                     TextTypeStub::NAME => new TextTypeStub(),
                 ],
                 []
@@ -54,7 +54,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
 
         $formConfig = $form->getConfig();
         $this->assertNull($formConfig->getOption('data_class'));
-        $this->assertEquals(AttributePropertyFallbackType::NAME, $formConfig->getOption('fallback_type'));
+        $this->assertEquals(FallbackPropertyType::NAME, $formConfig->getOption('fallback_type'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());

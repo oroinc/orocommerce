@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionsCollectionType;
@@ -50,7 +50,7 @@ class OptionsCollectionTypeTest extends AbstractLocalizedType
                     OptionRowType::NAME => new OptionRowType(),
                     LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
                     FallbackValueType::NAME => new FallbackValueType(),
-                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType(),
                 ],
                 []
             )

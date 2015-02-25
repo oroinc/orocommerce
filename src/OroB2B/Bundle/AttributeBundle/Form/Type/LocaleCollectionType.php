@@ -13,6 +13,8 @@ use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 
 class LocaleCollectionType extends AbstractType
 {
@@ -55,9 +57,9 @@ class LocaleCollectionType extends AbstractType
 
         $resolver->setDefaults([
             'options'           => [],
-            'fallback_type'     => AttributePropertyFallbackType::NAME,
+            'fallback_type'     => FallbackPropertyType::NAME,
             'enabled_fallbacks' => [],
-            'value_type' => FallbackValueType::NAME
+            'value_type'        => FallbackValueType::NAME
         ]);
     }
 

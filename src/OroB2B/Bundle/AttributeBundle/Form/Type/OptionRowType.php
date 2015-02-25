@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\OptionRowTransformer;
 use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 
 class OptionRowType extends AbstractType
 {

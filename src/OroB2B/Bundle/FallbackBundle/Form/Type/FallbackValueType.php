@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,7 +12,7 @@ use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\FallbackValueTransformer;
 
 class FallbackValueType extends AbstractType
 {
-    const NAME = 'orob2b_attribute_fallback_value';
+    const NAME = 'orob2b_fallback_value';
 
     /**
      * {@inheritdoc}
@@ -34,7 +34,7 @@ class FallbackValueType extends AbstractType
         $resolver->setDefaults([
             'data_class'        => null,
             'options'           => [],
-            'fallback_type'     => AttributePropertyFallbackType::NAME,
+            'fallback_type'     => FallbackPropertyType::NAME,
             'enabled_fallbacks' => [],
         ]);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -8,9 +8,9 @@ use Symfony\Component\OptionsResolver\Options;
 
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
-class AttributePropertyFallbackType extends AbstractType
+class FallbackPropertyType extends AbstractType
 {
-    const NAME = 'orob2b_attribute_property_fallback';
+    const NAME = 'orob2b_fallback_property';
 
     /**
      * {@inheritDoc}

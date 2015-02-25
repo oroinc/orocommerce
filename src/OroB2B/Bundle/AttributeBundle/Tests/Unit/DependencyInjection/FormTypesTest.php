@@ -13,9 +13,6 @@ class FormTypesTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BAttributeExtension());
 
         $expectedParameters = [
-//            'orob2b_attribute.form.type.attribute.class',
-            'orob2b_attribute.form.type.attribute_property_fallback.class',
-            'orob2b_attribute.form.type.fallback_value.class',
             'orob2b_attribute.form.type.attribute_type.class',
             'orob2b_attribute.form.type.attribute_type_constraint.class',
             'orob2b_attribute.form.type.locale_collection.class',
@@ -28,9 +25,6 @@ class FormTypesTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-//            'orob2b_attribute.form.type.attribute',
-            'orob2b_attribute.form.type.attribute_property_fallback',
-            'orob2b_attribute.form.type.fallback_value',
             'orob2b_attribute.form.type.attribute_type',
             'orob2b_attribute.form.type.attribute_type_constraint',
             'orob2b_attribute.form.type.locale_collection',
