@@ -17,13 +17,28 @@ class LoadAttributeDemoData extends AbstractLoadAttributeData
         $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Integer');
         $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\String');
         $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Text');
+        $this->attributes[] = $this->describeAttribute(
+            'OroB2B\Bundle\AttributeBundle\AttributeType\Select',
+            [
+                ['value' => 'Select option 01', 'order' => 5],
+                ['value' => 'Select option 02', 'order' => 10]
+            ]
+        );
+        $this->attributes[] = $this->describeAttribute(
+            'OroB2B\Bundle\AttributeBundle\AttributeType\MultiSelect',
+            [
+                ['value' => 'Multiselect option 01', 'order' => 10],
+                ['value' => 'Multiselect option 02', 'order' => 20]
+            ]
+        );
     }
 
     /**
      * @param string|object $attributeType
+     * @param array $options
      * @return array
      */
-    private function describeAttribute($attributeType)
+    private function describeAttribute($attributeType, array $options = [])
     {
         $class = new \ReflectionClass($attributeType);
         $name = $class->getConstant('NAME');
@@ -36,6 +51,11 @@ class LoadAttributeDemoData extends AbstractLoadAttributeData
             'unique'    => false,
             'label'     => $name,
         ];
+
+        if ($options) {
+            $attribute['options'] = $options;
+        }
+
         return $attribute;
     }
 }
