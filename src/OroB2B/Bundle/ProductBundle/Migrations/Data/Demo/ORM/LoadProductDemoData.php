@@ -33,7 +33,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadAttributeDemoData'];
+        return [
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadAttributeDemoData',
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
+        ];
     }
 
     /**
