@@ -126,6 +126,7 @@ class Attribute
      * @var Collection|AttributeOption[]
      *
      * @ORM\OneToMany(targetEntity="AttributeOption", mappedBy="attribute", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OrderBy({"order" = "ASC"})
      */
     protected $options;
 
@@ -356,7 +357,12 @@ class Attribute
             }
         });
 
-        return $properties->count() ? $properties->first() : null;
+        $count = $properties->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute properties found by the same field and locale ID.');
+        }
+
+        return $count > 0 ? $properties->first() : null;
     }
 
     /**
@@ -431,7 +437,12 @@ class Attribute
             }
         });
 
-        return $labels->count() ? $labels->first() : null;
+        $count = $labels->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute labels found by the same locale ID.');
+        }
+
+        return $count > 0 ? $labels->first() : null;
     }
 
     /**
@@ -493,11 +504,11 @@ class Attribute
 
     /**
      * @param int|null $localeId
-     * @return AttributeDefaultValue|null
+     * @return AttributeDefaultValue[]|Collection
      */
-    public function getDefaultValueByLocaleId($localeId)
+    protected function getDefaultValuesByLocaleId($localeId)
     {
-        $values = $this->defaultValues->filter(function (AttributeDefaultValue $value) use ($localeId) {
+        return $this->defaultValues->filter(function (AttributeDefaultValue $value) use ($localeId) {
             $locale = $value->getLocale();
             if ($locale) {
                 return $locale->getId() == $localeId;
@@ -505,9 +516,50 @@ class Attribute
                 return empty($localeId);
             }
         });
-
-        return $values->count() ? $values->first() : null;
     }
+
+    /**
+     * @param int|null $localeId
+     * @return AttributeDefaultValue|null
+     */
+    public function getDefaultValueByLocaleId($localeId)
+    {
+        $values = $this->getDefaultValuesByLocaleId($localeId);
+
+        $count = $values->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute default values found by the same locale ID.');
+        }
+
+        return $count > 0 ? $values->first() : null;
+    }
+
+    /**
+     * @param int|null $localeId
+     * @param int $optionId
+     * @return AttributeDefaultValue|null
+     */
+    public function getDefaultValueByLocaleIdAndOptionId($localeId, $optionId)
+    {
+        $values = $this->getDefaultValuesByLocaleId($localeId);
+
+        $values = $values->filter(function (AttributeDefaultValue $value) use ($optionId) {
+            $option = $value->getOption();
+            if (!$option || !$option->getId()) {
+                return false;
+            }
+
+            return $option->getId() == $optionId;
+        });
+
+        $count = $values->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute default values found by the same locale ID and option ID.');
+        }
+
+        return $count > 0 ? $values->first() : null;
+    }
+
 
     /**
      * Set default values for current attribute
@@ -564,6 +616,29 @@ class Attribute
     public function getOptions()
     {
         return $this->options;
+    }
+
+    /**
+     * @param int $optionId
+     * @return AttributeOption|null
+     */
+    public function getOptionById($optionId)
+    {
+        $options = $this->options->filter(function (AttributeOption $option) use ($optionId) {
+            $currentOptionId = $option->getId();
+            if (!$currentOptionId) {
+                return false;
+            }
+
+            return $currentOptionId == $optionId;
+        });
+
+        $count = $options->count();
+        if ($count > 1) {
+            throw new \LogicException('Several attribute options found by the same option ID.');
+        }
+
+        return $count > 0 ? $options->first() : null;
     }
 
     /**

@@ -11,9 +11,11 @@ use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class AttributeTest extends EntityTestCase
 {
-
     public function testProperties()
     {
         $properties = [
@@ -281,6 +283,25 @@ class AttributeTest extends EntityTestCase
         $this->assertNull($attribute->getLabelByLocaleId(42));
     }
 
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Several attribute labels found by the same locale ID.
+     */
+    public function testGetLabelByLocaleIdException()
+    {
+        $locale = $this->createLocale(1);
+
+        $firstLabel = new AttributeLabel();
+        $firstLabel->setLocale($locale);
+
+        $secondLabel = new AttributeLabel();
+        $secondLabel->setLocale($locale);
+
+        $attribute = new Attribute();
+        $attribute->resetLabels([$firstLabel, $secondLabel]);
+        $attribute->getLabelByLocaleId(1);
+    }
+
     public function testGetDefaultValueByLocaleId()
     {
         $defaultValue = new AttributeDefaultValue();
@@ -303,6 +324,25 @@ class AttributeTest extends EntityTestCase
         $this->assertEquals($firstLocaleValue, $attribute->getDefaultValueByLocaleId($firstLocale->getId()));
         $this->assertEquals($secondLocaleValue, $attribute->getDefaultValueByLocaleId($secondLocale->getId()));
         $this->assertNull($attribute->getDefaultValueByLocaleId(42));
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Several attribute default values found by the same locale ID.
+     */
+    public function testGetDefaultValueByLocaleIdException()
+    {
+        $locale = $this->createLocale(1);
+
+        $firstValue = new AttributeDefaultValue();
+        $firstValue->setLocale($locale);
+
+        $secondValue = new AttributeDefaultValue();
+        $secondValue->setLocale($locale);
+
+        $attribute = new Attribute();
+        $attribute->resetDefaultValues([$firstValue, $secondValue]);
+        $attribute->getDefaultValueByLocaleId(1);
     }
 
     public function testGetPropertiesByFieldAndGetPropertyByFieldAndWebsiteId()
@@ -362,6 +402,107 @@ class AttributeTest extends EntityTestCase
     }
 
     /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Several attribute properties found by the same field and locale ID.
+     */
+    public function testGetPropertyByFieldAndWebsiteIdException()
+    {
+        $website = $this->createWebsite(1);
+
+        $firstProperty = new AttributeProperty();
+        $firstProperty->setField(AttributeProperty::FIELD_USE_FOR_SEARCH)
+            ->setWebsite($website);
+
+        $secondProperty = new AttributeProperty();
+        $secondProperty->setField(AttributeProperty::FIELD_USE_FOR_SEARCH)
+            ->setWebsite($website);
+
+        $attribute = new Attribute();
+        $attribute->resetProperties([$firstProperty, $secondProperty]);
+        $attribute->getPropertyByFieldAndWebsiteId(AttributeProperty::FIELD_USE_FOR_SEARCH, 1);
+    }
+
+    public function testGetDefaultValueByLocaleIdAndOptionId()
+    {
+        $firstLocale = $this->createLocale(1);
+        $secondLocale = $this->createLocale(2);
+
+        $nullOption = $this->createAttributeOption(null);
+        $firstOption = $this->createAttributeOption(1);
+        $secondOption = $this->createAttributeOption(2);
+
+        $nullDefaultValue = new AttributeDefaultValue();
+        $nullDefaultValue->setLocale($firstLocale)
+            ->setOption($nullOption);
+
+        $firstDefaultValue = new AttributeDefaultValue();
+        $firstDefaultValue->setLocale($firstLocale)
+            ->setOption($firstOption);
+
+        $secondDefaultValue = new AttributeDefaultValue();
+        $secondDefaultValue->setLocale($secondLocale)
+            ->setOption($secondOption);
+
+        $attribute = new Attribute();
+        $attribute->resetDefaultValues([$nullDefaultValue, $firstDefaultValue, $secondDefaultValue]);
+
+        $this->assertEquals($firstDefaultValue, $attribute->getDefaultValueByLocaleIdAndOptionId(1, 1));
+        $this->assertEquals($secondDefaultValue, $attribute->getDefaultValueByLocaleIdAndOptionId(2, 2));
+        $this->assertNull($attribute->getDefaultValueByLocaleIdAndOptionId(1, 2));
+        $this->assertNull($attribute->getDefaultValueByLocaleIdAndOptionId(2, 1));
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Several attribute default values found by the same locale ID and option ID.
+     */
+    public function testGetDefaultValueByLocaleIdAndOptionIdException()
+    {
+        $locale = $this->createLocale(1);
+        $option = $this->createAttributeOption(2);
+
+        $firstValue = new AttributeDefaultValue();
+        $firstValue->setLocale($locale)
+            ->setOption($option);
+
+        $secondValue = new AttributeDefaultValue();
+        $secondValue->setLocale($locale)
+            ->setOption($option);
+
+        $attribute = new Attribute();
+        $attribute->resetDefaultValues([$firstValue, $secondValue]);
+        $attribute->getDefaultValueByLocaleIdAndOptionId(1, 2);
+    }
+
+    public function testGetOptionById()
+    {
+        $nullOption = $this->createAttributeOption(null);
+        $firstOption = $this->createAttributeOption(1);
+        $secondOption = $this->createAttributeOption(2);
+
+        $attribute = new Attribute();
+        $attribute->resetOptions([$nullOption, $firstOption, $secondOption]);
+
+        $this->assertEquals($firstOption, $attribute->getOptionById(1));
+        $this->assertEquals($secondOption, $attribute->getOptionById(2));
+        $this->assertNull($attribute->getOptionById(3));
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Several attribute options found by the same option ID.
+     */
+    public function testGetOptionByIdException()
+    {
+        $firstOption = $this->createAttributeOption(1);
+        $secondOption = $this->createAttributeOption(1);
+
+        $attribute = new Attribute();
+        $attribute->resetOptions([$firstOption, $secondOption]);
+        $attribute->getOptionById(1);
+    }
+
+    /**
      * @param int $id
      * @return Locale
      */
@@ -382,12 +523,27 @@ class AttributeTest extends EntityTestCase
      */
     protected function createWebsite($id)
     {
-        $locale = new Website();
+        $website = new Website();
 
-        $reflection = new \ReflectionProperty(get_class($locale), 'id');
+        $reflection = new \ReflectionProperty(get_class($website), 'id');
         $reflection->setAccessible(true);
-        $reflection->setValue($locale, $id);
+        $reflection->setValue($website, $id);
 
-        return $locale;
+        return $website;
+    }
+
+    /**
+     * @param int $id
+     * @return AttributeOption
+     */
+    protected function createAttributeOption($id)
+    {
+        $option = new AttributeOption();
+
+        $reflection = new \ReflectionProperty(get_class($option), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($option, $id);
+
+        return $option;
     }
 }

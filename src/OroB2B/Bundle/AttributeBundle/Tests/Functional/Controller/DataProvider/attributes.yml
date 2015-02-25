@@ -491,3 +491,367 @@
                 Canada:
                     value: false
                     fallback: system
+'multiselect not localized':
+    name: multiselect
+    code: color
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+    label: 'Multiselect attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: 'Canada multiselect attribute label'
+                fallback: null
+        options:
+            '0':
+                default: 'Red'
+                is_default: 1
+                locales:
+                    en_US:
+                        value: 'US red'
+                        fallback: null
+                    en_CA:
+                        value: 'CA red'
+                        fallback: null
+                order: 5
+            '1':
+                default: 'Brown'
+                is_default: 1
+                locales:
+                    en_US:
+                        value: 'US brown'
+                        fallback: null
+                    en_CA:
+                        value: 'CA brown'
+                        fallback: null
+                order: 100
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useForSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'multiselect localized':
+    name: multiselect
+    code: color
+    localized: true
+    sharingGroup: general
+    validation:
+        required: true
+    label: 'Multiselect attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: 'Canada multiselect attribute label'
+                fallback: null
+        options:
+            '0':
+                default: 'Red'
+                is_default: 1
+                locales:
+                    en_US:
+                        value: 'US red'
+                        fallback: null
+                        extend_value: 1
+                    en_CA:
+                        value: 'CA red'
+                        fallback: null
+                        extend_value: 1
+                order: 5
+            '1':
+                default: 'Brown'
+                is_default: 1
+                locales:
+                    en_US:
+                        value: 'US brown'
+                        fallback: null
+                        extend_value: 1
+                    en_CA:
+                        value: 'CA brown'
+                        fallback: null
+                        extend_value: 1
+                order: 100
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useForSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'select not localized':
+    name: select
+    code: color
+    localized: false
+    sharingGroup: general
+    validation:
+        required: true
+    label: 'Select attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: 'Canada select attribute label'
+                fallback: null
+        options:
+            '0':
+                default: 'Red'
+                is_default: 1
+                locales:
+                    en_US:
+                        value: 'US red'
+                        fallback: null
+                    en_CA:
+                        value: 'CA red'
+                        fallback: null
+                order: 5
+            '1':
+                default: 'Brown'
+                is_default: null
+                locales:
+                    en_US:
+                        value: 'US brown'
+                        fallback: null
+                    en_CA:
+                        value: 'CA brown'
+                        fallback: null
+                order: 100
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useForSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
+'select localized':
+    name: select
+    code: color
+    localized: true
+    sharingGroup: general
+    validation:
+        required: true
+    label: 'Select attribute label'
+    data:
+        label:
+            en_US:
+                value: null
+                fallback: system
+            en_CA:
+                value: 'Canada select attribute label'
+                fallback: null
+        options:
+            '0':
+                default: 'Red'
+                is_default: 1
+                locales:
+                    en_US:
+                        value: 'US red'
+                        fallback: null
+                        extend_value: null
+                    en_CA:
+                        value: 'CA red'
+                        fallback: null
+                        extend_value: null
+                order: 5
+            '1':
+                default: 'Brown'
+                is_default: null
+                locales:
+                    en_US:
+                        extend_value: 1
+                        value: 'US brown'
+                        fallback: null
+                    en_CA:
+                        extend_value: 1
+                        value: 'CA brown'
+                        fallback: null
+                order: 100
+        additional:
+            onProductView:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            inProductListing:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useInSorting:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            useForSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onAdvancedSearch:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: null
+            onProductComparison:
+                US:
+                    value: false
+                    fallback: null
+                Canada:
+                    value: false
+                    fallback: null
+            useInFilters:
+                US:
+                    value: false
+                    fallback: system
+                Canada:
+                    value: false
+                    fallback: system
