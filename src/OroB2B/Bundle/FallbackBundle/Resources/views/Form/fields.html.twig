@@ -17,3 +17,45 @@
     {{ form_errors(form.value) }}
     {{ form_errors(form.fallback) }}
 {% endblock %}
+
+{% block orob2b_fallback_localized_property_widget %}
+    <table>
+        <tr>
+            <td>{{ form.default.vars.label|trans }}</td>
+            <td>
+                {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
+            </td>
+        </tr>
+        {% for locale in form.locales %}
+            <tr>
+                <td>{{ locale.vars.label|trans }}</td>
+                <td>
+                    {{ form_widget(locale) }}
+                    {{ form_errors(locale) }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
+
+{% block orob2b_fallback_website_property_widget %}
+    <table>
+        <tr>
+            <td>{{ form.default.vars.label|trans }}</td>
+            <td>
+                {{ form_widget(form.default) }}
+                {{ form_errors(form.default) }}
+            </td>
+        </tr>
+        {% for website in form.websites %}
+            <tr>
+                <td>{{ website.vars.label|trans }}</td>
+                <td>
+                    {{ form_widget(website) }}
+                    {{ form_errors(website) }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

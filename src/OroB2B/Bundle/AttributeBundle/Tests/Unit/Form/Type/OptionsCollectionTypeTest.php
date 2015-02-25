@@ -6,11 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionsCollectionType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\IntegerType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextType;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\AbstractLocalizedType;
 
 use Symfony\Component\Form\Extension\Core\CoreExtension;
 use Symfony\Component\Form\FormFactoryBuilder;

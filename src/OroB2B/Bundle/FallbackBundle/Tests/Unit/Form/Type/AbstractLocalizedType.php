@@ -1,10 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
+
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 abstract class AbstractLocalizedType extends FormIntegrationTestCase
 {

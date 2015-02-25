@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType;
-use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\PercentTypeStub;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\PercentTypeStub;
 
-class LocalizedAttributePropertyTypeTest extends AbstractLocalizedType
+class LocalizedPropertyTypeTest extends AbstractLocalizedType
 {
     /**
-     * @var LocalizedAttributePropertyType
+     * @var LocalizedPropertyType
      */
     protected $formType;
 
@@ -24,7 +24,7 @@ class LocalizedAttributePropertyTypeTest extends AbstractLocalizedType
 
         parent::setUp();
 
-        $this->formType = new LocalizedAttributePropertyType();
+        $this->formType = new LocalizedPropertyType();
     }
 
     /**
@@ -79,8 +79,8 @@ class LocalizedAttributePropertyTypeTest extends AbstractLocalizedType
                 'options' => ['type' => 'text'],
                 'defaultData' => null,
                 'viewData' => [
-                    LocalizedAttributePropertyType::FIELD_DEFAULT => null,
-                    LocalizedAttributePropertyType::FIELD_LOCALES => [
+                    LocalizedPropertyType::FIELD_DEFAULT => null,
+                    LocalizedPropertyType::FIELD_LOCALES => [
                         1 => new FallbackType(FallbackType::SYSTEM),
                         2 => new FallbackType(FallbackType::PARENT_LOCALE),
                         3 => new FallbackType(FallbackType::PARENT_LOCALE),
@@ -103,16 +103,16 @@ class LocalizedAttributePropertyTypeTest extends AbstractLocalizedType
                     3    => new FallbackType(FallbackType::PARENT_LOCALE),
                 ],
                 'viewData' => [
-                    LocalizedAttributePropertyType::FIELD_DEFAULT => 5,
-                    LocalizedAttributePropertyType::FIELD_LOCALES => [
+                    LocalizedPropertyType::FIELD_DEFAULT => 5,
+                    LocalizedPropertyType::FIELD_LOCALES => [
                         1 => 10,
                         2 => new FallbackType(FallbackType::SYSTEM),
                         3 => new FallbackType(FallbackType::PARENT_LOCALE),
                     ]
                 ],
                 'submittedData' => [
-                    LocalizedAttributePropertyType::FIELD_DEFAULT => '10',
-                    LocalizedAttributePropertyType::FIELD_LOCALES => [
+                    LocalizedPropertyType::FIELD_DEFAULT => '10',
+                    LocalizedPropertyType::FIELD_LOCALES => [
                         1 => ['value' => '', 'fallback' => FallbackType::SYSTEM],
                         2 => ['value' => '5', 'fallback' => ''],
                         3 => ['value' => '', 'fallback' => FallbackType::PARENT_LOCALE],
@@ -130,6 +130,6 @@ class LocalizedAttributePropertyTypeTest extends AbstractLocalizedType
 
     public function testGetName()
     {
-        $this->assertEquals(LocalizedAttributePropertyType::NAME, $this->formType->getName());
+        $this->assertEquals(LocalizedPropertyType::NAME, $this->formType->getName());
     }
 }

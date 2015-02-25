@@ -8,9 +8,9 @@ define(function (require) {
         BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
-     * @export orob2battribute/js/app/components/fallback-value-component
+     * @export orob2bfallback/js/app/components/fallback-value-component
      * @extends oroui.app.components.base.Component
-     * @class orob2battribute.app.components.FallbackValueComponent
+     * @class orob2bfallback.app.components.FallbackValueComponent
      */
     FallbackValueComponent = BaseComponent.extend({
         /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,12 +13,10 @@ use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
-use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 
 class WebsiteCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_attribute_website_collection';
+    const NAME = 'orob2b_fallback_website_collection';
 
     /**
      * @var ManagerRegistry

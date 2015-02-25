@@ -9,11 +9,12 @@ use Symfony\Component\Form\PreloadedExtension;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\IntegerType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextType;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\AbstractLocalizedType;
 
 class OptionRowTypeTest extends AbstractLocalizedType
 {

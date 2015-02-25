@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\FallbackValueTransformer;
+use OroB2B\Bundle\FallbackBundle\Form\DataTransformer\FallbackValueTransformer;
 
 class FallbackValueType extends AbstractType
 {

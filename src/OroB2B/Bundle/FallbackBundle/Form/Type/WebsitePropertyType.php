@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\MultipleValueTransformer;
+use OroB2B\Bundle\FallbackBundle\Form\DataTransformer\MultipleValueTransformer;
 
-class WebsiteAttributePropertyType extends AbstractType
+class WebsitePropertyType extends AbstractType
 {
-    const NAME = 'orob2b_attribute_website_property';
+    const NAME = 'orob2b_fallback_website_property';
 
     const FIELD_DEFAULT  = 'default';
     const FIELD_WEBSITES = 'websites';
@@ -32,7 +32,11 @@ class WebsiteAttributePropertyType extends AbstractType
         $formOptions = $options['options'];
 
         $builder
-            ->add(self::FIELD_DEFAULT, $formType, array_merge($formOptions, ['label' => 'orob2b.attribute.default']))
+            ->add(
+                self::FIELD_DEFAULT,
+                $formType,
+                array_merge($formOptions, ['label' => 'orob2b.fallback.value.default'])
+            )
             ->add(self::FIELD_WEBSITES, WebsiteCollectionType::NAME, ['type' => $formType, 'options' => $formOptions]);
 
         $builder->addViewTransformer(new MultipleValueTransformer(self::FIELD_DEFAULT, self::FIELD_WEBSITES));

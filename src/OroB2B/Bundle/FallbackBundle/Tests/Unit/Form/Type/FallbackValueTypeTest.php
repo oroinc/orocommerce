@@ -8,7 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextTypeStub;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\TextTypeStub;
 
 class FallbackValueTypeTest extends FormIntegrationTestCase
 {

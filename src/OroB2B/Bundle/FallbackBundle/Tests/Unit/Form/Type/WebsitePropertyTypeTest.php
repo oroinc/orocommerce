@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -10,15 +10,15 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
 
-class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
+class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var WebsiteAttributePropertyType
+     * @var WebsitePropertyType
      */
     protected $formType;
 
@@ -33,7 +33,7 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
 
         parent::setUp();
 
-        $this->formType = new WebsiteAttributePropertyType();
+        $this->formType = new WebsitePropertyType();
     }
 
     /**
@@ -88,8 +88,8 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
                 'options' => ['type' => 'text'],
                 'defaultData' => null,
                 'viewData' => [
-                    WebsiteAttributePropertyType::FIELD_DEFAULT => null,
-                    WebsiteAttributePropertyType::FIELD_WEBSITES => [
+                    WebsitePropertyType::FIELD_DEFAULT => null,
+                    WebsitePropertyType::FIELD_WEBSITES => [
                         1 => new FallbackType(FallbackType::SYSTEM),
                         2 => new FallbackType(FallbackType::SYSTEM),
                         3 => new FallbackType(FallbackType::SYSTEM),
@@ -112,16 +112,16 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
                     3    => new FallbackType(FallbackType::SYSTEM),
                 ],
                 'viewData' => [
-                    WebsiteAttributePropertyType::FIELD_DEFAULT => 't',
-                    WebsiteAttributePropertyType::FIELD_WEBSITES => [
+                    WebsitePropertyType::FIELD_DEFAULT => 't',
+                    WebsitePropertyType::FIELD_WEBSITES => [
                         1 => '',
                         2 => new FallbackType(FallbackType::SYSTEM),
                         3 => new FallbackType(FallbackType::SYSTEM),
                     ]
                 ],
                 'submittedData' => [
-                    WebsiteAttributePropertyType::FIELD_DEFAULT => 't',
-                    WebsiteAttributePropertyType::FIELD_WEBSITES => [
+                    WebsitePropertyType::FIELD_DEFAULT => 't',
+                    WebsitePropertyType::FIELD_WEBSITES => [
                         1 => ['fallback' => FallbackType::SYSTEM],
                         2 => ['fallback' => ''],
                         3 => ['fallback' => FallbackType::SYSTEM],
@@ -209,6 +209,6 @@ class WebsiteAttributePropertyTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(WebsiteAttributePropertyType::NAME, $this->formType->getName());
+        $this->assertEquals(WebsitePropertyType::NAME, $this->formType->getName());
     }
 }

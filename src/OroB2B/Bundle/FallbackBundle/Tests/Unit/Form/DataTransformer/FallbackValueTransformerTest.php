@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\DataTransformer;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\DataTransformer;
 
-use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\FallbackValueTransformer;
+use OroB2B\Bundle\FallbackBundle\Form\DataTransformer\FallbackValueTransformer;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class FallbackValueTransformerTest extends \PHPUnit_Framework_TestCase

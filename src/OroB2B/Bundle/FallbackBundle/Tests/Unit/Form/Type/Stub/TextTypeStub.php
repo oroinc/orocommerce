@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub;
+namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CheckboxTypeStub extends CheckboxType
+class TextTypeStub extends TextType
 {
-    const NAME = 'checkbox_stub';
+    const NAME = 'text_stub';
 
     /**
      * {@inheritdoc}

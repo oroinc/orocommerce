@@ -7,7 +7,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
-class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
+class FallbackPropertyTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var FallbackPropertyType
@@ -53,9 +53,9 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'required' => false,
-                    'empty_value' => 'orob2b.attribute.form.fallback.empty',
+                    'empty_value' => 'orob2b.fallback.type.empty',
                     'choices' => [
-                        FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.default',
+                        FallbackType::SYSTEM => 'orob2b.fallback.type.default',
                     ],
                 ],
                 'submittedData' => FallbackType::SYSTEM,
@@ -66,10 +66,10 @@ class AttributePropertyFallbackTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'required' => false,
-                    'empty_value' => 'orob2b.attribute.form.fallback.empty',
+                    'empty_value' => 'orob2b.fallback.type.empty',
                     'choices' => [
-                        FallbackType::PARENT_LOCALE => 'orob2b.attribute.form.fallback.parent_locale',
-                        FallbackType::SYSTEM => 'orob2b.attribute.form.fallback.default',
+                        FallbackType::PARENT_LOCALE => 'orob2b.fallback.type.parent_locale',
+                        FallbackType::SYSTEM => 'orob2b.fallback.type.default',
                     ],
                 ],
                 'submittedData' => FallbackType::PARENT_LOCALE,

@@ -29,15 +29,9 @@ orob2b:
             unique:            'Unique'
 
         form:
-            fallback:
-                empty:         'Custom value'
-                parent_locale: 'Parent locale value'
-                default:       'Default value'
-
             create:
                 continue: 'Continue'
 
-        default: 'Default'
         order:   'Order'
 
         menu:

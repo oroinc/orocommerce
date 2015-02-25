@@ -1,7 +1,6 @@
 config:
     paths:
         'orob2battribute/js/app/modules/attribute-validator-constraints-module': 'bundles/orob2battribute/js/app/modules/attribute-validator-constraints-module.js'
-        'orob2battribute/js/app/components/fallback-value-component': 'bundles/orob2battribute/js/app/components/fallback-value-component.js'
         'orob2battribute/js/app/components/select-default-value-component': 'bundles/orob2battribute/js/app/components/select-default-value-component.js'
         'orob2battribute/js/validator/letters': 'bundles/orob2battribute/js/validator/letters.js'
         'orob2battribute/js/validator/alphanumeric': 'bundles/orob2battribute/js/validator/alphanumeric.js'
