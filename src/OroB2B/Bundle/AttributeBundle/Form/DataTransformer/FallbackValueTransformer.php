@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AttributeBundle\Form\DataTransformer;
 
 use Symfony\Component\Form\DataTransformerInterface;
 
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class FallbackValueTransformer implements DataTransformerInterface
 {

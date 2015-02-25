@@ -12,7 +12,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class LocaleCollectionType extends AbstractType
 {

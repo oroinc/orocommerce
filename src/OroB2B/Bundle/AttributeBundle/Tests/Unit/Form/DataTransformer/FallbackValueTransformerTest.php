@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\DataTransformer;
 
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\FallbackValueTransformer;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class FallbackValueTransformerTest extends \PHPUnit_Framework_TestCase
 {

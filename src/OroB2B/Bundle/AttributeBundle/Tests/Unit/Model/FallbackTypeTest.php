@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class FallbackTypeTest extends \PHPUnit_Framework_TestCase
 {

@@ -11,7 +11,7 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\IntegerType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextType;
 

@@ -14,7 +14,7 @@ use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeTransformer;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Model\SharingType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;

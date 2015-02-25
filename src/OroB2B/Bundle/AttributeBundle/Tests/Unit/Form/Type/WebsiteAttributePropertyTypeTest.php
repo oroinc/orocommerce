@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteCollectionType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;

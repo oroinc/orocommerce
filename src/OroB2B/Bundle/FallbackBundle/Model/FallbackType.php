@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Model;
+namespace OroB2B\Bundle\FallbackBundle\Model;
 
 class FallbackType
 {
