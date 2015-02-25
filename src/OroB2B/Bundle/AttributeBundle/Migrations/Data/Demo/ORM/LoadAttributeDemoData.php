@@ -6,10 +6,8 @@ use OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM\AbstractLoadAttributeData;
 
 class LoadAttributeDemoData extends AbstractLoadAttributeData
 {
-
     public function __construct()
     {
-        // TODO: Why don't we have an attribute factory that could be used?
         $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Boolean');
         $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\Date');
         $this->attributes[] = $this->describeAttribute('OroB2B\Bundle\AttributeBundle\AttributeType\DateTime');
