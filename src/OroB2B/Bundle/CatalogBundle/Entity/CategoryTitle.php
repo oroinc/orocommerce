@@ -71,10 +71,10 @@ class CategoryTitle
     }
 
     /**
-     * @param Category|null $category
+     * @param Category $category
      * @return $this
      */
-    public function setCategory(Category $category = null)
+    public function setCategory(Category $category)
     {
         $this->category = $category;
 

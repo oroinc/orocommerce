@@ -274,7 +274,7 @@ class Category
      */
     public function getChildCategories()
     {
-        return $this->titles;
+        return $this->childCategories;
     }
 
     /**
