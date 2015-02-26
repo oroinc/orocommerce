@@ -7,7 +7,7 @@ use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 
-class ProductHandlerTest extends FormHandlerTestCase
+class CategoryHandlerTest extends FormHandlerTestCase
 {
     protected function setUp()
     {

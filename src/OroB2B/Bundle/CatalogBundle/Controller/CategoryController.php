@@ -80,7 +80,7 @@ class CategoryController extends Controller
         $handler = new CategoryHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BAttributeBundle:Attribute')
+            $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
