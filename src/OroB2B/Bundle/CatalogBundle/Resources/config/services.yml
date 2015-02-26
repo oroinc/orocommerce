@@ -1,4 +1,10 @@
 parameters:
     orob2b_catalog.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
+    orob2b_catalog.form.type.category.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType
 
 services:
+    orob2b_catalog.form.type.category:
+        class: %orob2b_catalog.form.type.category.class%
+        tags:
+            - { name: form.type, alias: orob2b_catalog_category }
+

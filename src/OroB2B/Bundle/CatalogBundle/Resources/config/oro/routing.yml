@@ -1,0 +1,4 @@
+orob2b_catalog_category:
+    resource:     "@OroB2BCatalogBundle/Controller/CategoryController.php"
+    type:         annotation
+    prefix:       /catalog/category
