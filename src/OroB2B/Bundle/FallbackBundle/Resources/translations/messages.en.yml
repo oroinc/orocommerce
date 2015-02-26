@@ -1,0 +1,9 @@
+orob2b:
+    fallback:
+        type:
+            empty:         'Custom value'
+            parent_locale: 'Parent locale value'
+            default:       'Default value'
+
+        value:
+            default:       'Default'

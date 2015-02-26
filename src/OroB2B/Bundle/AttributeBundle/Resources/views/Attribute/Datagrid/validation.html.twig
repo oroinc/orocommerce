@@ -6,6 +6,6 @@
     {% set validation = validation|merge(['orob2b.attribute.attribute_type_constraint.unique'|trans]) %}
 {% endif %}
 {% if record.getValue('validation') %}
-    {% set validation = validation|merge([('orob2b.attribute.attribute_type_constraint.' ~ record.getValue('validation'))|trans]) %}
+    {% set validation = validation|merge([('orob2b.validation.constraint.alias.' ~ record.getValue('validation'))|trans]) %}
 {% endif %}
 {{ validation|join(', ') }}

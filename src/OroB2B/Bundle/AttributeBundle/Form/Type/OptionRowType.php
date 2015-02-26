@@ -12,7 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\OptionRowTransformer;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
 
 class OptionRowType extends AbstractType
 {
@@ -42,7 +44,7 @@ class OptionRowType extends AbstractType
                 self::DEFAULT_VALUE,
                 'text',
                 [
-                    'label' => 'orob2b.attribute.default',
+                    'label' => 'orob2b.fallback.value.default',
                     'constraints' => [new NotBlank()],
                     'validation_groups' => ['Default'],
                 ]

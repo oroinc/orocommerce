@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 use Symfony\Component\Validator\Constraint;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\AttributeConstraintInterface;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\AliasAwareConstraintInterface;
 
 /**
  * Provides an interface of an attribute type
@@ -52,7 +52,7 @@ interface AttributeTypeInterface
     /**
      * Gets optional validation constraints
      *
-     * @return Constraint[]|AttributeConstraintInterface[]
+     * @return Constraint[]|AliasAwareConstraintInterface[]
      */
     public function getOptionalConstraints();
 

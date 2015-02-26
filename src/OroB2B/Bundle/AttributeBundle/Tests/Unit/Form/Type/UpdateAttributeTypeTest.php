@@ -22,15 +22,15 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeConstraintType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedAttributePropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\SharingTypeType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\UpdateAttributeType;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal as DecimalConstraint;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal as DecimalConstraint;
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeDisabledFieldsTransformer;
 use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeTransformer;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\WebsiteAttributePropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
 use OroB2B\Bundle\AttributeBundle\AttributeType\MultiSelect;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 use OroB2B\Bundle\AttributeBundle\Form\Type\LocalizedMultiselectCollectionType;
@@ -132,7 +132,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addLabel = [
             'label',
-            LocalizedAttributePropertyType::NAME,
+            LocalizedPropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.labels.label',
                 'type' => 'text',
@@ -147,7 +147,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addOnProductView = [
             'onProductView',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.on_product_view',
                 'required' => false,
@@ -156,7 +156,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addInProductListing = [
             'inProductListing',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.in_product_listing',
                 'required' => false,
@@ -165,7 +165,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addUseInSorting = [
             'useInSorting',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.use_in_sorting',
                 'required' => false,
@@ -174,7 +174,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addOnAdvancedSearch = [
             'onAdvancedSearch',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.on_advanced_search',
                 'required' => false,
@@ -183,7 +183,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addOnProductComparison = [
             'onProductComparison',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.on_product_comparison',
                 'required' => false,
@@ -197,7 +197,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addUseForSearch = [
             'useForSearch',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.use_for_search',
                 'required' => false,
@@ -206,7 +206,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         ];
         $addUseInFilters = [
             'useInFilters',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.use_in_filters',
                 'required' => false,
@@ -287,7 +287,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $this->addValidation(new String()),
                     [
                         'defaultValue',
-                        LocalizedAttributePropertyType::NAME,
+                        LocalizedPropertyType::NAME,
                         [
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
@@ -352,7 +352,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $this->addValidation(new Integer()),
                     [
                         'defaultValue',
-                        LocalizedAttributePropertyType::NAME,
+                        LocalizedPropertyType::NAME,
                         [
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
@@ -424,7 +424,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $addUnique,
                     [
                         'defaultValue',
-                        LocalizedAttributePropertyType::NAME,
+                        LocalizedPropertyType::NAME,
                         [
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
@@ -481,7 +481,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                     $addLabel,
                     [
                         'defaultValue',
-                        LocalizedAttributePropertyType::NAME,
+                        LocalizedPropertyType::NAME,
                         [
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
@@ -750,12 +750,12 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'localized form and localized value' => [
-                'formType' => LocalizedAttributePropertyType::NAME,
+                'formType' => LocalizedPropertyType::NAME,
                 'inputData' => [
-                    'defaultValue' => [LocalizedAttributePropertyType::FIELD_DEFAULT => 'test']
+                    'defaultValue' => [LocalizedPropertyType::FIELD_DEFAULT => 'test']
                 ],
                 'expectedData' => [
-                    'defaultValue' => [LocalizedAttributePropertyType::FIELD_DEFAULT => 'test']
+                    'defaultValue' => [LocalizedPropertyType::FIELD_DEFAULT => 'test']
                 ],
             ],
             'not localized form and not localized value' => [
@@ -764,30 +764,30 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                 'expectedData' => ['defaultValue' => 'test'],
             ],
             'localized form and not localized value' => [
-                'formType' => LocalizedAttributePropertyType::NAME,
+                'formType' => LocalizedPropertyType::NAME,
                 'inputData' => ['defaultValue' => 'test'],
                 'expectedData' => [
-                    'defaultValue' => [LocalizedAttributePropertyType::FIELD_DEFAULT => 'test']
+                    'defaultValue' => [LocalizedPropertyType::FIELD_DEFAULT => 'test']
                 ],
             ],
             'localized form and not localized value for boolean attribute' => [
-                'formType' => LocalizedAttributePropertyType::NAME,
+                'formType' => LocalizedPropertyType::NAME,
                 'inputData' => [],
                 'expectedData' => [
-                    'defaultValue' => [LocalizedAttributePropertyType::FIELD_DEFAULT => null]
+                    'defaultValue' => [LocalizedPropertyType::FIELD_DEFAULT => null]
                 ],
             ],
             'not localized form and localized value' => [
                 'formType' => 'text',
                 'inputData' => [
-                    'defaultValue' => [LocalizedAttributePropertyType::FIELD_DEFAULT => 'test']
+                    'defaultValue' => [LocalizedPropertyType::FIELD_DEFAULT => 'test']
                 ],
                 'expectedData' => ['defaultValue' => 'test'],
             ],
             'not localized form and localized value for boolean attribute' => [
                 'formType' => 'text',
                 'inputData' => [
-                    'defaultValue' => [LocalizedAttributePropertyType::FIELD_LOCALES => []]
+                    'defaultValue' => [LocalizedPropertyType::FIELD_LOCALES => []]
                 ],
                 'expectedData' => ['defaultValue' => null],
             ],
