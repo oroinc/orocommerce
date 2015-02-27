@@ -21,10 +21,10 @@ define(function (require) {
                         },
                         'themes': {
                             'name': 'b2b'
-                            //'url': true,
-                            //'dir': '/bundles/orob2bcatalog/css/lib/jstree/themes'
                         }
-                    }
+                    },
+                    'state' : { 'key' : 'b2b-category' },
+                    'plugins': ['state']
                 }
             )
         },

@@ -92,7 +92,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '#',
                         'text' => 'Root',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => true
                         ]
                     ],
                     [
@@ -100,7 +101,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'TV',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ],
                     [
@@ -108,7 +110,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'Phones',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ],
                     [
@@ -116,7 +119,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 01',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ],
                     [
@@ -124,7 +128,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 02',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ]
                 ]
@@ -138,7 +143,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '#',
                         'text' => 'Root',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => true
                         ]
                     ],
                     [
@@ -146,7 +152,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'TV',
                         'state' => [
-                            'selected' => true
+                            'selected' => true,
+                            'opened' => false
                         ]
                     ],
                     [
@@ -154,7 +161,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'Phones',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ],
                     [
@@ -162,7 +170,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 01',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ],
                     [
@@ -170,7 +179,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 02',
                         'state' => [
-                            'selected' => false
+                            'selected' => false,
+                            'opened' => false
                         ]
                     ]
                 ]
