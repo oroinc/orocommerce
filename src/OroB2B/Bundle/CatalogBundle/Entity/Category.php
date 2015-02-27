@@ -11,6 +11,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+
 /**
  * @ORM\Table(name="orob2b_catalog_category")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
@@ -40,9 +42,22 @@ class Category
     protected $id;
 
     /**
-     * @var Collection|CategoryTitle[]
+     * @var Collection|LocalizedFallbackValue[]
      *
-     * @ORM\OneToMany(targetEntity="CategoryTitle", mappedBy="category", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="orob2b_catalog_category_title",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      */
     protected $titles;
 
@@ -140,7 +155,7 @@ class Category
     }
 
     /**
-     * @return Collection|CategoryTitle[]
+     * @return Collection|LocalizedFallbackValue[]
      */
     public function getTitles()
     {
@@ -148,30 +163,45 @@ class Category
     }
 
     /**
-     * @param CategoryTitle $title
+     * @param LocalizedFallbackValue $title
      * @return $this
      */
-    public function addTitle(CategoryTitle $title)
+    public function addTitle(LocalizedFallbackValue $title)
     {
         if (!$this->titles->contains($title)) {
             $this->titles->add($title);
-            $title->setCategory($this);
         }
 
         return $this;
     }
 
     /**
-     * @param CategoryTitle $title
+     * @param LocalizedFallbackValue $title
      * @return $this
      */
-    public function removeTitle(CategoryTitle $title)
+    public function removeTitle(LocalizedFallbackValue $title)
     {
         if ($this->titles->contains($title)) {
             $this->titles->removeElement($title);
         }
 
         return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     */
+    public function getDefaultTitle()
+    {
+        $titles = $this->titles->filter(function (LocalizedFallbackValue $title) {
+            return null === $title->getLocale();
+        });
+
+        if ($titles->count() != 1) {
+            throw new \LogicException('There must be only one default title');
+        }
+
+        return $titles->first();
     }
 
     /**

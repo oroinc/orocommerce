@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryTitle;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 abstract class AbstractCategoryFixture extends AbstractFixture
 {
@@ -43,8 +43,8 @@ abstract class AbstractCategoryFixture extends AbstractFixture
         }
 
         foreach ($categories as $title => $nestedCategories) {
-            $categoryTitle = new CategoryTitle();
-            $categoryTitle->setValue($title);
+            $categoryTitle = new LocalizedFallbackValue();
+            $categoryTitle->setString($title);
 
             $category = new Category();
             $category->addTitle($categoryTitle);

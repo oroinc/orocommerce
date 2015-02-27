@@ -51,14 +51,11 @@ class OroB2BCatalogBundle implements Migration
     protected function createOrob2BCatalogCategoryTitleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_catalog_category_title');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('locale_id', 'integer', ['notnull' => false]);
-        $table->addColumn('catalog_id', 'integer', ['notnull' => false]);
-        $table->addColumn('value', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
-        $table->addIndex(['locale_id'], 'idx_179c42f5e559dfd1', []);
-        $table->addIndex(['catalog_id'], 'idx_179c42f5cc3c66fc', []);
-        $table->setPrimaryKey(['id']);
+        $table->addColumn('category_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['category_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id'], 'uniq_179c42f5eb576e89');
+        $table->addIndex(['category_id'], 'idx_179c42f512469de2', []);
     }
 
     /**
@@ -86,14 +83,14 @@ class OroB2BCatalogBundle implements Migration
     {
         $table = $schema->getTable('orob2b_catalog_category_title');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_locale'),
-            ['locale_id'],
+            $schema->getTable('orob2b_fallback_locale_value'),
+            ['localized_value_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_catalog_category'),
-            ['catalog_id'],
+            ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
