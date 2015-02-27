@@ -97,6 +97,8 @@ orob2b:
             value.label:            'Value'
             attribute.label:        'Attribute'
             locale.label:           'Locale'
+            master_option.label:    'Master option'
+            related_options.label:  'Related options'
 
         attributeproperty:
             entity_label:           'Attribute property'

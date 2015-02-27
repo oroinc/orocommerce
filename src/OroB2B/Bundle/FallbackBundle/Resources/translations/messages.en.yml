@@ -7,3 +7,12 @@ orob2b:
 
         value:
             default:       'Default'
+
+        localizedfallbackvalue:
+            entity_label:           'Localized fallback value'
+            entity_plural_label:    'Localized fallback values'
+            id.label:               'ID'
+            fallback.label:         'Fallback'
+            locale.label:           'Locale'
+            string.label:           'String value'
+            text.label:             'Text value'
