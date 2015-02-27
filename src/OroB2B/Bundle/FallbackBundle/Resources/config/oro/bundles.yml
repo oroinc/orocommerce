@@ -1,0 +1,2 @@
+bundles:
+    - { name: OroB2B\Bundle\FallbackBundle\OroB2BFallbackBundle, priority: 5 }

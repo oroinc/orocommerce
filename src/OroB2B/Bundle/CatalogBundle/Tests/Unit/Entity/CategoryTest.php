@@ -5,7 +5,8 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\CategoryTitle;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class CategoryTest extends EntityTestCase
 {
@@ -52,11 +53,11 @@ class CategoryTest extends EntityTestCase
         $category = new Category();
         $this->assertEmpty($category->getTitles()->toArray());
 
-        $firstTitle = new CategoryTitle();
-        $firstTitle->setValue('first');
+        $firstTitle = new LocalizedFallbackValue();
+        $firstTitle->setString('first');
 
-        $secondTitle = new CategoryTitle();
-        $secondTitle->setValue('second');
+        $secondTitle = new LocalizedFallbackValue();
+        $secondTitle->setString('second');
 
         $category->addTitle($firstTitle)
             ->addTitle($secondTitle)
@@ -93,6 +94,49 @@ class CategoryTest extends EntityTestCase
             [$secondCategory],
             array_values($category->getChildCategories()->toArray())
         );
+    }
+
+    public function testGetDefaultTitle()
+    {
+        $defaultTitle = new LocalizedFallbackValue();
+        $defaultTitle->setString('default');
+
+        $localizedTitle = new LocalizedFallbackValue();
+        $localizedTitle->setString('localized')
+            ->setLocale(new Locale());
+
+        $category = new Category();
+        $category->addTitle($defaultTitle)
+            ->addTitle($localizedTitle);
+
+        $this->assertEquals($defaultTitle, $category->getDefaultTitle());
+    }
+
+    /**
+     * @param array $titles
+     * @dataProvider getDefaultTitleExceptionDataProvider
+     *
+     * @expectedException \LogicException
+     * @expectedExceptionMessage There must be only one default title
+     */
+    public function testGetDefaultTitleException(array $titles)
+    {
+        $category = new Category();
+        foreach ($titles as $title) {
+            $category->addTitle($title);
+        }
+        $category->getDefaultTitle();
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultTitleExceptionDataProvider()
+    {
+        return [
+            'no default title' => [[]],
+            'several default titles' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
+        ];
     }
 
     public function testPreUpdate()

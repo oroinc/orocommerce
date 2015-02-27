@@ -5,21 +5,12 @@ orob2b:
             entity_plural_label:    'Categories'
             id.label:               'ID'
             titles.label:           'Titles'
-            child_categories.label: 'Child categories'
-            parent_category.label:  'Parent category'
             left.label:             'Tree left index'
             level.label:            'Tree level'
             right.label:            'Tree right index'
             root.label:             'Tree root'
-
-        categorytitle:
-            entity_label:         'Category title'
-            entity_plural_label:  'Category titles'
-            id.label:             'ID'
-            fallback.label:       'Fallback'
-            value.label:          'Value'
-            category.label:       'Category'
-            locale.label:         'Locale'
+            child_categories.label: 'Child categories'
+            parent_category.label:  'Parent category'
 
         subcategory:
             entity_label:   'Subcategory'

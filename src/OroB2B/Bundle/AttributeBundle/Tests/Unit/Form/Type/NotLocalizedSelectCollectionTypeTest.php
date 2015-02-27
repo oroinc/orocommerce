@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionsCollectionType;
 

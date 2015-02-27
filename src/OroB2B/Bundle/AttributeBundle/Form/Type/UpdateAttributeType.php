@@ -19,6 +19,8 @@ use OroB2B\Bundle\AttributeBundle\Form\DataTransformer\AttributeDisabledFieldsTr
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\AttributeType\OptionAttributeTypeInterface;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType;
 
 class UpdateAttributeType extends AbstractType
 {
@@ -111,7 +113,7 @@ class UpdateAttributeType extends AbstractType
             )
             ->add(
                 'label',
-                LocalizedAttributePropertyType::NAME,
+                LocalizedPropertyType::NAME,
                 [
                     'label' => 'orob2b.attribute.labels.label',
                     'type' => 'text',
@@ -174,7 +176,7 @@ class UpdateAttributeType extends AbstractType
         if ($attribute->isLocalized()) {
             $builder->add(
                 'defaultValue',
-                LocalizedAttributePropertyType::NAME,
+                LocalizedPropertyType::NAME,
                 [
                     'label' => 'orob2b.attribute.default_values.label',
                     'required' => false,
@@ -202,22 +204,22 @@ class UpdateAttributeType extends AbstractType
         $data = $event->getData();
 
         $isLocalizedForm = $form->get('defaultValue')->getConfig()->getType()->getName()
-            == LocalizedAttributePropertyType::NAME;
+            == LocalizedPropertyType::NAME;
         $isLocalizedValue = array_key_exists('defaultValue', $data)
             && $this->isLocalizedValue($data['defaultValue']);
 
         // normalize value
         $defaultValue = null;
         if (!$isLocalizedForm && $isLocalizedValue) {
-            if (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $data['defaultValue'])) {
-                $defaultValue = $data['defaultValue'][LocalizedAttributePropertyType::FIELD_DEFAULT];
+            if (array_key_exists(LocalizedPropertyType::FIELD_DEFAULT, $data['defaultValue'])) {
+                $defaultValue = $data['defaultValue'][LocalizedPropertyType::FIELD_DEFAULT];
             }
             $data['defaultValue'] = $defaultValue;
         } elseif ($isLocalizedForm && !$isLocalizedValue) {
             if (array_key_exists('defaultValue', $data)) {
                 $defaultValue = $data['defaultValue'];
             }
-            $data['defaultValue'] = [LocalizedAttributePropertyType::FIELD_DEFAULT => $defaultValue];
+            $data['defaultValue'] = [LocalizedPropertyType::FIELD_DEFAULT => $defaultValue];
         }
 
         $event->setData($data);
@@ -230,8 +232,8 @@ class UpdateAttributeType extends AbstractType
     protected function isLocalizedValue($value)
     {
         return is_array($value)
-            && (array_key_exists(LocalizedAttributePropertyType::FIELD_DEFAULT, $value)
-            || array_key_exists(LocalizedAttributePropertyType::FIELD_LOCALES, $value));
+            && (array_key_exists(LocalizedPropertyType::FIELD_DEFAULT, $value)
+            || array_key_exists(LocalizedPropertyType::FIELD_LOCALES, $value));
     }
 
     /**
@@ -267,7 +269,7 @@ class UpdateAttributeType extends AbstractType
     {
         $builder->add(
             'onProductView',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.on_product_view',
                 'required' => false,
@@ -276,7 +278,7 @@ class UpdateAttributeType extends AbstractType
         )
         ->add(
             'inProductListing',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.in_product_listing',
                 'required' => false,
@@ -284,7 +286,7 @@ class UpdateAttributeType extends AbstractType
             ]
         )->add(
             'useInSorting',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.use_in_sorting',
                 'required' => false,
@@ -292,7 +294,7 @@ class UpdateAttributeType extends AbstractType
             ]
         )->add(
             'onAdvancedSearch',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.on_advanced_search',
                 'required' => false,
@@ -300,7 +302,7 @@ class UpdateAttributeType extends AbstractType
             ]
         )->add(
             'onProductComparison',
-            WebsiteAttributePropertyType::NAME,
+            WebsitePropertyType::NAME,
             [
                 'label' => 'orob2b.attribute.attributeproperty.fields.on_product_comparison',
                 'required' => false,
@@ -319,7 +321,7 @@ class UpdateAttributeType extends AbstractType
         if ($attributeType->isUsedForSearch()) {
             $builder->add(
                 'useForSearch',
-                WebsiteAttributePropertyType::NAME,
+                WebsitePropertyType::NAME,
                 [
                     'label' => 'orob2b.attribute.attributeproperty.fields.use_for_search',
                     'required' => false,
@@ -331,7 +333,7 @@ class UpdateAttributeType extends AbstractType
         if ($attributeType->isUsedInFilters()) {
             $builder->add(
                 'useInFilters',
-                WebsiteAttributePropertyType::NAME,
+                WebsitePropertyType::NAME,
                 [
                     'label' => 'orob2b.attribute.attributeproperty.fields.use_in_filters',
                     'required' => false,
