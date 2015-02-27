@@ -31,7 +31,7 @@ class LocalizedFallbackValueTest extends EntityTestCase
         $this->assertEquals('string', (string)$stringValue);
 
         $textValue = new LocalizedFallbackValue();
-        $textValue->setString('text');
+        $textValue->setText('text');
         $this->assertEquals('text', (string)$textValue);
 
         $emptyValue = new LocalizedFallbackValue();

@@ -132,7 +132,7 @@ class LocaleCollectionType extends AbstractType
 
         foreach ($this->getLocales() as $locale) {
             $localeId = $locale->getId();
-            if (!isset($data[$localeId])) {
+            if (!array_key_exists($localeId, $data)) {
                 if ($locale->getParentLocale()) {
                     $data[$localeId] = new FallbackType(FallbackType::PARENT_LOCALE);
                 } else {

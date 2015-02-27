@@ -99,14 +99,14 @@ class LocalizedPropertyTypeTest extends AbstractLocalizedType
                 'defaultData' => [
                     null => 5,
                     1    => 10,
-                    2    => new FallbackType(FallbackType::SYSTEM),
+                    2    => null,
                     3    => new FallbackType(FallbackType::PARENT_LOCALE),
                 ],
                 'viewData' => [
                     LocalizedPropertyType::FIELD_DEFAULT => 5,
                     LocalizedPropertyType::FIELD_LOCALES => [
                         1 => 10,
-                        2 => new FallbackType(FallbackType::SYSTEM),
+                        2 => null,
                         3 => new FallbackType(FallbackType::PARENT_LOCALE),
                     ]
                 ],
