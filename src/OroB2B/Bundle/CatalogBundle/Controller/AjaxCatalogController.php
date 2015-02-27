@@ -12,7 +12,11 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 class AjaxCatalogController extends Controller
 {
     /**
-     * @Route("/category-list/{selectedCategoryId}", name="orob2b_category_list")
+     * @Route(
+     *      "/category-list/{selectedCategoryId}",
+     *      defaults={"selectedCategoryId" = null},
+     *      name="orob2b_category_list"
+     * )
      * @AclAncestor("orob2b_category_view")
      *
      * @param int $selectedCategoryId

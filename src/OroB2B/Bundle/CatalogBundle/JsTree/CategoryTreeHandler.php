@@ -67,7 +67,8 @@ class CategoryTreeHandler
             'parent' => $category->getParentCategory() ? $category->getParentCategory()->getId() : '#',
             'text' => $category->getDefaultTitle()->getString(),
             'state' => [
-                'selected' => ($category->getId() === $selectedCategoryId) ? true : false
+                'selected' => $category->getId() === $selectedCategoryId,
+                'opened' => $category->getParentCategory() === null
             ]
         );
     }
