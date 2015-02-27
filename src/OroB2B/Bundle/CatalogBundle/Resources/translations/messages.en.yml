@@ -4,7 +4,7 @@ orob2b:
             entity_label:           'Category'
             entity_plural_label:    'Categories'
             id.label:               'ID'
-            titles.label:           'Titles'
+            titles.label:           'Title'
             left.label:             'Tree left index'
             level.label:            'Tree level'
             right.label:            'Tree right index'

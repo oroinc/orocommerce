@@ -5,6 +5,9 @@ namespace OroB2B\Bundle\CatalogBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 class CategoryType extends AbstractType
 {
@@ -20,6 +23,14 @@ class CategoryType extends AbstractType
             'parentCategory',
             'oro_entity_identifier',
             ['class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category', 'multiple' => false]
+        )->add(
+            'titles',
+            LocalizedFallbackValueCollectionType::NAME,
+            [
+                'label' => 'orob2b.catalog.category.titles.label',
+                'required' => false,
+                'options' => ['constraints' => [new NotBlank()]],
+            ]
         );
     }
 
