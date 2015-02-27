@@ -1,0 +1,14 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set pageTitle = 'orob2b.catalog.category.entity_plural_label'|trans %}
+{% block content_datagrid %}
+    {% set categoryId = 2 %}
+    <div class="category">
+        <div id="tree"
+            data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"
+            data-page-component-options="{{ {'categoryId': categoryId}|json_encode }}">
+        </div>
+    </div>
+
+    {{ parent() }}
+{% endblock content_datagrid %}
