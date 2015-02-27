@@ -4173,7 +4173,6 @@
 		 * @trigger set_theme.jstree
 		 */
 		set_theme : function (theme_name, theme_url) {
-            debugger;
 			if(!theme_name) { return false; }
 			if(theme_url === true) {
 				var dir = this.settings.core.themes.dir;
