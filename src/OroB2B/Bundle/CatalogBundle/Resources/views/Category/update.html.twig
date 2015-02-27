@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% oro_title_set({params : {"%title%": form.vars.value.id|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%title%": form.vars.value.defaultTitle|default('N/A'|trans)} }) %}
 
 {% set formAction = form.vars.value.id ? path('orob2b_catalog_category_update', { 'id': form.vars.value.id }) : path('orob2b_catalog_category_create', { 'id': form.vars.value.parentCategory.id })  %}
 
@@ -43,7 +43,7 @@
             'entity':      form.vars.value,
             'indexPath':   path('orob2b_catalog_category_index'),
             'indexLabel': 'orob2b.catalog.category.entity_plural_label'|trans,
-            'entityTitle': form.vars.value.id|default('N/A'|trans)
+            'entityTitle': form.vars.value.defaultTitle|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
