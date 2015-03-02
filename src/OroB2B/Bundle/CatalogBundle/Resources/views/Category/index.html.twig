@@ -1,3 +1,23 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set pageTitle = 'orob2b.catalog.category.entity_plural_label'|trans %}
+{% block content %}
+    {{ parent() }}
+
+    <div class="left-panel-container">
+        <div class="placeholder">
+            <div class="scrollable-container">
+                <div class="left-panel scrollable-container">
+                    <div class="category">
+                        <div id="tree" data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"></div>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="text-center">
+                            Please select a category on the left or create new one.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
