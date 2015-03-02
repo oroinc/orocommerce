@@ -59,3 +59,10 @@
         {% endfor %}
     </table>
 {% endblock %}
+
+{% block orob2b_fallback_localized_value_collection_widget %}
+    {{ form_widget(form.values) }}
+    {{ form_errors(form.values) }}
+    {{ form_widget(form.ids) }}
+    {{ form_errors(form.ids) }}
+{% endblock %}
