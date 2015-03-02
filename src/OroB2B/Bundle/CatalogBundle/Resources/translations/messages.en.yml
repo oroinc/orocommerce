@@ -23,3 +23,6 @@ orob2b:
         controller:
             category:
                 saved.message:  'Category saved'
+
+        template:
+            select_existing_or_create_new: 'Please select a category on the left or create new one.'
