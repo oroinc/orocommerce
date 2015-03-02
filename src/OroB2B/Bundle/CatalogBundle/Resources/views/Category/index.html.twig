@@ -1,6 +1,16 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set pageTitle = 'orob2b.catalog.category.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_catalog_category_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_catalog_category_create', { 'id' : rootCategory.id }),
+            'entity_label': 'orob2b.catalog.category.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
+
 {% block content %}
     {{ parent() }}
 
@@ -9,7 +19,7 @@
             <div class="scrollable-container">
                 <div class="left-panel scrollable-container">
                     <div class="category">
-                        <div id="tree" data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"></div>
+                        <div data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"></div>
                     </div>
                 </div>
                 <div class="content">

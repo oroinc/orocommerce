@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Controller;
 
-use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -13,6 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 
 class CategoryController extends Controller
 {
@@ -67,7 +67,11 @@ class CategoryController extends Controller
      */
     public function indexAction()
     {
-        return [];
+        $repository = $this->getDoctrine()->getRepository('OroB2BCatalogBundle:Category');
+
+        return [
+            'rootCategory' => $repository->getMasterCatalogRoot()
+        ];
     }
 
     /**
