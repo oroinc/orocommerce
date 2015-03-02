@@ -5,6 +5,7 @@ parameters:
     orob2b_fallback.form.type.localized_property.class: OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType
     orob2b_fallback.form.type.website_collection.class: OroB2B\Bundle\FallbackBundle\Form\Type\WebsiteCollectionType
     orob2b_fallback.form.type.website_property.class: OroB2B\Bundle\FallbackBundle\Form\Type\WebsitePropertyType
+    orob2b_fallback.form.type.localzed_value_colection.class: OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType
 
 services:
     orob2b_fallback.form.type.fallback_property:
@@ -40,3 +41,10 @@ services:
         class: %orob2b_fallback.form.type.website_property.class%
         tags:
             - { name: form.type, alias: orob2b_fallback_website_property }
+
+    orob2b_fallback.form.type.localzed_value_colection:
+        class: %orob2b_fallback.form.type.localzed_value_colection.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_fallback_localized_value_collection }
