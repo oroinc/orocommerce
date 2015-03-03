@@ -13,7 +13,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      * */
-    protected $doctrine;
+    protected $managerRegistry;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -43,7 +43,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->doctrine = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+        $this->managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,7 +51,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryTreeHandler = new CategoryTreeHandler($this->doctrine);
+        $this->categoryTreeHandler = new CategoryTreeHandler($this->managerRegistry);
     }
 
     /**
@@ -62,13 +62,14 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreateTree($categories, $selectedCategoryId, array $expected)
     {
-        $this->doctrine->expects($this->any())
+        $this->managerRegistry->expects($this->any())
             ->method('getRepository')
             ->with('OroB2BCatalogBundle:Category')
             ->willReturn($this->repository);
 
         $this->repository->expects($this->any())
             ->method('getChildren')
+            ->with(null, false, 'left', 'ASC')
             ->willReturn($categories);
 
         $result = $this->categoryTreeHandler->createTree($selectedCategoryId);
@@ -76,6 +77,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function createTreeDataProvider()
@@ -92,7 +94,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '#',
                         'text' => 'Root',
                         'state' => [
-                            'selected' => false,
                             'opened' => true
                         ]
                     ],
@@ -101,7 +102,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'TV',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -110,7 +110,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'Phones',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -119,7 +118,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 01',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -128,7 +126,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 02',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ]
@@ -143,7 +140,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '#',
                         'text' => 'Root',
                         'state' => [
-                            'selected' => false,
                             'opened' => true
                         ]
                     ],
@@ -152,7 +148,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'TV',
                         'state' => [
-                            'selected' => true,
                             'opened' => false
                         ]
                     ],
@@ -161,7 +156,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'Phones',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -170,7 +164,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 01',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -179,7 +172,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 02',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ]

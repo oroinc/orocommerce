@@ -9,35 +9,28 @@ define(function (require) {
 
     TreeManageComponent = BaseComponent.extend({
         initialize: function (options) {
-            this.$elem = options._sourceElement;
+            var $tree = $(options._sourceElement),
+                categoryList = options.data;
 
-            $(this.$elem).jstree(
+            $tree.jstree(
                 {
                     'core' : {
-                        'data' : {
-                            'url' : Routing.generate(
-                                'orob2b_category_list', { _format: 'json', selectedCategoryId: options.categoryId}
-                            )
-                        },
+                        'multiple' : false,
+                        'data' : categoryList,
                         'themes': {
                             'name': 'b2b'
                         }
                     },
-                    'state' : { 'key' : 'b2b-category' },
-                    'plugins': ['state']
+                    'state' : {
+                        'key' : 'b2b-category',
+                        'filter' : function(state) {
+                            state.core.selected = options.categoryId ? [options.categoryId] : [];
+                            return state;
+                        }
+                    },
+                    'plugins' : ['state']
                 }
             )
-        },
-
-        /**
-         * @inheritDoc
-         */
-        dispose: function () {
-            if (this.disposed) {
-                return;
-            }
-
-            TreeManageComponent.__super__.dispose.call(this);
         }
     });
 

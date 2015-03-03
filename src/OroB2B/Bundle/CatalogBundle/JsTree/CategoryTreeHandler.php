@@ -11,38 +11,36 @@ class CategoryTreeHandler
     /** @var ManagerRegistry */
     protected $doctrine;
 
+    /**
+     * @param ManagerRegistry $doctrine
+     */
     public function __construct(ManagerRegistry $doctrine)
     {
         $this->doctrine  = $doctrine;
     }
 
     /**
-     * @param int $selectedCategoryId
      * @return array
      */
-    public function createTree($selectedCategoryId)
+    public function createTree()
     {
-        $categoryTree = [
-            'categories' => $this->doctrine
-                ->getRepository('OroB2BCatalogBundle:Category')
-                ->getChildren(null, false, 'left', 'ASC'),
-            'selected' => (int)$selectedCategoryId
-        ];
+        $categoryTree = $this->doctrine
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getChildren(null, false, 'left', 'ASC');
 
         return $this->formatTree($categoryTree);
     }
     
     /**
-     * @param array $tree
+     * @param Category[] $categories
      * @return array
      */
-    protected function formatTree(array $tree)
+    protected function formatTree($categories)
     {
         $formattedTree = [];
-        $selectedCategoryId = $tree['selected'];
 
-        foreach ($tree['categories'] as $category) {
-            $formattedTree[] = $this->formatCategory($category, $selectedCategoryId);
+        foreach ($categories as $category) {
+            $formattedTree[] = $this->formatCategory($category);
         }
 
         return $formattedTree;
@@ -57,19 +55,17 @@ class CategoryTreeHandler
      * )
      *
      * @param Category $category
-     * @param int $selectedCategoryId
      * @return array
      */
-    protected function formatCategory(Category $category, $selectedCategoryId)
+    protected function formatCategory(Category $category)
     {
-        return array(
+        return [
             'id' => $category->getId(),
             'parent' => $category->getParentCategory() ? $category->getParentCategory()->getId() : '#',
             'text' => $category->getDefaultTitle()->getString(),
             'state' => [
-                'selected' => $category->getId() === $selectedCategoryId,
                 'opened' => $category->getParentCategory() === null
             ]
-        );
+        ];
     }
 }
