@@ -57,10 +57,9 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider createTreeDataProvider
      * @param Category[] $categories
-     * @param int $selectedCategoryId
      * @param array $expected
      */
-    public function testCreateTree($categories, $selectedCategoryId, array $expected)
+    public function testCreateTree($categories, array $expected)
     {
         $this->managerRegistry->expects($this->any())
             ->method('getRepository')
@@ -72,7 +71,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(null, false, 'left', 'ASC')
             ->willReturn($categories);
 
-        $result = $this->categoryTreeHandler->createTree($selectedCategoryId);
+        $result = $this->categoryTreeHandler->createTree();
         $this->assertEquals($expected, $result);
     }
 
@@ -85,9 +84,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->prepareCategories($this->categories);
 
         return [
-            'without selected item' => [
+            'tree' => [
                 'categories' => $this->categoriesCollection,
-                'selectedCategoryId' => null,
                 'expected' => [
                     [
                         'id' => 1,
@@ -131,52 +129,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ]
             ],
-            'with selected item' => [
-                'categories' => $this->categoriesCollection,
-                'selectedCategoryId' => 2,
-                'expected' => [
-                    [
-                        'id' => 1,
-                        'parent' => '#',
-                        'text' => 'Root',
-                        'state' => [
-                            'opened' => true
-                        ]
-                    ],
-                    [
-                        'id' => 2,
-                        'parent' => '1',
-                        'text' => 'TV',
-                        'state' => [
-                            'opened' => false
-                        ]
-                    ],
-                    [
-                        'id' => 3,
-                        'parent' => '1',
-                        'text' => 'Phones',
-                        'state' => [
-                            'opened' => false
-                        ]
-                    ],
-                    [
-                        'id' => 4,
-                        'parent' => '3',
-                        'text' => 'Phone 01',
-                        'state' => [
-                            'opened' => false
-                        ]
-                    ],
-                    [
-                        'id' => 5,
-                        'parent' => '3',
-                        'text' => 'Phone 02',
-                        'state' => [
-                            'opened' => false
-                        ]
-                    ]
-                ]
-            ]
         ];
     }
 
