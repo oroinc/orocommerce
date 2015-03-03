@@ -9,14 +9,14 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class CategoryTreeHandler
 {
     /** @var ManagerRegistry */
-    protected $doctrine;
+    protected $managerRegistry;
 
     /**
-     * @param ManagerRegistry $doctrine
+     * @param ManagerRegistry $managerRegistry
      */
-    public function __construct(ManagerRegistry $doctrine)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->doctrine  = $doctrine;
+        $this->managerRegistry  = $managerRegistry;
     }
 
     /**
@@ -24,7 +24,7 @@ class CategoryTreeHandler
      */
     public function createTree()
     {
-        $categoryTree = $this->doctrine
+        $categoryTree = $this->managerRegistry
             ->getRepository('OroB2BCatalogBundle:Category')
             ->getChildren(null, false, 'left', 'ASC');
 
