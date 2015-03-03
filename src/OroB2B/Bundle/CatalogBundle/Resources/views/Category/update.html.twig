@@ -81,7 +81,7 @@
         <div class="category category-tree">
             <div
                 data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"
-                data-page-component-options="{{ {'categoryId': categoryId}|json_encode }}"
+                data-page-component-options="{{ { 'data' : orob2b_category_list(), 'categoryId' : categoryId }|json_encode }}"
             ></div>
         </div>
     </div>
