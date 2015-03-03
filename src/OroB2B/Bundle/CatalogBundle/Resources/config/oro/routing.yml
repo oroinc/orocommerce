@@ -1,0 +1,3 @@
+orob2b_catalog_ajax:
+    resource:     "@OroB2BCatalogBundle/Controller/AjaxCatalogController.php"
+    type:         annotation

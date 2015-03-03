@@ -51,7 +51,104 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->managerRegistry->expects($this->any())
+            ->method('getRepository')
+            ->with('OroB2BCatalogBundle:Category')
+            ->willReturn($this->repository);
+
         $this->categoryTreeHandler = new CategoryTreeHandler($this->managerRegistry);
+    }
+
+    /**
+     * @dataProvider moveCategoryDataProvider
+     * @param int $nodeId
+     * @param int|null $parentNodeId
+     * @param int $position
+     */
+    public function testMoveCategory($nodeId, $parentNodeId, $position)
+    {
+        $this->prepareCategories($this->categories);
+        $categories = $this->categoriesCollection;
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('getConnection')
+            ->will($this->returnValue($connection));
+
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BCatalogBundle:Category')
+            ->will($this->returnValue($em));
+
+        $connection->expects($this->once())
+            ->method('beginTransaction');
+
+        $currentNode = $categories[$nodeId];
+        $parentNode = array_key_exists($parentNodeId, $categories) ? $categories[$parentNodeId] : null ;
+
+        if ($parentNode) {
+            $this->repository->expects($this->at(0))
+                ->method('find')
+                ->willReturn($currentNode);
+
+            $this->repository->expects($this->at(1))
+                ->method('find')
+                ->willReturn($parentNode);
+
+            $this->repository->expects($this->at(2))
+                ->method('persistAsFirstChildOf');
+
+            $em->expects($this->at(0))
+                ->method('flush');
+
+            if ($position) {
+                $this->repository->expects($this->at(3))
+                    ->method('moveDown')
+                    ->with($currentNode, $position);
+
+                $em->expects($this->at(0))
+                    ->method('flush');
+            }
+
+            $connection->expects($this->once())
+                ->method('commit');
+        } else {
+            $connection->expects($this->once())
+                ->method('rollBack');
+        }
+
+        $this->categoryTreeHandler->moveCategory($nodeId, $parentNodeId, $position);
+    }
+
+    /**
+     * @return array
+     */
+    public function moveCategoryDataProvider()
+    {
+        return [
+            'move with position' => [
+                'nodeId' => 4,
+                'parentNodeId' => 2,
+                'position' => 1
+            ],
+            'move without position' => [
+                'nodeId' => 5,
+                'parentNodeId' => 2,
+                'position' => 0
+            ],
+            'move to root' => [
+                'nodeId' => 5,
+                'parentNodeId' => '#',
+                'position' => 0
+            ]
+        ];
     }
 
     /**
@@ -128,7 +225,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ]
-            ],
+            ]
         ];
     }
 
@@ -146,7 +243,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $category->addTitle($categoryTitle);
             $category->setParentCategory($this->getParent($item['parent']));
 
-            $this->categoriesCollection[] = $category;
+            $this->categoriesCollection[$category->getId()] = $category;
         }
     }
 
