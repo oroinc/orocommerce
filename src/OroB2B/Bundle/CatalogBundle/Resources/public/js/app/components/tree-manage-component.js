@@ -7,7 +7,7 @@ define(function (require) {
         mediator = require('oroui/js/mediator'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
-    require('orob2bcatalog/js/lib/jstree/jstree');
+    require('jquery.jstree');
 
     /**
      * Options:
