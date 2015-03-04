@@ -6,6 +6,9 @@ use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
+/**
+ * @method CategoryRepository persistAsFirstChildOf() persistAsFirstChildOf(Category $node, Category $parent)
+ */
 class CategoryRepository extends NestedTreeRepository
 {
     /**
