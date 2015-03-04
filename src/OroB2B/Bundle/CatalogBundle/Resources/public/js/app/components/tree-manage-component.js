@@ -4,9 +4,10 @@ define(function (require) {
     var TreeManageComponent,
         $ = require('jquery'),
         _ = require('underscore'),
-        mediator = require('oroui/js/mediator'),
-        messenger = require('oroui/js/messenger'),
         __ = require('orotranslation/js/translator'),
+        mediator = require('oroui/js/mediator'),
+        layout = require('oroui/js/layout'),
+        messenger = require('oroui/js/messenger'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
     require('jquery.jstree');
@@ -81,6 +82,8 @@ define(function (require) {
                 self._resolveDeferredInit();
                 self.initialization = false;
             });
+
+            this._fixContainerHeight();
         },
 
         /**
@@ -158,6 +161,42 @@ define(function (require) {
             this.moveTriggered = true;
             this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
             this.moveTriggered = false;
+        },
+        
+        /** 
+         * Fix scrollable container height
+         * TODO: This method should be removed during fixing of https://magecore.atlassian.net/browse/BB-336
+         *
+         * @private
+         */
+        _fixContainerHeight: function() {
+            var categoryTree = this.$tree.parent();
+            if (!categoryTree.hasClass('category-tree')) {
+                return;
+            }
+
+            var categoryContainer = categoryTree.parent();
+            if (!categoryContainer.hasClass('category-container')) {
+                return;
+            }
+
+            var fixHeight = function() {
+                var anchor = $('#bottom-anchor').position().top;
+                var container = categoryContainer.position().top;
+                var debugBarHeight = $('.sf-toolbar:visible').height() || 0;
+                var footerHeight = $('#footer:visible').height() || 0;
+                var fixContent = 1;
+
+                categoryTree.height(anchor - container - debugBarHeight - footerHeight + fixContent);
+            };
+
+            layout.onPageRendered(fixHeight);
+            $(window).on('resize', _.debounce(fixHeight, 50));
+            mediator.on("page:afterChange", fixHeight);
+            mediator.on('layout:adjustReloaded', fixHeight);
+            mediator.on('layout:adjustHeight', fixHeight);
+
+            fixHeight();
         }
     });
 
