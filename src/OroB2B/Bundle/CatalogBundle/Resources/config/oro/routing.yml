@@ -2,6 +2,8 @@ orob2b_catalog_category:
     resource:     "@OroB2BCatalogBundle/Controller/CategoryController.php"
     type:         annotation
     prefix:       /catalog/category
+
 orob2b_catalog_ajax:
     resource:     "@OroB2BCatalogBundle/Controller/AjaxCatalogController.php"
     type:         annotation
+    prefix:       /catalog/ajax

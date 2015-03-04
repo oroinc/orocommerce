@@ -75,13 +75,16 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {% set categoryId = form.vars.value.id ? form.vars.value.id : form.vars.value.parentCategory.id %}
-
     <div class="category-container">
         <div class="category category-tree">
+            {% set treeOptions = {
+                'data' : orob2b_category_list(),
+                'categoryId' : form.vars.value.id ? form.vars.value.id : form.vars.value.parentCategory.id,
+                'dndEnabled' : resource_granted('orob2b_catalog_category_update')
+            } %}
             <div
                 data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"
-                data-page-component-options="{{ { 'data' : orob2b_category_list(), 'categoryId' : categoryId }|json_encode }}"
+                data-page-component-options="{{ treeOptions|json_encode }}"
             ></div>
         </div>
     </div>

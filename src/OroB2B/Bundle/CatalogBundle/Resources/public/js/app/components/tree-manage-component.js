@@ -56,7 +56,7 @@ define(function (require) {
 
             this._deferredInit();
 
-            if (options.dnd_enable) {
+            if (options.dndEnabled) {
                 config.plugins.push('dnd');
                 config['dnd'] = {
                     'copy' : false

@@ -11,9 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-/**
- * @Route("/catalog/ajax")
- */
 class AjaxCatalogController extends Controller
 {
     /**
