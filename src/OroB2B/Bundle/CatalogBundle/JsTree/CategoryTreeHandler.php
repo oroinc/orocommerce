@@ -9,40 +9,38 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class CategoryTreeHandler
 {
     /** @var ManagerRegistry */
-    protected $doctrine;
+    protected $managerRegistry;
 
-    public function __construct(ManagerRegistry $doctrine)
+    /**
+     * @param ManagerRegistry $managerRegistry
+     */
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->doctrine  = $doctrine;
+        $this->managerRegistry  = $managerRegistry;
     }
 
     /**
-     * @param int $selectedCategoryId
      * @return array
      */
-    public function createTree($selectedCategoryId)
+    public function createTree()
     {
-        $categoryTree = [
-            'categories' => $this->doctrine
-                ->getRepository('OroB2BCatalogBundle:Category')
-                ->getChildren(null, false, 'left', 'ASC'),
-            'selected' => (int)$selectedCategoryId
-        ];
+        $categoryTree = $this->managerRegistry
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getChildrenWithTitles(null, false, 'left', 'ASC');
 
         return $this->formatTree($categoryTree);
     }
     
     /**
-     * @param array $tree
+     * @param Category[] $categories
      * @return array
      */
-    protected function formatTree(array $tree)
+    protected function formatTree($categories)
     {
         $formattedTree = [];
-        $selectedCategoryId = $tree['selected'];
 
-        foreach ($tree['categories'] as $category) {
-            $formattedTree[] = $this->formatCategory($category, $selectedCategoryId);
+        foreach ($categories as $category) {
+            $formattedTree[] = $this->formatCategory($category);
         }
 
         return $formattedTree;
@@ -57,19 +55,17 @@ class CategoryTreeHandler
      * )
      *
      * @param Category $category
-     * @param int $selectedCategoryId
      * @return array
      */
-    protected function formatCategory(Category $category, $selectedCategoryId)
+    protected function formatCategory(Category $category)
     {
-        return array(
+        return [
             'id' => $category->getId(),
             'parent' => $category->getParentCategory() ? $category->getParentCategory()->getId() : '#',
             'text' => $category->getDefaultTitle()->getString(),
             'state' => [
-                'selected' => $category->getId() === $selectedCategoryId,
                 'opened' => $category->getParentCategory() === null
             ]
-        );
+        ];
     }
 }

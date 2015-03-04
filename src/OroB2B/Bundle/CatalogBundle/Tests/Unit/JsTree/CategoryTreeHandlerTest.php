@@ -13,7 +13,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      * */
-    protected $doctrine;
+    protected $managerRegistry;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -43,7 +43,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->doctrine = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+        $this->managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,31 +51,32 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryTreeHandler = new CategoryTreeHandler($this->doctrine);
+        $this->categoryTreeHandler = new CategoryTreeHandler($this->managerRegistry);
     }
 
     /**
      * @dataProvider createTreeDataProvider
      * @param Category[] $categories
-     * @param int $selectedCategoryId
      * @param array $expected
      */
-    public function testCreateTree($categories, $selectedCategoryId, array $expected)
+    public function testCreateTree($categories, array $expected)
     {
-        $this->doctrine->expects($this->any())
+        $this->managerRegistry->expects($this->any())
             ->method('getRepository')
             ->with('OroB2BCatalogBundle:Category')
             ->willReturn($this->repository);
 
         $this->repository->expects($this->any())
-            ->method('getChildren')
+            ->method('getChildrenWithTitles')
+            ->with(null, false, 'left', 'ASC')
             ->willReturn($categories);
 
-        $result = $this->categoryTreeHandler->createTree($selectedCategoryId);
+        $result = $this->categoryTreeHandler->createTree();
         $this->assertEquals($expected, $result);
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function createTreeDataProvider()
@@ -83,16 +84,14 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->prepareCategories($this->categories);
 
         return [
-            'without selected item' => [
+            'tree' => [
                 'categories' => $this->categoriesCollection,
-                'selectedCategoryId' => null,
                 'expected' => [
                     [
                         'id' => 1,
                         'parent' => '#',
                         'text' => 'Root',
                         'state' => [
-                            'selected' => false,
                             'opened' => true
                         ]
                     ],
@@ -101,7 +100,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'TV',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -110,7 +108,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '1',
                         'text' => 'Phones',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -119,7 +116,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 01',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ],
@@ -128,63 +124,11 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'parent' => '3',
                         'text' => 'Phone 02',
                         'state' => [
-                            'selected' => false,
                             'opened' => false
                         ]
                     ]
                 ]
             ],
-            'with selected item' => [
-                'categories' => $this->categoriesCollection,
-                'selectedCategoryId' => 2,
-                'expected' => [
-                    [
-                        'id' => 1,
-                        'parent' => '#',
-                        'text' => 'Root',
-                        'state' => [
-                            'selected' => false,
-                            'opened' => true
-                        ]
-                    ],
-                    [
-                        'id' => 2,
-                        'parent' => '1',
-                        'text' => 'TV',
-                        'state' => [
-                            'selected' => true,
-                            'opened' => false
-                        ]
-                    ],
-                    [
-                        'id' => 3,
-                        'parent' => '1',
-                        'text' => 'Phones',
-                        'state' => [
-                            'selected' => false,
-                            'opened' => false
-                        ]
-                    ],
-                    [
-                        'id' => 4,
-                        'parent' => '3',
-                        'text' => 'Phone 01',
-                        'state' => [
-                            'selected' => false,
-                            'opened' => false
-                        ]
-                    ],
-                    [
-                        'id' => 5,
-                        'parent' => '3',
-                        'text' => 'Phone 02',
-                        'state' => [
-                            'selected' => false,
-                            'opened' => false
-                        ]
-                    ]
-                ]
-            ]
         ];
     }
 

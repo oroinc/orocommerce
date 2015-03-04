@@ -1,0 +1,21 @@
+OroB2B\Bundle\CatalogBundle\Entity\Category:
+    alias:                          orob2b_category
+    title_fields:                   [defaultTitle]
+    route:
+        name:                       orob2b_catalog_category_update
+        parameters:
+            id:                     id
+    search_template:                OroB2BCatalogBundle:Category:searchResult.html.twig
+    fields:
+        -
+            name:                   defaultTitle
+            target_type:            text
+            target_fields:          [defaultTitle]
+        -
+            name: titles
+            relation_type: many-to-many
+            relation_fields:
+                -
+                    name: string
+                    target_type: text
+                    target_fields: [titles]

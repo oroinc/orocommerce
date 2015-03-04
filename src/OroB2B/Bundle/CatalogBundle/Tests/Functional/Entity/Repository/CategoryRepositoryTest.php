@@ -2,8 +2,12 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\PersistentCollection;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 /**
@@ -12,6 +16,11 @@ use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 class CategoryRepositoryTest extends WebTestCase
 {
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @var CategoryRepository
      */
     protected $repository;
@@ -19,8 +28,8 @@ class CategoryRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->repository = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BCatalogBundle:Category');
+        $this->registry = $this->getContainer()->get('doctrine');
+        $this->repository = $this->registry->getRepository('OroB2BCatalogBundle:Category');
     }
 
     public function testGetMasterCatalogRoot()
@@ -30,5 +39,21 @@ class CategoryRepositoryTest extends WebTestCase
 
         $defaultTitle = $root->getDefaultTitle();
         $this->assertEquals('Master catalog', $defaultTitle->getString());
+    }
+
+    public function testGetChildrenWithTitles()
+    {
+        $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')->clear();
+
+        $categories = $this->repository->getChildrenWithTitles();
+        $this->assertCount(1, $categories);
+
+        /** @var Category $category */
+        $category = current($categories);
+        /** @var PersistentCollection $titles */
+        $titles = $category->getTitles();
+        $this->assertInstanceOf('Doctrine\ORM\PersistentCollection', $titles);
+        $this->assertTrue($titles->isInitialized());
+        $this->assertNotEmpty($titles->toArray());
     }
 }

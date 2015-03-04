@@ -19,7 +19,10 @@
             <div class="scrollable-container">
                 <div class="left-panel scrollable-container">
                     <div class="category">
-                        <div data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"></div>
+                        <div
+                            data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"
+                            data-page-component-options="{{ { 'data' : orob2b_category_list() }|json_encode }}"
+                        ></div>
                     </div>
                 </div>
                 <div class="content">
