@@ -16,7 +16,7 @@ orob2b:
             entity_label:   'Subcategory'
 
         menu:
-            catalog_tab.label:                      'Catalog management'
+            catalog_tab.label:                      'Catalog Management'
             categories_tree.description:            'Catalog categories tree'
             shortcut_categories_tree.description:   'View tree of categories'
 
