@@ -139,8 +139,10 @@ define(function (require) {
                 success: function (result) {
                     if (!result.status) {
                         self.rollback(data);
-                        var placeholders = {nodeText: data.node.text};
-                        messenger.notificationFlashMessage('error', __("orob2b.catalog.move_category_error", placeholders));
+                        messenger.notificationFlashMessage(
+                            'error',
+                            __("orob2b.catalog.move_category_error", {nodeText: data.node.text})
+                        );
                     }
                 }
             });
