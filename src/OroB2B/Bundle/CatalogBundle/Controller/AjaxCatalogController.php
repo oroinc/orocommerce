@@ -17,19 +17,18 @@ class AjaxCatalogController extends Controller
      * @Route(
      *      "/category-move",
      *      name="orob2b_category_move"
-     *
      * )
      * @Method({"PUT"})
-     * @AclAncestor("orob2b_category_update")
+     * @AclAncestor("orob2b_catalog_category_update")
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function categoryMoveAction(Request $request)
     {
-        $nodeId = $request->get('id');
-        $parentId = $request->get('parent');
-        $position = $request->get('position');
+        $nodeId = (int)$request->get('id');
+        $parentId = (int)$request->get('parent');
+        $position = (int)$request->get('position');
 
         return new JsonResponse(
             $this->get('orob2b_catalog.category_tree_handler')->moveCategory($nodeId, $parentId, $position)

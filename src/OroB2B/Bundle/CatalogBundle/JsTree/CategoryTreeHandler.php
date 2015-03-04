@@ -3,10 +3,10 @@
 namespace OroB2B\Bundle\CatalogBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManager;
-use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class CategoryTreeHandler
 {
@@ -17,17 +17,11 @@ class CategoryTreeHandler
     protected $managerRegistry;
 
     /**
-     * @var NestedTreeRepository
-     */
-    protected $categoryRepository;
-
-    /**
      * @param ManagerRegistry $managerRegistry
      */
     public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
-        $this->categoryRepository = $managerRegistry->getRepository('OroB2BCatalogBundle:Category');
     }
 
     /**
@@ -35,8 +29,7 @@ class CategoryTreeHandler
      */
     public function createTree()
     {
-        $categoryTree = $this->managerRegistry
-            ->getRepository('OroB2BCatalogBundle:Category')
+        $categoryTree = $this->getCategoryRepository()
             ->getChildrenWithTitles(null, false, 'left', 'ASC');
 
         return $this->formatTree($categoryTree);
@@ -52,7 +45,7 @@ class CategoryTreeHandler
      */
     public function moveCategory($categoryId, $parentId, $position)
     {
-        $status = ['moved' => self::SUCCESS_STATUS];
+        $status = ['status' => self::SUCCESS_STATUS];
 
         /** @var EntityManager $em */
         $em = $this->managerRegistry->getManagerForClass('OroB2BCatalogBundle:Category');
@@ -61,30 +54,26 @@ class CategoryTreeHandler
         $connection->beginTransaction();
 
         try {
-            if ($parentId == '#') {
-                throw new \LogicException('Can not create root catalog');
-            }
-
-            $category = $this->categoryRepository->find($categoryId);
-            $parentCategory = $this->categoryRepository->find($parentId);
+            $category = $this->getCategoryRepository()->find($categoryId);
+            $parentCategory = $this->getCategoryRepository()->find($parentId);
 
             $category->setParentCategory($parentCategory);
-            $this->categoryRepository->persistAsFirstChildOf($category, $parentCategory);
+            $this->getCategoryRepository()->persistAsFirstChildOf($category, $parentCategory);
             $em->flush();
 
             if ($position) {
-                $this->categoryRepository->moveDown($category, $position);
+                $this->getCategoryRepository()->moveDown($category, $position);
                 $em->flush();
             }
 
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
-            $status['moved'] = self::ERROR_STATUS;
+            $status['status'] = self::ERROR_STATUS;
             $status['error'] = $e->getMessage();
         }
 
-        return ['status' => $status];
+        return $status;
     }
     
     /**
@@ -123,5 +112,13 @@ class CategoryTreeHandler
                 'opened' => $category->getParentCategory() === null
             ]
         ];
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    protected function getCategoryRepository()
+    {
+        return $this->managerRegistry->getRepository('OroB2BCatalogBundle:Category');
     }
 }

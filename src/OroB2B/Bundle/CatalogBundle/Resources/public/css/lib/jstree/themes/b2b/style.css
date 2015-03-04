@@ -256,7 +256,7 @@
     border-left-color: white;
     background: #e2e3e3;
 }
-.category #jstree-marker {
+#jstree-marker {
     position: absolute;
     top: 0;
     left: 0;
@@ -877,28 +877,28 @@
     background: transparent;
 }
 @media (max-width: 768px) {
-    .category #jstree-dnd.jstree-dnd-responsive {
+    #jstree-dnd.jstree-dnd-responsive {
         line-height: 40px;
         font-weight: bold;
         font-size: 1.1em;
         text-shadow: 1px 1px white;
     }
-    .category #jstree-dnd.jstree-dnd-responsive > i {
+    #jstree-dnd.jstree-dnd-responsive > i {
         background: transparent;
         width: 40px;
         height: 40px;
     }
-    .category #jstree-dnd.jstree-dnd-responsive > .jstree-ok {
+    #jstree-dnd.jstree-dnd-responsive > .jstree-ok {
         background-image: url("40px.png");
         background-position: 0 -200px;
         background-size: 120px 240px;
     }
-    .category #jstree-dnd.jstree-dnd-responsive > .jstree-er {
+    #jstree-dnd.jstree-dnd-responsive > .jstree-er {
         background-image: url("40px.png");
         background-position: -40px -200px;
         background-size: 120px 240px;
     }
-    .category #jstree-marker.jstree-dnd-responsive {
+    #jstree-marker.jstree-dnd-responsive {
         border-left-width: 10px;
         border-top-width: 10px;
         border-bottom-width: 10px;

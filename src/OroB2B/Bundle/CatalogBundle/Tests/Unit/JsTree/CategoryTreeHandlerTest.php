@@ -64,8 +64,9 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
      * @param int $nodeId
      * @param int|null $parentNodeId
      * @param int $position
+     * @param boolean $withException
      */
-    public function testMoveCategory($nodeId, $parentNodeId, $position)
+    public function testMoveCategory($nodeId, $parentNodeId, $position, $withException)
     {
         $this->prepareCategories($this->categories);
         $categories = $this->categoriesCollection;
@@ -93,7 +94,14 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $currentNode = $categories[$nodeId];
         $parentNode = array_key_exists($parentNodeId, $categories) ? $categories[$parentNodeId] : null ;
 
-        if ($parentNode) {
+        if ($withException) {
+            $this->repository->expects($this->at(0))
+                ->method('find')
+                ->willThrowException(new \Exception());
+
+            $connection->expects($this->once())
+                ->method('rollBack');
+        } else {
             $this->repository->expects($this->at(0))
                 ->method('find')
                 ->willReturn($currentNode);
@@ -119,9 +127,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
 
             $connection->expects($this->once())
                 ->method('commit');
-        } else {
-            $connection->expects($this->once())
-                ->method('rollBack');
         }
 
         $this->categoryTreeHandler->moveCategory($nodeId, $parentNodeId, $position);
@@ -136,17 +141,20 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             'move with position' => [
                 'nodeId' => 4,
                 'parentNodeId' => 2,
-                'position' => 1
+                'position' => 1,
+                'withException' => false
             ],
             'move without position' => [
                 'nodeId' => 5,
                 'parentNodeId' => 2,
-                'position' => 0
+                'position' => 0,
+                'withException' => false
             ],
-            'move to root' => [
+            'move with exception' => [
                 'nodeId' => 5,
-                'parentNodeId' => '#',
-                'position' => 0
+                'parentNodeId' => 2,
+                'position' => 0,
+                'withException' => true
             ]
         ];
     }

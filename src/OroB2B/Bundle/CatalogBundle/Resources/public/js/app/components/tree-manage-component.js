@@ -5,6 +5,8 @@ define(function (require) {
         $ = require('jquery'),
         _ = require('underscore'),
         mediator = require('oroui/js/mediator'),
+        messenger = require('oroui/js/messenger'),
+        __ = require('orotranslation/js/translator'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
     require('jquery.jstree');
@@ -34,8 +36,8 @@ define(function (require) {
          * @param {Object} options
          */
         initialize: function (options) {
-            var $tree = $(options._sourceElement),
-                categoryList = options.data,
+            this.$tree = $(options._sourceElement);
+            var categoryList = options.data,
                 config = {
                     'core' : {
                         'multiple' : false,
@@ -66,16 +68,16 @@ define(function (require) {
                 config.plugins.push('dnd');
                 config['dnd'] = {
                     'copy' : false
-                }
+                };
             }
 
-            $tree.jstree(config);
+            this.$tree.jstree(config);
 
-            $tree.on('select_node.jstree', _.bind(this.onSelect, this));
-            $tree.on('move_node.jstree', _.bind(this.onMove, this));
+            this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
+            this.$tree.on('move_node.jstree', _.bind(this.onMove, this));
 
             var self = this;
-            $tree.on('ready.jstree', function () {
+            this.$tree.on('ready.jstree', function () {
                 self._resolveDeferredInit();
                 self.initialization = false;
             });
@@ -118,6 +120,11 @@ define(function (require) {
                 return;
             }
 
+            if (data.parent == '#') {
+                this.rollback(data);
+                return;
+            }
+
             var self = this;
             $.ajax({
                 async: false,
@@ -129,14 +136,27 @@ define(function (require) {
                     position: data.position
                 },
                 success: function (result) {
-                    if (!result.status.moved) {
-                        self.moveTriggered = true;
-                        $tree.jstree('move_node', data.node, data.old_parent, data.old_position);
-                        self.moveTriggered = false;
-                        throw new Error('Can not move node ' + data.node.id + '.' + result.status.error);
+                    if (!result.status) {
+                        self.rollback(data);
                     }
                 }
             });
+        },
+
+        /**
+         * Rollback category move
+         *
+         * @param {Object} data
+         */
+        rollback: function(data)
+        {
+
+            this.moveTriggered = true;
+            this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
+            this.moveTriggered = false;
+            var placeholders = {nodeText: data.node.text};
+            messenger.notificationFlashMessage('error', __("orob2b.catalog.moveCategoryError", placeholders));
+
         }
     });
 
