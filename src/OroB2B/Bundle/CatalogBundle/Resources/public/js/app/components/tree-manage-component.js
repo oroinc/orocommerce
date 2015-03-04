@@ -21,6 +21,11 @@ define(function (require) {
         categoryId : null,
 
         /**
+         * @property {Boolean}
+         */
+        initialization : false,
+
+        /**
          * @param {Object} options
          */
         initialize: function (options) {
@@ -34,6 +39,7 @@ define(function (require) {
             this.categoryId = options.categoryId;
 
             this._deferredInit();
+            this.initialization = true;
 
             $tree.jstree({
                 'core' : {
@@ -55,6 +61,7 @@ define(function (require) {
             var self = this;
             $tree.on('ready.jstree', function () {
                 self._resolveDeferredInit();
+                self.initialization = false;
             });
         },
 
@@ -76,11 +83,12 @@ define(function (require) {
          * @param {Object} selected
          */
         onSelect: function(node, selected) {
-            var id = selected.node.id;
-            if (id != this.categoryId) {
-                var url = Routing.generate('orob2b_catalog_category_update', {id: id});
-                mediator.execute('redirectTo', {url: url});
+            if (this.initialization) {
+                return;
             }
+
+            var url = Routing.generate('orob2b_catalog_category_update', {id: selected.node.id});
+            mediator.execute('redirectTo', {url: url});
         }
     });
 
