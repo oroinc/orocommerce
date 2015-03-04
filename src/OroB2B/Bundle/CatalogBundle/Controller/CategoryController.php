@@ -67,10 +67,8 @@ class CategoryController extends Controller
      */
     public function indexAction()
     {
-        $repository = $this->getDoctrine()->getRepository('OroB2BCatalogBundle:Category');
-
         return [
-            'rootCategory' => $repository->getMasterCatalogRoot()
+            'rootCategory' => $this->getMasterRootCategory()
         ];
     }
 
@@ -87,7 +85,7 @@ class CategoryController extends Controller
             $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category')
         );
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $category,
             $form,
             function (Category $category) {
@@ -104,5 +102,19 @@ class CategoryController extends Controller
             $this->get('translator')->trans('orob2b.catalog.controller.category.saved.message'),
             $handler
         );
+
+        if (is_array($result)) {
+            $result['rootCategory'] = $this->getMasterRootCategory();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return Category
+     */
+    protected function getMasterRootCategory()
+    {
+        return $this->getDoctrine()->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
     }
 }

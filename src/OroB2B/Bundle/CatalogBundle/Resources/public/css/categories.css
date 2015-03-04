@@ -5,6 +5,10 @@
     position: absolute;
     border-top: 1px solid #f2f2f2;
     width: 334px;
+    overflow: auto;
+}
+.category {
+    padding-left: 10px
 }
 .category-data {
     margin-left: 334px;
