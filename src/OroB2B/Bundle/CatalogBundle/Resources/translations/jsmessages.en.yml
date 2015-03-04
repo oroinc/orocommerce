@@ -1,1 +1,2 @@
-"orob2b.catalog.moveCategoryError": "Can not move node {{ nodeText }} here."
+"orob2b.catalog.move_category_error": "Can not move node {{ nodeText }} here."
+"orob2b.catalog.add_new_root_warning": "You can not add new root category."
