@@ -122,6 +122,7 @@ define(function (require) {
 
             if (data.parent == '#') {
                 this.rollback(data);
+                messenger.notificationFlashMessage('warning', __("orob2b.catalog.add_new_root_warning"));
                 return;
             }
 
@@ -129,7 +130,7 @@ define(function (require) {
             $.ajax({
                 async: false,
                 type: 'PUT',
-                url: Routing.generate('orob2b_category_move'),
+                url: Routing.generate('orob2b_catalog_category_move'),
                 data: {
                     id: data.node.id,
                     parent: data.parent,
@@ -138,6 +139,8 @@ define(function (require) {
                 success: function (result) {
                     if (!result.status) {
                         self.rollback(data);
+                        var placeholders = {nodeText: data.node.text};
+                        messenger.notificationFlashMessage('error', __("orob2b.catalog.move_category_error", placeholders));
                     }
                 }
             });
@@ -153,9 +156,6 @@ define(function (require) {
             this.moveTriggered = true;
             this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
             this.moveTriggered = false;
-            var placeholders = {nodeText: data.node.text};
-            messenger.notificationFlashMessage('error', __("orob2b.catalog.moveCategoryError", placeholders));
-
         }
     });
 
