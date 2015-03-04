@@ -164,7 +164,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->repository);
 
         $this->repository->expects($this->any())
-            ->method('getChildren')
+            ->method('getChildrenWithTitles')
             ->with(null, false, 'left', 'ASC')
             ->willReturn($categories);
 

@@ -18,9 +18,10 @@ use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
+ *      routeName="orob2b_catalog_category_index",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-folder-open"
+ *              "icon"="icon-folder-close"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -378,5 +379,13 @@ class Category
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getDefaultTitle()->getString();
     }
 }

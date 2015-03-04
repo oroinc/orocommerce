@@ -20,4 +20,26 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getSingleResult();
     }
+
+    /**
+     * @param object|null $node
+     * @param bool $direct
+     * @param string|null $sortByField
+     * @param string $direction
+     * @param bool $includeNode
+     * @return Category[]
+     */
+    public function getChildrenWithTitles(
+        $node = null,
+        $direct = false,
+        $sortByField = null,
+        $direction = 'ASC',
+        $includeNode = false
+    ) {
+        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
+            ->addSelect('title')
+            ->leftJoin('node.titles', 'title')
+            ->getQuery()
+            ->getResult();
+    }
 }

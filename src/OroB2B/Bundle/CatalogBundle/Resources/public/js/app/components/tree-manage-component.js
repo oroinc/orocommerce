@@ -3,9 +3,11 @@ define(function (require) {
 
     var TreeManageComponent,
         $ = require('jquery'),
+        _ = require('underscore'),
+        mediator = require('oroui/js/mediator'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
-    require('orob2bcatalog/js/lib/jstree/jstree');
+    require('jquery.jstree');
 
     /**
      * Options:
@@ -13,10 +15,22 @@ define(function (require) {
      * - categoryId - identifier of selected category
      */
     TreeManageComponent = BaseComponent.extend({
+        /**
+         * @property {Number}
+         */
+        categoryId : null,
+
+        /**
+         * @property {Boolean}
+         */
+        moveTriggered : false,
+
+        /**
+         * @param {Object} options
+         */
         initialize: function (options) {
             var $tree = $(options._sourceElement),
                 categoryList = options.data,
-                moveTriggered = false,
                 config = {
                     'core' : {
                         'multiple' : false,
@@ -28,14 +42,19 @@ define(function (require) {
                     },
                     'state' : {
                         'key' : 'b2b-category',
-                        'filter' : function(state) {
-                            state.core.selected = options.categoryId ? [options.categoryId] : [];
-                            return state;
-                        }
+                        'filter' : _.bind(this.onFilter, this)
                     },
 
                     'plugins': ['state']
                 };
+
+            if (!categoryList) {
+                return;
+            }
+
+            this.categoryId = options.categoryId;
+
+            this._deferredInit();
 
             if (options.dnd_enable) {
                 config.plugins.push('dnd');
@@ -45,31 +64,72 @@ define(function (require) {
             }
 
             $tree.jstree(config);
+
+            $tree.on('select_node.jstree', _.bind(this.onSelect, this));
+            $tree.on('move_node.jstree', _.bind(this.onMove, this));
+
+            var self = this;
+            $tree.on('ready.jstree', function () {
+                self._resolveDeferredInit();
+            });
             
-            $tree.on('move_node.jstree', function (e, data) {
-                if (moveTriggered) {
-                    return;
-                }
-                
-                $.ajax({
-                    async: false,
-                    type: 'PUT',
-                    url: Routing.generate('orob2b_category_move'),
-                    data: {
-                        id: data.node.id,
-                        parent: data.parent,
-                        position: data.position
-                    },
-                    success: function (result) {
-                        if (!result.status.moved) {
-                            moveTriggered = true;
-                            $tree.jstree('move_node', data.node, data.old_parent, data.old_position);
-                            moveTriggered = false;
-                            throw new Error('Can not move node ' + data.node.id + '.' + result.status.error);
-                        }
+        },
+
+        /**
+         * Filters tree state
+         *
+         * @param {Object} state
+         * @returns {Object}
+         */
+        onFilter: function(state) {
+            state.core.selected = this.categoryId ? [this.categoryId] : [];
+            return state;
+        },
+
+        /**
+         * Triggers after category selection in tree
+         *
+         * @param {Object} node
+         * @param {Object} selected
+         */
+        onSelect: function(node, selected) {
+            var id = selected.node.id;
+            if (id != this.categoryId) {
+                var url = Routing.generate('orob2b_catalog_category_update', {id: id});
+                mediator.execute('redirectTo', {url: url});
+            }
+        },
+        
+        /**
+         * Triggers after category move
+         *
+         * @param {Object} e
+         * @param {Object} data
+         */
+        onMove: function(e, data) {
+            if (this.moveTriggered) {
+                return;
+            }
+
+            var self = this;
+            $.ajax({
+                async: false,
+                type: 'PUT',
+                url: Routing.generate('orob2b_category_move'),
+                data: {
+                    id: data.node.id,
+                    parent: data.parent,
+                    position: data.position
+                },
+                success: function (result) {
+                    if (!result.status.moved) {
+                        self.moveTriggered = true;
+                        $tree.jstree('move_node', data.node, data.old_parent, data.old_position);
+                        self.moveTriggered = false;
+                        throw new Error('Can not move node ' + data.node.id + '.' + result.status.error);
                     }
-                });
-            })
+                }
+            });
         }
     });
 

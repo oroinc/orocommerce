@@ -37,7 +37,7 @@ class CategoryTreeHandler
     {
         $categoryTree = $this->managerRegistry
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildren(null, false, 'left', 'ASC');
+            ->getChildrenWithTitles(null, false, 'left', 'ASC');
 
         return $this->formatTree($categoryTree);
     }

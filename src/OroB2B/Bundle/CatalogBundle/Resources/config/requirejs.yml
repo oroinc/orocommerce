@@ -1,4 +1,6 @@
 config:
     paths:
-        'orob2bcatalog/js/lib/jstree/jstree': 'bundles/orob2bcatalog/js/lib/jstree/jstree.js'
+        # TODO: remove jstree overridding after updating of library in platform
+        # TODO: should be updated in scope of https://magecore.atlassian.net/browse/BAP-7696
+        'jquery.jstree': 'bundles/orob2bcatalog/js/lib/jstree/jstree.js'
         'orob2bcatalog/js/app/components/tree-manage-component': 'bundles/orob2bcatalog/js/app/components/tree-manage-component.js'
