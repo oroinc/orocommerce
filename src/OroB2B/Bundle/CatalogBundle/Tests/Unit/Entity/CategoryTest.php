@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Entity;
+namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
 
@@ -146,5 +146,18 @@ class CategoryTest extends EntityTestCase
 
         $this->assertInstanceOf('DateTime', $category->getUpdatedAt());
         $this->assertLessThanOrEqual(new \DateTime(), $category->getUpdatedAt());
+    }
+
+    public function testToString()
+    {
+        $value = 'test';
+
+        $title = new LocalizedFallbackValue();
+        $title->setString($value);
+
+        $category = new Category();
+        $category->addTitle($title);
+
+        $this->assertEquals($value, (string)$category);
     }
 }
