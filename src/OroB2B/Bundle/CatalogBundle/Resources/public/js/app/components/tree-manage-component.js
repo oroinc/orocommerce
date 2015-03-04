@@ -150,7 +150,6 @@ define(function (require) {
          */
         rollback: function(data)
         {
-
             this.moveTriggered = true;
             this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
             this.moveTriggered = false;
