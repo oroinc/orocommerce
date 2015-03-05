@@ -106,7 +106,7 @@ class Category
     /**
      * @var Collection|Category[]
      *
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
      */
     protected $childCategories;
