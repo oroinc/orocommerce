@@ -59,7 +59,7 @@ class CategoriesTest extends Selenium2TestCase
         // assert second level category created
         $categories->assertTitle('Categories - Catalog Management')
             ->assertMessage('Category saved')
-            ->clickTreeSubcategories(self::$firstCategory)
+            ->openTreeSubcategories(self::$firstCategory)
             ->assertCategoryExists(self::$secondCategory)
             ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory)
             ->openCategory(self::$secondCategory)
@@ -84,7 +84,7 @@ class CategoriesTest extends Selenium2TestCase
         $categories->assertCategoryExists(self::MASTER_CATALOG)
             ->assertCategoryExists(self::$firstCategory)
             ->assertContainsSubcategory(self::MASTER_CATALOG, self::$firstCategory)
-            ->clickTreeSubcategories(self::$firstCategory)
+            ->openTreeSubcategories(self::$firstCategory)
             ->assertCategoryExists(self::$secondCategory)
             ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory);
 
@@ -118,7 +118,7 @@ class CategoriesTest extends Selenium2TestCase
          *          - First category
          */
         $categories->dragAndDrop(self::$firstCategory, self::$secondCategory)
-            ->clickTreeSubcategories(self::$secondCategory)
+            ->openTreeSubcategories(self::$secondCategory)
             ->assertContainsSubcategory(self::$secondCategory, self::$firstCategory)
             ->assertNotContainSubcategory(self::MASTER_CATALOG, self::$firstCategory);
     }
@@ -141,7 +141,7 @@ class CategoriesTest extends Selenium2TestCase
         $categories->assertCategoryExists(self::MASTER_CATALOG)
             ->assertCategoryExists(self::$secondCategory)
             ->assertContainsSubcategory(self::MASTER_CATALOG, self::$secondCategory)
-            ->clickTreeSubcategories(self::$secondCategory)
+            ->openTreeSubcategories(self::$secondCategory)
             ->assertCategoryExists(self::$firstCategory)
             ->assertContainsSubcategory(self::$secondCategory, self::$firstCategory);
 

@@ -18,7 +18,10 @@ class Categories extends AbstractPage
     protected $createButton = '//a[@title="Create Category"]';
 
     /** @var string */
-    protected $subcategoryShow = '//a[contains(., "%s")]/parent::*/i';
+    protected $subcategoryClosed = '//a[contains(., "%s")]/parent::li[contains(@class,"jstree-closed")]';
+
+    /** @var string */
+    protected $subcategoryOpen = '//a[contains(., "%s")]/parent::*/i[contains(@class,"jstree-ocl")]';
 
     /** @var string */
     protected $subcategoryContains = '//a[contains(., "%s")]/parent::*/ul/li/a[contains(., "%s")]';
@@ -65,9 +68,12 @@ class Categories extends AbstractPage
      * @param string $title
      * @return $this
      */
-    public function clickTreeSubcategories($title)
+    public function openTreeSubcategories($title)
     {
-        $this->test->byXpath(sprintf($this->subcategoryShow, $title))->click();
+        if ($this->isElementPresent(sprintf($this->subcategoryClosed, $title))) {
+            $this->test->byXpath(sprintf($this->subcategoryOpen, $title))->click();
+            sleep(1);
+        }
 
         return $this;
     }
@@ -83,6 +89,7 @@ class Categories extends AbstractPage
         $this->test->buttondown();
         $this->test->moveto($this->test->byXpath(sprintf($this->category, $targetTitle)));
         $this->test->buttonup();
+        $this->waitForAjax();
 
         return $this;
     }
@@ -164,6 +171,11 @@ class Categories extends AbstractPage
         return $this;
     }
 
+    /**
+     * @param string $beforeTitle
+     * @param string $afterTitle
+     * @return $this
+     */
     public function assertCategoryAfter($beforeTitle, $afterTitle)
     {
         $this->test->assertFalse(
