@@ -12,6 +12,8 @@
         <echo>                      (clean prepare-reportdir run-code-standards)</echo>
         <echo> functional-tests     Run functional tests.</echo>
         <echo>                      (clean prepare install install-admin-fixture run-functional-tests)</echo>
+        <echo> selenium-tests       Run Selenium tests.</echo>
+        <echo>                      (clean prepare install install-admin-fixture install-test-fixtures run-selenium-tests)</echo>
         <echo/>
         <echo>Build artifacts are created within the "build" directory. All normally</echo>
         <echo>generated reports and logs can be found in "build/reports"</echo>
@@ -176,13 +178,20 @@
 
     <extension-point name="wrap-up" depends="run"/>
 
-    <target name="unit-tests" depends="clean,prepare-reportdir,install-dependencies,run-unit-tests" description="Run unit tests."/>
+    <target name="unit-tests" description="Run unit tests."
+            depends="clean,prepare-reportdir,install-dependencies,run-unit-tests"/>
 
-    <target name="unit-tests-coverage" depends="clean,prepare-reportdir,install-dependencies,run-unit-tests-with-coverage" description="Run unit tests with code coverage collection enabled."/>
+    <target name="unit-tests-coverage" description="Run unit tests with code coverage collection enabled."
+            depends="clean,prepare-reportdir,install-dependencies,run-unit-tests-with-coverage"/>
 
-    <target name="code-standards" depends="clean,prepare-reportdir,run-code-standards" description="Run code standards checks."/>
+    <target name="code-standards" description="Run code standards checks."
+            depends="clean,prepare-reportdir,run-code-standards"/>
 
-    <target name="functional-tests" depends="clean,prepare,install,install-admin-fixture,run-functional-tests" description="Run functional tests."/>
+    <target name="functional-tests" description="Run functional tests."
+            depends="clean,prepare,install,install-admin-fixture,run-functional-tests"/>
+
+    <target name="selenium-tests" description="Run Selenium tests."
+            depends="clean,prepare,install,install-admin-fixture,install-test-fixtures,run-selenium-tests"/>
 
     <!-- END High Level Targets -->
 
@@ -268,6 +277,14 @@
                 <echo>Installing the application for @{iterate} environment...</echo>
                 <appconfig env="@{iterate}"/>
                 <oroinstall env="@{iterate}"/>
+                <chmod file="${basedir}/app/cache" perm="777"/>
+                <chmod file="${basedir}/app/cache/**" perm="777" type="both"/>
+                <chmod file="${basedir}/app/logs" perm="777"/>
+                <chmod file="${basedir}/app/logs/**" perm="777" type="both"/>
+                <chmod file="${basedir}/web/bundles" perm="777"/>
+                <chmod file="${basedir}/web/bundles/**" perm="777" type="both"/>
+                <chmod file="${basedir}/web/js" perm="777"/>
+                <chmod file="${basedir}/web/js/**" perm="777" type="both"/>
             </sequential>
         </for>
     </target>
@@ -276,7 +293,27 @@
         <for list="${run.env}" param="iterate">
             <sequential>
                 <exec dir="${basedir}" executable="php" failonerror="true">
-                    <arg line="app/console doctrine:fixture:load --no-debug --append --no-interaction --env=@{iterate} --fixtures src/Oro/src/Oro/Bundle/TestFrameworkBundle/Fixtures" />
+                    <arg line="app/console"/>
+                    <arg line="doctrine:fixture:load"/>
+                    <arg line="--no-debug"/>
+                    <arg line="--append"/>
+                    <arg line="--no-interaction"/>
+                    <arg line="--env=@{iterate}"/>
+                    <arg line="--fixtures src/Oro/src/Oro/Bundle/TestFrameworkBundle/Fixtures"/>
+                </exec>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="install-test-fixtures">
+        <for list="${run.env}" param="iterate">
+            <sequential>
+                <exec dir="${basedir}" executable="php" failonerror="true">
+                    <arg line="app/console"/>
+                    <arg line="oro:migration:data:load"/>
+                    <arg line="--fixtures-type=demo"/>
+                    <arg line="--bundles=AcmeDemoGridBundle"/>
+                    <arg line="--env=@{iterate}"/>
                 </exec>
             </sequential>
         </for>
@@ -484,6 +521,10 @@
 
     <target name="run-functional-tests" extensionOf="run-all-tests">
         <phpunit suite="${testsuite}" defaultsuite="Project Functional Tests"/>
+    </target>
+
+    <target name="run-selenium-tests" extensionOf="run-all-tests">
+        <phpunit suite="${testsuite}" defaultsuite="Project Selenium Tests"/>
     </target>
 
     <!-- Check code standards -->
