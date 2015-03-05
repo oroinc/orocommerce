@@ -44,7 +44,7 @@ class CategoriesTest extends Selenium2TestCase
 
         // assert first level category created
         $categories->assertTitle('Categories - Catalog Management')
-            ->assertMessage('Category saved')
+            ->assertMessage('Category has been saved')
             ->assertCategoryExists(self::$firstCategory)
             ->assertContainsSubcategory(self::MASTER_CATALOG, self::$firstCategory);
 
@@ -58,7 +58,7 @@ class CategoriesTest extends Selenium2TestCase
 
         // assert second level category created
         $categories->assertTitle('Categories - Catalog Management')
-            ->assertMessage('Category saved')
+            ->assertMessage('Category has been saved')
             ->openTreeSubcategories(self::$firstCategory)
             ->assertCategoryExists(self::$secondCategory)
             ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory)
@@ -77,7 +77,7 @@ class CategoriesTest extends Selenium2TestCase
         /**
          * preconditions
          *
-         *  Master catalog
+         *  - Master catalog
          *      - First category
          *          - Second category
          */
@@ -91,7 +91,7 @@ class CategoriesTest extends Selenium2TestCase
         /**
          * move second category to master catalog
          *
-         *  Master catalog
+         *  - Master catalog
          *      - Second category
          *      - First category
          */
@@ -103,7 +103,7 @@ class CategoriesTest extends Selenium2TestCase
         /**
          * move second category after first category
          *
-         *  Master catalog
+         *  - Master catalog
          *      - First category
          *      - Second category
          */
@@ -113,7 +113,7 @@ class CategoriesTest extends Selenium2TestCase
         /**
          * move first category to second category
          *
-         *  Master catalog
+         *  - Master catalog
          *      - Second category
          *          - First category
          */
@@ -134,7 +134,7 @@ class CategoriesTest extends Selenium2TestCase
         /**
          * preconditions
          *
-         *  Master catalog
+         *  - Master catalog
          *      - Second category
          *          - First category
          */
