@@ -148,7 +148,7 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains("Category has been saved", $crawler->html());
 
-        return $this->getCategoryIdByUri($this->client->getRequest()->getUri());
+        return $this->getCategoryIdByUri($this->client->getRequest()->getRequestUri());
     }
 
     /**
@@ -197,7 +197,11 @@ class CategoryControllerTest extends WebTestCase
      */
     protected function getCategoryIdByUri($uri)
     {
-        $urlPath = explode('/', parse_url($uri, PHP_URL_PATH));
-        return end($urlPath);
+        $router = $this->getContainer()->get('router');
+        $parameters = $router->match($uri);
+
+        $this->assertArrayHasKey('id', $parameters);
+
+        return $parameters['id'];
     }
 }
