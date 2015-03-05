@@ -97,7 +97,18 @@ class CategoriesTest extends Selenium2TestCase
          */
         $categories->dragAndDrop(self::$secondCategory, self::MASTER_CATALOG)
             ->assertContainsSubcategory(self::MASTER_CATALOG, self::$secondCategory)
-            ->assertNotContainSubcategory(self::$firstCategory, self::$secondCategory);
+            ->assertNotContainSubcategory(self::$firstCategory, self::$secondCategory)
+            ->assertCategoryAfter(self::$secondCategory, self::$firstCategory);
+
+        /**
+         * move second category after first category
+         *
+         *  Master catalog
+         *      - First category
+         *      - Second category
+         */
+        $categories->dragAndDropAfterTarget(self::$secondCategory, self::$firstCategory)
+            ->assertCategoryAfter(self::$firstCategory, self::$secondCategory);
 
         /**
          * move first category to second category

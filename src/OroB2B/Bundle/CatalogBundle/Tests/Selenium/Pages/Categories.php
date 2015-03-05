@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class Categories extends AbstractPage
 {
     const URL = 'catalog/category/';
@@ -19,6 +22,9 @@ class Categories extends AbstractPage
 
     /** @var string */
     protected $subcategoryContains = '//a[contains(., "%s")]/parent::*/ul/li/a[contains(., "%s")]';
+
+    /** @var string */
+    protected $categoryAfter = '//a[contains(., "%s")]/parent::*/following-sibling::*/ul/li/a[contains(., "%s")]';
 
     /**
      * @param \PHPUnit_Extensions_Selenium2TestCase $testCase
@@ -82,6 +88,25 @@ class Categories extends AbstractPage
     }
 
     /**
+     * @param string $sourceTitle
+     * @param string $targetTitle
+     * @return $this
+     */
+    public function dragAndDropAfterTarget($sourceTitle, $targetTitle)
+    {
+        $this->test->moveto($this->test->byXpath(sprintf($this->category, $sourceTitle)));
+        $this->test->buttondown();
+        $this->test->moveto([
+            'element' => $this->test->byXpath(sprintf($this->category, $targetTitle)),
+            'xoffset' => 0,
+            'yoffset' => 20,
+        ]);
+        $this->test->buttonup();
+
+        return $this;
+    }
+
+    /**
      * @param string $title
      * @return $this
      */
@@ -134,6 +159,16 @@ class Categories extends AbstractPage
         $this->test->assertFalse(
             $this->isElementPresent(sprintf($this->subcategoryContains, $parentTitle, $childTitle)),
             sprintf('Category %s contains subcategory %s', $parentTitle, $childTitle)
+        );
+
+        return $this;
+    }
+
+    public function assertCategoryAfter($beforeTitle, $afterTitle)
+    {
+        $this->test->assertFalse(
+            $this->isElementPresent(sprintf($this->categoryAfter, $beforeTitle, $afterTitle)),
+            sprintf('Category %s does not rendered after category %s', $afterTitle, $beforeTitle)
         );
 
         return $this;
