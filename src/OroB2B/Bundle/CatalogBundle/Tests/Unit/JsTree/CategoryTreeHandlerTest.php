@@ -153,7 +153,13 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 'parentNodeId' => 2,
                 'position' => 0,
                 'withException' => true
-            ]
+            ],
+            'move inside the same category' => [
+                'nodeId' => 3,
+                'parentNodeId' => 1,
+                'position' => 0,
+                'withException' => false
+            ],
         ];
     }
 

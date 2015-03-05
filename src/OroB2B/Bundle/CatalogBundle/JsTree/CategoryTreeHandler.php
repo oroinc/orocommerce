@@ -10,8 +10,8 @@ use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class CategoryTreeHandler
 {
-    const SUCCESS_STATUS = 1;
-    const ERROR_STATUS = 0;
+    const SUCCESS_STATUS = true;
+    const ERROR_STATUS = false;
 
     /**
      * @var ManagerRegistry
@@ -56,13 +56,9 @@ class CategoryTreeHandler
         $connection->beginTransaction();
 
         try {
-            /**
-             * @var Category $category
-             */
+            /** @var Category $category */
             $category = $this->getCategoryRepository()->find($categoryId);
-            /**
-             * @var Category $parentCategory
-             */
+            /** @var Category $parentCategory */
             $parentCategory = $this->getCategoryRepository()->find($parentId);
 
             if ($parentCategory->getChildCategories()->contains($category)) {
