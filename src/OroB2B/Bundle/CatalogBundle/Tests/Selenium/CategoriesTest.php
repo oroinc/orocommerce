@@ -8,6 +8,8 @@ use OroB2B\Bundle\CatalogBundle\Tests\Selenium\Pages\Categories;
 
 class CategoriesTest extends Selenium2TestCase
 {
+    const MASTER_CATALOG = 'Master catalog';
+
     /**
      * @var string
      */
@@ -25,34 +27,126 @@ class CategoriesTest extends Selenium2TestCase
         self::$secondCategory = 'Second category ' . $suffix;
     }
 
-    public function testCreateFirstLevelCategory()
+    public function testCreateCategories()
     {
         /** @var Categories $categories */
         $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
-        $categories->assertTitle('Categories - Catalog Management');
 
+        // preconditions
+        $categories->assertTitle('Categories - Catalog Management')
+            ->assertCategoryExists(self::MASTER_CATALOG);
+
+        // create first level category
         $categories->createCategory()
             ->assertTitle('Create Category - Categories - Catalog Management')
             ->setDefaultTitle(self::$firstCategory)
             ->save();
 
+        // assert first level category created
         $categories->assertTitle('Categories - Catalog Management')
             ->assertMessage('Category saved')
-            ->assertCategoryExists(self::$firstCategory);
+            ->assertCategoryExists(self::$firstCategory)
+            ->assertContainsSubcategory(self::MASTER_CATALOG, self::$firstCategory);
 
+        // create second level category
         $categories->openCategory(self::$firstCategory)
-            ->assertTitle(self::$firstCategory . ' - Edit - Categories - Catalog Management');
+            ->assertTitle(self::$firstCategory . ' - Edit - Categories - Catalog Management')
+            ->createSubcategory()
+            ->assertTitle('Create Category - Categories - Catalog Management')
+            ->setDefaultTitle(self::$secondCategory)
+            ->save();
 
-        return $categories;
+        // assert second level category created
+        $categories->assertTitle('Categories - Catalog Management')
+            ->assertMessage('Category saved')
+            ->clickTreeSubcategories(self::$firstCategory)
+            ->assertCategoryExists(self::$secondCategory)
+            ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory)
+            ->openCategory(self::$secondCategory)
+            ->assertTitle(self::$secondCategory . ' - Edit - Categories - Catalog Management');
     }
 
     /**
-     * @depends testCreateFirstLevelCategory
+     * @depends testCreateCategories
      */
-    public function testCreateSecondLevelCategory()
+    public function testDragAndDrop()
     {
         /** @var Categories $categories */
         $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
 
+        /**
+         * preconditions
+         *
+         *  Master catalog
+         *      - First category
+         *          - Second category
+         */
+        $categories->assertCategoryExists(self::MASTER_CATALOG)
+            ->assertCategoryExists(self::$firstCategory)
+            ->assertContainsSubcategory(self::MASTER_CATALOG, self::$firstCategory)
+            ->clickTreeSubcategories(self::$firstCategory)
+            ->assertCategoryExists(self::$secondCategory)
+            ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory);
+
+        /**
+         * move second category to master catalog
+         *
+         *  Master catalog
+         *      - Second category
+         *      - First category
+         */
+        $categories->dragAndDrop(self::$secondCategory, self::MASTER_CATALOG)
+            ->assertContainsSubcategory(self::MASTER_CATALOG, self::$secondCategory)
+            ->assertNotContainSubcategory(self::$firstCategory, self::$secondCategory);
+
+        /**
+         * move first category to second category
+         *
+         *  Master catalog
+         *      - Second category
+         *          - First category
+         */
+        $categories->dragAndDrop(self::$firstCategory, self::$secondCategory)
+            ->clickTreeSubcategories(self::$secondCategory)
+            ->assertContainsSubcategory(self::$secondCategory, self::$firstCategory)
+            ->assertNotContainSubcategory(self::MASTER_CATALOG, self::$firstCategory);
+    }
+
+    /**
+     * @depends testDragAndDrop
+     */
+    public function testDeleteCategories()
+    {
+        /** @var Categories $categories */
+        $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+
+        /**
+         * preconditions
+         *
+         *  Master catalog
+         *      - Second category
+         *          - First category
+         */
+        $categories->assertCategoryExists(self::MASTER_CATALOG)
+            ->assertCategoryExists(self::$secondCategory)
+            ->assertContainsSubcategory(self::MASTER_CATALOG, self::$secondCategory)
+            ->clickTreeSubcategories(self::$secondCategory)
+            ->assertCategoryExists(self::$firstCategory)
+            ->assertContainsSubcategory(self::$secondCategory, self::$firstCategory);
+
+        // master catalog can't be removed
+        $categories->openCategory(self::MASTER_CATALOG)
+            ->assertDeleteNotAllowed();
+
+        // delete second category, first should be removed automatically
+        $categories->openCategory(self::$secondCategory)
+            ->assertDeleteAllowed()
+            ->deleteCategory();
+
+        // assert categories removed
+        $categories->assertTitle('Categories - Catalog Management')
+            ->assertMessage('Category deleted')
+            ->assertCategoryNotExist(self::$firstCategory)
+            ->assertCategoryNotExist(self::$secondCategory);
     }
 }
