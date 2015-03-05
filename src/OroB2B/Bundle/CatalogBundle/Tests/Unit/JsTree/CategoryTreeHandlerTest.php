@@ -110,21 +110,19 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 ->method('find')
                 ->willReturn($parentNode);
 
-            $this->repository->expects($this->at(2))
-                ->method('persistAsFirstChildOf');
+            if ($position) {
+                $children = array_values($parentNode->getChildCategories()->toArray());
+                $this->repository->expects($this->at(2))
+                    ->method('__call')
+                    ->with('persistAsNextSiblingOf', [$currentNode, $children[$position - 1]]);
+            } else {
+                $this->repository->expects($this->at(2))
+                    ->method('__call')
+                    ->with('persistAsFirstChildOf', [$currentNode, $parentNode]);
+            }
 
             $em->expects($this->at(0))
                 ->method('flush');
-
-            if ($position) {
-                $this->repository->expects($this->at(3))
-                    ->method('moveDown')
-                    ->with($currentNode, $position);
-
-                $em->expects($this->at(0))
-                    ->method('flush');
-            }
-
             $connection->expects($this->once())
                 ->method('commit');
         }
@@ -140,7 +138,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             'move with position' => [
                 'nodeId' => 4,
-                'parentNodeId' => 2,
+                'parentNodeId' => 1,
                 'position' => 1,
                 'withException' => false
             ],
@@ -252,6 +250,14 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $category->setParentCategory($this->getParent($item['parent']));
 
             $this->categoriesCollection[$category->getId()] = $category;
+        }
+
+        foreach ($this->categoriesCollection as $parentCategory) {
+            foreach ($this->categoriesCollection as $category) {
+                if ($category->getParentCategory() == $parentCategory) {
+                    $parentCategory->addChildCategory($category);
+                }
+            }
         }
     }
 

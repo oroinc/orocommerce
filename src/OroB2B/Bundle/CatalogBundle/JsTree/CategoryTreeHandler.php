@@ -13,7 +13,9 @@ class CategoryTreeHandler
     const SUCCESS_STATUS = 1;
     const ERROR_STATUS = 0;
 
-    /** @var ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $managerRegistry;
 
     /**
@@ -54,18 +56,29 @@ class CategoryTreeHandler
         $connection->beginTransaction();
 
         try {
+            /**
+             * @var Category $category
+             */
             $category = $this->getCategoryRepository()->find($categoryId);
+            /**
+             * @var Category $parentCategory
+             */
             $parentCategory = $this->getCategoryRepository()->find($parentId);
 
-            $category->setParentCategory($parentCategory);
-            $this->getCategoryRepository()->persistAsFirstChildOf($category, $parentCategory);
-            $em->flush();
-
-            if ($position) {
-                $this->getCategoryRepository()->moveDown($category, $position);
-                $em->flush();
+            if ($parentCategory->getChildCategories()->contains($category)) {
+                $parentCategory->removeChildCategory($category);
             }
 
+            $parentCategory->addChildCategory($category);
+
+            if ($position) {
+                $children = array_values($parentCategory->getChildCategories()->toArray());
+                $this->getCategoryRepository()->persistAsNextSiblingOf($category, $children[$position - 1]);
+            } else {
+                $this->getCategoryRepository()->persistAsFirstChildOf($category, $parentCategory);
+            }
+
+            $em->flush();
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
