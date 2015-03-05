@@ -277,14 +277,6 @@
                 <echo>Installing the application for @{iterate} environment...</echo>
                 <appconfig env="@{iterate}"/>
                 <oroinstall env="@{iterate}"/>
-                <chmod file="${basedir}/app/cache" perm="777"/>
-                <chmod file="${basedir}/app/cache/**" perm="777" type="both"/>
-                <chmod file="${basedir}/app/logs" perm="777"/>
-                <chmod file="${basedir}/app/logs/**" perm="777" type="both"/>
-                <chmod file="${basedir}/web/bundles" perm="777"/>
-                <chmod file="${basedir}/web/bundles/**" perm="777" type="both"/>
-                <chmod file="${basedir}/web/js" perm="777"/>
-                <chmod file="${basedir}/web/js/**" perm="777" type="both"/>
             </sequential>
         </for>
     </target>
