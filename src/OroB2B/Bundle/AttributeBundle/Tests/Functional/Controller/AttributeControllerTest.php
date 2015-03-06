@@ -55,8 +55,8 @@ class AttributeControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadLocaleData',
-            'OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
         ]);
 
         // Fill locale registry by locales
