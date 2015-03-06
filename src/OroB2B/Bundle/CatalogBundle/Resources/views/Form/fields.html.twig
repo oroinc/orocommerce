@@ -3,8 +3,6 @@
 {% endblock %}
 
 {% block orob2b_catalog_category_tree_widget %}
-    {{ form_widget(form) }}
-
     <div class="category category-tree-form-type">
         {% set treeOptions = {
             'data' : orob2b_category_list(),
@@ -16,4 +14,7 @@
             data-page-component-options="{{ treeOptions|json_encode }}"
         ></div>
     </div>
+
+    {{ form_widget(form) }}
+    {{ form_errors(form) }}
 {% endblock %}
