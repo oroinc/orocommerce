@@ -5,6 +5,7 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
+        category.label: Category
         owner.label: Owner
         organization.label: Organization
 
