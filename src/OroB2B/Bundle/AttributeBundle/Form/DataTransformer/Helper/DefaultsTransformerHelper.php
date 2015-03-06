@@ -8,7 +8,7 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeDefaultValue;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class DefaultsTransformerHelper
 {

@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AttributePropertyTest extends EntityTestCase

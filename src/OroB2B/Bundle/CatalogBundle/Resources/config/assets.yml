@@ -1,0 +1,5 @@
+css:
+    'orob2bcatalog':
+        - 'bundles/orob2bcatalog/css/categories.css'
+        # libraries' styles
+        - 'bundles/orob2bcatalog/css/lib/jstree/themes/b2b/style.css'

@@ -8,7 +8,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeLabel;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeProperty;

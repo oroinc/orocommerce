@@ -16,10 +16,10 @@ class OroB2BProductBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BProductTable($schema);
+        $this->createOroB2BProductTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BProductForeignKeys($schema);
+        $this->addOroB2BProductForeignKeys($schema);
     }
 
     /**
@@ -27,10 +27,11 @@ class OroB2BProductBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BProductTable(Schema $schema)
+    protected function createOroB2BProductTable(Schema $schema)
     {
         $table = $schema->createTable(self::TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('sku', 'string', ['length' => 255]);
@@ -40,6 +41,7 @@ class OroB2BProductBundle implements Migration
         $table->addUniqueIndex(['sku'], 'UNIQ_5F9796C9F9038C4');
         $table->addIndex(['business_unit_owner_id'], 'IDX_5F9796C959294170', []);
         $table->addIndex(['organization_id'], 'IDX_5F9796C932C8A3DE', []);
+        $table->addIndex(['category_id'], 'IDX_5F9796C912469DE2', []);
     }
 
     /**
@@ -47,9 +49,15 @@ class OroB2BProductBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BProductForeignKeys(Schema $schema)
+    protected function addOroB2BProductForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_catalog_category'),
+            ['category_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],

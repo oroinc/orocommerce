@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Letters;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Url;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Email;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Letters;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Url;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Boolean;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Date;
 use OroB2B\Bundle\AttributeBundle\AttributeType\DateTime;
@@ -18,9 +18,9 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\Integer;
 use OroB2B\Bundle\AttributeBundle\AttributeType\Text;
 use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 use OroB2B\Bundle\AttributeBundle\Form\Type\AttributeTypeConstraintType;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer as IntegerConstraint;
 
 class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
 {
@@ -91,8 +91,8 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'empty_value' => 'orob2b.attribute.attribute_type_constraint.none',
                     'choices' => [
-                        GreaterThanZero::ALIAS => 'orob2b.attribute.attribute_type_constraint.greater_than_zero',
-                        IntegerConstraint::ALIAS => 'orob2b.attribute.attribute_type_constraint.integer'
+                        GreaterThanZero::ALIAS => 'orob2b.validation.constraint.alias.greater_than_zero',
+                        IntegerConstraint::ALIAS => 'orob2b.validation.constraint.alias.integer'
                     ]
                 ],
                 'submittedData' => GreaterThanZero::ALIAS,
@@ -114,13 +114,13 @@ class AttributeTypeConstraintTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'empty_value' => 'orob2b.attribute.attribute_type_constraint.none',
                     'choices' => [
-                        Letters::ALIAS => 'orob2b.attribute.attribute_type_constraint.letters',
-                        Alphanumeric::ALIAS => 'orob2b.attribute.attribute_type_constraint.alphanumeric',
-                        UrlSafe::ALIAS => 'orob2b.attribute.attribute_type_constraint.url_safe',
-                        Decimal::ALIAS => 'orob2b.attribute.attribute_type_constraint.decimal',
-                        IntegerConstraint::ALIAS => 'orob2b.attribute.attribute_type_constraint.integer',
-                        Email::ALIAS => 'orob2b.attribute.attribute_type_constraint.email',
-                        Url::ALIAS => 'orob2b.attribute.attribute_type_constraint.url'
+                        Letters::ALIAS => 'orob2b.validation.constraint.alias.letters',
+                        Alphanumeric::ALIAS => 'orob2b.validation.constraint.alias.alphanumeric',
+                        UrlSafe::ALIAS => 'orob2b.validation.constraint.alias.url_safe',
+                        Decimal::ALIAS => 'orob2b.validation.constraint.alias.decimal',
+                        IntegerConstraint::ALIAS => 'orob2b.validation.constraint.alias.integer',
+                        Email::ALIAS => 'orob2b.validation.constraint.alias.email',
+                        Url::ALIAS => 'orob2b.validation.constraint.alias.url'
                     ]
                 ],
                 'submittedData' => Alphanumeric::ALIAS,

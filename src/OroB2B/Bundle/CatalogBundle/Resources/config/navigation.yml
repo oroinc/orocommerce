@@ -1,0 +1,37 @@
+oro_menu_config:
+    items:
+        catalog_tab:
+            label:           'orob2b.catalog.menu.catalog_tab.label'
+            uri:             '#'
+            extras:
+                icon:        icon-folder-close
+                position:    20
+
+        categories_tree:
+            label:           'orob2b.catalog.category.entity_plural_label'
+            route:           'orob2b_catalog_category_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_catalog_category/']
+                description: 'orob2b.catalog.menu.categories_tree.description'
+
+        shortcut_categories_tree:
+            label:           'orob2b.catalog.category.entity_plural_label'
+            route:           'orob2b_catalog_category_index'
+            extras:
+                description: 'orob2b.catalog.menu.shortcut_categories_tree.description'
+
+    tree:
+        application_menu:
+            children:
+                catalog_tab:
+                    children:
+                        categories_tree: ~
+        shortcuts:
+            children:
+                shortcut_categories_tree: ~
+
+oro_titles:
+    orob2b_catalog_category_index:  ~
+    orob2b_catalog_category_update: '%%title%% - Edit'
+    orob2b_catalog_category_create: 'Create Category'

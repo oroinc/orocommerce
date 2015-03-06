@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
+
 class NotLocalizedSelectCollectionType extends AbstractType
 {
     const NAME = 'orob2b_not_localized_select_collection';
