@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -19,19 +20,41 @@ class CategoryType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(
-            'parentCategory',
-            'oro_entity_identifier',
-            ['class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category', 'multiple' => false]
-        )->add(
-            'titles',
-            LocalizedFallbackValueCollectionType::NAME,
-            [
-                'label' => 'orob2b.catalog.category.titles.label',
-                'required' => false,
-                'options' => ['constraints' => [new NotBlank()]],
-            ]
-        );
+        $builder
+            ->add(
+                'parentCategory',
+                EntityIdentifierType::NAME,
+                ['class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category', 'multiple' => false]
+            )
+            ->add(
+                'titles',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.catalog.category.titles.label',
+                    'required' => false,
+                    'options' => ['constraints' => [new NotBlank()]],
+                ]
+            )
+            ->add(
+                'appendProducts',
+                EntityIdentifierType::NAME,
+                [
+                    'class'    => 'OroB2BProductBundle:Product',
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeProducts',
+                EntityIdentifierType::NAME,
+                [
+                    'class'    => 'OroB2BProductBundle:Product',
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true,
+                ]
+            );
     }
 
     /**

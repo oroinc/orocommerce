@@ -1,10 +1,12 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% if form.vars.value.id %}
     {% oro_title_set({params : {"%title%": form.vars.value.defaultTitle.string} }) %}
 {% endif %}
 
-{% set formAction = form.vars.value.id ? path('orob2b_catalog_category_update', { 'id': form.vars.value.id }) : path('orob2b_catalog_category_create', { 'id': form.vars.value.parentCategory.id })  %}
+{% set entityId = form.vars.value.id %}
+{% set formAction = entityId ? path('orob2b_catalog_category_update', { 'id': entityId }) : path('orob2b_catalog_category_create', { 'id': form.vars.value.parentCategory.id })  %}
 
 {% block navButtons %}
     {% if form.vars.value.id %}
@@ -65,12 +67,28 @@
             'subblocks': [{
                 'title': '',
                 'data': [
+                    form_widget(form.appendProducts, {'id': 'categoryAppendProducts'}),
+                    form_widget(form.removeProducts, {'id': 'categoryRemoveProducts'}),
                     form_row(form.parentCategory),
                     form_row(form.titles)
                 ]
             }]
         }]
     %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'orob2b.product.entity_plural_label'|trans,
+            'subblocks':
+            [
+                {
+                    'title' : null,
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId }, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }])
+    %}
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

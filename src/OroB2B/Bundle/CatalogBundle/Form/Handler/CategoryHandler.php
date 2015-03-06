@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -11,6 +12,11 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryHandler
 {
+    /**
+     * @var FormInterface
+     */
+    protected $form;
+    
     /** @var Request */
     protected $request;
 
@@ -41,13 +47,52 @@ class CategoryHandler
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
-                $this->manager->persist($category);
-                $this->manager->flush();
+                $appendProducts = $this->form->get('appendProducts')->getData();
+                $removeProducts = $this->form->get('removeProducts')->getData();
+                $this->onSuccess($category, $appendProducts, $removeProducts);
 
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @param Category $category
+     * @param Product[] $appendProducts
+     * @param Product[] $removeProducts
+     */
+    protected function onSuccess(Category $category, array $appendProducts, array $removeProducts)
+    {
+        $this->appendProducts($category, $appendProducts);
+        $this->removeProducts($category, $removeProducts);
+
+        $this->manager->persist($category);
+        $this->manager->flush();
+    }
+
+    /**
+     * @param Category $category
+     * @param Product[] $products
+     */
+    protected function appendProducts(Category $category, array $products)
+    {
+        /** @var $product Product */
+        foreach ($products as $product) {
+            $category->addProduct($product);
+        }
+    }
+
+    /**
+     * @param Category $category
+     * @param Product[] $products
+     */
+    protected function removeProducts(Category $category, array $products)
+    {
+        /** @var $product Product */
+        foreach ($products as $product) {
+            $category->removeProduct($product);
+        }
     }
 }

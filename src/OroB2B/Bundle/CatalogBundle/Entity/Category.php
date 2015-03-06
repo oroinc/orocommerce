@@ -416,6 +416,7 @@ class Category
     {
         if ($this->products->contains($product)) {
             $this->products->removeElement($product);
+            $product->setCategory(null);
         }
 
         return $this;

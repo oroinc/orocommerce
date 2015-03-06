@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -29,7 +30,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'parentCategory',
-                'oro_entity_identifier',
+                EntityIdentifierType::NAME,
                 ['class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category', 'multiple' => false]
             )
             ->will($this->returnSelf());
@@ -43,6 +44,34 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                     'label' => 'orob2b.catalog.category.titles.label',
                     'required' => false,
                     'options' => ['constraints' => [new NotBlank()]],
+                ]
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(2))
+            ->method('add')
+            ->with(
+                'appendProducts',
+                EntityIdentifierType::NAME,
+                [
+                    'class'    => 'OroB2BProductBundle:Product',
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true,
+                ]
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(3))
+            ->method('add')
+            ->with(
+                'removeProducts',
+                EntityIdentifierType::NAME,
+                [
+                    'class'    => 'OroB2BProductBundle:Product',
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true,
                 ]
             )
             ->will($this->returnSelf());
