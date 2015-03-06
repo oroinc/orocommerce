@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class CategoryTest extends EntityTestCase
@@ -38,6 +39,9 @@ class CategoryTest extends EntityTestCase
 
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getChildCategories());
         $this->assertEmpty($category->getChildCategories()->toArray());
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getProducts());
+        $this->assertEmpty($category->getProducts()->toArray());
 
         $now = new \DateTime();
 
@@ -93,6 +97,31 @@ class CategoryTest extends EntityTestCase
         $this->assertEquals(
             [$secondCategory],
             array_values($category->getChildCategories()->toArray())
+        );
+    }
+
+    public function testProductAccessors()
+    {
+        $category = new Category();
+        $this->assertEmpty($category->getProducts()->toArray());
+
+        $firstProduct = new Product();
+        $secondProduct = new Product();
+
+        $category->addProduct($firstProduct)
+            ->addProduct($secondProduct);
+
+        $this->assertEquals(
+            [$firstProduct, $secondProduct],
+            array_values($category->getProducts()->toArray())
+        );
+
+        $category->removeProduct($firstProduct)
+            ->removeProduct($firstProduct);
+
+        $this->assertEquals(
+            [$secondProduct],
+            array_values($category->getProducts()->toArray())
         );
     }
 

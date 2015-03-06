@@ -12,6 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -139,10 +140,22 @@ class Category
      */
     protected $updatedAt;
 
+    /**
+     * @var Collection|Product[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product",
+     *      mappedBy="category",
+     *      cascade={"persist"}
+     * )
+     */
+    protected $products;
+
     public function __construct()
     {
         $this->titles = new ArrayCollection();
         $this->childCategories = new ArrayCollection();
+        $this->products = new ArrayCollection();
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
@@ -369,6 +382,41 @@ class Category
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts()
+    {
+        return $this->products;
+    }
+
+    /**
+     * @param Product $product
+     * @return $this
+     */
+    public function addProduct(Product $product)
+    {
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+            $product->setCategory($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Product $product
+     * @return $this
+     */
+    public function removeProduct(Product $product)
+    {
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+        }
 
         return $this;
     }

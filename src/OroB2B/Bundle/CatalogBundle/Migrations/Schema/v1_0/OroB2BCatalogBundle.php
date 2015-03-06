@@ -15,12 +15,12 @@ class OroB2BCatalogBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BCatalogCategoryTable($schema);
-        $this->createOrob2BCatalogCategoryTitleTable($schema);
+        $this->createOroB2BCatalogCategoryTable($schema);
+        $this->createOroB2BCatalogCategoryTitleTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BCatalogCategoryForeignKeys($schema);
-        $this->addOrob2BCatalogCategoryTitleForeignKeys($schema);
+        $this->addOroB2BCatalogCategoryForeignKeys($schema);
+        $this->addOroB2BCatalogCategoryTitleForeignKeys($schema);
     }
 
     /**
@@ -28,7 +28,7 @@ class OroB2BCatalogBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCatalogCategoryTable(Schema $schema)
+    protected function createOroB2BCatalogCategoryTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_catalog_category');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -48,7 +48,7 @@ class OroB2BCatalogBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BCatalogCategoryTitleTable(Schema $schema)
+    protected function createOroB2BCatalogCategoryTitleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_catalog_category_title');
         $table->addColumn('category_id', 'integer', []);
@@ -63,7 +63,7 @@ class OroB2BCatalogBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCatalogCategoryForeignKeys(Schema $schema)
+    protected function addOroB2BCatalogCategoryForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_catalog_category');
         $table->addForeignKeyConstraint(
@@ -79,7 +79,7 @@ class OroB2BCatalogBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BCatalogCategoryTitleForeignKeys(Schema $schema)
+    protected function addOroB2BCatalogCategoryTitleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_catalog_category_title');
         $table->addForeignKeyConstraint(
