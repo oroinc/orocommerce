@@ -62,6 +62,19 @@ class Category extends AbstractPageEntity
     /**
      * @return $this
      */
+    public function saveCategory()
+    {
+        $this->save();
+        $this->waitPageToLoad();
+        $this->waitForAjax();
+        sleep(1);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     public function assertDeleteAllowed()
     {
         $this->test->assertTrue(

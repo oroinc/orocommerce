@@ -40,7 +40,7 @@ class CategoriesTest extends Selenium2TestCase
         $categories->createCategory()
             ->assertTitle('Create Category - Categories - Catalog Management')
             ->setDefaultTitle(self::$firstCategory)
-            ->save();
+            ->saveCategory();
 
         // assert first level category created
         $categories->assertTitle('Categories - Catalog Management')
@@ -54,7 +54,7 @@ class CategoriesTest extends Selenium2TestCase
             ->createSubcategory()
             ->assertTitle('Create Category - Categories - Catalog Management')
             ->setDefaultTitle(self::$secondCategory)
-            ->save();
+            ->saveCategory();
 
         // assert second level category created
         $categories->assertTitle('Categories - Catalog Management')
