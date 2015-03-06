@@ -44,7 +44,7 @@
     {% set id = 'product-edit' %}
 
     {% set dataBlocks = [{
-            'title': 'General'|trans,
+            'title': 'orob2b.product.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
@@ -61,7 +61,7 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-            'title': 'Additional'|trans,
+            'title': 'orob2b.product.sections.additional'|trans,
             'subblocks': [{
                 'title': '',
                 'useSpan': false,
@@ -69,6 +69,15 @@
             }]
         }] ) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.product.sections.catalog'|trans,
+        'subblocks': [{
+            'data': [
+                form_row(form.category)
+            ]
+        }]
+    }] ) %}
 
     {% set data = {
         'formErrors': form_errors(form),
