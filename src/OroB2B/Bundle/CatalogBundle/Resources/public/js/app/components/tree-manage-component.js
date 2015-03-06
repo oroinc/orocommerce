@@ -10,6 +10,11 @@ define(function (require) {
         messenger = require('oroui/js/messenger'),
         BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
 
+    /**
+     * @export orob2bcatalog/js/app/components/tree-manage-component
+     * @extends orob2bcatalog.app.components.BasicTreeComponent
+     * @class orob2bcatalog.app.components.TreeManageComponent
+     */
     TreeManageComponent = BasicTreeComponent.extend({
         /**
          * @property {Boolean}

@@ -12,6 +12,10 @@ define(function (require) {
      * Options:
      * - data - tree structure in jstree json format
      * - categoryId - identifier of selected category
+     *
+     * @export orob2bcatalog/js/app/components/basic-tree-component
+     * @extends oroui.app.components.base.Component
+     * @class orob2bcatalog.app.components.BasicTreeComponent
      */
     BasicTreeComponent = BaseComponent.extend({
         /**

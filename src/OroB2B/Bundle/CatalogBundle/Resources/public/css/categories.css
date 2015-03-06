@@ -7,8 +7,11 @@
     width: 334px;
     overflow: auto;
 }
-.category {
-    padding-left: 10px
+.category-tree {
+    padding-left: 10px;
+}
+.category-tree-form-type {
+    margin-left: -10px;
 }
 .category-data {
     margin-left: 334px;
