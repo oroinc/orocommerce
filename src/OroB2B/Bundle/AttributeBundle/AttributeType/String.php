@@ -3,13 +3,13 @@
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Letters;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Url;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Email;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Letters;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Url;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 class String extends AbstractAttributeType
 {

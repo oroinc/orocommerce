@@ -85,8 +85,7 @@ class AttributeTypeConstraintType extends AbstractType
                     }
 
                     foreach ($constraints as $choice) {
-                        $choices[$choice->getAlias()] = 'orob2b.attribute.attribute_type_constraint.'
-                            . $choice->getAlias();
+                        $choices[$choice->getAlias()] = 'orob2b.validation.constraint.alias.' . $choice->getAlias();
                     }
 
                     return $choices;

@@ -28,7 +28,7 @@ class AttributeOptionRepositoryTest extends WebTestCase
     public function testCreateAttributeOptionsQueryBuilder()
     {
         $this->loadFixtures([
-            'OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadLocaleData',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
             'OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadSelectAttributeWithOptions',
         ]);
 

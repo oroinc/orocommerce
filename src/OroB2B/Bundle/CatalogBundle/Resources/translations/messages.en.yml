@@ -1,0 +1,28 @@
+orob2b:
+    catalog:
+        category:
+            entity_label:           'Category'
+            entity_plural_label:    'Categories'
+            id.label:               'ID'
+            titles.label:           'Title'
+            left.label:             'Tree left index'
+            level.label:            'Tree level'
+            right.label:            'Tree right index'
+            root.label:             'Tree root'
+            child_categories.label: 'Child categories'
+            parent_category.label:  'Parent category'
+
+        subcategory:
+            entity_label:   'Subcategory'
+
+        menu:
+            catalog_tab.label:                      'Catalog Management'
+            categories_tree.description:            'Catalog categories tree'
+            shortcut_categories_tree.description:   'View tree of categories'
+
+        controller:
+            category:
+                saved.message:  'Category has been saved'
+
+        template:
+            select_existing_or_create_new: 'Please select a category on the left or create new one.'

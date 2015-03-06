@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -55,8 +55,8 @@ class AttributeControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadLocaleData',
-            'OroB2B\Bundle\AttributeBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
         ]);
 
         // Fill locale registry by locales

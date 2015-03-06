@@ -20,14 +20,14 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\MultiSelectAttributeTypeType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedMultiselectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\NotLocalizedSelectCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Alphanumeric;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Email;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Decimal;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Letters;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Url;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\UrlSafe;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Email;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Letters;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Url;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 class AttributeTypeTest extends \PHPUnit_Framework_TestCase
 {

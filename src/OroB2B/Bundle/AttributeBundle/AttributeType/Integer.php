@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\AttributeBundle\AttributeType;
 
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\GreaterThanZero;
-use OroB2B\Bundle\AttributeBundle\Validator\Constraints\Integer as IntegerConstraint;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer as IntegerConstraint;
 
 class Integer extends AbstractAttributeType
 {

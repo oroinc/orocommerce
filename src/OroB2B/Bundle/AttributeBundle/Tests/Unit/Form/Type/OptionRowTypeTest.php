@@ -6,19 +6,20 @@ use Symfony\Component\Form\Extension\Core\CoreExtension;
 use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Form\PreloadedExtension;
 
-use OroB2B\Bundle\AttributeBundle\Form\Type\AttributePropertyFallbackType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\FallbackValueType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\HiddenFallbackValueType;
-use OroB2B\Bundle\AttributeBundle\Form\Type\LocaleCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\AttributeBundle\Form\Type\OptionRowType;
-use OroB2B\Bundle\AttributeBundle\Model\FallbackType;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\IntegerType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextType;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\AbstractLocalizedType;
 
 class OptionRowTypeTest extends AbstractLocalizedType
 {
     /**
-     * @var FallbackValueTypeTest
+     * @var OptionRowType
      */
     protected $formType;
 
@@ -47,7 +48,7 @@ class OptionRowTypeTest extends AbstractLocalizedType
                     'integer' => new IntegerType(),
                     FallbackValueType::NAME => new FallbackValueType(),
                     LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
-                    AttributePropertyFallbackType::NAME => new AttributePropertyFallbackType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType(),
                     HiddenFallbackValueType::NAME => new HiddenFallbackValueType()
                 ],
                 []
