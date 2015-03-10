@@ -102,13 +102,13 @@ datagrid:
                          ELSE
                               CASE WHEN product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
                               THEN true ELSE false END
-                         END) as in_category
+                         END) as inCategory
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
             bind_parameters:
                 - category_id
         columns:
-            in_category:
+            inCategory:
                 label:         orob2b.product.in_category.label
                 editable:      true
                 frontend_type: boolean
@@ -125,8 +125,8 @@ datagrid:
         sorters:
             multiple_sorting: true
             columns:
-                in_category:
-                    data_name: in_category
+                inCategory:
+                    data_name: inCategory
                 sku:
                     data_name: product.sku
                 createdAt:
@@ -134,7 +134,7 @@ datagrid:
                 updatedAt:
                     data_name: product.updatedAt
             default:
-                in_category: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                inCategory: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
@@ -150,7 +150,7 @@ datagrid:
         options:
             rowSelection:
                 dataField: id
-                columnName: in_category
+                columnName: inCategory
                 selectors:
                     included: '#categoryAppendProducts'
                     excluded: '#categoryRemoveProducts'
