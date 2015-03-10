@@ -115,7 +115,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         if (!array_key_exists($title, $this->categories)) {
             $this->categories[$title] = $manager->getRepository('OroB2BCatalogBundle:Category')
                 ->createQueryBuilder('category')
-                ->leftJoin('category.titles', 'title')
+                ->innerJoin('category.titles', 'title')
                 ->andWhere('title.string = :title')->setParameter('title', $title)
                 ->andWhere('title.locale IS NULL')
                 ->setMaxResults(1)
