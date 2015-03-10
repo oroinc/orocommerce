@@ -119,6 +119,8 @@ class CategoryTest extends EntityTestCase
         $category->removeProduct($firstProduct)
             ->removeProduct($firstProduct);
 
+        $this->assertEquals(null, $firstProduct->getCategory());
+
         $this->assertEquals(
             [$secondProduct],
             array_values($category->getProducts()->toArray())

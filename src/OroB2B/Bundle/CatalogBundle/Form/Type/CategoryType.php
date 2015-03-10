@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 

@@ -123,7 +123,10 @@ datagrid:
         properties:
             id: ~
         sorters:
+            multiple_sorting: true
             columns:
+                in_category:
+                    data_name: in_category
                 sku:
                     data_name: product.sku
                 createdAt:
@@ -131,6 +134,7 @@ datagrid:
                 updatedAt:
                     data_name: product.updatedAt
             default:
+                in_category: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:

@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandler
 {
