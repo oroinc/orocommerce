@@ -77,7 +77,7 @@ class ProductControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::UPDATED_SKU;
-        $category = $this->getCategoryByDefaultTitle(self::CATEGORY_NAME);
+        $category = $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME);
         $form['orob2b_product_form[category]'] = $category->getId();
 
         $this->client->followRedirects(true);
@@ -102,6 +102,11 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $crawler->html());
+        $product = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => self::UPDATED_SKU]);
+        $this->assertNotEmpty($product->getCategory());
+        $this->assertEquals(self::UPDATED_CATEGORY_NAME, $product->getCategory()->getDefaultTitle());
 
         return $id;
     }
@@ -129,7 +134,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected function getCategoryByDefaultTitle($title)
     {
-        return $this->getContainer()->get('doctrine.orm.entity_manager')
+        return $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BCatalogBundle:Category')
             ->findOneByDefaultTitle($title);
     }

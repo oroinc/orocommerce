@@ -183,8 +183,7 @@ class CategoryControllerTest extends WebTestCase
         $form['orob2b_catalog_category[titles][values][default]'] = $newTitle;
 
         $form['orob2b_catalog_category[appendProducts]']
-            = $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getId() . ', '
-            .$this->getProductBySku(LoadProductData::TEST_PRODUCT_03)->getId();
+            = $this->getProductBySku(LoadProductData::TEST_PRODUCT_03)->getId();
 
         $form['orob2b_catalog_category[removeProducts]']
             = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getId();
@@ -248,7 +247,7 @@ class CategoryControllerTest extends WebTestCase
      */
     protected function getProductBySku($sku)
     {
-        return $this->getContainer()->get('doctrine.orm.entity_manager')
+        return $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BProductBundle:Product')
             ->findOneBy(['sku' => $sku]);
     }
