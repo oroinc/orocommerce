@@ -1,6 +1,7 @@
 parameters:
     orob2b_catalog.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
     orob2b_catalog.form.type.category.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType
+    orob2b_catalog.form.type.category_tree.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType
     orob2b_catalog.category_tree_handler.class: OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler
     orob2b_catalog.category.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
@@ -9,6 +10,11 @@ services:
         class: %orob2b_catalog.form.type.category.class%
         tags:
             - { name: form.type, alias: orob2b_catalog_category }
+
+    orob2b_catalog.form.type.category_tree:
+        class: %orob2b_catalog.form.type.category_tree.class%
+        tags:
+            - { name: form.type, alias: orob2b_catalog_category_tree }
 
     orob2b_catalog.category_tree_handler:
         class: %orob2b_catalog.category_tree_handler.class%

@@ -13,11 +13,18 @@ datagrid:
                     - product.sku
                     - product.createdAt
                     - product.updatedAt
+                    - categoryTitle.string as category
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
+                join:
+                    left:
+                        - { join: product.category, alias: productCategory }
+                        - { join: productCategory.titles, alias: categoryTitle, conditionType: WITH, condition: 'categoryTitle.locale IS NULL' }
         columns:
             sku:
                 label:         orob2b.product.sku.label
+            category:
+                label:         orob2b.product.category.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -43,6 +50,8 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
+                category:
+                    data_name: categoryTitle.string
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -54,6 +63,9 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
+                category:
+                    type:      string
+                    data_name: categoryTitle.string
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt

@@ -113,6 +113,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category", inversedBy="products")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $category;
 

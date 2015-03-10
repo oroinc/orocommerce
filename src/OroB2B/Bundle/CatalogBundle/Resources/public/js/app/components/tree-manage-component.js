@@ -8,63 +8,40 @@ define(function (require) {
         mediator = require('oroui/js/mediator'),
         layout = require('oroui/js/layout'),
         messenger = require('oroui/js/messenger'),
-        BaseComponent = require('oroui/js/app/components/base/component');
-
-    require('jquery.jstree');
+        BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
 
     /**
-     * Options:
-     * - data - tree structure in jstree json format
-     * - categoryId - identifier of selected category
+     * @export orob2bcatalog/js/app/components/tree-manage-component
+     * @extends orob2bcatalog.app.components.BasicTreeComponent
+     * @class orob2bcatalog.app.components.TreeManageComponent
      */
-    TreeManageComponent = BaseComponent.extend({
-        /**
-         * @property {Number}
-         */
-        categoryId : null,
-
+    TreeManageComponent = BasicTreeComponent.extend({
         /**
          * @property {Boolean}
          */
         moveTriggered : false,
 
         /**
-         * @property {Boolean}
-         */
-        initialization : false,
-
-        /**
          * @param {Object} options
          */
         initialize: function (options) {
-            this.$tree = $(options._sourceElement);
-            var categoryList = options.data,
-                config = {
-                    'core' : {
-                        'multiple' : false,
-                        'data' : categoryList,
-                        'check_callback' : true,
-                        'themes': {
-                            'name': 'b2b'
-                        }
-                    },
-                    'state' : {
-                        'key' : 'b2b-category',
-                        'filter' : _.bind(this.onFilter, this)
-                    },
-
-                    'plugins': ['state']
-                };
-
-            if (!categoryList) {
+            TreeManageComponent.__super__.initialize.call(this, options);
+            if (!this.$tree) {
                 return;
             }
 
-            this.categoryId = options.categoryId;
+            this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
+            this.$tree.on('move_node.jstree', _.bind(this.onMove, this));
 
-            this._deferredInit();
-            this.initialization = true;
+            this._fixContainerHeight();
+        },
 
+        /**
+         * @param {Object} options
+         * @param {Object} config
+         * @returns {Object}
+         */
+        customizeTreeConfig: function(options, config) {
             if (options.dndEnabled) {
                 config.plugins.push('dnd');
                 config['dnd'] = {
@@ -72,29 +49,7 @@ define(function (require) {
                 };
             }
 
-            this.$tree.jstree(config);
-
-            this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
-            this.$tree.on('move_node.jstree', _.bind(this.onMove, this));
-
-            var self = this;
-            this.$tree.on('ready.jstree', function () {
-                self._resolveDeferredInit();
-                self.initialization = false;
-            });
-
-            this._fixContainerHeight();
-        },
-
-        /**
-         * Filters tree state
-         *
-         * @param {Object} state
-         * @returns {Object}
-         */
-        onFilter: function(state) {
-            state.core.selected = this.categoryId ? [this.categoryId] : [];
-            return state;
+            return config;
         },
 
         /**
@@ -156,8 +111,7 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        rollback: function(data)
-        {
+        rollback: function(data) {
             this.moveTriggered = true;
             this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
             this.moveTriggered = false;
