@@ -8,6 +8,7 @@ orob2b:
         category.label: Category
         owner.label: Owner
         organization.label: Organization
+        in_category.label: In category
 
         menu:
             products_tab.label: Product management
