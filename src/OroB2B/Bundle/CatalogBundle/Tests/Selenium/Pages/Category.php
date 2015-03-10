@@ -47,6 +47,7 @@ class Category extends AbstractPageEntity
         $this->test->byXPath($this->subcategoryButton)->click();
         $this->waitPageToLoad();
         $this->waitForAjax();
+        sleep(1);
 
         return new Category($this->test);
     }
@@ -57,6 +58,7 @@ class Category extends AbstractPageEntity
         $this->test->byXPath($this->deleteConfirmButton)->click();
         $this->waitPageToLoad();
         $this->waitForAjax();
+        sleep(1);
     }
 
     /**
