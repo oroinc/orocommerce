@@ -46,4 +46,19 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @param string $title
+     * @return Category|null
+     */
+    public function findOneByDefaultTitle($title)
+    {
+        return $this->createQueryBuilder('category')
+            ->innerJoin('category.titles', 'title')
+            ->andWhere('title.string = :title')->setParameter('title', $title)
+            ->andWhere('title.locale IS NULL')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

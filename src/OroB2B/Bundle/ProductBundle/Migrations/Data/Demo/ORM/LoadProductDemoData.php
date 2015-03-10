@@ -113,14 +113,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
     {
         if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] = $manager->getRepository('OroB2BCatalogBundle:Category')
-                ->createQueryBuilder('category')
-                ->innerJoin('category.titles', 'title')
-                ->andWhere('title.string = :title')->setParameter('title', $title)
-                ->andWhere('title.locale IS NULL')
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getOneOrNullResult();
+            $this->categories[$title] =
+                $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
         }
 
         return $this->categories[$title];
