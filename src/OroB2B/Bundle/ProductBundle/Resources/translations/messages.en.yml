@@ -18,6 +18,8 @@ orob2b:
 
         sections:
             general: General
+            additional: Additional
+            catalog: Master catalog
 
         widgets:
             product_information: Product Information

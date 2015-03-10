@@ -1,0 +1,20 @@
+{% block orob2b_catalog_category_tree_row %}
+    {{ block('form_row') }}
+{% endblock %}
+
+{% block orob2b_catalog_category_tree_widget %}
+    <div class="category category-tree-form-type">
+        {% set treeOptions = {
+            'data' : orob2b_category_list(),
+            'categoryId' : form.vars.value,
+            'fieldSelector': '#' ~ form.vars.id
+        } %}
+        <div
+            data-page-component-module="orob2bcatalog/js/app/components/tree-form-type-component"
+            data-page-component-options="{{ treeOptions|json_encode }}"
+        ></div>
+    </div>
+
+    {{ form_widget(form) }}
+    {{ form_errors(form) }}
+{% endblock %}
