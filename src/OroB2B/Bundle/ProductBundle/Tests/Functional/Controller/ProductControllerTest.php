@@ -6,6 +6,8 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+
 /**
  * @outputBuffering enabled
  * @dbIsolation
@@ -15,9 +17,13 @@ class ProductControllerTest extends WebTestCase
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
 
+    const CATEGORY_NAME = 'Test First Level';
+    const UPDATED_CATEGORY_NAME = 'Test Third Level 2';
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
     }
 
     public function testIndex()
@@ -37,6 +43,9 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
         $form['orob2b_product_form[owner]'] = $businessUnit;
+
+        $category = $this->getCategoryByDefaultTitle(self::CATEGORY_NAME);
+        $form['orob2b_product_form[category]'] = $category->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -60,6 +69,7 @@ class ProductControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
         $this->assertEquals(self::TEST_SKU, $result['sku']);
+        $this->assertEquals(self::CATEGORY_NAME, $result['category']);
 
         $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
@@ -67,6 +77,8 @@ class ProductControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::UPDATED_SKU;
+        $category = $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME);
+        $form['orob2b_product_form[category]'] = $category->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -90,6 +102,11 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $crawler->html());
+        $product = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BProductBundle:Product')
+            ->findOneBy(['sku' => self::UPDATED_SKU]);
+        $this->assertNotEmpty($product->getCategory());
+        $this->assertEquals(self::UPDATED_CATEGORY_NAME, $product->getCategory()->getDefaultTitle());
 
         return $id;
     }
@@ -109,5 +126,16 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    /**
+     * @param string $title
+     * @return Category|null
+     */
+    protected function getCategoryByDefaultTitle($title)
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByDefaultTitle($title);
     }
 }
