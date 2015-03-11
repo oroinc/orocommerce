@@ -21,7 +21,7 @@
                     <div class="category">
                         {% set treeOptions = {
                             'data' : orob2b_category_list(),
-                            'dndEnabled' : resource_granted('orob2b_catalog_category_update')
+                            'updateAllowed' : resource_granted('orob2b_catalog_category_update')
                         } %}
                         <div
                             data-page-component-module="orob2bcatalog/js/app/components/tree-manage-component"
@@ -30,9 +30,11 @@
                     </div>
                 </div>
                 <div class="content">
-                    <div class="text-center">
-                        {{ 'orob2b.catalog.template.select_existing_or_create_new'|trans }}
-                    </div>
+                    {% if resource_granted('orob2b_catalog_category_create') and resource_granted('orob2b_catalog_category_update') %}
+                        <div class="text-center">
+                            {{ 'orob2b.catalog.template.select_existing_or_create_new'|trans }}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
