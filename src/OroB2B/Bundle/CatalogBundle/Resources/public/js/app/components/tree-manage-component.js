@@ -19,6 +19,11 @@ define(function (require) {
         /**
          * @property {Boolean}
          */
+        updateAllowed : false,
+
+        /**
+         * @property {Boolean}
+         */
         moveTriggered : false,
 
         /**
@@ -29,6 +34,8 @@ define(function (require) {
             if (!this.$tree) {
                 return;
             }
+
+            this.updateAllowed = options.updateAllowed;
 
             this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
             this.$tree.on('move_node.jstree', _.bind(this.onMove, this));
@@ -42,7 +49,7 @@ define(function (require) {
          * @returns {Object}
          */
         customizeTreeConfig: function(options, config) {
-            if (options.dndEnabled) {
+            if (options.updateAllowed) {
                 config.plugins.push('dnd');
                 config['dnd'] = {
                     'copy' : false
@@ -59,7 +66,7 @@ define(function (require) {
          * @param {Object} selected
          */
         onSelect: function(node, selected) {
-            if (this.initialization) {
+            if (this.initialization || !this.updateAllowed) {
                 return;
             }
 

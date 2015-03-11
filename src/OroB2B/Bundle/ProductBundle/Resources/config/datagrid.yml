@@ -99,7 +99,7 @@ datagrid:
             entityHint:        product
             entity_pagination: true
         source:
-            acl_resource: orob2b_product_view
+            acl_resource: orob2b_product_update
             type:         orm
             query:
                 select:
