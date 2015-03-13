@@ -8,6 +8,7 @@ define(function (require) {
         mediator = require('oroui/js/mediator'),
         layout = require('oroui/js/layout'),
         messenger = require('oroui/js/messenger'),
+        routing = require('routing'),
         BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
 
     /**
@@ -70,7 +71,7 @@ define(function (require) {
                 return;
             }
 
-            var url = Routing.generate('orob2b_catalog_category_update', {id: selected.node.id});
+            var url = routing.generate('orob2b_catalog_category_update', {id: selected.node.id});
             mediator.execute('redirectTo', {url: url});
         },
         
@@ -95,7 +96,7 @@ define(function (require) {
             $.ajax({
                 async: false,
                 type: 'PUT',
-                url: Routing.generate('orob2b_catalog_category_move'),
+                url: routing.generate('orob2b_catalog_category_move'),
                 data: {
                     id: data.node.id,
                     parent: data.parent,
