@@ -2,17 +2,13 @@
 
 namespace OroB2B\Bundle\RedirectBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
-use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
- * @ORM\Table(name="orob2b_slug")
+ * @ORM\Table(name="orob2b_redirect_slug")
  * @ORM\Entity
  * @Config(
  *      defaultValues={

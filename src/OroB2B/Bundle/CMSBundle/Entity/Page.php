@@ -15,7 +15,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
 /**
- * @ORM\Table(name="orob2b_page")
+ * @ORM\Table(name="orob2b_cms_page")
  * @ORM\Entity
  * @Gedmo\Tree(type="nested")
  * @Config(
@@ -23,6 +23,11 @@ use OroB2B\Bundle\RedirectBundle\Entity\Slug;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-folder-close"
+ *          },
+ *         "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -158,9 +163,9 @@ class Page
      * @var Collection|Slug[]
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
-     * @ORM\JoinTable(name="orob2b_page_to_slug",
+     * @ORM\JoinTable(name="orob2b_cms_page_to_slug",
      *      joinColumns={@ORM\JoinColumn(name="page_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="slug_id", referencedColumnName="id")}
+     *      inverseJoinColumns={@ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true)}
      * )
      */
     protected $slugs;
@@ -458,7 +463,7 @@ class Page
      * @param Slug $slug
      * @return $this
      */
-    public function removeSlug(Slug $Slug)
+    public function removeSlug(Slug $slug)
     {
         if ($this->slugs->contains($slug)) {
             $this->slugs->removeElement($slug);
