@@ -1,7 +1,5 @@
 parameters:
-#    oro_b2_b_cms.example.class: OroB2B\Bundle\CmsBundle\Example
+    orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
 
 services:
-#    oro_b2_b_cms.example:
-#        class: %oro_b2_b_cms.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    #

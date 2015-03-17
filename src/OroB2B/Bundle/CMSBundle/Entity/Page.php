@@ -67,7 +67,7 @@ class Page
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="curent_slug_id", referencedColumnName="id")
+     *   @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
      */
     protected $currentSlug;
@@ -250,7 +250,7 @@ class Page
     /**
      * Set current slug
      *
-     * @param Slug $curentSlug
+     * @param Slug $currentSlug
      * @return Issue
      */
     public function setCurrentSlug(Slug $currentSlug = null)
