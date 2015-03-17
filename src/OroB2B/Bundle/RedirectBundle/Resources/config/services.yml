@@ -1,3 +1,5 @@
 parameters:
+    orob2b_redirect.slug.class: OroB2B\Bundle\RedirectBundle\Entity\Slug
 
 services:
+    #
