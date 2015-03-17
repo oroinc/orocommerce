@@ -1,5 +1,12 @@
 parameters:
     orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
+    orob2b_cms.kernel.listener.process_redirects.class: OroB2B\Bundle\CMSBundle\EventListener\CmsRouterListener
 
 services:
-    #
+    orob2b_cms.kernel.listener.process_redirects:
+        class: %orob2b_cms.kernel.listener.process_redirects.class%
+        arguments:
+            - @router
+            - @doctrine
+        tags:
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 33}
