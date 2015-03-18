@@ -15,12 +15,12 @@ class OroB2BCMSBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BCMSPageTable($schema);
-        $this->createOroB2BCMSPageSlugTable($schema);
+        $this->createOrob2BCmsPageTable($schema);
+        $this->createOrob2BCmsPageToSlugTable($schema);
 
         /** Foreign keys generation **/
-        $this->createOroB2BCMSPageForeignKeys($schema);
-        $this->createOroB2BCMSPageSlugForeignKeys($schema);
+        $this->addOrob2BCmsPageForeignKeys($schema);
+        $this->addOrob2BCmsPageToSlugForeignKeys($schema);
     }
 
     /**
@@ -28,24 +28,22 @@ class OroB2BCMSBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCMSPageTable(Schema $schema)
+    protected function createOrob2BCmsPageTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cms_page');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
-        $table->addColumn('current_slug_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('current_slug_id', 'integer', ['notnull' => false]);
+        $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('title', 'string', ['length' => 255]);
-        $table->addColumn('content', 'text');
+        $table->addColumn('content', 'text', []);
         $table->addColumn('tree_left', 'integer', []);
         $table->addColumn('tree_level', 'integer', []);
         $table->addColumn('tree_right', 'integer', []);
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-
         $table->addIndex(['parent_id'], 'idx_64a9fc9e2aaa38', []);
         $table->addIndex(['current_slug_id'], 'idx_630cccaba7bf3f', []);
         $table->addIndex(['organization_id'], 'idx_af6a6ae1a9aa6f', []);
@@ -56,13 +54,12 @@ class OroB2BCMSBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCMSPageSlugTable(Schema $schema)
+    protected function createOrob2BCmsPageToSlugTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_cms_page_to_slug');
         $table->addColumn('page_id', 'integer', []);
         $table->addColumn('slug_id', 'integer', []);
         $table->setPrimaryKey(['page_id', 'slug_id']);
-
         $table->addIndex(['page_id'], 'idx_5c529a7f4e8a67', []);
         $table->addIndex(['slug_id'], 'idx_3da2af4fc13a17', []);
     }
@@ -72,14 +69,14 @@ class OroB2BCMSBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCMSPageForeignKeys(Schema $schema)
+    protected function addOrob2BCmsPageForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cms_page');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_cms_page'),
-            ['parent_id'],
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_redirect_slug'),
@@ -88,10 +85,10 @@ class OroB2BCMSBundle implements Migration
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
-            ['organization_id'],
+            $schema->getTable('orob2b_cms_page'),
+            ['parent_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -100,18 +97,18 @@ class OroB2BCMSBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BCMSPageSlugForeignKeys(Schema $schema)
+    protected function addOrob2BCmsPageToSlugForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_cms_page_to_slug');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_cms_page'),
-            ['page_id'],
+            $schema->getTable('orob2b_redirect_slug'),
+            ['slug_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_redirect_slug'),
-            ['slug_id'],
+            $schema->getTable('orob2b_cms_page'),
+            ['page_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

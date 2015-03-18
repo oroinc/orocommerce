@@ -13,8 +13,8 @@ class RedirectDefaultValueTest extends EntityTestCase
         $properties = [
             ['id', 1],
             ['url', 'test/page'],
-            ['routeName', 'page/1'],
-            ['routeParameters', '[]'],
+            ['routeName', 'orob2b_cms_page_view'],
+            ['routeParameters', array('id' => 1)],
         ];
 
         $this->assertPropertyAccessors(new Slug(), $properties);

@@ -19,10 +19,12 @@ use OroB2B\Bundle\RedirectBundle\Entity\Slug;
  * @ORM\Entity
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_catalog_category_index",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-folder-close"
+ *              "icon"="icon-book"
+ *          },
+  *          "dataaudit"={
+ *              "auditable"=true
  *          },
  *         "ownership"={
  *              "owner_type"="ORGANIZATION",
@@ -52,6 +54,13 @@ class Page
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $title;
 
@@ -59,6 +68,13 @@ class Page
      * @var string
      *
      * @ORM\Column(type="text")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $content;
 
@@ -69,6 +85,13 @@ class Page
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $currentSlug;
 
@@ -228,7 +251,7 @@ class Page
      * Set organization
      *
      * @param Organization $organization
-     * @return Issue
+     * @return $this
      */
     public function setOrganization(Organization $organization = null)
     {
@@ -251,9 +274,9 @@ class Page
      * Set current slug
      *
      * @param Slug $currentSlug
-     * @return Issue
+     * @return $this
      */
-    public function setCurrentSlug(Slug $currentSlug = null)
+    public function setCurrentSlug(Slug $currentSlug)
     {
         $this->currentSlug = $currentSlug;
 
@@ -271,14 +294,6 @@ class Page
     }
 
     /**
-     * @return int
-     */
-    public function getLeft()
-    {
-        return $this->left;
-    }
-
-    /**
      * @param int $left
      * @return $this
      */
@@ -292,9 +307,9 @@ class Page
     /**
      * @return int
      */
-    public function getLevel()
+    public function getLeft()
     {
-        return $this->level;
+        return $this->left;
     }
 
     /**
@@ -311,9 +326,9 @@ class Page
     /**
      * @return int
      */
-    public function getRight()
+    public function getLevel()
     {
-        return $this->right;
+        return $this->level;
     }
 
     /**
@@ -328,14 +343,6 @@ class Page
     }
 
     /**
-     * @return int
-     */
-    public function getRoot()
-    {
-        return $this->root;
-    }
-
-    /**
      * @param int $root
      * @return $this
      */
@@ -347,11 +354,19 @@ class Page
     }
 
     /**
-     * @return Page
+     * @return int
      */
-    public function getParentPage()
+    public function getRight()
     {
-        return $this->parentPage;
+        return $this->right;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRoot()
+    {
+        return $this->root;
     }
 
     /**
@@ -363,6 +378,14 @@ class Page
         $this->parentPage = $parentPage;
 
         return $this;
+    }
+
+    /**
+     * @return Page
+     */
+    public function getParentPage()
+    {
+        return $this->parentPage;
     }
 
     /**
