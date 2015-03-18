@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use OroB2B\Component\Tree\GedmoTreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_cms_page")
@@ -41,6 +42,8 @@ use OroB2B\Bundle\RedirectBundle\Entity\Slug;
  */
 class Page
 {
+    use GedmoTreeTrait;
+
     /**
      * @var integer
      *
@@ -104,38 +107,6 @@ class Page
      * })
      */
     private $organization;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLeft
-     * @ORM\Column(name="tree_left", type="integer")
-     */
-    protected $left;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLevel
-     * @ORM\Column(name="tree_level", type="integer")
-     */
-    protected $level;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRight
-     * @ORM\Column(name="tree_right", type="integer")
-     */
-    protected $right;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRoot
-     * @ORM\Column(name="tree_root", type="integer", nullable=true)
-     */
-    protected $root;
 
     /**
      * @var Page
@@ -291,82 +262,6 @@ class Page
     public function getCurrentSlug()
     {
         return $this->currentSlug;
-    }
-
-    /**
-     * @param int $left
-     * @return $this
-     */
-    public function setLeft($left)
-    {
-        $this->left = $left;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLeft()
-    {
-        return $this->left;
-    }
-
-    /**
-     * @param int $level
-     * @return $this
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * @param int $right
-     * @return $this
-     */
-    public function setRight($right)
-    {
-        $this->right = $right;
-
-        return $this;
-    }
-
-    /**
-     * @param int $root
-     * @return $this
-     */
-    public function setRoot($root)
-    {
-        $this->root = $root;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRight()
-    {
-        return $this->right;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRoot()
-    {
-        return $this->root;
     }
 
     /**
