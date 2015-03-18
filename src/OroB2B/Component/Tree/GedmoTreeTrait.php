@@ -8,7 +8,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 trait GedmoTreeTrait
 {
-	/**
+    /**
      * @var integer
      *
      * @Gedmo\TreeLeft
