@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Component\Tree\GedmoTreeTrait;
+use OroB2B\Component\Tree\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -35,7 +35,7 @@ use OroB2B\Component\Tree\GedmoTreeTrait;
  */
 class Category
 {
-    use GedmoTreeTrait;
+    use TreeTrait;
 
     /**
      * @var integer

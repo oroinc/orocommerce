@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 
-trait GedmoTreeTrait
+trait TreeTrait
 {
     /**
      * @var integer
