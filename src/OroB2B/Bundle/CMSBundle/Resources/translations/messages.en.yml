@@ -1,0 +1,17 @@
+orob2b:
+    cms:
+        page:
+            entity_label:           'Page'
+            entity_plural_label:    'Pages'
+            id.label:               'ID'
+            title.label:            'Title'
+            content.label:          'Content'
+            organization.label:     'Organization'
+            current_slug.label:     'Current slug'
+            left.label:             'Tree left index'
+            level.label:            'Tree level'
+            right.label:            'Tree right index'
+            root.label:             'Tree root'
+            child_pages.label:      'Child pages'
+            parent_page.label:      'Parent page'
+            slugs.label:            'Slugs'

@@ -1,0 +1,5 @@
+parameters:
+    orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
+
+services:
+    #
