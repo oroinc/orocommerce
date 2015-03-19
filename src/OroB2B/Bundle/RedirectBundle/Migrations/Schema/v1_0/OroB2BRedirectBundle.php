@@ -15,7 +15,7 @@ class OroB2BRedirectBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BRedirectSlugTable($schema);
+        $this->createOrob2BRedirectSlugTable($schema);
     }
 
     /**
@@ -23,13 +23,13 @@ class OroB2BRedirectBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BRedirectSlugTable(Schema $schema)
+    protected function createOrob2BRedirectSlugTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('url', 'string', ['length' => 255]);
+        $table->addColumn('url', 'string', ['length' => 1024]);
         $table->addColumn('route_name', 'string', ['length' => 255]);
-        $table->addColumn('route_parameters', 'string', ['length' => 255]);
+        $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
     }
 }

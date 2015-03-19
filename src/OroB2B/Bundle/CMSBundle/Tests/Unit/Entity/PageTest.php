@@ -25,7 +25,6 @@ class PageTest extends EntityTestCase
             ['parentPage', new Page()],
             ['parentPage', null],
             ['currentSlug', new Slug()],
-            ['currentSlug', null],
             ['organization', new Organization()],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
