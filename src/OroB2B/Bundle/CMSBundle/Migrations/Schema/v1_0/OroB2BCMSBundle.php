@@ -61,7 +61,7 @@ class OroB2BCMSBundle implements Migration
         $table->addColumn('slug_id', 'integer', []);
         $table->setPrimaryKey(['page_id', 'slug_id']);
         $table->addIndex(['page_id'], 'idx_5c529a7f4e8a67', []);
-        $table->addIndex(['slug_id'], 'idx_3da2af4fc13a17', []);
+        $table->addUniqueIndex(['slug_id'], 'UNIQ_CB7C4340311966CE', []);
     }
 
     /**
@@ -82,7 +82,7 @@ class OroB2BCMSBundle implements Migration
             $schema->getTable('orob2b_redirect_slug'),
             ['current_slug_id'],
             ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_cms_page'),
@@ -101,14 +101,14 @@ class OroB2BCMSBundle implements Migration
     {
         $table = $schema->getTable('orob2b_cms_page_to_slug');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_redirect_slug'),
-            ['slug_id'],
+            $schema->getTable('orob2b_cms_page'),
+            ['page_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_cms_page'),
-            ['page_id'],
+            $schema->getTable('orob2b_redirect_slug'),
+            ['slug_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

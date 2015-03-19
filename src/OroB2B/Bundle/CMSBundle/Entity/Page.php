@@ -158,8 +158,12 @@ class Page
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
      * @ORM\JoinTable(name="orob2b_cms_page_to_slug",
-     *      joinColumns={@ORM\JoinColumn(name="page_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true)}
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
+     *      }
      * )
      */
     protected $slugs;
