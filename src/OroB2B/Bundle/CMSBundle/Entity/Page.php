@@ -13,16 +13,19 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use OroB2B\Component\Tree\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_cms_page")
  * @ORM\Entity
  * @Gedmo\Tree(type="nested")
  * @Config(
- *      routeName="orob2b_catalog_category_index",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-folder-close"
+ *              "icon"="icon-book"
+ *          },
+  *         "dataaudit"={
+ *              "auditable"=true
  *          },
  *         "ownership"={
  *              "owner_type"="ORGANIZATION",
@@ -39,6 +42,8 @@ use OroB2B\Bundle\RedirectBundle\Entity\Slug;
  */
 class Page
 {
+    use TreeTrait;
+
     /**
      * @var integer
      *
@@ -52,6 +57,13 @@ class Page
      * @var string
      *
      * @ORM\Column(type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $title;
 
@@ -59,6 +71,13 @@ class Page
      * @var string
      *
      * @ORM\Column(type="text")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $content;
 
@@ -67,8 +86,15 @@ class Page
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
+     *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $currentSlug;
 
@@ -77,42 +103,10 @@ class Page
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     *     @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      * })
      */
     private $organization;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLeft
-     * @ORM\Column(name="tree_left", type="integer")
-     */
-    protected $left;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeLevel
-     * @ORM\Column(name="tree_level", type="integer")
-     */
-    protected $level;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRight
-     * @ORM\Column(name="tree_right", type="integer")
-     */
-    protected $right;
-
-    /**
-     * @var integer
-     *
-     * @Gedmo\TreeRoot
-     * @ORM\Column(name="tree_root", type="integer", nullable=true)
-     */
-    protected $root;
 
     /**
      * @var Page
@@ -164,8 +158,12 @@ class Page
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
      * @ORM\JoinTable(name="orob2b_cms_page_to_slug",
-     *      joinColumns={@ORM\JoinColumn(name="page_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true)}
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="slug_id", referencedColumnName="id", unique=true, onDelete="CASCADE")
+     *      }
      * )
      */
     protected $slugs;
@@ -228,7 +226,7 @@ class Page
      * Set organization
      *
      * @param Organization $organization
-     * @return Issue
+     * @return $this
      */
     public function setOrganization(Organization $organization = null)
     {
@@ -251,9 +249,9 @@ class Page
      * Set current slug
      *
      * @param Slug $currentSlug
-     * @return Issue
+     * @return $this
      */
-    public function setCurrentSlug(Slug $currentSlug = null)
+    public function setCurrentSlug(Slug $currentSlug)
     {
         $this->currentSlug = $currentSlug;
 
@@ -271,77 +269,12 @@ class Page
     }
 
     /**
-     * @return int
-     */
-    public function getLeft()
-    {
-        return $this->left;
-    }
-
-    /**
-     * @param int $left
+     * @param Page|null $parentPage
      * @return $this
      */
-    public function setLeft($left)
+    public function setParentPage(Page $parentPage = null)
     {
-        $this->left = $left;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getLevel()
-    {
-        return $this->level;
-    }
-
-    /**
-     * @param int $level
-     * @return $this
-     */
-    public function setLevel($level)
-    {
-        $this->level = $level;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRight()
-    {
-        return $this->right;
-    }
-
-    /**
-     * @param int $right
-     * @return $this
-     */
-    public function setRight($right)
-    {
-        $this->right = $right;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRoot()
-    {
-        return $this->root;
-    }
-
-    /**
-     * @param int $root
-     * @return $this
-     */
-    public function setRoot($root)
-    {
-        $this->root = $root;
+        $this->parentPage = $parentPage;
 
         return $this;
     }
@@ -352,17 +285,6 @@ class Page
     public function getParentPage()
     {
         return $this->parentPage;
-    }
-
-    /**
-     * @param Page|null $parentPage
-     * @return $this
-     */
-    public function setParentPage(Page $parentPage = null)
-    {
-        $this->parentPage = $parentPage;
-
-        return $this;
     }
 
     /**
