@@ -122,4 +122,18 @@ class PageTest extends EntityTestCase
 
         $this->assertEquals($value, (string)$page);
     }
+
+    public function testSetCurrentSlug()
+    {
+        $page = new Page();
+
+        $this->assertEmpty($page->getCurrentSlug());
+        $this->assertEmpty($page->getSlugs()->toArray());
+
+        $slug = new Slug();
+        $page->setCurrentSlug($slug);
+
+        $this->assertEquals($slug, $page->getCurrentSlug());
+        $this->assertEquals([$slug], $page->getSlugs()->toArray());
+    }
 }

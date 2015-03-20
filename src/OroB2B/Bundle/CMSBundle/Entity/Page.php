@@ -86,7 +86,7 @@ class Page
     /**
      * @var Slug
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
@@ -158,7 +158,11 @@ class Page
     /**
      * @var Collection|Slug[]
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
      * @ORM\JoinTable(name="orob2b_cms_page_to_slug",
      *      joinColumns={
      *          @ORM\JoinColumn(name="page_id", referencedColumnName="id", onDelete="CASCADE")
@@ -256,6 +260,7 @@ class Page
     public function setCurrentSlug(Slug $currentSlug)
     {
         $this->currentSlug = $currentSlug;
+        $this->addSlug($currentSlug);
 
         return $this;
     }
