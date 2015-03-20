@@ -20,11 +20,13 @@ use OroB2B\Component\Tree\TreeTrait;
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
+ *      routeName="orob2b_cms_page_index",
+ *      routeView="orob2b_cms_page_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-book"
  *          },
-  *         "dataaudit"={
+ *          "dataaudit"={
  *              "auditable"=true
  *          },
  *         "ownership"={

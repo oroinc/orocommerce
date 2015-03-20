@@ -60,6 +60,12 @@
 {% block content_data %}
     {% set id = 'page-edit' %}
 
+    {% set pageContent %}
+        <div class="page-content-editor">
+            {{ form_widget(form.content) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.cms.sections.general'|trans,
@@ -76,9 +82,7 @@
             'title': 'orob2b.cms.sections.content'|trans,
             'subblocks': [{
                 'title': '',
-                'data': [
-                    form_widget(form.content)
-                ]
+                'data': [pageContent]
             }]
         }
     ] %}

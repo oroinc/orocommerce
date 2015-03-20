@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -76,13 +77,17 @@ class PageController extends Controller
      *      permission="CREATE"
      * )
      *
-     * @param Page|null $parentPage
+     * @param int|null $id
      * @return array|RedirectResponse
      */
-    public function createAction(Page $parentPage = null)
+    public function createAction($id)
     {
         $page = new Page();
-        if ($parentPage) {
+        if ($id) {
+            $parentPage = $this->getDoctrine()->getRepository('OroB2BCMSBundle:Page')->find($id);
+            if (!$parentPage) {
+                throw new \LogicException(sprintf('Page with identifier %s does not exist', $id));
+            }
             $page->setParentPage($parentPage);
         }
 
@@ -123,16 +128,16 @@ class PageController extends Controller
             $page,
             $form,
             function (Page $page) {
-                return array(
+                return [
                     'route' => 'orob2b_cms_page_update',
                     'parameters' => ['id' => $page->getId()]
-                );
+                ];
             },
             function (Page $page) {
-                return array(
+                return [
                     'route' => 'orob2b_cms_page_view',
                     'parameters' => ['id' => $page->getId()]
-                );
+                ];
             },
             $this->get('translator')->trans('orob2b.cms.controller.page.saved.message'),
             $handler
