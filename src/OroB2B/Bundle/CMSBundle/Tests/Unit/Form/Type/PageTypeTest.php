@@ -57,7 +57,6 @@ class PageTypeTest extends \PHPUnit_Framework_TestCase
                 [
                     'label' => 'orob2b.cms.page.content.label',
                     'required' => false,
-                    'wysiwyg_options' => ['width' => 800, 'height' => 400]
                 ]
             )
             ->will($this->returnSelf());
