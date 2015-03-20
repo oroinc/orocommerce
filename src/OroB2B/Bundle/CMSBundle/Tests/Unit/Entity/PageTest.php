@@ -52,8 +52,10 @@ class PageTest extends EntityTestCase
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $page->getChildPages());
         $this->assertEmpty($page->getChildPages()->toArray());
 
+        $slug = new Slug();
+        $slug->setUrl('/');
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $page->getSlugs());
-        $this->assertEmpty($page->getSlugs()->toArray());
+        $this->assertEquals([$slug], $page->getSlugs()->toArray());
 
         $now = new \DateTime();
 
@@ -107,8 +109,11 @@ class PageTest extends EntityTestCase
 
     public function testSlugAccessors()
     {
+        $emptySlug = new Slug();
+        $emptySlug->setUrl('/');
+
         $page = new Page();
-        $this->assertEmpty($page->getSlugs()->toArray());
+        $this->assertEquals([$emptySlug], $page->getSlugs()->toArray());
 
         $firstSlug = new Slug();
         $secondSlug = new Slug();
@@ -117,7 +122,7 @@ class PageTest extends EntityTestCase
             ->addSlug($secondSlug);
 
         $this->assertEquals(
-            [$firstSlug, $secondSlug],
+            [$emptySlug, $firstSlug, $secondSlug],
             array_values($page->getSlugs()->toArray())
         );
 
@@ -125,7 +130,7 @@ class PageTest extends EntityTestCase
             ->removeSlug($firstSlug);
 
         $this->assertEquals(
-            [$secondSlug],
+            [$emptySlug, $secondSlug],
             array_values($page->getSlugs()->toArray())
         );
     }
@@ -151,17 +156,20 @@ class PageTest extends EntityTestCase
 
     public function testSetCurrentSlug()
     {
+        $emptySlug = new Slug();
+        $emptySlug->setUrl('/');
+
         $page = new Page();
 
-        $this->assertEmpty($page->getCurrentSlug());
-        $this->assertEmpty($page->getSlugs()->toArray());
+        $this->assertEquals('/', $page->getCurrentSlug()->getUrl());
+        $this->assertEquals([$emptySlug], $page->getSlugs()->toArray());
 
         $slug = new Slug();
         $slug->setUrl('test');
         $page->setCurrentSlug($slug);
 
         $this->assertEquals($slug, $page->getCurrentSlug());
-        $this->assertEquals([$slug], $page->getSlugs()->toArray());
+        $this->assertEquals([$emptySlug, $slug], $page->getSlugs()->toArray());
     }
 
     public function testSetCurrentSlugUrl()
@@ -185,31 +193,5 @@ class PageTest extends EntityTestCase
         $rootPage->setCurrentSlugUrl('root-altered');
         $this->assertEquals('/root-altered', $rootPage->getCurrentSlugUrl());
         $this->assertEquals('/root-altered/first-altered', $childPage->getCurrentSlugUrl());
-    }
-
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Current slug is not defined
-     */
-    public function testSetCurrentSlugUrlNoSlug()
-    {
-        $page = new Page();
-        $page->setCurrentSlugUrl('test');
-    }
-
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Current slug is not defined
-     */
-    public function testSetCurrentSlugUrlNoParentPageSlug()
-    {
-        $slug = new Slug();
-        $slug->setUrl('/test');
-
-        $rootPage = new Page();
-
-        $childPage = new Page();
-        $childPage->setCurrentSlug($slug)
-            ->setParentPage($rootPage);
     }
 }

@@ -180,6 +180,8 @@ class Page
         $this->childPages = new ArrayCollection();
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->setCurrentSlug(new Slug());
     }
 
     /**
@@ -281,7 +283,6 @@ class Page
      */
     public function setCurrentSlugUrl($url)
     {
-        $this->assertSlugIsDefined($this->currentSlug);
         $this->currentSlug->setUrl($url);
         $this->refreshSlugUrls();
     }
@@ -445,27 +446,14 @@ class Page
     {
         $parentSlugUrl = '';
         if ($this->parentPage) {
-            $this->assertSlugIsDefined($this->parentPage->currentSlug);
             $parentSlugUrl = $this->parentPage->currentSlug->getUrl();
         }
-
-        $this->assertSlugIsDefined($this->currentSlug);
 
         $slugUrl = $this->currentSlug->getSlugUrl();
         $this->currentSlug->setUrl($parentSlugUrl . Slug::DELIMITER . $slugUrl);
 
         foreach ($this->childPages as $childPage) {
             $childPage->refreshSlugUrls();
-        }
-    }
-
-    /**
-     * @param Slug|null $slug
-     */
-    protected function assertSlugIsDefined($slug)
-    {
-        if (!$slug) {
-            throw new \LogicException('Current slug is not defined');
         }
     }
 }
