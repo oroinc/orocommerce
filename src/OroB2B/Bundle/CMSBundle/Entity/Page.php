@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
-use OroB2B\Component\Tree\GedmoTreeTrait;
+use OroB2B\Component\Tree\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_cms_page")
@@ -24,7 +24,7 @@ use OroB2B\Component\Tree\GedmoTreeTrait;
  *          "entity"={
  *              "icon"="icon-book"
  *          },
-  *          "dataaudit"={
+  *         "dataaudit"={
  *              "auditable"=true
  *          },
  *         "ownership"={
@@ -42,7 +42,7 @@ use OroB2B\Component\Tree\GedmoTreeTrait;
  */
 class Page
 {
-    use GedmoTreeTrait;
+    use TreeTrait;
 
     /**
      * @var integer
@@ -86,7 +86,7 @@ class Page
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
+     *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
      * @ConfigField(
      *      defaultValues={
@@ -103,7 +103,7 @@ class Page
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     *     @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      * })
      */
     private $organization;
