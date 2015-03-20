@@ -1,0 +1,37 @@
+oro_menu_config:
+    items:
+        cms_tab:
+            label:           'orob2b.cms.menu.cms_tab.label'
+            uri:             '#'
+            extras:
+                icon:        icon-book
+                position:    25
+
+        pages_list:
+            label:           'orob2b.cms.page.entity_plural_label'
+            route:           'orob2b_cms_page_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_cms_page/']
+                description: 'orob2b.cms.menu.pages_list.description'
+
+        shortcut_pages_list:
+            label:           'orob2b.cms.page.entity_plural_label'
+            route:           'orob2b_cms_page_index'
+            extras:
+                description: 'orob2b.cms.menu.shortcut_pages_list.description'
+    tree:
+        application_menu:
+            children:
+                cms_tab:
+                    children:
+                        pages_list: ~
+        shortcuts:
+            children:
+                shortcut_pages_list: ~
+
+oro_titles:
+    orob2b_cms_page_index:  ~
+    orob2b_cms_page_view:   '%%title%%'
+    orob2b_cms_page_update: '%%title%% - Edit'
+    orob2b_cms_page_create: 'Create Page'

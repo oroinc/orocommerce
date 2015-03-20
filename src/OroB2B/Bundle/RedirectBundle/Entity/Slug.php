@@ -52,7 +52,7 @@ class Slug
      *
      * @ORM\Column(name="route_parameters", type="array")
      */
-    protected $routeParameters;
+    protected $routeParameters = [];
 
     /**
      * @return integer
