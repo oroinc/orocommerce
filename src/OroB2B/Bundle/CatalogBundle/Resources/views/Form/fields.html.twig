@@ -5,8 +5,9 @@
 {% block orob2b_catalog_category_tree_widget %}
     <div class="category category-tree-form-type">
         {% set treeOptions = {
+            'key' : 'b2b-category',
             'data' : orob2b_category_list(),
-            'categoryId' : form.vars.value,
+            'nodeId' : form.vars.value,
             'fieldSelector': '#' ~ form.vars.id
         } %}
         <div
