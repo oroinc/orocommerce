@@ -49,11 +49,9 @@
     {% endset %}
 
     {% set pageContent %}
-        <div class="widget-content">
-            <div class="row-fluid form-horizontal">
-                <div class="responsive-block">
-                    {{ entity.content|raw }}
-                </div>
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ entity.content|raw }}
             </div>
         </div>
     {% endset %}

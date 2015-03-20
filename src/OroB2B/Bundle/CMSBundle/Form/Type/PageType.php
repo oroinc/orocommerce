@@ -44,7 +44,6 @@ class PageType extends AbstractType
                 [
                     'label' => 'orob2b.cms.page.content.label',
                     'required' => false,
-                    'wysiwyg_options' => ['width' => 800, 'height' => 400]
                 ]
             );
     }
