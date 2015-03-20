@@ -17,7 +17,7 @@ use OroB2B\Component\Tree\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_cms_page")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @Gedmo\Tree(type="nested")
  * @Config(
  *      defaultValues={

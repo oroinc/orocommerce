@@ -1,0 +1,11 @@
+parameters:
+    orob2b_cms.twig.page_extension.class: OroB2B\Bundle\CMSBundle\Twig\PageExtension
+
+services:
+    # Twig extensions
+    orob2b_cms.twig.page_extension:
+        class: %orob2b_cms.twig.page_extension.class%
+        arguments:
+            - @orob2b_cms.page_tree_handler
+        tags:
+            - { name: twig.extension }

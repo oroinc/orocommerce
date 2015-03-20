@@ -16,7 +16,7 @@ orob2b.cms:
         slugs.label:            'Slugs'
     child_page:
         entity_label:           'Child page'
-        
+
     controller:
         page.saved.message: 'Page has been saved'
 
@@ -28,3 +28,6 @@ orob2b.cms:
     sections:
         general: 'General'
         content: 'Content'
+
+    template:
+        select_existing_or_create_new: 'Please select a page on the left or create new one.'

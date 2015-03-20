@@ -74,5 +74,21 @@
     {% set id = 'pageView' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
-    {{ parent() }}
+    <div class="page-container">
+        <div class="page b2b-tree page-tree">
+            {% set treeOptions = {
+                'key' : 'b2b-page',
+                'data' : orob2b_page_list(),
+                'nodeId' : entity.id,
+                'updateAllowed' : resource_granted('orob2b_cms_page_update')
+            } %}
+            <div
+                data-page-component-module="orob2bcms/js/app/components/tree-manage-component"
+                data-page-component-options="{{ treeOptions|json_encode }}"
+            ></div>
+        </div>
+    </div>
+    <div class="page-data">
+        {{ parent() }}
+    </div>
 {% endblock content_data %}
