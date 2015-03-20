@@ -45,7 +45,7 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(name="route_name", type="string", length=255)
+     * @ORM\Column(name="route_name", type="string", length=255, nullable=true)
      */
     protected $routeName;
 

@@ -86,7 +86,7 @@ class Page
     /**
      * @var Slug
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
