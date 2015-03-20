@@ -1,0 +1,12 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set pageTitle = 'orob2b.cms.page.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_cms_page_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_cms_page_create'),
+            'entity_label': 'orob2b.cms.page.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
