@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-folder-close"
+ *              "icon"="icon-share-sign"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -36,7 +36,7 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=1024)
      */
     protected $url;
 
@@ -50,7 +50,7 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(name="route_parameters", type="string", length=255)
+     * @ORM\Column(name="route_parameters", type="array")
      */
     protected $routeParameters;
 
@@ -101,7 +101,7 @@ class Slug
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function getRouteParameters()
     {
@@ -109,7 +109,7 @@ class Slug
     }
 
     /**
-     * @param string $routeParameters
+     * @param array $routeParameters
      * @return $this
      */
     public function setRouteParameters($routeParameters)
@@ -117,5 +117,13 @@ class Slug
         $this->routeParameters = $routeParameters;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getUrl();
     }
 }
