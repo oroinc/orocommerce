@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\RedirectBundle\Manager;
 
-use Doctrine\Bundle\DoctrineBundle\Registry as Doctrine;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
@@ -10,18 +10,18 @@ use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 class SlugManager
 {
     /**
-     *  @var Doctrine
+     * @var ManagerRegistry
      */
-    private $doctrine;
+    protected $managerRegistry;
 
     /**
      * Constructor
      *
-     * @param Doctrine $doctrine
+     * @param ManagerRegistry $managerRegistry
      */
-    public function __construct(Doctrine $doctrine)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
-        $this->doctrine = $doctrine;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -29,43 +29,42 @@ class SlugManager
      *
      * @return EntityManager
      */
-    public function getEntityManager()
+    protected function getEntityManager()
     {
-        return $this->doctrine->getManager();
+        return $this->managerRegistry->getManager();
     }
 
     /**
      * Set unique url for Slug entity
      *
-     * @param string $url
-     * @return string
+     * @param Slug $slug
      */
-    public function setUniqueUrlForSlug(Slug $slug)
+    public function makeUrlUnique(Slug $slug)
     {
-        $existedSlug = $this->findSlugByUrl($slug->getUrl());
-        if (null !== $existedSlug && $existedSlug->getId() !== $slug->getId()) {
-            $incrementUrl = $this->incrementUrl($slug->getUrl());
+        $existingSlug = $this->findSlugByUrl($slug->getUrl());
+        if (null !== $existingSlug && $existingSlug->getId() !== $slug->getId()) {
+            $incrementedUrl = $this->incrementUrl($slug->getUrl());
 
-            while (null !== $this->findSlugByUrl($incrementUrl)) {
-                $incrementUrl = $this->incrementUrl($incrementUrl);
+            while (null !== $this->findSlugByUrl($incrementedUrl)) {
+                $incrementedUrl = $this->incrementUrl($incrementedUrl);
             }
 
-            $slug->setUrl($incrementUrl);
+            $slug->setUrl($incrementedUrl);
         }
     }
 
     /**
      * Check is Slug url exists
      *
-     * @param Slug $slug
-     * @return bool
+     * @param string $url
+     * @return Slug|null
      */
-    public function findSlugByUrl($url)
+    protected function findSlugByUrl($url)
     {
         return $this
             ->getEntityManager()
             ->getRepository('OroB2BRedirectBundle:Slug')
-            ->findOneByUrl($url);
+            ->findOneBy(['url' => $url]);
     }
 
     /**
@@ -74,16 +73,16 @@ class SlugManager
      * @param string $url
      * @return string
      */
-    public function incrementUrl($url)
+    protected function incrementUrl($url)
     {
         $version = 0;
 
-        if (preg_match('/(.*)-(\d*)$/', $url, $matches)) {
+        if (preg_match('/(.*)-(\d+)$/', $url, $matches)) {
             $url     = $matches[1];
             $version = $matches[2];
         }
 
-        $version += 1;
+        $version++;
 
         return sprintf('%s-%d', $url, $version);
     }
