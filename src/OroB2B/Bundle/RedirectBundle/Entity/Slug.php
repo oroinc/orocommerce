@@ -24,6 +24,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  */
 class Slug
 {
+    const DELIMITER = '/';
+
     /**
      * @var integer
      *
@@ -43,7 +45,7 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(name="route_name", type="string", length=255)
+     * @ORM\Column(name="route_name", type="string", length=255, nullable=true)
      */
     protected $routeName;
 
@@ -68,6 +70,20 @@ class Slug
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlugUrl()
+    {
+        $latestSlash = strrpos($this->url, self::DELIMITER);
+
+        if ($latestSlash !== false) {
+            return substr($this->url, $latestSlash + 1);
+        } else {
+            return $this->url;
+        }
     }
 
     /**

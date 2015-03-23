@@ -28,7 +28,7 @@ class OroB2BRedirectBundle implements Migration
         $table = $schema->createTable('orob2b_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('url', 'string', ['length' => 1024]);
-        $table->addColumn('route_name', 'string', ['length' => 255]);
+        $table->addColumn('route_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
     }
