@@ -25,16 +25,6 @@ class SlugManager
     }
 
     /**
-     * Get current EntityManager
-     *
-     * @return EntityManager
-     */
-    protected function getEntityManager()
-    {
-        return $this->managerRegistry->getManager();
-    }
-
-    /**
      * Set unique url for Slug entity
      *
      * @param Slug $slug
@@ -51,6 +41,16 @@ class SlugManager
 
             $slug->setUrl($incrementedUrl);
         }
+    }
+
+    /**
+     * Get current EntityManager
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->managerRegistry->getManager();
     }
 
     /**
