@@ -73,7 +73,7 @@ class PageType extends AbstractType
             $page = $event->getData();
 
             if ($slugData['mode'] == 'new') {
-                if ($slugData['redirect']) {
+                if (isset($slugData['redirect']) && $slugData['redirect']) {
                     // Leave the old slug for page. And add a new slug as current for page
                     $slug = new Slug();
                     $slug->setUrl($slugData['slug']);

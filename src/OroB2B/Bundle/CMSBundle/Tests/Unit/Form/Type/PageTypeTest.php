@@ -229,6 +229,7 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function submitDataProvider()
@@ -270,7 +271,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => [
-                        'mode' => 'old',
+                        'mode' => 'new',
                         'slug' => '/updated-first-page'
                     ]
                 ],
@@ -297,7 +298,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => [
-                        'mode' => 'old',
+                        'mode' => 'new',
                         'redirect' => true,
                         'slug' => '/updated-first-page'
                     ]
@@ -307,6 +308,32 @@ class PageTypeTest extends FormIntegrationTestCase
                     'title' => 'Updated first test page',
                     'content' => 'Updated page content',
                     'slug' => '/updated-first-page'
+                ],
+            ],
+            'update current page with old slug' => [
+                'options' => [],
+                'defaultData' => [
+                    'parentPage' => null,
+                    'title' => 'First test page',
+                    'content' => 'Page content',
+                    'slug' => [
+                        'mode' => 'old',
+                        'slug' => '/first-page'
+                    ]
+                ],
+                'submittedData' => [
+                    'parentPage' => null,
+                    'title' => 'Updated first test page',
+                    'content' => 'Updated page content',
+                    'slug' => [
+                        'mode' => 'old',
+                    ]
+                ],
+                'expectedData' => [
+                    'parentPage' => null,
+                    'title' => 'Updated first test page',
+                    'content' => 'Updated page content',
+                    'slug' => '/first-page'
                 ],
             ],
         ];
