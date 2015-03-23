@@ -2,7 +2,6 @@ parameters:
     orob2b_cms.page.class: OroB2B\Bundle\CmsBundle\Entity\Page
     orob2b_cms.form.type.page.class: OroB2B\Bundle\CmsBundle\Form\Type\PageType
     orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_cms.kernel.listener.process_redirects.class: OroB2B\Bundle\CMSBundle\EventListener\CmsRouterListener
 
 services:
     orob2b_cms.form.type.page:
@@ -16,11 +15,3 @@ services:
         arguments:
             - %orob2b_cms.page.class%
             - @doctrine.orm.entity_manager
-
-    orob2b_cms.kernel.listener.process_redirects:
-        class: %orob2b_cms.kernel.listener.process_redirects.class%
-        arguments:
-            - @router
-            - @doctrine
-        tags:
-            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 33}

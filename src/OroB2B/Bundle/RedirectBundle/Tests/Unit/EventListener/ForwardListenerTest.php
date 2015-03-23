@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\Test\Unit\EventListener;
+namespace OroB2B\Bundle\RedirectBundle\Test\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -10,12 +10,12 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
-use OroB2B\Bundle\CMSBundle\EventListener\CmsRouterListener;
+use OroB2B\Bundle\RedirectBundle\EventListener\ForwardListener;
 
-class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
+class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var CmsRouterListener
+     * @var ForwardListener
      */
     protected $listener;
 
@@ -37,7 +37,7 @@ class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->listener = new CmsRouterListener($this->router, $this->registry);
+        $this->listener = new ForwardListener($this->router, $this->registry);
     }
 
     /**
@@ -49,8 +49,11 @@ class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnKernelRequest($requestType, $existingController, array $slug_params, array $expected)
     {
+        /**
+         * @var \Symfony\Component\HttpKernel\HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel
+         */
         $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
-        $request = Request::create('http://localhost/');
+        $request = Request::create('http://localhost'. $slug_params['url']);
         if ($existingController) {
             $request->attributes->add(['_controller' => 'ExistingController']);
         }
@@ -59,17 +62,28 @@ class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
         $slug = new Slug();
         $slug->setRouteName($slug_params['route_name']);
         $slug->setUrl($slug_params['url']);
-        $slug->setRouteParameters(base64_encode(serialize($slug_params['route_parameters'])));
+        $slug->setRouteParameters($slug_params['route_parameters']);
 
         if ($requestType == HttpKernelInterface::MASTER_REQUEST) {
             $slugRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
 
-            $slugRepository->expects($this->any())
-                ->method('findOneBy')
-                ->with(['url' => $slug_params['url']])
-                ->will($this->returnValue($slug));
+            if ($slug_params['url'] !== '/') {
+                $slug_params['url'] = rtrim($slug_params['url'], '/');
+            }
+
+            if ($slug_params['url'] == '/missing-slug') {
+                $slugRepository->expects($this->any())
+                    ->method('findOneBy')
+                    ->with(['url' => $slug_params['url']])
+                    ->will($this->returnValue(null));
+            } else {
+                $slugRepository->expects($this->any())
+                    ->method('findOneBy')
+                    ->with(['url' => $slug_params['url']])
+                    ->will($this->returnValue($slug));
+            }
 
             $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
                 ->disableOriginalConstructor()
@@ -132,7 +146,7 @@ class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
                     '_route' => 'test_route',
                     '_controller' => 'TestController',
                     'id' => '1',
-                    "_route_params" => ['id' => '1']
+                    '_route_params' => ['id' => '1']
                 ]
             ],
             'with subrequest' => [
@@ -146,7 +160,7 @@ class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
                 'expected' => []
             ],
             'with existing controller' => [
-                'requestType' => HttpKernelInterface::SUB_REQUEST,
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => true,
                 'slugParams' => [
                     'url' => '/',
@@ -156,6 +170,31 @@ class CmsRouterListenerTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     '_controller' => 'ExistingController',
                 ]
+            ],
+            'with closing slash ' => [
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'existingController' => false,
+                'slugParams' => [
+                    'url' => '/test/',
+                    'route_name' => 'test_route',
+                    'route_parameters' => ['id' => '1']
+                ],
+                'expected' => [
+                    '_route' => 'test_route',
+                    '_controller' => 'TestController',
+                    'id' => '1',
+                    '_route_params' => ['id' => '1']
+                ],
+            ],
+            'without existing slug ' => [
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'existingController' => false,
+                'slugParams' => [
+                    'url' => '/missing-slug',
+                    'route_name' => 'test_route',
+                    'route_parameters' => ['id' => '1']
+                ],
+                'expected' => [],
             ]
         ];
     }

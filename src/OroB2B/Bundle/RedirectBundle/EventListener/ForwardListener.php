@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CMSBundle\EventListener;
+namespace OroB2B\Bundle\RedirectBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
-class CmsRouterListener
+class ForwardListener
 {
     /**
      * @var Router
@@ -46,12 +46,15 @@ class CmsRouterListener
         }
 
         $slugUrl = $request->getPathInfo();
+        if ($slugUrl !== '/') {
+            $slugUrl = rtrim($slugUrl, '/');
+        }
 
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BRedirectBundle:Slug');
         $slug = $em->getRepository('OroB2BRedirectBundle:Slug')->findOneBy(['url' => $slugUrl]);
 
-        if ($slug && $slugUrl == $slug->getUrl()) {
+        if ($slug) {
             $routeName = $slug->getRouteName();
             $controller = $this->router->getRouteCollection()->get($routeName)->getDefault('_controller');
 
@@ -59,7 +62,7 @@ class CmsRouterListener
             $parameters['_route'] = $routeName;
             $parameters['_controller'] = $controller;
 
-            $redirectRouteParameters = unserialize(base64_decode($slug->getRouteParameters()));
+            $redirectRouteParameters = $slug->getRouteParameters();
             $parameters = array_merge($parameters, $redirectRouteParameters);
             $parameters['_route_params'] = $redirectRouteParameters;
 
