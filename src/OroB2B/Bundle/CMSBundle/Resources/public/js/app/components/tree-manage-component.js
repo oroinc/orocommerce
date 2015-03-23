@@ -4,7 +4,6 @@ define(function (require) {
     var TreeManageComponent,
         $ = require('jquery'),
         _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),
         mediator = require('oroui/js/mediator'),
         layout = require('oroui/js/layout'),
         messenger = require('oroui/js/messenger'),
