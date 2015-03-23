@@ -1,0 +1,12 @@
+parameters:
+    orob2b_cms.form.type.slug.class: OroB2B\Bundle\CMSBundle\Form\Type\SlugType
+    orob2b_cms.form.event_listener.slug.class: OroB2B\Bundle\CMSBundle\Form\EventListener\SlugListener
+
+services:
+    orob2b_cms.form.type.slug:
+        class: %orob2b_cms.form.type.slug.class%
+        tags:
+            - { name: form.type, alias: orob2b_slug }
+
+    orob2b_cms.form.event_listener.slug:
+        class: %orob2b_cms.form.event_listener.slug.class%

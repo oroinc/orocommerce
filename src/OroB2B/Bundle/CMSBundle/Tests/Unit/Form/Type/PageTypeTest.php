@@ -2,15 +2,34 @@
 
 namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\CMSBundle\Form\Type\SlugType;
+use OroB2B\Bundle\RedirectBundle\Entity\Slug;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
+use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\CMSBundle\Form\Type\PageType;
+use Symfony\Component\Validator\ConstraintViolationList;
 
-class PageTypeTest extends \PHPUnit_Framework_TestCase
+class PageTypeTest extends FormIntegrationTestCase
 {
+    const NAME = 'orob2b_cms_page';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return self::NAME;
+    }
+
     /**
      * @var PageType
      */
@@ -18,7 +37,77 @@ class PageTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        /**
+         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
+         */
+        $validator = $this->getMock('\Symfony\Component\Validator\ValidatorInterface');
+        $validator->expects($this->any())
+            ->method('validate')
+            ->will($this->returnValue(new ConstraintViolationList()));
+
+        $this->factory = Forms::createFormFactoryBuilder()
+            ->addExtensions($this->getExtensions())
+            ->addTypeExtension(new FormTypeValidatorExtension($validator))
+            ->getFormFactory();
+
         $this->type = new PageType();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        $metaData = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $metaData->expects($this->any())
+            ->method('getSingleIdentifierFieldName')
+            ->will($this->returnValue('id'));
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /**
+         * @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry
+         */
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->will($this->returnValue($em));
+
+        $em->expects($this->any())
+            ->method('getClassMetadata')
+            ->will($this->returnValue($metaData));
+
+        $entityIdentifierType = new EntityIdentifierType($registry);
+
+        /**
+         * @var \Oro\Bundle\ConfigBundle\Config\ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
+         */
+        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $htmlTagProvider = $this->getMock('Oro\Bundle\FormBundle\Provider\HtmlTagProvider');
+        $htmlTagProvider->expects($this->any())
+            ->method('getAllowedElements')
+            ->willReturn(['br', 'a']);
+
+        return [
+            new PreloadedExtension(
+                [
+                    EntityIdentifierType::NAME => $entityIdentifierType,
+                    'text' => new TextType(),
+                    OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
+                    SlugType::NAME => new SlugType()
+                ],
+                []
+            )
+        ];
     }
 
     public function testBuildForm()
@@ -83,5 +172,143 @@ class PageTypeTest extends \PHPUnit_Framework_TestCase
     public function testGetName()
     {
         $this->assertEquals(PageType::NAME, $this->type->getName());
+    }
+
+    /**
+     * @param array $options
+     * @param mixed $defaultData
+     * @param mixed $submittedData
+     * @param mixed $expectedData
+     * @dataProvider submitDataProvider
+     */
+    public function testSubmit(array $options, $defaultData, $submittedData, $expectedData)
+    {
+        if ($defaultData) {
+            $existingPage = new Page();
+            $this->setId($existingPage, 1);
+            $existingPage->setTitle($defaultData['title']);
+            $existingPage->setContent($defaultData['content']);
+
+            $existingSlug = new Slug();
+            $this->setId($existingSlug, 1);
+            $existingSlug->setUrl($defaultData['slug']['slug']);
+            $existingPage->setCurrentSlug($existingSlug);
+
+            $defaultData = $existingPage;
+        }
+
+        $form = $this->factory->create($this->type, $defaultData, $options);
+
+        $this->assertEquals($defaultData, $form->getData());
+        if (isset($existingPage)) {
+            $this->assertEquals($existingPage, $form->getViewData());
+        } else {
+            $this->assertNull($form->getViewData());
+        }
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        /** @var Page $result */
+        $result = $form->getData();
+        $this->assertEquals($expectedData['title'], $result->getTitle());
+        $this->assertEquals($expectedData['content'], $result->getContent());
+        $this->assertEquals($expectedData['slug'], $result->getCurrentSlug()->getUrl());
+    }
+
+    /**
+     * @param mixed $obj
+     * @param mixed $val
+     */
+    protected function setId($obj, $val)
+    {
+        $class = new \ReflectionClass($obj);
+        $prop  = $class->getProperty('id');
+        $prop->setAccessible(true);
+
+        $prop->setValue($obj, $val);
+    }
+
+    /**
+     * @return array
+     */
+    public function submitDataProvider()
+    {
+        return [
+            'new page' => [
+                'options' => [],
+                'defaultData' => null,
+                'submittedData' => [
+                    'parentPage' => null,
+                    'title' => 'First test page',
+                    'content' => 'Page content',
+                    'slug' => [
+                        'mode' => 'new',
+                        'slug' => '/first-page'
+                    ]
+                ],
+                'expectedData' => [
+                    'parentPage' => null,
+                    'title' => 'First test page',
+                    'content' => 'Page content',
+                    'mode' => 'new',
+                    'slug' => '/first-page'
+                ],
+            ],
+            'update current page without redirect' => [
+                'options' => [],
+                'defaultData' => [
+                    'parentPage' => null,
+                    'title' => 'First test page',
+                    'content' => 'Page content',
+                    'slug' => [
+                        'mode' => 'new',
+                        'slug' => '/first-page'
+                    ]
+                ],
+                'submittedData' => [
+                    'parentPage' => null,
+                    'title' => 'Updated first test page',
+                    'content' => 'Updated page content',
+                    'slug' => [
+                        'mode' => 'old',
+                        'slug' => '/updated-first-page'
+                    ]
+                ],
+                'expectedData' => [
+                    'parentPage' => null,
+                    'title' => 'Updated first test page',
+                    'content' => 'Updated page content',
+                    'slug' => '/updated-first-page'
+                ],
+            ],
+            'update current page with redirect' => [
+                'options' => [],
+                'defaultData' => [
+                    'parentPage' => null,
+                    'title' => 'First test page',
+                    'content' => 'Page content',
+                    'slug' => [
+                        'mode' => 'new',
+                        'slug' => '/first-page'
+                    ]
+                ],
+                'submittedData' => [
+                    'parentPage' => null,
+                    'title' => 'Updated first test page',
+                    'content' => 'Updated page content',
+                    'slug' => [
+                        'mode' => 'old',
+                        'redirect' => true,
+                        'slug' => '/updated-first-page'
+                    ]
+                ],
+                'expectedData' => [
+                    'parentPage' => null,
+                    'title' => 'Updated first test page',
+                    'content' => 'Updated page content',
+                    'slug' => '/updated-first-page'
+                ],
+            ],
+        ];
     }
 }
