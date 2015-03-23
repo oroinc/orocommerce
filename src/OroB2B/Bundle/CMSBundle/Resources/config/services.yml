@@ -3,6 +3,7 @@ parameters:
     orob2b_cms.form.type.page.class: OroB2B\Bundle\CmsBundle\Form\Type\PageType
     orob2b_cms.page_tree_handler.class: OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler
     orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_cms.listener.page_slug_listener.class: OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener
 
 services:
     orob2b_cms.form.type.page:
@@ -21,3 +22,9 @@ services:
         arguments:
             - %orob2b_cms.page.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_cms.listener.page_slug_listener:
+        class: %orob2b_cms.listener.page_slug_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
