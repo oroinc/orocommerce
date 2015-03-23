@@ -39,8 +39,25 @@ define(function (require) {
             this.updateAllowed = options.updateAllowed;
 
             this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
+            this.$tree.on('move_node.jstree', _.bind(this.onMove, this));
 
             this._fixContainerHeight();
+        },
+
+        /**
+         * @param {Object} options
+         * @param {Object} config
+         * @returns {Object}
+         */
+        customizeTreeConfig: function(options, config) {
+            if (options.updateAllowed) {
+                config.plugins.push('dnd');
+                config['dnd'] = {
+                    'copy' : false
+                };
+            }
+
+            return config;
         },
 
         /**
@@ -56,6 +73,50 @@ define(function (require) {
 
             var url = routing.generate('orob2b_cms_page_view', {id: selected.node.id});
             mediator.execute('redirectTo', {url: url});
+        },
+
+        /**
+         * Triggers after page move
+         *
+         * @param {Object} e
+         * @param {Object} data
+         */
+        onMove: function(e, data) {
+            if (this.moveTriggered) {
+                return;
+            }
+
+            var self = this;
+            $.ajax({
+                async: false,
+                type: 'PUT',
+                url: routing.generate('orob2b_cms_page_move'),
+                data: {
+                    id: data.node.id,
+                    parent: data.parent,
+                    position: data.position
+                },
+                success: function (result) {
+                    if (!result.status) {
+                        self.rollback(data);
+                        messenger.notificationFlashMessage(
+                            'error',
+                            __("orob2b.cms.move_page_error", {nodeText: data.node.text})
+                        );
+                    }
+                }
+            });
+        },
+
+        /**
+         * Rollback page move
+         *
+         * @param {Object} data
+         */
+        rollback: function(data) {
+            this.moveTriggered = true;
+            this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
+            this.moveTriggered = false;
         },
 
         /**
