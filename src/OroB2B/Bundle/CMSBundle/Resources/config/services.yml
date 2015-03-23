@@ -15,6 +15,7 @@ services:
         class: %orob2b_cms.page_tree_handler.class%
         arguments:
             - @doctrine
+            - @orob2b_redirect.slug.manager
 
     orob2b_cms.page.manager.api:
         class: %orob2b_cms.page.manager.api.class%

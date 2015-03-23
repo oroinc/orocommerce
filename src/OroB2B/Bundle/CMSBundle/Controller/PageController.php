@@ -121,7 +121,8 @@ class PageController extends Controller
         $handler = new PageHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCMSBundle:Page')
+            $this->getDoctrine()->getManagerForClass('OroB2BCMSBundle:Page'),
+            $this->get('orob2b_redirect.slug.manager')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

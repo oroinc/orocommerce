@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 use OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository;
+use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
 
 class PageTreeHandler
 {
@@ -19,11 +20,17 @@ class PageTreeHandler
     protected $managerRegistry;
 
     /**
+     * @var SlugManager
+     */
+    protected $slugManager;
+
+    /**
      * @param ManagerRegistry $managerRegistry
      */
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry, SlugManager $slugManager)
     {
         $this->managerRegistry = $managerRegistry;
+        $this->slugManager     = $slugManager;
     }
 
     /**
@@ -83,6 +90,8 @@ class PageTreeHandler
                     $this->getPageRepository()->persistAsFirstChildOf($page, $parentPage);
                 }
             }
+
+            $this->slugManager->makeUrlUnique($page->getCurrentSlug());
 
             $em->flush();
             $connection->commit();
