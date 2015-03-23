@@ -86,7 +86,7 @@ class Page
     /**
      * @var Slug
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
+     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\RedirectBundle\Entity\Slug", cascade={"ALL"})
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="current_slug_id", referencedColumnName="id")
      * })
@@ -108,7 +108,7 @@ class Page
      *     @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      * })
      */
-    private $organization;
+    protected $organization;
 
     /**
      * @var Page
@@ -180,6 +180,8 @@ class Page
         $this->childPages = new ArrayCollection();
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->setCurrentSlug(new Slug());
     }
 
     /**
@@ -261,6 +263,7 @@ class Page
     {
         $this->currentSlug = $currentSlug;
         $this->addSlug($currentSlug);
+        $this->refreshSlugUrls();
 
         return $this;
     }
@@ -276,12 +279,30 @@ class Page
     }
 
     /**
+     * @param $url
+     */
+    public function setCurrentSlugUrl($url)
+    {
+        $this->currentSlug->setUrl($url);
+        $this->refreshSlugUrls();
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrentSlugUrl()
+    {
+        return $this->currentSlug->getUrl();
+    }
+
+    /**
      * @param Page|null $parentPage
      * @return $this
      */
     public function setParentPage(Page $parentPage = null)
     {
         $this->parentPage = $parentPage;
+        $this->refreshSlugUrls();
 
         return $this;
     }
@@ -324,6 +345,7 @@ class Page
     {
         if ($this->childPages->contains($page)) {
             $this->childPages->removeElement($page);
+            $page->setParentPage(null);
         }
 
         return $this;
@@ -415,5 +437,23 @@ class Page
     public function __toString()
     {
         return (string)$this->getTitle();
+    }
+
+    /**
+     * Refresh slug URLs for current and child pages
+     */
+    protected function refreshSlugUrls()
+    {
+        $parentSlugUrl = '';
+        if ($this->parentPage) {
+            $parentSlugUrl = $this->parentPage->currentSlug->getUrl();
+        }
+
+        $slugUrl = $this->currentSlug->getSlugUrl();
+        $this->currentSlug->setUrl($parentSlugUrl . Slug::DELIMITER . $slugUrl);
+
+        foreach ($this->childPages as $childPage) {
+            $childPage->refreshSlugUrls();
+        }
     }
 }

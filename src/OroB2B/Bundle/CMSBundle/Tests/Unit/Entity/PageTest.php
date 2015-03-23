@@ -14,6 +14,12 @@ class PageTest extends EntityTestCase
     {
         $date = new \DateTime();
 
+        $propertySlug = new Slug();
+        $propertySlug->setUrl('/property');
+
+        $propertyPage = new Page();
+        $propertyPage->setCurrentSlug($propertySlug);
+
         $properties = [
             ['id', 1],
             ['title', 'test_title'],
@@ -22,15 +28,21 @@ class PageTest extends EntityTestCase
             ['level', 3],
             ['right', 4],
             ['root', 1],
-            ['parentPage', new Page()],
+            ['currentSlug', $propertySlug, false],
+            ['parentPage', $propertyPage],
             ['parentPage', null],
-            ['currentSlug', new Slug()],
             ['organization', new Organization()],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
         ];
 
-        $this->assertPropertyAccessors(new Page(), $properties);
+        $testSlug = new Slug();
+        $testSlug->setUrl('/test');
+
+        $propertyPage = new Page();
+        $propertyPage->setCurrentSlug($testSlug);
+
+        $this->assertPropertyAccessors($propertyPage, $properties);
     }
 
     public function testConstruct()
@@ -40,8 +52,10 @@ class PageTest extends EntityTestCase
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $page->getChildPages());
         $this->assertEmpty($page->getChildPages()->toArray());
 
+        $slug = new Slug();
+        $slug->setUrl('/');
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $page->getSlugs());
-        $this->assertEmpty($page->getSlugs()->toArray());
+        $this->assertEquals([$slug], $page->getSlugs()->toArray());
 
         $now = new \DateTime();
 
@@ -54,14 +68,23 @@ class PageTest extends EntityTestCase
 
     public function testChildPageAccessors()
     {
+        $slug = new Slug();
+        $slug->setUrl('/root');
         $page = new Page();
+        $page->setCurrentSlug($slug);
         $this->assertEmpty($page->getChildPages()->toArray());
 
+        $firstSlug = new Slug();
+        $firstSlug->setUrl('/first');
         $firstPage = new Page();
         $firstPage->setLevel(1);
+        $firstPage->setCurrentSlug($firstSlug);
 
+        $secondSlug = new Slug();
+        $secondSlug->setUrl('/second');
         $secondPage = new Page();
         $secondPage->setLevel(2);
+        $secondPage->setCurrentSlug($secondSlug);
 
         $page->addChildPage($firstPage)
             ->addChildPage($secondPage)
@@ -70,6 +93,8 @@ class PageTest extends EntityTestCase
             [$firstPage, $secondPage],
             array_values($page->getChildPages()->toArray())
         );
+        $this->assertEquals('/root/first', $firstPage->getCurrentSlugUrl());
+        $this->assertEquals('/root/second', $secondPage->getCurrentSlugUrl());
 
         $page->removeChildPage($firstPage)
             ->removeChildPage($firstPage);
@@ -77,12 +102,18 @@ class PageTest extends EntityTestCase
             [$secondPage],
             array_values($page->getChildPages()->toArray())
         );
+
+        $this->assertEquals('/first', $firstPage->getCurrentSlugUrl());
+        $this->assertEquals('/root/second', $secondPage->getCurrentSlugUrl());
     }
 
     public function testSlugAccessors()
     {
+        $emptySlug = new Slug();
+        $emptySlug->setUrl('/');
+
         $page = new Page();
-        $this->assertEmpty($page->getSlugs()->toArray());
+        $this->assertEquals([$emptySlug], $page->getSlugs()->toArray());
 
         $firstSlug = new Slug();
         $secondSlug = new Slug();
@@ -91,7 +122,7 @@ class PageTest extends EntityTestCase
             ->addSlug($secondSlug);
 
         $this->assertEquals(
-            [$firstSlug, $secondSlug],
+            [$emptySlug, $firstSlug, $secondSlug],
             array_values($page->getSlugs()->toArray())
         );
 
@@ -99,7 +130,7 @@ class PageTest extends EntityTestCase
             ->removeSlug($firstSlug);
 
         $this->assertEquals(
-            [$secondSlug],
+            [$emptySlug, $secondSlug],
             array_values($page->getSlugs()->toArray())
         );
     }
@@ -125,15 +156,42 @@ class PageTest extends EntityTestCase
 
     public function testSetCurrentSlug()
     {
+        $emptySlug = new Slug();
+        $emptySlug->setUrl('/');
+
         $page = new Page();
 
-        $this->assertEmpty($page->getCurrentSlug());
-        $this->assertEmpty($page->getSlugs()->toArray());
+        $this->assertEquals('/', $page->getCurrentSlug()->getUrl());
+        $this->assertEquals([$emptySlug], $page->getSlugs()->toArray());
 
         $slug = new Slug();
+        $slug->setUrl('test');
         $page->setCurrentSlug($slug);
 
         $this->assertEquals($slug, $page->getCurrentSlug());
-        $this->assertEquals([$slug], $page->getSlugs()->toArray());
+        $this->assertEquals([$emptySlug, $slug], $page->getSlugs()->toArray());
+    }
+
+    public function testSetCurrentSlugUrl()
+    {
+        $rootSlug = new Slug();
+        $rootSlug->setUrl('/root');
+        $rootPage = new Page();
+        $rootPage->setCurrentSlug($rootSlug);
+
+        $childSlug = new Slug();
+        $childSlug->setUrl('/first');
+        $childPage = new Page();
+        $childPage->setCurrentSlug($childSlug);
+
+        $rootPage->addChildPage($childPage);
+
+        $childPage->setCurrentSlugUrl('first-altered');
+        $this->assertEquals('/root', $rootPage->getCurrentSlugUrl());
+        $this->assertEquals('/root/first-altered', $childPage->getCurrentSlugUrl());
+
+        $rootPage->setCurrentSlugUrl('root-altered');
+        $this->assertEquals('/root-altered', $rootPage->getCurrentSlugUrl());
+        $this->assertEquals('/root-altered/first-altered', $childPage->getCurrentSlugUrl());
     }
 }
