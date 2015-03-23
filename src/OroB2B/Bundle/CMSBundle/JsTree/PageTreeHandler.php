@@ -31,10 +31,10 @@ class PageTreeHandler
      */
     public function createTree()
     {
-        $categoryTree = $this->getPageRepository()
+        $tree = $this->getPageRepository()
             ->getChildren(null, false, 'left', 'ASC');
 
-        return $this->formatTree($categoryTree);
+        return $this->formatTree($tree);
     }
 
     /**
