@@ -63,6 +63,8 @@ class SlugManagerTest extends WebTestCase
         $testSlug->setRouteParameters(['id' => 2]);
 
         $this->slugManager->makeUrlUnique($testSlug);
+        $manager->persist($testSlug);
+        $manager->flush();
 
         $this->assertEquals('domain.com/hvac-equipment/detection-kits-1', $testSlug->getUrl());
 
@@ -72,8 +74,10 @@ class SlugManagerTest extends WebTestCase
         $testSlug1->setRouteParameters(['id' => 21]);
 
         $this->slugManager->makeUrlUnique($testSlug1);
+        $manager->persist($testSlug1);
+        $manager->flush();
 
-        $this->assertEquals('domain.com/hvac-equipment/detection-kits-1', $testSlug1->getUrl());
+        $this->assertEquals('domain.com/hvac-equipment/detection-kits-2', $testSlug1->getUrl());
 
         $testSlug2 = new Slug();
         $testSlug2->setUrl('domain.com/hvac-equipment/detection-kits1-1');
@@ -81,6 +85,8 @@ class SlugManagerTest extends WebTestCase
         $testSlug2->setRouteParameters(['id' => 21]);
 
         $this->slugManager->makeUrlUnique($testSlug2);
+        $manager->persist($testSlug2);
+        $manager->flush();
 
         $this->assertEquals('domain.com/hvac-equipment/detection-kits1-3', $testSlug2->getUrl());
     }

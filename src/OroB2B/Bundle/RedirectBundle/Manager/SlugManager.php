@@ -50,7 +50,7 @@ class SlugManager
      */
     protected function getEntityManager()
     {
-        return $this->managerRegistry->getManager();
+        return $this->managerRegistry->getManagerForClass('OroB2BRedirectBundle:Slug');
     }
 
     /**
@@ -77,7 +77,7 @@ class SlugManager
     {
         $version = 0;
 
-        if (preg_match('/(.*)-(\d+)$/', $url, $matches)) {
+        if (preg_match('/^(.*)-(\d+)$/', $url, $matches)) {
             $url     = $matches[1];
             $version = $matches[2];
         }
