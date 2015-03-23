@@ -10,16 +10,6 @@ use Symfony\Component\Validator\ConstraintViolationList;
 
 class SlugTypeTest extends FormIntegrationTestCase
 {
-    const NAME = 'orob2b_slug';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
     /**
      * @var SlugType
      */
@@ -61,18 +51,8 @@ class SlugTypeTest extends FormIntegrationTestCase
         }
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
-
-        if (empty($options['type'])) {
-            $this->assertEquals('create', $form->createView()->vars['type']);
-        } else {
-            $this->assertEquals($options['type'], $form->createView()->vars['type']);
-        }
-
-        if (empty($options['current_slug'])) {
-            $this->assertEquals('', $form->createView()->vars['current_slug']);
-        } else {
-            $this->assertEquals($options['current_slug'], $form->createView()->vars['current_slug']);
-        }
+        $this->assertEquals($options['type'], $form->createView()->vars['type']);
+        $this->assertEquals($options['current_slug'], $form->createView()->vars['current_slug']);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -87,6 +67,8 @@ class SlugTypeTest extends FormIntegrationTestCase
         return [
             'new slug' => [
                 'options' => [
+                    'type' => 'create',
+                    'current_slug' => ''
                 ],
                 'defaultData' => [],
                 'viewData' => [],

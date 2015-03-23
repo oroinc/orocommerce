@@ -2,34 +2,24 @@
 
 namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Form\Type\SlugType;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\CMSBundle\Form\Type\PageType;
-use Symfony\Component\Validator\ConstraintViolationList;
+use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\CMSBundle\Form\Type\SlugType;
+use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
-    const NAME = 'orob2b_cms_page';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
     /**
      * @var PageType
      */

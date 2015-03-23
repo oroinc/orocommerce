@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CMSBundle\Form\Type;
 
-use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,6 +11,9 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
+use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
 class PageType extends AbstractType
 {
@@ -60,7 +61,7 @@ class PageType extends AbstractType
                 $form->add(
                     'slug',
                     SlugType::NAME,
-                    ['mapped' => false, 'type' => 'update', 'current_slug' => $page->getCurrentSlug()]
+                    ['mapped' => false, 'type' => 'update', 'current_slug' => $page->getCurrentSlug()->getSlugUrl()]
                 );
             } else {
                 $form->add('slug', SlugType::NAME, ['mapped' => false, 'type' => 'create']);

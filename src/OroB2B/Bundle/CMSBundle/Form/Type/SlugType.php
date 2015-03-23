@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\CMSBundle\Form\Type;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 class SlugType extends AbstractType
 {
