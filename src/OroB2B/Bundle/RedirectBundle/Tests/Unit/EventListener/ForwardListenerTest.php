@@ -64,7 +64,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
         $slug->setUrl($slug_params['url']);
         $slug->setRouteParameters($slug_params['route_parameters']);
 
-        if ($requestType == HttpKernelInterface::MASTER_REQUEST) {
+        if ($requestType === HttpKernelInterface::MASTER_REQUEST) {
             $slugRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
                 ->disableOriginalConstructor()
                 ->getMock();
@@ -73,7 +73,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 $slug_params['url'] = rtrim($slug_params['url'], '/');
             }
 
-            if ($slug_params['url'] == '/missing-slug') {
+            if ($slug_params['url'] === '/missing-slug') {
                 $slugRepository->expects($this->any())
                     ->method('findOneBy')
                     ->with(['url' => $slug_params['url']])
@@ -122,7 +122,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->onKernelRequest($event);
 
-        if ($requestType == HttpKernelInterface::MASTER_REQUEST) {
+        if ($requestType === HttpKernelInterface::MASTER_REQUEST) {
             $parameters = $request->attributes->all();
             $this->assertEquals($expected, $parameters);
         }
@@ -171,7 +171,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                     '_controller' => 'ExistingController',
                 ]
             ],
-            'with closing slash ' => [
+            'with closing slash' => [
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'slugParams' => [
@@ -186,7 +186,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                     '_route_params' => ['id' => '1']
                 ],
             ],
-            'without existing slug ' => [
+            'without existing slug' => [
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'slugParams' => [
