@@ -14,6 +14,7 @@ services:
     orob2b_cms.page_tree_handler:
         class: %orob2b_cms.page_tree_handler.class%
         arguments:
+            - %orob2b_cms.page.class%
             - @doctrine
 
     orob2b_cms.page.manager.api:

@@ -2,53 +2,11 @@
 
 namespace OroB2B\Bundle\CMSBundle\JsTree;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
 use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository;
+use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
-class PageTreeHandler
+class PageTreeHandler extends AbstractTreeHandler
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $managerRegistry;
-
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
-
-    /**
-     * @return array
-     */
-    public function createTree()
-    {
-        $categoryTree = $this->getPageRepository()
-            ->getChildren(null, false, 'left', 'ASC');
-
-        return $this->formatTree($categoryTree);
-    }
-
-    /**
-     * @param Page[] $pages
-     * @return array
-     */
-    protected function formatTree($pages)
-    {
-        $formattedTree = [];
-
-        foreach ($pages as $page) {
-            $formattedTree[] = $this->formatPage($page);
-        }
-
-        return $formattedTree;
-    }
-
     /**
      * Returns an array formatted as:
      * array(
@@ -57,26 +15,29 @@ class PageTreeHandler
      *     'text'   => string  // tree item label
      * )
      *
-     * @param Page $page
+     * @param Page $entity
      * @return array
      */
-    protected function formatPage(Page $page)
+    protected function formatEntity($entity)
     {
         return [
-            'id'     => $page->getId(),
-            'parent' => $page->getParentPage() ? $page->getParentPage()->getId() : '#',
-            'text'   => $page->getTitle(),
+            'id'     => $entity->getId(),
+            'parent' => $entity->getParentPage() ? $entity->getParentPage()->getId() : '#',
+            'text'   => $entity->getTitle(),
             'state'  => [
-                'opened' => $page->getParentPage() === null
+                'opened' => $entity->getParentPage() === null
             ]
         ];
     }
 
     /**
-     * @return PageRepository
+     * Move node processing
+     *
+     * @param int $entityId
+     * @param int $parentId
+     * @param int $position
      */
-    protected function getPageRepository()
+    protected function moveProcessing($entityId, $parentId, $position)
     {
-        return $this->managerRegistry->getRepository('OroB2BCMSBundle:Page');
     }
 }
