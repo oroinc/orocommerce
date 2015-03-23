@@ -1,5 +1,12 @@
 parameters:
     orob2b_redirect.slug.class: OroB2B\Bundle\RedirectBundle\Entity\Slug
+    orob2b_redirect.kernel.listener.process_redirects.class: OroB2B\Bundle\RedirectBundle\EventListener\ForwardListener
 
 services:
-    #
+    orob2b_redirect.kernel.listener.process_redirects:
+        class: %orob2b_redirect.kernel.listener.process_redirects.class%
+        arguments:
+            - @router
+            - @doctrine
+        tags:
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
