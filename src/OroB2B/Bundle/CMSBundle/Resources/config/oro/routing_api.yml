@@ -1,0 +1,3 @@
+orob2b_cms_page_api:
+    resource: "@OroB2BCMSBundle/Controller/Api/Rest/PageController.php"
+    type:     rest
