@@ -47,7 +47,7 @@ abstract class AbstractTreeHandler
      * @param array $entities
      * @return array
      */
-    protected function formatTree($entities)
+    protected function formatTree(array $entities)
     {
         $formattedTree = [];
 
@@ -107,7 +107,7 @@ abstract class AbstractTreeHandler
      *     'text'   => string  // tree item label
      * )
      *
-     * @param object $entity
+     * @param Object $entity
      * @return array
      */
     abstract protected function formatEntity($entity);
