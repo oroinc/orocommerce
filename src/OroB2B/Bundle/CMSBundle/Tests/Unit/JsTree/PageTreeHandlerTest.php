@@ -28,11 +28,11 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     protected $pages = [
-        ['id' => 1, 'title' => 'Root', 'parent' => null],
-        ['id' => 2, 'title' => 'TV', 'parent' => 1],
-        ['id' => 3, 'title' => 'Phones', 'parent' => 1],
-        ['id' => 4, 'title' => 'Phone 01', 'parent' => 3],
-        ['id' => 5, 'title' => 'Phone 02', 'parent' => 3]
+        ['id' => 1, 'title' => 'First Root', 'parent' => null],
+        ['id' => 2, 'title' => 'Scaled models', 'parent' => 1],
+        ['id' => 3, 'title' => 'Traines', 'parent' => 1],
+        ['id' => 4, 'title' => 'Train model 01', 'parent' => 3],
+        ['id' => 5, 'title' => 'Train model 02', 'parent' => 3]
     ];
 
     /**
@@ -220,42 +220,42 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 'pages' => $this->pagesCollection,
                 'expected' => [
                     [
-                        'id' => 1,
+                        'id'     => 1,
                         'parent' => '#',
-                        'text' => 'Root',
-                        'state' => [
+                        'text'   => 'First Root',
+                        'state'  => [
                             'opened' => true
                         ]
                     ],
                     [
-                        'id' => 2,
+                        'id'     => 2,
                         'parent' => '1',
-                        'text' => 'TV',
-                        'state' => [
+                        'text'   => 'Scaled models',
+                        'state'  => [
                             'opened' => false
                         ]
                     ],
                     [
-                        'id' => 3,
+                        'id'     => 3,
                         'parent' => '1',
-                        'text' => 'Phones',
-                        'state' => [
+                        'text'   => 'Traines',
+                        'state'  => [
                             'opened' => false
                         ]
                     ],
                     [
-                        'id' => 4,
+                        'id'     => 4,
                         'parent' => '3',
-                        'text' => 'Phone 01',
-                        'state' => [
+                        'text'   => 'Train model 01',
+                        'state'  => [
                             'opened' => false
                         ]
                     ],
                     [
-                        'id' => 5,
+                        'id'     => 5,
                         'parent' => '3',
-                        'text' => 'Phone 02',
-                        'state' => [
+                        'text'   => 'Train model 02',
+                        'state'  => [
                             'opened' => false
                         ]
                     ]
