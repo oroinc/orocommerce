@@ -85,7 +85,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
-//            ->with('OroB2BCatalogBundle:Category')
+            ->with('OroB2BCatalogBundle:Category')
             ->will($this->returnValue($em));
 
         $connection->expects($this->once())
@@ -172,7 +172,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->managerRegistry->expects($this->any())
             ->method('getRepository')
-            //->with('OroB2BCatalogBundle:Category')
+            ->with('OroB2BCatalogBundle:Category')
             ->willReturn($this->repository);
 
         $this->repository->expects($this->any())
