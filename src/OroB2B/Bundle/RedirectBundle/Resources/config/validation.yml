@@ -1,0 +1,10 @@
+OroB2B\Bundle\RedirectBundle\Entity\Slug:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: url
+    properties:
+        url:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 1024
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~

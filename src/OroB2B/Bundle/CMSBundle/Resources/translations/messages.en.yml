@@ -16,7 +16,11 @@ orob2b.cms:
         slugs.label:            'Slugs'
     child_page:
         entity_label:           'Child page'
-        
+    slug:
+        update_to:             'Update to'
+        redirect:              'Redirect visitors from %old_slug%'
+        leave_as_is:           'Leave as is %old_slug%'
+
     controller:
         page.saved.message: 'Page has been saved'
 

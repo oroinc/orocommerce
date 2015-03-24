@@ -1,0 +1,28 @@
+{% block orob2b_slug_widget %}
+    {% if (form.vars.type == 'update') %}
+        {% for radio in form.mode %}
+            {% if radio.vars.value == 'new' %}
+                <div>
+                    {{- form_widget(radio) -}}
+                    {{- radio.vars.label|trans -}}
+                    {{- form_widget(form.slug) -}}
+                    {{- form_errors(form.slug) -}}
+                </div>
+                <div class="sub-item">
+                    {{- form_widget(form.redirect) -}}
+                    {{- form.redirect.vars.label|trans({'%old_slug%': form.vars.current_slug}) -}}
+                    {{- form_errors(form.redirect) -}}
+                </div>
+            {% else %}
+                <div>
+                    {{- form_widget(radio) -}}
+                    {{- radio.vars.label|trans({'%old_slug%': form.vars.current_slug}) -}}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {{- form_widget(form.mode) -}}
+        {{- form_widget(form.slug) -}}
+        {{- form_errors(form.slug) -}}
+    {% endif %}
+{% endblock %}
