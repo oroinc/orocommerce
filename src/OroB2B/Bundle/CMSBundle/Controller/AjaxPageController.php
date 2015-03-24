@@ -31,7 +31,7 @@ class AjaxPageController extends Controller
         $position = (int)$request->get('position');
 
         return new JsonResponse(
-            $this->get('orob2b_cms.page_tree_handler')->movePage($nodeId, $parentId, $position)
+            $this->get('orob2b_cms.page_tree_handler')->moveNode($nodeId, $parentId, $position)
         );
     }
 }

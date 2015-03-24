@@ -13,7 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
-use OroB2B\Component\Tree\TreeTrait;
+use OroB2B\Component\Tree\Entity\TreeTrait;
 
 /**
  * @ORM\Table(name="orob2b_cms_page")

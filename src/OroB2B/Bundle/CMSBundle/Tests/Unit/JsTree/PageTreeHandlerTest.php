@@ -55,17 +55,17 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BCMSBundle:Page')
             ->willReturn($this->repository);
 
-        $this->pageTreeHandler = new PageTreeHandler($this->managerRegistry);
+        $this->pageTreeHandler = new PageTreeHandler('OroB2BCMSBundle:Page', $this->managerRegistry);
     }
 
     /**
-     * @dataProvider movePageDataProvider
+     * @dataProvider moveNodeDataProvider
      * @param int $nodeId
      * @param int|null $parentNodeId
      * @param int $position
      * @param boolean $withException
      */
-    public function testMovePage($nodeId, $parentNodeId, $position, $withException)
+    public function testMoveNode($nodeId, $parentNodeId, $position, $withException)
     {
         $this->preparePages($this->pages);
         $pages = $this->pagesCollection;
@@ -138,13 +138,13 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 ->method('commit');
         }
 
-        $this->pageTreeHandler->movePage($nodeId, $parentNodeId, $position);
+        $this->pageTreeHandler->moveNode($nodeId, $parentNodeId, $position);
     }
 
     /**
      * @return array
      */
-    public function movePageDataProvider()
+    public function moveNodeDataProvider()
     {
         return [
             'move with position' => [

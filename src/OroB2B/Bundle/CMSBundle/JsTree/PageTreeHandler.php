@@ -2,114 +2,11 @@
 
 namespace OroB2B\Bundle\CMSBundle\JsTree;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
 use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository;
+use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
-class PageTreeHandler
+class PageTreeHandler extends AbstractTreeHandler
 {
-    const SUCCESS_STATUS = true;
-    const ERROR_STATUS   = false;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $managerRegistry;
-
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
-
-    /**
-     * @return array
-     */
-    public function createTree()
-    {
-        $tree = $this->getPageRepository()
-            ->getChildren(null, false, 'left', 'ASC');
-
-        return $this->formatTree($tree);
-    }
-
-    /**
-     * Move a page to another parent page
-     *
-     * @param int $pageId
-     * @param int $parentId
-     * @param int $position
-     * @return array
-     */
-    public function movePage($pageId, $parentId, $position)
-    {
-        $status = ['status' => self::SUCCESS_STATUS];
-
-        /** @var EntityManager $em */
-        $em = $this->managerRegistry->getManagerForClass('OroB2BCMSBundle:Page');
-        $connection = $em->getConnection();
-
-        $connection->beginTransaction();
-
-        try {
-            /** @var page $page */
-            $page = $this->getPageRepository()->find($pageId);
-            /** @var page $parentPage */
-            $parentPage = $this->getPageRepository()->find($parentId);
-
-            if (null === $parentPage) {
-                $page->setParentPage(null);
-
-                if ($position) {
-                    $this->getPageRepository()->persistAsNextSibling($page);
-                } else {
-                    $this->getPageRepository()->persistAsFirstChild($page);
-                }
-            } else {
-                if ($parentPage->getChildPages()->contains($page)) {
-                    $parentPage->removeChildPage($page);
-                }
-
-                $parentPage->addChildPage($page);
-
-                if ($position) {
-                    $children = array_values($parentPage->getChildPages()->toArray());
-                    $this->getPageRepository()->persistAsNextSiblingOf($page, $children[$position - 1]);
-                } else {
-                    $this->getPageRepository()->persistAsFirstChildOf($page, $parentPage);
-                }
-            }
-
-            $em->flush();
-            $connection->commit();
-        } catch (\Exception $e) {
-            $connection->rollBack();
-            $status['status'] = self::ERROR_STATUS;
-            $status['error']  = $e->getMessage();
-        }
-
-        return $status;
-    }
-
-    /**
-     * @param Page[] $pages
-     * @return array
-     */
-    protected function formatTree($pages)
-    {
-        $formattedTree = [];
-
-        foreach ($pages as $page) {
-            $formattedTree[] = $this->formatPage($page);
-        }
-
-        return $formattedTree;
-    }
-
     /**
      * Returns an array formatted as:
      * array(
@@ -118,26 +15,56 @@ class PageTreeHandler
      *     'text'   => string  // tree item label
      * )
      *
-     * @param Page $page
+     * @param Page $entity
      * @return array
      */
-    protected function formatPage(Page $page)
+    protected function formatEntity($entity)
     {
         return [
-            'id'     => $page->getId(),
-            'parent' => $page->getParentPage() ? $page->getParentPage()->getId() : '#',
-            'text'   => $page->getTitle(),
+            'id'     => $entity->getId(),
+            'parent' => $entity->getParentPage() ? $entity->getParentPage()->getId() : '#',
+            'text'   => $entity->getTitle(),
             'state'  => [
-                'opened' => $page->getParentPage() === null
+                'opened' => $entity->getParentPage() === null
             ]
         ];
     }
 
     /**
-     * @return PageRepository
+     * Move node processing
+     *
+     * @param int $entityId
+     * @param int $parentId
+     * @param int $position
      */
-    protected function getPageRepository()
+    protected function moveProcessing($entityId, $parentId, $position)
     {
-        return $this->managerRegistry->getRepository('OroB2BCMSBundle:Page');
+        /** @var page $page */
+        $page = $this->getEntityRepository()->find($entityId);
+        /** @var page $parentPage */
+        $parentPage = $this->getEntityRepository()->find($parentId);
+
+        if (null === $parentPage) {
+            $page->setParentPage(null);
+
+            if ($position) {
+                $this->getEntityRepository()->persistAsNextSibling($page);
+            } else {
+                $this->getEntityRepository()->persistAsFirstChild($page);
+            }
+        } else {
+            if ($parentPage->getChildPages()->contains($page)) {
+                $parentPage->removeChildPage($page);
+            }
+
+            $parentPage->addChildPage($page);
+
+            if ($position) {
+                $children = array_values($parentPage->getChildPages()->toArray());
+                $this->getEntityRepository()->persistAsNextSiblingOf($page, $children[$position - 1]);
+            } else {
+                $this->getEntityRepository()->persistAsFirstChildOf($page, $parentPage);
+            }
+        }
     }
 }

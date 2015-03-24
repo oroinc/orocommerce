@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Component\Tree;
+namespace OroB2B\Component\Tree\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
