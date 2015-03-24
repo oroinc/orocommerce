@@ -39,5 +39,32 @@ class PageTreeHandler extends AbstractTreeHandler
      */
     protected function moveProcessing($entityId, $parentId, $position)
     {
+        /** @var page $page */
+        $page = $this->getEntityRepository()->find($entityId);
+        /** @var page $parentPage */
+        $parentPage = $this->getEntityRepository()->find($parentId);
+
+        if (null === $parentPage) {
+            $page->setParentPage(null);
+
+            if ($position) {
+                $this->getEntityRepository()->persistAsNextSibling($page);
+            } else {
+                $this->getEntityRepository()->persistAsFirstChild($page);
+            }
+        } else {
+            if ($parentPage->getChildPages()->contains($page)) {
+                $parentPage->removeChildPage($page);
+            }
+
+            $parentPage->addChildPage($page);
+
+            if ($position) {
+                $children = array_values($parentPage->getChildPages()->toArray());
+                $this->getEntityRepository()->persistAsNextSiblingOf($page, $children[$position - 1]);
+            } else {
+                $this->getEntityRepository()->persistAsFirstChildOf($page, $parentPage);
+            }
+        }
     }
 }
