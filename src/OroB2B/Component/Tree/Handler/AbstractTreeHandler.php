@@ -3,8 +3,9 @@
 namespace OroB2B\Component\Tree\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
+
+use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 abstract class AbstractTreeHandler
 {
@@ -43,7 +44,7 @@ abstract class AbstractTreeHandler
     }
 
     /**
-     * @param Object[] $entities
+     * @param array $entities
      * @return array
      */
     protected function formatTree($entities)
@@ -112,7 +113,7 @@ abstract class AbstractTreeHandler
     abstract protected function formatEntity($entity);
 
     /**
-     * @return ObjectRepository
+     * @return NestedTreeRepository
      */
     protected function getEntityRepository()
     {
