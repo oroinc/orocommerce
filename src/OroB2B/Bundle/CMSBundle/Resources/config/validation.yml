@@ -1,0 +1,10 @@
+OroB2B\Bundle\CMSBundle\Entity\Page:
+    properties:
+        title:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        organization:
+            - NotBlank: ~
+        currentSlug:
+            - NotBlank: ~
