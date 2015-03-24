@@ -10,3 +10,34 @@
         }) }}
     {% endif %}
 {% endblock %}
+
+{% block content %}
+    {{ parent() }}
+
+    <div class="left-panel-container">
+        <div class="placeholder">
+            <div class="scrollable-container">
+                <div class="left-panel scrollable-container">
+                    <div class="page b2b-tree">
+                        {% set treeOptions = {
+                            'key' : 'b2b-page',
+                            'data' : orob2b_page_list(),
+                            'updateAllowed' : resource_granted('orob2b_cms_page_update')
+                        } %}
+                        <div
+                            data-page-component-module="orob2bcms/js/app/components/tree-manage-component"
+                            data-page-component-options="{{ treeOptions|json_encode }}"
+                        ></div>
+                    </div>
+                </div>
+                <div class="content">
+                    {% if resource_granted('orob2b_cms_page_create') and resource_granted('orob2b_cms_page_update') %}
+                        <div class="text-center">
+                            {{ 'orob2b.cms.template.select_existing_or_create_new'|trans }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
