@@ -8,11 +8,11 @@ class SlugGenerator
     {
         $string = transliterator_transliterate(
             "Any-Latin;
+            Latin-ASCII;
             NFD;
             [:Nonspacing Mark:] Remove;
-            [^\u0000-\u007E] Remove;
+            [^\u0020\u002D\u0030-\u0039\u0041-\u005A\u0041-\u005A\u005F\u0061-\u007A\u007E] Remove;
             NFC;
-            [:Punctuation:] Remove;
             Lower();",
             $string
         );

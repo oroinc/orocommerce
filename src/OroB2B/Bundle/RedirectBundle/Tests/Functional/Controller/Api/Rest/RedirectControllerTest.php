@@ -20,6 +20,8 @@ class RedirectControllerTest extends WebTestCase
     /**
      * Test slugify
      * @dataProvider slugifyActionDataProvider
+     * @param string $string
+     * @param string $slug
      */
     public function testSlugifyAction($string, $slug)
     {
@@ -41,12 +43,24 @@ class RedirectControllerTest extends WebTestCase
     {
         return [
             [
-                'string' => 'hello.',
+                'string' => 'hello',
                 'slug' => 'hello'
             ],
             [
-                'string' => 'LONDON - Cambridge!',
+                'string' => 'hello#%$^&*()',
+                'slug' => 'hello'
+            ],
+            [
+                'string' => 'hello123.',
+                'slug' => 'hello123'
+            ],
+            [
+                'string' => 'LONDON-Cambridge!',
                 'slug' => 'london-cambridge'
+            ],
+            [
+                'string' => 'LONDON|Cambridge',
+                'slug' => 'londoncambridge'
             ],
             [
                 'string' => 'Ça ne fait rien.',
@@ -70,20 +84,24 @@ class RedirectControllerTest extends WebTestCase
             ],
             [
                 'string' => 'Alle Gewässer fließen ins Meer',
-                'slug' => 'alle-gewasser-flieen-ins-meer'
+                'slug' => 'alle-gewasser-fliessen-ins-meer'
             ],
             [
                 'string' => '断鹤续凫',
                 'slug' => 'duan-he-xu-fu'
             ],
             [
-                'string' => 'ძმასთან მიმავალი გზა მუდამ მოკლეაო',
-                'slug' => 'dzmastan-mimavali-gza-mudam-mokleao'
+                'string' => 'საქართველო',
+                'slug' => 'sakartvelo'
             ],
             [
                 'string' => 'Czyja siła, tego prawda',
-                'slug' => 'czyja-sia-tego-prawda'
-            ]
+                'slug' => 'czyja-sila-tego-prawda'
+            ],
+            [
+                'string' => 'áàâéèêíìîóòôúùûã',
+                'slug' => 'aaaeeeiiiooouuua'
+            ],
         ];
     }
 }
