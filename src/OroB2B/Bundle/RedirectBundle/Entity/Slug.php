@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\RedirectBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_redirect_slug")
@@ -50,7 +49,7 @@ class Slug
     protected $routeName;
 
     /**
-     * @var string
+     * @var array
      *
      * @ORM\Column(name="route_parameters", type="array")
      */

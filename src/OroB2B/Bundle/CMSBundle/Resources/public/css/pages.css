@@ -17,3 +17,7 @@
 .page-content-editor .mce-tinymce {
     width: 100%;
 }
+
+.sub-item {
+    padding-left: 15px;
+}
