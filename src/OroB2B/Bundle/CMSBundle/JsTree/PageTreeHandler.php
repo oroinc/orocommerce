@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CMSBundle\JsTree;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 

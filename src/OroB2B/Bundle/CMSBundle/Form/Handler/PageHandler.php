@@ -28,6 +28,7 @@ class PageHandler
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
+     * @param SlugManager $slugManager
      */
     public function __construct(FormInterface $form, Request $request, ObjectManager $manager, SlugManager $slugManager)
     {
