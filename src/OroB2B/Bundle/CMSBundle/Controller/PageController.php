@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -121,7 +120,8 @@ class PageController extends Controller
         $handler = new PageHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCMSBundle:Page')
+            $this->getDoctrine()->getManagerForClass('OroB2BCMSBundle:Page'),
+            $this->get('orob2b_redirect.slug.manager')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

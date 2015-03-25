@@ -2,11 +2,41 @@
 
 namespace OroB2B\Bundle\CMSBundle\JsTree;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
 class PageTreeHandler extends AbstractTreeHandler
 {
+    /**
+     * @var SlugManager
+     */
+    protected $slugManager;
+
+    /**
+     * @param string $entityClass
+     * @param ManagerRegistry $managerRegistry
+     * @param SlugManager $slugManager
+     */
+    public function __construct($entityClass, ManagerRegistry $managerRegistry, SlugManager $slugManager)
+    {
+        parent::__construct($entityClass, $managerRegistry);
+        $this->slugManager     = $slugManager;
+    }
+
+    /**
+     * @return array
+     */
+    public function createTree()
+    {
+        $tree = $this->getEntityRepository()
+            ->getChildren(null, false, 'left', 'ASC');
+
+        return $this->formatTree($tree);
+    }
+
     /**
      * Returns an array formatted as:
      * array(
@@ -66,5 +96,7 @@ class PageTreeHandler extends AbstractTreeHandler
                 $this->getEntityRepository()->persistAsFirstChildOf($page, $parentPage);
             }
         }
+
+        $this->slugManager->makeUrlUnique($page->getCurrentSlug());
     }
 }
