@@ -2,102 +2,48 @@
 
 namespace OroB2B\Bundle\CatalogBundle\JsTree;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
-class CategoryTreeHandler
+class CategoryTreeHandler extends AbstractTreeHandler
 {
-    const SUCCESS_STATUS = true;
-    const ERROR_STATUS = false;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $managerRegistry;
-
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
-    public function __construct(ManagerRegistry $managerRegistry)
-    {
-        $this->managerRegistry = $managerRegistry;
-    }
-
     /**
      * @return array
      */
     public function createTree()
     {
-        $categoryTree = $this->getCategoryRepository()
+        $tree = $this->getEntityRepository()
             ->getChildrenWithTitles(null, false, 'left', 'ASC');
 
-        return $this->formatTree($categoryTree);
+        return $this->formatTree($tree);
     }
 
     /**
-     * Move a category to another parent category
+     * Move node processing
      *
-     * @param int $categoryId
+     * @param int $entityId
      * @param int $parentId
      * @param int $position
-     * @return array
      */
-    public function moveCategory($categoryId, $parentId, $position)
+    protected function moveProcessing($entityId, $parentId, $position)
     {
-        $status = ['status' => self::SUCCESS_STATUS];
+        /** @var Category $category */
+        $category = $this->getEntityRepository()->find($entityId);
+        /** @var Category $parentCategory */
+        $parentCategory = $this->getEntityRepository()->find($parentId);
 
-        /** @var EntityManager $em */
-        $em = $this->managerRegistry->getManagerForClass('OroB2BCatalogBundle:Category');
-        $connection = $em->getConnection();
-
-        $connection->beginTransaction();
-
-        try {
-            /** @var Category $category */
-            $category = $this->getCategoryRepository()->find($categoryId);
-            /** @var Category $parentCategory */
-            $parentCategory = $this->getCategoryRepository()->find($parentId);
-
-            if ($parentCategory->getChildCategories()->contains($category)) {
-                $parentCategory->removeChildCategory($category);
-            }
-
-            $parentCategory->addChildCategory($category);
-
-            if ($position) {
-                $children = array_values($parentCategory->getChildCategories()->toArray());
-                $this->getCategoryRepository()->persistAsNextSiblingOf($category, $children[$position - 1]);
-            } else {
-                $this->getCategoryRepository()->persistAsFirstChildOf($category, $parentCategory);
-            }
-
-            $em->flush();
-            $connection->commit();
-        } catch (\Exception $e) {
-            $connection->rollBack();
-            $status['status'] = self::ERROR_STATUS;
-            $status['error'] = $e->getMessage();
+        if ($parentCategory->getChildCategories()->contains($category)) {
+            $parentCategory->removeChildCategory($category);
         }
 
-        return $status;
-    }
-    
-    /**
-     * @param Category[] $categories
-     * @return array
-     */
-    protected function formatTree($categories)
-    {
-        $formattedTree = [];
+        $parentCategory->addChildCategory($category);
 
-        foreach ($categories as $category) {
-            $formattedTree[] = $this->formatCategory($category);
+        if ($position) {
+            $children = array_values($parentCategory->getChildCategories()->toArray());
+            $this->getEntityRepository()->persistAsNextSiblingOf($category, $children[$position - 1]);
+        } else {
+            $this->getEntityRepository()->persistAsFirstChildOf($category, $parentCategory);
         }
-
-        return $formattedTree;
     }
 
     /**
@@ -108,26 +54,18 @@ class CategoryTreeHandler
      *     'text'   => string  // tree item label
      * )
      *
-     * @param Category $category
+     * @param Category $entity
      * @return array
      */
-    protected function formatCategory(Category $category)
+    protected function formatEntity($entity)
     {
         return [
-            'id' => $category->getId(),
-            'parent' => $category->getParentCategory() ? $category->getParentCategory()->getId() : '#',
-            'text' => $category->getDefaultTitle()->getString(),
-            'state' => [
-                'opened' => $category->getParentCategory() === null
+            'id'     => $entity->getId(),
+            'parent' => $entity->getParentCategory() ? $entity->getParentCategory()->getId() : '#',
+            'text'   => $entity->getDefaultTitle()->getString(),
+            'state'  => [
+                'opened' => $entity->getParentCategory() === null
             ]
         ];
-    }
-
-    /**
-     * @return CategoryRepository
-     */
-    protected function getCategoryRepository()
-    {
-        return $this->managerRegistry->getRepository('OroB2BCatalogBundle:Category');
     }
 }

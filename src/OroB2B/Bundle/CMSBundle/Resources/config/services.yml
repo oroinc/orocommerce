@@ -1,19 +1,14 @@
 parameters:
-    orob2b_cms.page.class: OroB2B\Bundle\CmsBundle\Entity\Page
-    orob2b_cms.form.type.page.class: OroB2B\Bundle\CmsBundle\Form\Type\PageType
+    orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
     orob2b_cms.page_tree_handler.class: OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler
     orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_cms.listener.page_slug_listener.class: OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener
 
 services:
-    orob2b_cms.form.type.page:
-        class: %orob2b_cms.form.type.page.class%
-        tags:
-            - { name: form.type, alias: orob2b_cms_page }
-
     orob2b_cms.page_tree_handler:
         class: %orob2b_cms.page_tree_handler.class%
         arguments:
+            - %orob2b_cms.page.class%
             - @doctrine
             - @orob2b_redirect.slug.manager
 

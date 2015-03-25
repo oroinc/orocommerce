@@ -34,11 +34,11 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
      * @var array
      */
     protected $pages = [
-        ['id' => 1, 'title' => 'Root', 'parent' => null],
-        ['id' => 2, 'title' => 'TV', 'parent' => 1],
-        ['id' => 3, 'title' => 'Phones', 'parent' => 1],
-        ['id' => 4, 'title' => 'Phone 01', 'parent' => 3],
-        ['id' => 5, 'title' => 'Phone 02', 'parent' => 3]
+        ['id' => 1, 'title' => 'First Root', 'parent' => null],
+        ['id' => 2, 'title' => 'Scaled models', 'parent' => 1],
+        ['id' => 3, 'title' => 'Traines', 'parent' => 1],
+        ['id' => 4, 'title' => 'Train model 01', 'parent' => 3],
+        ['id' => 5, 'title' => 'Train model 02', 'parent' => 3]
     ];
 
     /**
@@ -65,17 +65,21 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->pageTreeHandler = new PageTreeHandler($this->managerRegistry, $this->slugManager);
+        $this->pageTreeHandler = new PageTreeHandler(
+            'OroB2BCMSBundle:Page',
+            $this->managerRegistry,
+            $this->slugManager
+        );
     }
 
     /**
-     * @dataProvider movePageDataProvider
+     * @dataProvider moveNodeDataProvider
      * @param int $nodeId
      * @param int|null $parentNodeId
      * @param int $position
      * @param boolean $withException
      */
-    public function testMovePage($nodeId, $parentNodeId, $position, $withException)
+    public function testMoveNode($nodeId, $parentNodeId, $position, $withException)
     {
         $this->preparePages($this->pages);
         $pages = $this->pagesCollection;
@@ -143,7 +147,8 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
             }
 
             $this->slugManager->expects($this->once())
-                ->method('makeUrlUnique');
+                ->method('makeUrlUnique')
+                ->with($currentNode->getCurrentSlug());
 
             $em->expects($this->at(0))
                 ->method('flush');
@@ -151,13 +156,13 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 ->method('commit');
         }
 
-        $this->pageTreeHandler->movePage($nodeId, $parentNodeId, $position);
+        $this->pageTreeHandler->moveNode($nodeId, $parentNodeId, $position);
     }
 
     /**
      * @return array
      */
-    public function movePageDataProvider()
+    public function moveNodeDataProvider()
     {
         return [
             'move with position' => [
@@ -233,42 +238,42 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 'pages' => $this->pagesCollection,
                 'expected' => [
                     [
-                        'id' => 1,
+                        'id'     => 1,
                         'parent' => '#',
-                        'text' => 'Root',
-                        'state' => [
+                        'text'   => 'First Root',
+                        'state'  => [
                             'opened' => true
                         ]
                     ],
                     [
-                        'id' => 2,
+                        'id'     => 2,
                         'parent' => '1',
-                        'text' => 'TV',
-                        'state' => [
+                        'text'   => 'Scaled models',
+                        'state'  => [
                             'opened' => false
                         ]
                     ],
                     [
-                        'id' => 3,
+                        'id'     => 3,
                         'parent' => '1',
-                        'text' => 'Phones',
-                        'state' => [
+                        'text'   => 'Traines',
+                        'state'  => [
                             'opened' => false
                         ]
                     ],
                     [
-                        'id' => 4,
+                        'id'     => 4,
                         'parent' => '3',
-                        'text' => 'Phone 01',
-                        'state' => [
+                        'text'   => 'Train model 01',
+                        'state'  => [
                             'opened' => false
                         ]
                     ],
                     [
-                        'id' => 5,
+                        'id'     => 5,
                         'parent' => '3',
-                        'text' => 'Phone 02',
-                        'state' => [
+                        'text'   => 'Train model 02',
+                        'state'  => [
                             'opened' => false
                         ]
                     ]

@@ -56,17 +56,17 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BCatalogBundle:Category')
             ->willReturn($this->repository);
 
-        $this->categoryTreeHandler = new CategoryTreeHandler($this->managerRegistry);
+        $this->categoryTreeHandler = new CategoryTreeHandler('OroB2BCatalogBundle:Category', $this->managerRegistry);
     }
 
     /**
-     * @dataProvider moveCategoryDataProvider
+     * @dataProvider moveNodeDataProvider
      * @param int $nodeId
      * @param int|null $parentNodeId
      * @param int $position
      * @param boolean $withException
      */
-    public function testMoveCategory($nodeId, $parentNodeId, $position, $withException)
+    public function testMoveNode($nodeId, $parentNodeId, $position, $withException)
     {
         $this->prepareCategories($this->categories);
         $categories = $this->categoriesCollection;
@@ -127,13 +127,13 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 ->method('commit');
         }
 
-        $this->categoryTreeHandler->moveCategory($nodeId, $parentNodeId, $position);
+        $this->categoryTreeHandler->moveNode($nodeId, $parentNodeId, $position);
     }
 
     /**
      * @return array
      */
-    public function moveCategoryDataProvider()
+    public function moveNodeDataProvider()
     {
         return [
             'move with position' => [

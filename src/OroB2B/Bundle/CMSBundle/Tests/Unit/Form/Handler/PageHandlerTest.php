@@ -38,10 +38,12 @@ class PageHandlerTest extends FormHandlerTestCase
 
         if ($isValid) {
             $this->slugManager->expects($this->once())
-                ->method('makeUrlUnique');
+                ->method('makeUrlUnique')
+                ->with($this->entity->getCurrentSlug());
         } else {
             $this->slugManager->expects($this->never())
-                ->method('makeUrlUnique');
+                ->method('makeUrlUnique')
+                ->with($this->entity->getCurrentSlug());
         }
 
         parent::testProcessSupportedRequest($method, $isValid, $isProcessed);

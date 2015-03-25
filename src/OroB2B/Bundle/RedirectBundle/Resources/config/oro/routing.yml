@@ -1,0 +1,9 @@
+orob2b_redirect_bundle_api:
+    resource:     "@OroB2BRedirectBundle/Resources/config/oro/routing_api.yml"
+    type: rest
+    prefix: api/rest/{version}
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
