@@ -2,9 +2,14 @@
 
 namespace OroB2B\Bundle\CMSBundle\Tests\Functional\Controller;
 
+use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
 /**
  * @outputBuffering enabled
@@ -12,22 +17,32 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PageControllerTest extends WebTestCase
 {
-    const DEFAULT_PAGE_TITLE            = 'Page Title';
-    const DEFAULT_PAGE_SLUG             = 'page-title';
-    const UPDATED_DEFAULT_PAGE_TITLE    = 'Updated Page Title';
-    const UPDATED_DEFAULT_PAGE_SLUG     = 'updated-page-title';
-    const DEFAULT_SUBPAGE_TITLE         = 'Subpage Title';
-    const DEFAULT_SUBPAGE_SLUG          = 'subpage-title';
-    const UPDATED_DEFAULT_SUBPAGE_TITLE = 'Updated Subpage Title';
-    const UPDATED_DEFAULT_SUBPAGE_SLUG  = 'updated-subpage-title';
+    const DEFAULT_PAGE_TITLE                = 'Page Title';
+    const DEFAULT_PAGE_SLUG_TEXT            = 'page-title';
+    const DEFAULT_PAGE_SLUG_URL             = '/page-title';
+    const UPDATED_DEFAULT_PAGE_TITLE        = 'Updated Page Title';
+    const UPDATED_DEFAULT_PAGE_SLUG_TEXT    = 'updated-page-title';
+    const UPDATED_DEFAULT_PAGE_SLUG_URL     = '/updated-page-title';
+    const DEFAULT_SUBPAGE_TITLE             = 'Subpage Title';
+    const DEFAULT_SUBPAGE_SLUG_TEXT         = 'subpage-title';
+    const DEFAULT_SUBPAGE_SLUG_URL          = '/page-title/subpage-title';
+    const UPDATED_DEFAULT_SUBPAGE_TITLE     = 'Updated Subpage Title';
+    const UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT = 'updated-subpage-title';
+    const UPDATED_DEFAULT_SUBPAGE_SLUG_URL  = '/page-title/updated-subpage-title';
 
     const SLUG_MODE_NEW      = 'new';
     const SLUG_MODE_OLD      = 'old';
     const SLUG_MODE_REDIRECT = 'redirect';
 
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page');
     }
 
     public function testIndex()
@@ -47,7 +62,7 @@ class PageControllerTest extends WebTestCase
      */
     public function testCreatePage()
     {
-        return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG);
+        return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG_TEXT);
     }
 
     /**
@@ -55,13 +70,23 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
+    public function testCreatePageSlugUrls($id)
+    {
+        return $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(), $id);
+    }
+
+    /**
+     * @depends testCreatePageSlugUrls
+     * @param int $id
+     * @return int
+     */
     public function testEditPageWithNewSlug($id)
     {
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
-            self::DEFAULT_PAGE_SLUG,
+            self::DEFAULT_PAGE_SLUG_TEXT,
             self::UPDATED_DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG,
+            self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
             self::SLUG_MODE_NEW,
             $id
         );
@@ -72,13 +97,23 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
+    public function testEditPageWithNewSlugUrls($id)
+    {
+        return $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
+    }
+
+    /**
+     * @depends testEditPageWithNewSlugUrls
+     * @param int $id
+     * @return int
+     */
     public function testEditPageWithOldSlug($id)
     {
         return $this->assertEdit(
             self::UPDATED_DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG,
+            self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
             self::DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG,
+            self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
             self::SLUG_MODE_OLD,
             $id
         );
@@ -89,16 +124,36 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
+    public function testEditPageWithOldSlugUrls($id)
+    {
+        return $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
+    }
+
+    /**
+     * @depends testEditPageWithOldSlugUrls
+     * @param int $id
+     * @return int
+     */
     public function testEditPageWithNewSlugAndRedirect($id)
     {
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG,
-            self::UPDATED_DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG,
+            self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
+            self::DEFAULT_PAGE_TITLE,
+            self::DEFAULT_PAGE_SLUG_TEXT,
             self::SLUG_MODE_REDIRECT,
             $id
         );
+    }
+
+    /**
+     * @depends testEditPageWithOldSlug
+     * @param int $id
+     * @return int
+     */
+    public function testEditPageWithNewSlugAndRedirectUrls($id)
+    {
+        return $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
     }
 
     /**
@@ -108,7 +163,7 @@ class PageControllerTest extends WebTestCase
      */
     public function testCreateSubPage($id)
     {
-        return $this->assertCreate(self::DEFAULT_SUBPAGE_TITLE, self::DEFAULT_SUBPAGE_SLUG, $id);
+        return $this->assertCreate(self::DEFAULT_SUBPAGE_TITLE, self::DEFAULT_SUBPAGE_SLUG_TEXT, $id);
     }
 
     /**
@@ -116,16 +171,36 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
+    public function testCreateSubPageUrls($id)
+    {
+        return $this->assertSlugs(self::DEFAULT_SUBPAGE_SLUG_URL, array(), $id);
+    }
+
+    /**
+     * @depends testCreateSubPageUrls
+     * @param int $id
+     * @return int
+     */
     public function testEditSubPage($id)
     {
         return $this->assertEdit(
             self::DEFAULT_SUBPAGE_TITLE,
-            self::DEFAULT_SUBPAGE_SLUG,
+            self::DEFAULT_SUBPAGE_SLUG_TEXT,
             self::UPDATED_DEFAULT_SUBPAGE_TITLE,
-            self::UPDATED_DEFAULT_SUBPAGE_SLUG,
+            self::UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT,
             self::SLUG_MODE_NEW,
             $id
         );
+    }
+
+    /**
+     * @depends testCreateSubPage
+     * @param int $id
+     * @return int
+     */
+    public function testEditSubPageUrls($id)
+    {
+        return $this->assertSlugs(self::UPDATED_DEFAULT_SUBPAGE_SLUG_URL, array(), $id);
     }
 
     /**
@@ -236,6 +311,30 @@ class PageControllerTest extends WebTestCase
             "Redirect visitors from " . $newSlug,
             $crawler->filter('.sub-item')->html()
         );
+
+        return $id;
+    }
+
+    /**
+     * @param string $expectedCurrentSlug
+     * @param string[] $expectedRelatedSlugs
+     * @param int $id
+     * @return int
+     */
+    protected function assertSlugs($expectedCurrentSlug, array $expectedRelatedSlugs, $id)
+    {
+        /** @var Page $page */
+        $page = $this->entityManager->find('OroB2BCMSBundle:Page', $id);
+
+        $this->assertEquals($expectedCurrentSlug, $page->getCurrentSlug()->getUrl());
+
+        $relatedSlugs = [];
+
+        foreach ($page->getRelatedSlugs() as $slug) {
+            $relatedSlugs[] = $slug->getUrl();
+        }
+
+        $this->assertEquals($expectedRelatedSlugs, $relatedSlugs);
 
         return $id;
     }
