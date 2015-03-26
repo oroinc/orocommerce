@@ -93,12 +93,29 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
-    {% set options = {
-        'targetInput': '#' ~ form.title.vars.id,
-        'recipientInput': '#' ~ form.slug.slug.vars.id,
-        'modeName': 'orob2b_cms_page[slug][mode]'
-    } %}
-    <div data-page-component-module="orob2bcms/js/app/components/slugify-component"
-         data-page-component-options="{{ options|json_encode }}"></div>
+    <div class="cms-page-container">
+        <div class="page b2b-tree page-tree">
+            {% set treeOptions = {
+                'key' : 'b2b-page',
+                'data' : orob2b_page_list(),
+                'nodeId' : entity.id,
+                'updateAllowed' : resource_granted('orob2b_cms_page_update'),
+                'reloadWidget': 'page-info-widget'
+            } %}
+            <div
+                    data-page-component-module="orob2bcms/js/app/components/tree-manage-component"
+                    data-page-component-options="{{ treeOptions|json_encode }}"
+                    ></div>
+        </div>
+    </div>
+    <div class="cms-page-data">
+        {{ parent() }}
+        {% set options = {
+            'targetInput': '#' ~ form.title.vars.id,
+            'recipientInput': '#' ~ form.slug.slug.vars.id,
+            'modeName': 'orob2b_cms_page[slug][mode]'
+        } %}
+        <div data-page-component-module="orob2bcms/js/app/components/slugify-component"
+             data-page-component-options="{{ options|json_encode }}"></div>
+    </div>
 {% endblock content_data %}
