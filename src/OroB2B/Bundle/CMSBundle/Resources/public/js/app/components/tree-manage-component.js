@@ -143,7 +143,7 @@ define(function (require) {
             }
 
             var pageContainer = pageTree.parent();
-            if (!pageContainer.hasClass('page-container')) {
+            if (!pageContainer.hasClass('cms-page-container')) {
                 return;
             }
 

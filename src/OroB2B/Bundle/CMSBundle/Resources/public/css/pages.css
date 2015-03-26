@@ -1,7 +1,7 @@
-.page-container {
+.cms-page-container {
     position: relative;
 }
-.page-container .page-tree {
+.cms-page-container .page-tree {
     position: absolute;
     border-top: 1px solid #f2f2f2;
     width: 334px;
