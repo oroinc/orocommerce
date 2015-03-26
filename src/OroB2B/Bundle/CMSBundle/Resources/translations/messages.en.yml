@@ -7,6 +7,7 @@ orob2b.cms:
         content.label:          'Content'
         organization.label:     'Organization'
         current_slug.label:     'Current slug'
+        related_slugs.label:    'Related slugs'
         left.label:             'Tree left index'
         level.label:            'Tree level'
         right.label:            'Tree right index'

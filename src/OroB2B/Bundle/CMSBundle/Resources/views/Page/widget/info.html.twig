@@ -1,9 +1,21 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
+{% macro page_related_slugs(slugs) %}
+    <ul class="without-markers">
+        {% for slug in slugs %}
+            <li>{{ slug.getUrl }}</li>
+        {% endfor %}
+    </ul>
+{% endmacro %}
+
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.cms.page.title.label'|trans, entity.title) }}
+            {{ UI.renderProperty('orob2b.cms.page.current_slug.label'|trans, entity.currentSlug.getUrl) }}
+            {% if entity.getRelatedSlugs %}
+                {{ UI.renderHtmlProperty('orob2b.cms.page.related_slugs.label'|trans, _self.page_related_slugs(entity.getRelatedSlugs)) }}
+            {% endif %}
         </div>
     </div>
 </div>

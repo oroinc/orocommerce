@@ -21,3 +21,8 @@
 .sub-item {
     padding-left: 15px;
 }
+
+.without-markers {
+    list-style: none;
+    margin: auto;
+}

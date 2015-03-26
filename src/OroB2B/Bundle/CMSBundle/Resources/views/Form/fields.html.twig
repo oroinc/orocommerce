@@ -7,11 +7,11 @@
                     {{- radio.vars.label|trans -}}
                     {{- form_widget(form.slug) -}}
                     {{- form_errors(form.slug) -}}
-                </div>
-                <div class="sub-item">
-                    {{- form_widget(form.redirect) -}}
-                    {{- form.redirect.vars.label|trans({'%old_slug%': form.vars.current_slug}) -}}
-                    {{- form_errors(form.redirect) -}}
+                    <div class="sub-item">
+                        {{- form_widget(form.redirect) -}}
+                        {{- form.redirect.vars.label|trans({'%old_slug%': form.vars.current_slug}) -}}
+                        {{- form_errors(form.redirect) -}}
+                    </div>
                 </div>
             {% else %}
                 <div>
