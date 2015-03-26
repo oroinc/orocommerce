@@ -56,20 +56,24 @@ class LoadPageDemoData extends AbstractFixture implements ContainerAwareInterfac
             $page->setOrganization($organization);
             $page->setCurrentSlugUrl($row['slug']);
 
-
-            if ($row['parentId'] > 0 && array_key_exists($row['parentId'], $this->pages)) {
+            if ($row['parentPageSlug'] && array_key_exists($row['parentPageSlug'], $this->pages)) {
                 /** @var Page $parent */
-                $parent = $this->pages[$row['parentId']];
+                $parent = $this->pages[$row['parentPageSlug']];
                 $parent->addChildPage($page);
             }
 
             $manager->persist($page);
+            $manager->flush();
 
-            $this->pages[$row['id']] = $page;
+            $slug = $page->getCurrentSlug();
+            $slug->setRouteName('orob2b_cms_page_view');
+            $slug->setRouteParameters(['id' => $page->getId()]);
+            $manager->persist($slug);
+            $manager->flush();
+
+            $this->pages[$page->getCurrentSlug()->getSlugUrl()] = $page;
         }
 
         fclose($handler);
-
-        $manager->flush();
     }
 }
