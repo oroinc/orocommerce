@@ -44,7 +44,8 @@
     {% set pageInfo %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('orob2b_cms_page_info', {id: entity.id})
+            'url': path('orob2b_cms_page_info', {id: entity.id}),
+            'alias': 'page-info-widget'
         }) }}
     {% endset %}
 
@@ -78,7 +79,8 @@
                 'key' : 'b2b-page',
                 'data' : orob2b_page_list(),
                 'nodeId' : entity.id,
-                'updateAllowed' : resource_granted('orob2b_cms_page_update')
+                'updateAllowed' : resource_granted('orob2b_cms_page_update'),
+                'reloadWidget': 'page-info-widget'
             } %}
             <div
                 data-page-component-module="orob2bcms/js/app/components/tree-manage-component"

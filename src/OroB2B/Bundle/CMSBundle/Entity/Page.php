@@ -269,6 +269,16 @@ class Page
     }
 
     /**
+     * Get slugs related to current page
+     *
+     * @return Slug[]
+     */
+    public function getRelatedSlugs()
+    {
+        return array_diff($this->slugs->toArray(), [$this->currentSlug]);
+    }
+
+    /**
      * Get currentSlug
      *
      * @return Slug
@@ -338,7 +348,7 @@ class Page
     }
 
     /**
-     * @param Page $Page
+     * @param Page $page
      * @return $this
      */
     public function removeChildPage(Page $page)

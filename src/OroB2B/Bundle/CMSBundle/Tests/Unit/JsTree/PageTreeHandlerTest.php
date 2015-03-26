@@ -6,6 +6,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 use OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler;
+use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
 
 class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,6 +14,11 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      * */
     protected $managerRegistry;
+
+    /**
+     * @var SlugManager
+     */
+    protected $slugManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
@@ -55,7 +61,15 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BCMSBundle:Page')
             ->willReturn($this->repository);
 
-        $this->pageTreeHandler = new PageTreeHandler('OroB2BCMSBundle:Page', $this->managerRegistry);
+        $this->slugManager = $this->getMockBuilder('OroB2B\Bundle\RedirectBundle\Manager\SlugManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->pageTreeHandler = new PageTreeHandler(
+            'OroB2BCMSBundle:Page',
+            $this->managerRegistry,
+            $this->slugManager
+        );
     }
 
     /**
@@ -131,6 +145,10 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         ->with('persistAsFirstChildOf', [$currentNode, $parentNode]);
                 }
             }
+
+            $this->slugManager->expects($this->once())
+                ->method('makeUrlUnique')
+                ->with($currentNode->getCurrentSlug());
 
             $em->expects($this->at(0))
                 ->method('flush');

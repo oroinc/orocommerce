@@ -4,6 +4,8 @@ define(function (require) {
     var TreeManageComponent,
         $ = require('jquery'),
         _ = require('underscore'),
+        __ = require('orotranslation/js/translator'),
+        widgetManager = require('oroui/js/widget-manager'),
         mediator = require('oroui/js/mediator'),
         layout = require('oroui/js/layout'),
         messenger = require('oroui/js/messenger'),
@@ -27,6 +29,11 @@ define(function (require) {
         moveTriggered : false,
 
         /**
+         * @property {String}
+         */
+        reloadWidget : '',
+
+        /**
          * @param {Object} options
          */
         initialize: function (options) {
@@ -36,6 +43,7 @@ define(function (require) {
             }
 
             this.updateAllowed = options.updateAllowed;
+            this.reloadWidget = options.reloadWidget;
 
             this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
             this.$tree.on('move_node.jstree', _.bind(this.onMove, this));
@@ -102,6 +110,10 @@ define(function (require) {
                             'error',
                             __("orob2b.cms.move_page_error", {nodeText: data.node.text})
                         );
+                    } else if (self.reloadWidget) {
+                        widgetManager.getWidgetInstanceByAlias(self.reloadWidget, function(widget) {
+                            widget.render();
+                        })
                     }
                 }
             });

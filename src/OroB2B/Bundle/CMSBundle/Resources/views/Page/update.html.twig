@@ -94,4 +94,11 @@
     }%}
 
     {{ parent() }}
+    {% set options = {
+        'targetInput': '#' ~ form.title.vars.id,
+        'recipientInput': '#' ~ form.slug.slug.vars.id,
+        'modeName': 'orob2b_cms_page[slug][mode]'
+    } %}
+    <div data-page-component-module="orob2bcms/js/app/components/slugify-component"
+         data-page-component-options="{{ options|json_encode }}"></div>
 {% endblock content_data %}

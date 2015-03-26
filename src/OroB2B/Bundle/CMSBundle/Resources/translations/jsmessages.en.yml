@@ -1,1 +1,2 @@
 "orob2b.cms.move_page_error": "You can not move node {{ nodeText }} here."
+"orob2b.cms.slugify_error": "Impossible slug generation for {{ string }}"

@@ -10,6 +10,7 @@ services:
         arguments:
             - %orob2b_cms.page.class%
             - @doctrine
+            - @orob2b_redirect.slug.manager
 
     orob2b_cms.page.manager.api:
         class: %orob2b_cms.page.manager.api.class%
