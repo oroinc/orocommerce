@@ -136,6 +136,10 @@ class PageTypeTest extends FormIntegrationTestCase
                 [
                     'label' => 'orob2b.cms.page.content.label',
                     'required' => false,
+                    'wysiwyg_options' => [
+                        'statusbar' => true,
+                        'resize' => true
+                    ]
                 ]
             )
             ->will($this->returnSelf());
