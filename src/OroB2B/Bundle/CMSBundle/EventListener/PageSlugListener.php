@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CMSBundle\EventListener;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
@@ -27,11 +28,28 @@ class PageSlugListener
     /**
      * @param LifecycleEventArgs $event
      */
+    public function preRemove(LifecycleEventArgs $event)
+    {
+        /** @var Page $page */
+        $page = $event->getEntity();
+        if (!$this->isApplicable($page)) {
+            return;
+        }
+
+        /** @var EntityManager $em */
+        $em = $event->getEntityManager();
+
+        $this->removePageSlugs($em, $page);
+    }
+
+    /**
+     * @param LifecycleEventArgs $event
+     */
     protected function process(LifecycleEventArgs $event)
     {
         /** @var Page $page */
         $page = $event->getEntity();
-        if (!$page instanceof Page) {
+        if (!$this->isApplicable($page)) {
             return;
         }
 
@@ -58,5 +76,30 @@ class PageSlugListener
                 $unitOfWork->scheduleExtraUpdate($slug, $changeSet);
             }
         }
+    }
+
+    /**
+     * @param  EntityManager $em
+     * @param  Page $page
+     */
+    protected function removePageSlugs(EntityManager $em, Page $page)
+    {
+        foreach ($page->getSlugs() as $slug) {
+            $page->removeSlug($slug);
+            $em->remove($slug);
+        }
+
+        foreach ($page->getChildPages() as $childPage) {
+            $this->removePageSlugs($em, $childPage);
+        }
+    }
+
+    /**
+     * @param  object  $entity
+     * @return boolean
+     */
+    protected function isApplicable($entity)
+    {
+        return $entity instanceof Page;
     }
 }
