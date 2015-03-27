@@ -93,6 +93,12 @@ define(function (require) {
                 return;
             }
 
+            if (data.parent == '#' && data.old_parent == '#') {
+                this.rollback(data);
+                messenger.notificationFlashMessage('warning', __("orob2b.cms.move_root_page_warning"));
+                return;
+            }
+
             var self = this;
             $.ajax({
                 async: false,
