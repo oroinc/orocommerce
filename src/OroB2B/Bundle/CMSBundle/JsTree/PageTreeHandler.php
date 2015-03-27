@@ -23,7 +23,7 @@ class PageTreeHandler extends AbstractTreeHandler
     public function __construct($entityClass, ManagerRegistry $managerRegistry, SlugManager $slugManager)
     {
         parent::__construct($entityClass, $managerRegistry);
-        $this->slugManager     = $slugManager;
+        $this->slugManager = $slugManager;
     }
 
     /**
