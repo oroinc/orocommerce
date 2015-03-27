@@ -95,4 +95,44 @@ class PageSlugListenerTest extends WebTestCase
             $this->assertEquals($expectedRouteParameters, $slug->getRouteParameters());
         }
     }
+
+    public function testRemovePage()
+    {
+        $page = new Page();
+        $page->setTitle('Test')
+            ->setContent('<p>test</p>')
+            ->setCurrentSlugUrl('/persist');
+        $this->entityManager->persist($page);
+
+        $childPage1 = new Page();
+        $childPage1->setTitle('Test child Page 1')
+            ->setContent('<p>test child page</p>')
+            ->setCurrentSlugUrl('/child1');
+        $this->entityManager->persist($childPage1);
+
+        $childPage2 = new Page();
+        $childPage2->setTitle('Test child Page 2')
+            ->setContent('<p>test child page</p>')
+            ->setCurrentSlugUrl('/child2');
+        $this->entityManager->persist($childPage2);
+
+        $this->entityManager->flush();
+
+        $pageSlugId       = $page->getCurrentSlug()->getId();
+        $childPage1SlugId = $childPage1->getCurrentSlug()->getId();
+        $childPage2SlugId = $childPage2->getCurrentSlug()->getId();
+
+        // make sure data persisted correctly
+        $this->entityManager->clear();
+
+        $this->entityManager->remove($page);
+
+        $pageSlug       = $this->entityManager->find('OroB2BRedirectBundle:Slug', $pageSlugId);
+        $childPage1Slug = $this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage1SlugId);
+        $childPage2Slug = $this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage2SlugId);
+
+        $this->assertNull($pageSlug);
+        $this->assertNull($childPage1Slug);
+        $this->assertNull($childPage2Slug);
+    }
 }
