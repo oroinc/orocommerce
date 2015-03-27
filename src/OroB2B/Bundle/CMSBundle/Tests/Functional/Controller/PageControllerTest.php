@@ -153,12 +153,14 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @depends testEditPageWithNewSlugAndRedirect
-     * @depends testCreateSubPage
      * @param int $id
      */
     public function testDelete($id)
     {
         $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
+
+        $page = $this->entityManager->find('OroB2BCMSBundle:Page', $id);
+        $children = $page->getChildPages();
 
         $this->client->request('DELETE', $this->getUrl('orob2b_api_cms_delete_page', ['id' => $id]));
 
@@ -169,6 +171,11 @@ class PageControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+
+        // Check all child page are deleted
+        foreach ($children as $childPage) {
+            $this->assertNull($this->entityManager->find('OroB2BCMSBundle:Page', $childPage->getId()));
+        }
     }
 
     /**
