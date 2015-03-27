@@ -27,17 +27,6 @@ class PageTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * @return array
-     */
-    public function createTree()
-    {
-        $tree = $this->getEntityRepository()
-            ->getChildren(null, false, 'left', 'ASC');
-
-        return $this->formatTree($tree);
-    }
-
-    /**
      * Returns an array formatted as:
      * array(
      *     'id'     => int,    // tree item id
