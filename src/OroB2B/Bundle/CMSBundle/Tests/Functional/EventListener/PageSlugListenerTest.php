@@ -101,7 +101,7 @@ class PageSlugListenerTest extends WebTestCase
         $page = new Page();
         $page->setTitle('Test')
             ->setContent('<p>test</p>')
-            ->setCurrentSlugUrl('/persist');
+            ->setCurrentSlugUrl('/remove');
         $this->entityManager->persist($page);
 
         $childPage1 = new Page();
@@ -116,23 +116,23 @@ class PageSlugListenerTest extends WebTestCase
             ->setCurrentSlugUrl('/child2');
         $this->entityManager->persist($childPage2);
 
-        $this->entityManager->flush();
+        $page->addChildPage($childPage1);
+        $page->addChildPage($childPage2);
+
+        $this->entityManager->flush($page);
 
         $pageSlugId       = $page->getCurrentSlug()->getId();
         $childPage1SlugId = $childPage1->getCurrentSlug()->getId();
         $childPage2SlugId = $childPage2->getCurrentSlug()->getId();
 
-        // make sure data persisted correctly
+        $this->entityManager->remove($page);
+        $this->entityManager->flush();
+
+        // make sure data updated correctly
         $this->entityManager->clear();
 
-        $this->entityManager->remove($page);
-
-        $pageSlug       = $this->entityManager->find('OroB2BRedirectBundle:Slug', $pageSlugId);
-        $childPage1Slug = $this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage1SlugId);
-        $childPage2Slug = $this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage2SlugId);
-
-        $this->assertNull($pageSlug);
-        $this->assertNull($childPage1Slug);
-        $this->assertNull($childPage2Slug);
+        $this->assertNull($this->entityManager->find('OroB2BRedirectBundle:Slug', $pageSlugId));
+        $this->assertNull($this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage1SlugId));
+        $this->assertNull($this->entityManager->find('OroB2BRedirectBundle:Slug', $childPage2SlugId));
     }
 }

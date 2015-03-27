@@ -30,7 +30,16 @@ class PageSlugListener
      */
     public function preRemove(LifecycleEventArgs $event)
     {
-        $this->processRemoveSlugs($event);
+        /** @var Page $page */
+        $page = $event->getEntity();
+        if ($this->isApplicable($page)) {
+            return;
+        }
+
+        /** @var EntityManager $em */
+        $em = $event->getEntityManager();
+
+        $this->removePageSlugs($em, $page);
     }
 
     /**
@@ -40,7 +49,7 @@ class PageSlugListener
     {
         /** @var Page $page */
         $page = $event->getEntity();
-        if (!$page instanceof Page) {
+        if ($this->isApplicable($page)) {
             return;
         }
 
@@ -70,23 +79,6 @@ class PageSlugListener
     }
 
     /**
-     * @param LifecycleEventArgs $event
-     */
-    protected function processRemoveSlugs(LifecycleEventArgs $event)
-    {
-        /** @var Page $page */
-        $page = $event->getEntity();
-        if (!$page instanceof Page) {
-            return;
-        }
-
-        /** @var EntityManager $em */
-        $em = $event->getEntityManager();
-
-        $this->removePageSlugs($em, $page);
-    }
-
-    /**
      * @param  EntityManager $em
      * @param  Page $page
      */
@@ -97,10 +89,17 @@ class PageSlugListener
             $em->remove($slug);
         }
 
-        $children = $page->getChildPages();
-
-        foreach ($children as $childPage) {
+        foreach ($page->getChildPages() as $childPage) {
             $this->removePageSlugs($em, $childPage);
         }
+    }
+
+    /**
+     * @param  object  $entity
+     * @return boolean
+     */
+    protected function isApplicable($entity)
+    {
+        return !$entity instanceof Page;
     }
 }
