@@ -32,7 +32,7 @@ class PageSlugListener
     {
         /** @var Page $page */
         $page = $event->getEntity();
-        if ($this->isApplicable($page)) {
+        if (!$this->isApplicable($page)) {
             return;
         }
 
@@ -49,7 +49,7 @@ class PageSlugListener
     {
         /** @var Page $page */
         $page = $event->getEntity();
-        if ($this->isApplicable($page)) {
+        if (!$this->isApplicable($page)) {
             return;
         }
 
@@ -100,6 +100,6 @@ class PageSlugListener
      */
     protected function isApplicable($entity)
     {
-        return !$entity instanceof Page;
+        return $entity instanceof Page;
     }
 }
