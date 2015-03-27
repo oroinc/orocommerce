@@ -58,11 +58,11 @@ class PagesTest extends Selenium2TestCase
         // assert root level page created
         $pages->assertTitle(self::$firstPage . ' - Pages - CMS')
             ->assertMessage('Page has been saved')
-            ->assertPageExists(self::$firstPage)
-            ->assertCurrentSlugUrl([self::$firstPageSlug]);
+            ->assertPageExists(self::$firstPage);
 
         // create child page
         $pages->openPage(self::$firstPage)
+            ->assertCurrentSlugUrl([self::$firstPageSlug])
             ->assertTitle(self::$firstPage . ' - Pages - CMS')
             ->createChildPage()
             ->assertTitle('Create Page - Pages - CMS')
@@ -93,7 +93,7 @@ class PagesTest extends Selenium2TestCase
             ->assertCurrentSlugUrl([self::$firstPageSlug])
             ->editPage();
 
-         /**
+        /**
          * preconditions
          *
          * Leave as is radio button is selected
@@ -106,7 +106,7 @@ class PagesTest extends Selenium2TestCase
             ->assertSlugInputDisabled()
             ->assertRedirectCheckboxDisabled();
 
-         /**
+        /**
          * click on Update slug radio button
          *
          * Leave as is radio button is notselected
@@ -120,7 +120,7 @@ class PagesTest extends Selenium2TestCase
             ->assertSlugInputEnabled()
             ->assertRedirectCheckboxEnabled();
 
-         /**
+        /**
          * click on Update slug radio button
          *
          * Leave as is radio button is selected
