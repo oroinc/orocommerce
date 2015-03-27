@@ -14,7 +14,6 @@ orob2b.cms:
         root.label:             'Tree root'
         child_pages.label:      'Child pages'
         parent_page.label:      'Parent page'
-        slugs.label:            'Slugs'
     child_page:
         entity_label:           'Child page'
     slug:
