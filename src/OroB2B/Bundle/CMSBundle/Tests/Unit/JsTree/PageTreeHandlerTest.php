@@ -38,7 +38,8 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
         ['id' => 2, 'title' => 'Scaled models', 'parent' => 1],
         ['id' => 3, 'title' => 'Traines', 'parent' => 1],
         ['id' => 4, 'title' => 'Train model 01', 'parent' => 3],
-        ['id' => 5, 'title' => 'Train model 02', 'parent' => 3]
+        ['id' => 5, 'title' => 'Train model 02', 'parent' => 3],
+        ['id' => 6, 'title' => 'Second Root', 'parent' => null],
     ];
 
     /**
@@ -123,17 +124,7 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 ->method('find')
                 ->willReturn($parentNode);
 
-            if ('#' === $parentNodeId) {
-                if ($position) {
-                    $this->repository->expects($this->at(2))
-                        ->method('__call')
-                        ->with('persistAsNextSibling', [$currentNode]);
-                } else {
-                    $this->repository->expects($this->at(2))
-                        ->method('__call')
-                        ->with('persistAsFirstChild', [$currentNode]);
-                }
-            } else {
+            if ('#' !== $parentNodeId) {
                 if ($position) {
                     $children = array_values($parentNode->getChildpages()->toArray());
                     $this->repository->expects($this->at(2))
@@ -157,6 +148,10 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->pageTreeHandler->moveNode($nodeId, $parentNodeId, $position);
+
+        if (!$withException) {
+            $this->assertEquals($parentNode, $currentNode->getParentPage());
+        }
     }
 
     /**
@@ -241,6 +236,14 @@ class PageTreeHandlerTest extends \PHPUnit_Framework_TestCase
                         'id'     => 1,
                         'parent' => '#',
                         'text'   => 'First Root',
+                        'state'  => [
+                            'opened' => true
+                        ]
+                    ],
+                    [
+                        'id'     => 6,
+                        'parent' => '#',
+                        'text'   => 'Second Root',
                         'state'  => [
                             'opened' => true
                         ]
