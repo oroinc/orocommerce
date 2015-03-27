@@ -50,13 +50,21 @@ class PageSlugListener
         foreach ($page->getSlugs() as $slug) {
             $actualRoute = $slug->getRouteName();
             $actualParameters = $slug->getRouteParameters();
+            $changeSet = [];
 
             if ($actualRoute !== $expectedRoute) {
                 $slug->setRouteName($expectedRoute);
+                $changeSet['routeName'] = [$actualRoute, $expectedRoute];
             }
 
             if ($actualParameters !== $expectedParameters) {
                 $slug->setRouteParameters($expectedParameters);
+                $changeSet['routeParameters'] = [$actualParameters, $expectedParameters];
+            }
+
+            if ($changeSet) {
+                $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+                $unitOfWork->scheduleExtraUpdate($slug, $changeSet);
             }
         }
     }

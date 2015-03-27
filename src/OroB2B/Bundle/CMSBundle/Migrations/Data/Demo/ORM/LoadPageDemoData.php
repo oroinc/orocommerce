@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 
@@ -56,24 +56,19 @@ class LoadPageDemoData extends AbstractFixture implements ContainerAwareInterfac
             $page->setOrganization($organization);
             $page->setCurrentSlugUrl($row['slug']);
 
-            if ($row['parentPageSlug'] && array_key_exists($row['parentPageSlug'], $this->pages)) {
+            if ($row['parentId'] > 0 && array_key_exists($row['parentId'], $this->pages)) {
                 /** @var Page $parent */
-                $parent = $this->pages[$row['parentPageSlug']];
+                $parent = $this->pages[$row['parentId']];
                 $parent->addChildPage($page);
             }
 
             $manager->persist($page);
-            $manager->flush();
 
-            $slug = $page->getCurrentSlug();
-            $slug->setRouteName('orob2b_cms_page_view');
-            $slug->setRouteParameters(['id' => $page->getId()]);
-            $manager->persist($slug);
-            $manager->flush();
-
-            $this->pages[$page->getCurrentSlug()->getSlugUrl()] = $page;
+            $this->pages[$row['id']] = $page;
         }
 
         fclose($handler);
+
+        $manager->flush();
     }
 }

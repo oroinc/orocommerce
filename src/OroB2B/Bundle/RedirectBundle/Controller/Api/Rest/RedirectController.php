@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\RedirectBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
+use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
-use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -13,13 +13,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @RouteResource("slug")
  * @NamePrefix("orob2b_api_")
  */
-class RedirectController extends RestController implements ClassResourceInterface
+class RedirectController extends FOSRestController
 {
     /**
      * Get slug for string
@@ -47,29 +46,5 @@ class RedirectController extends RestController implements ClassResourceInterfac
     {
         $slug = ['slug' => $this->get('orob2b_redirect.slug.generator')->slugify($string)];
         return new Response(json_encode($slug), Codes::HTTP_OK);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getManager()
-    {
-        return $this->get('orob2b_redirect.slug.manager.api');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getForm()
-    {
-        throw new \LogicException('This method should not be called');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormHandler()
-    {
-        throw new \LogicException('This method should not be called');
     }
 }
