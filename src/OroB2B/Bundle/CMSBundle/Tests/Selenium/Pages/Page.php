@@ -178,46 +178,6 @@ class Page extends AbstractPageEntity
         return new Page($this->test);
     }
 
-    public function assertSlugInputEnabled()
-    {
-        $this->assertIsEditable(
-            $this->test->byId('orob2b_cms_page_slug_slug'),
-            'Slug input is disabled'
-        );
-
-        return $this;
-    }
-
-    public function assertSlugInputDisabled()
-    {
-        $this->assertIsNotEditable(
-            $this->test->byId('orob2b_cms_page_slug_slug'),
-            'Slug input is disabled'
-        );
-
-        return $this;
-    }
-
-    public function assertRedirectCheckboxEnabled()
-    {
-        $this->assertIsEditable(
-            $this->test->byId('orob2b_cms_page_slug_redirect'),
-            'Slug input is disabled'
-        );
-
-        return $this;
-    }
-
-    public function assertRedirectCheckboxDisabled()
-    {
-        $this->assertIsNotEditable(
-            $this->test->byId('orob2b_cms_page_slug_redirect'),
-            'Slug input is disabled'
-        );
-
-        return $this;
-    }
-
     public function clickLeaveAsIsRadioButton()
     {
         $this->test->byId('orob2b_cms_page_slug_mode_0')->click();

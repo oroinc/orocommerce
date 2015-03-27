@@ -52,7 +52,7 @@ class PagesTest extends Selenium2TestCase
         $pages->createPage()
             ->assertTitle('Create Page - Pages - CMS')
             ->setTitle(self::$firstPage)
-            ->setSlug(self::$firstPageSlug)
+            ->waitForApiCall()
             ->savePage();
 
         // assert root level page created
@@ -67,7 +67,7 @@ class PagesTest extends Selenium2TestCase
             ->createChildPage()
             ->assertTitle('Create Page - Pages - CMS')
             ->setTitle(self::$secondPage)
-            ->setSlug(self::$secondPageSlug)
+            ->waitForApiCall()
             ->savePage();
 
         // assert child page created
@@ -92,47 +92,6 @@ class PagesTest extends Selenium2TestCase
         $page = $pages->openPage(self::$firstPage)
             ->assertCurrentSlugUrl([self::$firstPageSlug])
             ->editPage();
-
-        /**
-         * preconditions
-         *
-         * Leave as is radio button is selected
-         * Update radio button is not selected
-         * Slug input disabled
-         * Redirect checkbox disabled
-         */
-        $page->assertLeaveAsIsRadioButtonSelected()
-            ->assertUpdateRadioButtonNotSelected()
-            ->assertSlugInputDisabled()
-            ->assertRedirectCheckboxDisabled();
-
-        /**
-         * click on Update slug radio button
-         *
-         * Leave as is radio button is notselected
-         * Update radio button is selected
-         * Slug input enabled
-         * Redirect checkbox enabled
-         */
-        $page->clickUpdateRadioButton()
-            ->assertLeaveAsIsRadioButtonNotSelected()
-            ->assertUpdateRadioButtonSelected()
-            ->assertSlugInputEnabled()
-            ->assertRedirectCheckboxEnabled();
-
-        /**
-         * click on Update slug radio button
-         *
-         * Leave as is radio button is selected
-         * Update radio button is not selected
-         * Slug input disabled
-         * Redirect checkbox disabled
-         */
-        $page->clickLeaveAsIsRadioButton()
-            ->assertLeaveAsIsRadioButtonSelected()
-            ->assertUpdateRadioButtonNotSelected()
-            ->assertSlugInputDisabled()
-            ->assertRedirectCheckboxDisabled();
 
         /**
          * check call slug API on title change
