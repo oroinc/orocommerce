@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CMSBundle\JsTree;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
+use OroB2B\Bundle\CMSBundle\Entity\Repository\PageRepository;
 use OroB2B\Bundle\RedirectBundle\Manager\SlugManager;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
@@ -23,6 +24,7 @@ class PageTreeHandler extends AbstractTreeHandler
     public function __construct($entityClass, ManagerRegistry $managerRegistry, SlugManager $slugManager)
     {
         parent::__construct($entityClass, $managerRegistry);
+
         $this->slugManager = $slugManager;
     }
 
@@ -50,6 +52,33 @@ class PageTreeHandler extends AbstractTreeHandler
     }
 
     /**
+     * Need to sort root nodes by ID
+     *
+     * @param array $entities
+     * @return array
+     */
+    protected function formatTree(array $entities)
+    {
+        $rootNodes = [];
+
+        /** @var Page $page */
+        foreach ($entities as $key => $page) {
+            if (!$page->getParentPage()) {
+                unset($entities[$key]);
+                $rootNodes[] = $page;
+            }
+        }
+
+        uasort($rootNodes, function (Page $a, Page $b) {
+            return $a->getId() > $b->getId() ? 1 : -1;
+        });
+
+        $entities = array_merge($rootNodes, $entities);
+
+        return parent::formatTree($entities);
+    }
+
+    /**
      * Move node processing
      *
      * @param int $entityId
@@ -58,19 +87,16 @@ class PageTreeHandler extends AbstractTreeHandler
      */
     protected function moveProcessing($entityId, $parentId, $position)
     {
+        /** @var PageRepository $entityRepository */
+        $entityRepository = $this->getEntityRepository();
+
         /** @var page $page */
-        $page = $this->getEntityRepository()->find($entityId);
+        $page = $entityRepository->find($entityId);
         /** @var page $parentPage */
-        $parentPage = $this->getEntityRepository()->find($parentId);
+        $parentPage = $entityRepository->find($parentId);
 
         if (null === $parentPage) {
             $page->setParentPage(null);
-
-            if ($position) {
-                $this->getEntityRepository()->persistAsNextSibling($page);
-            } else {
-                $this->getEntityRepository()->persistAsFirstChild($page);
-            }
         } else {
             if ($parentPage->getChildPages()->contains($page)) {
                 $parentPage->removeChildPage($page);
@@ -80,9 +106,9 @@ class PageTreeHandler extends AbstractTreeHandler
 
             if ($position) {
                 $children = array_values($parentPage->getChildPages()->toArray());
-                $this->getEntityRepository()->persistAsNextSiblingOf($page, $children[$position - 1]);
+                $entityRepository->persistAsNextSiblingOf($page, $children[$position - 1]);
             } else {
-                $this->getEntityRepository()->persistAsFirstChildOf($page, $parentPage);
+                $entityRepository->persistAsFirstChildOf($page, $parentPage);
             }
         }
 
