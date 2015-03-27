@@ -1,0 +1,28 @@
+.cms-page-container {
+    position: relative;
+}
+.cms-page-container .page-tree {
+    position: absolute;
+    border-top: 1px solid #f2f2f2;
+    width: 334px;
+    overflow: auto;
+}
+.page-tree {
+    padding-left: 10px;
+}
+.cms-page-data {
+    margin-left: 334px;
+    border-left: 1px solid #f2f2f2;
+}
+.page-content-editor .mce-tinymce {
+    width: 100%;
+}
+
+.sub-item {
+    padding-left: 15px;
+}
+
+.without-markers {
+    list-style: none;
+    margin: auto;
+}

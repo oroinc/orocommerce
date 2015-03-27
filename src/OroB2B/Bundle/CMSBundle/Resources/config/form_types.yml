@@ -1,0 +1,14 @@
+parameters:
+    orob2b_cms.form.type.slug.class: OroB2B\Bundle\CMSBundle\Form\Type\SlugType
+    orob2b_cms.form.type.page.class: OroB2B\Bundle\CMSBundle\Form\Type\PageType
+
+services:
+    orob2b_cms.form.type.slug:
+        class: %orob2b_cms.form.type.slug.class%
+        tags:
+            - { name: form.type, alias: orob2b_slug }
+
+    orob2b_cms.form.type.page:
+        class: %orob2b_cms.form.type.page.class%
+        tags:
+            - { name: form.type, alias: orob2b_cms_page }

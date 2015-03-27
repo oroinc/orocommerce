@@ -1,0 +1,3 @@
+oro_redirect_api:
+    resource: "@OroB2BRedirectBundle/Controller/Api/Rest/RedirectController.php"
+    type:     rest

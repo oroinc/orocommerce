@@ -1,0 +1,37 @@
+orob2b.cms:
+    page:
+        entity_label:           'Page'
+        entity_plural_label:    'Pages'
+        id.label:               'ID'
+        title.label:            'Title'
+        content.label:          'Content'
+        organization.label:     'Organization'
+        current_slug.label:     'Current slug'
+        related_slugs.label:    'Related slugs'
+        left.label:             'Tree left index'
+        level.label:            'Tree level'
+        right.label:            'Tree right index'
+        root.label:             'Tree root'
+        child_pages.label:      'Child pages'
+        parent_page.label:      'Parent page'
+    child_page:
+        entity_label:           'Child page'
+    slug:
+        update_to:             'Update to'
+        redirect:              'Redirect visitors from %old_slug%'
+        leave_as_is:           'Leave as is %old_slug%'
+
+    controller:
+        page.saved.message: 'Page has been saved'
+
+    menu:
+        cms_tab.label: 'CMS'
+        pages_list.description: 'List of pages'
+        shortcut_pages_list.description: 'Shows list of existing pages'
+
+    sections:
+        general: 'General'
+        content: 'Content'
+
+    template:
+        select_existing_or_create_new: 'Please select a page on the left or create new one.'

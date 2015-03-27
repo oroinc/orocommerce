@@ -1,0 +1,27 @@
+parameters:
+    orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
+    orob2b_cms.page_tree_handler.class: OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler
+    orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_cms.listener.page_slug_listener.class: OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener
+
+services:
+    orob2b_cms.page_tree_handler:
+        class: %orob2b_cms.page_tree_handler.class%
+        arguments:
+            - %orob2b_cms.page.class%
+            - @doctrine
+            - @orob2b_redirect.slug.manager
+
+    orob2b_cms.page.manager.api:
+        class: %orob2b_cms.page.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_cms.page.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_cms.listener.page_slug_listener:
+        class: %orob2b_cms.listener.page_slug_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: preRemove }

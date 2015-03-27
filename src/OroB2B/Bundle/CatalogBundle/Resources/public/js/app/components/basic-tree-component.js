@@ -11,7 +11,7 @@ define(function (require) {
     /**
      * Options:
      * - data - tree structure in jstree json format
-     * - categoryId - identifier of selected category
+     * - nodeId - identifier of selected node
      *
      * @export orob2bcatalog/js/app/components/basic-tree-component
      * @extends oroui.app.components.base.Component
@@ -26,7 +26,7 @@ define(function (require) {
         /**
          * @property {Number}
          */
-        categoryId : null,
+        nodeId : null,
 
         /**
          * @property {Boolean}
@@ -37,8 +37,8 @@ define(function (require) {
          * @param {Object} options
          */
         initialize: function (options) {
-            var categoryList = options.data;
-            if (!categoryList) {
+            var nodeList = options.data;
+            if (!nodeList) {
                 return;
             }
 
@@ -47,14 +47,14 @@ define(function (require) {
             var config = {
                 'core' : {
                     'multiple' : false,
-                    'data' : categoryList,
+                    'data' : nodeList,
                     'check_callback' : true,
                     'themes': {
                         'name': 'b2b'
                     }
                 },
                 'state' : {
-                    'key' : 'b2b-category',
+                    'key' : options.key,
                     'filter' : _.bind(this.onFilter, this)
                 },
 
@@ -62,7 +62,7 @@ define(function (require) {
             };
             config = this.customizeTreeConfig(options, config);
 
-            this.categoryId = options.categoryId;
+            this.nodeId = options.nodeId;
 
             this._deferredInit();
             this.initialization = true;
@@ -94,7 +94,7 @@ define(function (require) {
          * @returns {Object}
          */
         onFilter: function(state) {
-            state.core.selected = this.categoryId ? [this.categoryId] : [];
+            state.core.selected = this.nodeId ? [this.nodeId] : [];
             return state;
         }
     });
