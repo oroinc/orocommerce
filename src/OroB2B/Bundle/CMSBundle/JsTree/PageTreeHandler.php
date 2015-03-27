@@ -23,18 +23,7 @@ class PageTreeHandler extends AbstractTreeHandler
     public function __construct($entityClass, ManagerRegistry $managerRegistry, SlugManager $slugManager)
     {
         parent::__construct($entityClass, $managerRegistry);
-        $this->slugManager     = $slugManager;
-    }
-
-    /**
-     * @return array
-     */
-    public function createTree()
-    {
-        $tree = $this->getEntityRepository()
-            ->getChildren(null, false, 'left', 'ASC');
-
-        return $this->formatTree($tree);
+        $this->slugManager = $slugManager;
     }
 
     /**

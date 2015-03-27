@@ -123,14 +123,38 @@ class SlugTypeTest extends FormIntegrationTestCase
                     'redirect' => false
                 ],
                 'submittedData' => [
-                    'mode' => 'old',
+                    'mode' => 'new',
                     'slug' => 'updated_slug',
                     'redirect' => true
                 ],
                 'expectedData' => [
-                    'mode' => 'old',
+                    'mode' => 'new',
                     'slug' => 'updated_slug',
                     'redirect' => true
+                ],
+            ],
+            'update current slug only old' => [
+                'options' => [
+                    'type' => 'update',
+                    'current_slug' => 'existing_slug'
+                ],
+                'defaultData' => [
+                    'mode' => 'old',
+                    'slug' => 'existing_slug',
+                    'redirect' => false
+                ],
+                'viewData' => [
+                    'mode' => 'old',
+                    'slug' => 'existing_slug',
+                    'redirect' => false
+                ],
+                'submittedData' => [
+                    'mode' => 'old',
+                ],
+                'expectedData' => [
+                    'mode' => 'old',
+                    'slug' => false,
+                    'redirect' => false
                 ],
             ],
         ];

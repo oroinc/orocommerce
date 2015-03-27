@@ -65,10 +65,19 @@ class PageType extends AbstractType
                 $form->add(
                     'slug',
                     SlugType::NAME,
-                    ['mapped' => false, 'type' => 'update', 'current_slug' => $page->getCurrentSlug()->getSlugUrl()]
+                    [
+                        'label' => 'orob2b.redirect.slug.entity_label',
+                        'mapped' => false, 'type' => 'update', 'current_slug' => $page->getCurrentSlug()->getSlugUrl()]
                 );
             } else {
-                $form->add('slug', SlugType::NAME, ['mapped' => false, 'type' => 'create']);
+                $form->add(
+                    'slug',
+                    SlugType::NAME,
+                    [
+                        'label' => 'orob2b.redirect.slug.entity_label',
+                        'mapped' => false, 'type' => 'create'
+                    ]
+                );
             }
         });
 

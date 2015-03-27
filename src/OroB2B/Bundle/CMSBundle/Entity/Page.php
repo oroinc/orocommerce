@@ -290,11 +290,14 @@ class Page
 
     /**
      * @param $url
+     * @return $this
      */
     public function setCurrentSlugUrl($url)
     {
         $this->currentSlug->setUrl($url);
         $this->refreshSlugUrls();
+
+        return $this;
     }
 
     /**

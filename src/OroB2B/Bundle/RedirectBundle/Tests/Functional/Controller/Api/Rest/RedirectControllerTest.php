@@ -6,10 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use FOS\RestBundle\Util\Codes;
 
-/**
- * @outputBuffering enabled
- * @dbIsolation
- */
 class RedirectControllerTest extends WebTestCase
 {
     protected function setUp()
@@ -19,6 +15,7 @@ class RedirectControllerTest extends WebTestCase
 
     /**
      * Test slugify
+     *
      * @dataProvider slugifyActionDataProvider
      * @param string $string
      * @param string $slug

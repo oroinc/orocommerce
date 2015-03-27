@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 
@@ -55,7 +55,6 @@ class LoadPageDemoData extends AbstractFixture implements ContainerAwareInterfac
             $page->setContent($row['content']);
             $page->setOrganization($organization);
             $page->setCurrentSlugUrl($row['slug']);
-
 
             if ($row['parentId'] > 0 && array_key_exists($row['parentId'], $this->pages)) {
                 /** @var Page $parent */
