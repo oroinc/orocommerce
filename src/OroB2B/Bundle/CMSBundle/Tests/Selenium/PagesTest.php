@@ -186,13 +186,13 @@ class PagesTest extends Selenium2TestCase
             ->assertCurrentSlugUrl([self::$secondPageSlug]);
 
         /**
-         * move first Page after first Page
+         * move first Page after second Page
          *
          *      - Second Page
          *      - First Page
          */
         $pages->dragAndDropAfterTarget(self::$firstPage, self::$secondPage)
-            ->assertPageAfter(self::$secondPage, self::$firstPage);
+            ->assertMessage('You can not change order of root nodes');
 
         /**
          * move first Page to second Page
