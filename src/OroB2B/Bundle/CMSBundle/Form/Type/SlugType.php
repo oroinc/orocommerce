@@ -29,7 +29,10 @@ class SlugType extends AbstractType
             ->add(
                 'slug',
                 'text',
-                ['constraints' => [new UrlSafe(), new NotBlank()]]
+                [
+                    'label' => 'orob2b.redirect.slug.entity_label',
+                    'constraints' => [new UrlSafe(), new NotBlank()]
+                ]
             );
 
         if ($options['type'] == 'update') {
@@ -60,7 +63,14 @@ class SlugType extends AbstractType
             if (is_array($data) && $data['mode'] == 'old') {
                 $event->getForm()
                     ->remove('slug')
-                    ->add('slug', 'text', ['constraints' => [new UrlSafe()]]);
+                    ->add(
+                        'slug',
+                        'text',
+                        [
+                            'label' => 'orob2b.redirect.slug.entity_label',
+                            'constraints' => [new UrlSafe()]
+                        ]
+                    );
             }
         });
     }
