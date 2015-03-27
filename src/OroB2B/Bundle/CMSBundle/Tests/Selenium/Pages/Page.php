@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\CMSBundle\Tests\Selenium\Pages;
 
 use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPageEntity;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class Page extends AbstractPageEntity
 {
     const SLUG_MODE_NEW = 'new';
