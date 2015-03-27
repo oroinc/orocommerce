@@ -9,11 +9,11 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
-use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
 /**
  * @outputBuffering enabled
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class PageControllerTest extends WebTestCase
 {
@@ -70,18 +70,10 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
-    public function testCreatePageSlugUrls($id)
-    {
-        return $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(), $id);
-    }
-
-    /**
-     * @depends testCreatePageSlugUrls
-     * @param int $id
-     * @return int
-     */
     public function testEditPageWithNewSlug($id)
     {
+        $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(), $id);
+
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
             self::DEFAULT_PAGE_SLUG_TEXT,
@@ -97,18 +89,10 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
-    public function testEditPageWithNewSlugUrls($id)
-    {
-        return $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
-    }
-
-    /**
-     * @depends testEditPageWithNewSlugUrls
-     * @param int $id
-     * @return int
-     */
     public function testEditPageWithOldSlug($id)
     {
+        $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
+
         return $this->assertEdit(
             self::UPDATED_DEFAULT_PAGE_TITLE,
             self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
@@ -124,18 +108,10 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
-    public function testEditPageWithOldSlugUrls($id)
-    {
-        return $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
-    }
-
-    /**
-     * @depends testEditPageWithOldSlugUrls
-     * @param int $id
-     * @return int
-     */
     public function testEditPageWithNewSlugAndRedirect($id)
     {
+        $this->assertSlugs(self::UPDATED_DEFAULT_PAGE_SLUG_URL, array(), $id);
+
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
             self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
@@ -144,16 +120,6 @@ class PageControllerTest extends WebTestCase
             self::SLUG_MODE_REDIRECT,
             $id
         );
-    }
-
-    /**
-     * @depends testEditPageWithOldSlug
-     * @param int $id
-     * @return int
-     */
-    public function testEditPageWithNewSlugAndRedirectUrls($id)
-    {
-        return $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
     }
 
     /**
@@ -171,18 +137,10 @@ class PageControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
-    public function testCreateSubPageUrls($id)
-    {
-        return $this->assertSlugs(self::DEFAULT_SUBPAGE_SLUG_URL, array(), $id);
-    }
-
-    /**
-     * @depends testCreateSubPageUrls
-     * @param int $id
-     * @return int
-     */
     public function testEditSubPage($id)
     {
+        $this->assertSlugs(self::DEFAULT_SUBPAGE_SLUG_URL, array(), $id);
+
         return $this->assertEdit(
             self::DEFAULT_SUBPAGE_TITLE,
             self::DEFAULT_SUBPAGE_SLUG_TEXT,
@@ -194,21 +152,14 @@ class PageControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testCreateSubPage
-     * @param int $id
-     * @return int
-     */
-    public function testEditSubPageUrls($id)
-    {
-        return $this->assertSlugs(self::UPDATED_DEFAULT_SUBPAGE_SLUG_URL, array(), $id);
-    }
-
-    /**
      * @depends testEditPageWithNewSlugAndRedirect
+     * @depends testCreateSubPage
      * @param int $id
      */
     public function testDelete($id)
     {
+        $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
+
         $this->client->request('DELETE', $this->getUrl('orob2b_api_cms_delete_page', ['id' => $id]));
 
         $result = $this->client->getResponse();
@@ -222,6 +173,7 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @param string $title
+     * @param string $slug
      * @param int $parentId
      * @return int
      */
@@ -253,7 +205,10 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @param string $title
+     * @param string $slug
      * @param string $newTitle
+     * @param string $newSlug
+     * @param string $slugMode
      * @param int $id
      * @return int
      */
