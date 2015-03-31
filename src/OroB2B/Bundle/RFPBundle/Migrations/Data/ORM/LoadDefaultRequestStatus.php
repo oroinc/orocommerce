@@ -35,6 +35,7 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
                 if (!$status) {
                     $status = new RequestStatus();
                     $status->setSortOrder($item['order']);
+                    $status->setName($item['name']);
                 }
 
                 $label = $this->translate($item['name'], static::PREFIX, $locale);
