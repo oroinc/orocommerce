@@ -21,9 +21,9 @@ class LoadRequestStatusDemoData extends AbstractFixture implements ContainerAwar
      * @var array
      */
     protected $statuses = array(
-        array('order' => 30, 'label' => 'Pending'),
-        array('order' => 40, 'label' => 'Assigned'),
-        array('order' => 50, 'label' => 'Blocked'),
+        array('order' => 30, 'label' => 'Pending', 'name' => 'pending'),
+        array('order' => 40, 'label' => 'Assigned', 'name' => 'assigned'),
+        array('order' => 50, 'label' => 'Blocked', 'name' => 'blocked'),
     );
 
     /**
@@ -45,6 +45,7 @@ class LoadRequestStatusDemoData extends AbstractFixture implements ContainerAwar
         foreach ($this->statuses as $status) {
             $entity = new RequestStatus();
             $entity->setSortOrder($status['order']);
+            $entity->setName($status['name']);
             $entity->setLocale($localeSettings->getLocale())->setLabel($status['label']);
             $manager->persist($entity);
         }
