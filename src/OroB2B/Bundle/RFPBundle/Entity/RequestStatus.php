@@ -8,7 +8,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * RequestStatus
@@ -42,7 +41,15 @@ class RequestStatus implements Translatable
     /**
      * @var string
      *
+     * @ORM\Column(name="name", type="string", length=255)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="label", type="string", length=255)
+     * @Gedmo\Translatable
      */
     private $label;
 
@@ -58,7 +65,7 @@ class RequestStatus implements Translatable
      *
      * @ORM\Column(name="deleted", type="boolean")
      */
-    private $deleted;
+    private $deleted = false;
 
     /**
      * @var string
@@ -66,7 +73,6 @@ class RequestStatus implements Translatable
      * @Gedmo\Locale()
      */
     protected $locale;
-
 
     /**
      * Get id
@@ -76,6 +82,29 @@ class RequestStatus implements Translatable
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     * @return RequestStatus
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
@@ -176,6 +205,6 @@ class RequestStatus implements Translatable
      */
     public function __toString()
     {
-        return (string)$this->getLabel();
+        return (string) $this->getLabel();
     }
 }
