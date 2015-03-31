@@ -1,0 +1,3 @@
+_frontend:
+    pattern:  /
+    defaults: { _controller: OroB2BFrontendBundle:Frontend:index }
