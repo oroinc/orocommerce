@@ -58,7 +58,7 @@ class RequestStatus implements Translatable
      *
      * @ORM\Column(name="deleted", type="boolean")
      */
-    private $deleted;
+    private $deleted = false;
 
     /**
      * @var string
