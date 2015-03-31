@@ -107,7 +107,7 @@ class RequestStatus implements Translatable
      * @param integer $sortOrder
      * @return RequestStatus
      */
-    public function setSortOrder(integer $sortOrder)
+    public function setSortOrder($sortOrder)
     {
         $this->sortOrder = $sortOrder;
 

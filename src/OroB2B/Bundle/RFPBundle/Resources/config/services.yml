@@ -1,5 +1,6 @@
 parameters:
-#
+    orob2b_rfp.request.class:                 OroB2B\Bundle\RFPBundle\Entity\Request
+    orob2b_rfp.request.status.class:          OroB2B\Bundle\RFPBundle\Entity\RequestStatus
 
 services:
 #
