@@ -14,7 +14,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * RequestStatus
  *
  * @ORM\Table("orob2b_rfp_status")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")
  * @Gedmo\TranslationEntity(class="OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation")
  * @Config(
  *      defaultValues={
@@ -107,7 +107,7 @@ class RequestStatus implements Translatable
      * @param integer $sortOrder
      * @return RequestStatus
      */
-    public function setSortOrder(integer $sortOrder)
+    public function setSortOrder($sortOrder)
     {
         $this->sortOrder = $sortOrder;
 
