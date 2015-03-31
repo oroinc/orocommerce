@@ -8,7 +8,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * RequestStatus
@@ -206,6 +205,6 @@ class RequestStatus implements Translatable
      */
     public function __toString()
     {
-        return (string)$this->getLabel();
+        return (string) $this->getLabel();
     }
 }
