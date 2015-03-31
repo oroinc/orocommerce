@@ -1,4 +1,6 @@
 parameters:
+    orob2b_rfp.request.class:                         OroB2B\Bundle\RFPBundle\Entity\Request
+    orob2b_rfp.request.status.class:                  OroB2B\Bundle\RFPBundle\Entity\RequestStatus
     orob2b_rfp.form.type.request_status_select.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType
 
 services:
