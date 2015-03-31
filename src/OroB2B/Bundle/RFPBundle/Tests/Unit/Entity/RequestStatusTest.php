@@ -13,8 +13,10 @@ class RequestStatusTest extends EntityTestCase
         $properties = [
             ['id', 1],
             ['locale', 'en'],
+            ['name', 'opened'],
             ['label', 'Opened'],
             ['sortOrder', 1],
+            ['deleted', true],
             ['deleted', false],
         ];
 

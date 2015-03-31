@@ -16,6 +16,7 @@ orob2b.rfp:
         entity_label:           'Request for proposal status'
         entity_plural_label:    'Request for proposal statuses'
         id.label:               'ID'
+        name.label:             'Name'
         label.label:            'Label'
         sort_order.label:       'Sort Order'
         deleted.label:          'Deleted'
