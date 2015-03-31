@@ -1,0 +1,34 @@
+OroB2B\Bundle\RFPBundle\Entity\Request:
+    properties:
+        firstName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        lastName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        email:
+            - NotBlank: ~
+            - Email: ~
+            - Length:
+                max: 255
+        body:
+            - NotBlank: ~
+        company:
+            - Length:
+                max: 255
+        role:
+            - Length:
+                max: 255
+
+OroB2B\Bundle\RFPBundle\Entity\RequestStatus:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        label:
+            - NotBlank: ~
+            - Length:
+                max: 255
