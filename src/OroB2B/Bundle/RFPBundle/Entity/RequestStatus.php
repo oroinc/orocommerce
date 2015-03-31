@@ -29,6 +29,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  */
 class RequestStatus implements Translatable
 {
+    const OPEN = 'open';
+    const CLOSED = 'closed';
+
     /**
      * @var integer
      *
