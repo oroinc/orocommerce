@@ -23,8 +23,8 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
                 max: 255
 
 OroB2B\Bundle\RFPBundle\Entity\RequestStatus:
-	properties:
-		label:
-			- NotBlank: ~
+    properties:
+        label:
+            - NotBlank: ~
             - Length:
                 max: 255

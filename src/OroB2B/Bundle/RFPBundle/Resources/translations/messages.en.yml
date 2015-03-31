@@ -19,3 +19,8 @@ orob2b.rfp:
         label.label:            'Label'
         sort_order.label:       'Sort Order'
         deleted.label:          'Deleted'
+
+    system_configuration:
+        group_title:                 'RFP'
+        requeststatus_group_title:   'RFP status'
+        requeststatus_default_label: 'Deafault RFP status'

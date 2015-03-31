@@ -15,17 +15,17 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
     /**
      * @var array
      */
-    protected $items = [
+    /*protected $items = [
         ['order' => 10, 'name' => RequestStatus::OPEN],
         ['order' => 20, 'name' => RequestStatus::CLOSED]
-    ];
+    ];*/
 
     /**
      * {@inheritdoc}
      */
     public function loadEntities(ObjectManager $objectManager)
     {
-        $locales = $this->getTranslationLocales();
+        /*$locales = $this->getTranslationLocales();
         $requestStatusRepository = $objectManager->getRepository('OroB2BRFPBundle:RequestStatus');
 
         foreach ($locales as $locale) {
@@ -47,6 +47,6 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
             }
 
             $objectManager->flush();
-        }
+        }*/
     }
 }
