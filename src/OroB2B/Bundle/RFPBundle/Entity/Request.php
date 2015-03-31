@@ -384,6 +384,6 @@ class Request
      */
     public function __toString()
     {
-        return (string)$this->getBody();
+        return (string)$this->getEmail();
     }
 }
