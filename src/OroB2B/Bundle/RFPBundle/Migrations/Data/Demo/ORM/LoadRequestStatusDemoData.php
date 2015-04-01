@@ -39,7 +39,7 @@ class LoadRequestStatusDemoData extends AbstractFixture implements ContainerAwar
      */
     public function load(ObjectManager $manager)
     {
-        /** @var Oro\Bundle\LocaleBundle\Model\LocaleSettings $localeSettings */
+        /** @var \Oro\Bundle\LocaleBundle\Model\LocaleSettings $localeSettings */
         $localeSettings = $this->container->get('oro_locale.settings');
 
         foreach ($this->statuses as $status) {
