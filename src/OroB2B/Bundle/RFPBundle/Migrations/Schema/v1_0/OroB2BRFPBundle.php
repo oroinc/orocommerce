@@ -4,11 +4,41 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroB2BRFPBundle implements Migration
+class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, ActivityExtensionAwareInterface
 {
+    /**
+     * @var ActivityExtension
+     */
+    protected $activityExtension;
+
+    /**
+     * @var NoteExtension
+     */
+    protected $noteExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -21,6 +51,9 @@ class OroB2BRFPBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOrob2BRfpRequestForeignKeys($schema);
+
+        self::addNoteAssociations($schema, $this->noteExtension);
+        self::addActivityAssociations($schema, $this->activityExtension);
     }
 
     /**
@@ -94,5 +127,27 @@ class OroB2BRFPBundle implements Migration
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * Enable notes for RFP entity
+      *
+     * @param Schema        $schema
+     * @param NoteExtension $noteExtension
+     */
+    public static function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
+    {
+        $noteExtension->addNoteAssociation($schema, 'orob2b_rfp_request');
+    }
+
+    /**
+     * Enables Email activity for RFP entity
+     *
+     * @param Schema            $schema
+     * @param ActivityExtension $activityExtension
+     */
+    public static function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
+    {
+        $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_rfp_request');
     }
 }
