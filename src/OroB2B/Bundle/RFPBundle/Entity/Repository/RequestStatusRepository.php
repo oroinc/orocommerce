@@ -9,7 +9,7 @@ class RequestStatusRepository extends EntityRepository
     /**
      * Returns all statuses that are not deleted
      *
-     * @return array
+     * @return RequestStatus[]
      */
     public function getNotDeletedStatuses()
     {

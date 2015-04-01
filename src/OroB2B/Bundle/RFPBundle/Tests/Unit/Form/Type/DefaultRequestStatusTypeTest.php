@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
+use OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType;
 
-class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
+class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RequestStatusSelectType
@@ -12,18 +12,20 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
-     * @var array
+     * @var OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
      */
-    protected $choices = [
-        1 => 'Opened',
-        2 => 'Closed'
-    ];
+    protected $choices;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        $this->choices = [
+            $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestStatus'),
+            $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestStatus'),
+        ];
+
         $repository = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -41,7 +43,7 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BRFPBundle:RequestStatus')
             ->willReturn($repository);
 
-        $this->formType = new RequestStatusSelectType($registry);
+        $this->formType = new DefaulRequestStatusType($registry);
     }
 
     /**
@@ -55,10 +57,7 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
 
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'class'   => 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus',
-                'choices' => $this->choices,
-            ]);
+            ->withAnyParameters();
 
         $this->formType->setDefaultOptions($resolver);
     }
@@ -68,7 +67,7 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(RequestStatusSelectType::NAME, $this->formType->getName());
+        $this->assertEquals(DefaulRequestStatusType::NAME, $this->formType->getName());
     }
 
     /**
@@ -76,6 +75,6 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetParent()
     {
-        $this->assertEquals('entity', $this->formType->getParent());
+        $this->assertEquals('choice', $this->formType->getParent());
     }
 }

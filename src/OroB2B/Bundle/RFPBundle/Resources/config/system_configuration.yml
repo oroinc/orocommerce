@@ -10,7 +10,7 @@ oro_system_configuration:
         oro_b2b_rfp.default_request_status:
             ui_only: true
             data_type: string
-            type: text
+            type: orob2b_rfp_default_request_status
             options:
                 label: orob2b.rfp.system_configuration.requeststatus_default_label
 
