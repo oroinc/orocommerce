@@ -1,10 +1,2 @@
 bundles_frontend:
-    - { name: Symfony\Bundle\FrameworkBundle\FrameworkBundle }
-    - { name: Symfony\Bundle\SecurityBundle\SecurityBundle }
-    - { name: Symfony\Bundle\TwigBundle\TwigBundle }
-    - { name: Symfony\Bundle\MonologBundle\MonologBundle }
-    - { name: Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle }
-    - { name: Symfony\Bundle\AsseticBundle\AsseticBundle }
-    - { name: Doctrine\Bundle\DoctrineBundle\DoctrineBundle }
-    - { name: Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle }
     - { name: OroB2B\Bundle\FrontendBundle\OroB2BFrontendBundle, priority: 10  }
