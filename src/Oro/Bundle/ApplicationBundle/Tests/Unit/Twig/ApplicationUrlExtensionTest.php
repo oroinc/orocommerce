@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Twig;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 use Oro\Bundle\ApplicationBundle\Twig\ApplicationUrlExtension;
 
 class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
@@ -39,6 +41,8 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('setPathInfo')
             ->with('');
 
+        $applicationUrl = 'http://localhost/test.php/route/data';
+
         $router = $this->getMockBuilder('Symfony\Component\Routing\RouterInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -47,7 +51,8 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($routerContext));
         $router->expects($this->once())
             ->method('generate')
-            ->with('test', [], true);
+            ->with('test', ['key' => 'value'], UrlGeneratorInterface::ABSOLUTE_URL)
+            ->will($this->returnValue($applicationUrl));
 
         $container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerInterface')
             ->disableOriginalConstructor()
@@ -64,6 +69,7 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getContainer')
             ->will($this->returnValue($container));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationUrlExtension $extension */
         $extension = $this->getMock(
             'Oro\Bundle\ApplicationBundle\Twig\ApplicationUrlExtension',
             ['getKernel'],
@@ -73,7 +79,10 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getKernel')
             ->will($this->returnValue($kernel));
 
-        $extension->getApplicationUrl('test', ['application' => 'test']);
+        $this->assertEquals(
+            $applicationUrl,
+            $extension->getApplicationUrl('test', ['application' => 'test', 'key' => 'value'])
+        );
     }
 
     public function testGetFunctions()
