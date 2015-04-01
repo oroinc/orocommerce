@@ -9,7 +9,7 @@ class RequestStatusRepository extends EntityRepository
     /**
      * Returns all statuses that are not deleted
      *
-     * @return RequestStatus[]
+     * @return \OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
      */
     public function getNotDeletedStatuses()
     {

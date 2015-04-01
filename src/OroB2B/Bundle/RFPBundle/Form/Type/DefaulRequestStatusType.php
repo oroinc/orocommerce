@@ -31,6 +31,8 @@ class DefaulRequestStatusType extends AbstractType
     {
         $choicesRaw = $this->registry->getRepository('OroB2BRFPBundle:RequestStatus')->getNotDeletedStatuses();
 
+        $choices = [];
+
         foreach ($choicesRaw as $choiceRaw) {
             $choices[$choiceRaw->getName()] = $choiceRaw->getLabel();
         }

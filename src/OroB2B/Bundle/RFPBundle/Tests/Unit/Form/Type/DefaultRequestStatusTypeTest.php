@@ -7,12 +7,12 @@ use OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType;
 class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RequestStatusSelectType
+     * @var DefaulRequestStatusType
      */
     protected $formType;
 
     /**
-     * @var OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
+     * @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
      */
     protected $choices;
 
