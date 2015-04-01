@@ -52,8 +52,8 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
         /** Foreign keys generation **/
         $this->addOrob2BRfpRequestForeignKeys($schema);
 
-        self::addNoteAssociations($schema, $this->noteExtension);
-        self::addActivityAssociations($schema, $this->activityExtension);
+        $this->addNoteAssociations($schema, $this->noteExtension);
+        $this->addActivityAssociations($schema, $this->activityExtension);
     }
 
     /**
@@ -135,7 +135,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
      * @param Schema        $schema
      * @param NoteExtension $noteExtension
      */
-    public static function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
+    protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
     {
         $noteExtension->addNoteAssociation($schema, 'orob2b_rfp_request');
     }
@@ -146,7 +146,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
      * @param Schema            $schema
      * @param ActivityExtension $activityExtension
      */
-    public static function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
+    protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_rfp_request');
     }

@@ -2,13 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Model;
 
-use Oro\Bundle\ActivityBundle\Model\ActivityInterface;
-use Oro\Bundle\ActivityBundle\Model\ExtendActivity;
-
-class ExtendRequest implements ActivityInterface
+class ExtendRequest
 {
-    use ExtendActivity;
-
     /**
      * Constructor
      *
