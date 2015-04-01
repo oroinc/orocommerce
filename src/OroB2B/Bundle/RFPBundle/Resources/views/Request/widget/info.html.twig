@@ -1,11 +1,12 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.rfp.request.first_name.label'|trans, entity.firstName) }}
             {{ UI.renderProperty('orob2b.rfp.request.last_name.label'|trans, entity.lastName) }}
-            {{ UI.renderProperty('orob2b.rfp.request.email.label'|trans, entity.email) }}
+            {{ UI.renderHtmlProperty('orob2b.rfp.request.email.label'|trans, EmailActions.sendEmailLink(entity.email, entity))}}
             {{ UI.renderProperty('orob2b.rfp.request.phone.label'|trans, entity.phone) }}
             {{ UI.renderProperty('orob2b.rfp.request.company.label'|trans, entity.company ? entity.company : 'N/A') }}
             {{ UI.renderProperty('orob2b.rfp.request.role.label'|trans, entity.role ? entity.role : 'N/A') }}
