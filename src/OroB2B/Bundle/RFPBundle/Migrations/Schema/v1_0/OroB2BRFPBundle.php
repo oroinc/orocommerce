@@ -21,7 +21,6 @@ class OroB2BRFPBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOrob2BRfpRequestForeignKeys($schema);
-        $this->addOrob2BRfpStatusTranslationForeignKeys($schema);
     }
 
     /**
@@ -56,6 +55,7 @@ class OroB2BRFPBundle implements Migration
     {
         $table = $schema->createTable('orob2b_rfp_status');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('label', 'string', ['length' => 255]);
         $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('deleted', 'boolean', []);
@@ -71,13 +71,13 @@ class OroB2BRFPBundle implements Migration
     {
         $table = $schema->createTable('orob2b_rfp_status_translation');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('object_id', 'integer', ['notnull' => false]);
+        $table->addColumn('foreign_key', 'string', ['length' => 64]);
+        $table->addColumn('content', 'string', ['length' => 255]);
         $table->addColumn('locale', 'string', ['length' => 8]);
+        $table->addColumn('object_class', 'string', ['length' => 255]);
         $table->addColumn('field', 'string', ['length' => 32]);
-        $table->addColumn('content', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['object_id'], 'IDX_BA186C17232D562B', []);
-        $table->addIndex(['locale', 'object_id', 'field'], 'lookup_unique_idx', []);
+        $table->addIndex(['locale', 'object_class', 'field', 'foreign_key'], 'orob2b_rfp_status_trans_idx', []);
     }
 
     /**
@@ -93,22 +93,6 @@ class OroB2BRFPBundle implements Migration
             ['status_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add orob2b_rfp_status_translation foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOrob2BRfpStatusTranslationForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_rfp_status_translation');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_rfp_status'),
-            ['object_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

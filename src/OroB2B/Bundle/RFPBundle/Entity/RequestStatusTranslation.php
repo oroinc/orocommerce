@@ -4,19 +4,27 @@ namespace OroB2B\Bundle\RFPBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Gedmo\Translatable\Entity\MappedSuperclass\AbstractPersonalTranslation;
+use Gedmo\Translatable\Entity\MappedSuperclass\AbstractTranslation;
 
 /**
  * @ORM\Table(name="orob2b_rfp_status_translation", indexes={
- *      @ORM\Index(name="lookup_unique_idx", columns={"locale", "object_id", "field"})
+ *      @ORM\Index(name="orob2b_rfp_status_trans_idx", columns={"locale", "object_class", "field", "foreign_key"})
  * })
  * @ORM\Entity(repositoryClass="Gedmo\Translatable\Entity\Repository\TranslationRepository")
  */
-class RequestStatusTranslation extends AbstractPersonalTranslation
+class RequestStatusTranslation extends AbstractTranslation
 {
     /**
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatus", inversedBy="translations")
-     * @ORM\JoinColumn(name="object_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var string $foreignKey
+     *
+     * @ORM\Column(name="foreign_key", type="string", length=64)
      */
-    protected $object;
+    protected $foreignKey;
+
+    /**
+     * @var string $content
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $content;
 }
