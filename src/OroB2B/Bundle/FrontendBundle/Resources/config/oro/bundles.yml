@@ -1,4 +1,4 @@
-bundles_front:
+bundles_frontend:
     - { name: Symfony\Bundle\FrameworkBundle\FrameworkBundle }
     - { name: Symfony\Bundle\SecurityBundle\SecurityBundle }
     - { name: Symfony\Bundle\TwigBundle\TwigBundle }
