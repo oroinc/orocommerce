@@ -9,6 +9,8 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
+
 /**
  * Request
  *
@@ -24,12 +26,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
- *          }
+ *          },
+ *          "grouping"={"groups"={"activity"}}
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Request
+class Request extends ExtendRequest
 {
     /**
      * @var integer
@@ -129,6 +132,8 @@ class Request
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
     }
