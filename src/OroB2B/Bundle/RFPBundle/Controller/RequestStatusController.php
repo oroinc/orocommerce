@@ -10,7 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestStatusController extends Controller
 {
@@ -24,13 +24,13 @@ class RequestStatusController extends Controller
      *      permission="VIEW"
      * )
      *
-     * @param Request $request
+     * @param RequestStatus $requestStatus
      * @return array
      */
-    public function viewAction(Request $request)
+    public function viewAction(RequestStatus $requestStatus)
     {
         return [
-            'entity' => $request
+            'entity' => $requestStatus
         ];
     }
 
@@ -39,13 +39,13 @@ class RequestStatusController extends Controller
      * @Template
      * @AclAncestor("orob2b_rfp_request_status_view")
      *
-     * @param Request $request
+     * @param RequestStatus $requestStatus
      * @return array
      */
-    public function infoAction(Request $request)
+    public function infoAction(RequestStatus $requestStatus)
     {
         return [
-            'entity' => $request
+            'entity' => $requestStatus
         ];
     }
 

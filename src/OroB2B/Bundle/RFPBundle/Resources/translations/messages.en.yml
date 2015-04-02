@@ -22,9 +22,11 @@ orob2b.rfp:
         deleted.label:          'Deleted'
 
     menu:
-        rfp_tab.label:                      'RFP'
-        requests_list.description:          'List of requests'
-        shortcut_requests_list.description: 'Shows list of existing requests'
+        rfp_tab.label:                              'RFP'
+        requests_list.description:                  'List of requests'
+        request_statuses_list.description:          'List of request statuses'
+        shortcut_requests_list.description:         'Shows list of existing requests'
+        shortcut_request_statuses_list.description: 'Shows list of existing request statuses'
 
     sections:
         general:    'General'

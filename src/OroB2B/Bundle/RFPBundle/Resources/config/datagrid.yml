@@ -117,3 +117,67 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_request_view
                 rowAction:     true
+
+    rfp-request-statuses-grid:
+        extended_entity_name: %orob2b_rfp.request.status.class%
+        options:
+            entityHint:        status
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_rfp_request_status_view
+            type:         orm
+            query:
+                select:
+                    - status.id
+                    - status.name
+                    - status.label
+                    - status.sortOrder
+                    - status.deleted
+                from:
+                    - { table: %orob2b_rfp.request.status.class%, alias: status }
+        columns:
+            label:
+                label:         orob2b.rfp.requeststatus.label.label
+            name:
+                label:         orob2b.rfp.requeststatus.name.label
+            deleted:
+                label:         orob2b.rfp.requeststatus.deleted.label
+                frontend_type: boolean
+            sortOrder:
+                label:         orob2b.rfp.requeststatus.sort_order.label
+                frontend_type: integer
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_rfp_request_status_view
+                params:
+                    - id
+        sorters:
+            columns:
+                label:
+                    data_name: status.label
+                name:
+                    data_name: status.name
+                sortOrder:
+                    data_name: status.sortOrder
+                deleted:
+                    data_name: status.deleted
+            default:
+                sortOrder: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                label:
+                    type:      string
+                    data_name: request.firstName
+                name:
+                    type:      string
+                    data_name: request.lastName
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_rfp_request_status_view
+                rowAction:     true
