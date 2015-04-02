@@ -74,7 +74,7 @@ datagrid:
                 updatedAt:
                     data_name: request.updatedAt
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                updatedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 firstName:

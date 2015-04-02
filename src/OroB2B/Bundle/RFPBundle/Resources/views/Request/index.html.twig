@@ -3,11 +3,3 @@
 {% set gridName = 'rfp-requests-grid' %}
 {% set pageTitle = 'orob2b.rfp.request.entity_plural_label'|trans %}
 
-{% block navButtons %}
-    {% if resource_granted('orob2b_rfp_request_create') %}
-        {{ UI.addButton({
-            'path': path('orob2b_rfp_request_create'),
-            'entity_label': 'orob2b.rfp.request.entity_label'|trans
-        }) }}
-    {% endif %}
-{% endblock %}
