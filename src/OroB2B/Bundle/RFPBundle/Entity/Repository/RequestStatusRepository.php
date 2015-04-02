@@ -13,10 +13,8 @@ class RequestStatusRepository extends EntityRepository
      */
     public function getNotDeletedStatuses()
     {
-        return $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('requestStatus')
-            ->from('OroB2BRFPBundle:RequestStatus', 'requestStatus')
+        return $this
+            ->createQueryBuilder('requestStatus')
             ->where('requestStatus.deleted = 0')
             ->orderBy('requestStatus.sortOrder', 'ASC')
             ->getQuery()
