@@ -15,7 +15,6 @@ class RequestStatusRepository extends EntityRepository
     {
         return $this
             ->createQueryBuilder('requestStatus')
-            //->from('OroB2BRFPBundle:RequestStatus', 'requestStatus')
             ->where('requestStatus.deleted = 0')
             ->orderBy('requestStatus.sortOrder', 'ASC')
             ->getQuery()
