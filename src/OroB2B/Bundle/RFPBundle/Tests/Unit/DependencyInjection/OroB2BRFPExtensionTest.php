@@ -8,14 +8,22 @@ use OroB2B\Bundle\RFPBundle\DependencyInjection\OroB2BRFPExtension;
 
 class OroB2BRFPExtensionTest extends ExtensionTestCase
 {
-    public function testLoad()
+    /**
+     * Test Extension
+     */
+    public function testExtension()
     {
-        $this->loadExtension(new OroB2BRFPExtension());
+        $extension = new OroB2BRFPExtension();
+
+        $this->loadExtension($extension);
 
         $expectedParameters = [
             'orob2b_rfp.request.class',
             'orob2b_rfp.request.status.class',
         ];
+
         $this->assertParametersLoaded($expectedParameters);
+
+        $this->assertEquals('oro_b2b_rfp', $extension->getAlias());
     }
 }
