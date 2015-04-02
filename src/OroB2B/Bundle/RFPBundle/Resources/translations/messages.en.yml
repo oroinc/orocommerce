@@ -29,3 +29,8 @@ orob2b.rfp:
     sections:
         general:    'General'
         body:       'Request body'
+
+    system_configuration:
+        group_title:                 'RFP'
+        requeststatus_group_title:   'RFP status'
+        requeststatus_default_label: 'Deafault RFP status'
