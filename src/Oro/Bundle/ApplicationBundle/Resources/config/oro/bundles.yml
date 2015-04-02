@@ -1,2 +1,12 @@
 bundles:
     - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
+bundles_frontend:
+    - { name: Symfony\Bundle\FrameworkBundle\FrameworkBundle }
+    - { name: Symfony\Bundle\SecurityBundle\SecurityBundle }
+    - { name: Symfony\Bundle\TwigBundle\TwigBundle }
+    - { name: Symfony\Bundle\MonologBundle\MonologBundle }
+    - { name: Symfony\Bundle\SwiftmailerBundle\SwiftmailerBundle }
+    - { name: Symfony\Bundle\AsseticBundle\AsseticBundle }
+    - { name: Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle }
+    - { name: Doctrine\Bundle\DoctrineBundle\DoctrineBundle }
+    - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
