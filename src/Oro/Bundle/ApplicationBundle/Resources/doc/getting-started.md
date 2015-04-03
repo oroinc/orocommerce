@@ -17,10 +17,10 @@ Multiple Applications Structure was developed for convenience of application dev
 Main purposes
 -------------
 
-Multiple Applications Structure may be used in situation, when used only one single application-server for all applications. There is no need to install all applications in the separate directories. Just use desired entry point for separate `virtual host`.
+Multiple Applications Structure may be used in situation, if only one single application-server for all applications should be use. There is no need to install all applications in the separate directories. Just use desired entry point for separate `virtual host`.
 One common configuration for all application, one `vendor` directory and simplified development.
 
-Also, it may be used in architecture with several application-servers, on each server is running the own application. Just select the desired entry point on single instance. That's it.
+Also, it may be used in architecture with several application-servers, each server runs the own application. Just select the desired entry point on single instance. That's it.
 
 Directory structure
 -------------------
@@ -118,7 +118,7 @@ Now configuration of any application is divided to **two parts**. Such as **comm
 
 Also, all of applications have own directory for storing `attachments`, `cache` and `logs`.
 For these purposes there is a corresponding folder `var`, that located at the same level with directory `app` and contains all these directories inside.
-Cache and log names are following the `application ~ underscore ~ environment` pattern.
+Cache and log names are following the `<application_name>_<environment>` pattern.
 ```
 ├── app/
 └── var/
@@ -206,14 +206,17 @@ Below are general schemes of the **Multiple Applications Structure**.
 How to register bundles
 -----------------------
 
-For auto-registering *bundles* and *exclusions* in applications are used the same approach as in the old structure (see DistributionBundle/README.md) with a small difference.
-Default application named **admin** is used block `bundles` from bundles.yml. All other applications are used their own blocks named by next pattern: `bundles ~ underscore ~ environment`.
+For auto-registering *bundles* and *exclusions* in applications use the same approach as in the old structure (see DistributionBundle/README.md) with a small difference.
+Default application named **admin** use block `bundles` from bundles.yml. All other applications use their own blocks named by next pattern: `bundles_<application_name>`.
 
 ``` yml
+#Distribution configuration block, used for `admin` application
 bundles:
     - VendorName\Bundle\VendorBundle\VendorAnyBundle
     - MyName\Bundle\MyCustomBundle\MyNameCustomBundle
 #   - ...
+
+#Frontend bundles (needed to add `_<application_name>` after `bundles`)
 bundles_frontend:
     - VendorName\Bundle\VendorBundle\VendorAnyBundle
     - MyName\Bundle\MyCustomBundle\MyNameCustomBundle
@@ -223,3 +226,6 @@ bundles_frontend:
 Examples
 --------
 
+Just imagine an abstract website, that provides some kinds of services. It has two different interfaces: frontend (website for end-level customers) and backend (admin panel). This is two application, which are use one database, located on single server instance and use some common bundles.
+
+An application developer can use Multiple Applications Structure for this two application. All applications located in one directory, use similar config, common working directories. But it's still two different applications and if needed they may be distributed at two different server instances with minimum labor.

@@ -1,4 +1,4 @@
-Multiple Applications Structure
-===============================
+Multiple Applications Structure Documentation
+=============================================
 
-Please see [documentation](./Resources/doc/index.md) for more details.
+- [Getting Started](./Resources/doc/getting-started.md)
