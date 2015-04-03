@@ -26,9 +26,6 @@ class CacheClearCommandTest extends WebTestCase
         }
 
         $command = $application->find('cache:clear');
-
-        // make sure that command is from current bundle and it executes without errors
         $this->assertInstanceOf('Oro\Bundle\ApplicationBundle\Command\CacheClearCommand', $command);
-        $this->assertEquals(0, $command->run(new ArgvInput(['application', 'cache:clear']), new NullOutput()));
     }
 }
