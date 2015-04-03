@@ -336,10 +336,10 @@
             <if>
                 <equals arg1="@{env}" arg2="prod"/>
                 <then>
-                    <var name="appconfig.filename" value="${appdir}/config/parameters.yml"/>
+                    <var name="appconfig.filename" value="${appdir}/common/parameters.yml"/>
                 </then>
                 <else>
-                    <var name="appconfig.filename" value="${appdir}/config/parameters_@{env}.yml"/>
+                    <var name="appconfig.filename" value="${appdir}/common/parameters_@{env}.yml"/>
                 </else>
             </if>
             <delete file="${appconfig.filename}" quiet="true"/>
