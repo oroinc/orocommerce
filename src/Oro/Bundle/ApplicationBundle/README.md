@@ -2,3 +2,4 @@ Multiple Applications Approach Documentation
 =============================================
 
 - [Getting Started](./Resources/doc/getting-started.md)
+- [How to add new application](./Resources/doc/add-new-application.md)
