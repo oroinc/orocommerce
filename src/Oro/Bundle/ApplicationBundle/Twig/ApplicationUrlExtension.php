@@ -2,32 +2,27 @@
 
 namespace Oro\Bundle\ApplicationBundle\Twig;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\ProcessBuilder;
+
+use Oro\Bundle\ApplicationBundle\Command\GenerateUrlCommand;
 
 class ApplicationUrlExtension extends \Twig_Extension
 {
     const NAME = 'oro_application_application_url_extension';
 
     /**
-     * @var string
+     * @var KernelInterface
      */
-    protected $kernelEnvironment;
+    protected $kernel;
 
     /**
-     * @var array
+     * @param KernelInterface $kernel
      */
-    protected $applicationHosts;
-
-    /**
-     * @param string $kernelEnvironment
-     * @param array $applicationHosts
-     */
-    public function __construct($kernelEnvironment, array $applicationHosts)
+    public function __construct(KernelInterface $kernel)
     {
-        $this->kernelEnvironment = $kernelEnvironment;
-        $this->applicationHosts = $applicationHosts;
+        $this->kernel = $kernel;
     }
 
     /**
@@ -51,63 +46,46 @@ class ApplicationUrlExtension extends \Twig_Extension
     /**
      * @param string $name
      * @param array $parameters
-     * @param bool $schemeRelative
      * @return string
      */
-    public function getApplicationUrl($name, array $parameters = [], $schemeRelative = false)
+    public function getApplicationUrl($name, array $parameters)
     {
-        if (!isset($parameters['application'])) {
+        if (!array_key_exists('application', $parameters)) {
             throw new \InvalidArgumentException('Parameters must have required element `application`.');
         }
 
         $applicationName = $parameters['application'];
         unset($parameters['application']);
 
-        $kernel = $this->getKernel($applicationName);
-        $router = $kernel->getContainer()->get('router');
+        $processBuilder = new ProcessBuilder();
+        $processBuilder->add($this->getPhp())
+            ->add($this->kernel->getRootDir() . DIRECTORY_SEPARATOR . 'console')
+            ->add(GenerateUrlCommand::NAME)
+            ->add($name)
+            ->add(json_encode($parameters))
+            ->add('--app=' . $applicationName)
+            ->add('--env=' . $this->kernel->getEnvironment());
 
-        $routerContext = $router->getContext();
-        $routerContext->fromRequest(Request::create($this->getHost($applicationName)));
-        $routerContext->setBaseUrl(rtrim($routerContext->getPathInfo(), '/'));
-        $routerContext->setPathInfo('');
-
-        return $router->generate(
-            $name,
-            $parameters,
-            $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL
-        );
-    }
-
-    /**
-     * @param  string $applicationName
-     * @return \AppKernel
-     * @throws \Exception
-     */
-    protected function getKernel($applicationName)
-    {
-        $kernel = new \AppKernel($applicationName, $this->kernelEnvironment, false);
-        $kernel->loadClassCache();
-        $kernel->boot();
-
-        return $kernel;
-    }
-
-    /**
-     * @param string $applicationName
-     * @return string
-     * @throws \InvalidArgumentException
-     */
-    protected function getHost($applicationName)
-    {
-        if (!isset($this->applicationHosts[$applicationName])) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'The name of the application is not a valid. Allowed the following names: %s.',
-                    implode(', ', array_keys($this->applicationHosts))
-                )
-            );
+        $process = $processBuilder->getProcess();
+        if ($process->run() !== 0) {
+            throw new \LogicException('Invalid URL generation result');
         }
 
-        return $this->applicationHosts[$applicationName];
+        return trim($process->getOutput());
+    }
+
+    /**
+     * @return string
+     * @throws \LogicException
+     */
+    protected function getPhp()
+    {
+        $phpFinder = new PhpExecutableFinder();
+        $phpPath   = $phpFinder->find();
+        if (!$phpPath) {
+            throw new \LogicException('The PHP executable could not be found.');
+        }
+
+        return $phpPath;
     }
 }
