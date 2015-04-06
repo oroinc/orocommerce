@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Symfony\Component\DependencyInjection\Reference;
-
 use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\ApplicationHostPass;
 
 class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
@@ -30,7 +28,7 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
                     [
                         ['application_host.admin', true],
                         ['application_host.frontend', true],
-                        ['application_host.installer', true],
+                        ['application_host.install', true],
                         ['application_host.tracking', true],
                     ]
                 )
@@ -42,7 +40,7 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
                     [
                         ['application_host.admin', 'http://localhost/admin.php'],
                         ['application_host.frontend', 'http://localhost/frontend.php'],
-                        ['application_host.installer', 'http://localhost/installer.php'],
+                        ['application_host.install', 'http://localhost/install.php'],
                         ['application_host.tracking', 'http://localhost/tracking.php'],
                     ]
                 )

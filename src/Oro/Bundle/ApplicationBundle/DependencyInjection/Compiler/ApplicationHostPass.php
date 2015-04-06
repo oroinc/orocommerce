@@ -15,7 +15,7 @@ class ApplicationHostPass implements CompilerPassInterface
     private $parameters = [
         'application_host.admin',
         'application_host.frontend',
-        'application_host.installer',
+        'application_host.install',
         'application_host.tracking',
     ];
 
