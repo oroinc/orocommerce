@@ -21,7 +21,7 @@ Main purposes
 Multiple Applications approach should be used in situation when several applications should share the same code source.
 So there will be no need to install applications in a separate directories. Just specify and use desired entry point 
 file (front controller) for each application. These application will have both common and separate parts 
-of configuration, and will use the save `vendor` directory with source code.
+of configuration, and will use the same `vendor` directory with source code.
 
 Also, it may be used in architecture with several application-servers where each server runs the own application. 
 In this case developer have to select the desired entry for each application.
@@ -31,9 +31,9 @@ Directory structure
 
 Multiple Applications approach provides the separated directories architecture to configure all applications. 
 Each application extend the **common configuration** and uses global common `parameters.yml` file.
-There is only one `console` script for all applications. By default it uses `admin` application.
+There is only one `console` script for all applications (by default it uses `admin` application).
 
-In old structure global **config** directory is located in `app/config` directory, and *cache* and *logs* 
+In regular Symfony structure global **config** directory is located in `app/config` directory, and *cache* and *logs* 
 directories are in `app` directory (same as at regular Symfony application): 
 
 ```
@@ -103,8 +103,8 @@ that usually extends **common** configuration.
             └── ...
 ```
 
-`Resources` directory of application (if it needed) should be located in directory at the same level with `config` 
-directory.
+`Resources` directory of application (if it needed) should be located in application directory on the same level 
+with `config` directory.
 
 ```
 └── app/
@@ -132,8 +132,8 @@ directory.
 
 Also, each application has its own directory for storing `attachments`, `cache` and `logs`.
 For these purposes there is a corresponding folder `var`, that located at the same level with directory `app` 
-and contains all these directories inside. Cache and log names are following the 
-`<application_name>_<environment>` pattern. Main purpose of `var` directory is to provide one writable directory 
+and contains all these directories inside. Cache and log directory names are following the 
+`<application_name>_<environment>` pattern. Main purpose of `var` directory is to provide the one writable directory 
 outside the `web` directory. 
 
 ```
@@ -152,7 +152,7 @@ outside the `web` directory.
         └── ...
 ```
 
-Each application must have its own entry point (similar to `app.php` in old structure), that runs appropriate
+Each application must have its own entry point (similar to `app.php` in regular Symfony structure), that runs appropriate
 application. The main purpose of this file - specify the name of application inside entry point. 
 Entry point names are arbitrary and do not need to match the application name.
 
@@ -226,8 +226,7 @@ Below are general schema of the **Multiple Applications** structure.
 How to register bundles
 -----------------------
 
-To register *bundles* and *exclusions* application uses almost the same approach as in the old structure 
-(see DistributionBundle/README.md) with a small difference.
+To register *bundles* and *exclusions* application uses regular OroPlatform approach with a small difference.
 Default application named **admin** uses block `bundles` from bundles.yml, and all other applications 
 use their own blocks named by the pattern `bundles_<application_name>`.
 
@@ -248,11 +247,11 @@ bundles_frontend:
 Examples
 --------
 
-Let's imagine an abstract website that provides some kinds of services. It has two different interfaces: 
-frontend (website for end-level customers) and backend (admin panel). These two applications use 
-same database located on single server instance and some common bundles.
+Let's imagine an abstract website that provides some kind of services. It has two different interfaces: 
+frontend (website for end-level customers) and backend (admin panel). These two applications use the
+same database located on single server instance and some common set of bundles.
 
 An application developer can use Multiple Applications approach for these two applications - they will be located 
 in the same directory, will use similar config and common working directories. 
-But in fact there will be two different applications and, just in case, they can be separated into two different 
-server instances with minimum labor.
+But in fact there will be two different applications and, if required, they can be separated into two different 
+server instances with minimal effort.
