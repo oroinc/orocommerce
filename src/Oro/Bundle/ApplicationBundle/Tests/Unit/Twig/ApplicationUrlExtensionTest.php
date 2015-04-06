@@ -8,6 +8,8 @@ use Oro\Bundle\ApplicationBundle\Twig\ApplicationUrlExtension;
 
 class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    const TEST_APPLICATION = 'test';
+    const TEST_APPLICATION_HOST = 'http://localhost/';
     /**
      * @var ApplicationUrlExtension
      */
@@ -18,12 +20,29 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->extension = new ApplicationUrlExtension('test', ['test' => 'http://localhost/']);
+        $this->extension = new ApplicationUrlExtension(
+            self::TEST_APPLICATION,
+            [self::TEST_APPLICATION => self::TEST_APPLICATION_HOST]
+        );
     }
 
     public function testGetName()
     {
         $this->assertEquals(ApplicationUrlExtension::NAME, $this->extension->getName());
+    }
+
+    public function testGetHost()
+    {
+        $this->assertEquals(self::TEST_APPLICATION_HOST, $this->extension->getHost(self::TEST_APPLICATION));
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage The name of the application is not a valid. Allowed the following names: test.
+     */
+    public function testGetHostException()
+    {
+        $this->extension->getHost('not_existing_application');
     }
 
     public function testGetApplicationUrl()
@@ -87,14 +106,25 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFunctions()
     {
-        $functions = $this->extension->getFunctions();
-        $this->assertCount(1, $functions);
+        $expectedFunctions = [
+            ['application_url', 'getApplicationUrl'],
+            ['application_host', 'getHost']
+        ];
 
-        /** @var \Twig_SimpleFunction $function */
-        $function = $functions[0];
-        $this->assertInstanceOf('\Twig_SimpleFunction', $function);
-        $this->assertEquals('application_url', $function->getName());
-        $this->assertEquals([$this->extension, 'getApplicationUrl'], $function->getCallable());
+        /** @var \Twig_SimpleFunction[] $functions */
+        $functions = $this->extension->getFunctions();
+
+        $this->assertSameSize($expectedFunctions, $functions);
+
+        foreach ($functions as $twigFunction) {
+            $expectedFunction = current($expectedFunctions);
+
+            $this->assertInstanceOf('\Twig_SimpleFunction', $twigFunction);
+            $this->assertEquals($expectedFunction[0], $twigFunction->getName());
+            $this->assertEquals([$this->extension, $expectedFunction[1]], $twigFunction->getCallable());
+
+            next($expectedFunctions);
+        }
     }
 
     /**
