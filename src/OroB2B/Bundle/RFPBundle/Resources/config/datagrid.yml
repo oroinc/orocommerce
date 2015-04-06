@@ -25,6 +25,8 @@ datagrid:
                 join:
                     left:
                         - { join: request.status, alias: status }
+            hints:
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             firstName:
                 label:         orob2b.rfp.request.first_name.label
