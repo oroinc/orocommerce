@@ -12,23 +12,30 @@ Table of Contents
 Overview
 --------
 
-Multiple Applications Structure was developed for convenience of application developer to separate applications, optimize their configurations and performance.
+Multiple Applications approach was developed for convenience of application developer to separate applications, 
+optimize their configurations and performance.
 
 Main purposes
 -------------
 
-Multiple Applications Structure may be used in situation, if only one single application-server for all applications should be use. There is no need to install all applications in the separate directories. Just use desired entry point for separate `virtual host`.
-One common configuration for all application, one `vendor` directory and simplified development.
+Multiple Applications approach should be used in situation when several applications should share the same code source.
+So there will be no need to install applications in a separate directories. Just specify and use desired entry point 
+file (front controller) for each application. These application will have both common and separate parts 
+of configuration, and will use the same `vendor` directory with source code.
 
-Also, it may be used in architecture with several application-servers, each server runs the own application. Just select the desired entry point on single instance. That's it.
+Also, it may be used in architecture with several application-servers where each server runs the own application. 
+In this case developer have to select the desired entry for each application.
 
 Directory structure
 -------------------
 
-Multiple Applications Structure provides the separated directories architecture for configure any of application. Each application extend the **common configuration** and have global `parameters.yml`.
-In all structure exists only one `console` script. By default it runs for `admin` application.
+Multiple Applications approach provides the separated directories architecture to configure all applications. 
+Each application extend the **common configuration** and uses global common `parameters.yml` file.
+There is only one `console` script for all applications (by default it uses `admin` application).
 
-In old structure global **config** is located in `app/config` directory:
+In regular Symfony structure global **config** directory is located in `app/config` directory, and *cache* and *logs* 
+directories are in `app` directory (same as at regular Symfony application): 
+
 ```
 ├── app/
 │   ├── attachment/
@@ -58,9 +65,12 @@ In old structure global **config** is located in `app/config` directory:
     └── app_dev.php
 ```
 
-Now configuration of any application is divided to **two parts**. Such as **common** and **own** configuration parts.
+Now configuration of any application is divided into **two parts** - **common** part and **application** own 
+configuration part.
 
-**Common** is located in `app/common` directory.
+**Common** part is located in `app/common` directory. It includes general configuration that should be used for all
+application, and file `parameters.yml` used to store common parameters (like DB connection, application hosts etc).
+
 ```
 └── app/
     └── common/
@@ -70,7 +80,9 @@ Now configuration of any application is divided to **two parts**. Such as **comm
         └── parameters.yml
 ```
 
-**Own application** configuration is located in subdirectory of `app` with name like *own application name* and extends **common** configuration.
+**Application** own configuration is located in subdirectory of `app` with name equals to application name 
+that usually extends **common** configuration.
+
 ```
 └── app/
     ├── admin/
@@ -91,7 +103,9 @@ Now configuration of any application is divided to **two parts**. Such as **comm
             └── ...
 ```
 
-`Resources` directory of application (if it needed) should be located in directory at the same level with `config` directory.
+`Resources` directory of application (if it needed) should be located in application directory on the same level 
+with `config` directory.
+
 ```
 └── app/
     ├── admin/
@@ -116,9 +130,12 @@ Now configuration of any application is divided to **two parts**. Such as **comm
             └── ...
 ```
 
-Also, all of applications have own directory for storing `attachments`, `cache` and `logs`.
-For these purposes there is a corresponding folder `var`, that located at the same level with directory `app` and contains all these directories inside.
-Cache and log names are following the `<application_name>_<environment>` pattern.
+Also, each application has its own directory for storing `attachments`, `cache` and `logs`.
+For these purposes there is a corresponding folder `var`, that located at the same level with directory `app` 
+and contains all these directories inside. Cache and log directory names are following the 
+`<application_name>_<environment>` pattern. Main purpose of `var` directory is to provide the one writable directory 
+outside the `web` directory. 
+
 ```
 ├── app/
 └── var/
@@ -135,8 +152,10 @@ Cache and log names are following the `<application_name>_<environment>` pattern
         └── ...
 ```
 
-For any of separated application must be created own entry point, instead of `app.php` in old structure, that run application respectively.
-The main purpose of this action - specify the name of application inside entry point. Entry point names are arbitrary and do not need to match the application name.
+Each application must have its own entry point (similar to `app.php` in regular Symfony structure), that runs appropriate
+application. The main purpose of this file - specify the name of application inside entry point. 
+Entry point names are arbitrary and do not need to match the application name.
+
 ```
 ├── app/
 │   └── ...
@@ -147,7 +166,8 @@ The main purpose of this action - specify the name of application inside entry p
     └── tracking.php
 ```
 
-Below are general schemes of the **Multiple Applications Structure**.
+Below are general schema of the **Multiple Applications** structure.
+
 ```
 ├── app/
 │   ├── admin/
@@ -206,26 +226,32 @@ Below are general schemes of the **Multiple Applications Structure**.
 How to register bundles
 -----------------------
 
-For auto-registering *bundles* and *exclusions* in applications use the same approach as in the old structure (see DistributionBundle/README.md) with a small difference.
-Default application named **admin** use block `bundles` from bundles.yml. All other applications use their own blocks named by next pattern: `bundles_<application_name>`.
+To register *bundles* and *exclusions* application uses regular OroPlatform approach with a small difference.
+Default application named **admin** uses block `bundles` from bundles.yml, and all other applications 
+use their own blocks named by the pattern `bundles_<application_name>`.
 
 ``` yml
-#Distribution configuration block, used for `admin` application
+# admin bundles, used for `admin` application
 bundles:
-    - VendorName\Bundle\VendorBundle\VendorAnyBundle
-    - MyName\Bundle\MyCustomBundle\MyNameCustomBundle
+    - VendorName\Bundle\AdminBundle\VendorAdminBundle
+    - MyName\Bundle\MyAdminBundle\MyNameAdminBundle
 #   - ...
 
-#Frontend bundles (needed to add `_<application_name>` after `bundles`)
+# frontend bundles, used for `frontend` application (according to pattern `bundles_<application_name>`)
 bundles_frontend:
-    - VendorName\Bundle\VendorBundle\VendorAnyBundle
-    - MyName\Bundle\MyCustomBundle\MyNameCustomBundle
+    - VendorName\Bundle\FrontendBundle\VendorFrontendBundle
+    - MyName\Bundle\MyFrontendBundle\MyNameFrontendBundle
 #   - ...
 ```
 
 Examples
 --------
 
-Just imagine an abstract website, that provides some kinds of services. It has two different interfaces: frontend (website for end-level customers) and backend (admin panel). This is two application, which are use one database, located on single server instance and use some common bundles.
+Let's imagine an abstract website that provides some kind of services. It has two different interfaces: 
+frontend (website for end-level customers) and backend (admin panel). These two applications use the
+same database located on single server instance and some common set of bundles.
 
-An application developer can use Multiple Applications Structure for this two application. All applications located in one directory, use similar config, common working directories. But it's still two different applications and if needed they may be distributed at two different server instances with minimum labor.
+An application developer can use Multiple Applications approach for these two applications - they will be located 
+in the same directory, will use similar config and common working directories. 
+But in fact there will be two different applications and, if required, they can be separated into two different 
+server instances with minimal effort.
