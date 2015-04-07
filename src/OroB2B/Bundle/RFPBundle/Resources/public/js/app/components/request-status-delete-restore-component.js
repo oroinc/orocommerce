@@ -16,7 +16,7 @@ define(function (require) {
 
                 $.ajax({
                     url: options.url,
-                    type: (options.action == 'delete') ? 'DELETE' : 'PATCH',
+                    type: (options.action == 'delete') ? 'DELETE' : 'GET',
                     success: function(response) {
                          if (response && response.message) {
                              mediator.once('page:afterChange', function() {
