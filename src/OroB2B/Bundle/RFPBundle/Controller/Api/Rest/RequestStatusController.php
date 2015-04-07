@@ -44,7 +44,7 @@ class RequestStatusController extends RestController
 
         if (null === $requesStatus) {
             return new JsonResponse(
-                $this->get('translator')->trans('Item not found'),
+                $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
                 Codes::HTTP_NOT_FOUND
             );
         }
@@ -85,10 +85,10 @@ class RequestStatusController extends RestController
 
         return $this->handleView(
             $this->view(
-                array(
+                [
                     'successful' => true,
                     'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_restored')
-                ),
+                ],
                 Codes::HTTP_OK
             )
         );
