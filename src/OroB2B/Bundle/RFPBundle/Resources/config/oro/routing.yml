@@ -1,0 +1,4 @@
+orob2b_rfp_request:
+    resource:     "@OroB2BRFPBundle/Controller/RequestController.php"
+    type:         annotation
+    prefix:       /rfp/request

@@ -21,6 +21,15 @@ orob2b.rfp:
         sort_order.label:       'Sort Order'
         deleted.label:          'Deleted'
 
+    menu:
+        rfp_tab.label:                      'RFP'
+        requests_list.description:          'List of requests'
+        shortcut_requests_list.description: 'Shows list of existing requests'
+
+    sections:
+        general:    'General'
+        body:       'Request body'
+
     system_configuration:
         group_title:                 'RFP'
         requeststatus_group_title:   'RFP status'
