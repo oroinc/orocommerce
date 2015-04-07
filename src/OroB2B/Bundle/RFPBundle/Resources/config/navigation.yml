@@ -33,3 +33,4 @@ oro_menu_config:
 oro_titles:
     orob2b_rfp_request_index:  ~
     orob2b_rfp_request_view:   '%%title%%'
+    orob2b_rfp_request_update: '%%title%% - Edit'

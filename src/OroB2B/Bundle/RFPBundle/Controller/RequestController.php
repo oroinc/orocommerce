@@ -11,6 +11,8 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestHandler;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 
 class RequestController extends Controller
 {
@@ -61,5 +63,43 @@ class RequestController extends Controller
         return [
             'entity_class' => $this->container->getParameter('orob2b_rfp.request.class')
         ];
+    }
+
+    /**
+     * @Route("/update/{id}", name="orob2b_rfp_request_update", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_rfp_request_update",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function updateAction(Request $request)
+    {
+        $form = $this->createForm(RequestType::NAME, ['status' => $request->getStatus()]);
+
+        $handler = new RequestHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:Request'),
+            $this->container->get('templating')
+        );
+
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $request,
+            $form,
+            function (Request $request) {
+                return ['route' => 'orob2b_rfp_request_update', 'parameters' => ['id' => $request->getId()]];
+            },
+            function (Request $request) {
+                return ['route' => 'orob2b_rfp_request_view', 'parameters' => ['id' => $request->getId()]];
+            },
+            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
+            $handler
+        );
     }
 }

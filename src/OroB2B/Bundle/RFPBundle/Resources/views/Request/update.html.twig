@@ -1,0 +1,50 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.firstName ~ ' ' ~ entity.lastName}}) %}
+{% set formAction = path('orob2b_rfp_request_update', { 'id': entity.id }) %}
+
+{% block navButtons %}
+    {{ UI.cancelButton(path('orob2b_rfp_request_view', { 'id': entity.id })) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if resource_granted('orob2b_rfp_request_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_rfp_request_index'),
+        'indexLabel': 'orob2b.rfp.request.entity_plural_label'|trans,
+        'entityTitle': entity.email|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'request-status-change' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.rfp.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.status),
+                        form_row(form.note),
+                    ]
+                },
+            ]
+        },
+    ] %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

@@ -1,0 +1,24 @@
+parameters:
+    orob2b_rfp.form.type.default_request_status.class: OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType
+    orob2b_rfp.form.type.request_status_select.class:  OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType
+    orob2b_rfp.form.type.request.class:                OroB2B\Bundle\RFPBundle\Form\Type\RequestType
+
+services:
+    orob2b_rfp.form.type.default_request_status:
+        class: %orob2b_rfp.form.type.default_request_status.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_rfp_default_request_status }
+
+    orob2b_rfp.form.type.request_status_select:
+        class: %orob2b_rfp.form.type.request_status_select.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_status_select }
+
+    orob2b_rfp.form.type.request:
+        class: %orob2b_rfp.form.type.request.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request }
