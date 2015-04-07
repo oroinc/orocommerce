@@ -44,7 +44,8 @@ class ApplicationUrlExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('application_url', [$this, 'getApplicationUrl'])
+            new \Twig_SimpleFunction('application_url', [$this, 'getApplicationUrl']),
+            new \Twig_SimpleFunction('application_host', [$this, 'getHost'])
         ];
     }
 
@@ -54,7 +55,7 @@ class ApplicationUrlExtension extends \Twig_Extension
      * @param bool $schemeRelative
      * @return string
      */
-    public function getApplicationUrl($name, array $parameters = [], $schemeRelative = false)
+    public function getApplicationUrl($name, array $parameters, $schemeRelative = false)
     {
         if (!isset($parameters['application'])) {
             throw new \InvalidArgumentException('Parameters must have required element `application`.');
@@ -85,7 +86,8 @@ class ApplicationUrlExtension extends \Twig_Extension
      */
     protected function getKernel($applicationName)
     {
-        $kernel = new \AppKernel($applicationName, $this->kernelEnvironment, false);
+        $kernel = new \AppKernel($this->kernelEnvironment, false);
+        $kernel->setApplication($applicationName);
         $kernel->loadClassCache();
         $kernel->boot();
 
@@ -97,7 +99,7 @@ class ApplicationUrlExtension extends \Twig_Extension
      * @return string
      * @throws \InvalidArgumentException
      */
-    protected function getHost($applicationName)
+    public function getHost($applicationName)
     {
         if (!isset($this->applicationHosts[$applicationName])) {
             throw new \InvalidArgumentException(

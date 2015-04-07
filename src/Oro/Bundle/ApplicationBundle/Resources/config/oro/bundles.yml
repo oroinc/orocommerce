@@ -10,3 +10,17 @@ bundles_frontend:
     - { name: Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle }
     - { name: Doctrine\Bundle\DoctrineBundle\DoctrineBundle }
     - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
+    - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
+bundles_install:
+    - { name: Symfony\Bundle\FrameworkBundle\FrameworkBundle }
+    - { name: Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle }
+    - { name: Symfony\Bundle\TwigBundle\TwigBundle }
+    - { name: Symfony\Bundle\AsseticBundle\AsseticBundle }
+    - { name: Symfony\Bundle\MonologBundle\MonologBundle }
+    - { name: Oro\Bundle\DistributionBundle\OroDistributionBundle, priority: 10 }
+    - { name: Symfony\Bundle\SecurityBundle\SecurityBundle }
+    - { name: Doctrine\Bundle\DoctrineBundle\DoctrineBundle }
+    - { name: Oro\Bundle\HelpBundle\OroHelpBundle }
+    - { name: Lexik\Bundle\MaintenanceBundle\LexikMaintenanceBundle }
+    - { name: Oro\Bundle\PlatformBundle\OroPlatformBundle }
+    - { name: Oro\Bundle\InstallerBundle\OroInstallerBundle }

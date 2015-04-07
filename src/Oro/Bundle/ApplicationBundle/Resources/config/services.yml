@@ -1,0 +1,23 @@
+parameters:
+    oro_application.listener.request.class:             Oro\Bundle\ApplicationBundle\EventListener\RequestListener
+    oro_application.listener.navigation_listener.class: Oro\Bundle\ApplicationBundle\EventListener\NavigationListener
+services:
+    kernel.listener.install.event:
+        class: %oro_application.listener.request.class%
+        arguments:
+            - "@router"
+            - %installed%
+            - %application_host.install%
+            - %kernel.debug%
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: 10 }
+
+    oro_distribution.listener.navigation_listener:
+        class: %oro_application.listener.navigation_listener.class%
+        arguments:
+            - @security.context
+            - %application_host.install%
+        tags:
+            - { name: kernel.event_listener, event: oro_menu.configure.application_menu, method: onNavigationConfigure }
+        calls:
+            - [setRequest, ["@?request="]]
