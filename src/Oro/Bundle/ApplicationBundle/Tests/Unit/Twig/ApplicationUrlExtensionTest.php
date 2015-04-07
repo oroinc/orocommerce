@@ -64,7 +64,6 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Parameters must have required element `application`.
