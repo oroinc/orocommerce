@@ -2,11 +2,9 @@
 
 namespace Oro\Bundle\ApplicationBundle\Twig;
 
-use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Component\Process\PhpExecutableFinder;
-use Symfony\Component\Process\ProcessBuilder;
-
-use Oro\Bundle\ApplicationBundle\Command\GenerateUrlCommand;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RequestContext;
 
 class ApplicationUrlExtension extends \Twig_Extension
 {
@@ -18,11 +16,18 @@ class ApplicationUrlExtension extends \Twig_Extension
     protected $kernel;
 
     /**
-     * @param KernelInterface $kernel
+     * @var array
      */
-    public function __construct(KernelInterface $kernel)
+    protected $applicationHosts;
+
+    /**
+     * @param string $kernelEnvironment
+     * @param array $applicationHosts
+     */
+    public function __construct($KernelInterface $kernel, array $applicationHosts)
     {
         $this->kernel = $kernel;
+        $this->applicationHosts = $applicationHosts;
     }
 
     /**
@@ -39,7 +44,8 @@ class ApplicationUrlExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('application_url', [$this, 'getApplicationUrl'])
+            new \Twig_SimpleFunction('application_url', [$this, 'getApplicationUrl']),
+            new \Twig_SimpleFunction('application_host', [$this, 'getHost'])
         ];
     }
 
@@ -87,5 +93,24 @@ class ApplicationUrlExtension extends \Twig_Extension
         }
 
         return $phpPath;
+    }
+
+    /**
+     * @param string $applicationName
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    public function getHost($applicationName)
+    {
+        if (!isset($this->applicationHosts[$applicationName])) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    'The name of the application is not a valid. Allowed the following names: %s.',
+                    implode(', ', array_keys($this->applicationHosts))
+                )
+            );
+        }
+
+        return $this->applicationHosts[$applicationName];
     }
 }

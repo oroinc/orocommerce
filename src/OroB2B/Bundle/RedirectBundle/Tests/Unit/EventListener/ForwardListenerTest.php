@@ -36,19 +36,25 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $this->listener = new ForwardListener($this->router, $this->registry);
     }
 
     /**
      * @dataProvider onKernelRequestDataProvider
+     * @param boolean $installed
      * @param string $requestType
      * @param boolean $existingController
      * @param array $slug_params
      * @param array $expected
      */
-    public function testOnKernelRequest($requestType, $existingController, array $slug_params, array $expected)
-    {
+    public function testOnKernelRequest(
+        $installed,
+        $requestType,
+        $existingController,
+        array $slug_params,
+        array $expected
+    ) {
+        $this->listener = new ForwardListener($this->router, $this->registry, $installed);
+
         /**
          * @var \Symfony\Component\HttpKernel\HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel
          */
@@ -135,6 +141,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'with existing slug' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'slugParams' => [
@@ -150,6 +157,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'with subrequest' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'existingController' => false,
                 'slugParams' => [
@@ -160,6 +168,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'expected' => []
             ],
             'with existing controller' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => true,
                 'slugParams' => [
@@ -172,6 +181,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'with closing slash' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'slugParams' => [
@@ -187,10 +197,22 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'without existing slug' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'slugParams' => [
                     'url' => '/missing-slug',
+                    'route_name' => 'test_route',
+                    'route_parameters' => ['id' => '1']
+                ],
+                'expected' => [],
+            ],
+            'not installed application' => [
+                'installed' => false,
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'existingController' => false,
+                'slugParams' => [
+                    'url' => '/test/',
                     'route_name' => 'test_route',
                     'route_parameters' => ['id' => '1']
                 ],
