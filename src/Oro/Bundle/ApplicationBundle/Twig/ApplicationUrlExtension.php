@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ApplicationBundle\Twig;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\ProcessBuilder;
+
+use Oro\Bundle\ApplicationBundle\Command\GenerateUrlCommand;
 
 class ApplicationUrlExtension extends \Twig_Extension
 {
@@ -21,10 +23,10 @@ class ApplicationUrlExtension extends \Twig_Extension
     protected $applicationHosts;
 
     /**
-     * @param string $kernelEnvironment
+     * @param KernelInterface $kernel
      * @param array $applicationHosts
      */
-    public function __construct($KernelInterface $kernel, array $applicationHosts)
+    public function __construct(KernelInterface $kernel, array $applicationHosts)
     {
         $this->kernel = $kernel;
         $this->applicationHosts = $applicationHosts;

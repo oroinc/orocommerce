@@ -8,5 +8,6 @@ services:
         public: false
         arguments:
             - @kernel
+            - %application_hosts%
         tags:
             - { name: twig.extension }
