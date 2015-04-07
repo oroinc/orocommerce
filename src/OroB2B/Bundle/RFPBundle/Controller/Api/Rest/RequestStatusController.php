@@ -5,18 +5,20 @@ namespace OroB2B\Bundle\RFPBundle\Controller\Api\Rest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 /**
- * @NamePrefix("orob2b_rfp_request_status_api_")
+ * @NamePrefix("orob2b_api_rfp_request_status_")
  */
-class RequestStatusController extends RestController
+class RequestStatusController extends FOSRestController
 {
     /**
      * Rest delete
@@ -37,7 +39,7 @@ class RequestStatusController extends RestController
      */
     public function deleteAction($id)
     {
-        $em = $this->get('doctrine')->getManager();
+        $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
         $requesStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
         if (null === $requesStatus) {
@@ -56,26 +58,40 @@ class RequestStatusController extends RestController
     }
 
     /**
-     * {@inheritdoc}
+     * @param $id
+     *
+     * @Rest\Get()
+     * @ApiDoc(
+     *      description="Restore RequestStatus",
+     *      resource=true
+     * )
+     * @AclAncestor("orob2b_rfp_request_status_delete")
+     *
+     * @return Response
      */
-    public function getManager()
+    public function restoreAction($id)
     {
-        throw new \LogicException('This method should not be called');
-    }
+        $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
+        $requesStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getForm()
-    {
-        throw new \LogicException('This method should not be called');
-    }
+        if (null === $requesStatus) {
+            return new JsonResponse(
+                $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
+                Codes::HTTP_NOT_FOUND
+            );
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormHandler()
-    {
-        throw new \LogicException('This method should not be called');
+        $requesStatus->setDeleted(false);
+        $em->flush();
+
+        return $this->handleView(
+            $this->view(
+                [
+                    'successful' => true,
+                    'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_restored')
+                ],
+                Codes::HTTP_OK
+            )
+        );
     }
 }

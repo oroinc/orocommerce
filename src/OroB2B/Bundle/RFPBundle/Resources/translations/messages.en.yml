@@ -36,3 +36,6 @@ orob2b.rfp:
         group_title:                 'RFP'
         requeststatus_group_title:   'RFP status'
         requeststatus_default_label: 'Deafault RFP status'
+
+    datagrid:
+        action_restore: 'Restore'

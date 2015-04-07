@@ -49,10 +49,9 @@ datagrid:
         properties:
             id: ~
             view_link:
-                type:  url
-                route: orob2b_rfp_request_view
-                params:
-                    - id
+                type:   url
+                route:  orob2b_rfp_request_view
+                params: [ id ]
         sorters:
             columns:
                 firstName:
@@ -135,6 +134,8 @@ datagrid:
                     - status.deleted
                 from:
                     - { table: %orob2b_rfp.request.status.class%, alias: status }
+            hints:
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             label:
                 label:         orob2b.rfp.requeststatus.label.label
@@ -151,8 +152,15 @@ datagrid:
             view_link:
                 type:  url
                 route: orob2b_rfp_request_status_view
-                params:
-                    - id
+                params: [ id ]
+            restore_link:
+                type:   url
+                route:  orob2b_api_rfp_request_status_restore
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_rfp_request_status_delete
+                params: [ id ]
         sorters:
             columns:
                 label:
@@ -181,3 +189,16 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_request_status_view
                 rowAction:     true
+            restore:
+                type:          ajax
+                acl_resource:  orob2b_rfp_request_status_delete
+                label:         orob2b.rfp.datagrid.action_restore
+                icon:          ok
+                link:          restore_link
+            delete:
+                type:          delete
+                acl_resource:  orob2b_rfp_request_status_delete
+                label:         oro.grid.action.delete
+                icon:          trash
+                link:          delete_link
+        action_configuration: [@orob2b_rfp.datagrid.action_permission_provider, "getRequestStatusDefinitionPermissions"]
