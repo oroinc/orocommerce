@@ -2,18 +2,20 @@
 
 namespace Oro\Bundle\ApplicationBundle\Twig;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\ProcessBuilder;
+
+use Oro\Bundle\ApplicationBundle\Command\GenerateUrlCommand;
 
 class ApplicationUrlExtension extends \Twig_Extension
 {
     const NAME = 'oro_application_application_url_extension';
 
     /**
-     * @var string
+     * @var KernelInterface
      */
-    protected $kernelEnvironment;
+    protected $kernel;
 
     /**
      * @var array
@@ -21,12 +23,12 @@ class ApplicationUrlExtension extends \Twig_Extension
     protected $applicationHosts;
 
     /**
-     * @param string $kernelEnvironment
+     * @param KernelInterface $kernel
      * @param array $applicationHosts
      */
-    public function __construct($kernelEnvironment, array $applicationHosts)
+    public function __construct(KernelInterface $kernel, array $applicationHosts)
     {
-        $this->kernelEnvironment = $kernelEnvironment;
+        $this->kernel = $kernel;
         $this->applicationHosts = $applicationHosts;
     }
 
@@ -52,46 +54,47 @@ class ApplicationUrlExtension extends \Twig_Extension
     /**
      * @param string $name
      * @param array $parameters
-     * @param bool $schemeRelative
      * @return string
      */
-    public function getApplicationUrl($name, array $parameters, $schemeRelative = false)
+    public function getApplicationUrl($name, array $parameters)
     {
-        if (!isset($parameters['application'])) {
+        if (!array_key_exists('application', $parameters)) {
             throw new \InvalidArgumentException('Parameters must have required element `application`.');
         }
 
         $applicationName = $parameters['application'];
         unset($parameters['application']);
 
-        $kernel = $this->getKernel($applicationName);
-        $router = $kernel->getContainer()->get('router');
+        $processBuilder = new ProcessBuilder();
+        $processBuilder->add($this->getPhp())
+            ->add($this->kernel->getRootDir() . DIRECTORY_SEPARATOR . 'console')
+            ->add(GenerateUrlCommand::NAME)
+            ->add($name)
+            ->add(json_encode($parameters))
+            ->add('--app=' . $applicationName)
+            ->add('--env=' . $this->kernel->getEnvironment());
 
-        $routerContext = $router->getContext();
-        $routerContext->fromRequest(Request::create($this->getHost($applicationName)));
-        $routerContext->setBaseUrl(rtrim($routerContext->getPathInfo(), '/'));
-        $routerContext->setPathInfo('');
+        $process = $processBuilder->getProcess();
+        if ($process->run() !== 0) {
+            throw new \LogicException('Invalid URL generation result');
+        }
 
-        return $router->generate(
-            $name,
-            $parameters,
-            $schemeRelative ? UrlGeneratorInterface::NETWORK_PATH : UrlGeneratorInterface::ABSOLUTE_URL
-        );
+        return trim($process->getOutput());
     }
 
     /**
-     * @param  string $applicationName
-     * @return \AppKernel
-     * @throws \Exception
+     * @return string
+     * @throws \LogicException
      */
-    protected function getKernel($applicationName)
+    protected function getPhp()
     {
-        $kernel = new \AppKernel($this->kernelEnvironment, false);
-        $kernel->setApplication($applicationName);
-        $kernel->loadClassCache();
-        $kernel->boot();
+        $phpFinder = new PhpExecutableFinder();
+        $phpPath   = $phpFinder->find();
+        if (!$phpPath) {
+            throw new \LogicException('The PHP executable could not be found.');
+        }
 
-        return $kernel;
+        return $phpPath;
     }
 
     /**

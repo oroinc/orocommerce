@@ -7,7 +7,7 @@ services:
         class: %oro_application.twig.application_url_extension.class%
         public: false
         arguments:
-            - %kernel.environment%
+            - @kernel
             - %application_hosts%
         tags:
             - { name: twig.extension }
