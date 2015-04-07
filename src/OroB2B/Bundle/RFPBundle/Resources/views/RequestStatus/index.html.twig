@@ -4,13 +4,11 @@
 {% set gridName = 'rfp-request-statuses-grid' %}
 {% set pageTitle = 'orob2b.rfp.requeststatus.entity_plural_label'|trans %}
 
-{#
 {% block navButtons %}
-    {% if resource_granted('orob2b_rfp_request_status_delete') %}
+    {% if resource_granted('orob2b_rfp_request_status_create') %}
         {{ UI.addButton({
-            'path': path('orob2b_rfp_request_create'),
-            'entity_label': 'orob2b.rfp.request.entity_label'|trans
+            'path': path('orob2b_rfp_request_status_create'),
+            'entity_label': 'orob2b.rfp.requeststatus.entity_label'|trans
         }) }}
     {% endif %}
 {% endblock %}
-#}

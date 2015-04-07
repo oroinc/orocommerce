@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\TranslationBundle\DataFixtures\AbstractTranslatableEntityFixture;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation;
 
 class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
 {
@@ -25,29 +26,34 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
      */
     public function loadEntities(ObjectManager $objectManager)
     {
-        $locales = $this->getTranslationLocales();
-        $requestStatusRepository = $objectManager->getRepository('OroB2BRFPBundle:RequestStatus');
+        $localeSettings = $this->container->get('oro_locale.settings');
+        $defaultLocale  = $localeSettings->getLocale();
+        $locales        = $this->getTranslationLocales();
 
-        foreach ($locales as $locale) {
-            foreach ($this->items as $item) {
-                $status = $requestStatusRepository->findOneBy(['name' => $item['name']]);
+        if (!in_array($defaultLocale, $locales)) {
+            throw new \LogicException('There are no default locale in transltions!');
+        }
 
-                if (!$status) {
-                    $status = new RequestStatus();
-                    $status->setSortOrder($item['order']);
-                    $status->setName($item['name']);
-                }
+        foreach ($this->items as $item) {
+            $status = new RequestStatus();
+            $status->setSortOrder($item['order']);
+            $status->setName($item['name']);
 
+            foreach ($locales as $locale) {
                 $label = $this->translate($item['name'], static::PREFIX, $locale);
 
-                $status
-                    ->setLabel($label)
-                    ->setLocale($locale);
-
-                $objectManager->persist($status);
+                if ($locale == $defaultLocale) {
+                    $status
+                        ->setLabel($label)
+                        ->setLocale($locale);
+                } else {
+                    $status->addTranslation(new RequestStatusTranslation($locale, 'label', $label));
+                }
             }
 
-            $objectManager->flush();
+            $objectManager->persist($status);
         }
+
+        $objectManager->flush();
     }
 }
