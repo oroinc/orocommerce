@@ -15,10 +15,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * RequestStatus
  *
- * @ORM\Table("orob2b_rfp_status")
+ * @ORM\Table(
+ *      name="orob2b_rfp_status",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_rfp_status_name_idx",columns={"name"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")
  * @Gedmo\TranslationEntity(class="OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation")
  * @Config(
+ *      routeName="orob2b_rfp_request_status_index",
+ *      routeView="orob2b_rfp_request_status_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-file-text"
@@ -79,7 +86,7 @@ class RequestStatus implements Translatable
     /**
      * @var boolean
      *
-     * @ORM\Column(name="deleted", type="boolean")
+     * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
      */
     private $deleted = false;
 

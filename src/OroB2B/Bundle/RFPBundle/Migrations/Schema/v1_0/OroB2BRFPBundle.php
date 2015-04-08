@@ -51,6 +51,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
 
         /** Foreign keys generation **/
         $this->addOrob2BRfpRequestForeignKeys($schema);
+        $this->addOrob2BRfpStatusForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addActivityAssociations($schema, $this->activityExtension);
@@ -91,7 +92,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('label', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('sort_order', 'integer', ['notnull' => false]);
-        $table->addColumn('deleted', 'boolean', []);
+        $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['name'], 'orob2b_rfp_status_name_idx', []);
     }
@@ -110,7 +111,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
         $table->addColumn('field', 'string', ['length' => 32]);
         $table->addColumn('content', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['object_id'], 'IDX_F42DCDB8232D562B', []);
+        $table->addIndex(['object_id'], 'IDX_BA186C17232D562B', []);
         $table->addIndex(['locale', 'object_id', 'field'], 'orob2b_rfp_status_trans_idx', []);
     }
 
