@@ -111,7 +111,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_rfp_request_status_delete', ['id' => $id]));
+        $this->client->request('DELETE', $this->getUrl('orob2b_api_rfp_delete_request_status', ['id' => $id]));
 
         $result = $this->client->getResponse();
 

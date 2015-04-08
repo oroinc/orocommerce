@@ -41,7 +41,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->assertTrue($requestStatus->getDeleted());
 
-        $this->client->request('PATCH', $this->getUrl('orob2b_api_rfp_request_status_restore', [
+        $this->client->request('GET', $this->getUrl('orob2b_api_rfp_restore_request_status', [
             'id' => $requestStatus->getId()
         ]));
 
