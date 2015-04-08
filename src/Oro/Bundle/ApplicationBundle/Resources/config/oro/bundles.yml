@@ -10,7 +10,6 @@ bundles_frontend:
     - { name: Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle }
     - { name: Doctrine\Bundle\DoctrineBundle\DoctrineBundle }
     - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
-    - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
 bundles_install:
     - { name: Symfony\Bundle\FrameworkBundle\FrameworkBundle }
     - { name: Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle }
