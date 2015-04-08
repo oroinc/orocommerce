@@ -31,6 +31,7 @@ class CategoriesTest extends Selenium2TestCase
     {
         /** @var Categories $categories */
         $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+        sleep(1);
 
         // preconditions
         $categories->assertTitle('Categories - Catalog Management')
@@ -73,6 +74,7 @@ class CategoriesTest extends Selenium2TestCase
     {
         /** @var Categories $categories */
         $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+        sleep(1);
 
         /**
          * preconditions
@@ -130,6 +132,7 @@ class CategoriesTest extends Selenium2TestCase
     {
         /** @var Categories $categories */
         $categories = $this->login()->openCategories('OroB2B\Bundle\CatalogBundle');
+        sleep(1);
 
         /**
          * preconditions
