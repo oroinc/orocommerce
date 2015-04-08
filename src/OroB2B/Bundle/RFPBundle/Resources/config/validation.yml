@@ -23,8 +23,14 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
                 max: 255
 
 OroB2B\Bundle\RFPBundle\Entity\RequestStatus:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields:     [ name ]
+              ignoreNull: false
     properties:
-        label:
+        name:
             - NotBlank: ~
             - Length:
                 max: 255
+        sortOrder:
+            - NotBlank: ~

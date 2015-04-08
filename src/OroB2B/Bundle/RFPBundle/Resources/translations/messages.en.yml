@@ -22,15 +22,27 @@ orob2b.rfp:
         deleted.label:          'Deleted'
 
     menu:
-        rfp_tab.label:                      'RFP'
-        requests_list.description:          'List of requests'
-        shortcut_requests_list.description: 'Shows list of existing requests'
+        rfp_tab.label:                              'RFP'
+        requests_list.description:                  'List of requests'
+        request_statuses_list.description:          'List of request statuses'
+        shortcut_requests_list.description:         'Shows list of existing requests'
+        shortcut_request_statuses_list.description: 'Shows list of existing request statuses'
 
     sections:
-        general:    'General'
-        body:       'Request body'
+        general:           'General'
+        body:              'Request body'
+        label_translation: 'Request body'
 
     system_configuration:
         group_title:                 'RFP'
         requeststatus_group_title:   'RFP status'
         requeststatus_default_label: 'Deafault RFP status'
+
+    message:
+        request_status_saved:     'Request status saved'
+        request_status_restored:  'Request status restored'
+        request_status_not_found: 'Request status not found'
+
+    btn:
+        delete:  'Delete'
+        restore: 'Restore'
