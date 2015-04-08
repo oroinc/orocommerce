@@ -12,7 +12,8 @@ Run the `composer update` command
 ```
 $ php composer.phar update
 ```
-in section `application_host` add your application hosts.
+In section `application_host` add your application hosts.
+
 For example:
 ```
 application_host.admin ('http://localhost/admin.php'): http://your-site-name/admin.php
@@ -25,6 +26,7 @@ application_host.tracking ('http://localhost/tracking.php'): http://your-site-na
 
 Move `app/parameters.yml` to `common/parameters.yml`.
 Add hosts settings to the end of file.
+
 For example:
 ```
 application_host.admin: 'http://your-site-name/admin.php'
