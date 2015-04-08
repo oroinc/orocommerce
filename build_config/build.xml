@@ -332,7 +332,7 @@
         <attribute name="locale" default="en"/>
         <attribute name="secret" default="ThisTokenIsNotSoSecretChangeIt"/>
         <attribute name="installed" default="~"/>
-        <attribute name="application_host" default="http://localhost.com/"/>
+        <attribute name="application-host" default="http://localhost.com/"/>
         <sequential>
             <if>
                 <equals arg1="@{env}" arg2="prod"/>
@@ -363,10 +363,10 @@
             <echo file="${appconfig.filename}" append="true">    locale: @{locale}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    secret: @{secret}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    installed: @{installed}${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.admin: @{application_host}admin.php${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.frontend: @{application_host}${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.install: @{application_host}install.php${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.tracking: @{application_host}tracking.php${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    application_host.admin: @{application-host}admin.php${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    application_host.frontend: @{application-host}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    application_host.install: @{application-host}install.php${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    application_host.tracking: @{application-host}tracking.php${line.separator}</echo>
         </sequential>
     </macrodef>
 
