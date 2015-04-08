@@ -7,6 +7,7 @@ You need to do following actions:
 1. Install or update application
 --------------------------------
 **1. If application is not installed yet.**
+
 Run the `composer update` command
 ```
 $ php composer.phar update
@@ -21,6 +22,7 @@ application_host.tracking ('http://localhost/tracking.php'): http://your-site-na
 ```
 
 **2. If application already installed.**
+
 Move `app/parameters.yml` to `common/parameters.yml`.
 Add hosts settings to the end of file.
 For example:
