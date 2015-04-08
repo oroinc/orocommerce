@@ -2,9 +2,12 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Handler;
 
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
 
-class RequestStatusHandlerTest extends \PHPUnit_Framework_TestCase
+use Oro\Component\Testing\Unit\FormHandlerTestCase;
+
+class RequestStatusHandlerTest extends FormHandlerTestCase
 {
     /**
      * @var RequestStatusHandler
@@ -12,52 +15,23 @@ class RequestStatusHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
+     * @var Symfony\Component\Translation\TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+        parent::setUp();
+
+        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $form->expects($this->any())
-            ->method('isValid')
-            ->willReturn(true);
+        $this->entity = new RequestStatus();
 
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request->expects($this->any())
-            ->method('getMethod')
-            ->willReturn('POST');
-
-        $om = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->handler = new RequestStatusHandler($form, $request, $om, $translator);
-    }
-
-    /**
-     * Test process
-     */
-    public function testProcess()
-    {
-        $requestStatus = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\RequestStatus')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $requestStatus->expects($this->once())
-            ->method('setLocale');
-
-        $requestStatus->expects($this->once())
-            ->method('getId');
-
-        $this->assertTrue($this->handler->process($requestStatus));
+        $this->handler = new RequestStatusHandler($this->form, $this->request, $this->manager, $this->translator);
     }
 }

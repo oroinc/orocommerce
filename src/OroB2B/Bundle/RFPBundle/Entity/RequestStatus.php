@@ -268,7 +268,7 @@ class RequestStatus implements Translatable
     public function addTranslation(RequestStatusTranslation $translation)
     {
         if (!$this->translations->contains($translation)) {
-            $this->translations[] = $translation;
+            $this->translations->add($translation);
             $translation->setObject($this);
         }
 
