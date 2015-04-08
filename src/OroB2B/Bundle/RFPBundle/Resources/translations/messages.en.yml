@@ -46,3 +46,7 @@ orob2b.rfp:
     btn:
         delete:  'Delete'
         restore: 'Restore'
+
+    datagrid:
+        action_restore: 'Restore'
+

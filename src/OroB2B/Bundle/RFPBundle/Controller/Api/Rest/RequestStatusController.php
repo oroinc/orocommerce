@@ -5,20 +5,21 @@ namespace OroB2B\Bundle\RFPBundle\Controller\Api\Rest;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-use FOS\RestBundle\Util\Codes;
+use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 /**
- * @NamePrefix("orob2b_api_rfp_request_status_")
+ * @NamePrefix("orob2b_api_rfp_")
  */
-class RequestStatusController extends RestController
+class RequestStatusController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * Rest delete
@@ -39,7 +40,7 @@ class RequestStatusController extends RestController
      */
     public function deleteAction($id)
     {
-        $em = $this->get('doctrine')->getManager();
+        $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
         $requesStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
         if (null === $requesStatus) {
@@ -60,6 +61,7 @@ class RequestStatusController extends RestController
     /**
      * @param $id
      *
+     * @Rest\Get()
      * @ApiDoc(
      *      description="Restore RequestStatus",
      *      resource=true
@@ -70,7 +72,7 @@ class RequestStatusController extends RestController
      */
     public function restoreAction($id)
     {
-        $em = $this->get('doctrine')->getManager();
+        $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
         $requesStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
         if (null === $requesStatus) {
@@ -92,29 +94,5 @@ class RequestStatusController extends RestController
                 Codes::HTTP_OK
             )
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getManager()
-    {
-        throw new \LogicException('This method should not be called');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getForm()
-    {
-        throw new \LogicException('This method should not be called');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFormHandler()
-    {
-        throw new \LogicException('This method should not be called');
     }
 }
