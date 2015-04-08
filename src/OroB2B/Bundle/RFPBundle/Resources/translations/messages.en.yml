@@ -35,6 +35,11 @@ orob2b.rfp:
         requeststatus_group_title:   'RFP status'
         requeststatus_default_label: 'Deafault RFP status'
 
-    controller:
-        request:
-            saved.message: 'Request status changed'
+    message:
+        request_status_changed:   'RFP status successfully changed'
+
+    btn:
+        change_status: 'Change Status'
+
+    widget:
+        change_status_title: 'Change RFP Status'

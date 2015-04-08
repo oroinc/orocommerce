@@ -12,7 +12,7 @@ use Oro\Bundle\NoteBundle\Entity\Note;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
-class RequestHandler
+class RequestStatusChangeHandler
 {
     /**
      * @var FormInterface
@@ -87,18 +87,19 @@ class RequestHandler
 
         if (!empty($noteMessage)) {
             $note = new Note();
-            $note->setTarget($rfpRequest);
-            $note->setMessage(
-                htmlspecialchars_decode(
-                    $this->templating->render(
-                        'OroB2BRFPBundle:Request:note.html.twig',
-                        [
-                            'status' => $status->getLabel(),
-                            'note' => $noteMessage,
-                        ]
+            $note
+                ->setTarget($rfpRequest)
+                ->setMessage(
+                    htmlspecialchars_decode(
+                        $this->templating->render(
+                            'OroB2BRFPBundle:Request:note.html.twig',
+                            [
+                                'status' => $status->getLabel(),
+                                'note' => $noteMessage,
+                            ]
+                        )
                     )
-                )
-            );
+                );
 
             $this->manager->persist($note);
         }

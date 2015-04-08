@@ -9,9 +9,9 @@ use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestHandler;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusChangeHandler;
 
-class RequestHandlerTest extends FormHandlerTestCase
+class RequestStatusChangeHandlerTest extends FormHandlerTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EngineInterface
@@ -27,7 +27,7 @@ class RequestHandlerTest extends FormHandlerTestCase
 
         $this->entity = new RFPRequest();
         $this->templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
-        $this->handler = new RequestHandler($this->form, $this->request, $this->manager, $this->templating);
+        $this->handler = new RequestStatusChangeHandler($this->form, $this->request, $this->manager, $this->templating);
     }
 
     /**
