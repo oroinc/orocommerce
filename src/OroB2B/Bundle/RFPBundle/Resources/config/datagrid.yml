@@ -155,11 +155,11 @@ datagrid:
                 params: [ id ]
             restore_link:
                 type:   url
-                route:  orob2b_api_rfp_request_status_restore
+                route:  orob2b_api_rfp_restore_request_status
                 params: [ id ]
             delete_link:
                 type:   url
-                route:  orob2b_api_rfp_request_status_delete
+                route:  orob2b_api_rfp_delete_request_status
                 params: [ id ]
         sorters:
             columns:

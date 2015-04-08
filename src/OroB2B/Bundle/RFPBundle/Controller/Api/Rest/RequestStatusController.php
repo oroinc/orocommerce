@@ -6,9 +6,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Routing\ClassResourceInterface;
+use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -16,9 +17,9 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 /**
- * @NamePrefix("orob2b_api_rfp_request_status_")
+ * @NamePrefix("orob2b_api_rfp_")
  */
-class RequestStatusController extends FOSRestController
+class RequestStatusController extends FOSRestController implements ClassResourceInterface
 {
     /**
      * Rest delete
@@ -44,7 +45,7 @@ class RequestStatusController extends FOSRestController
 
         if (null === $requesStatus) {
             return new JsonResponse(
-                $this->get('translator')->trans('Item not found'),
+                $this->get('translator')->trans('orob2b.rfp.message.request_status_deleted'),
                 Codes::HTTP_NOT_FOUND
             );
         }

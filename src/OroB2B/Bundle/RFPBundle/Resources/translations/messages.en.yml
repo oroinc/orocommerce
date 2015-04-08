@@ -37,5 +37,11 @@ orob2b.rfp:
         requeststatus_group_title:   'RFP status'
         requeststatus_default_label: 'Deafault RFP status'
 
+    message:
+        request_status_saved:     'Request status saved'
+        request_status_restored:  'Request status restored'
+        request_status_not_found: 'Request status not found'
+        request_status_deleted:   'Request status deleted'
+
     datagrid:
         action_restore: 'Restore'
