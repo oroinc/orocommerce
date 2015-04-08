@@ -45,7 +45,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
 
         if (null === $requesStatus) {
             return new JsonResponse(
-                $this->get('translator')->trans('orob2b.rfp.message.request_status_deleted'),
+                $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
                 Codes::HTTP_NOT_FOUND
             );
         }
