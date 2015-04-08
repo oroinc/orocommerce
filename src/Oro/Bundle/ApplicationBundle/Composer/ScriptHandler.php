@@ -20,7 +20,7 @@ class ScriptHandler extends BasicScriptHandler
             $options['symfony-web-dir'] : 'web';
 
         $parametersFile = isset($options['incenteev-parameters']['file']) ?
-            $options['incenteev-parameters']['file'] : 'app/config/parameters.yml';
+            $options['incenteev-parameters']['file'] : 'app/common/parameters.yml';
 
         $directories = [
             'var/cache',
