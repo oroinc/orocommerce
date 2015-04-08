@@ -19,6 +19,10 @@ application_host.frontend ('http://localhost/'): http://your-site-name
 application_host.install ('http://localhost/install.php'): http://your-site-name/install.php
 application_host.tracking ('http://localhost/tracking.php'): http://your-site-name/tracking.php
 ```
+Remove `app/config` folder:
+```
+$ rm -rf app/config
+```
 
 **2. If application already installed.**
 Move `app/parameters.yml` to `common/parameters.yml`.
@@ -29,6 +33,10 @@ application_host.admin: 'http://your-site-name/admin.php'
 application_host.frontend: 'http://your-site-name/frontend.php'
 application_host.install: 'http://your-site-name/install.php'
 application_host.tracking: 'http://your-site-name/tracking.php'
+```
+Remove `app/config` folder:
+```
+$ rm -rf app/config
 ```
 
 3. Move your attachments
