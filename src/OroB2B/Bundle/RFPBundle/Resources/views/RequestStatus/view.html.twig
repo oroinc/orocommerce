@@ -45,13 +45,13 @@
                 'iCss':  'icon-ok',
                 'id':    idButton,
                 'label': 'orob2b.rfp.btn.restore'|trans,
-                'path':  path('orob2b_api_rfp_request_status_restore', {'id': entity.id}),
+                'path':  path('orob2b_api_rfp_restore_request_status', {'id': entity.id}),
                 'title': 'orob2b.rfp.btn.restore'|trans,
             }) }}
 
             {% set requestStatusDeleteRestoreComponentOptions  = {
                 id: idButton,
-                url: path('orob2b_api_rfp_request_status_restore', {'id': entity.id}),
+                url: path('orob2b_api_rfp_restore_request_status', {'id': entity.id}),
                 action: 'restore'
             } %}
 
@@ -65,13 +65,13 @@
                 'iCss':  'icon-remove',
                 'id':    idButton,
                 'label': 'orob2b.rfp.btn.delete'|trans,
-                'path':  path('orob2b_api_rfp_request_status_delete', {'id': entity.id}),
+                'path':  path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
                 'title': 'orob2b.rfp.btn.delete'|trans,
             }) }}
 
             {% set requestStatusDeleteRestoreComponentOptions  = {
                 id: idButton,
-                url: path('orob2b_api_rfp_request_status_delete', {'id': entity.id}),
+                url: path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
                 action: 'delete'
             } %}
 
