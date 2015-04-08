@@ -171,10 +171,10 @@ datagrid:
             columns:
                 label:
                     type:      string
-                    data_name: request.firstName
+                    data_name: status.label
                 name:
                     type:      string
-                    data_name: request.lastName
+                    data_name: status.name
         actions:
             view:
                 type:          navigate

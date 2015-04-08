@@ -15,25 +15,25 @@ class LoadRequestStatusData extends AbstractFixture
     protected $requestStatuses = [
         [
             'order'   => 10,
-            'name'    => 'open',
+            'name'    => 'test1',
             'label'   => 'Open',
             'locale'  => 'en_US',
             'deleted' => false
         ], [
             'order'   => 20,
-            'name'    => 'inprogress',
+            'name'    => 'test2',
             'label'   => 'In Progress',
             'locale'  => 'en_US',
             'deleted' => false
         ], [
             'order'   => 30,
-            'name'    => 'closed',
+            'name'    => 'test3',
             'label'   => 'Closed',
             'locale'  => 'en_US',
             'deleted' => false
         ], [
             'order'   => 40,
-            'name'    => 'deleted',
+            'name'    => 'test4',
             'label'   => 'Deleted',
             'locale'  => 'en_US',
             'deleted' => true
