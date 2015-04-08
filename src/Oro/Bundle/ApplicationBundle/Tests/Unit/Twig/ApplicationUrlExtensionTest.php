@@ -19,7 +19,10 @@ class ApplicationUrlExtensionTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $kernel = $this->getMock('Symfony\Component\HttpKernel\KernelInterface');
-        $this->extension = new ApplicationUrlExtension($kernel, [self::TEST_APPLICATION => self::TEST_APPLICATION_HOST]);
+        $this->extension = new ApplicationUrlExtension(
+            $kernel,
+            [self::TEST_APPLICATION => self::TEST_APPLICATION_HOST]
+        );
     }
 
     public function testGetName()
