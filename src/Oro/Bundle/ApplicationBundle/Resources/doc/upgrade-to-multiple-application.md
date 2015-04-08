@@ -43,7 +43,7 @@ Remove `app/config` folder:
 $ rm -rf app/config
 ```
 
-3. Move your attachments
+2. Move your attachments
 ------------------------
 Move your attachments from `app/attachments` to `var/attachments`:
 ```
@@ -55,7 +55,7 @@ Then remove `app/attachments` directory:
 $ rm -rf app/attachments
 ```
 
-4. Remove cache and logs directories
+3. Remove cache and logs directories
 ------------------------------------
 Now application log files are located in `var/logs/<application_name>_<application_env>/`.
 If you want to save your old log files, please, make backup `app/logs` folder or move them from `app/logs` to appropriate folders.
@@ -65,19 +65,19 @@ For removing current directories on a UNIX system, run following command:
 $ rm -rf app/cache app/logs
 ```
 
-5. Update Oro platform
+4. Update Oro platform
 ----------------------
 Run `oro:platform:update` command
 ```
 $ php app/console oro:platform:update --force
 ```
 
-6. Make sure `var` directory is writable
+5. Make sure `var` directory is writable
 -----------------------------------------
 Make sure `var` directory is writable both by the web server and the command line user.
 On a UNIX system, if your web server user is different from your command line user, you can use [this approach](http://symfony.com/doc/2.3/book/installation.html#book-installation-permissions)
 
-7. Make changes into your web service configuration
+6. Make changes into your web service configuration
 ---------------------------------------------------
 Change your web server setting according application hosts in `common/parameters.yml`
 
