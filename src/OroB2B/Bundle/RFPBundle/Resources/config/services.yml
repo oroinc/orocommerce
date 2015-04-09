@@ -6,7 +6,6 @@ parameters:
     orob2b_rfp.form.type.default_request_status.class:     OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType
     orob2b_rfp.form.type.request_status_translation.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType
     orob2b_rfp.form.type.request_status.class:             OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType
-    orob2b_rfp.form.type.request_status.api.class:         OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusApiType
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
