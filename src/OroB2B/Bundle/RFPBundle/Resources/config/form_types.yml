@@ -1,9 +1,13 @@
 parameters:
-    orob2b_rfp.form.type.default_request_status.class: OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType
-    orob2b_rfp.form.type.request_status_select.class:  OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType
-    orob2b_rfp.form.type.request_status_change.class:  OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusChangeType
+    orob2b_rfp.datagrid.action_permission_provider.class: OroB2B\Bundle\RFPBundle\Datagrid\ActionPermissionProvider
+    orob2b_rfp.form.type.default_request_status.class:    OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType
+    orob2b_rfp.form.type.request_status_select.class:     OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType
+    orob2b_rfp.form.type.request_status_change.class:     OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusChangeType
 
 services:
+    orob2b_rfp.datagrid.action_permission_provider:
+        class: %orob2b_rfp.datagrid.action_permission_provider.class%
+
     orob2b_rfp.form.type.default_request_status:
         class: %orob2b_rfp.form.type.default_request_status.class%
         arguments:

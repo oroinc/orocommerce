@@ -22,9 +22,11 @@ orob2b.rfp:
         deleted.label:          'Deleted'
 
     menu:
-        rfp_tab.label:                      'RFP'
-        requests_list.description:          'List of requests'
-        shortcut_requests_list.description: 'Shows list of existing requests'
+        rfp_tab.label:                              'RFP'
+        requests_list.description:                  'List of requests'
+        request_statuses_list.description:          'List of request statuses'
+        shortcut_requests_list.description:         'Shows list of existing requests'
+        shortcut_request_statuses_list.description: 'Shows list of existing request statuses'
 
     sections:
         general:    'General'
@@ -36,7 +38,13 @@ orob2b.rfp:
         requeststatus_default_label: 'Deafault RFP status'
 
     message:
-        request_status_changed:   'RFP status successfully changed'
+        request_status_saved:     'Request status saved'
+        request_status_restored:  'Request status restored'
+        request_status_not_found: 'Request status not found'
+        request_status_changed:   'Request for proposal status successfully changed'
+
+    datagrid:
+        action_restore: 'Restore'
 
     btn:
         change_status: 'Change Status'

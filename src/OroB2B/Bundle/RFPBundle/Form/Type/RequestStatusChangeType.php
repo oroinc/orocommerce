@@ -15,7 +15,7 @@ class RequestStatusChangeType extends AbstractType
      */
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**
