@@ -22,13 +22,20 @@ class ForwardListener
     protected $registry;
 
     /**
+     * @var bool
+     */
+    protected $installed;
+
+    /**
      * @param Router $router
      * @param ManagerRegistry $registry
+     * @param boolean $installed
      */
-    public function __construct(Router $router, ManagerRegistry $registry)
+    public function __construct(Router $router, ManagerRegistry $registry, $installed)
     {
         $this->router = $router;
         $this->registry = $registry;
+        $this->installed = $installed;
     }
 
     /**
@@ -36,6 +43,10 @@ class ForwardListener
      */
     public function onKernelRequest(GetResponseEvent $event)
     {
+        if (!$this->installed) {
+            return;
+        }
+
         $request = $event->getRequest();
 
         if (
