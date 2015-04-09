@@ -1,6 +1,5 @@
-Upgrade to multiple application structure
-=========================================
-
+Upgrade to multiple application approach
+========================================
 
 If developer wants to update regular simple application to [multiple application approach](./getting-started.md#directory-structure),
 then he has to do following actions:
