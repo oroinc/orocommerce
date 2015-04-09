@@ -21,7 +21,7 @@ class RequestChangeStatusDialogAction extends AbstractAction
     /**
      * @var array
      */
-    protected static $defaultOptions = [
+    protected $defaultOptions = [
         'launcherOptions' => [
             'onClickReturnValue' => true,
             'runAction'          => true,
@@ -47,7 +47,7 @@ class RequestChangeStatusDialogAction extends AbstractAction
     public function getOptions()
     {
         $options = parent::getOptions();
-        $finalOptions = array_replace_recursive(self::$defaultOptions, $options->toArray());
+        $finalOptions = array_replace_recursive($this->defaultOptions, $options->toArray());
 
         if (isset($finalOptions['widgetOptions']['options']['dialogOptions']['title'])) {
             $title = $this->translator->trans($finalOptions['widgetOptions']['options']['dialogOptions']['title']);
