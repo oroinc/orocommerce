@@ -1,98 +1,123 @@
 Upgrade to multiple application structure
 =========================================
 
-If you as developer want to update you single application to [multiple application structure](./Resources/doc/getting-started.md#directory-structure).
-You need to do following actions:
+
+If developer wants to update regular simple application to [multiple application approach](./getting-started.md#directory-structure),
+then he has to do following actions:
 
 1. Install or update application
 --------------------------------
-**1. If application is not installed yet.**
+
+**If application is not installed yet**
 
 Run the `composer update` command
+
 ```
 $ php composer.phar update
 ```
-In section `application_host` add your application hosts.
 
-For example:
+`application_host` should contain URLs for all entry points. For example:
+
 ```
 application_host.admin ('http://localhost/admin.php'): http://your-site-name/admin.php
-application_host.frontend ('http://localhost/'): http://your-site-name
+application_host.frontend ('http://localhost/'): http://your-site-name/
 application_host.install ('http://localhost/install.php'): http://your-site-name/install.php
 application_host.tracking ('http://localhost/tracking.php'): http://your-site-name/tracking.php
 ```
+
 Remove `app/config` folder:
+
 ```
 $ rm -rf app/config
 ```
 
-**2. If application already installed.**
+**If application already installed**
 
-Move `app/parameters.yml` to `common/parameters.yml`.
-Add hosts settings to the end of file.
+Move parameter file `app/parameters.yml` to `app/common/parameters.yml`. The same should be done for other parameter
+files.
 
-For example:
+Add hosts settings to the end of file. For example:
+
 ```
 application_host.admin: 'http://your-site-name/admin.php'
 application_host.frontend: 'http://your-site-name/frontend.php'
 application_host.install: 'http://your-site-name/install.php'
 application_host.tracking: 'http://your-site-name/tracking.php'
 ```
-Remove `app/config` folder:
+
+If application has some custom configuration in `app/config` directory then it has to be moved to appropriate files
+in `app/admin/config` directory. The same should be done for custom resources - they have to be moved from
+`app/Resources` to `app/admin/Resources`.
+
+After that `app/config` directory should be removed:
+
 ```
 $ rm -rf app/config
 ```
 
-2. Move your attachments
+2. Move attachment files
 ------------------------
-Move your attachments from `app/attachments` to `var/attachments`:
+
+Copy attachment files from `app/attachment` to `var/attachment`:
 ```
-$ cp -r app/attachments/* var/attachments
+$ cp -r app/attachment/* var/attachment
 ```
 
-Then remove `app/attachments` directory:
+Then remove `app/attachment` directory:
 ```
-$ rm -rf app/attachments
+$ rm -rf app/attachment
 ```
 
 3. Remove cache and logs directories
 ------------------------------------
-Now application log files are located in `var/logs/<application_name>_<application_env>/`.
-If you want to save your old log files, please, make backup `app/logs` folder or move them from `app/logs` to appropriate folders.
 
-For removing current directories on a UNIX system, run following command:
+Now application log files are located in `var/logs/<application_name>_<application_env>.log` files.
+If there is a need to save old log files - please, backup content of `app/logs` directory or move them from `app/logs` 
+to `var/logs` directory.
+
+To current directories on a UNIX system, run following command:
+
 ```
 $ rm -rf app/cache app/logs
 ```
 
-4. Update Oro platform
+4. Update Oro Platform
 ----------------------
+
 Run `oro:platform:update` command
+
 ```
 $ php app/console oro:platform:update --force
 ```
 
 5. Make sure `var` directory is writable
------------------------------------------
-Make sure `var` directory is writable both by the web server and the command line user.
-On a UNIX system, if your web server user is different from your command line user, you can use [this approach](http://symfony.com/doc/2.3/book/installation.html#book-installation-permissions)
+----------------------------------------
 
-6. Make changes into your web service configuration
----------------------------------------------------
-Change your web server setting according application hosts in `common/parameters.yml`
+Make sure `var` directory is writable both for the web server and the command line user.
+If web server user is different from command line user, developer can use 
+[regular Symfony approach](http://symfony.com/doc/2.3/book/installation.html#book-installation-permissions).
+to handle permissions.
 
-Now you have separate entry points which you specify for each application.
-Also you can [add your own application](./Resources/doc/add-new-application).
+6. Update web service configuration
+-----------------------------------
+
+Change web server setting according application hosts in `app/common/parameters.yml` - i.e. developer can set
+different hosts/aliases for different entry points and there hosts/aliases have to be set in parameters file.
+
+Now there are separate entry points for each application. Also developer can 
+[add new application](./add-new-application) for some custom purposes.
 
 Optional changes
 ----------------
-This part is not require. These changes are necessary if you made your own custom change in single application.
 
-**1.`AppKernel` file was changed.**
-If you made your custom change into `AppKernel` file coordinate them with new `AppKernel`.
+This part is not required. These changes are necessary if developer made custom change in single application.
 
-**2.`DistributionKernel` was removed.**
-Now used `AppKernel` with application `install`. If you made custom change with dist, file coordinate them with this approach.
+**`AppKernel` file was changed**
 
+If developer made custom changes in `AppKernel` file, then these changes should be merged with new `AppKernel` file.
 
+**`DistributionKernel` and `dist` console file were removed**
 
+Now `install` application uses regular `AppKernel` and `console` files instead of `DistributionKernel` and `dist` files.
+If developer made custom changes into `DistributionKernel` or `dist` files, these changes should be merged with 
+`AppKernel` and `console` files.
