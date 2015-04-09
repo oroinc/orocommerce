@@ -24,7 +24,7 @@ application_host.install ('http://localhost/install.php'): http://your-site-name
 application_host.tracking ('http://localhost/tracking.php'): http://your-site-name/tracking.php
 ```
 
-Remove `app/config` folder:
+Remove `app/config` directory:
 
 ```
 $ rm -rf app/config
