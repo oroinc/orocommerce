@@ -93,10 +93,20 @@ class RequestController extends Controller
             $request,
             $form,
             function (Request $request) {
-                return ['route' => 'orob2b_rfp_request_update', 'parameters' => ['id' => $request->getId()]];
+                return [
+                    'route' => 'orob2b_rfp_request_update',
+                    'parameters' => [
+                        'id' => $request->getId()
+                    ]
+                ];
             },
             function (Request $request) {
-                return ['route' => 'orob2b_rfp_request_view', 'parameters' => ['id' => $request->getId()]];
+                return [
+                    'route' => 'orob2b_rfp_request_view',
+                    'parameters' => [
+                        'id' => $request->getId()
+                    ]
+                ];
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message'),
             $handler
