@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2brfp/js/app/components/request-change-status-widget-component': 'bundles/orob2brfp/js/app/components/request-change-status-widget-component.js'
