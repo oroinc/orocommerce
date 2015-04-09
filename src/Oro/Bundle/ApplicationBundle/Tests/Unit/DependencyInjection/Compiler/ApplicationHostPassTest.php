@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\ApplicationHostPass;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+
+use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\ApplicationHostPass;
 
 class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\DependencyInjection\ContainerBuilder
+     * @var \PHPUnit_Framework_MockObject_MockObject
      */
-    private $container;
+    protected $container;
 
     /**
      * Environment setup
