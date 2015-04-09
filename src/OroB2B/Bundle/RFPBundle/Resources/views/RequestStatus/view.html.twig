@@ -1,0 +1,53 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.id }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_rfp_request_status_index'),
+        'indexLabel': 'orob2b.rfp.requeststatus.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set requestInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_rfp_request_status_info', {id: entity.id}),
+            'alias': 'request-status-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.rfp.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [requestInfo]}]
+        }
+    ] %}
+
+    {% set id = 'pageView' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block navButtons %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
+            'dataRedirect': path('orob2b_rfp_request_status_index'),
+            'aCss': 'no-hash remove-button',
+            'id': 'btn-remove-issue',
+            'dataId': entity.id,
+            'entity_label': 'orob2b.rfp.requeststatus.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% block stats %}
+    {# don't touch it #}
+{% endblock stats %}
