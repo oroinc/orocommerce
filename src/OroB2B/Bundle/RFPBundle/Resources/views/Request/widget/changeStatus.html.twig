@@ -1,7 +1,10 @@
 {% form_theme form with ['OroTagBundle:Form:fields.html.twig'] %}
 <div class="widget-content">
     {% if saved is defined and saved %}
-        {% set requestChangeStatusWidgetComponentOptions = { wid: app.request.get('_wid') } %}
+        {% set requestChangeStatusWidgetComponentOptions = {
+            wid: app.request.get('_wid'),
+            successMessage: 'orob2b.rfp.message.request_status_changed'|trans
+        } %}
         <span data-page-component-module="orob2brfp/js/app/components/request-change-status-widget-component"
               data-page-component-options="{{ requestChangeStatusWidgetComponentOptions|json_encode }}"></span>
     {% else %}
@@ -25,7 +28,7 @@
                     <div class="widget-actions form-actions">
                         <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
                         <button class="btn btn-primary" type="submit">
-                            {{ 'oro.ui.update_entity'|trans({'%entityName%': 'orob2b.rfp.request.entity_label'|trans}) }}
+                            {{ 'oro.ui.update_entity'|trans({'%entityName%': 'orob2b.rfp.request.entity_label_short'|trans}) }}
                         </button>
                     </div>
                 </fieldset>
