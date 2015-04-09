@@ -1,11 +1,11 @@
 placeholders:
     view_navButtons_before:
         items:
-            orob2b_rfp_request_status_change_button:
+            orob2b_rfp_request_change_status_button:
                 order: 100
 
 items:
-    orob2b_rfp_request_status_change_button:
-        template: OroB2BRFPBundle:Request:requestStatusChangeButton.html.twig
+    orob2b_rfp_request_change_status_button:
+        template: OroB2BRFPBundle:Request:requestChangeStatusButton.html.twig
         applicable: @oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_rfp.request.class%)
         acl: orob2b_rfp_request_update

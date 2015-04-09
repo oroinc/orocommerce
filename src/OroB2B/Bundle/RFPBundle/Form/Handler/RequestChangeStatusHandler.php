@@ -12,7 +12,7 @@ use Oro\Bundle\NoteBundle\Entity\Note;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
-class RequestStatusChangeHandler
+class RequestChangeStatusHandler
 {
     /**
      * @var FormInterface

@@ -1,9 +1,9 @@
 {% form_theme form with ['OroTagBundle:Form:fields.html.twig'] %}
 <div class="widget-content">
     {% if saved is defined and saved %}
-        {% set requestStatusChangeWidgetComponentOptions = { wid: app.request.get('_wid') } %}
-        <span data-page-component-module="orob2brfp/js/app/components/request-status-change-widget-component"
-              data-page-component-options="{{ requestStatusChangeWidgetComponentOptions|json_encode }}"></span>
+        {% set requestChangeStatusWidgetComponentOptions = { wid: app.request.get('_wid') } %}
+        <span data-page-component-module="orob2brfp/js/app/components/request-change-status-widget-component"
+              data-page-component-options="{{ requestChangeStatusWidgetComponentOptions|json_encode }}"></span>
     {% else %}
         {% if not form.vars.valid and form.vars.errors|length %}
             <div class="alert alert-error">

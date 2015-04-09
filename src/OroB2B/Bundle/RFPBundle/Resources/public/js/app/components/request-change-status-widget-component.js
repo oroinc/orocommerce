@@ -3,14 +3,14 @@
 define(function (require) {
     'use strict';
 
-    var RequestStatusChangeWidgetComponent,
+    var RequestChangeStatusWidgetComponent,
         BaseComponent = require('oroui/js/app/components/base/component'),
         __ = require('orotranslation/js/translator'),
         widgetManager = require('oroui/js/widget-manager'),
         mediator = require('oroui/js/mediator'),
         messenger = require('oroui/js/messenger');
 
-    RequestStatusChangeWidgetComponent = BaseComponent.extend({
+    RequestChangeStatusWidgetComponent = BaseComponent.extend({
         initialize: function (options) {
             widgetManager.getWidgetInstance(options.wid, function (widget) {
                 messenger.notificationFlashMessage('success', __('orob2b.rfp.message.request_status_changed'));
@@ -21,5 +21,5 @@ define(function (require) {
         }
     });
 
-    return RequestStatusChangeWidgetComponent;
+    return RequestChangeStatusWidgetComponent;
 });

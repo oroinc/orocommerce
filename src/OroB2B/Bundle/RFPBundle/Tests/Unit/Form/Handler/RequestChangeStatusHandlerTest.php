@@ -9,9 +9,9 @@ use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusChangeHandler;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestChangeStatusHandler;
 
-class RequestStatusChangeHandlerTest extends FormHandlerTestCase
+class RequestChangeStatusHandlerTest extends FormHandlerTestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EngineInterface
@@ -27,7 +27,7 @@ class RequestStatusChangeHandlerTest extends FormHandlerTestCase
 
         $this->entity = new RFPRequest();
         $this->templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
-        $this->handler = new RequestStatusChangeHandler($this->form, $this->request, $this->manager, $this->templating);
+        $this->handler = new RequestChangeStatusHandler($this->form, $this->request, $this->manager, $this->templating);
     }
 
     /**
@@ -45,7 +45,7 @@ class RequestStatusChangeHandlerTest extends FormHandlerTestCase
             ->will($this->returnValue($isValid));
 
         if ($isValid) {
-            $this->assertRequestStatusChange();
+            $this->assertRequestChangeStatus();
         }
 
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
@@ -75,7 +75,7 @@ class RequestStatusChangeHandlerTest extends FormHandlerTestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        $this->assertRequestStatusChange();
+        $this->assertRequestChangeStatus();
 
         $this->manager->expects($this->once())
             ->method('persist')
@@ -106,7 +106,7 @@ class RequestStatusChangeHandlerTest extends FormHandlerTestCase
         ];
     }
 
-    protected function assertRequestStatusChange()
+    protected function assertRequestChangeStatus()
     {
         $requestStatusEntity = new RequestStatus();
         $requestStatusEntity->setLabel('StatusLabel');

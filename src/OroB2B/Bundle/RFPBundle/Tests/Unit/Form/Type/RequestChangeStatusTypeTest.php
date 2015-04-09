@@ -5,12 +5,12 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusChangeType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType;
 
-class RequestStatusChangeTypeTest extends \PHPUnit_Framework_TestCase
+class RequestChangeStatusTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RequestStatusChangeType
+     * @var RequestChangeStatusType
      */
     protected $formType;
 
@@ -19,7 +19,7 @@ class RequestStatusChangeTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->formType = new RequestStatusChangeType();
+        $this->formType = new RequestChangeStatusType();
     }
 
     /**
@@ -27,7 +27,7 @@ class RequestStatusChangeTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(RequestStatusChangeType::NAME, $this->formType->getName());
+        $this->assertEquals(RequestChangeStatusType::NAME, $this->formType->getName());
     }
 
     public function testBuildForm()

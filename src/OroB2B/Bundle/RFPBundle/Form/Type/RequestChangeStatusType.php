@@ -6,9 +6,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class RequestStatusChangeType extends AbstractType
+class RequestChangeStatusType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_status_change';
+    const NAME = 'orob2b_rfp_request_change_status';
 
     /**
      * {@inheritdoc}
