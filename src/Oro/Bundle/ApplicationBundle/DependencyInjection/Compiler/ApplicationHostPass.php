@@ -8,16 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 class ApplicationHostPass implements CompilerPassInterface
 {
     const PARAMETER_NAME = 'application_hosts';
-
-    /**
-     * @var array
-     */
-    private $parameters = [
-        'application_host.admin',
-        'application_host.frontend',
-        'application_host.install',
-        'application_host.tracking',
-    ];
+    const PARAMETER_PREFIX = 'application_host.';
 
     /**
      * {@inheritdoc}
@@ -26,14 +17,11 @@ class ApplicationHostPass implements CompilerPassInterface
     {
         $hosts = [];
 
-        foreach ($this->parameters as $parameter) {
-            if (!$container->hasParameter($parameter)) {
-                throw new \RuntimeException(sprintf('Parameter `%s` must be defined.', $parameter));
+        foreach ($container->getParameterBag()->all() as $name => $value) {
+            if (strpos($name, self::PARAMETER_PREFIX) === 0) {
+                $applicationName = substr($name, strlen(self::PARAMETER_PREFIX));
+                $hosts[$applicationName] = $value;
             }
-
-            $parts = explode('.', $parameter);
-
-            $hosts[$parts[1]] = $container->getParameter($parameter);
         }
 
         $container->setParameter(self::PARAMETER_NAME, $hosts);
