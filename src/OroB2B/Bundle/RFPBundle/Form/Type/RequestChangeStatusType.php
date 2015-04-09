@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
 class RequestChangeStatusType extends AbstractType
 {
     const NAME = 'orob2b_rfp_request_change_status';
@@ -38,7 +40,7 @@ class RequestChangeStatusType extends AbstractType
             )
             ->add(
                 'note',
-                'oro_rich_text',
+                OroRichTextType::NAME,
                 [
                     'label'    => 'oro.note.entity_label',
                     'required' => false,

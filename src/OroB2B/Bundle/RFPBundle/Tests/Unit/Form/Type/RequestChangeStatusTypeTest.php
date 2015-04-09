@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType;
 
@@ -54,7 +56,7 @@ class RequestChangeStatusTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 'note',
-                'oro_rich_text',
+                OroRichTextType::NAME,
                 [
                     'label'    => 'oro.note.entity_label',
                     'required' => false,
