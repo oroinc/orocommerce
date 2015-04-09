@@ -8,7 +8,7 @@ then he has to do following actions:
 1. Install or update application
 --------------------------------
 
-**If application is not installed yet**
+**If application is not installed**
 
 Run the `composer update` command
 
@@ -16,7 +16,7 @@ Run the `composer update` command
 $ php composer.phar update
 ```
 
-`application_host` should contain URLs for all entry points. For example:
+Parameters started with `application_host` should contain URLs for appropriate entry points. For example:
 
 ```
 application_host.admin ('http://localhost/admin.php'): http://your-site-name/admin.php
@@ -36,7 +36,7 @@ $ rm -rf app/config
 Move parameter file `app/parameters.yml` to `app/common/parameters.yml`. The same should be done for other parameter
 files.
 
-Add hosts settings to the end of file. For example:
+Add entry point parameters to the end of file. For example:
 
 ```
 application_host.admin: 'http://your-site-name/admin.php'
@@ -75,7 +75,7 @@ Now application log files are located in `var/logs/<application_name>_<applicati
 If there is a need to save old log files - please, backup content of `app/logs` directory or move them from `app/logs` 
 to `var/logs` directory.
 
-To current directories on a UNIX system, run following command:
+Then directories that contain cache and logs should be removed:
 
 ```
 $ rm -rf app/cache app/logs
@@ -95,29 +95,29 @@ $ php app/console oro:platform:update --force
 
 Make sure `var` directory is writable both for the web server and the command line user.
 If web server user is different from command line user, developer can use 
-[regular Symfony approach](http://symfony.com/doc/2.3/book/installation.html#book-installation-permissions).
+[regular Symfony approach](http://symfony.com/doc/2.3/book/installation.html#book-installation-permissions)
 to handle permissions.
 
 6. Update web service configuration
 -----------------------------------
 
-Change web server setting according application hosts in `app/common/parameters.yml` - i.e. developer can set
-different hosts/aliases for different entry points and there hosts/aliases have to be set in parameters file.
+Change web server settings according to application hosts defined in `app/common/parameters.yml` - i.e. developer can 
+set different hosts/aliases for different entry points and these hosts/aliases have to be set in parameters file.
 
 Now there are separate entry points for each application. Also developer can 
-[add new application](./add-new-application) for some custom purposes.
+[add new application](./add-new-application.md) for some custom purposes.
 
 Optional changes
 ----------------
 
-This part is not required. These changes are necessary if developer made custom change in single application.
+This part is not required - described changes are necessary only if developer made custom changes in single application.
 
 **`AppKernel` file was changed**
 
-If developer made custom changes in `AppKernel` file, then these changes should be merged with new `AppKernel` file.
+If developer changed `AppKernel` file, then these changes should be merged with new `AppKernel` file.
 
 **`DistributionKernel` and `dist` console file were removed**
 
 Now `install` application uses regular `AppKernel` and `console` files instead of `DistributionKernel` and `dist` files.
-If developer made custom changes into `DistributionKernel` or `dist` files, these changes should be merged with 
+If developer changed `DistributionKernel` or `dist` files, then these changes should be merged with 
 `AppKernel` and `console` files.
