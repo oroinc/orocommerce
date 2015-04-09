@@ -17,8 +17,9 @@ class ActionPermissionProvider
 
         return [
             'restore' => $isDeleted,
-            'delete' => !$isDeleted,
-            'view' => true
+            'delete'  => !$isDeleted,
+            'view'    => true,
+            'update'  => true
         ];
     }
 }

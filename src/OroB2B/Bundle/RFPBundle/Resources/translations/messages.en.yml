@@ -42,6 +42,7 @@ orob2b.rfp:
         request_status_saved:     'Request status saved'
         request_status_restored:  'Request status restored'
         request_status_not_found: 'Request status not found'
+        request_status_not_deletable: 'Request Status is not deletable'
 
     datagrid:
         action_restore: 'Restore'

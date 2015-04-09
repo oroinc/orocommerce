@@ -163,6 +163,10 @@ datagrid:
                 type:   url
                 route:  orob2b_api_rfp_delete_request_status
                 params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_rfp_request_status_update
+                params: [ id ]
         sorters:
             columns:
                 label:
@@ -190,6 +194,13 @@ datagrid:
                 link:          view_link
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_request_status_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_rfp_request_status_update
                 rowAction:     true
             restore:
                 type:          ajax

@@ -7,7 +7,6 @@ parameters:
     orob2b_rfp.form.type.request_status_translation.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType
     orob2b_rfp.form.type.request_status.class:             OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType
     orob2b_rfp.form.type.request_status.api.class:         OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusApiType
-    orob2b_rfp.form.handler.request_status.class:          OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
@@ -39,20 +38,3 @@ services:
             - @oro_locale.settings
         tags:
             - { name: form.type, alias: orob2b_rfp_request_status }
-
-    orob2b_rfp.form.request_status:
-        class: Symfony\Component\Form\Form
-        factory_method: createNamed
-        factory_service: form.factory
-        arguments: ["orob2b_rfp_request_status", "orob2b_rfp_request_status", null]
-
-    orob2b_rfp.form.handler.request_status:
-        class: %orob2b_rfp.form.handler.request_status.class%
-        scope: request
-        arguments:
-            - @orob2b_rfp.form.request_status
-            - @request
-            - @doctrine.orm.entity_manager
-            - @translator
-        calls:
-            - [setDefaultLocale, [%stof_doctrine_extensions.default_locale%]]

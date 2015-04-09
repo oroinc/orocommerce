@@ -47,7 +47,9 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
                         ->setLabel($label)
                         ->setLocale($locale);
                 } else {
-                    $status->addTranslation(new RequestStatusTranslation($locale, 'label', $label));
+                    $status->addTranslation(
+                        (new RequestStatusTranslation())->setLocale($locale)->setField('label')->setContent($label)
+                    );
                 }
             }
 

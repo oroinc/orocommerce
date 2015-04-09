@@ -19,18 +19,4 @@ class RequestStatusTranslation extends AbstractPersonalTranslation
      * @ORM\JoinColumn(name="object_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $object;
-
-    /**
-     * Convinient constructor
-     *
-     * @param string $locale
-     * @param string $field
-     * @param string $content
-     */
-    public function __construct($locale = null, $field = null, $content = null)
-    {
-        $this->setLocale($locale);
-        $this->setField($field);
-        $this->setContent($content);
-    }
 }

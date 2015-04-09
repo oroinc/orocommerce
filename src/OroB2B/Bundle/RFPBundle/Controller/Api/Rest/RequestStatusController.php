@@ -41,16 +41,30 @@ class RequestStatusController extends FOSRestController implements ClassResource
     public function deleteAction($id)
     {
         $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
-        $requesStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
+        $requestStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
-        if (null === $requesStatus) {
+        if (null === $requestStatus) {
             return new JsonResponse(
                 $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
                 Codes::HTTP_NOT_FOUND
             );
         }
 
-        $requesStatus->setDeleted(true);
+        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
+
+        if ($defaultRequestStatusName === $requestStatus->getName()) {
+            return $this->handleView(
+                $this->view(
+                    [
+                        'successful' => false,
+                        'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_not_deletable')
+                    ],
+                    Codes::HTTP_OK
+                )
+            );
+        }
+
+        $requestStatus->setDeleted(true);
         $em->flush();
 
         $result = new Response(null, Codes::HTTP_NO_CONTENT);
@@ -72,16 +86,16 @@ class RequestStatusController extends FOSRestController implements ClassResource
     public function restoreAction($id)
     {
         $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
-        $requesStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
+        $requestStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
-        if (null === $requesStatus) {
+        if (null === $requestStatus) {
             return new JsonResponse(
                 $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
                 Codes::HTTP_NOT_FOUND
             );
         }
 
-        $requesStatus->setDeleted(false);
+        $requestStatus->setDeleted(false);
         $em->flush();
 
         return $this->handleView(

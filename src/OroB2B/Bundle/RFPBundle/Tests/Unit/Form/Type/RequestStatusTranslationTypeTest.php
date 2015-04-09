@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType;
 
+use Symfony\Component\Form\FormView;
+
 class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -48,5 +50,23 @@ class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
             ->method('setDefaults');
 
         $this->type->setDefaultOptions($optionsResolver);
+    }
+
+    /**
+     * Test buildView
+     */
+    public function testBuildView()
+    {
+        $formView = new FormView();
+
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $labels = [1, 2, 3];
+
+        $this->type->buildView($formView, $form, ['labels' => $labels]);
+
+        $this->assertEquals($formView->vars['labels'], $labels);
     }
 }

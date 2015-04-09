@@ -11,6 +11,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
 
 class RequestStatusController extends Controller
 {
@@ -25,6 +26,7 @@ class RequestStatusController extends Controller
      * )
      *
      * @param RequestStatus $requestStatus
+     *
      * @return array
      */
     public function viewAction(RequestStatus $requestStatus)
@@ -40,6 +42,7 @@ class RequestStatusController extends Controller
      * @AclAncestor("orob2b_rfp_request_status_view")
      *
      * @param RequestStatus $requestStatus
+     *
      * @return array
      */
     public function infoAction(RequestStatus $requestStatus)
@@ -72,6 +75,8 @@ class RequestStatusController extends Controller
      *     permission="CREATE",
      *     class="OroB2BRFPBundle:RequestStatus"
      * )
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function createAction()
     {
@@ -82,19 +87,44 @@ class RequestStatusController extends Controller
     /**
      * @Route("/update/{id}", name="orob2b_rfp_request_status_update", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_rfp_request_status_create")
+     * @Acl(
+     *     id="orob2b_rfp_request_status_update",
+     *     type="entity",
+     *     permission="EDIT",
+     *     class="OroB2BRFPBundle:RequestStatus"
+     * )
+     *
+     * @param RequestStatus $requestStatus
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function updateAction(RequestStatus $requestStatus)
     {
         return $this->process($requestStatus);
     }
 
+    /**
+     * @param RequestStatus $requestStatus
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     */
     protected function process(RequestStatus $requestStatus)
     {
+        $form = $this->createForm('orob2b_rfp_request_status');
+
+        $handler = new RequestStatusHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:RequestStatus'),
+            $this->container->get('translator')
+        );
+
+        $handler->setDefaultLocale($this->container->getParameter('stof_doctrine_extensions.default_locale'));
+
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate(
                 $requestStatus,
-                $this->get('orob2b_rfp.form.request_status'),
+                $form,
                 function (RequestStatus $requestStatus) {
                     return [
                         'route' => 'orob2b_rfp_request_status_update',
@@ -112,7 +142,7 @@ class RequestStatusController extends Controller
                     ];
                 },
                 $this->get('translator')->trans('orob2b.rfp.message.request_status_saved'),
-                $this->get('orob2b_rfp.form.handler.request_status')
+                $handler
             )
         ;
     }
