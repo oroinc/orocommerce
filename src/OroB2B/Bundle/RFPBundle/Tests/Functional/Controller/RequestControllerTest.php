@@ -24,7 +24,6 @@ class RequestControllersTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                //'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
                 'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
             ]
         );
@@ -66,7 +65,10 @@ class RequestControllersTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('John Dow - Requests for proposal - RFP', $result->getContent());
+        $this->assertContains(
+            sprintf('%s %s - Requests for proposal - RFP', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
+            $result->getContent()
+        );
 
         return $id;
     }
@@ -97,10 +99,15 @@ class RequestControllersTest extends WebTestCase
     public function testChangeStatus($id)
     {
         /** @var \Doctrine\Common\Persistence\ObjectManager $manager */
-        $manager = static::$kernel->getContainer()->get('doctrine')->getManager();
+        $manager = $this->getContainer()->get('doctrine')->getManager();
 
         /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
-        $status = array_shift($manager->getRepository('OroB2BRFPBundle:RequestStatus')->findBy([], ['id' => 'DESC']));
+        $status = array_shift(
+            $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findBy(
+                ['deleted' => false],
+                ['id' => 'DESC']
+            )
+        );
 
         $this->assertNotNull($status);
 
@@ -116,9 +123,11 @@ class RequestControllersTest extends WebTestCase
             ['_widgetContainer' => 'dialog']
         );
 
+        $noteSubject = 'Test Request Note';
+
         $form = $crawler->selectButton('Update Request')->form();
         $form['orob2b_rfp_request_change_status[status]'] = $status->getId();
-        $form['orob2b_rfp_request_change_status[note]'] = 'Test Request Note';
+        $form['orob2b_rfp_request_change_status[note]'] = $noteSubject;
 
         $params = $form->getPhpValues();
         $params['_widgetContainer'] = 'dialog';
@@ -139,7 +148,7 @@ class RequestControllersTest extends WebTestCase
         $this->assertCount(1, $notes);
 
         $note = array_shift($notes);
-        $this->assertTrue(strpos($note['subject'], 'Test Request Note') > 0);
+        $this->assertTrue(strpos($note['subject'], $noteSubject) > 0);
     }
 
     /**
@@ -149,7 +158,7 @@ class RequestControllersTest extends WebTestCase
     private function getNotesForRequest(Request $entity)
     {
         /** @var \Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager $ActivityManager */
-        $activityManager = static::$kernel->getContainer()->get('oro_activity_list.manager');
+        $activityManager = $this->getContainer()->get('oro_activity_list.manager');
 
         return $activityManager->getList(
             get_class($entity),
