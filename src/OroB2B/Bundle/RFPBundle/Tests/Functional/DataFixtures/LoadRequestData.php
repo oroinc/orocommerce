@@ -9,20 +9,30 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 
 class LoadRequestData extends AbstractFixture
 {
+    const FIRST_NAME = 'John';
+    const LAST_NAME = 'Dow';
+    const EMAIL = 'test_request@example.com';
+
     /**
      * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
+        $status = array_shift($manager->getRepository('OroB2BRFPBundle:RequestStatus')->findBy([], ['id' => 'ASC']));
+        if (!$status) {
+            return;
+        }
+
         $request = new Request();
         $request
-            ->setFirstName('John')
-            ->setLastName('Dow')
-            ->setEmail('test_request@example.com')
+            ->setFirstName(self::FIRST_NAME)
+            ->setLastName(self::LAST_NAME)
+            ->setEmail(self::EMAIL)
             ->setPhone('+17(452)241-1069')
             ->setCompany('SomeCompany')
             ->setRole('SomeManager')
-            ->setBody('TestRequestBody');
+            ->setBody('TestRequestBody')
+            ->setStatus($status);
 
         $manager->persist($request);
         $manager->flush();
