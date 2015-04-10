@@ -44,9 +44,16 @@ class RequestStatusController extends FOSRestController implements ClassResource
         $requestStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
 
         if (null === $requestStatus) {
-            return new JsonResponse(
-                $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
-                Codes::HTTP_NOT_FOUND
+            return $this->handleView(
+                $this->view(['successful' => false], Codes::HTTP_NOT_FOUND)
+            );
+        }
+
+        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
+
+        if ($defaultRequestStatusName === $requestStatus->getName()) {
+            return $this->handleView(
+                $this->view(['successful' => false], Codes::HTTP_FORBIDDEN)
             );
         }
 
@@ -61,7 +68,6 @@ class RequestStatusController extends FOSRestController implements ClassResource
     /**
      * @param $id
      *
-     * @Rest\Get()
      * @ApiDoc(
      *      description="Restore RequestStatus",
      *      resource=true

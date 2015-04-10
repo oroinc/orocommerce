@@ -20,7 +20,7 @@ define(function (require) {
                     success: function(response) {
                          if (response && response.message) {
                              mediator.once('page:afterChange', function() {
-                                mediator.execute('showFlashMessage', 'success', response.message);
+                                mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
                              });
                          }
                         mediator.execute('refreshPage');

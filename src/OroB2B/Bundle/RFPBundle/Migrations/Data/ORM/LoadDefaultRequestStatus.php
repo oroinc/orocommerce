@@ -31,7 +31,7 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
         $locales        = $this->getTranslationLocales();
 
         if (!in_array($defaultLocale, $locales)) {
-            throw new \LogicException('There are no default locale in transltions!');
+            throw new \LogicException('There are no default locale in translations!');
         }
 
         foreach ($this->items as $item) {
@@ -47,7 +47,9 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
                         ->setLabel($label)
                         ->setLocale($locale);
                 } else {
-                    $status->addTranslation(new RequestStatusTranslation($locale, 'label', $label));
+                    $status->addTranslation(
+                        (new RequestStatusTranslation())->setLocale($locale)->setField('label')->setContent($label)
+                    );
                 }
             }
 

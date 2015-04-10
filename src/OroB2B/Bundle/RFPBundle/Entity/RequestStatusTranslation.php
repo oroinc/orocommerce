@@ -19,16 +19,4 @@ class RequestStatusTranslation extends AbstractPersonalTranslation
      * @ORM\JoinColumn(name="object_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $object;
-
-    /**
-     * @param string $locale
-     * @param string $field
-     * @param string $content
-     */
-    public function __construct($locale, $field, $content)
-    {
-        $this->setLocale($locale);
-        $this->setField($field);
-        $this->setContent($content);
-    }
 }

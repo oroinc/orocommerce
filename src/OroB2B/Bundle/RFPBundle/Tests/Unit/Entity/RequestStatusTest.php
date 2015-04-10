@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
@@ -9,6 +10,9 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation;
 
 class RequestStatusTest extends EntityTestCase
 {
+    /**
+     * Test setters getters
+     */
     public function testAccessors()
     {
         $properties = [
@@ -26,6 +30,9 @@ class RequestStatusTest extends EntityTestCase
         $this->assertPropertyAccessors($propertyRequestStatus, $properties);
     }
 
+    /**
+     * Test toString
+     */
     public function testToString()
     {
         $value = 'Opened';
@@ -36,38 +43,36 @@ class RequestStatusTest extends EntityTestCase
         $this->assertEquals($value, (string)$requestStatus);
     }
 
-    public function testTranslationAccessors()
+    /**
+     * Test translation setters getters
+     */
+    public function testTranslation()
     {
         $requestStatus = new RequestStatus();
-        $this->assertEmpty($requestStatus->getTranslations()->toArray());
 
-        $firstTranslation = $this->createStatusTranslation('en', 'en_label');
-        $secondTranslation = $this->createStatusTranslation('ru', 'ru_label');
-        $thirdTranslation = $this->createStatusTranslation('de', 'de_label');
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $requestStatus->getTranslations());
+        $this->assertCount(0, $requestStatus->getTranslations());
 
-        $requestStatus->setTranslations([$firstTranslation, $secondTranslation]);
-        $this->assertEquals(
-            [$firstTranslation, $secondTranslation],
-            $requestStatus->getTranslations()->toArray()
-        );
-        $this->assertEquals($requestStatus, $firstTranslation->getObject());
-        $this->assertEquals($requestStatus, $secondTranslation->getObject());
+        $translation = new RequestStatusTranslation();
 
-        $requestStatus->addTranslation($thirdTranslation);
-        $this->assertEquals(
-            [$firstTranslation, $secondTranslation, $thirdTranslation],
-            $requestStatus->getTranslations()->toArray()
-        );
-        $this->assertEquals($requestStatus, $thirdTranslation->getObject());
-    }
+        $requestStatus->addTranslation($translation);
 
-    /**
-     * @param string $locale
-     * @param string $content
-     * @return RequestStatusTranslation
-     */
-    protected function createStatusTranslation($locale, $content)
-    {
-        return new RequestStatusTranslation($locale, 'label', $content);
+        $this->assertCount(1, $requestStatus->getTranslations());
+
+        $requestStatus->addTranslation($translation);
+
+        $this->assertCount(1, $requestStatus->getTranslations());
+
+        $requestStatus->addTranslation(new RequestStatusTranslation());
+
+        $this->assertCount(2, $requestStatus->getTranslations());
+
+        $translation = new RequestStatusTranslation();
+        $translation
+            ->setLocale('en_US')
+            ->setField('type');
+        $translations = new ArrayCollection([$translation]);
+        $requestStatus->setTranslations($translations);
+        $this->assertCount(1, $requestStatus->getTranslations());
     }
 }

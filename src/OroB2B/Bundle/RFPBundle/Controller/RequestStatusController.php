@@ -84,7 +84,16 @@ class RequestStatusController extends Controller
     /**
      * @Route("/update/{id}", name="orob2b_rfp_request_status_update", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_rfp_request_status_create")
+     * @Acl(
+     *     id="orob2b_rfp_request_status_update",
+     *     type="entity",
+     *     permission="EDIT",
+     *     class="OroB2BRFPBundle:RequestStatus"
+     * )
+     *
+     * @param RequestStatus $requestStatus
+     *
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function updateAction(RequestStatus $requestStatus)
     {
@@ -129,6 +138,6 @@ class RequestStatusController extends Controller
                 $this->get('translator')->trans('orob2b.rfp.message.request_status_saved'),
                 $handler
             )
-        ;
+            ;
     }
 }
