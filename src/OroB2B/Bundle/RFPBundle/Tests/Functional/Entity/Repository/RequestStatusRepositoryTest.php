@@ -26,7 +26,7 @@ class RequestStatusRepositoryTest extends WebTestCase
             ->getRepository('OroB2BRFPBundle:RequestStatus');
 
         $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestWithDeletedStatusData'
         ]);
     }
 

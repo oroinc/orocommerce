@@ -16,12 +16,10 @@ class RequestStatusRepository extends EntityRepository
     public function getNotDeletedStatuses()
     {
         return $this
-            ->createQueryBuilder('requestStatus')
-            ->where('requestStatus.deleted = :deleted')
-            ->setParameter('deleted', false, \PDO::PARAM_BOOL)
-            ->orderBy('requestStatus.sortOrder', 'ASC')
+            ->getNotDeletedRequestStatusesQueryBuilder()
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 
     /**
@@ -31,7 +29,7 @@ class RequestStatusRepository extends EntityRepository
      */
     public function getNotDeletedAndDeletedWithRequestsStatuses()
     {
-        $notDeletedStatuses = $this->getNotDeletedStatuses();
+        /*$notDeletedStatuses = $this->getNotDeletedStatuses();
 
         $deletedStatuses = $this
             ->createQueryBuilder('requestStatus')
@@ -44,6 +42,29 @@ class RequestStatusRepository extends EntityRepository
 
         return new ArrayCollection(
             array_merge((array) $notDeletedStatuses, (array) $deletedStatuses)
-        );
+        );*/
+
+        return $this->getNotDeletedRequestStatusesQueryBuilder()
+            ->orWhere('requestStatus.deleted = :deleted_param AND request.id IS NOT NULL')
+            ->setParameter('deleted_param', true, \PDO::PARAM_BOOL)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Returns QB
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    protected function getNotDeletedRequestStatusesQueryBuilder()
+    {
+        return $this
+            ->createQueryBuilder('requestStatus')
+            ->orderBy('requestStatus.sortOrder', 'ASC')
+            ->leftJoin('requestStatus.requests', 'request')
+            ->where('requestStatus.deleted = :not_deleted_param')
+            ->setParameter('not_deleted_param', false, \PDO::PARAM_BOOL)
+        ;
     }
 }

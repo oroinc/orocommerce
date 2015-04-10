@@ -7,7 +7,7 @@ use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType;
 class RequestStatusWithDeletedSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RequestStatusSelectType
+     * @var RequestStatusWithDeletedSelectType
      */
     protected $formType;
 

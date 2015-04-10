@@ -6,12 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
-class LoadRequestData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadRequestWithDeletedStatusData extends AbstractFixture implements DependentFixtureInterface
 {
     /**
      * @var array
@@ -29,19 +27,6 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
     ];
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getDependencies()
@@ -57,6 +42,10 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
     public function load(ObjectManager $om)
     {
         $deletedRequestStatus = $om->getRepository('OroB2BRFPBundle:RequestStatus')->findOneByName('deleted');
+
+        if (!$deletedRequestStatus instanceof RequestStatus) {
+            throw new \LogicException('$deletedRequestStatus must be instance of RequestStatus');
+        }
 
         foreach ($this->requests as $rawRequest) {
             $request = new Request();

@@ -51,4 +51,4 @@ orob2b.rfp:
         change_status: 'Change Status'
 
     widget:
-        change_status_title: 'Change RFP Status'
+        change_status_title: 'Change Request For Proposal Status'
