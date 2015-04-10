@@ -3,16 +3,24 @@
 namespace OroB2B\Bundle\RFPBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Gedmo\Translatable\Translatable;
+
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * RequestStatus
  *
- * @ORM\Table("orob2b_rfp_status")
+ * @ORM\Table(
+ *      name="orob2b_rfp_status",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_rfp_status_name_idx",columns={"name"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")
  * @Gedmo\TranslationEntity(class="OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation")
  * @Config(
@@ -53,15 +61,25 @@ class RequestStatus implements Translatable
     /**
      * @var string
      *
-     * @ORM\Column(name="label", type="string", length=255)
+     * @ORM\Column(name="label", type="string", length=255, nullable=true)
      * @Gedmo\Translatable
      */
     private $label;
 
     /**
+     * @ORM\OneToMany(
+     *     targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation",
+     *     mappedBy="object",
+     *     cascade={"persist", "remove"}
+     * )
+     * @Assert\Valid(deep = true)
+     */
+    protected $translations;
+
+    /**
      * @var integer
      *
-     * @ORM\Column(name="sort_order", type="integer")
+     * @ORM\Column(name="sort_order", type="integer", nullable=true)
      */
     private $sortOrder;
 
@@ -78,6 +96,14 @@ class RequestStatus implements Translatable
      * @Gedmo\Locale()
      */
     protected $locale;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->translations = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -211,5 +237,51 @@ class RequestStatus implements Translatable
     public function __toString()
     {
         return (string) $this->getLabel();
+    }
+
+    /**
+     * Set translations
+     *
+     * @param ArrayCollection $translations
+     *
+     * @return RequestStatus
+     */
+    public function setTranslations($translations)
+    {
+        /** @var RequestStatusTranslation $translation */
+        foreach ($translations as $translation) {
+            $translation->setObject($this);
+        }
+
+        $this->translations = $translations;
+
+        return $this;
+    }
+
+    /**
+     * Add RequestStatusTranslation
+     *
+     * @param RequestStatusTranslation $translation
+     *
+     * @return $this
+     */
+    public function addTranslation(RequestStatusTranslation $translation)
+    {
+        if (!$this->translations->contains($translation)) {
+            $this->translations->add($translation);
+            $translation->setObject($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get translations
+     *
+     * @return ArrayCollection|RequestStatusTranslation[]
+     */
+    public function getTranslations()
+    {
+        return $this->translations;
     }
 }

@@ -30,8 +30,9 @@ orob2b.rfp:
         shortcut_request_statuses_list.description: 'Shows list of existing request statuses'
 
     sections:
-        general:    'General'
-        body:       'Request body'
+        general:           'General'
+        body:              'Request body'
+        label_translation: 'Request body'
 
     system_configuration:
         group_title:                 'RFP'
@@ -43,11 +44,14 @@ orob2b.rfp:
         request_status_restored:  'Request status restored'
         request_status_not_found: 'Request status not found'
         request_status_changed:   'Request for proposal status successfully changed'
+        request_status_not_deletable: 'Request Status is not deletable'
 
     datagrid:
         action_restore: 'Restore'
 
     btn:
+        delete:  'Delete'
+        restore: 'Restore'
         change_status: 'Change Status'
 
     widget:
