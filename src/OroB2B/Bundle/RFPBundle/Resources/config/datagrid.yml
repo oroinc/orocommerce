@@ -104,7 +104,7 @@ datagrid:
                     type:      entity
                     data_name: status.id
                     options:
-                        field_type: orob2b_rfp_request_status_select
+                        field_type: orob2b_rfp_request_status_with_deleted_select
                         field_options:
                             class: %orob2b_rfp.request.status.class%
                             property: label

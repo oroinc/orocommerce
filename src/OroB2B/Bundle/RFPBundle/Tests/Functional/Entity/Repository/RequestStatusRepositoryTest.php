@@ -24,6 +24,10 @@ class RequestStatusRepositoryTest extends WebTestCase
         $this->initClient();
         $this->repository = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BRFPBundle:RequestStatus');
+
+        $this->loadFixtures([
+            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+        ]);
     }
 
     /**
@@ -31,20 +35,39 @@ class RequestStatusRepositoryTest extends WebTestCase
      */
     public function testGetNotDeletedStatuses()
     {
-        $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData'
-        ]);
-
         $statuses = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroB2BRFPBundle:RequestStatus')
             ->getNotDeletedStatuses();
 
-        $this->assertCount(3, $statuses);
+        $this->assertCount(5, $statuses); // 3 from fixtures + 2 deafult
 
         foreach ($statuses as $status) {
             $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $status);
             $this->assertFalse($status->getDeleted());
+        }
+    }
+
+    /**
+     * Test getNotDeletedAndDeletedWithRequestsStatuses
+     */
+    public function testGetNotDeletedAndDeletedWithRequestsStatuses()
+    {
+        $statuses = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BRFPBundle:RequestStatus')
+            ->getNotDeletedAndDeletedWithRequestsStatuses();
+
+        $this->assertCount(6, $statuses); // 3 from fixtures + 1 deleted + 2 deafult
+
+        foreach ($statuses as $status) {
+            $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $status);
+
+            if ($status->getName() == 'deleted') {
+                $this->assertTrue($status->getDeleted());
+            } else {
+                $this->assertFalse($status->getDeleted());
+            }
         }
     }
 }
