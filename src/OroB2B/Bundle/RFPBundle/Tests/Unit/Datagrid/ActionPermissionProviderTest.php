@@ -14,7 +14,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     protected $actionPermissionProvider;
 
     /**
-     * @var ResultRecordInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ResultRecordInterface
      */
     protected $record;
 
@@ -29,14 +29,41 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * Test getRequestStatusDefinitionPermissions
+     *
+     * @dataProvider recordConditions
+     * @param $isRecordDeleted
      */
-    public function testGetRequestStatusDefinitionPermissions()
+    public function testGetRequestStatusDefinitionPermissions($isRecordDeleted)
     {
         $this->record->expects($this->once())
             ->method('getValue')
             ->with('deleted')
-            ->willReturn(true);
+            ->willReturn($isRecordDeleted);
 
-        $this->assertCount(3, $this->actionPermissionProvider->getRequestStatusDefinitionPermissions($this->record));
+        $result = $this->actionPermissionProvider->getRequestStatusDefinitionPermissions($this->record);
+
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('restore', $result);
+        $this->assertArrayHasKey('delete', $result);
+        $this->assertArrayHasKey('view', $result);
+
+        $this->assertEquals($isRecordDeleted, $result['restore']);
+        $this->assertEquals(!$isRecordDeleted, $result['delete']);
+        $this->assertTrue($result['view']);
+    }
+
+    /**
+     * @return array
+     */
+    public function recordConditions()
+    {
+        return [
+            'deleted record' => [
+                'isRecordDeleted' => true,
+            ],
+            'normal record' => [
+                'isRecordDeleted' => false,
+            ],
+        ];
     }
 }
