@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\NoteBundle\Entity\Note;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -166,7 +165,7 @@ class RequestControllersTest extends WebTestCase
             [
                 'activityType' => [
                     'value' => [
-                        Note::class
+                        'Oro\Bundle\NoteBundle\Entity\Note'
                     ]
                 ]
             ],

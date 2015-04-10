@@ -391,6 +391,6 @@ class Request extends ExtendRequest
      */
     public function __toString()
     {
-        return (string) $this->getEmail();
+        return sprintf('%s: %s %s', $this->id, $this->firstName, $this->lastName);
     }
 }
