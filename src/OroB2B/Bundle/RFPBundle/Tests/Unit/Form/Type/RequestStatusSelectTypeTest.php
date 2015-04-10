@@ -76,6 +76,6 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetParent()
     {
-        $this->assertEquals('entity', $this->formType->getParent());
+        $this->assertEquals('translatable_entity', $this->formType->getParent());
     }
 }

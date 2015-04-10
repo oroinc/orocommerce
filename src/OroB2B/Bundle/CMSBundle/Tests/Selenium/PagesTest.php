@@ -47,6 +47,7 @@ class PagesTest extends Selenium2TestCase
     {
         /** @var Pages $pages */
         $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        sleep(1);
 
         // create root level page
         $pages->createPage()
@@ -88,6 +89,7 @@ class PagesTest extends Selenium2TestCase
     {
         /** @var Pages $pages */
         $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        sleep(1);
 
         $page = $pages->openPage(self::$firstPage)
             ->assertCurrentSlugUrl([self::$firstPageSlug])
@@ -117,6 +119,7 @@ class PagesTest extends Selenium2TestCase
     {
         /** @var Pages $pages */
         $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        sleep(1);
 
         /**
          * preconditions
@@ -177,6 +180,7 @@ class PagesTest extends Selenium2TestCase
     {
         /** @var Pages $pages */
         $pages = $this->login()->openPages('OroB2B\Bundle\CMSBundle');
+        sleep(1);
 
         /**
          * preconditions

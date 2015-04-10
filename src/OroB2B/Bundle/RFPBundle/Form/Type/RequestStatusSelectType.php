@@ -44,7 +44,7 @@ class RequestStatusSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return 'translatable_entity';
     }
 
     /**

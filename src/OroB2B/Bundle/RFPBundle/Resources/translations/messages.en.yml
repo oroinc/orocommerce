@@ -1,6 +1,7 @@
 orob2b.rfp:
     request:
         entity_label:           'Request for proposal'
+        entity_label_short:     'Request'
         entity_plural_label:    'Requests for proposal'
         id.label:               'ID'
         first_name.label:       'First Name'
@@ -29,9 +30,8 @@ orob2b.rfp:
         shortcut_request_statuses_list.description: 'Shows list of existing request statuses'
 
     sections:
-        general:           'General'
-        body:              'Request body'
-        label_translation: 'Request body'
+        general:    'General'
+        body:       'Request body'
 
     system_configuration:
         group_title:                 'RFP'
@@ -42,11 +42,13 @@ orob2b.rfp:
         request_status_saved:     'Request status saved'
         request_status_restored:  'Request status restored'
         request_status_not_found: 'Request status not found'
-
-    btn:
-        delete:  'Delete'
-        restore: 'Restore'
+        request_status_changed:   'Request for proposal status successfully changed'
 
     datagrid:
         action_restore: 'Restore'
 
+    btn:
+        change_status: 'Change Status'
+
+    widget:
+        change_status_title: 'Change RFP Status'
