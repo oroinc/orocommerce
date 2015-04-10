@@ -58,11 +58,18 @@ class RequestTest extends EntityTestCase
 
     public function testToString()
     {
-        $value = 'john.dow@example.com';
+        $id = 12;
+        $firstName = 'John';
+        $lastName = 'Doe';
 
         $request = new Request();
-        $request->setEmail($value);
+        $request->setFirstName($firstName)
+            ->setLastName($lastName);
 
-        $this->assertEquals($value, (string)$request);
+        $reflectionProperty = new \ReflectionProperty(get_class($request), 'id');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($request, $id);
+
+        $this->assertEquals(sprintf('%s: %s %s', $id, $firstName, $lastName), (string)$request);
     }
 }

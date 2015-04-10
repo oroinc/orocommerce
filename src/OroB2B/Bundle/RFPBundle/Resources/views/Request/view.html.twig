@@ -1,14 +1,14 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% oro_title_set({params : {"%title%": entity.firstName ~ ' ' ~ entity.lastName}}) %}
+{% oro_title_set({params : {"%title%": entity.__toString()}}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_rfp_request_index'),
         'indexLabel': 'orob2b.rfp.request.entity_plural_label'|trans,
-        'entityTitle': entity.email|default('N/A'|trans)
+        'entityTitle': entity.__toString()|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
