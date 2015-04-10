@@ -10,6 +10,8 @@ parameters:
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
+        arguments:
+            - @oro_config.manager
 
     orob2b_rfp.form.type.request_status_select:
         class: %orob2b_rfp.form.type.request_status_select.class%

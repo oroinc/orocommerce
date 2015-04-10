@@ -47,12 +47,12 @@ class RequestStatusHandlerTest extends FormHandlerTestCase
      */
     public function testSetDefaultLocale()
     {
-        $this->entity->expects($this->once(0))
+        $this->entity->expects($this->once())
             ->method('setLocale')
-            ->with(static::LOCALE)
+            ->with(self::LOCALE)
             ->willReturnSelf();
 
-        $this->handler->setDefaultLocale(static::LOCALE);
+        $this->handler->setDefaultLocale(self::LOCALE);
 
         $this->handler->process($this->entity);
     }

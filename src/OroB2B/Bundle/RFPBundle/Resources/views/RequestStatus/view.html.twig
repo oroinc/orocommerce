@@ -57,7 +57,7 @@
 
             <span data-page-component-module="orob2brfp/js/app/components/request-status-delete-restore-component"
                   data-page-component-options="{{ requestStatusDeleteRestoreComponentOptions|json_encode }}"></span>
-        {% else %}
+        {% elseif oro_config_value('oro_b2b_rfp.default_request_status') != entity.name %}
             {% set idButton = 'btn-delete-request-status' %}
 
             {{ UI.button({

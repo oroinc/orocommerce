@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
@@ -65,5 +66,13 @@ class RequestStatusTest extends EntityTestCase
         $requestStatus->addTranslation(new RequestStatusTranslation());
 
         $this->assertCount(2, $requestStatus->getTranslations());
+
+        $translation = new RequestStatusTranslation();
+        $translation
+            ->setLocale('en_US')
+            ->setField('type');
+        $translations = new ArrayCollection([$translation]);
+        $requestStatus->setTranslations($translations);
+        $this->assertCount(1, $requestStatus->getTranslations());
     }
 }
