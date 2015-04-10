@@ -139,6 +139,7 @@ datagrid:
                             dblclick: maximize
                             maximizedHeightDecreaseBy: minimize-bar
                             width: 550
+                            resizable: true
                 messages:
                     saved: orob2b.rfp.message.request_status_changed
 
@@ -210,6 +211,9 @@ datagrid:
                 name:
                     type:      string
                     data_name: status.name
+                deleted:
+                    type:      boolean
+                    data_name: status.deleted
         actions:
             view:
                 type:          navigate
