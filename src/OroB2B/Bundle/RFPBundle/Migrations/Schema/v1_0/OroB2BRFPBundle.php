@@ -110,7 +110,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
         $table->addColumn('field', 'string', ['length' => 32]);
         $table->addColumn('content', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['object_id'], 'IDX_F42DCDB8232D562B', []);
+        $table->addIndex(['object_id'], 'IDX_F42DCDB8232D562C', []);
         $table->addIndex(['locale', 'object_id', 'field'], 'orob2b_rfp_status_trans_idx', []);
     }
 
