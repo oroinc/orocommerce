@@ -34,7 +34,7 @@ class CategoryControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
         $this->loadFixtures([
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
             'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData'
