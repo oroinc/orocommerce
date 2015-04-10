@@ -50,7 +50,7 @@ class RequestStatusType extends AbstractType
             'integer',
             [
                 'label'    => 'orob2b.rfp.requeststatus.sort_order.label',
-                'required' => false
+                'required' => true
             ]
         );
 

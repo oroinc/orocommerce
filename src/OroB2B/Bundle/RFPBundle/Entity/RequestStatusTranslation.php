@@ -21,13 +21,11 @@ class RequestStatusTranslation extends AbstractPersonalTranslation
     protected $object;
 
     /**
-     * Convinient constructor
-     *
      * @param string $locale
      * @param string $field
      * @param string $content
      */
-    public function __construct($locale = null, $field = null, $content = null)
+    public function __construct($locale, $field, $content)
     {
         $this->setLocale($locale);
         $this->setField($field);

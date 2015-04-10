@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -237,18 +238,19 @@ class RequestStatus implements Translatable
     /**
      * Set translations
      *
-     * @param ArrayCollection $translations
+     * @param array|Collection $translations
      *
      * @return RequestStatus
      */
     public function setTranslations($translations)
     {
+        $this->translations = new ArrayCollection();
+
         /** @var RequestStatusTranslation $translation */
         foreach ($translations as $translation) {
             $translation->setObject($this);
+            $this->translations->add($translation);
         }
-
-        $this->translations = $translations;
 
         return $this;
     }

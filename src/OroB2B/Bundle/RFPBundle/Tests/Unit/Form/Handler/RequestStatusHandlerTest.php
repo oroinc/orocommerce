@@ -2,62 +2,55 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Handler;
 
+use Oro\Component\Testing\Unit\FormHandlerTestCase;
+
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
 
-class RequestStatusHandlerTest extends \PHPUnit_Framework_TestCase
+class RequestStatusHandlerTest extends FormHandlerTestCase
 {
+    const DEFAULT_LOCALE = 'ru';
+
     /**
      * @var RequestStatusHandler
      */
     protected $handler;
 
     /**
+     * @var RequestStatus
+     */
+    protected $entity;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
 
-        $form->expects($this->any())
-            ->method('isValid')
-            ->willReturn(true);
-
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $request->expects($this->any())
-            ->method('getMethod')
-            ->willReturn('POST');
-
-        $om = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->handler = new RequestStatusHandler($form, $request, $om, $translator);
+        $this->entity = new RequestStatus();
+        $this->handler = new RequestStatusHandler($this->form, $this->request, $this->manager);
+        $this->handler->setDefaultLocale(self::DEFAULT_LOCALE);
     }
 
     /**
-     * Test process
+     * @dataProvider supportedMethods
+     * @param string $method
+     * @param boolean $isValid
+     * @param boolean $isProcessed
      */
-    public function testProcess()
+    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
-        $requestStatus = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\RequestStatus')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $reflection = new \ReflectionProperty(get_class($this->entity), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->entity, 1);
 
-        $requestStatus->expects($this->once())
-            ->method('setLocale');
+        $this->manager->expects($this->once())
+            ->method('refresh')
+            ->with($this->entity);
 
-        $requestStatus->expects($this->once())
-            ->method('getId');
+        parent::testProcessSupportedRequest($method, $isValid, $isProcessed);
 
-        $this->assertTrue($this->handler->process($requestStatus));
+        $this->assertEquals(self::DEFAULT_LOCALE, $this->entity->getLocale());
     }
 }

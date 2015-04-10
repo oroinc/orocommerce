@@ -32,6 +32,7 @@ orob2b.rfp:
     sections:
         general:    'General'
         body:       'Request body'
+        label_translation: 'Translations'
 
     system_configuration:
         group_title:                 'RFP'

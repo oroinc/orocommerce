@@ -12,19 +12,16 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class RequestControllerTest extends WebTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
+    const OLD_NAME = 'test';
+    const OLD_LABEL = 'Test';
+    const NEW_LABEL = 'New Test';
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
-
-        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
+        $this->initClient([], $this->generateBasicAuthHeader());
     }
 
     /**
@@ -47,9 +44,9 @@ class RequestControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_create'));
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_rfp_request_status[name]']      = 'test';
+        $form['orob2b_rfp_request_status[name]']      = self::OLD_NAME;
         $form['orob2b_rfp_request_status[sortOrder]'] = '1000';
-        $form['orob2b_rfp_request_status[translations][defaultLocale][en][label]'] = 'Test';
+        $form['orob2b_rfp_request_status[translations][defaultLocale][en][label]'] = self::OLD_LABEL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -67,7 +64,10 @@ class RequestControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $response = $this->client->requestGrid('rfp-request-statuses-grid', ['rfp-request-statuses-grid[_filter][name][value]' => 'test']);
+        $response = $this->client->requestGrid(
+            'rfp-request-statuses-grid',
+            ['rfp-request-statuses-grid[_filter][name][value]' => self::OLD_NAME]
+        );
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
@@ -76,7 +76,7 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_rfp_request_status[translations][defaultLocale][en][label]'] = 'Test_new';
+        $form['orob2b_rfp_request_status[translations][defaultLocale][en][label]'] = self::NEW_LABEL;
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $result = $this->client->getResponse();
@@ -99,29 +99,8 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Test_new', $crawler->html());
+        $this->assertContains(self::NEW_LABEL, $crawler->html());
 
         return $id;
-    }
-
-    /**
-     * Test Delete
-     *
-     * @depends testView
-     */
-    public function testDelete($id)
-    {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_rfp_delete_request_status', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_status_view', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Test_new', $crawler->html());
     }
 }

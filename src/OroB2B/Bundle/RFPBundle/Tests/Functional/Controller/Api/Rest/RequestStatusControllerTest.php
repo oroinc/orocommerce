@@ -2,51 +2,54 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Api\Rest;
 
-use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
 /**
  * @outputBuffering enabled
  * @dbIsolation
  */
-class RequestControllerTest extends WebTestCase
+class RequestStatusControllerTest extends WebTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private $em;
-
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        //$this->initClient([], $this->generateWsseAuthHeader());
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateWsseAuthHeader());
 
-        $this->em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
+        $this->loadFixtures(['OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData']);
     }
 
-    /**
-     * Test restoreAction
-     */
-    public function testRestoreAction()
+    public function testDeleteAndRestoreAction()
     {
-        $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData'
-        ]);
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
+        $entityRepository = $entityManager->getRepository('OroB2BRFPBundle:RequestStatus');
 
-        $requestStatus = $this->em->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(['name' => 'test4']);
+        $requestStatus = $entityRepository->findOneBy(['name' => LoadRequestStatusData::NAME_NOT_DELETED]);
+        $this->assertFalse($requestStatus->getDeleted());
 
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_rfp_delete_request_status', ['id' => $requestStatus->getId()])
+        );
+        $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
+
+        $entityManager->clear();
+
+        $requestStatus = $entityRepository->findOneBy(['name' => LoadRequestStatusData::NAME_NOT_DELETED]);
         $this->assertTrue($requestStatus->getDeleted());
 
-        $this->client->request('GET', $this->getUrl('orob2b_api_rfp_restore_request_status', [
-            'id' => $requestStatus->getId()
-        ]));
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_api_rfp_restore_request_status', ['id' => $requestStatus->getId()])
+        );
+        $this->assertEquals($this->client->getResponse()->getStatusCode(), 200);
 
-        $requestStatus = $this->em->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(['name' => 'test4']);
+        $entityManager->clear();
 
+        $requestStatus = $entityRepository->findOneBy(['name' => LoadRequestStatusData::NAME_NOT_DELETED]);
         $this->assertFalse($requestStatus->getDeleted());
     }
 }
