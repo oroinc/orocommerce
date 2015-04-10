@@ -54,6 +54,10 @@ datagrid:
                 type:   url
                 route:  orob2b_rfp_request_view
                 params: [ id ]
+            request_change_status_link:
+                type:   url
+                route:  orob2b_rfp_request_change_status
+                params: [ id ]
         sorters:
             columns:
                 firstName:
@@ -118,6 +122,25 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_request_view
                 rowAction:     true
+            request_change_status:
+                type:          request-change-status-dialog
+                label:         orob2b.rfp.btn.change_status
+                link:          request_change_status_link
+                icon:          edit
+                acl_resource:  orob2b_rfp_request_update
+                rowAction:     true
+                widgetOptions:
+                    reload-grid-name: rfp-requests-grid
+                    options:
+                        dialogOptions:
+                            title: orob2b.rfp.widget.change_status_title
+                            allowMaximize: false
+                            allowMinimize: false
+                            dblclick: maximize
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 550
+                messages:
+                    saved: orob2b.rfp.message.request_status_changed
 
     rfp-request-statuses-grid:
         extended_entity_name: %orob2b_rfp.request.status.class%

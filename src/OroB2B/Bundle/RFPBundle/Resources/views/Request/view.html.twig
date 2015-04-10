@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {"%title%": entity.firstName ~ ' ' ~ entity.lastName}}) %}
 
@@ -11,6 +12,37 @@
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
+
+{% block navButtons %}
+    {{ UI.clientButton({
+        'dataUrl': path('orob2b_rfp_request_change_status', {id: entity.id}),
+        'aCss': 'no-hash',
+        'iCss': 'icon-edit',
+        'dataId': entity.id,
+        'label': 'orob2b.rfp.btn.change_status'|trans,
+        'widget' : {
+            'type' : 'dialog',
+            'multiple' : false,
+            'refresh-widget-alias' : 'activity-list-widget',
+            'reload-widget-alias' : 'request-info-widget',
+            'options' : {
+                'alias': 'request-change-status-dialog',
+                'aliasss': 'request-change-status-dialog',
+                'dialogOptions' : {
+                    'title' : 'orob2b.rfp.widget.change_status_title'|trans,
+                    'allowMaximize': false,
+                    'allowMinimize': false,
+                    'dblclick': 'maximize',
+                    'maximizedHeightDecreaseBy': 'minimize-bar',
+                    'width': 550
+                }
+            }
+        },
+        'messages': {
+            'saved': 'orob2b.rfp.message.request_status_changed'|trans
+        }
+    }) }}
+{% endblock navButtons %}
 
 {% block content_data %}
     {% set requestInfo %}
