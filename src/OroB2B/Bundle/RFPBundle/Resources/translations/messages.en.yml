@@ -31,8 +31,8 @@ orob2b.rfp:
 
     sections:
         general:    'General'
-        body:       'Request body'
-        label_translation: 'Translations'
+        body:       'Request'
+        label_translation: 'Labels'
 
     system_configuration:
         group_title:                 'Request For Proposal'
