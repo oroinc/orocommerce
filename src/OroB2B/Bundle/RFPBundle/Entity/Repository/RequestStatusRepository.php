@@ -15,7 +15,8 @@ class RequestStatusRepository extends EntityRepository
     {
         return $this
             ->createQueryBuilder('requestStatus')
-            ->where('requestStatus.deleted = 0')
+            ->where('requestStatus.deleted = :deleted')
+            ->setParameter('deleted', false, \PDO::PARAM_BOOL)
             ->orderBy('requestStatus.sortOrder', 'ASC')
             ->getQuery()
             ->getResult();

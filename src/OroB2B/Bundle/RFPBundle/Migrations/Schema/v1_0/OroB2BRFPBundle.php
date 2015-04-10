@@ -91,7 +91,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('label', 'string', ['length' => 255]);
         $table->addColumn('sort_order', 'integer', []);
-        $table->addColumn('deleted', 'boolean', []);
+        $table->addColumn('deleted', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
     }
 

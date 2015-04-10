@@ -38,14 +38,13 @@
 {% block navButtons %}
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_rfp_request_status_api_delete', {'id': entity.id}),
+            'dataUrl': path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
             'dataRedirect': path('orob2b_rfp_request_status_index'),
             'aCss': 'no-hash remove-button',
             'id': 'btn-remove-issue',
             'dataId': entity.id,
             'entity_label': 'orob2b.rfp.requeststatus.entity_label'|trans
-        })
-        }}
+        }) }}
     {% endif %}
 {% endblock %}
 
