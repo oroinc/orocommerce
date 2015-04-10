@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
@@ -21,9 +20,6 @@ class RequestStatusHandler
     /** @var ObjectManager */
     protected $manager;
 
-    /** @var TranslatorInterface */
-    protected $translator;
-
     /** @var string */
     protected $defaultLocale = 'en';
 
@@ -31,18 +27,15 @@ class RequestStatusHandler
      * @param FormInterface       $form
      * @param Request             $request
      * @param ObjectManager       $manager
-     * @param TranslatorInterface $translator
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
-        TranslatorInterface $translator
+        ObjectManager $manager
     ) {
         $this->form       = $form;
         $this->request    = $request;
         $this->manager    = $manager;
-        $this->translator = $translator;
     }
 
     /**

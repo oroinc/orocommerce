@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Handler;
 
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
-
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
+
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
 
 class RequestStatusHandlerTest extends FormHandlerTestCase
 {
-    const LOCALE = 'uk_UA';
+    const DEFAULT_LOCALE = 'ru';
 
     /**
      * @var RequestStatusHandler
@@ -16,9 +17,9 @@ class RequestStatusHandlerTest extends FormHandlerTestCase
     protected $handler;
 
     /**
-     * @var \Symfony\Component\Translation\TranslatorInterface
+     * @var RequestStatus
      */
-    protected $translator;
+    protected $entity;
 
     /**
      * {@inheritdoc}
@@ -27,33 +28,29 @@ class RequestStatusHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entity = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\RequestStatus')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->entity->expects($this->any())
-            ->method('getId')
-            ->willReturn(42);
-
-        $this->handler = new RequestStatusHandler($this->form, $this->request, $this->manager, $this->translator);
+        $this->entity = new RequestStatus();
+        $this->handler = new RequestStatusHandler($this->form, $this->request, $this->manager);
+        $this->handler->setDefaultLocale(self::DEFAULT_LOCALE);
     }
 
     /**
-     * Test setDefaultLocale
+     * @dataProvider supportedMethods
+     * @param string $method
+     * @param boolean $isValid
+     * @param boolean $isProcessed
      */
-    public function testSetDefaultLocale()
+    public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
-        $this->entity->expects($this->once())
-            ->method('setLocale')
-            ->with(self::LOCALE)
-            ->willReturnSelf();
+        $reflection = new \ReflectionProperty(get_class($this->entity), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($this->entity, 1);
 
-        $this->handler->setDefaultLocale(self::LOCALE);
+        $this->manager->expects($this->once())
+            ->method('refresh')
+            ->with($this->entity);
 
-        $this->handler->process($this->entity);
+        parent::testProcessSupportedRequest($method, $isValid, $isProcessed);
+
+        $this->assertEquals(self::DEFAULT_LOCALE, $this->entity->getLocale());
     }
 }

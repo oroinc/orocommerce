@@ -9,31 +9,33 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestStatusData extends AbstractFixture
 {
+    const NAME_NOT_DELETED = 'test1';
+
     /**
      * @var array
      */
     protected $requestStatuses = [
         [
             'order'   => 10,
-            'name'    => 'open',
+            'name'    => self::NAME_NOT_DELETED,
             'label'   => 'Open',
             'locale'  => 'en_US',
             'deleted' => false
         ], [
             'order'   => 20,
-            'name'    => 'inprogress',
+            'name'    => 'test2',
             'label'   => 'In Progress',
             'locale'  => 'en_US',
             'deleted' => false
         ], [
             'order'   => 30,
-            'name'    => 'closed',
+            'name'    => 'test3',
             'label'   => 'Closed',
             'locale'  => 'en_US',
             'deleted' => false
         ], [
             'order'   => 40,
-            'name'    => 'deleted',
+            'name'    => 'test4',
             'label'   => 'Deleted',
             'locale'  => 'en_US',
             'deleted' => true

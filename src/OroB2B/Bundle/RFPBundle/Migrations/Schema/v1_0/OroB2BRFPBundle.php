@@ -149,7 +149,7 @@ class OroB2BRFPBundle implements Migration, NoteExtensionAwareInterface, Activit
 
     /**
      * Enable notes for RFP entity
-      *
+     *
      * @param Schema        $schema
      * @param NoteExtension $noteExtension
      */

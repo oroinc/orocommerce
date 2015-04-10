@@ -52,21 +52,17 @@ class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
         $this->type->setDefaultOptions($optionsResolver);
     }
 
-    /**
-     * Test buildView
-     */
     public function testBuildView()
     {
-        $formView = new FormView();
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $view = new FormView();
 
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->assertArrayNotHasKey('labels', $view->vars);
 
-        $labels = [1, 2, 3];
+        $options = ['labels' => ['first', 'second']];
+        $this->type->buildView($view, $form, $options);
 
-        $this->type->buildView($formView, $form, ['labels' => $labels]);
-
-        $this->assertEquals($formView->vars['labels'], $labels);
+        $this->assertArrayHasKey('labels', $view->vars);
+        $this->assertEquals($options['labels'], $view->vars['labels']);
     }
 }

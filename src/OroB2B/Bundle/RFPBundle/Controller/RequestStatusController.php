@@ -12,6 +12,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Form\Handler\RequestStatusHandler;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType;
 
 class RequestStatusController extends Controller
 {
@@ -26,7 +27,6 @@ class RequestStatusController extends Controller
      * )
      *
      * @param RequestStatus $requestStatus
-     *
      * @return array
      */
     public function viewAction(RequestStatus $requestStatus)
@@ -42,7 +42,6 @@ class RequestStatusController extends Controller
      * @AclAncestor("orob2b_rfp_request_status_view")
      *
      * @param RequestStatus $requestStatus
-     *
      * @return array
      */
     public function infoAction(RequestStatus $requestStatus)
@@ -75,8 +74,6 @@ class RequestStatusController extends Controller
      *     permission="CREATE",
      *     class="OroB2BRFPBundle:RequestStatus"
      * )
-     *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function createAction()
     {
@@ -105,20 +102,17 @@ class RequestStatusController extends Controller
 
     /**
      * @param RequestStatus $requestStatus
-     *
      * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
     protected function process(RequestStatus $requestStatus)
     {
-        $form = $this->createForm('orob2b_rfp_request_status');
+        $form = $this->createForm(RequestStatusType::NAME);
 
         $handler = new RequestStatusHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:RequestStatus'),
-            $this->container->get('translator')
+            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:RequestStatus')
         );
-
         $handler->setDefaultLocale($this->container->getParameter('stof_doctrine_extensions.default_locale'));
 
         return $this->get('oro_form.model.update_handler')
@@ -144,6 +138,6 @@ class RequestStatusController extends Controller
                 $this->get('translator')->trans('orob2b.rfp.message.request_status_saved'),
                 $handler
             )
-        ;
+            ;
     }
 }

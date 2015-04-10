@@ -10,6 +10,7 @@ orob2b_rfp_request_status:
 
 orob2b_rfp_bundle_api:
     resource:     "@OroB2BRFPBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1
         _format:  json
