@@ -45,7 +45,7 @@ class RequestStatusRepository extends EntityRepository
         return $this
             ->createQueryBuilder('requestStatus')
             ->orderBy('requestStatus.sortOrder', 'ASC')
-            ->leftJoin('requestStatus.requests', 'request')
+            ->leftJoin('OroB2BRFPBundle:Request', 'request', Join::WITH, 'IDENTITY(request.status) = requestStatus.id')
             ->where('requestStatus.deleted = :not_deleted_param')
             ->setParameter('not_deleted_param', false, \PDO::PARAM_BOOL)
         ;

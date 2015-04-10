@@ -81,19 +81,6 @@ class RequestStatus implements Translatable
     protected $locale;
 
     /**
-     * @ORM\OneToMany(targetEntity="Request", mappedBy="status")
-     **/
-    protected $requests;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->requests = new ArrayCollection();
-    }
-
-    /**
      * Get id
      *
      * @return integer
@@ -225,40 +212,5 @@ class RequestStatus implements Translatable
     public function __toString()
     {
         return (string) $this->getLabel();
-    }
-
-    /**
-     * Add request
-     *
-     * @param Request $request
-     * @return RequestStatus
-     */
-    public function addRequest(Request $request)
-    {
-        if (!$this->requests->contains($request)) {
-            $this->requests->add($request);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove request
-     *
-     * @param Request $request
-     */
-    public function removeRequest(Request $request)
-    {
-        $this->requests->removeElement($request);
-    }
-
-    /**
-     * Get requests
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getRequests()
-    {
-        return $this->requests;
     }
 }
