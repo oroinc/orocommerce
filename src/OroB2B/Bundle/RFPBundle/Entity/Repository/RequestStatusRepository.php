@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 class RequestStatusRepository extends EntityRepository
 {
     /**
