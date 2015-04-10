@@ -29,21 +29,6 @@ class RequestStatusRepository extends EntityRepository
      */
     public function getNotDeletedAndDeletedWithRequestsStatuses()
     {
-        /*$notDeletedStatuses = $this->getNotDeletedStatuses();
-
-        $deletedStatuses = $this
-            ->createQueryBuilder('requestStatus')
-            ->where('requestStatus.deleted = :deleted')
-            ->join('requestStatus.requests', 'request')
-            ->setParameter('deleted', true, \PDO::PARAM_BOOL)
-            ->orderBy('requestStatus.sortOrder', 'ASC')
-            ->getQuery()
-            ->getResult();
-
-        return new ArrayCollection(
-            array_merge((array) $notDeletedStatuses, (array) $deletedStatuses)
-        );*/
-
         return $this->getNotDeletedRequestStatusesQueryBuilder()
             ->orWhere('requestStatus.deleted = :deleted_param AND request.id IS NOT NULL')
             ->setParameter('deleted_param', true, \PDO::PARAM_BOOL)
