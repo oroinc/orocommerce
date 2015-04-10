@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 class RequestStatusRepository extends EntityRepository
 {
     /**
@@ -30,6 +28,7 @@ class RequestStatusRepository extends EntityRepository
     public function getNotDeletedAndDeletedWithRequestsStatuses()
     {
         return $this->getNotDeletedRequestStatusesQueryBuilder()
+            ->leftJoin('requestStatus.requests', 'request')
             ->orWhere('requestStatus.deleted = :deleted_param AND request.id IS NOT NULL')
             ->setParameter('deleted_param', true, \PDO::PARAM_BOOL)
             ->getQuery()
@@ -47,7 +46,6 @@ class RequestStatusRepository extends EntityRepository
         return $this
             ->createQueryBuilder('requestStatus')
             ->orderBy('requestStatus.sortOrder', 'ASC')
-            ->leftJoin('requestStatus.requests', 'request')
             ->where('requestStatus.deleted = :not_deleted_param')
             ->setParameter('not_deleted_param', false, \PDO::PARAM_BOOL)
         ;
