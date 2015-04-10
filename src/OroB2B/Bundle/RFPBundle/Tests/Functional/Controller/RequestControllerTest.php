@@ -13,7 +13,7 @@ use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
  * @dbIsolation
  * @dbReindex
  */
-class RequestControllersTest extends WebTestCase
+class RequestControllerTest extends WebTestCase
 {
     /**
      * {@inheritDoc}
@@ -66,7 +66,7 @@ class RequestControllersTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(
-            sprintf('%s %s - Requests for proposal - RFP', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
+            sprintf('%s %s - Requests For Proposal - RFP', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
             $result->getContent()
         );
 
@@ -136,7 +136,7 @@ class RequestControllersTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Request for proposal status successfully changed", $result->getContent());
+        $this->assertContains("Request For Proposal Status was successfully changed", $result->getContent());
 
         $manager->refresh($entity);
 

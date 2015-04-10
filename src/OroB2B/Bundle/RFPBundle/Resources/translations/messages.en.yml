@@ -14,8 +14,8 @@ orob2b.rfp:
         body.label:             'Request body'
 
     requeststatus:
-        entity_label:           'Request For Proposal status'
-        entity_plural_label:    'Request For Proposal statuses'
+        entity_label:           'Request For Proposal Status'
+        entity_plural_label:    'Request For Proposal Statuses'
         id.label:               'ID'
         name.label:             'Name'
         label.label:            'Label'

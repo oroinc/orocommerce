@@ -12,7 +12,7 @@ oro_menu_config:
             route:           'orob2b_rfp_request_index'
             extras:
                 position:    10
-                routes:      ['/^orob2b_rfp_request/']
+                routes:      ['orob2b_rfp_request_index', 'orob2b_rfp_request_view']
                 description: 'orob2b.rfp.menu.requests_list.description'
 
         request_statuses_list:
@@ -20,7 +20,11 @@ oro_menu_config:
             route:           'orob2b_rfp_request_status_index'
             extras:
                 position:    20
-                routes:      ['/^orob2b_rfp_request_status/']
+                routes:
+                    - 'orob2b_rfp_request_status_index'
+                    - 'orob2b_rfp_request_status_view'
+                    - 'orob2b_rfp_request_status_update'
+                    - 'orob2b_rfp_request_status_create'
                 description: 'orob2b.rfp.menu.request_statuses_list.description'
 
         shortcut_requests_list:
@@ -48,10 +52,9 @@ oro_menu_config:
                 shortcut_request_statuses_list: ~
 
 oro_titles:
-    orob2b_rfp_request_index:  ~
-    orob2b_rfp_request_view:   '%%title%%'
-
+    orob2b_rfp_request_index:         ~
     orob2b_rfp_request_status_index:  ~
+    orob2b_rfp_request_view:          '%%title%%'
+    orob2b_rfp_request_status_create: oro.ui.create_entity
     orob2b_rfp_request_status_view:   '%%title%%'
-    orob2b_rfp_request_status_create: 'Create Request For Proposal Status'
     orob2b_rfp_request_status_update: '%%title%% - Edit'

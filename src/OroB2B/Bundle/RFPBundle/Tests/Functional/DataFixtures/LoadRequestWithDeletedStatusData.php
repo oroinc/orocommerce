@@ -41,7 +41,8 @@ class LoadRequestWithDeletedStatusData extends AbstractFixture implements Depend
      */
     public function load(ObjectManager $om)
     {
-        $deletedRequestStatus = $om->getRepository('OroB2BRFPBundle:RequestStatus')->findOneByName('deleted');
+        $deletedRequestStatus = $om->getRepository('OroB2BRFPBundle:RequestStatus')
+            ->findOneBy(['name' => LoadRequestStatusData::NAME_DELETED]);
 
         if (!$deletedRequestStatus instanceof RequestStatus) {
             throw new \LogicException('$deletedRequestStatus must be instance of RequestStatus');

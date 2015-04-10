@@ -2,15 +2,13 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @outputBuffering enabled
  * @dbIsolation
  */
-class RequestControllerTest extends WebTestCase
+class RequestStatusControllerTest extends WebTestCase
 {
     const OLD_NAME = 'test';
     const OLD_LABEL = 'Test';
@@ -34,7 +32,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request for proposal statuses', $result->getContent());
+        $this->assertContains('Request For Proposal Statuses', $result->getContent());
     }
 
     /**
@@ -54,7 +52,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request status saved', $crawler->html());
+        $this->assertContains('Request Status saved', $crawler->html());
     }
 
     /**
@@ -82,7 +80,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request status saved', $crawler->html());
+        $this->assertContains('Request Status saved', $crawler->html());
 
         return $id;
     }
