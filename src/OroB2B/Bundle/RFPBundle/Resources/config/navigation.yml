@@ -48,7 +48,10 @@ oro_menu_config:
                 shortcut_request_statuses_list: ~
 
 oro_titles:
-    orob2b_rfp_request_index:        ~
-    orob2b_rfp_request_status_index: ~
-    orob2b_rfp_request_view:         '%%title%%'
-    orob2b_rfp_request_status_view:  '%%title%%'
+    orob2b_rfp_request_index:  ~
+    orob2b_rfp_request_view:   '%%title%%'
+
+    orob2b_rfp_request_status_index:  ~
+    orob2b_rfp_request_status_view:   '%%title%%'
+    orob2b_rfp_request_status_create: 'Create Request For Proposal Status'
+    orob2b_rfp_request_status_update: '%%title%% - Edit'
