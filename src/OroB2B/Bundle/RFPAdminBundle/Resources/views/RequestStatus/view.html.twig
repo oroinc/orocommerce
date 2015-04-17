@@ -6,7 +6,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_rfp_admin_request_status_index'),
-        'indexLabel': 'orob2b.rfp.requeststatus.entity_plural_label'|trans,
+        'indexLabel': 'orob2b.rfp.admin.requeststatus.entity_plural_label'|trans,
         'entityTitle': entity.label|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -23,7 +23,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.rfp.sections.general'|trans,
+            'title': 'orob2b.rfp.admin.sections.general'|trans,
             'class': 'active',
             'subblocks': [{'data' : [requestInfo]}]
         }
@@ -44,9 +44,9 @@
                 'aCss':  'no-hash',
                 'iCss':  'icon-ok',
                 'id':    idButton,
-                'label': 'orob2b.rfp.btn.restore'|trans,
+                'label': 'orob2b.rfp.admin.btn.restore'|trans,
                 'path':  path('orob2b_api_rfp_restore_request_status', {'id': entity.id}),
-                'title': 'orob2b.rfp.btn.restore'|trans,
+                'title': 'orob2b.rfp.admin.btn.restore'|trans,
             }) }}
 
             {% set requestStatusDeleteRestoreComponentOptions  = {
@@ -64,9 +64,9 @@
                 'aCss':  'no-hash',
                 'iCss':  'icon-remove',
                 'id':    idButton,
-                'label': 'orob2b.rfp.btn.delete'|trans,
+                'label': 'orob2b.rfp.admin.btn.delete'|trans,
                 'path':  path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
-                'title': 'orob2b.rfp.btn.delete'|trans,
+                'title': 'orob2b.rfp.admin.btn.delete'|trans,
             }) }}
 
             {% set requestStatusDeleteRestoreComponentOptions  = {
@@ -83,7 +83,7 @@
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path': path('orob2b_rfp_admin_request_status_update', {'id': entity.id}),
-            'entity_label': 'orob2b.rfp.requeststatus.entity_label'|trans
+            'entity_label': 'orob2b.rfp.admin.requeststatus.entity_label'|trans
         }) }}
     {% endif %}
 {% endblock %}

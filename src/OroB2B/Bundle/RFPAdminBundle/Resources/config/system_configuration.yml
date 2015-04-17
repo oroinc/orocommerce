@@ -1,10 +1,10 @@
 oro_system_configuration:
     groups:
         rfp_settings:
-            title: orob2b.rfp.system_configuration.group_title
+            title: orob2b.rfp.admin.system_configuration.group_title
             icon: icon-file
         rfp_requeststatus_settings:
-            title: orob2b.rfp.system_configuration.requeststatus_group_title
+            title: orob2b.rfp.admin.system_configuration.requeststatus_group_title
 
     fields:
         oro_b2b_rfp_admin.default_request_status:
@@ -12,7 +12,7 @@ oro_system_configuration:
             data_type: string
             type: orob2b_rfp_admin_default_request_status
             options:
-                label: orob2b.rfp.system_configuration.requeststatus_default_label
+                label: orob2b.rfp.admin.system_configuration.requeststatus_default_label
 
     tree:
         system_configuration:

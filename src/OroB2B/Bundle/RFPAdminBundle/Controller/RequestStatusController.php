@@ -135,7 +135,7 @@ class RequestStatusController extends Controller
                         ]
                     ];
                 },
-                $this->get('translator')->trans('orob2b.rfp.message.request_status_saved'),
+                $this->get('translator')->trans('orob2b.rfp.admin.message.request_status_saved'),
                 $handler
             )
             ;

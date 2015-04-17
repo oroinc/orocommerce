@@ -1,4 +1,4 @@
-orob2b.rfp:
+orob2b.rfp.admin:
     request:
         entity_label:           'Request For Proposal'
         entity_label_short:     'Request'

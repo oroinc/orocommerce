@@ -30,7 +30,7 @@ class RequestChangeStatusType extends AbstractType
                 'status',
                 RequestStatusSelectType::NAME,
                 [
-                    'label'       => 'orob2b.rfp.request.status.label',
+                    'label'       => 'orob2b.rfp.admin.request.status.label',
                     'required'    => true,
                     'empty_value' => '',
                     'constraints' => [

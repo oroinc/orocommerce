@@ -1,22 +1,22 @@
 oro_menu_config:
     items:
         rfp_tab:
-            label:           'orob2b.rfp.menu.rfp_tab.label'
+            label:           'orob2b.rfp.admin.menu.rfp_tab.label'
             uri:             '#'
             extras:
                 icon:        icon-file-text
                 position:    35
 
         requests_list:
-            label:           'orob2b.rfp.request.entity_plural_label'
+            label:           'orob2b.rfp.admin.request.entity_plural_label'
             route:           'orob2b_rfp_admin_request_index'
             extras:
                 position:    10
                 routes:      ['orob2b_rfp_admin_request_index', 'orob2b_rfp_admin_request_view']
-                description: 'orob2b.rfp.menu.requests_list.description'
+                description: 'orob2b.rfp.admin.menu.requests_list.description'
 
         request_statuses_list:
-            label:           'orob2b.rfp.requeststatus.entity_plural_label'
+            label:           'orob2b.rfp.admin.requeststatus.entity_plural_label'
             route:           'orob2b_rfp_admin_request_status_index'
             extras:
                 position:    20
@@ -25,19 +25,19 @@ oro_menu_config:
                     - 'orob2b_rfp_admin_request_status_view'
                     - 'orob2b_rfp_admin_request_status_update'
                     - 'orob2b_rfp_admin_request_status_create'
-                description: 'orob2b.rfp.menu.request_statuses_list.description'
+                description: 'orob2b.rfp.admin.menu.request_statuses_list.description'
 
         shortcut_requests_list:
-            label:           'orob2b.rfp.request.entity_plural_label'
+            label:           'orob2b.rfp.admin.request.entity_plural_label'
             route:           'orob2b_rfp_admin_request_index'
             extras:
-                description: 'orob2b.rfp.menu.shortcut_requests_list.description'
+                description: 'orob2b.rfp.admin.menu.shortcut_requests_list.description'
 
         shortcut_request_statuses_list:
-            label:           'orob2b.rfp.requeststatus.entity_plural_label'
+            label:           'orob2b.rfp.admin.requeststatus.entity_plural_label'
             route:           'orob2b_rfp_admin_request_status_index'
             extras:
-                description: 'orob2b.rfp.menu.shortcut_request_statuses_list.description'
+                description: 'orob2b.rfp.admin.menu.shortcut_request_statuses_list.description'
 
     tree:
         application_menu:
