@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\RFPAdminBundle\Form\Type;
 
 class RequestStatusWithDeletedSelectType extends RequestStatusSelectType
 {
-    const NAME = 'orob2b_rfp_request_status_with_deleted_select';
+    const NAME = 'orob2b_rfp_admin_request_status_with_deleted_select';
 
     /**
      * {@inheritdoc}

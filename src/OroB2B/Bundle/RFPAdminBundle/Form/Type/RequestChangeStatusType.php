@@ -10,7 +10,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 class RequestChangeStatusType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_change_status';
+    const NAME = 'orob2b_rfp_admin_request_change_status';
 
     /**
      * {@inheritdoc}

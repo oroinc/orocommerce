@@ -1,8 +1,8 @@
 OroB2B\Bundle\RFPAdminBundle\Entity\Request:
-    alias:                          orob2b_rfp_request
+    alias:                          orob2b_rfp_admin_request
     title_fields:                   [firstName, lastName, email]
     route:
-        name:                       orob2b_rfp_request_view
+        name:                       orob2b_rfp_admin_request_view
         parameters:
             id:                     id
     search_template:                OroB2BRFPAdminBundle:Request:searchResult.html.twig

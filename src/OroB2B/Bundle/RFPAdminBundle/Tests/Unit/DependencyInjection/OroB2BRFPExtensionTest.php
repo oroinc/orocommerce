@@ -18,8 +18,8 @@ class OroB2BRFPAdminExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedParameters = [
-            'orob2b_rfp.request.class',
-            'orob2b_rfp.request.status.class',
+            'orob2b_rfp_admin.request.class',
+            'orob2b_rfp_admin.request.status.class',
         ];
 
         $this->assertParametersLoaded($expectedParameters);

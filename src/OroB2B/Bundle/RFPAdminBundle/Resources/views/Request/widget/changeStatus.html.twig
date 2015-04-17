@@ -5,7 +5,7 @@
             wid: app.request.get('_wid'),
             successMessage: 'orob2b.rfp.message.request_status_changed'|trans
         } %}
-        <span data-page-component-module="orob2brfp/js/app/components/request-change-status-widget-component"
+        <span data-page-component-module="orob2brfpadmin/js/app/components/request-change-status-widget-component"
               data-page-component-options="{{ requestChangeStatusWidgetComponentOptions|json_encode }}"></span>
     {% else %}
         {% if not form.vars.valid and form.vars.errors|length %}

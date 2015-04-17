@@ -6,7 +6,7 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_rfp_request_index'),
+        'indexPath': path('orob2b_rfp_admin_request_index'),
         'indexLabel': 'orob2b.rfp.request.entity_plural_label'|trans,
         'entityTitle': entity.__toString()|default('N/A'|trans)
     } %}
@@ -15,7 +15,7 @@
 
 {% block navButtons %}
     {{ UI.clientButton({
-        'dataUrl': path('orob2b_rfp_request_change_status', {id: entity.id}),
+        'dataUrl': path('orob2b_rfp_admin_request_change_status', {id: entity.id}),
         'aCss': 'no-hash',
         'iCss': 'icon-edit',
         'dataId': entity.id,
@@ -48,7 +48,7 @@
     {% set requestInfo %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'url': path('orob2b_rfp_request_info', {id: entity.id}),
+            'url': path('orob2b_rfp_admin_request_info', {id: entity.id}),
             'alias': 'request-info-widget'
         }) }}
     {% endset %}

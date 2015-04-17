@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 class DefaulRequestStatusType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_default_request_status';
+    const NAME = 'orob2b_rfp_admin_default_request_status';
 
     /**
      * @var ManagerRegistry

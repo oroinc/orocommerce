@@ -4,19 +4,19 @@
 {% oro_title_set({params : {"%title%": entity.label, "%entityName%": 'orob2b.rfp.requeststatus.entity_label'|trans} }) %}
 
 {% set formAction = entity.id
-    ? path('orob2b_rfp_request_status_update', { id: entity.id })
-    : path('orob2b_rfp_request_status_create')
+    ? path('orob2b_rfp_admin_request_status_update', { id: entity.id })
+    : path('orob2b_rfp_admin_request_status_create')
 %}
 
 {% block navButtons %}
     {% if entity.id %}
-        {{ UI.cancelButton(path('orob2b_rfp_request_status_view', {'id': entity.id})) }}
+        {{ UI.cancelButton(path('orob2b_rfp_admin_request_status_view', {'id': entity.id})) }}
     {% else %}
-        {{ UI.cancelButton(path('orob2b_rfp_request_status_index')) }}
+        {{ UI.cancelButton(path('orob2b_rfp_admin_request_status_index')) }}
     {% endif %}
 
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_rfp_request_status_create') %}
+    {% if entity.id or resource_granted('orob2b_rfp_admin_request_status_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
 
@@ -27,7 +27,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_rfp_request_status_index'),
+            'indexPath':   path('orob2b_rfp_admin_request_status_index'),
             'indexLabel':  'orob2b.rfp.request.entity_plural_label'|trans,
             'entityTitle': entity.label
         } %}

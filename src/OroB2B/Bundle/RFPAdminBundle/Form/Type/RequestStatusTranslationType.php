@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RequestStatusTranslationType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_status_translation';
+    const NAME = 'orob2b_rfp_admin_request_status_translation';
 
     /**
      * {@inheritdoc}

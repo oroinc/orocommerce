@@ -30,7 +30,7 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
+        $this->client->request('GET', $this->getUrl('orob2b_rfp_admin_request_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
@@ -59,7 +59,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_rfp_request_view', ['id' => $id])
+            $this->getUrl('orob2b_rfp_admin_request_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -80,7 +80,7 @@ class RequestControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_rfp_request_info', ['id' => $id]),
+            $this->getUrl('orob2b_rfp_admin_request_info', ['id' => $id]),
             ['_widgetContainer' => 'dialog']
         );
 
@@ -116,15 +116,15 @@ class RequestControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_rfp_request_change_status', ['id' => $id]),
+            $this->getUrl('orob2b_rfp_admin_request_change_status', ['id' => $id]),
             ['_widgetContainer' => 'dialog']
         );
 
         $noteSubject = 'Test Request Note';
 
         $form = $crawler->selectButton('Update Request')->form();
-        $form['orob2b_rfp_request_change_status[status]'] = $status->getId();
-        $form['orob2b_rfp_request_change_status[note]'] = $noteSubject;
+        $form['orob2b_rfp_admin_request_change_status[status]'] = $status->getId();
+        $form['orob2b_rfp_admin_request_change_status[note]'] = $noteSubject;
 
         $params = $form->getPhpValues();
         $params['_widgetContainer'] = 'dialog';

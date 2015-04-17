@@ -31,7 +31,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_rfp_request_status_delete",
+     *      id="orob2b_rfp_admin_request_status_delete",
      *      type="entity",
      *      permission="DELETE",
      *      class="OroB2BRFPAdminBundle:RequestStatus"
@@ -72,7 +72,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
      *      description="Restore RequestStatus",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_rfp_request_status_delete")
+     * @AclAncestor("orob2b_rfp_admin_request_status_delete")
      *
      * @return Response
      */

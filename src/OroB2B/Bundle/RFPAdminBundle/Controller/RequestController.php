@@ -17,10 +17,10 @@ use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestChangeStatusType;
 class RequestController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_rfp_request_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="orob2b_rfp_admin_request_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_rfp_request_view",
+     *      id="orob2b_rfp_admin_request_view",
      *      type="entity",
      *      class="OroB2BRFPAdminBundle:Request",
      *      permission="VIEW"
@@ -37,9 +37,9 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_rfp_request_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="orob2b_rfp_admin_request_info", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_rfp_request_view")
+     * @AclAncestor("orob2b_rfp_admin_request_view")
      *
      * @param Request $request
      * @return array
@@ -52,24 +52,24 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_rfp_request_index")
+     * @Route("/", name="orob2b_rfp_admin_request_index")
      * @Template
-     * @AclAncestor("orob2b_rfp_request_view")
+     * @AclAncestor("orob2b_rfp_admin_request_view")
      *
      * @return array
      */
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.request.class')
+            'entity_class' => $this->container->getParameter('orob2b_rfp_admin.request.class')
         ];
     }
 
     /**
-     * @Route("/change_status/{id}", name="orob2b_rfp_request_change_status", requirements={"id"="\d+"})
+     * @Route("/change_status/{id}", name="orob2b_rfp_admin_request_change_status", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_rfp_request_update",
+     *      id="orob2b_rfp_admin_request_update",
      *      type="entity",
      *      class="OroB2BRFPAdminBundle:Request",
      *      permission="EDIT"
@@ -92,7 +92,7 @@ class RequestController extends Controller
             $this->container->get('templating')
         );
 
-        $formAction = $this->get('router')->generate('orob2b_rfp_request_change_status', ['id' => $request->getId()]);
+        $formAction = $this->get('router')->generate('orob2b_rfp_admin_request_change_status', ['id' => $request->getId()]);
 
         return [
             'entity'     => $request,

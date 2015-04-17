@@ -11,7 +11,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 class RequestStatusType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_status';
+    const NAME = 'orob2b_rfp_admin_request_status';
 
     /**
      * @var ConfigManager
@@ -61,7 +61,7 @@ class RequestStatusType extends AbstractType
 
         $builder->add(
             'translations',
-            'orob2b_rfp_request_status_translation',
+            'orob2b_rfp_admin_request_status_translation',
             [
                 'label'    => 'orob2b.rfp.requeststatus.label.label',
                 'required' => false,

@@ -11,7 +11,7 @@ use OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus;
 
 class RequestStatusSelectType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_request_status_select';
+    const NAME = 'orob2b_rfp_admin_request_status_select';
 
     /**
      * {@inheritdoc}

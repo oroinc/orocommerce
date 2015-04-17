@@ -25,8 +25,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\RFPAdminBundle\Entity\Repository\RequestStatusRepository")
  * @Gedmo\TranslationEntity(class="OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatusTranslation")
  * @Config(
- *      routeName="orob2b_rfp_request_status_index",
- *      routeView="orob2b_rfp_request_status_view",
+ *      routeName="orob2b_rfp_admin_request_status_index",
+ *      routeView="orob2b_rfp_admin_request_status_view",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-file-text"
