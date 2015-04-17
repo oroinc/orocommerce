@@ -1,0 +1,7 @@
+parameters:
+#    oro_b2_b_user_admin.example.class: OroB2B\Bundle\UserBundle\Example
+
+services:
+#    oro_b2_b_user_admin.example:
+#        class: %oro_b2_b_user_admin.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
