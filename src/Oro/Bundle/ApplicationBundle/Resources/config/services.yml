@@ -1,7 +1,9 @@
 parameters:
-    oro_application.listener.request.class:             Oro\Bundle\ApplicationBundle\EventListener\RequestListener
+    oro_application.listener.request.class: Oro\Bundle\ApplicationBundle\EventListener\RequestListener
     oro_application.listener.navigation_listener.class: Oro\Bundle\ApplicationBundle\EventListener\NavigationListener
-    oro_distribution.script_runner.class:               Oro\Bundle\ApplicationBundle\Script\Runner
+    oro_distribution.script_runner.class: Oro\Bundle\ApplicationBundle\Script\Runner
+    oro_application.config_manager.class: Oro\Bundle\ApplicationBundle\Config\ConfigManager;
+
 services:
     kernel.listener.install.event:
         class: %oro_application.listener.request.class%
@@ -33,3 +35,6 @@ services:
             - %kernel.environment%
         tags:
             - { name: monolog.logger, channel: oro_distribution }
+
+    oro_config.fake_manager:
+        class: %oro_application.config_manager.class%
