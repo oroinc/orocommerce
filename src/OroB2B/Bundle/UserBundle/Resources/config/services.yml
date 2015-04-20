@@ -1,7 +1,8 @@
 parameters:
-#    oro_b2_b_user_admin.example.class: OroB2B\Bundle\UserBundle\Example
+    orob2b_user.user_provider.email.class: OroB2B\Bundle\UserBundle\Security\EmailProvider
 
 services:
-#    oro_b2_b_user_admin.example:
-#        class: %oro_b2_b_user_admin.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    orob2b_user.user_provider.email:
+        class: %orob2b_user.user_provider.email.class%
+        arguments: [@fos_user.user_manager]
+        public: false
