@@ -7,10 +7,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
+/**
+ * @Route("/rfp")
+ */
 class RequestController extends Controller
 {
     /**
-     * @Route("/rfp", name="orob2b_rfp_index")
+     * @Route("/", name="orob2b_rfp_reuest_index")
      */
     public function indexAction()
     {
