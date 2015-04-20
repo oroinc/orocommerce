@@ -8,7 +8,7 @@ use FOS\UserBundle\Entity\Group as BaseGroup;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="fos_group")
+ * @ORM\Table(name="orob2b_group")
  */
 class Group extends BaseGroup
 {
