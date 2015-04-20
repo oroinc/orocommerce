@@ -42,14 +42,14 @@ class RequestStatusType extends AbstractType
             'name',
             'text',
             [
-                'label'    => 'orob2b.rfp.admin.requeststatus.name.label',
+                'label'    => 'orob2b.rfpadmin.requeststatus.name.label',
                 'required' => true
             ]
         )->add(
             'sortOrder',
             'integer',
             [
-                'label'    => 'orob2b.rfp.admin.requeststatus.sort_order.label',
+                'label'    => 'orob2b.rfpadmin.requeststatus.sort_order.label',
                 'required' => true
             ]
         );
@@ -63,7 +63,7 @@ class RequestStatusType extends AbstractType
             'translations',
             'orob2b_rfp_admin_request_status_translation',
             [
-                'label'    => 'orob2b.rfp.admin.requeststatus.label.label',
+                'label'    => 'orob2b.rfpadmin.requeststatus.label.label',
                 'required' => false,
                 'locales'  => $notificationLangs,
                 'labels'   => $localeLabels,

@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_rfp_admin_request_index'),
-        'indexLabel': 'orob2b.rfp.admin.request.entity_plural_label'|trans,
+        'indexLabel': 'orob2b.rfpadmin.request.entity_plural_label'|trans,
         'entityTitle': entity.__toString()|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -19,7 +19,7 @@
         'aCss': 'no-hash',
         'iCss': 'icon-edit',
         'dataId': entity.id,
-        'label': 'orob2b.rfp.admin.btn.change_status'|trans,
+        'label': 'orob2b.rfpadmin.btn.change_status'|trans,
         'widget' : {
             'type' : 'dialog',
             'multiple' : false,
@@ -28,7 +28,7 @@
             'options' : {
                 'alias': 'request-change-status-dialog',
                 'dialogOptions' : {
-                    'title' : 'orob2b.rfp.admin.widget.change_status_title'|trans,
+                    'title' : 'orob2b.rfpadmin.widget.change_status_title'|trans,
                     'allowMaximize': false,
                     'allowMinimize': false,
                     'dblclick': 'maximize',
@@ -39,7 +39,7 @@
             }
         },
         'messages': {
-            'saved': 'orob2b.rfp.admin.message.request_status_changed'|trans
+            'saved': 'orob2b.rfpadmin.message.request_status_changed'|trans
         }
     }) }}
 {% endblock navButtons %}
@@ -63,12 +63,12 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.rfp.admin.sections.general'|trans,
+            'title': 'orob2b.rfpadmin.sections.general'|trans,
             'class': 'active',
             'subblocks': [{'data' : [requestInfo]}]
         },
         {
-            'title': 'orob2b.rfp.admin.sections.body'|trans,
+            'title': 'orob2b.rfpadmin.sections.body'|trans,
             'class': 'active',
             'subblocks': [{'data' : [requestContent]}]
         }

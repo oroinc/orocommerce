@@ -29,19 +29,19 @@ datagrid:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             firstName:
-                label:         orob2b.rfp.admin.request.first_name.label
+                label:         orob2b.rfpadmin.request.first_name.label
             lastName:
-                label:         orob2b.rfp.admin.request.last_name.label
+                label:         orob2b.rfpadmin.request.last_name.label
             email:
-                label:         orob2b.rfp.admin.request.email.label
+                label:         orob2b.rfpadmin.request.email.label
             phone:
-                label:         orob2b.rfp.admin.request.phone.label
+                label:         orob2b.rfpadmin.request.phone.label
             company:
-                label:         orob2b.rfp.admin.request.company.label
+                label:         orob2b.rfpadmin.request.company.label
             role:
-                label:         orob2b.rfp.admin.request.role.label
+                label:         orob2b.rfpadmin.request.role.label
             status_label:
-                label:         orob2b.rfp.admin.request.status.label
+                label:         orob2b.rfpadmin.request.status.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -124,7 +124,7 @@ datagrid:
                 rowAction:     true
             request_change_status:
                 type:          request-change-status-dialog
-                label:         orob2b.rfp.admin.btn.change_status
+                label:         orob2b.rfpadmin.btn.change_status
                 link:          request_change_status_link
                 icon:          edit
                 acl_resource:  orob2b_rfp_admin_request_update
@@ -133,7 +133,7 @@ datagrid:
                     reload-grid-name: rfp-requests-grid
                     options:
                         dialogOptions:
-                            title: orob2b.rfp.admin.widget.change_status_title
+                            title: orob2b.rfpadmin.widget.change_status_title
                             allowMaximize: false
                             allowMinimize: false
                             dblclick: maximize
@@ -141,7 +141,7 @@ datagrid:
                             width: 550
                             resizable: true
                 messages:
-                    saved: orob2b.rfp.admin.message.request_status_changed
+                    saved: orob2b.rfpadmin.message.request_status_changed
 
     rfp-request-statuses-grid:
         extended_entity_name: %orob2b_rfp_admin.request.status.class%
@@ -164,14 +164,14 @@ datagrid:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
             label:
-                label:         orob2b.rfp.admin.requeststatus.label.label
+                label:         orob2b.rfpadmin.requeststatus.label.label
             name:
-                label:         orob2b.rfp.admin.requeststatus.name.label
+                label:         orob2b.rfpadmin.requeststatus.name.label
             deleted:
-                label:         orob2b.rfp.admin.requeststatus.deleted.label
+                label:         orob2b.rfpadmin.requeststatus.deleted.label
                 frontend_type: boolean
             sortOrder:
-                label:         orob2b.rfp.admin.requeststatus.sort_order.label
+                label:         orob2b.rfpadmin.requeststatus.sort_order.label
                 frontend_type: integer
         properties:
             id: ~
@@ -232,7 +232,7 @@ datagrid:
             restore:
                 type:          ajax
                 acl_resource:  orob2b_rfp_admin_request_status_delete
-                label:         orob2b.rfp.admin.datagrid.action_restore
+                label:         orob2b.rfpadmin.datagrid.action_restore
                 icon:          ok
                 link:          restore_link
             delete:
