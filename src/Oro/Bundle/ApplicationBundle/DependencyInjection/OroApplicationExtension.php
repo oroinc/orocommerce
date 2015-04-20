@@ -13,9 +13,13 @@ use Oro\Bundle\ApplicationBundle\Configuration\RolesConfiguration;
 
 class OroApplicationExtension extends Extension
 {
+    const APPLICATION_ADMIN    = 'admin';
+    const APPLICATION_FRONTEND = 'frontend';
+
     const CONFIG_ROLES = 'roles.yml';
+
     const ROLES_CONTAINER_PARAM_FRONTEND = 'security.role_hierarchy.roles';
-    const ROLES_CONTAINER_PARAM_ADMIN = 'frontend.roles';
+    const ROLES_CONTAINER_PARAM_ADMIN = 'orob2b.frontend.roles';
 
     /**
      * {@inheritDoc}
@@ -29,7 +33,7 @@ class OroApplicationExtension extends Extension
         $roles = $this->parseExternalConfigFiles($container);
         $application = $container->getParameter('kernel.application');
 
-        if ($application == \AppKernel::APPLICATION_FRONTEND) {
+        if ($application == self::APPLICATION_FRONTEND) {
             $roles = array_map(
                 function () {
                     return [];
@@ -40,7 +44,7 @@ class OroApplicationExtension extends Extension
             $roles = array_merge_recursive($roles, $container->getParameter(self::ROLES_CONTAINER_PARAM_FRONTEND));
 
             $container->setParameter(self::ROLES_CONTAINER_PARAM_FRONTEND, $roles);
-        } elseif ($application == \AppKernel::APPLICATION_ADMIN) {
+        } elseif ($application == self::APPLICATION_ADMIN) {
             $container->setParameter(self::ROLES_CONTAINER_PARAM_ADMIN, $roles);
         }
     }
