@@ -6,7 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 use OroB2B\Bundle\RFPBundle\DependencyInjection\OroB2BRFPExtension;
 
-class OroB2BRFPAdminExtensionTest extends ExtensionTestCase
+class OroB2BRFPExtensionTest extends ExtensionTestCase
 {
     /**
      * Test Extension
