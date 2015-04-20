@@ -2,7 +2,7 @@ parameters:
     oro_application.listener.request.class: Oro\Bundle\ApplicationBundle\EventListener\RequestListener
     oro_application.listener.navigation_listener.class: Oro\Bundle\ApplicationBundle\EventListener\NavigationListener
     oro_distribution.script_runner.class: Oro\Bundle\ApplicationBundle\Script\Runner
-    oro_application.config_manager.class: Oro\Bundle\ApplicationBundle\Config\ConfigManager;
+    oro_application.config_manager.class: Oro\Bundle\ApplicationBundle\Config\ConfigManager
 
 services:
     kernel.listener.install.event:
