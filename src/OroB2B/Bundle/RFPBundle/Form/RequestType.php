@@ -22,6 +22,7 @@ class RequestType extends AbstractType
             ->add('phone', 'text')
             ->add('company', 'text')
             ->add('role', 'text')
+            ->add('body', 'textarea')
         ;
     }
 
