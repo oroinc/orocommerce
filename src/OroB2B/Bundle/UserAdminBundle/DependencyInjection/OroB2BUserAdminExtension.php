@@ -1,13 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\UserBundle\DependencyInjection;
+namespace OroB2B\Bundle\UserAdminBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
-class OroB2BUserExtension extends Extension
+class OroB2BUserAdminExtension extends Extension
 {
     /**
      * {@inheritDoc}

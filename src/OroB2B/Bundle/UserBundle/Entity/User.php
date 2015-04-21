@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use FOS\UserBundle\Entity\User as BaseUser;
+use OroB2B\Bundle\UserBundle\Model\User as BaseUser;
 
 /**
  * @ORM\Entity
@@ -12,13 +12,6 @@ use FOS\UserBundle\Entity\User as BaseUser;
  */
 class User extends BaseUser
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
-
     /**
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\UserBundle\Entity\Group")
      * @ORM\JoinTable(name="orob2b_user_group",
