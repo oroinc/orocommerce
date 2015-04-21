@@ -1,1 +1,36 @@
+orob2b_user:
+    form:
+        first_name.label: FirstName:
+        last_name.label: LastName:
+        email.label: Email:
+        password.label: Password:
+        password_confirmation.label: Verification:
+
+    layout:
+        logout: Logout
+        login: Login
+        register: Register
+        logged_in_as.label: Logged in as %username%
+        profile: Profile
+        password_reset: Reset Password
+
+    security:
+        login:
+            email.label: "Email:"
+            password.label: "Password:"
+            remember_me.label: Remember Me
+            submit: Login
+
+    profile:
+        show:
+            first_name.label: FirstName
+            last_name.label: LastName
+            email.label: Email
+            edit: Edit profile
+            password_change: Change Password
+
+    message:
+        password_mismatch: The entered passwords don't match
+
 "Bad credentials": Invalid email or password
+"Registration closed": We’re sorry, but online registration is now closed.

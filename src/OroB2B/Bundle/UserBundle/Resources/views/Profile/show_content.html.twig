@@ -1,0 +1,15 @@
+<div class="fos_user_user_show">
+    <p>{{ 'orob2b_user.profile.show.first_name.label'|trans }}: {{ user.firstName }}</p>
+    <p>{{ 'orob2b_user.profile.show.last_name.label'|trans }}: {{ user.lastName }}</p>
+    <p>{{ 'orob2b_user.profile.show.email.label'|trans }}: {{ user.email }}</p>
+    <p>
+        <a href="{{ path('fos_user_profile_edit') }}">
+            {{ 'orob2b_user.profile.show.edit'|trans }}
+        </a>
+    </p>
+    <p>
+        <a href="{{ path('fos_user_change_password') }}">
+            {{ 'orob2b_user.profile.show.password_change'|trans }}
+        </a>
+    </p>
+</div>
