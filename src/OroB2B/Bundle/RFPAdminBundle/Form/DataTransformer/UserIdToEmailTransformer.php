@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
-class UserToEmailTransformer implements DataTransformerInterface
+class UserIdToEmailTransformer implements DataTransformerInterface
 {
     /**
      * @var ManagerRegistry
@@ -26,7 +26,7 @@ class UserToEmailTransformer implements DataTransformerInterface
 
     /**
      * @param string $email
-     * @return null|User
+     * @return null|int
      */
     public function transform($email)
     {
@@ -48,17 +48,29 @@ class UserToEmailTransformer implements DataTransformerInterface
             ));
         }
 
-        return $user;
+        return $user->getId();
     }
 
     /**
-     * @param null|User $user
-     * @return null|string
+     * @param int $userId
+     * @return string|null
      */
-    public function reverseTransform($user)
+    public function reverseTransform($userId)
     {
-        if (null === $user) {
+        if (!is_int($userId)) {
             return null;
+        }
+
+        $user = $this->registry
+            ->getManagerForClass('OroUserBundle:User')
+            ->getRepository('OroUserBundle:User')
+            ->find($userId);
+
+        if (null === $user) {
+            throw new TransformationFailedException(sprintf(
+                'User with ID "%s" does not exist!',
+                $userId
+            ));
         }
 
         return $user->getEmail();

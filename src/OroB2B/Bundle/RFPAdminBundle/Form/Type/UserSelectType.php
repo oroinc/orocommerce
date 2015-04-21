@@ -3,8 +3,11 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
+use OroB2B\Bundle\RFPAdminBundle\Form\DataTransformer\UserIdToEmailTransformer;
 
 class UserSelectType extends AbstractType
 {
@@ -21,6 +24,16 @@ class UserSelectType extends AbstractType
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'transformer' => new UserIdToEmailTransformer($this->registry)
+        ]);
     }
 
     /**
