@@ -9,6 +9,9 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestTest extends EntityTestCase
 {
+    /**
+     * Test setters getters
+     */
     public function testAccessors()
     {
         $date = new \DateTime();
@@ -34,6 +37,9 @@ class RequestTest extends EntityTestCase
         $this->assertPropertyAccessors($propertyRequest, $properties);
     }
 
+    /**
+     * Test construct
+     */
     public function testConstruct()
     {
         $request = new Request();
@@ -47,6 +53,9 @@ class RequestTest extends EntityTestCase
         $this->assertLessThanOrEqual($now, $request->getUpdatedAt());
     }
 
+    /**
+     * Test preUpdate
+     */
     public function testPreUpdate()
     {
         $request = new Request();
@@ -56,6 +65,9 @@ class RequestTest extends EntityTestCase
         $this->assertLessThanOrEqual(new \DateTime(), $request->getUpdatedAt());
     }
 
+    /**
+     * Test toString
+     */
     public function testToString()
     {
         $id = 12;

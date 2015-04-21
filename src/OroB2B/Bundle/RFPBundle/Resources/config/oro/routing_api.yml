@@ -1,3 +1,0 @@
-orob2b_rfp_request_status_api:
-    resource: "@OroB2BRFPBundle/Controller/Api/Rest/RequestStatusController.php"
-    type:     rest
