@@ -1,1 +1,8 @@
-#
+parameters:
+    orob2b_rfp.form.type.request.class: OroB2B\Bundle\RFPBundle\Form\RequestType
+
+services:
+    orob2b_rfp.form.type.request:
+        class: %orob2b_rfp.form.type.request.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_type }
