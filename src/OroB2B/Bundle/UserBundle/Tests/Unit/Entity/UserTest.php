@@ -11,9 +11,11 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setFirstName('John');
         $user->setLastName('Doe');
+        $user->setEmail('test@example.com');
 
         $this->assertEquals('John', $user->getFirstName());
         $this->assertEquals('Doe', $user->getLastName());
-        $this->assertEquals('John Doe', $user->getUsername());
+        $this->assertEquals('test@example.com', $user->getUsername());
+        $this->assertEquals('test@example.com', $user->getEmail());
     }
 }
