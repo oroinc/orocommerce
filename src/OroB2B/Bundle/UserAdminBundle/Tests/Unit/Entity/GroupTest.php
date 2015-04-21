@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\UserAdminBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;

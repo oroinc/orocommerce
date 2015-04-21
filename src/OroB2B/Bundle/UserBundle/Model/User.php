@@ -9,6 +9,13 @@ use FOS\UserBundle\Entity\User as BaseUser;
 abstract class User extends BaseUser
 {
     /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
      * @ORM\Column(name="first_name", type="string", length=255)
      */
     protected $firstName;
