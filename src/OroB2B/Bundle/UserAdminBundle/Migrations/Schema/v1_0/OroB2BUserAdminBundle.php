@@ -67,8 +67,8 @@ class OroB2BUserAdminBundle implements Migration
     {
         $table = $schema->createTable('orob2b_user');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('username', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('usernameCanonical', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('username', 'string', ['length' => 255]);
+        $table->addColumn('username_canonical', 'string', ['length' => 255]);
         $table->addColumn('email', 'string', ['length' => 255]);
         $table->addColumn('email_canonical', 'string', ['length' => 255]);
         $table->addColumn('enabled', 'boolean', []);
@@ -87,6 +87,7 @@ class OroB2BUserAdminBundle implements Migration
         $table->addColumn('last_name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['email_canonical'], 'UNIQ_27572461A0D96FBF');
+        $table->addUniqueIndex(['username_canonical'], 'UNIQ_27572461F5A5DC32');
     }
 
     /**
