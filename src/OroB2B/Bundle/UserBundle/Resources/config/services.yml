@@ -1,4 +1,6 @@
 parameters:
+    orob2b_user.user.entity.class: OroB2B\Bundle\UserBundle\Entity\User
+    orob2b_user.group.entity.class: OroB2B\Bundle\UserBundle\Entity\Group
     orob2b_user.user_provider.email.class: OroB2B\Bundle\UserBundle\Security\EmailProvider
 
 services:
