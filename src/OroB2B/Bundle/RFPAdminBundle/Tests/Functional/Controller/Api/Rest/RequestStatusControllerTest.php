@@ -24,7 +24,10 @@ class RequestStatusControllerTest extends WebTestCase
 
     public function testDeleteAndRestoreAction()
     {
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BRFPAdminBundle:RequestStatus');
+        $entityManager = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BRFPAdminBundle:RequestStatus');
+
         $entityRepository = $entityManager->getRepository('OroB2BRFPAdminBundle:RequestStatus');
 
         $requestStatus = $entityRepository->findOneBy(['name' => LoadRequestStatusData::NAME_NOT_DELETED]);

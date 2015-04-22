@@ -71,7 +71,9 @@ class RequestStatusControllerTest extends WebTestCase
         $result = reset($result['data']);
         $id = $result['id'];
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_admin_request_status_update', ['id' => $id]));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_admin_request_status_update', [
+            'id' => $id
+        ]));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_rfp_admin_request_status[translations][defaultLocale][en][label]'] = self::NEW_LABEL;

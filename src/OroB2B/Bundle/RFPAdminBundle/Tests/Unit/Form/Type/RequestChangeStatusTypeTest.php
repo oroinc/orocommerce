@@ -43,7 +43,7 @@ class RequestChangeStatusTypeTest extends \PHPUnit_Framework_TestCase
                 'status',
                 RequestStatusSelectType::NAME,
                 [
-                    'label'       => 'orob2b.rfp.admin.request.status.label',
+                    'label'       => 'orob2b.rfpadmin.request.status.label',
                     'required'    => true,
                     'empty_value' => '',
                     'constraints' => [
