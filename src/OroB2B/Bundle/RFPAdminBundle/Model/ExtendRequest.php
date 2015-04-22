@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Model;
 
-class ExtendRequest
+use OroB2B\Bundle\RFPBundle\Entity\AbstractRequest;
+
+class ExtendRequest extends AbstractRequest
 {
     /**
      * Constructor

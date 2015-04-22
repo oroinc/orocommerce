@@ -13,6 +13,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use OroB2B\Bundle\RFPBundle\Entity\AbstractRequestStatus;
+
 /**
  * RequestStatus
  *
@@ -38,7 +40,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      }
  * )
  */
-class RequestStatus implements Translatable
+class RequestStatus extends AbstractRequestStatus implements Translatable
 {
     const OPEN = 'open';
     const CLOSED = 'closed';
@@ -50,14 +52,14 @@ class RequestStatus implements Translatable
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string
@@ -65,7 +67,7 @@ class RequestStatus implements Translatable
      * @ORM\Column(name="label", type="string", length=255, nullable=true)
      * @Gedmo\Translatable
      */
-    private $label;
+    protected $label;
 
     /**
      * @ORM\OneToMany(
@@ -82,14 +84,14 @@ class RequestStatus implements Translatable
      *
      * @ORM\Column(name="sort_order", type="integer", nullable=true)
      */
-    private $sortOrder;
+    protected $sortOrder;
 
     /**
      * @var boolean
      *
      * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
      */
-    private $deleted = false;
+    protected $deleted = false;
 
     /**
      * @var string
@@ -104,108 +106,6 @@ class RequestStatus implements Translatable
     public function __construct()
     {
         $this->translations = new ArrayCollection();
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return RequestStatus
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set label
-     *
-     * @param string $label
-     * @return RequestStatus
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-
-        return $this;
-    }
-
-    /**
-     * Get label
-     *
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * Set sortOrder
-     *
-     * @param integer $sortOrder
-     * @return RequestStatus
-     */
-    public function setSortOrder($sortOrder)
-    {
-        $this->sortOrder = $sortOrder;
-
-        return $this;
-    }
-
-    /**
-     * Get sortOrder
-     *
-     * @return integer
-     */
-    public function getSortOrder()
-    {
-        return $this->sortOrder;
-    }
-
-    /**
-     * Set deleted
-     *
-     * @param boolean $deleted
-     * @return RequestStatus
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-
-        return $this;
-    }
-
-    /**
-     * Get deleted
-     *
-     * @return boolean
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**
@@ -230,14 +130,6 @@ class RequestStatus implements Translatable
     public function getLocale()
     {
         return $this->locale;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->getLabel();
     }
 
     /**
