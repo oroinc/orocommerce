@@ -2,18 +2,67 @@
 
 namespace OroB2B\Bundle\UserBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
+
+use OroB2B\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\UserBundle\Form\Type\RegistrationFormType;
 
-class RegistrationFormTypeTest extends \PHPUnit_Framework_TestCase
+class RegistrationFormTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var RegistrationFormType
      */
-    protected $type;
+    protected $formType;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
-        $this->type = new RegistrationFormType('OroB2B\Bundle\UserAdminBundle\Entity\User');
+        parent::setUp();
+
+        $this->formType = new RegistrationFormType('OroB2B\Bundle\UserBundle\Entity\User');
+    }
+
+    /**
+     * @dataProvider submitDataProvider
+     * @param mixed $submittedData
+     */
+    public function testSubmit($submittedData)
+    {
+        $user = new User();
+        $form = $this->factory->create($this->formType, $user);
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertEquals($user, $form->getData());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions()
+    {
+        return [new ValidatorExtension(Validation::createValidator())];
+    }
+
+    /**
+     * @return array
+     */
+    public function submitDataProvider()
+    {
+        return [
+            'submit' => [
+                'submittedData' => [
+                    'firstName' => 'First Name',
+                    'lastName' => 'Last Name',
+                    'email' => 'test@example.com',
+                    'plainPassword' => 'password',
+                ],
+            ]
+        ];
     }
 
     public function testBuildFormTest()
@@ -59,11 +108,11 @@ class RegistrationFormTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
-        $this->type->buildForm($builder, []);
+        $this->formType->buildForm($builder, []);
     }
 
     public function testGetName()
     {
-        $this->assertEquals(RegistrationFormType::NAME, $this->type->getName());
+        $this->assertEquals(RegistrationFormType::NAME, $this->formType->getName());
     }
 }
