@@ -13,7 +13,10 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 use OroB2B\Bundle\RFPAdminBundle\Migrations\Schema\v1_0\OroB2BRFPAdminBundle as OroB2BRFPAdminBundle10;
 
-class OroB2BRFPAdminBundleInstaller implements Installation, NoteExtensionAwareInterface, ActivityExtensionAwareInterface
+class OroB2BRFPAdminBundleInstaller implements
+    Installation,
+    NoteExtensionAwareInterface,
+    ActivityExtensionAwareInterface
 {
     /**
      * @var ActivityExtension

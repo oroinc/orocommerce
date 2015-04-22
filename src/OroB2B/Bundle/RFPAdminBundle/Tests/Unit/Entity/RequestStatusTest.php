@@ -3,12 +3,13 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatusTranslation;
 
-class RequestStatusTest extends EntityTestCase
+use OroB2B\Bundle\RFPBundle\Tests\Unit\Entity\RequestStatusTestCase;
+
+class RequestStatusTest extends RequestStatusTestCase
 {
     /**
      * Test setters getters
@@ -28,19 +29,6 @@ class RequestStatusTest extends EntityTestCase
         $propertyRequestStatus = new RequestStatus();
 
         $this->assertPropertyAccessors($propertyRequestStatus, $properties);
-    }
-
-    /**
-     * Test toString
-     */
-    public function testToString()
-    {
-        $value = 'Opened';
-
-        $requestStatus = new RequestStatus();
-        $requestStatus->setLabel($value);
-
-        $this->assertEquals($value, (string)$requestStatus);
     }
 
     /**
@@ -71,6 +59,7 @@ class RequestStatusTest extends EntityTestCase
         $translation
             ->setLocale('en_US')
             ->setField('type');
+
         $translations = new ArrayCollection([$translation]);
         $requestStatus->setTranslations($translations);
         $this->assertCount(1, $requestStatus->getTranslations());

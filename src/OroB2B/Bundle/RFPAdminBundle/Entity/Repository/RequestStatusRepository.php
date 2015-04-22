@@ -29,7 +29,12 @@ class RequestStatusRepository extends EntityRepository
     public function getNotDeletedAndDeletedWithRequestsStatuses()
     {
         return $this->getNotDeletedRequestStatusesQueryBuilder()
-            ->leftJoin('OroB2BRFPAdminBundle:Request', 'request', Join::WITH, 'IDENTITY(request.status) = requestStatus.id')
+            ->leftJoin(
+                'OroB2BRFPAdminBundle:Request',
+                'request',
+                Join::WITH,
+                'IDENTITY(request.status) = requestStatus.id'
+            )
             ->orWhere('requestStatus.deleted = :deleted_param AND request.id IS NOT NULL')
             ->setParameter('deleted_param', true, \PDO::PARAM_BOOL)
             ->getQuery()

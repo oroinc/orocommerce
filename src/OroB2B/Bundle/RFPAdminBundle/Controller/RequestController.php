@@ -92,7 +92,9 @@ class RequestController extends Controller
             $this->container->get('templating')
         );
 
-        $formAction = $this->get('router')->generate('orob2b_rfp_admin_request_change_status', ['id' => $request->getId()]);
+        $formAction = $this->get('router')->generate('orob2b_rfp_admin_request_change_status', [
+            'id' => $request->getId()
+        ]);
 
         return [
             'entity'     => $request,
