@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Model;
 
-use OroB2B\Bundle\RFPBundle\Entity\AbstractRequest;
+use OroB2B\Bundle\RFPBundle\Model\AbstractRequest;
 
 class ExtendRequest extends AbstractRequest
 {
