@@ -2,6 +2,7 @@ parameters:
     oro_application.listener.request.class:             Oro\Bundle\ApplicationBundle\EventListener\RequestListener
     oro_application.listener.navigation_listener.class: Oro\Bundle\ApplicationBundle\EventListener\NavigationListener
     oro_distribution.script_runner.class:               Oro\Bundle\ApplicationBundle\Script\Runner
+    oro_application.form.type.roles.class:              Oro\Bundle\ApplicationBundle\Form\Type\RolesType
 services:
     kernel.listener.install.event:
         class: %oro_application.listener.request.class%
@@ -33,3 +34,10 @@ services:
             - %kernel.environment%
         tags:
             - { name: monolog.logger, channel: oro_distribution }
+
+    oro_application.form.type.roles:
+        class: %oro_application.form.type.roles.class%
+        arguments:
+            - %orob2b.frontend.roles%
+        tags:
+            - { name: form.type, alias: orob2b_frontend_roles }
