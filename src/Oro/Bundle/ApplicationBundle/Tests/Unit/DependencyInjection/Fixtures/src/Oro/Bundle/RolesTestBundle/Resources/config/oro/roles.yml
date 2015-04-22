@@ -1,0 +1,6 @@
+ROLE_TEST:
+    label: test
+    description: test description
+ROLE_TEST2:
+    label: test2
+    description: test2 description
