@@ -94,14 +94,6 @@ class RequestTypeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test getDefaultRequestStatus
-     */
-    public function testGetDefaultRequestStatus()
-    {
-        $this->assertEquals($this->requestStatus, $this->formType->getDefaultRequestStatus());
-    }
-
-    /**
      * Test buildForm
      */
     public function testBuildForm()
@@ -165,15 +157,15 @@ class RequestTypeTest extends \PHPUnit_Framework_TestCase
 
         $builder->expects($this->once())
             ->method('addEventListener')
-            ->with(FormEvents::PRE_SUBMIT, [$this->formType, 'postSubmit']);
+            ->with(FormEvents::PRE_SUBMIT, [$this->formType, 'preSubmit']);
 
         $this->formType->buildForm($builder, []);
     }
 
     /**
-     * Test postSubmit
+     * Test preSubmit
      */
-    public function testPostSubmit()
+    public function testPreSubmit()
     {
         $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
             ->disableOriginalConstructor()
@@ -195,7 +187,7 @@ class RequestTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getForm')
             ->willReturn($form);
 
-        $this->formType->postSubmit($formEvent);
+        $this->formType->preSubmit($formEvent);
     }
 
     /**

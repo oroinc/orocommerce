@@ -67,13 +67,13 @@ class RequestType extends AbstractType
             ])
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'postSubmit']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
     /**
      * @param FormEvent $event
      */
-    public function postSubmit(FormEvent $event)
+    public function preSubmit(FormEvent $event)
     {
         $form = $event->getForm();
 
@@ -86,7 +86,7 @@ class RequestType extends AbstractType
     /**
      * @return RequestStatus
      */
-    public function getDefaultRequestStatus()
+    protected function getDefaultRequestStatus()
     {
         return $this->registry
             ->getManagerForClass('OroB2BRFPBundle:RequestStatus')
