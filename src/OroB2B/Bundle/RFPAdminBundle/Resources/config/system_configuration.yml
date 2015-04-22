@@ -1,7 +1,7 @@
 oro_system_configuration:
     groups:
         frontend_application:
-            title: 'Frontend Application'
+            title: orob2b.frontendadmin.system_configuration.frontend_application_group_title
         rfp_settings:
             title: orob2b.rfpadmin.system_configuration.group_title
             icon: icon-file

@@ -57,3 +57,8 @@ orob2b.rfpadmin:
 
     widget:
         change_status_title: 'Change Request For Proposal Status'
+
+# We MUST move this section form here in the future!
+orob2b.frontendadmin:
+    system_configuration:
+        frontend_application_group_title: 'Frontend Application'
