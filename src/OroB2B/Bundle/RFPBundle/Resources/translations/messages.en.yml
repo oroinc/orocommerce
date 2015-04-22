@@ -1,0 +1,15 @@
+orob2b.rfp:
+    request:
+        first_name.label: 'First Name'
+        last_name.label: 'Last Name'
+        email.label: 'Email Address'
+        phone.label: 'Phone Number'
+        company.label: 'Company'
+        role.label: 'Role'
+        status.label: 'Status'
+        body.label: 'Request body'
+
+        submit.label: 'Submit Request For Proposal'
+
+    message:
+        request_saved: 'Your Request For Proposal successfully saved!'
