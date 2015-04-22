@@ -35,9 +35,10 @@ orob2b.rfpadmin:
         label_translation: 'Labels'
 
     system_configuration:
-        group_title:                 'Request For Proposal'
-        requeststatus_group_title:   'Request For Proposal Status'
-        requeststatus_default_label: 'Deafault Request For Proposal Status'
+        group_title: 'Request For Proposal'
+        requeststatus_group_title: 'Request For Proposal Status'
+        requeststatus_default_label: 'Default Request For Proposal Status'
+        default_user_for_notifications: 'Default User For Notifications'
 
     message:
         request_status_saved:     'Request Status saved'

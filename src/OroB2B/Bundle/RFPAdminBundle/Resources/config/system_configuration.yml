@@ -1,5 +1,7 @@
 oro_system_configuration:
     groups:
+        frontend_application:
+            title: 'Frontend Application'
         rfp_settings:
             title: orob2b.rfpadmin.system_configuration.group_title
             icon: icon-file
@@ -18,13 +20,13 @@ oro_system_configuration:
             data_type: string
             type: orob2b_rfp_admin_user_select
             options:
-                label: 'adfsdfsdfsdfsdfsdfsdf'
+                label: orob2b.rfpadmin.system_configuration.default_user_for_notifications
 
     tree:
         system_configuration:
             platform:
                 children:
-                    general_setup:
+                    frontend_application:
                         children:
                             rfp_settings:
                                 children:
