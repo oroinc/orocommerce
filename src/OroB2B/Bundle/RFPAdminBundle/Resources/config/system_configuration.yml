@@ -1,0 +1,27 @@
+oro_system_configuration:
+    groups:
+        rfp_settings:
+            title: orob2b.rfpadmin.system_configuration.group_title
+            icon: icon-file
+        rfp_requeststatus_settings:
+            title: orob2b.rfpadmin.system_configuration.requeststatus_group_title
+
+    fields:
+        oro_b2b_rfp_admin.default_request_status:
+            ui_only: true
+            data_type: string
+            type: orob2b_rfp_admin_default_request_status
+            options:
+                label: orob2b.rfpadmin.system_configuration.requeststatus_default_label
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            rfp_settings:
+                                children:
+                                    rfp_requeststatus_settings:
+                                        children:
+                                            - oro_b2b_rfp_admin.default_request_status
