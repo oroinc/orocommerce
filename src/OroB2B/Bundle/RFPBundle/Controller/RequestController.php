@@ -11,9 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
-/**
- * @Route("/rfp")
- */
 class RequestController extends Controller
 {
     /**
