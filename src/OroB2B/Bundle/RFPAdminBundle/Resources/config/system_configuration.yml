@@ -13,6 +13,12 @@ oro_system_configuration:
             type: orob2b_rfp_admin_default_request_status
             options:
                 label: orob2b.rfpadmin.system_configuration.requeststatus_default_label
+        oro_b2b_rfp_admin.default_user_for_notifications:
+            ui_only: true
+            data_type: string
+            type: orob2b_rfp_admin_user_select
+            options:
+                label: 'adfsdfsdfsdfsdfsdfsdf'
 
     tree:
         system_configuration:
@@ -25,3 +31,4 @@ oro_system_configuration:
                                     rfp_requeststatus_settings:
                                         children:
                                             - oro_b2b_rfp_admin.default_request_status
+                                            - oro_b2b_rfp_admin.default_user_for_notifications
