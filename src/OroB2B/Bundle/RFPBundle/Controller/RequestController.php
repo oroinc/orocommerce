@@ -48,15 +48,6 @@ class RequestController extends Controller
     {
         $rfpRequest = new RFPRequest();
 
-        $defaultStatusName = $this->get('oro_config.fake_manager')->get('oro_b2b_rfp_admin.default_request_status');
-
-        $defaultStatus = $this->getDoctrine()
-            ->getManagerForClass('OroB2BRFPBundle:RequestStatus')
-            ->getRepository('OroB2BRFPBundle:RequestStatus')
-            ->findOneBy(['name' => $defaultStatusName]);
-
-        $rfpRequest->setStatus($defaultStatus);
-
         $form = $this->createCreateForm($rfpRequest);
         $form->handleRequest($request);
 

@@ -2,15 +2,12 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Form\RequestType;
 
-use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
-use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Form\FormEvents;
 
-class RequestTypeTest extends FormIntegrationTestCase
+class RequestTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RequestType
@@ -18,24 +15,64 @@ class RequestTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
+     * @var RequestStatus
+     */
+    protected $requestStatus;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
-         */
-        $validator = $this->getMock('\Symfony\Component\Validator\ValidatorInterface');
-        $validator->expects($this->any())
-            ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
 
-        $this->factory = Forms::createFormFactoryBuilder()
-            ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new FormTypeValidatorExtension($validator))
-            ->getFormFactory();
+        $this->requestStatus = new RequestStatus();
 
-        $this->formType = new RequestType();
+        $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->any())
+            ->method('findOneBy')
+            ->with(['name' => 'open'])
+            ->willReturn($this->requestStatus);
+
+        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->with('OroB2BRFPBundle:RequestStatus')
+            ->willReturn($repository);
+
+        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with('OroUserBundle:User')
+            ->willReturn($manager);
+
+        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with('OroB2BRFPBundle:RequestStatus')
+            ->willReturn($manager);
+
+        $configManager = $this->getMockBuilder('Oro\Bundle\ApplicationBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_b2b_rfp_admin.default_request_status')
+            ->willReturn('open');
+
+        $this->formType = new RequestType($configManager, $registry);
     }
 
     /**
@@ -57,61 +94,115 @@ class RequestTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * Test getDefaultRequestStatus
+     */
+    public function testGetDefaultRequestStatus()
+    {
+        $this->assertEquals($this->requestStatus, $this->formType->getDefaultRequestStatus());
+    }
+
+    /**
+     * Test buildForm
+     */
+    public function testBuildForm()
+    {
+        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilderInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $builder->expects($this->exactly(7))
+            ->method('add')
+            ->willReturnSelf();
+
+        $builder->expects($this->at(0))
+            ->method('add')
+            ->with('firstName', 'text', [
+                'label' => 'orob2b.rfp.request.first_name.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->at(1))
+            ->method('add')
+            ->with('lastName', 'text', [
+                'label' => 'orob2b.rfp.request.last_name.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->at(2))
+            ->method('add')
+            ->with('email', 'text', [
+                'label' => 'orob2b.rfp.request.email.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->at(3))
+            ->method('add')
+            ->with('phone', 'text', [
+                'label' => 'orob2b.rfp.request.phone.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->at(4))
+            ->method('add')
+            ->with('company', 'text', [
+                'label' => 'orob2b.rfp.request.company.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->at(5))
+            ->method('add')
+            ->with('role', 'text', [
+                'label' => 'orob2b.rfp.request.role.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->at(6))
+            ->method('add')
+            ->with('body', 'textarea', [
+                'label' => 'orob2b.rfp.request.body.label'
+            ])
+            ->willReturnSelf();
+
+        $builder->expects($this->once())
+            ->method('addEventListener')
+            ->with(FormEvents::PRE_SUBMIT, [$this->formType, 'postSubmit']);
+
+        $this->formType->buildForm($builder, []);
+    }
+
+    /**
+     * Test postSubmit
+     */
+    public function testPostSubmit()
+    {
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $form->expects($this->once())
+            ->method('add')
+            ->with('status', 'entity', [
+                'class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus',
+                'data'  => $this->requestStatus
+            ])
+            ->willReturnSelf();
+
+        $formEvent = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $formEvent->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+
+        $this->formType->postSubmit($formEvent);
+    }
+
+    /**
      * Test getName
      */
     public function testGetName()
     {
         $this->assertEquals(RequestType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
-     * @dataProvider submitDataProvider
-     */
-    public function testSubmit($defaultData, $viewData, $submittedData, $expectedData)
-    {
-        $form = $this->factory->create($this->formType, $defaultData, []);
-
-        $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
-
-        $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
-    }
-
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
-    {
-        return [
-            'new request' => [
-                'defaultData' => new Request(),
-                'viewData'    => new Request(),
-                'submittedData' => [
-                    'firstName' => 'Grzegorz',
-                    'lastName'  => 'Brzeczyszczykiewicz',
-                    'email'     => 'grzegorz@nsdap.de',
-                    'phone'     => '+38 (044) 247-68-00',
-                    'company'   => 'NSDAP',
-                    'role'      => 'obersturmbannfuhrer',
-                    'body'      => 'I wanna buy more Tiger I and Tiger II'
-                ],
-                'expectedData' => (new Request())
-                    ->setFirstName('Grzegorz')
-                    ->setLastName('Brzeczyszczykiewicz')
-                    ->setEmail('grzegorz@nsdap.de')
-                    ->setPhone('+38 (044) 247-68-00')
-                    ->setCompany('NSDAP')
-                    ->setRole('obersturmbannfuhrer')
-                    ->setBody('I wanna buy more Tiger I and Tiger II')
-                ,
-                'isValid' => true
-            ]
-        ];
     }
 }

@@ -2,13 +2,41 @@
 
 namespace OroB2B\Bundle\RFPBundle\Form;
 
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Oro\Bundle\ApplicationBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+
 class RequestType extends AbstractType
 {
     const NAME = 'orob2b_rfp_request_type';
+
+    /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @param ConfigManager $configManager
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ConfigManager $configManager, ManagerRegistry $registry)
+    {
+        $this->configManager = $configManager;
+        $this->registry = $registry;
+    }
 
     /**
      * {@inheritdoc}
@@ -38,6 +66,34 @@ class RequestType extends AbstractType
                 'label' => 'orob2b.rfp.request.body.label'
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'postSubmit']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        $form->add('status', 'entity', [
+            'class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus',
+            'data'  => $this->getDefaultRequestStatus()
+        ]);
+    }
+
+    /**
+     * @return RequestStatus
+     */
+    public function getDefaultRequestStatus()
+    {
+        return $this->registry
+            ->getManagerForClass('OroB2BRFPBundle:RequestStatus')
+            ->getRepository('OroB2BRFPBundle:RequestStatus')
+            ->findOneBy([
+                'name' => $this->configManager->get('oro_b2b_rfp_admin.default_request_status')
+            ]);
     }
 
     /**
