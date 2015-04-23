@@ -1,8 +1,9 @@
 parameters:
-    orob2b_rfp_admin.form.type.default_request_status.class:             OroB2B\Bundle\RFPAdminBundle\Form\Type\DefaulRequestStatusType
-    orob2b_rfp_admin.form.type.request_status_select.class:              OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestStatusSelectType
-    orob2b_rfp_admin.form.type.request_change_status.class:              OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestChangeStatusType
+    orob2b_rfp_admin.form.type.default_request_status.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\DefaulRequestStatusType
+    orob2b_rfp_admin.form.type.request_status_select.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestStatusSelectType
+    orob2b_rfp_admin.form.type.request_change_status.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestChangeStatusType
     orob2b_rfp_admin.form.type.request_status_with_deleted_select.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestStatusWithDeletedSelectType
+    orob2b_rfp_admin.form.type.user_select.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\UserSelectType
 
 services:
     orob2b_rfp_admin.form.type.default_request_status:
@@ -30,3 +31,10 @@ services:
         class: %orob2b_rfp_admin.form.type.request_change_status.class%
         tags:
             - { name: form.type, alias: orob2b_rfp_admin_request_change_status }
+
+    orob2b_rfp_admin.form.type.user_select:
+        class: %orob2b_rfp_admin.form.type.user_select.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_rfp_admin_user_select }

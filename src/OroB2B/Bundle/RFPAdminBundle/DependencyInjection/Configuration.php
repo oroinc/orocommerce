@@ -20,7 +20,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'default_request_status' => ['value' => 'open']
+                'default_request_status' => ['value' => 'open'],
+                'default_user_for_notifications' => null,
             ]
         );
 
