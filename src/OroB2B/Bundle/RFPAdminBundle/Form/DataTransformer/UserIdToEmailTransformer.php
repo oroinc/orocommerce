@@ -57,7 +57,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      */
     public function reverseTransform($userId)
     {
-        if (!is_int($userId)) {
+        if (!is_numeric($userId)) {
             return null;
         }
 
