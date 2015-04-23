@@ -14,4 +14,4 @@ services:
         arguments:
             - @mailer
             - @twig
-            - @oro_config.fake_manager
+            - @oro_application.config_manager
