@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ApplicationBundle\Form\Type;
+namespace OroB2B\Bundle\UserAdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class RolesType extends AbstractType
+class FrontendRolesType extends AbstractType
 {
-    const NAME = 'orob2b_roles';
+    const NAME = 'orob2b_frontend_roles';
 
     /**
      * @var array

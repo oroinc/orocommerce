@@ -1,17 +1,21 @@
 <?php
 
-namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ApplicationBundle\Form\Type\RolesType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-class RolesTypeTest extends FormIntegrationTestCase
+use OroB2B\Bundle\UserAdminBundle\Form\Type\FrontendRolesType;
+
+class FrontendRolesTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var RolesType
+     * @var FrontendRolesType
      */
     protected $formType;
 
+    /**
+     * @var array
+     */
     protected $frontendRoles = [
         'TEST_ROLE_01' => [
             'label' => 'Test 1',
@@ -27,7 +31,7 @@ class RolesTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new RolesType($this->frontendRoles);
+        $this->formType = new FrontendRolesType($this->frontendRoles);
     }
 
     /**
@@ -81,7 +85,7 @@ class RolesTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(RolesType::NAME, $this->formType->getName());
+        $this->assertEquals(FrontendRolesType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()

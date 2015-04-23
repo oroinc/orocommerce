@@ -1,0 +1,9 @@
+parameters:
+    orob2b_user_admin.form.type.roles.class: OroB2B\Bundle\UserAdminBundle\Form\Type\FrontendRolesType
+services:
+    orob2b_user_admin.form.type.roles:
+        class: %orob2b_user_admin.form.type.roles.class%
+        arguments:
+            - %orob2b.frontend.roles%
+        tags:
+            - { name: form.type, alias: orob2b_frontend_roles }
