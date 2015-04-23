@@ -13,6 +13,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ApplicationBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 
 class RequestType extends AbstractType
 {
@@ -67,20 +68,17 @@ class RequestType extends AbstractType
             ])
         ;
 
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
      * @param FormEvent $event
      */
-    public function preSubmit(FormEvent $event)
+    public function postSubmit(FormEvent $event)
     {
-        $form = $event->getForm();
-
-        $form->add('status', 'entity', [
-            'class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus',
-            'data'  => $this->getDefaultRequestStatus()
-        ]);
+        /** @var Request $request */
+        $request = $event->getData();
+        $request->setStatus($this->getDefaultRequestStatus());
     }
 
     /**

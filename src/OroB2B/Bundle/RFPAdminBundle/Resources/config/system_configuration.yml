@@ -1,5 +1,7 @@
 oro_system_configuration:
     groups:
+        frontend_application:
+            title: orob2b.frontendadmin.system_configuration.frontend_application_group_title
         rfp_settings:
             title: orob2b.rfpadmin.system_configuration.group_title
             icon: icon-file
@@ -13,15 +15,22 @@ oro_system_configuration:
             type: orob2b_rfp_admin_default_request_status
             options:
                 label: orob2b.rfpadmin.system_configuration.requeststatus_default_label
+        oro_b2b_rfp_admin.default_user_for_notifications:
+            ui_only: true
+            data_type: string
+            type: orob2b_rfp_admin_user_select
+            options:
+                label: orob2b.rfpadmin.system_configuration.default_user_for_notifications
 
     tree:
         system_configuration:
             platform:
                 children:
-                    general_setup:
+                    frontend_application:
                         children:
                             rfp_settings:
                                 children:
                                     rfp_requeststatus_settings:
                                         children:
                                             - oro_b2b_rfp_admin.default_request_status
+                                            - oro_b2b_rfp_admin.default_user_for_notifications
