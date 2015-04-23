@@ -24,17 +24,10 @@ abstract class WebTestCase extends BaseWebTestCase
      *
      * @param array $options
      * @param array $server
-     * @param bool $force
      */
-    protected function initClient($options = [], $server = [], $force = false)
+    protected function initClient($options = [], $server = [])
     {
-        if ($force || !static::$clientInstance) {
-            static::$clientInstance = static::createClient($options, $server);
-        } else {
-            static::$clientInstance->setServerParameters($server);
-        }
-
-        $this->client = static::$clientInstance;
+        $this->client = static::createClient($options, $server);
     }
 
     /**
@@ -75,6 +68,6 @@ abstract class WebTestCase extends BaseWebTestCase
      */
     public function getContainer()
     {
-        return static::$kernel->getContainer();
+        return $this->client->getContainer();
     }
 }

@@ -6,16 +6,18 @@ use OroB2B\Bundle\FrontendBundle\Test\WebTestCase;
 
 class RequstControllerTest extends WebTestCase
 {
-    const REQUEST_FIRST_NAME = 'Agnetha';
-    const REQUEST_LAST_NAME  = 'Faltskog';
-    const REQUEST_EMAIL      = 'contact@agnetha.com';
-    const REQUEST_PHONE      = '+38 (044) 494-42-70';
-    const REQUEST_COMPANY    = 'ABBA';
-    const REQUEST_ROLE       = 'Singer';
-    const REQUEST_BODY       = 'Gimme gimme gimme a man after midnight';
+    const REQUEST_FIRST_NAME    = 'Agnetha';
+    const REQUEST_LAST_NAME     = 'Faltskog';
+    const REQUEST_EMAIL         = 'contact@agnetha.com';
+    const REQUEST_INVALID_EMAIL = 'No No No, David Blaine, No';
+    const REQUEST_PHONE         = '+38 (044) 494-42-70';
+    const REQUEST_COMPANY       = 'ABBA';
+    const REQUEST_ROLE          = 'Singer';
+    const REQUEST_BODY          = 'Gimme gimme gimme a man after midnight';
 
-    const REQUEST_SUBMIT_BTN = 'Submit Request For Proposal';
-    const REQUEST_SAVED_MSG  = 'Your Request For Proposal successfully saved!';
+    const REQUEST_SUBMIT_BTN  = 'Submit Request For Proposal';
+    const REQUEST_SAVED_MSG   = 'Your Request For Proposal successfully saved';
+    const REQUEST_INVALID_MSG = 'This value is not a valid email address';
 
     /**
      * {@inheritdoc}
@@ -25,6 +27,9 @@ class RequstControllerTest extends WebTestCase
         $this->initClient();
     }
 
+    /**
+     * Test valid submit
+     */
     public function testSubmit()
     {
         // PART 1: Test if form was successfully submitted
@@ -65,7 +70,7 @@ class RequstControllerTest extends WebTestCase
         $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $request);
 
         $defaultRequestStatusName = $this->getContainer()
-            ->get('oro_config.fake_manager') // TODO: rename to oro_application.config_manager
+            ->get('oro_application.config_manager')
             ->get('oro_b2b_rfp_admin.default_request_status');
 
         $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $request->getStatus());
@@ -78,5 +83,27 @@ class RequstControllerTest extends WebTestCase
         // PART 4: Cleaning
         $em->remove($request);
         $em->flush();
+    }
+
+    /**
+     * Test invalid submit
+     */
+    public function testInvalidSubmit()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
+
+        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form(array(
+            'orob2b_rfp_request_type[firstName]' => self::REQUEST_FIRST_NAME,
+            'orob2b_rfp_request_type[lastName]'  => self::REQUEST_LAST_NAME,
+            'orob2b_rfp_request_type[email]'     => self::REQUEST_INVALID_EMAIL,
+            'orob2b_rfp_request_type[phone]'     => self::REQUEST_PHONE,
+            'orob2b_rfp_request_type[company]'   => self::REQUEST_COMPANY,
+            'orob2b_rfp_request_type[role]'      => self::REQUEST_ROLE,
+            'orob2b_rfp_request_type[body]'      => self::REQUEST_BODY,
+        ));
+
+        $this->client->submit($form);
+
+        $this->assertContains(self::REQUEST_INVALID_MSG, $this->client->getCrawler()->html());
     }
 }
