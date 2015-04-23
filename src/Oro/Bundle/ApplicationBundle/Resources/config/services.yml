@@ -36,5 +36,5 @@ services:
         tags:
             - { name: monolog.logger, channel: oro_distribution }
 
-    oro_config.fake_manager:
+    oro_application.config_manager:
         class: %oro_application.config_manager.class%
