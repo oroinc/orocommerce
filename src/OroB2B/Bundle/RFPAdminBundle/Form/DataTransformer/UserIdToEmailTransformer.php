@@ -57,14 +57,14 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      */
     public function reverseTransform($userId)
     {
-        if (!is_numeric($userId)) {
+        if (!$userId) {
             return null;
         }
 
         $user = $this->registry
             ->getManagerForClass('OroUserBundle:User')
             ->getRepository('OroUserBundle:User')
-            ->find($userId);
+            ->find((int) $userId);
 
         if (null === $user) {
             throw new TransformationFailedException(sprintf(
