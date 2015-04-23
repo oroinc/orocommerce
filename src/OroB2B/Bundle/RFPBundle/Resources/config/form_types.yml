@@ -5,7 +5,7 @@ services:
     orob2b_rfp.form.type.request:
         class: %orob2b_rfp.form.type.request.class%
         arguments:
-            - @oro_config.fake_manager
+            - @oro_application.config_manager
             - @doctrine
         tags:
             - { name: form.type, alias: orob2b_rfp_request_type }

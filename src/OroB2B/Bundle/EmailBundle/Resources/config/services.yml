@@ -14,7 +14,7 @@ services:
         class: %orob2b_email.mailer.class%
         arguments:
             - @mailer
-            - @oro_config.fake_manager
+            - @oro_application.config_manager
         public: false
 
     orob2b_email.email_send_processor:
@@ -22,5 +22,5 @@ services:
         arguments:
             - @doctrine
             - @twig
-            - @oro_config.fake_manager
+            - @oro_application.config_manager
             - @orob2b_email.mailer
