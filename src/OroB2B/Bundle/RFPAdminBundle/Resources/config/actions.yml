@@ -1,0 +1,11 @@
+parameters:
+    orob2b_rfp_admin.datagrid.action.request_change_status_dialog.class: OroB2B\Bundle\RFPAdminBundle\Datagrid\Action\RequestChangeStatusDialogAction
+
+services:
+    orob2b_rfp_admin.datagrid.action.request_change_status_dialog:
+        class: %orob2b_rfp_admin.datagrid.action.request_change_status_dialog.class%
+        arguments:
+            - @translator
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: request-change-status-dialog }

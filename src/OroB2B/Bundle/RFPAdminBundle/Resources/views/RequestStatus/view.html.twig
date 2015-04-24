@@ -1,0 +1,93 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.label } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_rfp_admin_request_status_index'),
+        'indexLabel': 'orob2b.rfpadmin.requeststatus.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set requestInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_rfp_admin_request_status_info', {id: entity.id}),
+            'alias': 'request-status-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.rfpadmin.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [requestInfo]}]
+        }
+    ] %}
+
+    {% set id = 'pageView' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block navButtons %}
+    {% if resource_granted('DELETE', entity) %}
+        {% if entity.deleted %}
+            {% set idButton = 'btn-restore-request-status' %}
+
+            {{ UI.button({
+                'aCss':  'no-hash',
+                'iCss':  'icon-ok',
+                'id':    idButton,
+                'label': 'orob2b.rfpadmin.btn.restore'|trans,
+                'path':  path('orob2b_api_rfp_restore_request_status', {'id': entity.id}),
+                'title': 'orob2b.rfpadmin.btn.restore'|trans,
+            }) }}
+
+            {% set requestStatusDeleteRestoreComponentOptions  = {
+                id: idButton,
+                url: path('orob2b_api_rfp_restore_request_status', {'id': entity.id}),
+                action: 'restore'
+            } %}
+
+            <span data-page-component-module="orob2brfpadmin/js/app/components/request-status-delete-restore-component"
+                  data-page-component-options="{{ requestStatusDeleteRestoreComponentOptions|json_encode }}"></span>
+        {% elseif oro_config_value('oro_b2b_rfp_admin.default_request_status') != entity.name %}
+            {% set idButton = 'btn-delete-request-status' %}
+
+            {{ UI.button({
+                'aCss':  'no-hash',
+                'iCss':  'icon-remove',
+                'id':    idButton,
+                'label': 'orob2b.rfpadmin.btn.delete'|trans,
+                'path':  path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
+                'title': 'orob2b.rfpadmin.btn.delete'|trans,
+            }) }}
+
+            {% set requestStatusDeleteRestoreComponentOptions  = {
+                id: idButton,
+                url: path('orob2b_api_rfp_delete_request_status', {'id': entity.id}),
+                action: 'delete'
+            } %}
+
+            <span data-page-component-module="orob2brfpadmin/js/app/components/request-status-delete-restore-component"
+                  data-page-component-options="{{ requestStatusDeleteRestoreComponentOptions|json_encode }}"></span>
+        {% endif %}
+    {% endif %}
+
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path': path('orob2b_rfp_admin_request_status_update', {'id': entity.id}),
+            'entity_label': 'orob2b.rfpadmin.requeststatus.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
+
+{% block stats %}
+    {# don't touch it #}
+{% endblock stats %}

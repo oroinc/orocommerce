@@ -1,0 +1,75 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with ['OroFormBundle:Form:fields.html.twig']%}
+
+{% oro_title_set({params : {"%title%": entity.label, "%entityName%": 'orob2b.rfpadmin.requeststatus.entity_label'|trans} }) %}
+
+{% set formAction = entity.id
+    ? path('orob2b_rfp_admin_request_status_update', { id: entity.id })
+    : path('orob2b_rfp_admin_request_status_create')
+%}
+
+{% block navButtons %}
+    {% if entity.id %}
+        {{ UI.cancelButton(path('orob2b_rfp_admin_request_status_view', {'id': entity.id})) }}
+    {% else %}
+        {{ UI.cancelButton(path('orob2b_rfp_admin_request_status_index')) }}
+    {% endif %}
+
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_rfp_admin_request_status_create') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_rfp_admin_request_status_index'),
+            'indexLabel':  'orob2b.rfpadmin.request.entity_plural_label'|trans,
+            'entityTitle': entity.label
+        } %}
+
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.rfpadmin.request.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'request-status-edit' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.rfpadmin.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.name),
+                    form_row(form.sortOrder)
+                ]
+            }]
+        },
+        {
+            'title': 'orob2b.rfpadmin.sections.label_translation'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_widget(form.translations)
+                ]
+            }]
+        }
+    ] %}
+
+    {% set data = {
+        'formErrors': form_errors(form)? form_errors(form) : null,
+        'dataBlocks': dataBlocks,
+        }
+    %}
+
+    {{ parent() }}
+{% endblock content_data %}
