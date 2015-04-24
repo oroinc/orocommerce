@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\ApplicationHostPass;
 
 class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $container;
 
@@ -26,20 +27,6 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcess()
     {
-        $this->container->expects($this->exactly(3))
-            ->method('getParameter')
-            ->will(
-                $this->returnCallback(function($arg) {
-                    $map = [
-                        'kernel.name'        => 'app',
-                        'kernel.environment' => 'dev',
-                        'kernel.application' => 'admin'
-                    ];
-
-                    return $map[$arg];
-                })
-            );
-
         $allParameters = [
             'application_host.admin'    => 'http://localhost/admin.php',
             'application_host.frontend' => 'http://localhost/',
@@ -60,18 +47,9 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
             ->method('getParameterBag')
             ->willReturn(new ParameterBag($allParameters));
 
-        $this->container->expects($this->exactly(2))
+        $this->container->expects($this->once())
             ->method('setParameter')
-            ->will(
-                $this->returnCallback(function($arg) use ($expectedParameters) {
-                    $map = [
-                        ApplicationHostPass::PARAMETER_NAME => $expectedParameters,
-                        'router.cache_class_prefix'         => 'appDevAdmin'
-                    ];
-
-                    return $map[$arg];
-                })
-            );
+            ->with(ApplicationHostPass::PARAMETER_NAME, $expectedParameters);
 
         $compilerPass = new ApplicationHostPass();
         $compilerPass->process($this->container);

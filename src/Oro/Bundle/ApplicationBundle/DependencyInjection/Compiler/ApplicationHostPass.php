@@ -25,13 +25,5 @@ class ApplicationHostPass implements CompilerPassInterface
         }
 
         $container->setParameter(self::PARAMETER_NAME, $hosts);
-
-        // Create new cache_class_prefix considering the new multiapp architecture
-        $routerCacheClassPrefix = $container->getParameter('kernel.name')
-                                . ucfirst($container->getParameter('kernel.environment'))
-                                . ucfirst($container->getParameter('kernel.application'));
-
-        // Redefine cache_class_prefix from SymfonyFrameworkBundle
-        $container->setParameter('router.cache_class_prefix', $routerCacheClassPrefix);
     }
 }
