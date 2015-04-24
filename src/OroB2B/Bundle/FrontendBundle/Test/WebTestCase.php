@@ -71,15 +71,4 @@ abstract class WebTestCase extends BaseWebTestCase
     {
         return $this->client->getContainer();
     }
-
-    /**
-     * @return MessageDataCollector
-     */
-    protected function getMailerCollector()
-    {
-        $collector = new MessageDataCollector($this->getContainer(), false);
-        $collector->collect($this->client->getRequest(), $this->client->getResponse());
-
-        return $collector;
-    }
 }

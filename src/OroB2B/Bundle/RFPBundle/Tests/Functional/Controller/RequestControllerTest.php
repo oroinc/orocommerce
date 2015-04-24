@@ -50,6 +50,10 @@ class RequstControllerTest extends WebTestCase
 
         $this->client->submit($form);
 
+        // collect messages for future needs
+        /** @var array $collectedMessages */
+        $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
+
         $crawler = $this->client->followRedirect();
 
         $this->assertContains(self::REQUEST_SAVED_MSG, $crawler->html());
@@ -89,8 +93,6 @@ class RequstControllerTest extends WebTestCase
         $defaultUserForNotificationEmail = $this->getContainer()
             ->get('oro_application.config_manager')
             ->get('oro_b2b_rfp_admin.default_user_for_notifications'); // expects admin@example.com
-
-        $collectedMessages = $this->getMailerCollector()->getMessages();
 
         /** @var \Swift_Message $message */
         $message = reset($collectedMessages);
