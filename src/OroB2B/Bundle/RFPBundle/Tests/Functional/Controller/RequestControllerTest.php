@@ -15,6 +15,9 @@ class RequstControllerTest extends WebTestCase
     const REQUEST_ROLE          = 'Singer';
     const REQUEST_BODY          = 'Gimme gimme gimme a man after midnight';
 
+    const REQUEST_NOTIFICATION_SUBJECT_PARTIAL = 'New RFP from';
+    const REQUEST_NOTIFICATION_BODY_PARTIAL    = 'created new RFP';
+
     const REQUEST_SUBMIT_BTN  = 'Submit Request For Proposal';
     const REQUEST_SAVED_MSG   = 'Your Request For Proposal successfully saved';
     const REQUEST_INVALID_MSG = 'This value is not a valid email address';
@@ -79,6 +82,23 @@ class RequstControllerTest extends WebTestCase
 
         // PART 3: Test email notification
         // TODO: wait until BB-406 will be implemented
+
+        //expects admin@example.com
+        $defaultUserForNotificationEmail = $this->getContainer()
+            ->get('oro_application.config_manager')
+            ->get('oro_b2b_rfp_admin.default_user_for_notifications');
+
+        $collectedMessages = $this->getMailerCollector()->getMessages();
+
+        /** @var \Swift_Message $message */
+        $message = reset($collectedMessages);
+
+        // Asserting e-mail data
+        $this->assertInstanceOf('Swift_Message', $message);
+        $this->assertContains(REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getSubject());
+        $this->assertContains(REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getBody());
+        $this->assertEquals($defaultUserForNotificationEmail, key($message->getTo()));
+        $this->assertEquals($defaultUserForNotificationEmail, key($message->getFrom())); // not the best option
 
         // PART 4: Cleaning
         $em->remove($request);

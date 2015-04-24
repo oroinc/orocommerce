@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Client;
+use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
 
 abstract class WebTestCase extends BaseWebTestCase
 {
@@ -66,8 +67,19 @@ abstract class WebTestCase extends BaseWebTestCase
     /**
      * @return ContainerInterface
      */
-    public function getContainer()
+    protected function getContainer()
     {
         return $this->client->getContainer();
+    }
+
+    /**
+     * @return MessageDataCollector
+     */
+    protected function getMailerCollector()
+    {
+        $collector = new MessageDataCollector($this->getContainer(), false);
+        $collector->collect($this->client->getRequest(), $this->client->getResponse());
+
+        return $collector;
     }
 }
