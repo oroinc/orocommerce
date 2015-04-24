@@ -107,7 +107,7 @@ class RequstControllerTest extends WebTestCase
         $this->assertContains(self::REQUEST_FIRST_NAME, $message->getSubject());
         $this->assertContains(self::REQUEST_LAST_NAME, $message->getSubject());
 
-        $this->assertContains(self::REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getBody());
+        $this->assertContains(self::REQUEST_NOTIFICATION_BODY_PARTIAL, $message->getBody());
         $this->assertContains(self::REQUEST_FIRST_NAME, $message->getBody());
         $this->assertContains(self::REQUEST_LAST_NAME, $message->getBody());
         $this->assertContains(self::REQUEST_EMAIL, $message->getBody());

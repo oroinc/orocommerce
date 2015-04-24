@@ -70,9 +70,7 @@ class RequestTypeTest extends FormIntegrationTestCase
         /**
          * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
          */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ApplicationBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager', ['get']);
 
         $configManager->expects($this->any())
             ->method('get')
