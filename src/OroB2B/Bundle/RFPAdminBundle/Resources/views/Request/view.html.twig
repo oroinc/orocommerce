@@ -56,7 +56,7 @@
     {% set requestContent %}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ entity.body }}
+                {{ entity.body|nl2br }}
             </div>
         </div>
     {% endset %}
