@@ -21,8 +21,25 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
         $this->container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')->getMock();
     }
 
+    /**
+     * Test process
+     */
     public function testProcess()
     {
+        $this->container->expects($this->exactly(3))
+            ->method('getParameter')
+            ->will(
+                $this->returnCallback(function($arg) {
+                    $map = [
+                        'kernel.name'        => 'app',
+                        'kernel.environment' => 'dev',
+                        'kernel.application' => 'admin'
+                    ];
+
+                    return $map[$arg];
+                })
+            );
+
         $allParameters = [
             'application_host.admin'    => 'http://localhost/admin.php',
             'application_host.frontend' => 'http://localhost/',
@@ -43,9 +60,18 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
             ->method('getParameterBag')
             ->willReturn(new ParameterBag($allParameters));
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->exactly(2))
             ->method('setParameter')
-            ->with(ApplicationHostPass::PARAMETER_NAME, $expectedParameters);
+            ->will(
+                $this->returnCallback(function($arg) use ($expectedParameters) {
+                    $map = [
+                        ApplicationHostPass::PARAMETER_NAME => $expectedParameters,
+                        'router.cache_class_prefix'         => 'appDevAdmin'
+                    ];
+
+                    return $map[$arg];
+                })
+            );
 
         $compilerPass = new ApplicationHostPass();
         $compilerPass->process($this->container);
