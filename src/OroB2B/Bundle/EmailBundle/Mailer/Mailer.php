@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\EmailBundle\Mailer;
 
 use Oro\Bundle\ApplicationBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\EmailBundle\Entity\EmailTemplate;
-
 class Mailer
 {
     /**
@@ -14,70 +12,43 @@ class Mailer
     protected $mailer;
 
     /**
-     * @var \Twig_Environment
-     */
-    protected $twig;
-
-    /**
      * @var ConfigManager
      */
     protected $configManager;
 
     /**
      * @param \Swift_Mailer $mailer
-     * @param \Twig_Environment $twig
      * @param ConfigManager $configManager
      */
-    public function __construct(\Swift_Mailer $mailer, \Twig_Environment $twig, ConfigManager $configManager)
+    public function __construct(\Swift_Mailer $mailer, ConfigManager $configManager)
     {
         $this->mailer = $mailer;
-        $this->twig = $twig;
         $this->configManager = $configManager;
     }
 
     /**
-     * @param EmailTemplate $emailTemplate
-     * @param mixed $entity
+     * @param string $subject
+     * @param string $body
      * @param string $emailTo
      * @return integer
      */
-    public function send(EmailTemplate $emailTemplate, $entity, $emailTo)
+    public function send($subject, $body, $emailTo)
     {
-        $this->assertEntity($emailTemplate, $entity);
-
+        $result = 0;
         $emailFrom = $this->getMailFrom();
 
-        $renderedTemplate = $this->renderTemplate($emailTemplate->getContent(), ['entity' => $entity]);
-        $renderedSubject = $this->renderTemplate($emailTemplate->getSubject(), ['entity' => $entity]);
+        if ($emailFrom) {
+            $message = $this->mailer->createMessage();
+            $message
+                ->setSubject($subject)
+                ->setBody($body)
+                ->setFrom($emailFrom)
+                ->setTo($emailTo);
 
-        $message = $this->mailer->createMessage();
-        $message
-            ->setSubject($renderedSubject)
-            ->setFrom($emailFrom)
-            ->setTo($emailTo)
-            ->setBody($renderedTemplate);
-
-        return $this->mailer->send($message);
-    }
-
-    /**
-     * @param EmailTemplate $emailTemplate
-     * @param mixed $entity
-     * @throws \InvalidArgumentException
-     */
-    protected function assertEntity(EmailTemplate $emailTemplate, $entity)
-    {
-        if (!is_object($entity)) {
-            throw new \InvalidArgumentException('Entity variable should be an object');
+            $result = $this->mailer->send($message);
         }
 
-        $entityName = $emailTemplate->getEntityName();
-
-        if (!($entity instanceof $entityName)) {
-            throw new \InvalidArgumentException(
-                sprintf('Entity variable should be instance of %s class', $entityName)
-            );
-        }
+        return $result;
     }
 
     /**
@@ -85,19 +56,6 @@ class Mailer
      */
     protected function getMailFrom()
     {
-        $emailFrom = $this->configManager->get('oro_notification.email_notification_sender_email');
-        $nameFrom = $this->configManager->get('oro_notification.email_notification_sender_name');
-
-        return [$emailFrom => $nameFrom];
-    }
-
-    /**
-     * @param string $template
-     * @param array $data
-     * @return string
-     */
-    protected function renderTemplate($template, array $data)
-    {
-        return $this->twig->render($template, $data);
+        return $this->configManager->get('oro_b2b_rfp_admin.default_user_for_notifications');
     }
 }

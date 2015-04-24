@@ -19,12 +19,14 @@ class OroB2BEmailExtensionTest extends ExtensionTestCase
             'orob2b_email.email_template.entity.class',
             'orob2b_email.twig.string_loader.class',
             'orob2b_email.mailer.class',
+            'orob2b_email.email_send_processor.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
             'orob2b_email.twig.string_loader',
             'orob2b_email.mailer',
+            'orob2b_email.email_send_processor',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

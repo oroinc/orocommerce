@@ -57,6 +57,8 @@ class RequestController extends Controller
             $em->persist($rfpRequest);
             $em->flush();
 
+            $this->get('orob2b_email.email_send_processor')->sendRequestCreateNotification($rfpRequest);
+
             $request->getSession()->getFlashBag()->add(
                 'notice',
                 $this->get('translator')->trans('orob2b.rfp.message.request_saved')
