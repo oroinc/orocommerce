@@ -68,7 +68,8 @@ class EmailSendProcessor
     /**
      * @param Request $request
      * @param string $templateName
-     * @return int
+     * @param string $emailTo
+     * @return integer
      * @throws EmailTemplateNotFoundException
      */
     protected function sendEmail(Request $request, $templateName, $emailTo)
@@ -81,8 +82,6 @@ class EmailSendProcessor
         if (!$emailTemplate) {
             throw new EmailTemplateNotFoundException("Couldn't find email template with name " . $templateName);
         }
-
-        //$this->assertEntity($emailTemplate, $request);
 
         $subject = $this->renderTemplate($emailTemplate->getSubject(), ['entity' => $request]);
         $body = $this->renderTemplate($emailTemplate->getContent(), ['entity' => $request]);
@@ -98,21 +97,5 @@ class EmailSendProcessor
     protected function renderTemplate($template, array $data)
     {
         return $this->twig->render($template, $data);
-    }
-
-    /**
-     * @param EmailTemplate $emailTemplate
-     * @param mixed $entity
-     * @throws \InvalidArgumentException
-     */
-    protected function assertEntity(EmailTemplate $emailTemplate, $entity)
-    {
-        $entityName = $emailTemplate->getEntityName();
-
-        if (!($entity instanceof $entityName)) {
-            throw new \InvalidArgumentException(
-                sprintf('Entity variable should be instance of %s class', $entityName)
-            );
-        }
     }
 }

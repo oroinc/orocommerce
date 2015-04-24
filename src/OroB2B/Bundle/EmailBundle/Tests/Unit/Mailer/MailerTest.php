@@ -33,7 +33,7 @@ class MailerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager');
+        $this->configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager', ['get']);
 
         $this->mailer = new Mailer($this->swiftMailer, $this->configManager);
     }
