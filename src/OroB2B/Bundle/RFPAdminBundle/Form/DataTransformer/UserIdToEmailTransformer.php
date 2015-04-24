@@ -5,9 +5,8 @@ namespace OroB2B\Bundle\RFPAdminBundle\Form\DataTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\UserBundle\Entity\User;
 
 class UserIdToEmailTransformer implements DataTransformerInterface
 {
@@ -34,16 +33,11 @@ class UserIdToEmailTransformer implements DataTransformerInterface
             return null;
         }
 
-        $user = $this->registry
-            ->getManagerForClass('OroUserBundle:User')
-            ->getRepository('OroUserBundle:User')
-            ->findOneBy([
-                'email' => $email
-            ]);
+        $user = $this->getUserRepository()->findOneBy(['email' => $email]);
 
         if (null === $user) {
             throw new TransformationFailedException(sprintf(
-                'User with email "%s" does not exist!',
+                'User with email "%s" does not exist',
                 $email
             ));
         }
@@ -52,27 +46,39 @@ class UserIdToEmailTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param int $userId
+     * @param mixed $value
      * @return string|null
      */
-    public function reverseTransform($userId)
+    public function reverseTransform($value)
     {
-        if (!$userId) {
+        if (!$value) {
             return null;
         }
 
-        $user = $this->registry
-            ->getManagerForClass('OroUserBundle:User')
-            ->getRepository('OroUserBundle:User')
-            ->find((int) $userId);
+        // system configuration may return email string as default value, so we need to check this case too
+        if (is_string($value) && strpos($value, '@') !== false) {
+            return $value;
+        }
+
+        $user = $this->getUserRepository()->find((int)$value);
 
         if (null === $user) {
             throw new TransformationFailedException(sprintf(
-                'User with ID "%s" does not exist!',
-                $userId
+                'User with ID "%s" does not exist',
+                $value
             ));
         }
 
         return $user->getEmail();
+    }
+
+    /**
+     * @return ObjectRepository
+     */
+    protected function getUserRepository()
+    {
+        $userClass = 'OroUserBundle:User';
+
+        return $this->registry->getManagerForClass($userClass)->getRepository($userClass);
     }
 }

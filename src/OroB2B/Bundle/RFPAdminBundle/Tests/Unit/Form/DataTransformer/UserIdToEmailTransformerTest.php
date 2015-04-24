@@ -2,62 +2,55 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\DataTransformer;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Oro\Bundle\UserBundle\Entity\User;
+
 use OroB2B\Bundle\RFPAdminBundle\Form\DataTransformer\UserIdToEmailTransformer;
 
 class UserIdToEmailTransformerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var UserIdToEmailTransformer
-     */
-    protected $transformer;
+    const USER_ID = 42;
+    const USER_EMAIL = 'box42@example.com';
 
     /**
-     * {@inheritdoc}
+     * @return User|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function setUp()
+    protected function getExistingUserMock()
     {
         $user = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\User')
             ->disableOriginalConstructor()
             ->getMock();
-
         $user->expects($this->any())
             ->method('getId')
-            ->willReturn(42);
-
+            ->willReturn(self::USER_ID);
         $user->expects($this->any())
             ->method('getEmail')
-            ->willReturn('box42@example.com');
+            ->willReturn(self::USER_EMAIL);
 
+        return $user;
+    }
+
+    /**
+     * @param array $findMap
+     * @param array $findOneByMap
+     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createRegistryMock(array $findMap = [], array $findOneByMap = [])
+    {
         $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $repository->expects($this->any())
-            ->method('findOneBy')
-            ->will($this->returnCallback(function ($arg) use ($user) {
-                $map = [
-                    'box42@example.com' => $user,
-                    'box100500@example.com' => null
-                ];
-
-                return $map[$arg['email']];
-            }));
-
         $repository->expects($this->any())
             ->method('find')
-            ->will($this->returnCallback(function ($arg) use ($user) {
-                $map = [
-                    '42' => $user,
-                    '100500' => null
-                ];
-
-                return $map[$arg];
-            }));
+            ->willReturnMap($findMap);
+        $repository->expects($this->any())
+            ->method('findOneBy')
+            ->willReturnMap($findOneByMap);
 
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
-
         $manager->expects($this->any())
             ->method('getRepository')
             ->with('OroUserBundle:User')
@@ -66,48 +59,112 @@ class UserIdToEmailTransformerTest extends \PHPUnit_Framework_TestCase
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
-
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroUserBundle:User')
             ->willReturn($manager);
 
-        $this->transformer = new UserIdToEmailTransformer($registry);
+        return $registry;
     }
 
     /**
-     * Test transform
+     * @return array
      */
-    public function testTransform()
+    public function transformDataProvider()
     {
-        $this->assertNull($this->transformer->transform(null));
-        $this->assertEquals('42', $this->transformer->transform('box42@example.com'));
+        return [
+            'null' => [
+                'input' => null,
+                'expected' => null,
+            ],
+            'empty string' => [
+                'input' => '',
+                'expected' => null,
+            ],
+            'existing email' => [
+                'input' => self::USER_EMAIL,
+                'expected' => self::USER_ID,
+            ]
+        ];
     }
 
     /**
-     * Test transform fail
+     * @param mixed $input
+     * @param mixed $expected
+     * @dataProvider transformDataProvider
      */
-    public function testTransformFail()
+    public function testTransform($input, $expected)
     {
-        $this->setExpectedException('Symfony\Component\Form\Exception\TransformationFailedException');
-        $this->transformer->transform('box100500@example.com');
+        $findOneByMap = [];
+        if ($expected) {
+            $findOneByMap[] = [['email' => $input], $this->getExistingUserMock()];
+        }
+
+        $transformer = new UserIdToEmailTransformer($this->createRegistryMock([], $findOneByMap));
+        $this->assertEquals($expected, $transformer->transform($input));
     }
 
     /**
-     * Test reverseTransform
+     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
+     * @expectedExceptionMessage User with email "unknown_email@example.com" does not exist
      */
-    public function testReverseTransform()
+    public function testTransformException()
     {
-        $this->assertNull($this->transformer->reverseTransform(null));
-        $this->assertEquals('box42@example.com', $this->transformer->reverseTransform(42));
+        $transformer = new UserIdToEmailTransformer($this->createRegistryMock());
+        $transformer->transform('unknown_email@example.com');
     }
 
     /**
-     * Test reverseTransform fail
+     * @return array
      */
-    public function testReverseTransformFail()
+    public function reverseTransformDataProvider()
     {
-        $this->setExpectedException('Symfony\Component\Form\Exception\TransformationFailedException');
-        $this->transformer->reverseTransform(100500);
+        return [
+            'null' => [
+                'input' => null,
+                'expected' => null,
+            ],
+            'empty string' => [
+                'input' => '',
+                'expected' => null,
+            ],
+            'existing email' => [
+                'input' => self::USER_EMAIL,
+                'expected' => self::USER_EMAIL,
+            ],
+            'existing id' => [
+                'input' => self::USER_ID,
+                'expected' => self::USER_EMAIL,
+            ]
+        ];
+    }
+
+    /**
+     * @param mixed $input
+     * @param mixed $expected
+     * @dataProvider reverseTransformDataProvider
+     */
+    public function testReverseTransform($input, $expected)
+    {
+        $findMap = [];
+        if ($expected) {
+            $findMap[] = [$input, $this->getExistingUserMock()];
+        }
+
+        $transformer = new UserIdToEmailTransformer($this->createRegistryMock($findMap));
+        $this->assertEquals($expected, $transformer->reverseTransform($input));
+    }
+
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\TransformationFailedException
+     * @expectedExceptionMessage User with ID "100500" does not exist
+     */
+    public function testReverseTransformException()
+    {
+        $unknownEmailId = 100500;
+
+        $transformer = new UserIdToEmailTransformer($this->createRegistryMock());
+        $transformer->reverseTransform($unknownEmailId);
     }
 }
