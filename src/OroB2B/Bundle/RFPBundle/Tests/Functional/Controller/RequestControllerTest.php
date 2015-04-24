@@ -59,7 +59,7 @@ class RequstControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass('OroB2BRFPBundle:Request');
 
-        $request = $em->getRepository('OroB2BRFPBundle:Request')
+        $originalRequest = $em->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy([
                 'firstName' => self::REQUEST_FIRST_NAME,
                 'lastName'  => self::REQUEST_LAST_NAME,
@@ -70,23 +70,25 @@ class RequstControllerTest extends WebTestCase
                 'body'      => self::REQUEST_BODY
             ]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $request);
+        $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $originalRequest);
+
+        // cleaning
+        $request = clone $originalRequest;
+        $em->remove($originalRequest);
+        $em->flush();
 
         $defaultRequestStatusName = $this->getContainer()
             ->get('oro_application.config_manager')
-            ->get('oro_b2b_rfp_admin.default_request_status');
+            ->get('oro_b2b_rfp_admin.default_request_status'); // expects open
 
         $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $request->getStatus());
 
         $this->assertEquals($defaultRequestStatusName, $request->getStatus()->getName());
 
         // PART 3: Test email notification
-        // TODO: wait until BB-406 will be implemented
-
-        //expects admin@example.com
         $defaultUserForNotificationEmail = $this->getContainer()
             ->get('oro_application.config_manager')
-            ->get('oro_b2b_rfp_admin.default_user_for_notifications');
+            ->get('oro_b2b_rfp_admin.default_user_for_notifications'); // expects admin@example.com
 
         $collectedMessages = $this->getMailerCollector()->getMessages();
 
@@ -95,14 +97,21 @@ class RequstControllerTest extends WebTestCase
 
         // Asserting e-mail data
         $this->assertInstanceOf('Swift_Message', $message);
-        $this->assertContains(REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getSubject());
-        $this->assertContains(REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getBody());
-        $this->assertEquals($defaultUserForNotificationEmail, key($message->getTo()));
-        $this->assertEquals($defaultUserForNotificationEmail, key($message->getFrom())); // not the best option
 
-        // PART 4: Cleaning
-        $em->remove($request);
-        $em->flush();
+        $this->assertEquals($defaultUserForNotificationEmail, key($message->getTo()));
+        $this->assertEquals($defaultUserForNotificationEmail, key($message->getFrom()));
+
+        $this->assertContains(self::REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getSubject());
+        $this->assertContains(self::REQUEST_FIRST_NAME, $message->getSubject());
+        $this->assertContains(self::REQUEST_LAST_NAME, $message->getSubject());
+
+        $this->assertContains(self::REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getBody());
+        $this->assertContains(self::REQUEST_FIRST_NAME, $message->getBody());
+        $this->assertContains(self::REQUEST_LAST_NAME, $message->getBody());
+        $this->assertContains(self::REQUEST_EMAIL, $message->getBody());
+        $this->assertContains(self::REQUEST_PHONE, $message->getBody());
+        $this->assertContains(self::REQUEST_COMPANY, $message->getBody());
+        $this->assertContains(self::REQUEST_ROLE, $message->getBody());
     }
 
     /**
