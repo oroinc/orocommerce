@@ -56,7 +56,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
         }
 
         // system configuration may return email string as default value, so we need to check this case too
-        if (is_string($value) && strpos($value, '@') !== false) {
+        if (is_string($value) && filter_var($value, FILTER_VALIDATE_EMAIL) !== false) {
             return $value;
         }
 
