@@ -1,32 +1,32 @@
 orob2b.rfpadmin:
     request:
-        entity_label:           'Request For Proposal'
-        entity_label_short:     'Request'
-        entity_plural_label:    'Requests For Proposal'
-        id.label:               'ID'
-        first_name.label:       'First Name'
-        last_name.label:        'Last Name'
-        email.label:            'Email Address'
-        phone.label:            'Phone Number'
-        company.label:          'Company'
-        role.label:             'Role'
-        status.label:           'Status'
-        body.label:             'Request body'
+        entity_label: 'Request For Proposal'
+        entity_label_short: 'Request'
+        entity_plural_label: 'Requests For Proposal'
+        id.label: 'ID'
+        first_name.label: 'First Name'
+        last_name.label: 'Last Name'
+        email.label: 'Email Address'
+        phone.label: 'Phone Number'
+        company.label: 'Company'
+        role.label: 'Role'
+        status.label: 'Status'
+        body.label: 'Request body'
 
     requeststatus:
-        entity_label:           'Request For Proposal Status'
-        entity_plural_label:    'Request For Proposal Statuses'
-        id.label:               'ID'
-        name.label:             'Name'
-        label.label:            'Label'
-        sort_order.label:       'Sort Order'
-        deleted.label:          'Deleted'
+        entity_label: 'Request For Proposal Status'
+        entity_plural_label: 'Request For Proposal Statuses'
+        id.label: 'ID'
+        name.label: 'Name'
+        label.label: 'Label'
+        sort_order.label: 'Sort Order'
+        deleted.label: 'Deleted'
 
     menu:
-        rfp_tab.label:                              'RFP'
-        requests_list.description:                  'List of Requests'
-        request_statuses_list.description:          'List of Request Statuses'
-        shortcut_requests_list.description:         'Shows list of existing Requests'
+        rfp_tab.label: 'RFP'
+        requests_list.description: 'List of Requests'
+        request_statuses_list.description: 'List of Request Statuses'
+        shortcut_requests_list.description: 'Shows list of existing Requests'
         shortcut_request_statuses_list.description: 'Shows list of existing Request Statuses'
 
     sections:
@@ -41,17 +41,17 @@ orob2b.rfpadmin:
         default_user_for_notifications: 'Default User For Notifications'
 
     message:
-        request_status_saved:     'Request Status saved'
-        request_status_restored:  'Request Status restored'
+        request_status_saved: 'Request Status saved'
+        request_status_restored: 'Request Status restored'
         request_status_not_found: 'Request Status not found'
-        request_status_changed:   'Request For Proposal Status was successfully changed'
+        request_status_changed: 'Request For Proposal Status was successfully changed'
         request_status_not_deletable: 'Request Status is not deletable'
 
     datagrid:
         action_restore: 'Restore'
 
     btn:
-        delete:  'Delete'
+        delete: 'Delete'
         restore: 'Restore'
         change_status: 'Change Status'
 
