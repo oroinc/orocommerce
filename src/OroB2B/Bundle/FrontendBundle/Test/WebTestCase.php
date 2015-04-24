@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Client;
-use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
 
 abstract class WebTestCase extends BaseWebTestCase
 {

@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use OroB2B\Bundle\FrontendBundle\Test\WebTestCase;
 
-class RequstControllerTest extends WebTestCase
+class RequestControllerTest extends WebTestCase
 {
     const REQUEST_FIRST_NAME    = 'Agnetha';
     const REQUEST_LAST_NAME     = 'Faltskog';
@@ -35,7 +35,7 @@ class RequstControllerTest extends WebTestCase
      */
     public function testSubmit()
     {
-        // PART 1: Test if form was successfully submitted
+        // Test if form was successfully submitted
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
 
         $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form(array(
@@ -50,7 +50,7 @@ class RequstControllerTest extends WebTestCase
 
         $this->client->submit($form);
 
-        // collect messages for future needs
+        // Collect messages for future needs
         /** @var array $collectedMessages */
         $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
 
@@ -58,7 +58,7 @@ class RequstControllerTest extends WebTestCase
 
         $this->assertContains(self::REQUEST_SAVED_MSG, $crawler->html());
 
-        // PART 2: Test if entity was created with default status
+        // Test if entity was created with default status
         $em = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroB2BRFPBundle:Request');
@@ -76,7 +76,7 @@ class RequstControllerTest extends WebTestCase
 
         $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $originalRequest);
 
-        // cleaning
+        // Cleaning
         $request = clone $originalRequest;
         $em->remove($originalRequest);
         $em->flush();
@@ -89,7 +89,7 @@ class RequstControllerTest extends WebTestCase
 
         $this->assertEquals($defaultRequestStatusName, $request->getStatus()->getName());
 
-        // PART 3: Test email notification
+        // Test email notification
         $defaultUserForNotificationEmail = $this->getContainer()
             ->get('oro_application.config_manager')
             ->get('oro_b2b_rfp_admin.default_user_for_notifications'); // expects admin@example.com
