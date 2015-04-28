@@ -1,0 +1,9 @@
+orob2b_customer_admin_customer:
+    resource:     "@OroB2BCustomerAdminBundle/Controller/CustomerController.php"
+    type:         annotation
+    prefix:       /customer
+
+orob2b_customer_admin_customer_group:
+    resource:     "@OroB2BCustomerAdminBundle/Controller/CustomerGroupController.php"
+    type:         annotation
+    prefix:       /customer/group
