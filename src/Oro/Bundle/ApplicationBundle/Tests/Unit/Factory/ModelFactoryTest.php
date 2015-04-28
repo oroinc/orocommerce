@@ -10,16 +10,6 @@ class ModelFactoryTest extends \PHPUnit_Framework_TestCase
     const MODEL_CLASS = 'Oro\Bundle\ApplicationBundle\Tests\Unit\Factory\Stub\TestModel';
 
     /**
-     * @var ModelFactory
-     */
-    protected $factory;
-
-    protected function setUp()
-    {
-        $this->factory = new ModelFactory(self::MODEL_CLASS);
-    }
-
-    /**
      * @param array $arguments
      * @param string|null $expectedFirst
      * @param string|null $expectedSecond
@@ -28,7 +18,8 @@ class ModelFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCreate(array $arguments, $expectedFirst, $expectedSecond)
     {
         /** @var TestModel $model */
-        $model = $this->factory->create($arguments);
+        $factory = new ModelFactory(self::MODEL_CLASS);
+        $model = $factory->create($arguments);
 
         $this->assertInstanceOf(self::MODEL_CLASS, $model);
         $this->assertEquals($expectedFirst, $model->first);
@@ -57,5 +48,23 @@ class ModelFactoryTest extends \PHPUnit_Framework_TestCase
                 'expectedSecond' => 'second_value',
             ],
         ];
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Class "UndefinedClass" is not defined
+     */
+    public function testConstructUndefinedClass()
+    {
+        new ModelFactory('UndefinedClass');
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Class "\DateTime" must implement ModelInterface
+     */
+    public function testConstructInvalidClass()
+    {
+        new ModelFactory('\DateTime');
     }
 }

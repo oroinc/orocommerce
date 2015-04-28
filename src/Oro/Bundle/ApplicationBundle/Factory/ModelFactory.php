@@ -19,6 +19,8 @@ class ModelFactory implements ModelFactoryInterface
      */
     public function __construct($modelClassName)
     {
+        $this->assertModelClassName($modelClassName);
+
         $this->modelClassName = $modelClassName;
     }
 
@@ -32,5 +34,19 @@ class ModelFactory implements ModelFactoryInterface
         }
 
         return $this->classReflection->newInstanceArgs($arguments);
+    }
+
+    /**
+     * @param $className
+     */
+    protected function assertModelClassName($className)
+    {
+        if (!class_exists($className)) {
+            throw new \LogicException(sprintf('Class "%s" is not defined', $className));
+        }
+
+        if (!in_array('Oro\Bundle\ApplicationBundle\Model\ModelInterface', class_implements($className))) {
+            throw new \LogicException(sprintf('Class "%s" must implement ModelInterface', $className));
+        }
     }
 }
