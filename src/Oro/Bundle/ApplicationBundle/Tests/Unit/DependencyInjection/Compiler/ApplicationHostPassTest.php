@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\ApplicationHostPass;
 
 class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $container;
 
@@ -21,6 +22,9 @@ class ApplicationHostPassTest extends \PHPUnit_Framework_TestCase
         $this->container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')->getMock();
     }
 
+    /**
+     * Test process
+     */
     public function testProcess()
     {
         $allParameters = [

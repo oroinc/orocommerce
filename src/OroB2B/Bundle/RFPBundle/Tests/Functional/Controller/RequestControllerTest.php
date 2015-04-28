@@ -2,174 +2,139 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use OroB2B\Bundle\FrontendBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
-
-/**
- * @outputBuffering enabled
- * @dbIsolation
- * @dbReindex
- */
 class RequestControllerTest extends WebTestCase
 {
+    const REQUEST_FIRST_NAME    = 'Agnetha';
+    const REQUEST_LAST_NAME     = 'Faltskog';
+    const REQUEST_EMAIL         = 'contact@agnetha.com';
+    const REQUEST_INVALID_EMAIL = 'No No No, David Blaine, No';
+    const REQUEST_PHONE         = '+38 (044) 494-42-70';
+    const REQUEST_COMPANY       = 'ABBA';
+    const REQUEST_ROLE          = 'Singer';
+    const REQUEST_BODY          = 'Gimme gimme gimme a man after midnight';
+
+    const REQUEST_NOTIFICATION_SUBJECT_PARTIAL = 'New RFP from';
+    const REQUEST_NOTIFICATION_BODY_PARTIAL    = 'created new RFP';
+
+    const REQUEST_SUBMIT_BTN  = 'Submit Request For Proposal';
+    const REQUEST_SAVED_MSG   = 'Your Request For Proposal successfully saved';
+    const REQUEST_INVALID_MSG = 'This value is not a valid email address';
+
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
-            ]
-        );
-    }
-
-    public function testIndex()
-    {
-        $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::LAST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::EMAIL, $result->getContent());
+        $this->initClient();
     }
 
     /**
-     * @return integer
+     * Test valid submit
      */
-    public function testView()
+    public function testSubmit()
     {
-        $response = $this->client->requestGrid(
-            'rfp-requests-grid',
-            [
-                'rfp-requests-grid[_filter][firstName][value]' => LoadRequestData::FIRST_NAME,
-                'rfp-requests-grid[_filter][LastName][value]' => LoadRequestData::LAST_NAME,
-                'rfp-requests-grid[_filter][email][value]' => LoadRequestData::EMAIL,
-            ]
-        );
+        // Test if form was successfully submitted
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
+        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form(array(
+            'orob2b_rfp_request_type[firstName]' => self::REQUEST_FIRST_NAME,
+            'orob2b_rfp_request_type[lastName]'  => self::REQUEST_LAST_NAME,
+            'orob2b_rfp_request_type[email]'     => self::REQUEST_EMAIL,
+            'orob2b_rfp_request_type[phone]'     => self::REQUEST_PHONE,
+            'orob2b_rfp_request_type[company]'   => self::REQUEST_COMPANY,
+            'orob2b_rfp_request_type[role]'      => self::REQUEST_ROLE,
+            'orob2b_rfp_request_type[body]'      => self::REQUEST_BODY,
+        ));
 
-        $id = $result['id'];
+        $this->client->submit($form);
 
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_rfp_request_view', ['id' => $id])
-        );
+        // Collect messages for future needs
+        /** @var array $collectedMessages */
+        $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
 
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(
-            sprintf('%s %s - Requests For Proposal - RFP', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
-            $result->getContent()
-        );
+        $crawler = $this->client->followRedirect();
 
-        return $id;
+        $this->assertContains(self::REQUEST_SAVED_MSG, $crawler->html());
+
+        // Test if entity was created with default status
+        $em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BRFPBundle:Request');
+
+        $originalRequest = $em->getRepository('OroB2BRFPBundle:Request')
+            ->findOneBy([
+                'firstName' => self::REQUEST_FIRST_NAME,
+                'lastName'  => self::REQUEST_LAST_NAME,
+                'email'     => self::REQUEST_EMAIL,
+                'phone'     => self::REQUEST_PHONE,
+                'company'   => self::REQUEST_COMPANY,
+                'role'      => self::REQUEST_ROLE,
+                'body'      => self::REQUEST_BODY
+            ]);
+
+        $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $originalRequest);
+
+        // Cleaning
+        $request = clone $originalRequest;
+        $em->remove($originalRequest);
+        $em->flush();
+
+        $defaultRequestStatusName = $this->getContainer()
+            ->get('oro_application.config_manager')
+            ->get('oro_b2b_rfp_admin.default_request_status'); // expects open
+
+        $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $request->getStatus());
+
+        $this->assertEquals($defaultRequestStatusName, $request->getStatus()->getName());
+
+        // Test email notification
+        $defaultUserForNotificationEmail = $this->getContainer()
+            ->get('oro_application.config_manager')
+            ->get('oro_b2b_rfp_admin.default_user_for_notifications'); // expects admin@example.com
+
+        /** @var \Swift_Message $message */
+        $message = reset($collectedMessages);
+
+        // Asserting e-mail data
+        $this->assertInstanceOf('Swift_Message', $message);
+
+        $this->assertEquals($defaultUserForNotificationEmail, key($message->getTo()));
+        $this->assertEquals($defaultUserForNotificationEmail, key($message->getFrom()));
+
+        $this->assertContains(self::REQUEST_NOTIFICATION_SUBJECT_PARTIAL, $message->getSubject());
+        $this->assertContains(self::REQUEST_FIRST_NAME, $message->getSubject());
+        $this->assertContains(self::REQUEST_LAST_NAME, $message->getSubject());
+
+        $this->assertContains(self::REQUEST_NOTIFICATION_BODY_PARTIAL, $message->getBody());
+        $this->assertContains(self::REQUEST_FIRST_NAME, $message->getBody());
+        $this->assertContains(self::REQUEST_LAST_NAME, $message->getBody());
+        $this->assertContains(self::REQUEST_EMAIL, $message->getBody());
+        $this->assertContains(self::REQUEST_PHONE, $message->getBody());
+        $this->assertContains(self::REQUEST_COMPANY, $message->getBody());
+        $this->assertContains(self::REQUEST_ROLE, $message->getBody());
     }
 
     /**
-     * @depends testView
-     * @param integer $id
+     * Test invalid submit
      */
-    public function testInfo($id)
+    public function testInvalidSubmit()
     {
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_rfp_request_info', ['id' => $id]),
-            ['_widgetContainer' => 'dialog']
-        );
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
 
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::LAST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::EMAIL, $result->getContent());
-    }
+        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form(array(
+            'orob2b_rfp_request_type[firstName]' => self::REQUEST_FIRST_NAME,
+            'orob2b_rfp_request_type[lastName]'  => self::REQUEST_LAST_NAME,
+            'orob2b_rfp_request_type[email]'     => self::REQUEST_INVALID_EMAIL,
+            'orob2b_rfp_request_type[phone]'     => self::REQUEST_PHONE,
+            'orob2b_rfp_request_type[company]'   => self::REQUEST_COMPANY,
+            'orob2b_rfp_request_type[role]'      => self::REQUEST_ROLE,
+            'orob2b_rfp_request_type[body]'      => self::REQUEST_BODY,
+        ));
 
-    /**
-     * @depends testView
-     * @param integer $id
-     */
-    public function testChangeStatus($id)
-    {
-        /** @var \Doctrine\Common\Persistence\ObjectManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManager();
+        $this->client->submit($form);
 
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
-        $status = array_shift(
-            $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findBy(
-                ['deleted' => false],
-                ['id' => 'DESC']
-            )
-        );
-
-        $this->assertNotNull($status);
-
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
-        $entity = $manager->getRepository('OroB2BRFPBundle:Request')->find($id);
-
-        $this->assertNotEquals($status->getId(), $entity->getStatus()->getId());
-        $this->assertCount(0, $this->getNotesForRequest($entity));
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_rfp_request_change_status', ['id' => $id]),
-            ['_widgetContainer' => 'dialog']
-        );
-
-        $noteSubject = 'Test Request Note';
-
-        $form = $crawler->selectButton('Update Request')->form();
-        $form['orob2b_rfp_request_change_status[status]'] = $status->getId();
-        $form['orob2b_rfp_request_change_status[note]'] = $noteSubject;
-
-        $params = $form->getPhpValues();
-        $params['_widgetContainer'] = 'dialog';
-
-        $this->client->request($form->getMethod(), $form->getUri(), $params);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Request For Proposal Status was successfully changed", $result->getContent());
-
-        $manager->refresh($entity);
-
-        $this->assertNotNull($entity);
-        $this->assertNotNull($entity->getStatus());
-        $this->assertEquals($status->getId(), $entity->getStatus()->getId());
-
-        $notes = $this->getNotesForRequest($entity);
-        $this->assertCount(1, $notes);
-
-        $note = array_shift($notes);
-        $this->assertTrue(strpos($note['subject'], $noteSubject) > 0);
-    }
-
-    /**
-     * @param Request $entity
-     * @return \Oro\Bundle\ActivityListBundle\Entity\ActivityList[]
-     */
-    private function getNotesForRequest(Request $entity)
-    {
-        /** @var \Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager $ActivityManager */
-        $activityManager = $this->getContainer()->get('oro_activity_list.manager');
-
-        return $activityManager->getList(
-            get_class($entity),
-            $entity->getId(),
-            [
-                'activityType' => [
-                    'value' => [
-                        'Oro\Bundle\NoteBundle\Entity\Note'
-                    ]
-                ]
-            ],
-            1
-        );
+        $this->assertContains(self::REQUEST_INVALID_MSG, $this->client->getCrawler()->html());
     }
 }
