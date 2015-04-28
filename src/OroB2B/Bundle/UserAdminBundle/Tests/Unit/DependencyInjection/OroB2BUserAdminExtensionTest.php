@@ -13,9 +13,15 @@ class OroB2BUserAdminExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BUserAdminExtension());
 
         $expectedParameters = [
-            "orob2b_user.user.entity.class",
-            "orob2b_user.group.entity.class"
+            "orob2b_user_admin.user.entity.class",
+            "orob2b_user_admin.group.entity.class",
+            "orob2b_user_admin.form.type.roles.class"
         ];
         $this->assertParametersLoaded($expectedParameters);
+
+        $expectedDefinitions = [
+            "orob2b_user_admin.form.type.roles",
+        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 }
