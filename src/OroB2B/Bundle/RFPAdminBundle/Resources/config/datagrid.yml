@@ -1,0 +1,244 @@
+datagrid:
+    rfp-requests-grid:
+        extended_entity_name: %orob2b_rfp_admin.request.class%
+        options:
+            entityHint:        request
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_rfp_admin_request_view
+            type:         orm
+            query:
+                select:
+                    - request.id
+                    - request.firstName
+                    - request.lastName
+                    - request.email
+                    - request.phone
+                    - request.company
+                    - request.role
+                    - status.label as status_label
+                    - status.sortOrder as status_order
+                    - request.createdAt
+                    - request.updatedAt
+                from:
+                    - { table: %orob2b_rfp_admin.request.class%, alias: request }
+                join:
+                    left:
+                        - { join: request.status, alias: status }
+            hints:
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
+        columns:
+            firstName:
+                label:         orob2b.rfpadmin.request.first_name.label
+            lastName:
+                label:         orob2b.rfpadmin.request.last_name.label
+            email:
+                label:         orob2b.rfpadmin.request.email.label
+            phone:
+                label:         orob2b.rfpadmin.request.phone.label
+            company:
+                label:         orob2b.rfpadmin.request.company.label
+            role:
+                label:         orob2b.rfpadmin.request.role.label
+            status_label:
+                label:         orob2b.rfpadmin.request.status.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_rfp_admin_request_view
+                params: [ id ]
+            request_change_status_link:
+                type:   url
+                route:  orob2b_rfp_admin_request_change_status
+                params: [ id ]
+        sorters:
+            columns:
+                firstName:
+                    data_name: request.firstName
+                lastName:
+                    data_name: request.lastName
+                email:
+                    data_name: request.email
+                phone:
+                    data_name: request.phone
+                company:
+                    data_name: request.company
+                role:
+                    data_name: request.role
+                status_label:
+                    data_name: status_order
+                createdAt:
+                    data_name: request.createdAt
+                updatedAt:
+                    data_name: request.updatedAt
+            default:
+                updatedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                firstName:
+                    type:      string
+                    data_name: request.firstName
+                lastName:
+                    type:      string
+                    data_name: request.lastName
+                email:
+                    type:      string
+                    data_name: request.email
+                phone:
+                    type:      string
+                    data_name: request.phone
+                company:
+                    type:      string
+                    data_name: request.company
+                role:
+                    type:      string
+                    data_name: request.role
+                status_label:
+                    type:      entity
+                    data_name: status.id
+                    options:
+                        field_type: orob2b_rfp_admin_request_status_with_deleted_select
+                        field_options:
+                            class: %orob2b_rfp_admin.request.status.class%
+                            property: label
+                createdAt:
+                    type:      datetime
+                    data_name: request.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: request.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_rfp_admin_request_view
+                rowAction:     true
+            request_change_status:
+                type:          request-change-status-dialog
+                label:         orob2b.rfpadmin.btn.change_status
+                link:          request_change_status_link
+                icon:          edit
+                acl_resource:  orob2b_rfp_admin_request_update
+                rowAction:     true
+                widgetOptions:
+                    reload-grid-name: rfp-requests-grid
+                    options:
+                        dialogOptions:
+                            title: orob2b.rfpadmin.widget.change_status_title
+                            allowMaximize: false
+                            allowMinimize: false
+                            dblclick: maximize
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 550
+                            resizable: true
+                messages:
+                    saved: orob2b.rfpadmin.message.request_status_changed
+
+    rfp-request-statuses-grid:
+        extended_entity_name: %orob2b_rfp_admin.request.status.class%
+        options:
+            entityHint:        status
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_rfp_admin_request_status_view
+            type:         orm
+            query:
+                select:
+                    - status.id
+                    - status.name
+                    - status.label
+                    - status.sortOrder
+                    - status.deleted
+                from:
+                    - { table: %orob2b_rfp_admin.request.status.class%, alias: status }
+            hints:
+                - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
+        columns:
+            label:
+                label:         orob2b.rfpadmin.requeststatus.label.label
+            name:
+                label:         orob2b.rfpadmin.requeststatus.name.label
+            deleted:
+                label:         orob2b.rfpadmin.requeststatus.deleted.label
+                frontend_type: boolean
+            sortOrder:
+                label:         orob2b.rfpadmin.requeststatus.sort_order.label
+                frontend_type: integer
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_rfp_admin_request_status_view
+                params: [ id ]
+            restore_link:
+                type:   url
+                route:  orob2b_api_rfp_restore_request_status
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_rfp_delete_request_status
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_rfp_admin_request_status_update
+                params: [ id ]
+        sorters:
+            columns:
+                label:
+                    data_name: status.label
+                name:
+                    data_name: status.name
+                sortOrder:
+                    data_name: status.sortOrder
+                deleted:
+                    data_name: status.deleted
+            default:
+                sortOrder: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                label:
+                    type:      string
+                    data_name: status.label
+                name:
+                    type:      string
+                    data_name: status.name
+                deleted:
+                    type:      boolean
+                    data_name: status.deleted
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_rfp_admin_request_status_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_rfp_admin_request_status_update
+                rowAction:     true
+            restore:
+                type:          ajax
+                acl_resource:  orob2b_rfp_admin_request_status_delete
+                label:         orob2b.rfpadmin.datagrid.action_restore
+                icon:          ok
+                link:          restore_link
+            delete:
+                type:          delete
+                acl_resource:  orob2b_rfp_admin_request_status_delete
+                label:         oro.grid.action.delete
+                icon:          trash
+                link:          delete_link
+        action_configuration: [@orob2b_rfp_admin.datagrid.action_permission_provider, "getRequestStatusDefinitionPermissions"]

@@ -13,9 +13,19 @@ class OroB2BUserExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BUserExtension());
 
         $expectedParameters = [
-            "orob2b_user.user.entity.class",
-            "orob2b_user.group.entity.class"
+            'orob2b_user.user.entity.class',
+            'orob2b_user.group.entity.class',
+            'orob2b_user.mailer.class',
+            'orob2b_user.registration.form.type.class',
+            'orob2b_user.profile.form.type.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
+
+        $expectedDefinitions = [
+            'orob2b_user.mailer',
+            'orob2b_user.registration.form.type',
+            'orob2b_user.profile.form.type',
+        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 }
