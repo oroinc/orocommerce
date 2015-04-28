@@ -7,5 +7,5 @@ services:
     orob2b_user.mailer:
         class: %orob2b_user.mailer.class%
         parent: fos_user.mailer.default
-        arguments: [@oro_config.fake_manager]
+        arguments: [@oro_application.config_manager]
         public: false

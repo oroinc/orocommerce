@@ -40,9 +40,8 @@ class Mailer extends BaseMailer
      */
     protected function sendEmailMessage($renderedTemplate, $fromEmail, $toEmail)
     {
-        $email = $this->configManager->get('oro_notification.email_notification_sender_email');
-        $name = $this->configManager->get('oro_notification.email_notification_sender_name');
+        $emailFrom = $this->configManager->get('oro_b2b_rfp_admin.default_user_for_notifications');
 
-        parent::sendEmailMessage($renderedTemplate, [$email => $name], $toEmail);
+        parent::sendEmailMessage($renderedTemplate, $emailFrom, $toEmail);
     }
 }

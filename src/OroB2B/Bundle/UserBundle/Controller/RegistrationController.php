@@ -12,7 +12,7 @@ class RegistrationController extends BaseController
     public function registerAction()
     {
         $allowRegistration = $this->container
-            ->get('oro_config.fake_manager')
+            ->get('oro_application.config_manager')
             ->get('orob2b_user.allow_frontend_registration');
 
         if (!$allowRegistration) {
