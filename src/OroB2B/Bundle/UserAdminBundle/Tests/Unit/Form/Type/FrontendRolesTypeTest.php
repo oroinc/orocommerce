@@ -27,6 +27,9 @@ class FrontendRolesTypeTest extends FormIntegrationTestCase
         ],
     ];
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -35,7 +38,7 @@ class FrontendRolesTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param mixed $submittedData
+     * @param array $submittedData
      * @param array $expected
      * @dataProvider submitDataProvider
      */

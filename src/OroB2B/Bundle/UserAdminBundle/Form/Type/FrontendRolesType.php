@@ -22,6 +22,9 @@ class FrontendRolesType extends AbstractType
         $this->roles = $frontendRoles;
     }
 
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $choices = [];
@@ -36,11 +39,17 @@ class FrontendRolesType extends AbstractType
         ]);
     }
 
+    /**
+     * @return string
+     */
     public function getParent()
     {
         return 'choice';
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return self::NAME;
