@@ -37,7 +37,7 @@ class ModelFactory implements ModelFactoryInterface
     }
 
     /**
-     * @param $className
+     * @param string $className
      */
     protected function assertModelClassName($className)
     {
