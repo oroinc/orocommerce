@@ -5,6 +5,7 @@ namespace Oro\Bundle\ApplicationBundle\Repository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
 use Oro\Bundle\ApplicationBundle\Model\ModelInterface;
@@ -73,12 +74,7 @@ class ModelRepository implements ModelRepositoryInterface
         $identifierEvent = new ModelIdentifierEvent($modelIdentifier);
         $this->eventDispatcher->dispatch($modelName . '.model.find.before', $identifierEvent);
 
-        $objectManager = $this->managerRegistry->getManagerForClass($this->entityClassName);
-        if (!$objectManager) {
-            throw new \LogicException(sprintf('Object manager for class "%s" is not defined', $this->entityClassName));
-        }
-
-        $entity = $objectManager->find($this->entityClassName, $identifierEvent->getIdentifier());
+        $entity = $this->getObjectManager()->find($this->entityClassName, $identifierEvent->getIdentifier());
 
         if ($entity) {
             $this->assertAbstractModelClassName($this->modelClassName);
@@ -109,7 +105,7 @@ class ModelRepository implements ModelRepositoryInterface
 
         $model = $modelEvent->getModel();
 
-        $objectManager = $this->managerRegistry->getManagerForClass($this->entityClassName);
+        $objectManager = $this->getObjectManager();
         foreach ($model->getEntities() as $entity) {
             $objectManager->persist($entity);
         }
@@ -131,7 +127,7 @@ class ModelRepository implements ModelRepositoryInterface
 
         $model = $modelEvent->getModel();
 
-        $objectManager = $this->managerRegistry->getManagerForClass($this->entityClassName);
+        $objectManager = $this->getObjectManager();
         foreach ($model->getEntities() as $entity) {
             $objectManager->remove($entity);
         }
@@ -146,8 +142,8 @@ class ModelRepository implements ModelRepositoryInterface
      */
     protected function getModelName()
     {
-        // in fact this is model class name, not model instance, phpdoc is used to support autocomplete
         /** @var ModelInterface $modelClassName */
+        // in fact this is model class name, not model instance, but phpdoc is used to support autocomplete
         $modelClassName = $this->modelClassName;
 
         return $modelClassName::getModelName();
@@ -185,9 +181,25 @@ class ModelRepository implements ModelRepositoryInterface
     {
         if (!in_array('Oro\Bundle\ApplicationBundle\Model\AbstractModel', class_parents($modelClassName))) {
             throw new \LogicException(
-                'Default repository can create only instances of AbstractModel. ' .
-                'You have to create custom repository for custom model.'
+                sprintf(
+                    'Default repository can create only instances of AbstractModel. ' .
+                    'You have to create custom repository for model "%s".',
+                    $modelClassName
+                )
             );
         }
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        $objectManager = $this->managerRegistry->getManagerForClass($this->entityClassName);
+        if (!$objectManager) {
+            throw new \LogicException(sprintf('Object manager for class "%s" is not defined', $this->entityClassName));
+        }
+
+        return $objectManager;
     }
 }
