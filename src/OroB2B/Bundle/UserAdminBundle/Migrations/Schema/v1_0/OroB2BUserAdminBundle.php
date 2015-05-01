@@ -16,12 +16,10 @@ class OroB2BUserAdminBundle implements Migration
     {
         /** Tables generation **/
         $this->createOroB2BGroupTable($schema);
-        $this->createOroB2BGroupTranslationTable($schema);
         $this->createOroB2BUserTable($schema);
         $this->createOroB2BUserGroupTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BGroupTranslationForeignKeys($schema);
         $this->addOroB2BUserGroupForeignKeys($schema);
     }
 
@@ -39,24 +37,6 @@ class OroB2BUserAdminBundle implements Migration
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['name'], 'UNIQ_58DF28CD5E237E06');
-    }
-
-    /**
-     * Create orob2b_group_translation table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BGroupTranslationTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_group_translation');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('object_id', 'integer', ['notnull' => false]);
-        $table->addColumn('locale', 'string', ['length' => 8]);
-        $table->addColumn('field', 'string', ['length' => 32]);
-        $table->addColumn('content', 'text', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['object_id'], 'IDX_7F107757232D562B', []);
-        $table->addIndex(['locale', 'object_id', 'field'], 'orob2b_group_trans_idx', []);
     }
 
     /**
@@ -104,22 +84,6 @@ class OroB2BUserAdminBundle implements Migration
         $table->setPrimaryKey(['user_id', 'group_id']);
         $table->addIndex(['user_id'], 'IDX_7BC99A1CA76ED395', []);
         $table->addIndex(['group_id'], 'IDX_7BC99A1CFE54D947', []);
-    }
-
-    /**
-     * Add orob2b_group_translation foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BGroupTranslationForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_group_translation');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_group'),
-            ['object_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
     }
 
     /**

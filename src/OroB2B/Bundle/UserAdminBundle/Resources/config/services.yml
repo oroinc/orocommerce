@@ -1,3 +1,11 @@
 parameters:
     orob2b_user_admin.user.entity.class: OroB2B\Bundle\UserAdminBundle\Entity\User
     orob2b_user_admin.group.entity.class: OroB2B\Bundle\UserAdminBundle\Entity\Group
+
+services:
+    orob2b_user_admin.group.manager.api:
+        class: %oro_attachment.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_user_admin.group.entity.class%
+            - @doctrine.orm.entity_manager

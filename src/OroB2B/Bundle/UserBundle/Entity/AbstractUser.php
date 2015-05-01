@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\UserBundle\Model;
+namespace OroB2B\Bundle\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use FOS\UserBundle\Entity\User as BaseUser;
 
-abstract class User extends BaseUser
+abstract class AbstractUser extends BaseUser
 {
     /**
      * @ORM\Id

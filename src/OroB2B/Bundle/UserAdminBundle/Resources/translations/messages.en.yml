@@ -1,0 +1,36 @@
+orob2b:
+    useradmin:
+        user:
+            entity_label:        'User'
+            entity_plural_label: 'Users'
+            username.label:      'Email'
+            first_name.label:    'First Name'
+            last_name.label:     'Last Name'
+        group:
+            entity_label:        'Group'
+            entity_plural_label: 'Groups'
+            name.label:          'Name'
+            label.label:         'Label'
+            has_group.label:     'Has Group'
+        role:
+            entity_label:        'Role'
+            entity_plural_label: 'Roles'
+
+        menu:
+            frontend_users_management.label:  'Frontend User Management'
+            frontend_groups.description:      'List of frontend groups'
+            shortcut_new_group.label:         'Create new frontend group'
+            shortcut_new_group.description:   'Create new frontend group instance'
+            shortcut_list_groups.label:       'Show frontend groups'
+            shortcut_list_groups.description: 'View list of fontend groups'
+
+        controller:
+            group:
+                saved.message:  'Group has been saved'
+
+        sections:
+            general: 'General'
+            roles: 'Roles'
+
+        message:
+            group_saved: 'Group saved'

@@ -1,0 +1,41 @@
+datagrid:
+    frontend-group-grid:
+        extended_entity_name: %orob2b_user_admin.group.entity.class%
+        source:
+            acl_resource: orob2b_user_admin_group_view
+            type: orm
+            query:
+                select:
+                    - userGroup.id
+                    - userGroup.name
+                from:
+                    - { table: %orob2b_user_admin.group.entity.class%, alias: userGroup }
+        columns:
+            name:
+                label: orob2b.useradmin.group.name.label
+        sorters:
+            columns:
+                name:
+                    data_name: userGroup.name
+            default:
+                name: ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: userGroup.name
+        properties:
+            id: ~
+            delete_link:
+                type: url
+                route: orob2b_api_user_admin_delete_frontendgroup
+                params: [ id ]
+        actions:
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_user_admin_group_delete
+        options:
+            entity_pagination: true
