@@ -10,7 +10,6 @@ orob2b:
             entity_label:        'Group'
             entity_plural_label: 'Groups'
             name.label:          'Name'
-            label.label:         'Label'
             has_group.label:     'Has Group'
         role:
             entity_label:        'Role'
@@ -33,4 +32,4 @@ orob2b:
             roles: 'Roles'
 
         message:
-            group_saved: 'Group saved'
+            group_saved: 'Group has been saved'

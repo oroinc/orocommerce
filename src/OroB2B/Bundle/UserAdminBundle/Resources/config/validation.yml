@@ -3,4 +3,4 @@ OroB2B\Bundle\UserAdminBundle\Entity\Group:
         name:
             - NotBlank: ~
             - Length:
-                max: 50
+                max: 255
