@@ -51,7 +51,6 @@ datagrid:
             entity_pagination: true
 
     frontend-group-users-grid:
-        extended_entity_name: %orob2b_user_admin.user.entity.class%
         source:
             acl_resource: orob2b_user_admin_group_update
             type: orm
