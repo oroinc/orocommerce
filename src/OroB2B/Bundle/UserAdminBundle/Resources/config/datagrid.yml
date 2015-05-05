@@ -1,6 +1,5 @@
 datagrid:
     frontend-group-grid:
-        extended_entity_name: %orob2b_user_admin.group.entity.class%
         source:
             acl_resource: orob2b_user_admin_group_view
             type: orm

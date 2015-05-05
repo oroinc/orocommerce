@@ -4,14 +4,11 @@ namespace OroB2B\Bundle\UserAdminBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_user")
- * @Config()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class User extends BaseUser

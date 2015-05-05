@@ -34,7 +34,6 @@ class OroB2BUserAdminBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('roles', 'array', ['comment' => '(DC2Type:array)']);
-        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['name'], 'UNIQ_58DF28CD5E237E06');
     }
