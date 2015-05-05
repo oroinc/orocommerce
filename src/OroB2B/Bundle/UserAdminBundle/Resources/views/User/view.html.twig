@@ -18,6 +18,29 @@
             'path' : path('orob2b_user_admin_user_update', { 'id': entity.id }),
             'entity_label': 'orob2b.useradmin.user.entity_label'|trans
         }) }}
+        {% if entity.enabled %}
+            {% set idButton = entity.id ~ '-disable-frontenduser-btn' %}
+            {{ UI.button({
+                'aCss':  'no-hash',
+                'iCss':  'icon-remove',
+                'id':    idButton,
+                'label': 'orob2b.useradmin.action.user.disable'|trans,
+                'path':  path('orob2b_api_user_admin_disable_frontenduser', {'id': entity.id}),
+                'title': 'orob2b.useradmin.action.user.disable'|trans
+            }) }}
+        {% else %}
+            {% set idButton = entity.id ~ '-enable-frontenduser-btn' %}
+            {{ UI.button({
+                'aCss':  'no-hash',
+                'iCss':  'icon-ok',
+                'id':    idButton,
+                'label': 'orob2b.useradmin.action.user.enable'|trans,
+                'path':  path('orob2b_api_user_admin_enable_frontenduser', {'id': entity.id}),
+                'title': 'orob2b.useradmin.action.user.enable'|trans
+            }) }}
+        {% endif %}
+        <span data-page-component-module="orob2buseradmin/js/app/components/user-enable-disable-component"
+              data-page-component-options="{{ {id: idButton}|json_encode }}"></span>
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
@@ -25,7 +48,7 @@
             'dataRedirect': path('orob2b_user_admin_user_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
-            'id': 'btn-remove-account',
+            'id': 'btn-remove-frontenduser',
             'entity_label': 'orob2b.useradmin.user.entity_label'|trans
         }) }}
     {% endif %}

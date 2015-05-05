@@ -1,7 +1,12 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-{% oro_title_set({params : {"%email%": form.vars.value.email|default('N/A'|trans)} }) %}
+{% oro_title_set({
+    params : {
+        "%email%": form.vars.value.email|default('N/A'|trans),
+        "%entityName%": 'orob2b.useradmin.user.entity_label'|trans
+    }
+}) %}
 
 {% set formAction = form.vars.value.id ? path('orob2b_user_admin_user_update', { 'id': form.vars.value.id }) : path('orob2b_user_admin_user_create')  %}
 

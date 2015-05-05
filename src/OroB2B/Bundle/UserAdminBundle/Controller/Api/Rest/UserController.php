@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Controller\Api\Rest;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -15,6 +12,8 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @Rest\RouteResource("frontenduser")
@@ -63,28 +62,8 @@ class UserController extends RestController implements ClassResourceInterface
      */
     public function enableAction($id)
     {
-        $em = $this->get('doctrine')->getManagerForClass('OroB2BUserAdminBundle:User');
-        $user = $em->getRepository('OroB2BUserAdminBundle:User')->find($id);
-
-        if (null === $user) {
-            return new JsonResponse(
-                $this->get('translator')->trans('orob2b.useradmin.controller.user.not_found.message'),
-                Codes::HTTP_NOT_FOUND
-            );
-        }
-
-        $user->setEnabled(true);
-        $em->flush();
-
-        return $this->handleView(
-            $this->view(
-                [
-                    'successful' => true,
-                    'message' => $this->get('translator')->trans('orob2b.useradmin.controller.user.enabled.message')
-                ],
-                Codes::HTTP_OK
-            )
-        );
+        $enableMessage = $this->get('translator')->trans('orob2b.useradmin.controller.user.enabled.message');
+        return $this->enableTrigger($id, true, $enableMessage);
     }
 
     /**
@@ -103,24 +82,35 @@ class UserController extends RestController implements ClassResourceInterface
      */
     public function disableAction($id)
     {
+        $disableMessage = $this->get('translator')->trans('orob2b.useradmin.controller.user.disabled.message');
+        return $this->enableTrigger($id, false, $disableMessage);
+    }
+
+    /**
+     * @param int $id
+     * @param boolean $enabled
+     * @param string $successMessage
+     * @return Response
+     */
+    protected function enableTrigger($id, $enabled, $successMessage)
+    {
         $em = $this->get('doctrine')->getManagerForClass('OroB2BUserAdminBundle:User');
         $user = $em->getRepository('OroB2BUserAdminBundle:User')->find($id);
 
         if (null === $user) {
-            return new JsonResponse(
-                $this->get('translator')->trans('orob2b.useradmin.controller.user.not_found.message'),
-                Codes::HTTP_NOT_FOUND
+            return $this->handleView(
+                $this->view(['successful' => false], Codes::HTTP_NOT_FOUND)
             );
         }
 
-        $user->setEnabled(false);
+        $user->setEnabled($enabled);
         $em->flush();
 
         return $this->handleView(
             $this->view(
                 [
                     'successful' => true,
-                    'message' => $this->get('translator')->trans('orob2b.useradmin.controller.user.disabled.message')
+                    'message' => $successMessage
                 ],
                 Codes::HTTP_OK
             )

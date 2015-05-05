@@ -11,5 +11,7 @@ services:
             - { name: form.type, alias: orob2b_frontend_roles }
     orob2b_user_admin.form.type.user:
         class: %orob2b_user_admin.form.type.user.class%
+        arguments:
+            - @translator
         tags:
             - { name: form.type, alias: orob2b_user_admin_user }

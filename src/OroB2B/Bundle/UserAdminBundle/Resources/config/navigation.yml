@@ -41,4 +41,4 @@ oro_titles:
     orob2b_user_admin_user_index:   ~
     orob2b_user_admin_user_view:   '%%email%%'
     orob2b_user_admin_user_update: '%%email%% - Edit'
-    orob2b_user_admin_user_create: 'Create Frontend User'
+    orob2b_user_admin_user_create: oro.ui.create_entity

@@ -2,19 +2,32 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Form\Type;
 
-use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class UserType extends AbstractType
 {
     const NAME = 'orob2b_user_admin_user';
 
+    /** @var TranslatorInterface */
+    protected $translator;
+
     /** @var SecurityFacade */
     protected $securityFacade;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -52,7 +65,7 @@ class UserType extends AbstractType
             'required'        => false,
             'first_options'   => ['label' => 'orob2b.useradmin.user.password.label'],
             'second_options'  => ['label' => 'orob2b.useradmin.user.password_confirmation.label'],
-            'invalid_message' => 'orob2b.useradmin.message.password_mismatch'
+            'invalid_message' => $this->translator->trans('orob2b.useradmin.message.password_mismatch')
         ];
 
         if ($data instanceof User && $data->getId()) {

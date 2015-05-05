@@ -33,6 +33,9 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected $group;
 
+    /** @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $translator;
+
     /**
      * {@inheritdoc}
      */
@@ -47,8 +50,9 @@ class UserTypeTest extends FormIntegrationTestCase
             ->addExtension(new CoreExtension());
 
         $this->factory = $builder->getFormFactory();
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->formType = new UserType();
+        $this->formType = new UserType($this->translator);
     }
 
     /**

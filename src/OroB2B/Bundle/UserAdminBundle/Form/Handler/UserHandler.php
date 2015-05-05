@@ -11,6 +11,9 @@ use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class UserHandler
 {
+    /** @var FormInterface  */
+    protected $form;
+
     /** @var Request */
     protected $request;
 
