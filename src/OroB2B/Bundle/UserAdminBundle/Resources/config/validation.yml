@@ -1,0 +1,6 @@
+OroB2B\Bundle\UserAdminBundle\Entity\Group:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255

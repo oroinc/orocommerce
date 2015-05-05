@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\UserAdminBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use OroB2B\Bundle\UserBundle\Model\User as BaseUser;
+use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
 
 /**
  * @ORM\Entity

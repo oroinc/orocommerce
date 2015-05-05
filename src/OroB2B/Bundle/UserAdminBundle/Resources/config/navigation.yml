@@ -1,0 +1,35 @@
+oro_menu_config:
+    items:
+        frontend_users_management:
+            label: 'orob2b.useradmin.menu.frontend_users_management.label'
+            uri: '#'
+            extras:
+                position: 30
+        frontend_groups:
+            label: 'orob2b.useradmin.group.entity_plural_label'
+            route: 'orob2b_user_admin_group_index'
+            extras:
+                position: 20
+                routes: ['orob2b_user_admin_group_*']
+                description: 'orob2b.useradmin.menu.frontend_groups.description'
+        shortcut_list_frontend_groups:
+            label: 'orob2b.useradmin.menu.shortcut_list_groups.label'
+            route: 'orob2b_user_admin_group_index'
+            extras:
+                description: 'orob2b.useradmin.menu.shortcut_list_groups.description'
+                isCustomAction: true
+
+    tree:
+        application_menu:
+            children:
+                system_tab:
+                    children:
+                        frontend_users_management:
+                            children:
+                                frontend_groups: ~
+        shortcuts:
+            children:
+                shortcut_list_frontend_groups: ~
+
+oro_titles:
+    orob2b_user_admin_group_index: ~

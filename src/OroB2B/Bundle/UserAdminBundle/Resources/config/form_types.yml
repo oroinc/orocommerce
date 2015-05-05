@@ -1,5 +1,6 @@
 parameters:
     orob2b_user_admin.form.type.roles.class: OroB2B\Bundle\UserAdminBundle\Form\Type\FrontendRolesType
+
 services:
     orob2b_user_admin.form.type.roles:
         class: %orob2b_user_admin.form.type.roles.class%
