@@ -43,20 +43,20 @@ class FrontendRolesType extends AbstractType
 
                     if (isset($this->roles[$value]['description'])) {
                         $options['tooltip'] = $this->roles[$value]['description'];
-                    }
 
-                    if (array_key_exists('auto_initialize', $options)) {
-                        $options['auto_initialize'] = false;
-                    }
+                        if (array_key_exists('auto_initialize', $options)) {
+                            $options['auto_initialize'] = false;
+                        }
 
-                    $form->add(
-                        $form->getConfig()->getFormFactory()->createNamed(
-                            $child->getName(),
-                            'checkbox',
-                            null,
-                            $options
-                        )
-                    );
+                        $form->add(
+                            $form->getConfig()->getFormFactory()->createNamed(
+                                $child->getName(),
+                                'checkbox',
+                                null,
+                                $options
+                            )
+                        );
+                    }
                 }
             }
         );
