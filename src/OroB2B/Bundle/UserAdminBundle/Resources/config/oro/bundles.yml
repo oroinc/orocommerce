@@ -1,2 +1,3 @@
 bundles:
+    - { name: FOS\UserBundle\FOSUserBundle, priority: 10 }
     - { name: OroB2B\Bundle\UserAdminBundle\OroB2BUserAdminBundle, priority: 20 }

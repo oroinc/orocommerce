@@ -1,0 +1,3 @@
+orob2b_user_admin_api:
+    resource: "@OroB2BUserAdminBundle/Controller/Api/Rest/UserController.php"
+    type:     rest

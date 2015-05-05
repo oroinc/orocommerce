@@ -25,16 +25,6 @@ class Group extends BaseGroup implements Translatable
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    protected $name;
-
-    /**
-     * @ORM\Column(type="array")
-     */
-    protected $roles;
-
-    /**
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
