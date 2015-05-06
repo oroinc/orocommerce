@@ -144,6 +144,7 @@ abstract class AbstractCustomer
     public function addChild(AbstractCustomer $child)
     {
         if (!$this->children->contains($child)) {
+            $child->setParent($this);
             $this->children->add($child);
         }
 
@@ -158,6 +159,7 @@ abstract class AbstractCustomer
     public function removeChild(AbstractCustomer $child)
     {
         if ($this->children->contains($child)) {
+            $child->setParent(null);
             $this->children->removeElement($child);
         }
     }
