@@ -7,12 +7,12 @@ use Symfony\Component\EventDispatcher\Event;
 class ModelIdentifierEvent extends Event
 {
     /**
-     * @var mixed
+     * @var int|string
      */
     protected $identifier;
 
     /**
-     * @param mixed $identifier
+     * @param int|string $identifier
      */
     public function __construct($identifier)
     {
@@ -20,7 +20,7 @@ class ModelIdentifierEvent extends Event
     }
 
     /**
-     * @return mixed
+     * @return int|string
      */
     public function getIdentifier()
     {
@@ -28,7 +28,7 @@ class ModelIdentifierEvent extends Event
     }
 
     /**
-     * @param mixed $identifier
+     * @param int|string $identifier
      */
     public function setIdentifier($identifier)
     {

@@ -72,7 +72,7 @@ class ModelRepository implements ModelRepositoryInterface
         $modelName = $this->getModelName();
 
         $identifierEvent = new ModelIdentifierEvent($modelIdentifier);
-        $this->eventDispatcher->dispatch($modelName . '.model.find.before', $identifierEvent);
+        $this->eventDispatcher->dispatch('model.find.before.' . $modelName, $identifierEvent);
 
         $entity = $this->getObjectManager()->find($this->entityClassName, $identifierEvent->getIdentifier());
 
@@ -82,12 +82,12 @@ class ModelRepository implements ModelRepositoryInterface
             $model = $this->modelFactory->create([$entity]);
 
             $modelEvent = new ModelEvent($model);
-            $this->eventDispatcher->dispatch($modelName . '.model.find.after', $modelEvent);
+            $this->eventDispatcher->dispatch('model.find.after.' . $modelName, $modelEvent);
 
             return $modelEvent->getModel();
         } else {
             $identifierEvent = new ModelIdentifierEvent($modelIdentifier);
-            $this->eventDispatcher->dispatch($modelName . '.model.find.after.not_found', $identifierEvent);
+            $this->eventDispatcher->dispatch('model.find.after.not_found.' . $modelName, $identifierEvent);
 
             return null;
         }
@@ -101,7 +101,7 @@ class ModelRepository implements ModelRepositoryInterface
         $modelName = $this->getModelName();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch($modelName . '.model.save.before', $modelEvent);
+        $this->eventDispatcher->dispatch('model.save.before.' . $modelName, $modelEvent);
 
         $model = $modelEvent->getModel();
 
@@ -112,7 +112,7 @@ class ModelRepository implements ModelRepositoryInterface
         $objectManager->flush();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch($modelName . '.model.save.after', $modelEvent);
+        $this->eventDispatcher->dispatch('model.save.after.' . $modelName, $modelEvent);
     }
 
     /**
@@ -123,7 +123,7 @@ class ModelRepository implements ModelRepositoryInterface
         $modelName = $this->getModelName();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch($modelName . '.model.delete.before', $modelEvent);
+        $this->eventDispatcher->dispatch('model.delete.before.' . $modelName, $modelEvent);
 
         $model = $modelEvent->getModel();
 
@@ -134,7 +134,7 @@ class ModelRepository implements ModelRepositoryInterface
         $objectManager->flush();
 
         $modelEvent = new ModelEvent($model);
-        $this->eventDispatcher->dispatch($modelName . '.model.delete.after', $modelEvent);
+        $this->eventDispatcher->dispatch('model.delete.after.' . $modelName, $modelEvent);
     }
 
     /**
@@ -158,7 +158,7 @@ class ModelRepository implements ModelRepositoryInterface
             throw new \LogicException(sprintf('Class "%s" is not defined', $modelClassName));
         }
 
-        if (!in_array('Oro\Bundle\ApplicationBundle\Model\ModelInterface', class_implements($modelClassName))) {
+        if (!is_a($modelClassName, 'Oro\Bundle\ApplicationBundle\Model\ModelInterface', true)) {
             throw new \LogicException(sprintf('Class "%s" must implement ModelInterface', $modelClassName));
         }
     }
@@ -179,7 +179,7 @@ class ModelRepository implements ModelRepositoryInterface
      */
     protected function assertAbstractModelClassName($modelClassName)
     {
-        if (!in_array('Oro\Bundle\ApplicationBundle\Model\AbstractModel', class_parents($modelClassName))) {
+        if (!is_a($modelClassName, 'Oro\Bundle\ApplicationBundle\Model\AbstractModel', true)) {
             throw new \LogicException(
                 sprintf(
                     'Default repository can create only instances of AbstractModel. ' .

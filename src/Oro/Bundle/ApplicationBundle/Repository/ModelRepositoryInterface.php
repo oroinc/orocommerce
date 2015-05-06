@@ -13,7 +13,7 @@ interface ModelRepositoryInterface
     /**
      * Find model by its identifier and return found model or null
      *
-     * @param mixed $modelIdentifier
+     * @param int|string $modelIdentifier
      * @return ModelInterface|null
      */
     public function find($modelIdentifier);
