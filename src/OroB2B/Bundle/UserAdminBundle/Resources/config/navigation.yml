@@ -12,6 +12,11 @@ oro_menu_config:
                 position: 20
                 routes: ['orob2b_user_admin_group_*']
                 description: 'orob2b.useradmin.menu.frontend_groups.description'
+        shortcut_new_frontend_group:
+            label: 'orob2b.useradmin.menu.shortcut_new_group.label'
+            route: 'orob2b_user_admin_group_create'
+            extras:
+                description: 'orob2b.useradmin.menu.shortcut_new_group.description'
         shortcut_list_frontend_groups:
             label: 'orob2b.useradmin.menu.shortcut_list_groups.label'
             route: 'orob2b_user_admin_group_index'
@@ -29,7 +34,10 @@ oro_menu_config:
                                 frontend_groups: ~
         shortcuts:
             children:
+                shortcut_new_frontend_group: ~
                 shortcut_list_frontend_groups: ~
 
 oro_titles:
     orob2b_user_admin_group_index: ~
+    orob2b_user_admin_group_create: oro.ui.create_entity
+    orob2b_user_admin_group_update: '%%title%% - Edit'
