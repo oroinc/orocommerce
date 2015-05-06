@@ -52,5 +52,5 @@ orob2b.useradmin:
         group.saved.message:    'Group has been saved'
 
     message:
-        password_mismatch: 'The entered passwords don't match'
-        group_saved: 'Group has been saved'
+        password_mismatch: "The entered passwords don't match"
+        group_saved:       "Group has been saved"
