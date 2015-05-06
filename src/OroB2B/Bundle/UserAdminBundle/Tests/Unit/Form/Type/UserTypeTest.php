@@ -33,7 +33,9 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected $group;
 
-    /** @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $translator;
 
     /**

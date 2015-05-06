@@ -105,6 +105,7 @@ datagrid:
         action_configuration: [@orob2b_user_admin.datagrid.action_permission_provider, "getUserPermissions"]
 
     frontend-group-grid:
+        entity_name: %orob2b_user_admin.group.entity.class%
         source:
             acl_resource: orob2b_user_admin_group_view
             type: orm

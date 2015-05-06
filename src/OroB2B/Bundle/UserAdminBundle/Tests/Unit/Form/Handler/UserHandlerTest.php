@@ -9,6 +9,9 @@ use OroB2B\Bundle\UserAdminBundle\Form\Handler\UserHandler;
 
 class UserHandlerTest extends FormHandlerTestCase
 {
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         parent::setUp();
