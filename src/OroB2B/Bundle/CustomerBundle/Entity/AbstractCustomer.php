@@ -4,10 +4,16 @@ namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_customer")
+ * @ORM\Table(
+ *      name="orob2b_customer",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_customer_name_idx", columns={"name"})
+ *      }
+ * )
  */
 abstract class AbstractCustomer
 {
@@ -33,7 +39,7 @@ abstract class AbstractCustomer
     protected $parent;
 
     /**
-     * @var ArrayCollection|AbstractCustomer[]
+     * @var Collection|AbstractCustomer[]
      */
     protected $children;
 
@@ -64,7 +70,7 @@ abstract class AbstractCustomer
      * Set name
      *
      * @param string $name
-     * @return $this
+     * @return AbstractCustomer
      */
     public function setName($name)
     {
@@ -87,7 +93,7 @@ abstract class AbstractCustomer
      * Set parent
      *
      * @param AbstractCustomer $parent
-     * @return $this
+     * @return AbstractCustomer
      */
     public function setParent(AbstractCustomer $parent)
     {
@@ -110,7 +116,7 @@ abstract class AbstractCustomer
      * Set group
      *
      * @param AbstractCustomerGroup $group
-     * @return $this
+     * @return AbstractCustomer
      */
     public function setGroup(AbstractCustomerGroup $group)
     {
@@ -133,7 +139,7 @@ abstract class AbstractCustomer
      * Add child
      *
      * @param AbstractCustomer $child
-     * @return $this
+     * @return AbstractCustomer
      */
     public function addChild(AbstractCustomer $child)
     {
@@ -159,7 +165,7 @@ abstract class AbstractCustomer
     /**
      * Get children
      *
-     * @return ArrayCollection|AbstractCustomer[]
+     * @return Collection|AbstractCustomer[]
      */
     public function getChildren()
     {
