@@ -1,0 +1,37 @@
+oro_menu_config:
+    items:
+        customer_tab:
+            label:           'orob2b.customeradmin.menu.customer_tab.label'
+            uri:             '#'
+            extras:
+                icon:        icon-file-text
+                position:    40
+
+        customer_list:
+            label:           'orob2b.customeradmin.customer.entity_plural_label'
+            route:           'orob2b_customer_admin_customer_index'
+            extras:
+                position:    10
+                routes:      ['orob2b_customer_admin_customer_index', 'orob2b_customer_admin_customer_view']
+                description: 'orob2b.customeradmin.menu.customer_list.description'
+
+        shortcut_customer_list:
+            label:           'orob2b.customeradmin.customer.entity_plural_label'
+            route:           'orob2b_customer_admin_customer_index'
+            extras:
+                description: 'orob2b.customeradmin.menu.shortcut_customer_list.description'
+
+    tree:
+        application_menu:
+            children:
+                customer_tab:
+                    children:
+                        customer_list: ~
+
+        shortcuts:
+            children:
+                shortcut_customer_list: ~
+
+oro_titles:
+    orob2b_customer_admin_customer_index: ~
+    orob2b_customer_admin_customer_view:  '%%title%%'

@@ -1,0 +1,43 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.name } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_customer_admin_customer_index'),
+        'indexLabel': 'orob2b.customeradmin.customer.entity_plural_label'|trans,
+        'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set customerInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_customer_admin_customer_info', {id: entity.id}),
+            'alias': 'customer-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'orob2b.customeradmin.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{'data' : [customerInfo]}]
+    }] %}
+
+    {% set id = 'pageView' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block navButtons %}
+    {# Will be used in the nearby future #}
+{% endblock %}
+
+{% block stats %}
+    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+{% endblock stats %}

@@ -1,0 +1,59 @@
+datagrid:
+    customer-customers-grid:
+        extended_entity_name: %orob2b_customer_admin.customer.class%
+        options:
+            entityHint:        customer
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_customer_admin_customer_view
+            type:         orm
+            query:
+                select:
+                    - customer.id
+                    - customer.name
+                    - customer_group.name as group_name
+                from:
+                    - { table: %orob2b_customer_admin.customer.class%, alias: customer }
+                join:
+                    left:
+                        - { join: customer.group, alias: customer_group }
+        columns:
+            name:
+                label: orob2b.customeradmin.customer.name.label
+            group_name:
+                label: orob2b.customeradmin.customer.group.label
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_customer_admin_customer_view
+                params: [ id ]
+        sorters:
+            columns:
+                name:
+                    data_name: customer.name
+                group_name:
+                    data_name: group_name
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: customer.name
+                group_name:
+                    type:      entity
+                    data_name: customer_group.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_customer_admin.customer_group.class%
+                            property: name
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_customer_admin_customer_view
+                rowAction:    true

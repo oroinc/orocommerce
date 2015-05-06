@@ -2,7 +2,17 @@ orob2b.customeradmin:
     customer:
         entity_label: 'Customer'
         entity_plural_label: 'Customers'
+        name.label: 'Name'
+        group.label: 'Group'
 
     customergroup:
         entity_label: 'Customer Group'
         entity_plural_label: 'Customer Groups'
+
+    sections:
+        general: 'General'
+
+    menu:
+        customer_tab.label: 'Customers'
+        customer_list.description: 'List of Customers'
+        shortcut_customer_list.description: 'List of Customers'
