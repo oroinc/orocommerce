@@ -66,5 +66,11 @@ class OroB2BCustomerAdminBundle implements Migration
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
+        $table->addForeignKeyConstraint(
+            $table,
+            ['parent_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 }

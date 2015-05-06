@@ -4,10 +4,16 @@ namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_customer_group")
+ * @ORM\Table(
+ *      name="orob2b_customer_group",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_customer_group_name_idx", columns={"name"})
+ *      }
+ * )
  */
 abstract class AbstractCustomerGroup
 {
@@ -28,7 +34,7 @@ abstract class AbstractCustomerGroup
     protected $name;
 
     /**
-     * @var ArrayCollection|AbstractCustomer[]
+     * @var Collection|AbstractCustomer[]
      */
     protected $customers;
 
@@ -54,7 +60,7 @@ abstract class AbstractCustomerGroup
      * Set name
      *
      * @param string $name
-     * @return $this
+     * @return AbstractCustomerGroup
      */
     public function setName($name)
     {
@@ -77,7 +83,7 @@ abstract class AbstractCustomerGroup
      * Add customer
      *
      * @param AbstractCustomer $customer
-     * @return $this
+     * @return AbstractCustomerGroup
      */
     public function addCustomer(AbstractCustomer $customer)
     {
@@ -103,7 +109,7 @@ abstract class AbstractCustomerGroup
     /**
      * Get customers
      *
-     * @return ArrayCollection|AbstractCustomer[]
+     * @return Collection|AbstractCustomer[]
      */
     public function getCustomers()
     {
