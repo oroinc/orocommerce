@@ -103,3 +103,126 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_user_admin_user_delete
         action_configuration: [@orob2b_user_admin.datagrid.action_permission_provider, "getUserPermissions"]
+
+    frontend-group-grid:
+        source:
+            acl_resource: orob2b_user_admin_group_view
+            type: orm
+            query:
+                select:
+                    - userGroup.id
+                    - userGroup.name
+                from:
+                    - { table: %orob2b_user_admin.group.entity.class%, alias: userGroup }
+        columns:
+            name:
+                label: orob2b.useradmin.group.name.label
+        sorters:
+            columns:
+                name:
+                    data_name: userGroup.name
+            default:
+                name: ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: userGroup.name
+        properties:
+            id: ~
+            update_link:
+                type:   url
+                route:  orob2b_user_admin_group_update
+                params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_user_admin_delete_frontendgroup
+                params: [ id ]
+        actions:
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_user_admin_group_update
+                rowAction:     true
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_user_admin_group_delete
+        options:
+            entity_pagination: true
+
+    frontend-group-users-grid:
+        source:
+            acl_resource: orob2b_user_admin_group_update
+            type: orm
+            query:
+                select:
+                    - user.id
+                    - user.username
+                    - user.firstName
+                    - user.lastName
+                    - >
+                      (CASE WHEN (:group_id IS NOT NULL) THEN
+                        CASE WHEN (:group_id MEMBER OF user.groups OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ELSE
+                        CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      END) as has_group
+                from:
+                    - { table: OroB2BUserAdminBundle:User, alias: user }
+            bind_parameters:
+                - group_id
+        columns:
+            has_group:
+                label: orob2b.useradmin.group.has_group.label
+                editable: true
+                frontend_type: boolean
+            username:
+                label: orob2b.useradmin.user.username.label
+            firstName:
+                label: orob2b.useradmin.user.first_name.label
+            lastName:
+                label: orob2b.useradmin.user.last_name.label
+        filters:
+            columns:
+                has_group:
+                    type: boolean
+                    data_name: has_group
+                username:
+                    type: string
+                    data_name: user.username
+                firstName:
+                    type: string
+                    data_name: user.firstName
+                lastName:
+                    type: string
+                    data_name: user.lastName
+        sorters:
+            multiple_sorting: true
+            columns:
+                has_group:
+                    data_name: has_group
+                username:
+                    data_name: user.username
+                firstName:
+                    data_name: user.firstName
+                lastName:
+                    data_name: user.lastName
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                has_group: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                lastName: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+        options:
+            rowSelection:
+                dataField: id
+                columnName: has_group
+                selectors:
+                    included: '#groupAppendUsers'
+                    excluded: '#groupRemoveUsers'

@@ -1,3 +1,7 @@
 orob2b_user_admin_user_api:
     resource: "@OroB2BUserAdminBundle/Controller/Api/Rest/UserController.php"
     type:     rest
+
+orob2b_user_admin_group_api:
+    resource: "@OroB2BUserAdminBundle/Controller/Api/Rest/GroupController.php"
+    type:     rest

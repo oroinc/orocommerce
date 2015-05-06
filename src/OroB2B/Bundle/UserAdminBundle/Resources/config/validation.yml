@@ -17,3 +17,10 @@ OroB2B\Bundle\UserAdminBundle\Entity\User:
                 max: 255
         plainPassword:
             - NotBlank: { groups: [create] }
+
+OroB2B\Bundle\UserAdminBundle\Entity\Group:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255

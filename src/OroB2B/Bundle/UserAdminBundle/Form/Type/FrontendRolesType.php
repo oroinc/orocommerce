@@ -3,6 +3,10 @@
 namespace OroB2B\Bundle\UserAdminBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FrontendRolesType extends AbstractType
@@ -20,6 +24,42 @@ class FrontendRolesType extends AbstractType
     public function __construct(array $frontendRoles)
     {
         $this->roles = $frontendRoles;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($builder) {
+                $form = $event->getForm();
+
+                /** @var FormInterface $child */
+                foreach ($form as $child) {
+                    $options = $child->getConfig()->getOptions();
+                    $value = $options['value'];
+
+                    if (isset($this->roles[$value]['description'])) {
+                        $options['tooltip'] = $this->roles[$value]['description'];
+
+                        if (array_key_exists('auto_initialize', $options)) {
+                            $options['auto_initialize'] = false;
+                        }
+
+                        $form->add(
+                            $form->getConfig()->getFormFactory()->createNamed(
+                                $child->getName(),
+                                'checkbox',
+                                null,
+                                $options
+                            )
+                        );
+                    }
+                }
+            }
+        );
     }
 
     /**
