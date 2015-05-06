@@ -10,28 +10,28 @@ orob2b.useradmin:
         password.label:              'Password'
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
-        groups.label:                'Groups'
+        groups.label:                'Roles'
     group:
-        entity_label:                'Group'
-        entity_plural_label:         'Groups'
-        name.label:                  'Name'
-        has_group.label:             'Has Group'
-    role:
         entity_label:                'Role'
         entity_plural_label:         'Roles'
+        name.label:                  'Name'
+        has_group.label:             'Has Role'
+    role:
+        entity_label:                'Capability'
+        entity_plural_label:         'Capabilities'
 
     menu:
         frontend_users_management.label:  'Frontend User Management'
         frontend_users.description:       'List of frontend users'
-        frontend_groups.description:      'List of frontend groups'
+        frontend_groups.description:      'List of frontend roles'
         shortcut_new_user.label:          'Create new frontend user'
         shortcut_new_user.description:    'Create new frontend user instance'
         shortcut_list_users.label:        'Show frontend users'
         shortcut_list_users.description:  'View list of fontend users'
-        shortcut_new_group.label:         'Create new frontend group'
-        shortcut_new_group.description:   'Create new frontend group instance'
-        shortcut_list_groups.label:       'Show frontend groups'
-        shortcut_list_groups.description: 'View list of fontend groups'
+        shortcut_new_group.label:         'Create new frontend role'
+        shortcut_new_group.description:   'Create new frontend role instance'
+        shortcut_list_groups.label:       'Show frontend roles'
+        shortcut_list_groups.description: 'View list of fontend roles'
 
     action:
         user.enable:  'Enable'
@@ -39,7 +39,8 @@ orob2b.useradmin:
 
     sections:
         general: 'General'
-        roles: 'Roles'
+        groups:  'Roles'
+        roles:   'Capabilities'
 
     widgets:
         user_information: 'User Information'
@@ -49,8 +50,8 @@ orob2b.useradmin:
         user.enabled.message:   'User has been enabled'
         user.disabled.message:  'User has been disabled'
         user.not_found.message: 'User not found'
-        group.saved.message:    'Group has been saved'
+        group.saved.message:    'Role has been saved'
 
     message:
         password_mismatch: "The entered passwords don't match"
-        group_saved:       "Group has been saved"
+        group_saved:       "Role has been saved"

@@ -7,7 +7,7 @@
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', form.vars.value) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_user_admin_delete_frontendgroup', {'id': entity.id}),
+            'dataUrl': path('orob2b_api_user_admin_delete_frontendrole', {'id': entity.id}),
             'dataRedirect': path('orob2b_user_admin_group_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,

@@ -6,7 +6,7 @@ orob2b_user_admin_user:
 orob2b_user_admin_group:
     resource: "@OroB2BUserAdminBundle/Controller/GroupController.php"
     type: annotation
-    prefix: /frontenduser/group
+    prefix: /frontenduser/role
 
 orob2b_user_admin_bundle_api:
     resource:     "@OroB2BUserAdminBundle/Resources/config/oro/routing_api.yml"
