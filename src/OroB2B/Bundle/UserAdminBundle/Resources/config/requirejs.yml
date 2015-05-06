@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2buseradmin/js/app/components/user-enable-disable-component': 'bundles/orob2buseradmin/js/app/components/user-enable-disable-component.js'

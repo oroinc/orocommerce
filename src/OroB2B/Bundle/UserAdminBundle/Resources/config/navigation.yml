@@ -5,6 +5,23 @@ oro_menu_config:
             uri: '#'
             extras:
                 position: 30
+        frontend_users:
+            label: 'orob2b.useradmin.user.entity_plural_label'
+            route: 'orob2b_user_admin_user_index'
+            extras:
+                position: 10
+                routes: ['/^orob2b_user_admin_user/']
+                description: 'orob2b.useradmin.menu.frontend_users.description'
+        shortcut_new_frontend_user:
+            label: 'orob2b.useradmin.menu.shortcut_new_user.label'
+            route: 'orob2b_user_admin_user_create'
+            extras:
+                description: 'oro.user.menu.shortcut_new_user.description'
+        shortcut_list_frontend_users:
+            label: 'orob2b.useradmin.menu.shortcut_list_users.label'
+            route: 'orob2b_user_admin_user_index'
+            extras:
+                description: 'oro.user.menu.shortcut_list_users.description'
         frontend_groups:
             label: 'orob2b.useradmin.group.entity_plural_label'
             route: 'orob2b_user_admin_group_index'
@@ -31,13 +48,20 @@ oro_menu_config:
                     children:
                         frontend_users_management:
                             children:
+                                frontend_users: ~
                                 frontend_groups: ~
         shortcuts:
             children:
+                shortcut_new_frontend_user: ~
+                shortcut_list_frontend_users: ~
                 shortcut_new_frontend_group: ~
                 shortcut_list_frontend_groups: ~
 
 oro_titles:
-    orob2b_user_admin_group_index: ~
-    orob2b_user_admin_group_create: oro.ui.create_entity
+    orob2b_user_admin_user_index:   ~
+    orob2b_user_admin_group_index:  ~
+    orob2b_user_admin_user_view:    '%%email%%'
+    orob2b_user_admin_user_update:  '%%email%% - Edit'
     orob2b_user_admin_group_update: '%%title%% - Edit'
+    orob2b_user_admin_user_create:  oro.ui.create_entity
+    orob2b_user_admin_group_create: oro.ui.create_entity

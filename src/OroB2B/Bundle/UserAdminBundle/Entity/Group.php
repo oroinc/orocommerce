@@ -24,20 +24,8 @@ class Group extends BaseGroup
     protected $id;
 
     /**
-     * @var string
+     * Get label
      *
-     * @ORM\Column(type="string", length=255, unique=true)
-     */
-    protected $name;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(type="array")
-     */
-    protected $roles;
-
-    /**
      * @return string
      */
     public function __toString()

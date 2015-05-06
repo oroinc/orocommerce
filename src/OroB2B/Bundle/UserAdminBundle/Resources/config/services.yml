@@ -1,11 +1,23 @@
 parameters:
     orob2b_user_admin.user.entity.class: OroB2B\Bundle\UserAdminBundle\Entity\User
     orob2b_user_admin.group.entity.class: OroB2B\Bundle\UserAdminBundle\Entity\Group
+    orob2b_user_admin.user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_user_admin.datagrid.action_permission_provider.class: OroB2B\Bundle\UserAdminBundle\Datagrid\ActionPermissionProvider
 
 services:
+    orob2b_user_admin.user.manager.api:
+        class: %orob2b_user_admin.user.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_user_admin.user.entity.class%
+            - @doctrine.orm.entity_manager
+
     orob2b_user_admin.group.manager.api:
         class: %oro_attachment.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_user_admin.group.entity.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_user_admin.datagrid.action_permission_provider:
+        class: %orob2b_user_admin.datagrid.action_permission_provider.class%
