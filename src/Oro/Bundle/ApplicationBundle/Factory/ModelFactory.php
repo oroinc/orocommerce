@@ -45,7 +45,7 @@ class ModelFactory implements ModelFactoryInterface
             throw new \LogicException(sprintf('Class "%s" is not defined', $className));
         }
 
-        if (!in_array('Oro\Bundle\ApplicationBundle\Model\ModelInterface', class_implements($className))) {
+        if (!is_a($className, 'Oro\Bundle\ApplicationBundle\Model\ModelInterface', true)) {
             throw new \LogicException(sprintf('Class "%s" must implement ModelInterface', $className));
         }
     }
