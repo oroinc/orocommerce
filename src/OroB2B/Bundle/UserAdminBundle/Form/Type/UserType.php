@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use FOS\UserBundle\Util\TokenGenerator;
+
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
@@ -20,6 +22,9 @@ class UserType extends AbstractType
 
     /** @var SecurityFacade */
     protected $securityFacade;
+
+    /** @var TokenGenerator */
+    protected $passwordGenerator;
 
     /**
      * @param TranslatorInterface $translator
@@ -79,6 +84,26 @@ class UserType extends AbstractType
         if ($data instanceof User && $data->getId()) {
             $passwordOptions = array_merge($passwordOptions, ['required' => false, 'validation_groups' => false]);
         } else {
+            $builder
+                ->add(
+                    'passwordGenerate',
+                    'checkbox',
+                    [
+                        'required' => false,
+                        'label'    => 'orob2b.useradmin.user.password_generate.label',
+                        'mapped'   => false
+                    ]
+                )
+                ->add(
+                    'sendEmail',
+                    'checkbox',
+                    [
+                        'required' => false,
+                        'label'    => 'orob2b.useradmin.user.send_email.label',
+                        'mapped'   => false
+                    ]
+                );
+
             $passwordOptions = array_merge($passwordOptions, ['required' => true, 'validation_groups' => 'create']);
         }
 

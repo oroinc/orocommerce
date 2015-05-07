@@ -1,3 +1,4 @@
 config:
     paths:
         'orob2buseradmin/js/app/components/user-enable-disable-component': 'bundles/orob2buseradmin/js/app/components/user-enable-disable-component.js'
+        'orob2buseradmin/js/app/components/password-generate': 'bundles/orob2buseradmin/js/app/components/password-generate.js'
