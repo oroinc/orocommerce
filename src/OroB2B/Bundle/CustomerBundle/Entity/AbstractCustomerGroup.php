@@ -6,15 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-/**
- * @ORM\Entity
- * @ORM\Table(
- *      name="orob2b_customer_group",
- *      indexes={
- *          @ORM\Index(name="orob2b_customer_group_name_idx", columns={"name"})
- *      }
- * )
- */
 abstract class AbstractCustomerGroup
 {
     /**
