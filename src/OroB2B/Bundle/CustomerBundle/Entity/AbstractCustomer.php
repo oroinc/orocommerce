@@ -95,7 +95,7 @@ abstract class AbstractCustomer
      * @param AbstractCustomer $parent
      * @return AbstractCustomer
      */
-    public function setParent(AbstractCustomer $parent)
+    public function setParent(AbstractCustomer $parent = null)
     {
         $this->parent = $parent;
 

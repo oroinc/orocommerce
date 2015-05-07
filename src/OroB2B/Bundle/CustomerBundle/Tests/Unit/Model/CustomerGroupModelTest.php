@@ -21,6 +21,61 @@ class CustomerGroupModelTest extends \PHPUnit_Framework_TestCase
         $customerGroup->addCustomer($customer1);
         $customerGroup->addCustomer($customer2);
 
+        foreach ($this->getModel($customerGroup)->getCustomers() as $key => $customerModel) {
+            $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Model\CustomerModel', $customerModel);
+
+            $this->assertEquals(
+                [$customerGroup->getCustomers()->get($key)],
+                $customerModel->getEntities()
+            );
+        }
+    }
+
+    public function testGetCustomersEmpty()
+    {
+        $customerGroup = new CustomerGroup();
+
+        $model = $this->getModel($customerGroup);
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $model->getCustomers());
+        $this->assertTrue($model->getCustomers()->isEmpty());
+    }
+
+    public function testGetName()
+    {
+        $name = 'customerGroup';
+        $group = new CustomerGroup();
+        $group->setName($name);
+        $model = $this->getModel($group);
+
+        $this->assertInternalType('string', $model->getName());
+        $this->assertEquals($name, $model->getName());
+    }
+
+    public function testGetNameEmpty()
+    {
+        $group = new CustomerGroup();
+        $model = $this->getModel($group);
+
+        $this->assertNull($model->getName());
+    }
+
+    public function testGetModelName()
+    {
+        $customerGroup = new CustomerGroup();
+
+        $model = $this->getModel($customerGroup);
+
+        $this->assertInternalType('string', $model->getModelName());
+        $this->assertEquals('customer_group', $model->getModelName());
+    }
+
+    /**
+     * @param CustomerGroup $customerGroup
+     * @return CustomerGroupModel
+     */
+    protected function getModel(CustomerGroup $customerGroup)
+    {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ModelFactoryInterface $factory */
         $factory = $this->getMock('Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface');
 
@@ -37,28 +92,6 @@ class CustomerGroupModelTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $model = new CustomerGroupModel($customerGroup, $factory);
-
-        foreach ($model->getCustomers() as $key => $customerModel) {
-            $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Model\CustomerModel', $customerModel);
-
-            $this->assertEquals(
-                [$customerGroup->getCustomers()->get($key)],
-                $customerModel->getEntities()
-            );
-        }
-    }
-
-    public function testGetModelName()
-    {
-        $customerGroup = new CustomerGroup();
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ModelFactoryInterface $factory */
-        $factory = $this->getMock('Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface');
-
-        $model = new CustomerGroupModel($customerGroup, $factory);
-
-        $this->assertInternalType('string', $model->getModelName());
-        $this->assertEquals('customer_group', $model->getModelName());
+        return new CustomerGroupModel($customerGroup, $factory);
     }
 }

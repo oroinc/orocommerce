@@ -17,6 +17,11 @@ class CustomerFactory extends ModelFactory
     protected $groupFactory;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * @param string $modelClassName
      * @param ContainerInterface $container
      */
@@ -24,7 +29,7 @@ class CustomerFactory extends ModelFactory
     {
         parent::__construct($modelClassName);
 
-        $this->groupFactory = $container->get('orob2b_customer_admin.factory.customer_group');
+        $this->container = $container;
     }
 
     /**
@@ -32,6 +37,18 @@ class CustomerFactory extends ModelFactory
      */
     public function create(array $arguments = [])
     {
-        return new CustomerModel(reset($arguments), $this->groupFactory, $this);
+        return new CustomerModel(reset($arguments), $this->getGroupFactory(), $this);
+    }
+
+    /**
+     * @return ModelFactoryInterface
+     */
+    protected function getGroupFactory()
+    {
+        if (!$this->groupFactory) {
+            $this->groupFactory = $this->container->get('orob2b_customer_admin.factory.customer_group');
+        }
+
+        return $this->groupFactory;
     }
 }

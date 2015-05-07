@@ -16,7 +16,7 @@ services:
             - @service_container
 
     orob2b_customer_admin.factory.customer_group:
-        class: %oro_application.factory.class%
+        class: %orob2b_customer_admin.factory.customer_group.class%
         arguments:
             - %orob2b_customer_admin.model.customer_group.class%
             - @service_container

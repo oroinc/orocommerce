@@ -26,6 +26,16 @@ class CustomerModelTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$parent], $model->getParent()->getEntities());
     }
 
+    public function testGetParentEmpty()
+    {
+        $customer = new Customer();
+        $customer->setName('customer');
+
+        $model = $this->getModel($customer);
+
+        $this->assertNull($model->getParent());
+    }
+
     public function testGetGroup()
     {
         $customerGroup = new CustomerGroup();
@@ -36,6 +46,14 @@ class CustomerModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Model\CustomerGroupModel', $model->getGroup());
         $this->assertEquals([$customerGroup], $model->getGroup()->getEntities());
+    }
+
+    public function testGetGroupEmpty()
+    {
+        $customer = new Customer();
+        $model = $this->getModel($customer);
+
+        $this->assertNull($model->getGroup());
     }
 
     public function testGetChildren()
@@ -60,6 +78,34 @@ class CustomerModelTest extends \PHPUnit_Framework_TestCase
                 $customerModel->getEntities()
             );
         }
+    }
+
+    public function testGetChildrenEmpty()
+    {
+        $customer = new Customer();
+        $model = $this->getModel($customer);
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $model->getChildren());
+        $this->assertTrue($model->getChildren()->isEmpty());
+    }
+
+    public function testGetName()
+    {
+        $name = 'customer';
+        $customer = new Customer();
+        $customer->setName($name);
+        $model = $this->getModel($customer);
+
+        $this->assertInternalType('string', $model->getName());
+        $this->assertEquals($name, $model->getName());
+    }
+
+    public function testGetNameEmpty()
+    {
+        $customer = new Customer();
+        $model = $this->getModel($customer);
+
+        $this->assertNull($model->getName());
     }
 
     /**

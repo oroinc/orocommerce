@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
 use Oro\Bundle\ApplicationBundle\Model\AbstractModel;
 
@@ -27,17 +30,22 @@ class CustomerModel extends AbstractModel
     /**
      * @var CustomerModel
      */
-    protected $parent;
+    protected $parent = false;
 
     /**
-     * @var CustomerModel[]
+     * @var CustomerModel[]|Collection
      */
-    protected $children;
+    protected $children = false;
 
     /**
      * @var CustomerGroupModel
      */
-    protected $group;
+    protected $group = false;
+
+    /**
+     * @var string
+     */
+    protected $name = false;
 
     /**
      * @param AbstractCustomer $entity
@@ -68,22 +76,32 @@ class CustomerModel extends AbstractModel
      */
     public function getParent()
     {
-        if (!$this->parent) {
-            $this->parent = $this->customerFactory->create([$this->entity->getParent()]);
+        if (false === $this->parent) {
+            $parent = $this->entity->getParent();
+
+            $this->parent = null;
+            if ($parent) {
+                $this->parent = $this->customerFactory->create([$parent]);
+            }
         }
 
         return $this->parent;
     }
 
     /**
-     * @return CustomerModel[]
+     * @return CustomerModel[]|Collection
      */
     public function getChildren()
     {
-        if (!$this->children) {
+        if (false === $this->children) {
+            $this->children = new ArrayCollection();
+
             $this->entity->getChildren()->map(
                 function (AbstractCustomer $customer) {
-                    $this->children[] = $this->customerFactory->create([$customer]);
+                    $model = $this->customerFactory->create([$customer]);
+                    if (!$this->children->contains($model)) {
+                        $this->children->add($model);
+                    }
                 }
             );
         }
@@ -96,10 +114,27 @@ class CustomerModel extends AbstractModel
      */
     public function getGroup()
     {
-        if (!$this->group) {
-            $this->group = $this->groupFactory->create([$this->entity->getGroup()]);
+        if (false === $this->group) {
+            $group = $this->entity->getGroup();
+
+            $this->group = null;
+            if ($group) {
+                $this->group = $this->groupFactory->create([$group]);
+            }
         }
 
         return $this->group;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        if (false === $this->name) {
+            $this->name = $this->entity->getName();
+        }
+
+        return $this->name;
     }
 }

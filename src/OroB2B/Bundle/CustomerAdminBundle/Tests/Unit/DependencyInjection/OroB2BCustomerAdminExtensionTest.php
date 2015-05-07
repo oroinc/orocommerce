@@ -13,7 +13,7 @@ class OroB2BCustomerAdminExtensionTest extends ExtensionTestCase
 {
     public function testLoad()
     {
-        $this->loadExtension(new  OroB2BCustomerAdminExtension());
+        $this->loadExtension(new OroB2BCustomerAdminExtension());
 
         $expectedParameters = ['orob2b_customer_admin.entity.customer.class'];
         $this->assertParametersLoaded($expectedParameters);

@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
 use Oro\Bundle\ApplicationBundle\Model\AbstractModel;
 
@@ -21,9 +24,14 @@ class CustomerGroupModel extends AbstractModel
     protected $entity;
 
     /**
-     * @var CustomerModel[]
+     * @var CustomerModel[]|Collection
      */
-    protected $customers = [];
+    protected $customers = false;
+
+    /**
+     * @var string
+     */
+    protected $name = false;
 
     /**
      * @param AbstractCustomerGroup $entity
@@ -45,18 +53,35 @@ class CustomerGroupModel extends AbstractModel
     }
 
     /**
-     * @return CustomerModel[]
+     * @return CustomerModel[]|Collection
      */
     public function getCustomers()
     {
-        if (!$this->customers) {
+        if (false === $this->customers) {
+            $this->customers = new ArrayCollection();
+
             $this->entity->getCustomers()->map(
                 function (AbstractCustomer $customer) {
-                    $this->customers[] = $this->customerFactory->create([$customer]);
+                    $model = $this->customerFactory->create([$customer]);
+                    if (!$this->customers->contains($model)) {
+                        $this->customers->add($model);
+                    }
                 }
             );
         }
 
         return $this->customers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        if (false === $this->name) {
+            $this->name = $this->entity->getName();
+        }
+
+        return $this->name;
     }
 }
