@@ -48,18 +48,34 @@
 {% block content_data %}
     {% set id = 'product-edit' %}
 
+    {% set formRows = [
+        form_row(form.enabled),
+        form_row(form.firstName),
+        form_row(form.lastName),
+        form_row(form.email),
+        form_widget(form.plainPassword, { 'attr': {'class': 'password'} })
+    ] %}
+
+    {% if form.passwordGenerate is defined %}
+        {% set formRows = formRows|merge([
+            form_row(form.passwordGenerate, { 'attr': {'class': 'password-trigger'} })
+        ]) %}
+        <span data-page-component-module="orob2buseradmin/js/app/components/password-generate"
+              data-page-component-options="{{ {class: 'password-trigger', targetClass: 'password'}|json_encode }}"></span>
+    {% endif %}
+
+    {% if form.sendEmail is defined %}
+        {% set formRows = formRows|merge([
+            form_row(form.sendEmail)
+        ]) %}
+    {% endif %}
+
     {% set dataBlocks = [{
             'title': 'orob2b.useradmin.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
-                'data': [
-                    form_row(form.firstName),
-                    form_row(form.lastName),
-                    form_row(form.email),
-                    form_row(form.plainPassword),
-                    form_row(form.enabled),
-                ]
+                'data': formRows
             }]
         }]
     %}

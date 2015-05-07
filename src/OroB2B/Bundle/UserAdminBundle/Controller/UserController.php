@@ -113,7 +113,9 @@ class UserController extends Controller
         $handler = new UserHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category')
+            $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category'),
+            $this->get('orob2b_user_admin.mailer.processor'),
+            $this->get('fos_user.util.token_generator')
         );
 
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
