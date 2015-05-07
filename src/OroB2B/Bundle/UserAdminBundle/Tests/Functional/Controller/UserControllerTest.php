@@ -12,7 +12,7 @@ use OroB2B\Bundle\UserAdminBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class UserControllerTest extends WebTestCase
 {
-    const UPDATED_FIRST_NAME = 'UpdFirstName';
+    const UPDATED_FIRST_NAME = 'UFirstName';
     const UPDATED_LAST_NAME = 'UpdLastName';
     const UPDATED_EMAIL = 'updated@example.com';
 
