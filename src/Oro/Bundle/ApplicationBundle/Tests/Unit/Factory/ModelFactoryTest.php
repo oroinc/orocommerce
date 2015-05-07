@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Factory;
 
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactory;
-use Oro\Bundle\ApplicationBundle\Tests\Unit\Factory\Stub\TestModel;
+use Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel;
 
 class ModelFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    const MODEL_CLASS = 'Oro\Bundle\ApplicationBundle\Tests\Unit\Factory\Stub\TestModel';
+    const MODEL_CLASS = 'Oro\Bundle\ApplicationBundle\Tests\Unit\Stub\TestModel';
 
     /**
      * @param array $arguments
