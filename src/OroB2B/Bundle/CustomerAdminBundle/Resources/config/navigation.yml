@@ -4,7 +4,7 @@ oro_menu_config:
             label:           'orob2b.customeradmin.menu.customer_tab.label'
             uri:             '#'
             extras:
-                icon:        icon-file-text
+                icon:        icon-user
                 position:    40
 
         customer_list:

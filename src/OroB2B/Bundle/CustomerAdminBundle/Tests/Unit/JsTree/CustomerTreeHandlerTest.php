@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\CustomerAdminBundle\Tests\Unit\JsTree;
 
-use OroB2B\Bundle\CustomerAdminBundle\JsTree\CustomerTreeHandler;
-
-use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use PHPUnit_Framework_MockObject_MockObject as Mock;
+
+use OroB2B\Bundle\CustomerAdminBundle\JsTree\CustomerTreeHandler;
+use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
 
 class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,8 +23,8 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $customer3 = $this->createCustomer(3, 'Adam Brodzisz');
         $customer4 = $this->createCustomer(4, 'Jerzy Ficowski');
 
-        $this->addChildren($customer1, [$customer2, $customer3]);
         $this->addChildren($customer3, [$customer4]);
+        $this->addChildren($customer1, [$customer2, $customer3]);
 
         /** @var Mock|\Doctrine\ORM\EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -35,62 +36,55 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(1)
             ->willReturn($customer1);
 
-        /** @var Mock|\Doctrine\ORM\EntityManager $manager */
-        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with($class)
-            ->willReturn($repository);
-
         /** @var Mock|\Doctrine\Bundle\DoctrineBundle\Registry $registry */
         $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
 
         $registry->expects($this->once())
-            ->method('getManagerForClass')
+            ->method('getRepository')
             ->with($class)
-            ->willReturn($manager);
+            ->willReturn($repository);
 
         $handler = new CustomerTreeHandler($class, $registry);
 
-        $this->assertEquals([
+        $this->assertEquals(
             [
-                'id' => '1',
-                'parent' => '#',
-                'text' => 'Waclaw Zagorski',
-                'state' => [
-                    'opened' => true
-                ]
+                [
+                    'id' => '1',
+                    'parent' => '#',
+                    'text' => 'Waclaw Zagorski',
+                    'state' => [
+                        'opened' => true,
+                    ],
+                ],
+                [
+                    'id' => '2',
+                    'parent' => '1',
+                    'text' => 'Mieczyslaw Krawicz',
+                    'state' => [
+                        'opened' => false,
+                    ],
+                ],
+                [
+                    'id' => '3',
+                    'parent' => '1',
+                    'text' => 'Adam Brodzisz',
+                    'state' => [
+                        'opened' => true,
+                    ],
+                ],
+                [
+                    'id' => '4',
+                    'parent' => '3',
+                    'text' => 'Jerzy Ficowski',
+                    'state' => [
+                        'opened' => false,
+                    ],
+                ],
             ],
-            [
-                'id' => '2',
-                'parent' => '1',
-                'text' => 'Mieczyslaw Krawicz',
-                'state' => [
-                    'opened' => false
-                ]
-            ],
-            [
-                'id' => '3',
-                'parent' => '1',
-                'text' => 'Adam Brodzisz',
-                'state' => [
-                    'opened' => true
-                ]
-            ],
-            [
-                'id' => '4',
-                'parent' => '3',
-                'text' => 'Jerzy Ficowski',
-                'state' => [
-                    'opened' => false
-                ]
-            ]
-        ], $handler->createTree(1));
+            $handler->createTree(1)
+        );
     }
 
     /**
@@ -127,10 +121,13 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $child->expects($this->any())
                 ->method('getParent')
                 ->willReturn($parent);
+            $child->expects($this->any())
+                ->method('getChildren')
+                ->willReturn(new ArrayCollection());
         }
 
         $parent->expects($this->any())
             ->method('getChildren')
-            ->willReturn($children);
+            ->willReturn(new ArrayCollection($children));
     }
 }

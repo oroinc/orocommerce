@@ -4,10 +4,16 @@ orob2b.customeradmin:
         entity_plural_label: 'Customers'
         name.label: 'Name'
         group.label: 'Group'
+        children.label: 'Children'
+        id.label: 'Id'
+        parent.label: 'Parent'
 
     customergroup:
         entity_label: 'Customer Group'
         entity_plural_label: 'Customer Groups'
+        name.label: 'Name'
+        id.label: 'Id'
+        customers.label: 'Customers'
 
     sections:
         general: 'General'

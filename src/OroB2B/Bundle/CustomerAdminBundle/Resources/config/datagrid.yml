@@ -12,16 +12,20 @@ datagrid:
                     - customer.id
                     - customer.name
                     - customer_group.name as group_name
+                    - parent.name as parent_name
                 from:
                     - { table: %orob2b_customer_admin.customer.class%, alias: customer }
                 join:
                     left:
                         - { join: customer.group, alias: customer_group }
+                        - { join: customer.parent, alias: parent }
         columns:
             name:
                 label: orob2b.customeradmin.customer.name.label
             group_name:
                 label: orob2b.customeradmin.customer.group.label
+            parent_name:
+                label: orob2b.customeradmin.customer.parent.label
         properties:
             id: ~
             view_link:
@@ -34,6 +38,8 @@ datagrid:
                     data_name: customer.name
                 group_name:
                     data_name: group_name
+                parent_name:
+                    data_name: parent_name
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -48,6 +54,14 @@ datagrid:
                         field_type: entity
                         field_options:
                             class:    %orob2b_customer_admin.customer_group.class%
+                            property: name
+                parent_name:
+                    type:      entity
+                    data_name: parent.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_customer_admin.customer.class%
                             property: name
         actions:
             view:

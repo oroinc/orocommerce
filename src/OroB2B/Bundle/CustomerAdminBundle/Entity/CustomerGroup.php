@@ -10,6 +10,14 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomerGroup;
 
 /**
+ * @ORM\Entity
+ * @ORM\Table(
+ *      name="orob2b_customer_group",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_customer_group_name_idx", columns={"name"})
+ *      }
+ * )
+ *
  * @Config()
  */
 class CustomerGroup extends AbstractCustomerGroup

@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\CustomerAdminBundle\Controller;
 
-use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
-
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+
+use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
 
 class CustomerController extends Controller
 {
@@ -50,7 +50,7 @@ class CustomerController extends Controller
 
     /**
      * @Route("/info/{id}", name="orob2b_customer_admin_customer_info", requirements={"id"="\d+"})
-     * @Template
+     * @Template("OroB2BCustomerAdminBundle:Customer/widget:info.html.twig")
      * @AclAncestor("orob2b_customer_admin_customer_view")
      *
      * @param Customer $customer
@@ -59,7 +59,8 @@ class CustomerController extends Controller
     public function infoAction(Customer $customer)
     {
         return [
-            'entity' => $customer
+            'entity' => $customer,
+            'treeData' => $this->get('orob2b_customer_admin.customer_tree_handler')->createTree($customer->getId())
         ];
     }
 }

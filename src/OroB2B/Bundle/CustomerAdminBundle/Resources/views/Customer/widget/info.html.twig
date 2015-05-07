@@ -5,6 +5,31 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.customeradmin.customer.name.label'|trans, entity.name) }}
+            {% if entity.group %}
+                {# @todo: add link to group view #}
+                {{ UI.renderProperty('orob2b.customeradmin.customer.group.label'|trans, entity.group.name) }}
+            {% endif %}
+            {% if entity.parent %}
+                {% if is_granted('VIEW', entity.parent) %}
+                    {% set parentData %}
+                        <a href="{{ path('orob2b_customer_admin_customer_view', {id: entity.parent.id}) }}">
+                            {{ entity.parent.name }}
+                        </a>
+                    {% endset %}
+                    {{ UI.renderHtmlProperty('orob2b.customeradmin.customer.parent.label'|trans, parentData) }}
+                {% else %}
+                    {{ UI.renderProperty('orob2b.customeradmin.customer.parent.label'|trans, entity.parent.name) }}
+                {% endif %}
+            {% endif %}
+            {% if entity.children %}
+                {% set customerTree %}
+                    <div class="b2b-tree">
+                        <div data-page-component-module="orob2bcustomeradmin/js/app/components/customer-tree-component"
+                             data-page-component-options="{{ {'data' : treeData}|json_encode }}"></div>
+                    </div>
+                {% endset %}
+                {{ UI.renderHtmlProperty('orob2b.customeradmin.customer.children.label'|trans, customerTree) }}
+            {% endif %}
         </div>
     </div>
 </div>

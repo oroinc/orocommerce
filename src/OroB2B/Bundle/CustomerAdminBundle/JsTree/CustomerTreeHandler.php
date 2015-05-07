@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\CustomerAdminBundle\JsTree;
 
-use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
-
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
+
+use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
 
 class CustomerTreeHandler
 {
@@ -26,25 +26,26 @@ class CustomerTreeHandler
     public function createTree($rootId)
     {
         /** @var Customer $root */
-        $root = $this->getEntityRepository()->find((int) $rootId);
+        $root = $this->getEntityRepository()->find((int)$rootId);
 
-        $entities = [$root];
+        $entities = [];
 
         $childrenEntities = $this->buildTreeRecursive($root);
 
-        return $this->formatTree(array_merge($entities, $childrenEntities));
+        return $this->formatTree(array_merge($entities, $childrenEntities), $rootId);
     }
 
     /**
      * @param array|Customer[] $entities
+     * @param int $rootId
      * @return array
      */
-    protected function formatTree(array $entities)
+    protected function formatTree(array $entities, $rootId)
     {
         $formattedTree = [];
 
         foreach ($entities as $entity) {
-            $formattedTree[] = $this->formatEntity($entity);
+            $formattedTree[] = $this->formatEntity($entity, $rootId);
         }
 
         return $formattedTree;
@@ -52,16 +53,17 @@ class CustomerTreeHandler
 
     /**
      * @param Customer $entity
+     * @param int $rootId
      * @return array
      */
-    protected function formatEntity(Customer $entity)
+    protected function formatEntity(Customer $entity, $rootId)
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParent() ? $entity->getParent()->getId() : '#',
+            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $rootId ? $entity->getParent()->getId() : '#',
             'text'   => $entity->getName(),
             'state'  => [
-                'opened' => !($entity->getChildren() === null)
+                'opened' => !$entity->getChildren()->isEmpty()
             ]
         ];
     }
@@ -76,12 +78,10 @@ class CustomerTreeHandler
 
         $children = $entity->getChildren();
 
-        if ($children && is_array($children)) {
-            foreach ($children as $child) {
-                $entities[] = $child;
+        foreach ($children->toArray() as $child) {
+            $entities[] = $child;
 
-                $entities = array_merge($entities, $this->buildTreeRecursive($child));
-            }
+            $entities = array_merge($entities, $this->buildTreeRecursive($child));
         }
 
         return $entities;
@@ -92,8 +92,6 @@ class CustomerTreeHandler
      */
     protected function getEntityRepository()
     {
-        return $this->managerRegistry
-            ->getManagerForClass($this->entityClass)
-            ->getRepository($this->entityClass);
+        return $this->managerRegistry->getRepository($this->entityClass);
     }
 }
