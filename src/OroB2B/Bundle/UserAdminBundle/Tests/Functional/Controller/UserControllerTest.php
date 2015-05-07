@@ -12,8 +12,8 @@ use OroB2B\Bundle\UserAdminBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class UserControllerTest extends WebTestCase
 {
-    const UPDATED_FIRST_NAME = 'Updfirstname';
-    const UPDATED_LAST_NAME = 'Updlastname';
+    const UPDATED_FIRST_NAME = 'UpdFirstName';
+    const UPDATED_LAST_NAME = 'UpdLastName';
     const UPDATED_EMAIL = 'updated@example.com';
 
     /**
@@ -164,9 +164,9 @@ class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_user_admin_user_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_user_admin_user[firstName]'] = '_' . LoadUserData::FIRST_NAME;
-        $form['orob2b_user_admin_user[lastName]']  = '_' . LoadUserData::LAST_NAME;
-        $form['orob2b_user_admin_user[email]']     = 'changed.' . LoadUserData::EMAIL;
+        $form['orob2b_user_admin_user[firstName]'] = self::UPDATED_FIRST_NAME;
+        $form['orob2b_user_admin_user[lastName]']  = self::UPDATED_LAST_NAME;
+        $form['orob2b_user_admin_user[email]']     = self::UPDATED_EMAIL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -191,7 +191,7 @@ class UserControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(
-            sprintf('%s - Frontend Users - Frontend User Management - System', 'changed.' . LoadUserData::EMAIL),
+            sprintf('%s - Frontend Users - Frontend User Management - System', self::UPDATED_EMAIL),
             $result->getContent()
         );
 
@@ -213,8 +213,8 @@ class UserControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('_' . LoadUserData::FIRST_NAME, $result->getContent());
-        $this->assertContains('_' . LoadUserData::LAST_NAME, $result->getContent());
-        $this->assertContains('changed.' . LoadUserData::EMAIL, $result->getContent());
+        $this->assertContains(self::UPDATED_FIRST_NAME, $result->getContent());
+        $this->assertContains(self::UPDATED_LAST_NAME, $result->getContent());
+        $this->assertContains(self::UPDATED_EMAIL, $result->getContent());
     }
 }
