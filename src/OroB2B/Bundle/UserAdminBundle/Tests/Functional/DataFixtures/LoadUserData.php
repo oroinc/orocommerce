@@ -12,6 +12,7 @@ class LoadUserData extends AbstractFixture
     const FIRST_NAME = 'Grzegorz';
     const LAST_NAME = 'Brzeczyszczykiewicz';
     const EMAIL = 'grzegorz.brzeczyszczykiewicz@example.com';
+    const PASSWORD = 'test';
 
     /**
      * @var array
@@ -22,7 +23,7 @@ class LoadUserData extends AbstractFixture
             'last_name' => self::LAST_NAME,
             'email' => self::EMAIL,
             'enabled' => true,
-            'password' => 'test',
+            'password' => self::PASSWORD,
         ]
     ];
 

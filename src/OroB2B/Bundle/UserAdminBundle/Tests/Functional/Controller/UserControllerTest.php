@@ -11,11 +11,6 @@ use OroB2B\Bundle\UserAdminBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class UserControllerTest extends WebTestCase
 {
-    const FIRST_NAME = 'Grzegorz';
-    const LAST_NAME = 'Brzeczyszczykiewicz';
-    const EMAIL = 'grzegorz.brzeczyszczykiewicz@example.com';
-    const PASSWORD = 'test';
-
     /**
      * {@inheritDoc}
      */
@@ -29,10 +24,26 @@ class UserControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        $form = $this->getUserCreationForm();
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_user_admin_user_create'));
 
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $form = $crawler->selectButton('Save and Close')->form();
+        $form['orob2b_user_admin_user[firstName]']             = LoadUserData::FIRST_NAME;
+        $form['orob2b_user_admin_user[lastName]']              = LoadUserData::LAST_NAME;
+        $form['orob2b_user_admin_user[email]']                 = LoadUserData::EMAIL;
+        $form['orob2b_user_admin_user[plainPassword][first]']  = LoadUserData::PASSWORD;
+        $form['orob2b_user_admin_user[plainPassword][second]'] = LoadUserData::PASSWORD;
+        $form['orob2b_user_admin_user[enabled]']               = true;
+        $form['orob2b_user_admin_user[passwordGenerate]']      = true;
+        $form['orob2b_user_admin_user[sendEmail]']             = true;
+
+        $this->client->submit($form);
+
+        $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
+
+        $this->assertCount(1, $collectedMessages);
+        $this->assertMessage(array_shift($collectedMessages));
+
+        $crawler = $this->client->followRedirect();
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -40,21 +51,41 @@ class UserControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Symfony\Component\DomCrawler\Form
+     * @param \Swift_Message $message
      */
-    protected function getUserCreationForm()
+    protected function assertMessage(\Swift_Message $message)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_user_admin_user_create'));
+        /** @var \OroB2B\Bundle\UserAdminBundle\Entity\User $user */
+        $user = $this->getUserRepository()->findOneBy(['email' => LoadUserData::EMAIL]);
 
-        $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_user_admin_user[firstName]']             = self::FIRST_NAME;
-        $form['orob2b_user_admin_user[lastName]']              = self::LAST_NAME;
-        $form['orob2b_user_admin_user[email]']                 = self::EMAIL;
-        $form['orob2b_user_admin_user[plainPassword][first]']  = self::PASSWORD;
-        $form['orob2b_user_admin_user[plainPassword][second]'] = self::PASSWORD;
-        $form['orob2b_user_admin_user[enabled]']               = true;
+        $this->assertNotNull($user);
 
-        return $form;
+        $this->assertInstanceOf('\Swift_Message', $message);
+
+        $this->assertEquals(LoadUserData::EMAIL, key($message->getTo()));
+        $this->assertEquals(
+            $this->getContainer()->get('oro_config.manager')->get('oro_notification.email_notification_sender_email'),
+            key($message->getFrom())
+        );
+
+        $this->assertContains(LoadUserData::EMAIL, $message->getSubject());
+        $this->assertContains(LoadUserData::EMAIL, $message->getBody());
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager
+     */
+    protected function getObjectManager()
+    {
+        return $this->getContainer()->get('doctrine')->getManager();
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    protected function getUserRepository()
+    {
+        return $this->getObjectManager()->getRepository('OroB2BUserAdminBundle:User');
     }
 
     /**
@@ -94,9 +125,9 @@ class UserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_user_admin_user_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_user_admin_user[firstName]'] = '_' . self::FIRST_NAME;
-        $form['orob2b_user_admin_user[lastName]']  = '_' . self::LAST_NAME;
-        $form['orob2b_user_admin_user[email]']     = 'changed.' . self::EMAIL;
+        $form['orob2b_user_admin_user[firstName]'] = '_' . LoadUserData::FIRST_NAME;
+        $form['orob2b_user_admin_user[lastName]']  = '_' . LoadUserData::LAST_NAME;
+        $form['orob2b_user_admin_user[email]']     = 'changed.' . LoadUserData::EMAIL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
