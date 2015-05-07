@@ -11,6 +11,8 @@ orob2b.useradmin:
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
         groups.label:                'Groups'
+        password_generate.label:     'Generate Password'
+        send_email.label:            'Send Welcome Email'
     group:
         entity_label:                'Group'
         entity_plural_label:         'Groups'
