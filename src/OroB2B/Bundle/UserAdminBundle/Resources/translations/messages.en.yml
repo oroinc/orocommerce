@@ -1,7 +1,7 @@
 orob2b.useradmin:
     user:
-        entity_label:                'User'
-        entity_plural_label:         'Users'
+        entity_label:                'Frontend User'
+        entity_plural_label:         'Frontend Users'
         id.label:                    'ID'
         first_name.label:            'First Name'
         last_name.label:             'Last Name'
@@ -10,17 +10,17 @@ orob2b.useradmin:
         password.label:              'Password'
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
-        groups.label:                'Groups'
+        groups.label:                'Frontend Groups'
         password_generate.label:     'Generate Password'
         send_email.label:            'Send Welcome Email'
     group:
-        entity_label:                'Group'
-        entity_plural_label:         'Groups'
+        entity_label:                'Frontend Group'
+        entity_plural_label:         'Frontend Groups'
         name.label:                  'Name'
-        has_group.label:             'Has Group'
+        has_group.label:             'Has Frontend Group'
     role:
-        entity_label:                'Role'
-        entity_plural_label:         'Roles'
+        entity_label:                'Frontend Role'
+        entity_plural_label:         'Frontend Roles'
 
     menu:
         frontend_users_management.label:  'Frontend User Management'
@@ -41,18 +41,18 @@ orob2b.useradmin:
 
     sections:
         general: 'General'
-        roles: 'Roles'
+        roles: 'Frontend Roles'
 
     widgets:
-        user_information: 'User Information'
+        user_information: 'Frontend User Information'
 
     controller:
-        user.saved.message:     'User has been saved'
-        user.enabled.message:   'User has been enabled'
-        user.disabled.message:  'User has been disabled'
-        user.not_found.message: 'User not found'
-        group.saved.message:    'Group has been saved'
+        user.saved.message:     'Frontend User has been saved'
+        user.enabled.message:   'Frontend User has been enabled'
+        user.disabled.message:  'Frontend User has been disabled'
+        user.not_found.message: 'Frontend User not found'
+        group.saved.message:    'Frontend Group has been saved'
 
     message:
         password_mismatch: "The entered passwords don't match"
-        group_saved:       "Group has been saved"
+        group_saved:       "Frontend Group has been saved"

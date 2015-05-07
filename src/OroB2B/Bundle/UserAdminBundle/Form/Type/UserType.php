@@ -7,10 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use FOS\UserBundle\Util\TokenGenerator;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class UserType extends AbstractType
@@ -19,12 +15,6 @@ class UserType extends AbstractType
 
     /** @var TranslatorInterface */
     protected $translator;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
-    /** @var TokenGenerator */
-    protected $passwordGenerator;
 
     /**
      * @param TranslatorInterface $translator

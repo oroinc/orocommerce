@@ -134,7 +134,7 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->mailer->expects($this->any())
             ->method('send')
-            ->willReturnCallback(function ($message) {
+            ->willReturnCallback(function (\Swift_Message $message) {
                 $this->assertEquals(self::SUBJECT, $message->getSubject());
                 $this->assertEquals(self::BODY, $message->getBody());
             });

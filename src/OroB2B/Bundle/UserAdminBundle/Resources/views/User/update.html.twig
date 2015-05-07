@@ -64,7 +64,7 @@
               data-page-component-options="{{ {class: 'password-trigger', targetClass: 'password'}|json_encode }}"></span>
     {% endif %}
 
-    {% if form.passwordGenerate is defined %}
+    {% if form.sendEmail is defined %}
         {% set formRows = formRows|merge([
             form_row(form.sendEmail)
         ]) %}

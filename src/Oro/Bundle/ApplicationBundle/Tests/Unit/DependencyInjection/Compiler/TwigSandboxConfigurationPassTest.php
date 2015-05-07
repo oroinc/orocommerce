@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\DependencyInjection\Compiler;
 
-use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
-
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+
+use Oro\Bundle\ApplicationBundle\DependencyInjection\Compiler\TwigSandboxConfigurationPass;
 
 class TwigSandboxConfigurationPassTest extends \PHPUnit_Framework_TestCase
 {
