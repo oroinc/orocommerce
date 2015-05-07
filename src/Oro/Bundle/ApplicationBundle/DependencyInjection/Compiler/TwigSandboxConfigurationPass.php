@@ -23,11 +23,11 @@ class TwigSandboxConfigurationPass implements CompilerPassInterface
             // register 'application_url' function
             $securityPolicyDef = $container->getDefinition(self::EMAIL_TEMPLATE_SANDBOX_SECURITY_POLICY_SERVICE_KEY);
             $functions = $securityPolicyDef->getArgument(4);
-            $functions = array_merge($functions, array('application_url'));
+            $functions = array_merge($functions, ['application_url']);
             $securityPolicyDef->replaceArgument(4, $functions);
             // register an twig extension implements this function
             $rendererDef = $container->getDefinition(self::EMAIL_TEMPLATE_RENDERER_SERVICE_KEY);
-            $rendererDef->addMethodCall('addExtension', array(new Reference(self::APPLICATION_URL_EXTENSION)));
+            $rendererDef->addMethodCall('addExtension', [new Reference(self::APPLICATION_URL_EXTENSION)]);
         }
     }
 }
