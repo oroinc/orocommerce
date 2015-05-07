@@ -5,6 +5,15 @@ namespace OroB2B\Bundle\CustomerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
+/**
+ * @ORM\Entity()
+ * @ORM\Table(
+ *      name="orob2b_customer",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_customer_name_idx", columns={"name"})
+ *      }
+ * )
+ */
 class Customer extends AbstractCustomer
 {
     /**
