@@ -44,12 +44,20 @@ class UserType extends AbstractType
             ->add('lastName', 'text', ['required' => true, 'label' => 'orob2b.useradmin.user.last_name.label'])
             ->add('email', 'email', ['required' => true, 'label' => 'orob2b.useradmin.user.email.label'])
 
-            ->add('enabled', 'checkbox', ['required' => false, 'label' => 'orob2b.useradmin.user.enabled.label'])
+            ->add(
+                'enabled',
+                'checkbox',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.useradmin.user.enabled.label',
+                    'data' => true,
+                ]
+            )
             ->add(
                 'groups',
                 'entity',
                 [
-                    'label'     => null,
+                    'label'     => 'orob2b.useradmin.user.groups.label',
                     'class'     => 'OroB2BUserAdminBundle:Group',
                     'property'  => 'name',
                     'multiple'  => true,

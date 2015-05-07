@@ -137,7 +137,7 @@ datagrid:
                 params: [ id ]
             delete_link:
                 type: url
-                route: orob2b_api_user_admin_delete_frontendgroup
+                route: orob2b_api_user_admin_delete_frontendrole
                 params: [ id ]
         actions:
             update:
