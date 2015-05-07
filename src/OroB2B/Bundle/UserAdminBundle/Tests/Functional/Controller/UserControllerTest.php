@@ -7,10 +7,15 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\UserAdminBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
+ * @outputBuffering enabled
  * @dbIsolation
  */
 class UserControllerTest extends WebTestCase
 {
+    const UPDATED_FIRST_NAME = 'Updfirstname';
+    const UPDATED_LAST_NAME = 'Updlastname';
+    const UPDATED_EMAIL = 'updated@example.com';
+
     /**
      * {@inheritDoc}
      */
@@ -20,56 +25,90 @@ class UserControllerTest extends WebTestCase
     }
 
     /**
-     * Test create
+     * @dataProvider createDataProvider
      */
-    public function testCreate()
+    public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_user_admin_user_create'));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_user_admin_user[firstName]']             = LoadUserData::FIRST_NAME;
         $form['orob2b_user_admin_user[lastName]']              = LoadUserData::LAST_NAME;
-        $form['orob2b_user_admin_user[email]']                 = LoadUserData::EMAIL;
-        $form['orob2b_user_admin_user[plainPassword][first]']  = LoadUserData::PASSWORD;
-        $form['orob2b_user_admin_user[plainPassword][second]'] = LoadUserData::PASSWORD;
+        $form['orob2b_user_admin_user[email]']                 = $email;
+        $form['orob2b_user_admin_user[plainPassword][first]']  = $password;
+        $form['orob2b_user_admin_user[plainPassword][second]'] = $password;
         $form['orob2b_user_admin_user[enabled]']               = true;
-        $form['orob2b_user_admin_user[passwordGenerate]']      = true;
-        $form['orob2b_user_admin_user[sendEmail]']             = true;
+        $form['orob2b_user_admin_user[passwordGenerate]']      = $isPasswordGenerate;
+        $form['orob2b_user_admin_user[sendEmail]']             = $isSendEmail;
 
         $this->client->submit($form);
 
         $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
 
-        $this->assertCount(1, $collectedMessages);
-        $this->assertMessage(array_shift($collectedMessages));
+        $this->assertCount($emailsCount, $collectedMessages);
+
+        if ($isSendEmail) {
+            $this->assertMessage($email, array_shift($collectedMessages));
+        }
 
         $crawler = $this->client->followRedirect();
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('User has been saved', $crawler->html());
+        $this->assertContains('Frontend User has been saved', $crawler->html());
     }
 
     /**
+     * @return array
+     */
+    public function createDataProvider()
+    {
+        return [
+            'simple create' => [
+                'email' => LoadUserData::EMAIL,
+                'password' => LoadUserData::PASSWORD,
+                'isPasswordGenerate' => false,
+                'isSendEmail' => false,
+                'emailsCount' => 0,
+            ],
+            'create with email and without password generator' => [
+                'email' => 'second@example.com',
+                'password' => LoadUserData::PASSWORD,
+                'isPasswordGenerate' => false,
+                'isSendEmail' => true,
+                'emailsCount' => 1,
+            ],
+            'create with email and password generator' => [
+                'email' => 'third@example.com',
+                'password' => '',
+                'isPasswordGenerate' => true,
+                'isSendEmail' => true,
+                'emailsCount' => 1,
+            ]
+        ];
+    }
+
+    /**
+     * @param string $email
      * @param \Swift_Message $message
      */
-    protected function assertMessage(\Swift_Message $message)
+    protected function assertMessage($email, \Swift_Message $message)
     {
         /** @var \OroB2B\Bundle\UserAdminBundle\Entity\User $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => LoadUserData::EMAIL]);
+        $user = $this->getUserRepository()->findOneBy(['email' => $email]);
 
         $this->assertNotNull($user);
 
         $this->assertInstanceOf('\Swift_Message', $message);
 
-        $this->assertEquals(LoadUserData::EMAIL, key($message->getTo()));
+        $this->assertEquals($email, key($message->getTo()));
         $this->assertEquals(
             $this->getContainer()->get('oro_config.manager')->get('oro_notification.email_notification_sender_email'),
             key($message->getFrom())
         );
 
-        $this->assertContains(LoadUserData::EMAIL, $message->getSubject());
-        $this->assertContains(LoadUserData::EMAIL, $message->getBody());
+        $this->assertContains($email, $message->getSubject());
+        $this->assertContains($email, $message->getBody());
     }
 
     /**
@@ -134,7 +173,7 @@ class UserControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('User has been saved', $crawler->html());
+        $this->assertContains('Frontend User has been saved', $crawler->html());
 
         return $id;
     }
@@ -152,7 +191,7 @@ class UserControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(
-            sprintf('%s - Users - Frontend User Management - System', 'changed.' . LoadUserData::EMAIL),
+            sprintf('%s - Frontend Users - Frontend User Management - System', 'changed.' . LoadUserData::EMAIL),
             $result->getContent()
         );
 

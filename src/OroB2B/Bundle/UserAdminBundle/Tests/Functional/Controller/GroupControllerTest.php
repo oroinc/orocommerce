@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class GroupControllerTest extends WebTestCase
 {
-    const GROUP_NAME = 'Test Group Name';
+    const GROUP_NAME = 'Test Frontend Role Name';
 
     /**
      * {@inheritDoc}
@@ -42,7 +42,7 @@ class GroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Role has been saved', $crawler->html());
+        $this->assertContains('Frontend Role has been saved', $crawler->html());
     }
 
     /**
@@ -79,7 +79,7 @@ class GroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Role has been saved', $crawler->html());
+        $this->assertContains('Frontend Role has been saved', $crawler->html());
     }
 
     /**
