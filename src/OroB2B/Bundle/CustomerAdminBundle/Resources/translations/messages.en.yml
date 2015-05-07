@@ -22,3 +22,7 @@ orob2b.customeradmin:
         customer_tab.label: 'Customers'
         customer_list.description: 'List of Customers'
         shortcut_customer_list.description: 'List of Customers'
+
+    controller:
+        customer:
+            saved.message: 'Customer saved'

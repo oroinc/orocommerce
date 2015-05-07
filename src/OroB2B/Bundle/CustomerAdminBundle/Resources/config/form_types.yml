@@ -1,5 +1,8 @@
 parameters:
-    # for the future needs
+    orob2b_customer_admin.form.type.customer.class: OroB2B\Bundle\CustomerAdminBundle\Form\Type\CustomerType
 
 services:
-    # for the future needs
+    orob2b_customer_admin.form.type.customer:
+        class: %orob2b_customer_admin.form.type.customer.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_admin_customer_type }

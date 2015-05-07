@@ -12,7 +12,11 @@ oro_menu_config:
             route:           'orob2b_customer_admin_customer_index'
             extras:
                 position:    10
-                routes:      ['orob2b_customer_admin_customer_index', 'orob2b_customer_admin_customer_view']
+                routes:
+                    - 'orob2b_customer_admin_customer_index'
+                    - 'orob2b_customer_admin_customer_view'
+                    - 'orob2b_customer_admin_customer_create'
+                    - 'orob2b_customer_admin_customer_update'
                 description: 'orob2b.customeradmin.menu.customer_list.description'
 
         shortcut_customer_list:
@@ -35,3 +39,5 @@ oro_menu_config:
 oro_titles:
     orob2b_customer_admin_customer_index: ~
     orob2b_customer_admin_customer_view:  '%%title%%'
+    orob2b_customer_admin_customer_update: %%customerName%% - oro.ui.edit
+    orob2b_customer_admin_customer_create: oro.ui.create_entity
