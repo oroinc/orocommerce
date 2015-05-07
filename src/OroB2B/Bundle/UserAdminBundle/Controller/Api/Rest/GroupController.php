@@ -14,7 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
- * @RouteResource("frontendgroup")
+ * @RouteResource("frontendrole")
  * @NamePrefix("orob2b_api_user_admin_")
  */
 class GroupController extends RestController implements ClassResourceInterface
