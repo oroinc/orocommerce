@@ -62,14 +62,16 @@ class UserHandler
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
-                if ($this->form->get('passwordGenerate')->getData()) {
-                    $generatedPassword = substr($this->passwordGenerator->generateToken(), 0, 10);
-                    $user->setPlainPassword($generatedPassword);
-                }
+                if (!$user->getId()) {
+                    if ($this->form->get('passwordGenerate')->getData()) {
+                        $generatedPassword = substr($this->passwordGenerator->generateToken(), 0, 10);
+                        $user->setPlainPassword($generatedPassword);
+                    }
 
-                if ($this->form->get('sendEmail')->getData()) {
-                    $password = $user->getPlainPassword();
-                    $this->emailSendProcessor->sendWelcomeNotification($user, $password);
+                    if ($this->form->get('sendEmail')->getData()) {
+                        $password = $user->getPlainPassword();
+                        $this->emailSendProcessor->sendWelcomeNotification($user, $password);
+                    }
                 }
 
                 $this->manager->persist($user);
