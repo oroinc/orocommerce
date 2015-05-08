@@ -32,6 +32,7 @@
     "autoload": {
         "psr-0": {
             "Oro\\Component": "src/",
+            "Oro\\Bundle": "src/",
             "OroB2B\\Component": "src/",
             "OroB2B\\Bundle": "src/"
         }
