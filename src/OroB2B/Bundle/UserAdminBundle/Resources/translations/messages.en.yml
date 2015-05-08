@@ -1,0 +1,59 @@
+orob2b.useradmin:
+    user:
+        entity_label:                'Frontend User'
+        entity_plural_label:         'Frontend Users'
+        id.label:                    'ID'
+        first_name.label:            'First Name'
+        last_name.label:             'Last Name'
+        username.label:              'Email'
+        email.label:                 'Email Address'
+        password.label:              'Password'
+        password_confirmation.label: 'Confirm Password'
+        enabled.label:               'Enabled'
+        groups.label:                'Frontend Roles'
+        password_generate.label:     'Generate Password'
+        send_email.label:            'Send Welcome Email'
+    group:
+        entity_label:                'Frontend Role'
+        entity_plural_label:         'Frontend Roles'
+        name.label:                  'Name'
+        has_group.label:             'Has Frontend Role'
+    role:
+        entity_label:                'Frontend Capability'
+        entity_plural_label:         'Frontend Capabilities'
+
+    menu:
+        frontend_users_management.label:  'Frontend User Management'
+        frontend_users.description:       'List of frontend users'
+        frontend_groups.description:      'List of frontend roles'
+        shortcut_new_user.label:          'Create new frontend user'
+        shortcut_new_user.description:    'Create new frontend user instance'
+        shortcut_list_users.label:        'Show frontend users'
+        shortcut_list_users.description:  'View list of fontend users'
+        shortcut_new_group.label:         'Create new frontend role'
+        shortcut_new_group.description:   'Create new frontend role instance'
+        shortcut_list_groups.label:       'Show frontend roles'
+        shortcut_list_groups.description: 'View list of fontend roles'
+
+    action:
+        user.enable:  'Enable'
+        user.disable: 'Disable'
+
+    sections:
+        general: 'General'
+        groups:  'Frontend Roles'
+        roles:   'Frontend Capabilities'
+
+    widgets:
+        user_information: 'Frontend User Information'
+
+    controller:
+        user.saved.message:     'Frontend User has been saved'
+        user.enabled.message:   'Frontend User has been enabled'
+        user.disabled.message:  'Frontend User has been disabled'
+        user.not_found.message: 'Frontend User not found'
+        group.saved.message:    'Frontend Role has been saved'
+
+    message:
+        password_mismatch: "The entered passwords don't match"
+        group_saved:       "Frontend Role has been saved"

@@ -20,7 +20,9 @@
         }
     ],
     "require": {
-        "oro/platform": "1.x-dev"
+        "oro/platform": "1.x-dev",
+        "jms/security-extra-bundle": "1.5.1",
+        "friendsofsymfony/user-bundle": "~1.3"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,

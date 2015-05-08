@@ -10,6 +10,7 @@ class ConfigManager
     protected $config = [
         'oro_b2b_rfp_admin.default_request_status' => 'open',
         'oro_b2b_rfp_admin.default_user_for_notifications' => 'admin@example.com',
+        'orob2b_user.allow_frontend_registration' => true,
     ];
 
     /**

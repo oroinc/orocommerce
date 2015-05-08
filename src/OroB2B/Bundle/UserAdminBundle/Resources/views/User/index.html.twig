@@ -1,0 +1,13 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% set gridName = 'user-admin-user-grid' %}
+{% set pageTitle = 'orob2b.useradmin.user.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_user_admin_user_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_user_admin_user_create'),
+            'entity_label': 'orob2b.useradmin.user.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
