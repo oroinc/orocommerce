@@ -22,7 +22,7 @@ class MailerTest extends \PHPUnit_Framework_TestCase
         $router = $this->getMock('Symfony\Component\Routing\RouterInterface');
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
 
-        $configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager');
+        $configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager', ['get']);
         $configManager->expects($this->at(0))
             ->method('get')
             ->with('oro_notification.email_notification_sender_email')
