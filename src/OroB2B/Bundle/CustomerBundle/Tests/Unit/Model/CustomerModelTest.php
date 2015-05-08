@@ -89,7 +89,7 @@ class CustomerModelTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($model->getChildren()->isEmpty());
     }
 
-    public function testGetName()
+    public function testGetSetName()
     {
         $name = 'customer';
         $customer = new Customer();
@@ -98,6 +98,12 @@ class CustomerModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('string', $model->getName());
         $this->assertEquals($name, $model->getName());
+
+        $alteredName = 'alteredCustomer';
+        $model->setName($alteredName);
+
+        $this->assertEquals($alteredName, $customer->getName());
+        $this->assertEquals($alteredName, $model->getName());
     }
 
     public function testGetNameEmpty()
@@ -161,5 +167,18 @@ class CustomerModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('string', $model->getModelName());
         $this->assertEquals('customer', $model->getModelName());
+    }
+
+    public function testGetId()
+    {
+        $customerId = 1;
+        $customer = new Customer();
+
+        $reflection = new \ReflectionProperty(get_class($customer), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($customer, $customerId);
+
+        $model = $this->getModel($customer);
+        $this->assertEquals($customerId, $model->getId());
     }
 }

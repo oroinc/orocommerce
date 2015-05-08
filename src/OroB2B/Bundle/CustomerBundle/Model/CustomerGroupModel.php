@@ -53,6 +53,14 @@ class CustomerGroupModel extends AbstractModel
     }
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->entity->getId();
+    }
+
+    /**
      * @return CustomerModel[]|Collection
      */
     public function getCustomers()
@@ -78,10 +86,17 @@ class CustomerGroupModel extends AbstractModel
      */
     public function getName()
     {
-        if (false === $this->name) {
-            $this->name = $this->entity->getName();
-        }
+        return $this->entity->getName();
+    }
 
-        return $this->name;
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->entity->setName($name);
+
+        return $this;
     }
 }

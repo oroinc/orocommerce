@@ -50,6 +50,12 @@ class CustomerGroupModelTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('string', $model->getName());
         $this->assertEquals($name, $model->getName());
+
+        $alteredName = 'alteredCustomerGroup';
+        $model->setName($alteredName);
+
+        $this->assertEquals($alteredName, $group->getName());
+        $this->assertEquals($alteredName, $model->getName());
     }
 
     public function testGetNameEmpty()
@@ -93,5 +99,19 @@ class CustomerGroupModelTest extends \PHPUnit_Framework_TestCase
             );
 
         return new CustomerGroupModel($customerGroup, $factory);
+    }
+
+
+    public function testGetId()
+    {
+        $customerGroupId = 1;
+        $customerGroup = new CustomerGroup();
+
+        $reflection = new \ReflectionProperty(get_class($customerGroup), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($customerGroup, $customerGroupId);
+
+        $model = $this->getModel($customerGroup);
+        $this->assertEquals($customerGroupId, $model->getId());
     }
 }

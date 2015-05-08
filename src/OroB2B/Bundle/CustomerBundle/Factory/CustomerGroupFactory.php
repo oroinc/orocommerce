@@ -23,11 +23,12 @@ class CustomerGroupFactory extends ModelFactory
 
     /**
      * @param string $modelClassName
+     * @param string $entityClassName
      * @param ContainerInterface $container
      */
-    public function __construct($modelClassName, ContainerInterface $container)
+    public function __construct($modelClassName, $entityClassName, ContainerInterface $container)
     {
-        parent::__construct($modelClassName);
+        parent::__construct($modelClassName, $entityClassName);
 
         $this->container = $container;
     }
@@ -37,7 +38,12 @@ class CustomerGroupFactory extends ModelFactory
      */
     public function create(array $arguments = [])
     {
-        return new CustomerGroupModel(reset($arguments), $this->getCustomerFactory());
+        $entity = null;
+        if (!empty($arguments[0])) {
+            $entity = $arguments[0];
+        }
+
+        return parent::create([$entity, $this->getCustomerFactory()]);
     }
 
     /**

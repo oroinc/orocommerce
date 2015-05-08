@@ -26,7 +26,11 @@ class CustomerGroupFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->once())->method('get')->with($this->isType('string'))->willReturn($groupFactory);
 
-        $this->factory = new CustomerGroupFactory('OroB2B\Bundle\CustomerBundle\Model\CustomerGroupModel', $container);
+        $this->factory = new CustomerGroupFactory(
+            'OroB2B\Bundle\CustomerBundle\Model\CustomerGroupModel',
+            'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup',
+            $container
+        );
     }
 
     protected function tearDown()

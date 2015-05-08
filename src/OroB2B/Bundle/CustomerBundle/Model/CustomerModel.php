@@ -43,11 +43,6 @@ class CustomerModel extends AbstractModel
     protected $group = false;
 
     /**
-     * @var string
-     */
-    protected $name = false;
-
-    /**
      * @param AbstractCustomer $entity
      * @param ModelFactoryInterface $groupFactory
      * @param ModelFactoryInterface $customerFactory
@@ -69,6 +64,14 @@ class CustomerModel extends AbstractModel
     public static function getModelName()
     {
         return 'customer';
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->entity->getId();
     }
 
     /**
@@ -131,10 +134,17 @@ class CustomerModel extends AbstractModel
      */
     public function getName()
     {
-        if (false === $this->name) {
-            $this->name = $this->entity->getName();
-        }
+        return $this->entity->getName();
+    }
 
-        return $this->name;
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->entity->setName($name);
+
+        return $this;
     }
 }
