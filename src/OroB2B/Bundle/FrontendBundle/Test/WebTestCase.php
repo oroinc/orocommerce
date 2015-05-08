@@ -4,10 +4,9 @@ namespace OroB2B\Bundle\FrontendBundle\Test;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase as BaseWebTestCase;
 
-use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class WebTestCase extends BaseWebTestCase
@@ -206,5 +205,45 @@ abstract class WebTestCase extends BaseWebTestCase
         }
 
         return self::$clientInstance;
+    }
+
+    /**
+     * Assert response is html and has status code
+     *
+     * @param Response $response
+     * @param int      $statusCode
+     */
+    public static function assertHtmlResponseStatusCodeEquals(Response $response, $statusCode)
+    {
+        self::assertResponseStatusCodeEquals($response, $statusCode);
+        self::assertResponseContentTypeEquals($response, 'text/html; charset=UTF-8');
+    }
+
+    /**
+     * Assert response status code equals
+     *
+     * @param Response $response
+     * @param int      $statusCode
+     */
+    public static function assertResponseStatusCodeEquals(Response $response, $statusCode)
+    {
+        \PHPUnit_Framework_TestCase::assertEquals(
+            $statusCode,
+            $response->getStatusCode()
+        );
+    }
+
+    /**
+     * Assert response content type equals
+     *
+     * @param Response $response
+     * @param string   $contentType
+     */
+    public static function assertResponseContentTypeEquals(Response $response, $contentType)
+    {
+        \PHPUnit_Framework_TestCase::assertTrue(
+            $response->headers->contains('Content-Type', $contentType),
+            $response->headers
+        );
     }
 }
