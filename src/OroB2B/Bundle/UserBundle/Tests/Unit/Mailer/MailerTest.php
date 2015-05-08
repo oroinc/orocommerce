@@ -10,7 +10,6 @@ class MailerTest extends \PHPUnit_Framework_TestCase
     {
         $emailText = 'Email Test Text';
         $emailFrom = 'from@example.com';
-        $nameFrom = 'John Dow';
         $emailTo = 'to@example.com';
 
         $swiftMailer = $this->getMockBuilder('Swift_Mailer')
@@ -23,14 +22,10 @@ class MailerTest extends \PHPUnit_Framework_TestCase
         $templating = $this->getMock('Symfony\Bundle\FrameworkBundle\Templating\EngineInterface');
 
         $configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager', ['get']);
-        $configManager->expects($this->at(0))
+        $configManager->expects($this->once())
             ->method('get')
-            ->with('oro_notification.email_notification_sender_email')
+            ->with('oro_b2b_rfp_admin.default_user_for_notifications')
             ->willReturn($emailFrom);
-        $configManager->expects($this->at(1))
-            ->method('get')
-            ->with('oro_notification.email_notification_sender_name')
-            ->willReturn($nameFrom);
 
         $mailer = new Mailer($swiftMailer, $router, $templating, [], $configManager);
 
