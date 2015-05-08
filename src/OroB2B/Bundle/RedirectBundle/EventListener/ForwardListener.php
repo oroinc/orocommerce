@@ -49,8 +49,7 @@ class ForwardListener
 
         $request = $event->getRequest();
 
-        if (
-            $request->attributes->has('_controller')
+        if ($request->attributes->has('_controller')
             || $event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST
         ) {
             return;
