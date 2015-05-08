@@ -1,0 +1,16 @@
+parameters:
+    orob2b_user.registration.form.type.class: OroB2B\Bundle\UserBundle\Form\Type\RegistrationFormType
+    orob2b_user.profile.form.type.class: OroB2B\Bundle\UserBundle\Form\Type\ProfileFormType
+
+services:
+    orob2b_user.registration.form.type:
+        class: %orob2b_user.registration.form.type.class%
+        arguments: [%orob2b_user.user.entity.class%]
+        tags:
+            - { name: form.type, alias: orob2b_user_registration }
+
+    orob2b_user.profile.form.type:
+        class: %orob2b_user.profile.form.type.class%
+        arguments: [%orob2b_user.user.entity.class%]
+        tags:
+            - { name: form.type, alias: orob2b_user_profile }
