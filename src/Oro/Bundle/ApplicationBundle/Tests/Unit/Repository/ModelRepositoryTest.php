@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ApplicationBundle\Tests\Unit\Model;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -84,6 +85,9 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('find')
             ->with(self::ENTITY_CLASS, $alteredIdentifier)
             ->willReturn($entity);
+        $objectManager->expects($this->once())
+            ->method('initializeObject')
+            ->with($entity);
 
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
@@ -109,7 +113,22 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($alteredModel, $this->repository->find($sourceIdentifier));
     }
 
-    public function testFindEntityNotFound()
+    /**
+     * @return array
+     */
+    public function findEntityNotFoundDataProvider()
+    {
+        return [
+            'not found' => [false],
+            'found empty proxy' => [true]
+        ];
+    }
+
+    /**
+     * @param bool $isProxy
+     * @dataProvider findEntityNotFoundDataProvider
+     */
+    public function testFindEntityNotFound($isProxy)
     {
         $identifier = 1;
 
@@ -118,10 +137,23 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             ->with('model.find.before.test_model', new ModelIdentifierEvent($identifier));
 
         $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $objectManager->expects($this->once())
-            ->method('find')
-            ->with(self::ENTITY_CLASS, $identifier)
-            ->willReturn(null);
+
+        if ($isProxy) {
+            $proxy = new \DateTime();
+            $objectManager->expects($this->once())
+                ->method('find')
+                ->with(self::ENTITY_CLASS, $identifier)
+                ->willReturn($proxy);
+            $objectManager->expects($this->once())
+                ->method('initializeObject')
+                ->with($proxy)
+                ->willThrowException(new EntityNotFoundException());
+        } else {
+            $objectManager->expects($this->once())
+                ->method('find')
+                ->with(self::ENTITY_CLASS, $identifier)
+                ->willReturn(null);
+        }
 
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
