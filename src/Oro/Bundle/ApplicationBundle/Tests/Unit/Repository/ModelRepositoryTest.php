@@ -74,7 +74,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with('model.find.before.test_model')
             ->willReturnCallback(
-                function($name, ModelIdentifierEvent $event) use ($sourceIdentifier, $alteredIdentifier) {
+                function ($name, ModelIdentifierEvent $event) use ($sourceIdentifier, $alteredIdentifier) {
                     self::assertEquals($sourceIdentifier, $event->getIdentifier());
                     $event->setIdentifier($alteredIdentifier);
                 }
@@ -104,7 +104,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with('model.find.after.test_model')
             ->willReturnCallback(
-                function($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
+                function ($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
                     self::assertEquals($sourceModel, $event->getModel());
                     $event->setModel($alteredModel);
                 }
@@ -200,7 +200,7 @@ class ModelRepositoryTest extends \PHPUnit_Framework_TestCase
             ->method('dispatch')
             ->with('model.' . $eventSuffix . '.before.test_multi_entity_model')
             ->willReturnCallback(
-                function($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
+                function ($name, ModelEvent $event) use ($sourceModel, $alteredModel) {
                     self::assertEquals($sourceModel, $event->getModel());
                     $event->setModel($alteredModel);
                 }
