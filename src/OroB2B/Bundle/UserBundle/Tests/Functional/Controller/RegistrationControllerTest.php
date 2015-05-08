@@ -44,6 +44,7 @@ class RegistrationControllerTest extends WebTestCase
             'fos_user_registration_form[plainPassword][second]' => self::PASSWORD,
         ]);
 
+        $this->client->followRedirects(false);
         $this->client->submit($form);
 
         // Collect messages
@@ -56,6 +57,7 @@ class RegistrationControllerTest extends WebTestCase
         /** @var \Swift_Message $message */
         $message = reset($collectedMessages);
 
+        $this->assertEquals(self::EMAIL, key($message->getTo()));
         $this->assertEquals('Welcome '. self::EMAIL .'!', $message->getSubject());
 
         $result = $this->client->getResponse();
@@ -127,11 +129,11 @@ class RegistrationControllerTest extends WebTestCase
 
         $crawler = $this->client->followRedirect();
 
-
         // Test email notification
         /** @var \Swift_Message $message */
         $message = reset($collectedMessages);
 
+        $this->assertEquals(self::EMAIL, key($message->getTo()));
         $this->assertEquals('Reset Password', $message->getSubject());
 
         $result = $this->client->getResponse();
@@ -191,6 +193,9 @@ class RegistrationControllerTest extends WebTestCase
         /** @var EntityManager $em */
         $em = $this->getContainer()->get('doctrine.orm.entity_manager');
         $user = $em->getRepository('OroB2BUserBundle:User')->findOneBy(['email' => $email]);
+
+        $this->assertNotNull($user);
+
         $user->setEnabled(true);
 
         $em->persist($user);
