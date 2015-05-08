@@ -5,7 +5,7 @@ OroB2B\Bundle\UserAdminBundle\Entity\User:
         firstName:
             - NotBlank: ~
             - Length:
-                max: 10
+                max: 255
         lastName:
             - NotBlank: ~
             - Length:
@@ -19,6 +19,8 @@ OroB2B\Bundle\UserAdminBundle\Entity\User:
             - NotBlank: { groups: [create] }
 
 OroB2B\Bundle\UserAdminBundle\Entity\Group:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
     properties:
         name:
             - NotBlank: ~
