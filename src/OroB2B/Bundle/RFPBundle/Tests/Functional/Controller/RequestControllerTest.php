@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 use OroB2B\Bundle\FrontendBundle\Test\WebTestCase;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class RequestControllerTest extends WebTestCase
@@ -67,7 +66,7 @@ class RequestControllerTest extends WebTestCase
             ->get('doctrine')
             ->getManagerForClass('OroB2BRFPBundle:Request');
 
-        $originalRequest = $em->getRepository('OroB2BRFPBundle:Request')
+        $request = $em->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy([
                 'firstName' => self::REQUEST_FIRST_NAME,
                 'lastName'  => self::REQUEST_LAST_NAME,
@@ -78,10 +77,7 @@ class RequestControllerTest extends WebTestCase
                 'body'      => self::REQUEST_BODY
             ]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $originalRequest);
-
-        // Cleaning
-        $request = clone $originalRequest;
+        $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\Request', $request);
 
         $defaultRequestStatusName = $this->getContainer()
             ->get('oro_application.config_manager')
