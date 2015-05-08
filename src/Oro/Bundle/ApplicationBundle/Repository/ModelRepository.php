@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityNotFoundException;
 
 use Oro\Bundle\ApplicationBundle\Factory\ModelFactoryInterface;
 use Oro\Bundle\ApplicationBundle\Model\ModelInterface;
@@ -74,7 +75,15 @@ class ModelRepository implements ModelRepositoryInterface
         $identifierEvent = new ModelIdentifierEvent($modelIdentifier);
         $this->eventDispatcher->dispatch('model.find.before.' . $modelName, $identifierEvent);
 
-        $entity = $this->getObjectManager()->find($this->entityClassName, $identifierEvent->getIdentifier());
+        $objectManager = $this->getObjectManager();
+        $entity = $objectManager->find($this->entityClassName, $identifierEvent->getIdentifier());
+        if ($entity) {
+            try {
+                $objectManager->initializeObject($entity);
+            } catch (EntityNotFoundException $e) {
+                $entity = null;
+            }
+        }
 
         if ($entity) {
             $this->assertAbstractModelClassName($this->modelClassName);
