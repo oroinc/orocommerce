@@ -143,12 +143,12 @@ class AttributeTypeTest extends \PHPUnit_Framework_TestCase
                         ['from' => 0, 'to' => false],
                         ['from' => 1, 'to' => true],
                     ],
-                   'denormalize' => [
-                       ['from' => null, 'to' => null],
-                       ['from' => '', 'to' => 0],
-                       ['from' => '0', 'to' => 0],
-                       ['from' => '1', 'to' => 1],
-                   ],
+                    'denormalize' => [
+                        ['from' => null, 'to' => null],
+                        ['from' => '', 'to' => 0],
+                        ['from' => '0', 'to' => 0],
+                        ['from' => '1', 'to' => 1],
+                    ],
                 ],
             ],
             'float' => [
