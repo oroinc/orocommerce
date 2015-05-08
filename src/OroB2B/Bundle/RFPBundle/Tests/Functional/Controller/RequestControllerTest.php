@@ -4,6 +4,10 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use OroB2B\Bundle\FrontendBundle\Test\WebTestCase;
 
+/**
+ * @outputBuffering enabled
+ * @dbIsolation
+ */
 class RequestControllerTest extends WebTestCase
 {
     const REQUEST_FIRST_NAME    = 'Agnetha';
@@ -78,8 +82,6 @@ class RequestControllerTest extends WebTestCase
 
         // Cleaning
         $request = clone $originalRequest;
-        $em->remove($originalRequest);
-        $em->flush();
 
         $defaultRequestStatusName = $this->getContainer()
             ->get('oro_application.config_manager')
