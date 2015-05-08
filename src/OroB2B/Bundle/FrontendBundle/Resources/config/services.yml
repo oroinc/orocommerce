@@ -1,1 +1,2 @@
-
+parameters:
+    test.client.class: OroB2B\Bundle\FrontendBundle\Test\Client

@@ -1,0 +1,28 @@
+OroB2B\Bundle\UserAdminBundle\Entity\User:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        firstName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        lastName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        email:
+            - NotBlank: ~
+            - Email: ~
+            - Length:
+                max: 255
+        plainPassword:
+            - NotBlank: { groups: [create] }
+
+OroB2B\Bundle\UserAdminBundle\Entity\Group:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: name
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
