@@ -1,5 +1,5 @@
 bundles:
-    - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
+#    - { name: Oro\Bundle\ApplicationBundle\OroApplicationBundle, priority: 10 }
 bundles_frontend:
     - { name: Symfony\Bundle\FrameworkBundle\FrameworkBundle }
     - { name: Symfony\Bundle\SecurityBundle\SecurityBundle }
