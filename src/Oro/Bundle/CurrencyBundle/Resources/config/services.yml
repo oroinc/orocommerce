@@ -1,0 +1,5 @@
+parameters:
+    oro_currency.price.model: Oro\Bundle\CurrencyBundle\Model\Price
+
+services:
+
