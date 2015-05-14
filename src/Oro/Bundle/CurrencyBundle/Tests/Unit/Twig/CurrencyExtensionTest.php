@@ -82,4 +82,9 @@ class CurrencyExtensionTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
+
+    public function testGetName()
+    {
+        $this->assertEquals('oro_currency', $this->extension->getName());
+    }
 }
