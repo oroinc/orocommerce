@@ -18,7 +18,19 @@ use OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomerGroup;
  *      }
  * )
  *
- * @Config()
+ * @Config(
+ *      routeName="orob2b_customer_admin_group_index",
+ *      routeView="orob2b_customer_admin_group_view",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-group"
+ *          },
+ *          "form"={
+ *              "form_type"="orob2b_customer_admin_customer_group_select",
+ *              "grid_name"="customer-groups-grid",
+ *          }
+ *      }
+ * )
  */
 class CustomerGroup extends AbstractCustomerGroup
 {

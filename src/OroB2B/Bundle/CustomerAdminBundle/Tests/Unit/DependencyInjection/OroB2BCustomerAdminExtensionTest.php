@@ -18,8 +18,8 @@ class OroB2BCustomerAdminExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedParameters = [
-            'orob2b_customer_admin.customer.class',
-            'orob2b_customer_admin.customer_group.class'
+            'orob2b_customer_admin.entity.customer.class',
+            'orob2b_customer_admin.entity.customer_group.class'
         ];
 
         $this->assertParametersLoaded($expectedParameters);

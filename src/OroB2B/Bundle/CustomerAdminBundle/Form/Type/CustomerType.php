@@ -18,11 +18,9 @@ class CustomerType extends AbstractType
             ->add('name', 'text', ['label' => 'orob2b.customeradmin.customer.name.label'])
             ->add(
                 'group',
-                'entity',
+                'orob2b_customer_admin_customer_group_select',
                 [
                     'label' => 'orob2b.customeradmin.customer.group.label',
-                    'class' => 'OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup',
-                    'property' => 'name',
                     'required' => false
                 ]
             )

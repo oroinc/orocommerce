@@ -19,9 +19,27 @@ oro_menu_config:
                     - 'orob2b_customer_admin_customer_update'
                 description: 'orob2b.customeradmin.menu.customer_list.description'
 
+        customer_group_list:
+            label:           'orob2b.customeradmin.customergroup.entity_plural_label'
+            route:           'orob2b_customer_admin_group_index'
+            extras:
+                position:    20
+                routes:
+                    - 'orob2b_customer_admin_group_index'
+                    - 'orob2b_customer_admin_group_view'
+                    - 'orob2b_customer_admin_group_create'
+                    - 'orob2b_customer_admin_group_update'
+                description: 'orob2b.customeradmin.menu.customer_group_list.description'
+
         shortcut_customer_list:
             label:           'orob2b.customeradmin.customer.entity_plural_label'
             route:           'orob2b_customer_admin_customer_index'
+            extras:
+                description: 'orob2b.customeradmin.menu.shortcut_customer_list.description'
+
+        shortcut_customer_group_list:
+            label:           'orob2b.customeradmin.customergroup.entity_plural_label'
+            route:           'orob2b_customer_admin_group_index'
             extras:
                 description: 'orob2b.customeradmin.menu.shortcut_customer_list.description'
 
@@ -31,13 +49,20 @@ oro_menu_config:
                 customer_tab:
                     children:
                         customer_list: ~
+                        customer_group_list: ~
 
         shortcuts:
             children:
                 shortcut_customer_list: ~
+                shortcut_customer_group_list: ~
 
 oro_titles:
     orob2b_customer_admin_customer_index: ~
     orob2b_customer_admin_customer_view:  '%%title%%'
     orob2b_customer_admin_customer_update: %%customerName%% - oro.ui.edit
     orob2b_customer_admin_customer_create: oro.ui.create_entity
+
+    orob2b_customer_admin_group_index: ~
+    orob2b_customer_admin_group_view:  '%%title%%'
+    orob2b_customer_admin_group_update: %%customerGroupName%% - oro.ui.edit
+    orob2b_customer_admin_group_create: oro.ui.create_entity
