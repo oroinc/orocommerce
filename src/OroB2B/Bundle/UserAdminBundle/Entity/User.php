@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
 use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
 
 /**
@@ -24,7 +25,6 @@ use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
  *          }
  *      }
  * )
- * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class User extends BaseUser
 {
@@ -36,4 +36,31 @@ class User extends BaseUser
      * )
      */
     protected $groups;
+
+    /**
+     * @var Customer
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerAdminBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $customer;
+
+    /**
+     * @return Customer
+     */
+    public function getCustomer()
+    {
+        return $this->customer;
+    }
+
+    /**
+     * @param Customer $customer
+     * @return $this
+     */
+    public function setCustomer($customer)
+    {
+        $this->customer = $customer;
+
+        return $this;
+    }
 }
