@@ -1,0 +1,11 @@
+parameters:
+    oro_currency.form.type.currency_selection.class: Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType
+
+services:
+    oro_currency.form.type.currency_selection:
+        class: %oro_currency.form.type.currency_selection.class%
+        arguments:
+            - @oro_config.manager
+            - %locale%
+        tags:
+            - { name: form.type, alias: oro_currency_selection }
