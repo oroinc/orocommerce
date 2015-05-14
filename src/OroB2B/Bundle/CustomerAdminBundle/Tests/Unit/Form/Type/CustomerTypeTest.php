@@ -7,10 +7,11 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\CustomerAdminBundle\Form\Type\CustomerType;
+use OroB2B\Bundle\CustomerAdminBundle\Tests\Unit\Form\Type\Stub\CustomerGroupSelectTypeStub;
 
 class CustomerTypeTest extends FormIntegrationTestCase
 {
@@ -56,9 +57,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ->method('getManagerForClass')
             ->will($this->returnValue($this->em));
 
-        $type = new EntityType($registry);
+        $entityType = new EntityType($registry);
+        $customerGroupSelectType = new CustomerGroupSelectTypeStub($registry);
 
-        return [new PreloadedExtension([$type->getName() => $type], [])];
+        return [
+            new PreloadedExtension([$entityType->getName() => $entityType], []),
+            new PreloadedExtension([$customerGroupSelectType->getName() => $customerGroupSelectType], [])
+        ];
     }
 
     /**
@@ -78,11 +83,11 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ->willReturnOnConsecutiveCalls(
                 [
                     $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup', 1),
-                    $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup', 2),
+                    $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup', 2)
                 ],
                 [
                     $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 1),
-                    $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 2),
+                    $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 2)
                 ]
             );
 
@@ -112,13 +117,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'name' => 'customer_name',
                     'group' => 0,
-                    'parent' => 1,
+                    'parent' => 1
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup', 1),
-                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 2),
-                ],
+                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 2)
+                ]
             ],
             'empty parent' => [
                 'options' => [],
@@ -127,13 +132,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'name' => 'customer_name',
                     'group' => 0,
-                    'parent' => null,
+                    'parent' => null
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup', 1),
-                    'parent' => null,
-                ],
+                    'parent' => null
+                ]
             ],
             'empty group' => [
                 'options' => [],
@@ -142,14 +147,14 @@ class CustomerTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'name' => 'customer_name',
                     'group' => null,
-                    'parent' => 1,
+                    'parent' => 1
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => null,
-                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 2),
-                ],
-            ],
+                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerAdminBundle\Entity\Customer', 2)
+                ]
+            ]
         ];
     }
 

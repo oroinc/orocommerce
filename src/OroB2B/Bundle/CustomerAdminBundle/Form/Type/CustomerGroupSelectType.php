@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\CustomerAdminBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+
 class CustomerGroupSelectType extends AbstractType
 {
     const NAME = 'orob2b_customer_admin_customer_group_select';
@@ -38,6 +40,6 @@ class CustomerGroupSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_entity_create_or_select_inline';
+        return OroEntitySelectOrCreateInlineType::NAME;
     }
 }
