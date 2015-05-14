@@ -16,4 +16,14 @@ class OroCurrencyExtensionTest extends ExtensionTestCase
         ];
         $this->assertParametersLoaded($expectedParameters);
     }
+
+    /**
+     * Test Get Alias
+     */
+    public function testGetAlias()
+    {
+        $extension = new OroCurrencyExtension();
+
+        $this->assertEquals('oro_currency', $extension->getAlias());
+    }
 }
