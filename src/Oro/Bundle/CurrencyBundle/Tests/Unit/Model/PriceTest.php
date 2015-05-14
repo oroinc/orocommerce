@@ -1,0 +1,56 @@
+<?php
+
+namespace Oro\Bundle\CurrencyBundle\Tests\Model;
+
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
+use Oro\Bundle\CurrencyBundle\Model\Price;
+
+class PriceTest extends \PHPUnit_Framework_TestCase
+{
+    const VALUE = 100;
+    const CURRENCY = 'USD';
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Price value can not be empty
+     */
+    public function testEmptyValueException()
+    {
+        new Price(null, null);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Price currency can not be empty
+     */
+    public function testEmptyCurrencyException()
+    {
+        new Price(100, null);
+    }
+
+    /**
+     * @dataProvider propertiesDataProvider
+     * @param string $property
+     * @param mixed  $value
+     */
+    public function testSettersAndGetters($property, $value)
+    {
+        $obj = new Price(self::VALUE, self::CURRENCY);
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+        $accessor->setValue($obj, $property, $value);
+        $this->assertEquals($value, $accessor->getValue($obj, $property));
+    }
+
+    /**
+     * @return array
+     */
+    public function propertiesDataProvider()
+    {
+        return [
+            ['value', self::VALUE],
+            ['currency', self::CURRENCY]
+        ];
+    }
+}

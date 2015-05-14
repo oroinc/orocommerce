@@ -1,0 +1,8 @@
+Oro\Bundle\CurrencyBundle\Model\Price:
+    properties:
+        value:
+            - NotBlank: ~
+            - Type:     numeric
+        currency:
+            - NotBlank: ~
+            - Currency: ~
