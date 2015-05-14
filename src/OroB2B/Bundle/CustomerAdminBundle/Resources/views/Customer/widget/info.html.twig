@@ -21,7 +21,7 @@
                     {{ UI.renderProperty('orob2b.customeradmin.customer.parent.label'|trans, entity.parent.name) }}
                 {% endif %}
             {% endif %}
-            {% if entity.children %}
+            {% if entity.children.count() %}
                 {% set customerTree %}
                     <div class="b2b-tree">
                         <div data-page-component-module="orob2bcustomeradmin/js/app/components/customer-tree-component"

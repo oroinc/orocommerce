@@ -60,7 +60,9 @@ class CustomerTreeHandler
     {
         return [
             'id'     => $entity->getId(),
-            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $rootId ? $entity->getParent()->getId() : '#',
+            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $rootId
+                ? $entity->getParent()->getId()
+                : '#',
             'text'   => $entity->getName(),
             'state'  => [
                 'opened' => !$entity->getChildren()->isEmpty()

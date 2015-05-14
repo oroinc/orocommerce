@@ -24,7 +24,7 @@ class CustomerController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_customer_admin.customer.class')
+            'entity_class' => $this->container->getParameter('orob2b_customer_admin.entity.customer.class')
         ];
     }
 
