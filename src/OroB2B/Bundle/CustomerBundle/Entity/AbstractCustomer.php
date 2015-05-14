@@ -6,15 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-/**
- * @ORM\Entity
- * @ORM\Table(
- *      name="orob2b_customer",
- *      indexes={
- *          @ORM\Index(name="orob2b_customer_name_idx", columns={"name"})
- *      }
- * )
- */
 abstract class AbstractCustomer
 {
     /**
@@ -95,7 +86,7 @@ abstract class AbstractCustomer
      * @param AbstractCustomer $parent
      * @return AbstractCustomer
      */
-    public function setParent(AbstractCustomer $parent)
+    public function setParent(AbstractCustomer $parent = null)
     {
         $this->parent = $parent;
 
@@ -144,6 +135,7 @@ abstract class AbstractCustomer
     public function addChild(AbstractCustomer $child)
     {
         if (!$this->children->contains($child)) {
+            $child->setParent($this);
             $this->children->add($child);
         }
 
@@ -158,6 +150,7 @@ abstract class AbstractCustomer
     public function removeChild(AbstractCustomer $child)
     {
         if ($this->children->contains($child)) {
+            $child->setParent(null);
             $this->children->removeElement($child);
         }
     }

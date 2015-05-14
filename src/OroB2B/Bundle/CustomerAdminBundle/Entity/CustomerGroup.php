@@ -17,7 +17,6 @@ use OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomerGroup;
  *          @ORM\Index(name="orob2b_customer_group_name_idx", columns={"name"})
  *      }
  * )
- *
  * @Config()
  */
 class CustomerGroup extends AbstractCustomerGroup
