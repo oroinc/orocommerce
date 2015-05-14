@@ -6,16 +6,24 @@ use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
 
 use OroB2B\Bundle\CustomerAdminBundle\DependencyInjection\OroB2BCustomerAdminExtension;
 
-/**
- * {@inheritdoc}
- */
 class OroB2BCustomerAdminExtensionTest extends ExtensionTestCase
 {
-    public function testLoad()
+    /**
+     * Test Extension
+     */
+    public function testExtension()
     {
-        $this->loadExtension(new OroB2BCustomerAdminExtension());
+        $extension = new OroB2BCustomerAdminExtension();
 
-        $expectedParameters = ['orob2b_customer_admin.entity.customer.class'];
+        $this->loadExtension($extension);
+
+        $expectedParameters = [
+            'orob2b_customer_admin.entity.customer.class',
+            'orob2b_customer_admin.entity.customer_group.class'
+        ];
+
         $this->assertParametersLoaded($expectedParameters);
+
+        $this->assertEquals('oro_b2b_customer_admin', $extension->getAlias());
     }
 }

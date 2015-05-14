@@ -17,6 +17,20 @@ use OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomer;
  *          @ORM\Index(name="orob2b_customer_name_idx", columns={"name"})
  *      }
  * )
+ *
+ * @Config(
+ *      routeName="orob2b_customer_admin_customer_index",
+ *      routeView="orob2b_customer_admin_customer_view",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-user"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          }
+ *      }
+ * )
  * @Config()
  */
 class Customer extends AbstractCustomer

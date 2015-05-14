@@ -1,0 +1,72 @@
+datagrid:
+    customer-customers-grid:
+        options:
+            entityHint:        customer
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_customer_admin_customer_view
+            type:         orm
+            query:
+                select:
+                    - customer.id
+                    - customer.name
+                    - customer_group.name as group_name
+                    - parent.name as parent_name
+                from:
+                    - { table: %orob2b_customer_admin.entity.customer.class%, alias: customer }
+                join:
+                    left:
+                        - { join: customer.group, alias: customer_group }
+                        - { join: customer.parent, alias: parent }
+        columns:
+            name:
+                label: orob2b.customeradmin.customer.name.label
+            group_name:
+                label: orob2b.customeradmin.customer.group.label
+            parent_name:
+                label: orob2b.customeradmin.customer.parent.label
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_customer_admin_customer_view
+                params: [ id ]
+        sorters:
+            columns:
+                name:
+                    data_name: customer.name
+                group_name:
+                    data_name: group_name
+                parent_name:
+                    data_name: parent_name
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: customer.name
+                group_name:
+                    type:      entity
+                    data_name: customer_group.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_customer_admin.entity.customer_group.class%
+                            property: name
+                parent_name:
+                    type:      entity
+                    data_name: parent.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_customer_admin.entity.customer.class%
+                            property: name
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_customer_admin_customer_view
+                rowAction:    true
