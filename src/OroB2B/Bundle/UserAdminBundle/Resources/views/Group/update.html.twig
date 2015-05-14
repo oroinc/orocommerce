@@ -1,0 +1,97 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%title%": entity.name, "%entityName%": 'orob2b.useradmin.group.entity_label'|trans} }) %}
+{% set formAction = entity.id ? path('orob2b_user_admin_group_update', { id: entity.id }) : path('orob2b_user_admin_group_create') %}
+
+{% block navButtons %}
+    {% if entity.id and resource_granted('DELETE', form.vars.value) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_user_admin_delete_frontendrole', {'id': entity.id}),
+            'dataRedirect': path('orob2b_user_admin_group_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-group',
+            'entity_label': 'oro.user.group.entity_label'|trans
+        }) }}
+
+        {{ UI.buttonSeparator() }}
+    {% endif %}
+
+    {{ UI.cancelButton(path('orob2b_user_admin_group_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_user_admin_group_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_user_admin_group_index'),
+            'indexLabel':  'orob2b.useradmin.group.entity_plural_label'|trans,
+            'entityTitle': entity.name
+        } %}
+
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.useradmin.group.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'group-edit' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.useradmin.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'title': '',
+                    'data': [
+                        form_row(form.name),
+                        form_widget(form.appendUsers, {'id': 'groupAppendUsers'}),
+                        form_widget(form.removeUsers, {'id': 'groupRemoveUsers'}),
+                    ]
+                }
+            ]
+        },
+        {
+            'title': 'orob2b.useradmin.sections.roles'|trans,
+            'subblocks': [
+                {
+                    'title': '',
+                    'data': [
+                        form_row(form.roles),
+                    ]
+                }
+            ]
+        }
+    ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.useradmin.user.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('frontend-group-users-grid', {group_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set data = {
+        'formErrors': form_errors(form) ? form_errors(form) : null,
+        'dataBlocks': dataBlocks,
+        }
+    %}
+
+    {{ parent() }}
+{% endblock content_data %}

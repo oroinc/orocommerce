@@ -17,15 +17,16 @@ class TestModel extends AbstractModel
     public $second;
 
     /**
+     * @param object $entity
      * @param string|null $first
      * @param string|null $second
      */
-    public function __construct($first = null, $second = null)
+    public function __construct($entity, $first = null, $second = null)
     {
         $this->first = $first;
         $this->second = $second;
 
-        parent::__construct(new \DateTime());
+        parent::__construct($entity);
     }
 
     /**
