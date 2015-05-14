@@ -1,7 +1,5 @@
 parameters:
-#    oro_currency.example.class: Oro\Bundle\CurrencyBundle\Example
+    oro_currency.price.model: Oro\Bundle\CurrencyBundle\Model\Price
 
 services:
-#    oro_currency.example:
-#        class: %oro_currency.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+
