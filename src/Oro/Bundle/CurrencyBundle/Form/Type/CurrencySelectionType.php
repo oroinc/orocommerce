@@ -41,22 +41,26 @@ class CurrencySelectionType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => function (Options $options) {
-                return $this->getCurrencies($options['currencies_list'], $options['compact']);
+                if ($options['currencies_list'] !== null && !is_array($options['currencies_list'])) {
+                    throw new LogicException('The option "currencies_list" must be array.');
+                }
+
+                $currencies = count($options['currencies_list']) ? $options['currencies_list'] : $this->currencies;
+
+                return $this->getCurrencies($currencies, $options['compact']);
             },
             'compact' => false,
-            'currencies_list' => [],
+            'currencies_list' => null,
         ]);
     }
 
     /**
-     * @param array $currenciesList
+     * @param array $currencies
      * @param boolean $isCompact
      * @return array
      */
-    protected function getCurrencies(array $currenciesList, $isCompact)
+    protected function getCurrencies(array $currencies, $isCompact)
     {
-        $currencies = count($currenciesList) ? $currenciesList : $this->currencies;
-
         $this->checkCurrencies($currencies);
 
         if ($isCompact) {
