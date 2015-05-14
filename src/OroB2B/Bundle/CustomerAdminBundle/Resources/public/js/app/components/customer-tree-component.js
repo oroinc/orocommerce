@@ -22,11 +22,6 @@ define(function (require) {
         $tree : null,
 
         /**
-         * @property {Boolean}
-         */
-        initialization : false,
-
-        /**
          * @param {Object} options
          */
         initialize: function (options) {
@@ -49,14 +44,12 @@ define(function (require) {
             };
 
             this._deferredInit();
-            this.initialization = true;
 
             this.$tree.jstree(config);
 
             var self = this;
             this.$tree.on('ready.jstree', function () {
                 self._resolveDeferredInit();
-                self.initialization = false;
             });
         }
     });

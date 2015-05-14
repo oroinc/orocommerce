@@ -31,6 +31,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomer;
  *          }
  *      }
  * )
+ * @Config()
  */
 class Customer extends AbstractCustomer
 {

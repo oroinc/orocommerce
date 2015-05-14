@@ -51,16 +51,8 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [
                 [
-                    'id' => '1',
-                    'parent' => '#',
-                    'text' => 'Waclaw Zagorski',
-                    'state' => [
-                        'opened' => true,
-                    ],
-                ],
-                [
                     'id' => '2',
-                    'parent' => '1',
+                    'parent' => '#',
                     'text' => 'Mieczyslaw Krawicz',
                     'state' => [
                         'opened' => false,
@@ -68,7 +60,7 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
                 ],
                 [
                     'id' => '3',
-                    'parent' => '1',
+                    'parent' => '#',
                     'text' => 'Adam Brodzisz',
                     'state' => [
                         'opened' => true,

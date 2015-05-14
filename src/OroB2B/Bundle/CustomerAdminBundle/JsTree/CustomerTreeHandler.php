@@ -58,11 +58,11 @@ class CustomerTreeHandler
      */
     protected function formatEntity(Customer $entity, $rootId)
     {
-        $isRoot = $entity->getParent() && $entity->getParent()->getId() !== $rootId;
-
         return [
             'id'     => $entity->getId(),
-            'parent' => $isRoot ? $entity->getParent()->getId() : '#',
+            'parent' => $entity->getParent() && $entity->getParent()->getId() !== $rootId
+                ? $entity->getParent()->getId()
+                : '#',
             'text'   => $entity->getName(),
             'state'  => [
                 'opened' => !$entity->getChildren()->isEmpty()

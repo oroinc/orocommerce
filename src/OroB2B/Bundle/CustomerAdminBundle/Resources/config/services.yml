@@ -12,6 +12,12 @@ parameters:
     orob2b_customer_admin.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
+    orob2b_customer_admin.customer_tree_handler:
+        class: %orob2b_customer_admin.customer_tree_handler.class%
+        arguments:
+            - %orob2b_customer_admin.entity.customer.class%
+            - @doctrine
+
     orob2b_customer_admin.factory.customer:
         class: %orob2b_customer_admin.factory.customer.class%
         arguments:
@@ -43,12 +49,6 @@ services:
             - @orob2b_customer_admin.factory.customer_group
             - %orob2b_customer_admin.model.customer_group.class%
             - %orob2b_customer_admin.entity.customer_group.class%
-            
-    orob2b_customer_admin.customer_tree_handler:
-        class: %orob2b_customer_admin.customer_tree_handler.class%
-        arguments:
-            - %orob2b_customer_admin.entity.customer.class%
-            - @doctrine
 
     orob2b_customer_admin.manager.api.attribute:
         class:  %orob2b_customer_admin.manager.api.attribute.class%

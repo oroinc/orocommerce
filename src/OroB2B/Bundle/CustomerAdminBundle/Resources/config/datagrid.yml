@@ -1,6 +1,5 @@
 datagrid:
     customer-customers-grid:
-        extended_entity_name: %orob2b_customer_admin.entity.customer.class%
         options:
             entityHint:        customer
             entity_pagination: true
