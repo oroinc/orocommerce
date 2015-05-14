@@ -3,7 +3,9 @@
 namespace Oro\Bundle\CurrencyBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Exception\LogicException;
 use Symfony\Component\Intl\Intl;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -33,22 +35,65 @@ class CurrencySelectionType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritDoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $currencies = array_intersect_key(
-            Intl::getCurrencyBundle()->getCurrencyNames($this->locale),
-            array_fill_keys($this->currencies, null)
-        );
-
         $resolver->setDefaults([
-            'choices' => $currencies,
+            'choices' => function (Options $options) {
+                return $this->getCurrencies($options['currencies_list'], $options['compact']);
+            },
+            'compact' => false,
+            'currencies_list' => [],
         ]);
     }
 
     /**
-     * @return string
+     * @param array $currenciesList
+     * @param boolean $isCompact
+     * @return array
+     */
+    protected function getCurrencies(array $currenciesList, $isCompact)
+    {
+        $currencies = count($currenciesList) ? $currenciesList : $this->currencies;
+
+        $this->checkCurrencies($currencies);
+
+        if ($isCompact) {
+            $currencies = array_combine($currencies, $currencies);
+        } else {
+            $currencies = array_intersect_key(
+                Intl::getCurrencyBundle()->getCurrencyNames($this->locale),
+                array_fill_keys($currencies, null)
+            );
+        }
+
+        return $currencies;
+    }
+
+    /**
+     * @param array $currencies
+     * @throws LogicException
+     */
+    protected function checkCurrencies(array $currencies)
+    {
+        $invalidCurrencies = [];
+
+        foreach ($currencies as $currency) {
+            $name = Intl::getCurrencyBundle()->getCurrencyName($currency, $this->locale);
+
+            if (!$name) {
+                $invalidCurrencies[] = $currency;
+            }
+        }
+
+        if (!empty($invalidCurrencies)) {
+            throw new LogicException(sprintf('Found unknown currencies: %s.', implode(', ', $invalidCurrencies)));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getParent()
     {
@@ -56,7 +101,7 @@ class CurrencySelectionType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getName()
     {
