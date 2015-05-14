@@ -1,6 +1,9 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%title%": entity.name } }) %}
+
+{% set gridName = 'customer-group-customers-grid-view' %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -42,11 +45,19 @@
         }) }}
     {% endset %}
 
-    {% set dataBlocks = [{
-        'title': 'orob2b.customeradmin.sections.general'|trans,
-        'class': 'active',
-        'subblocks': [{'data' : [customerGroupInfo]}]
-    }] %}
+    {% set customersGrid = dataGrid.renderGrid(gridName, {group: entity.id}, { cssClass: 'inner-grid' }) %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.customeradmin.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [customerGroupInfo]}]
+        },
+        {
+            'title': 'orob2b.customeradmin.sections.customergroup.customers'|trans,
+            'subblocks': [{'data' : [customersGrid]}]
+        }
+    ] %}
 
     {% set id = 'pageView' %}
     {% set data = {'dataBlocks': dataBlocks} %}

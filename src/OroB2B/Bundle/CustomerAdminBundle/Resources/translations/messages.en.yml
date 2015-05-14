@@ -18,6 +18,8 @@ orob2b.customeradmin:
 
     sections:
         general: 'General'
+        customergroup:
+            customers: 'Customers'
 
     menu:
         customer_tab.label: 'Customers'
