@@ -118,10 +118,10 @@ datagrid:
                 type:   url
                 route:  orob2b_customer_admin_group_update
                 params: [ id ]
-#            delete_link:
-#                type:   url
-#                route:  orob2b_api_customer_admin_delete_customer_group
-#                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_customer_admin_delete_customer_group
+                params: [ id ]
         sorters:
             columns:
                 name:
@@ -147,12 +147,12 @@ datagrid:
                 link:          update_link
                 icon:          edit
                 acl_resource:  orob2b_customer_admin_group_update
-#            delete:
-#                type:          delete
-#                label:         oro.grid.action.delete
-#                link:          delete_link
-#                icon:          trash
-#                acl_resource:  orob2b_customer_admin_group_delete
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_customer_admin_group_delete
 
     customer-group-customers-grid-basic:
         source:
