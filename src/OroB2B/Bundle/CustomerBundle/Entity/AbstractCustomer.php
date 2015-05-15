@@ -109,7 +109,7 @@ abstract class AbstractCustomer
      * @param AbstractCustomerGroup $group
      * @return AbstractCustomer
      */
-    public function setGroup(AbstractCustomerGroup $group)
+    public function setGroup(AbstractCustomerGroup $group = null)
     {
         $this->group = $group;
 
