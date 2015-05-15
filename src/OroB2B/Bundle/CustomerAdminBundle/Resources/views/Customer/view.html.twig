@@ -20,7 +20,7 @@
             'entity_label': 'orob2b.customeradmin.customer.entity_label'|trans
         }) }}
     {% endif %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
+    {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_customer_admin_delete_customer', {'id': entity.id}),
             'dataRedirect': path('orob2b_customer_admin_customer_index'),
@@ -29,7 +29,6 @@
             'id': 'btn-remove-attribute',
             'entity_label': 'orob2b.customeradmin.customer.entity_label'|trans,
         }) }}
-        {{ UI.buttonSeparator() }}
     {% endif %}
 {% endblock navButtons %}
 
