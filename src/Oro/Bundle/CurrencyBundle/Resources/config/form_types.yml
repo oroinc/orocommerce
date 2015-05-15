@@ -6,6 +6,6 @@ services:
         class: %oro_currency.form.type.currency_selection.class%
         arguments:
             - @oro_config.manager
-            - %locale%
+            - @oro_locale.settings
         tags:
             - { name: form.type, alias: oro_currency_selection }

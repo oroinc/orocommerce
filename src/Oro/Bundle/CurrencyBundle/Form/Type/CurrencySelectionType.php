@@ -9,6 +9,7 @@ use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 class CurrencySelectionType extends AbstractType
 {
@@ -26,12 +27,19 @@ class CurrencySelectionType extends AbstractType
 
     /**
      * @param ConfigManager $configManager
-     * @param string $locale
+     * @param LocaleSettings $localeSettings
      */
-    public function __construct(ConfigManager $configManager, $locale)
+    public function __construct(ConfigManager $configManager, LocaleSettings $localeSettings)
     {
         $this->currencies = $configManager->get('oro_currency.allowed_currencies');
-        $this->locale = $locale;
+
+        if (empty($this->currencies)) {
+            //TODO: Change the getting currency list from system configuration option
+            //TODO: "functional currency of organization" when it will be added.
+            $this->currencies = [$localeSettings->getCurrency()];
+        }
+
+        $this->locale = $localeSettings->getLocale();
     }
 
     /**

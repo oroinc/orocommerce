@@ -37,7 +37,7 @@ class OroCurrencyExtensionTest extends ExtensionTestCase
     protected function buildContainerMock()
     {
         return $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter', 'getParameter', 'prependExtensionConfig'])
+            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig'])
             ->getMock();
     }
 
@@ -48,10 +48,6 @@ class OroCurrencyExtensionTest extends ExtensionTestCase
     {
         $container = parent::getContainerMock();
         $container->expects($this->once())
-            ->method('getParameter')
-            ->with('locale')
-            ->willReturn('en');
-        $container->expects($this->any())
             ->method('prependExtensionConfig')
             ->will(
                 $this->returnCallback(
