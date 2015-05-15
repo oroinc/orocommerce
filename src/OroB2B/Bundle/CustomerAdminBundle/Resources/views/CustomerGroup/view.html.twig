@@ -1,6 +1,9 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%title%": entity.name } }) %}
+
+{% set gridName = 'customer-group-customers-grid-view' %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -20,16 +23,15 @@
             'entity_label': 'orob2b.customeradmin.customergroup.entity_label'|trans
         }) }}
     {% endif %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
-        {#{{ UI.deleteButton({#}
-            {#'dataUrl': path('orob2b_api_customer_admin_delete_customer', {'id': entity.id}),#}
-            {#'dataRedirect': path('orob2b_customer_admin_customer_index'),#}
-            {#'aCss': 'no-hash remove-button',#}
-            {#'dataId': entity.id,#}
-            {#'id': 'btn-remove-attribute',#}
-            {#'entity_label': 'orob2b.customeradmin.customer.entity_label'|trans,#}
-        {#}) }}#}
-        {{ UI.buttonSeparator() }}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_customer_admin_delete_customer_group', {'id': entity.id}),
+            'dataRedirect': path('orob2b_customer_admin_group_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.customeradmin.customergroup.entity_label'|trans,
+        }) }}
     {% endif %}
 {% endblock navButtons %}
 
@@ -42,11 +44,19 @@
         }) }}
     {% endset %}
 
-    {% set dataBlocks = [{
-        'title': 'orob2b.customeradmin.sections.general'|trans,
-        'class': 'active',
-        'subblocks': [{'data' : [customerGroupInfo]}]
-    }] %}
+    {% set customersGrid = dataGrid.renderGrid(gridName, {group: entity.id}, { cssClass: 'inner-grid' }) %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.customeradmin.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [customerGroupInfo]}]
+        },
+        {
+            'title': 'orob2b.customeradmin.sections.customergroup.customers'|trans,
+            'subblocks': [{'data' : [customersGrid]}]
+        }
+    ] %}
 
     {% set id = 'pageView' %}
     {% set data = {'dataBlocks': dataBlocks} %}

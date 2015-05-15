@@ -15,17 +15,17 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 /**
  * @NamePrefix("orob2b_api_customer_admin_")
  */
-class CustomerController extends RestController implements ClassResourceInterface
+class CustomerGroupController extends RestController implements ClassResourceInterface
 {
     /**
      * @ApiDoc(
-     *      description="Delete customer",
+     *      description="Delete customer group",
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_customer_admin_customer_delete",
+     *      id="orob2b_customer_admin_group_delete",
      *      type="entity",
-     *      class="OroB2BCustomerAdminBundle:Customer",
+     *      class="OroB2BCustomerAdminBundle:CustomerGroup",
      *      permission="DELETE"
      * )
      *
@@ -42,7 +42,7 @@ class CustomerController extends RestController implements ClassResourceInterfac
      */
     public function getManager()
     {
-        return $this->get('orob2b_customer_admin.manager.customer.api.attribute');
+        return $this->get('orob2b_customer_admin.manager.group.api.attribute');
     }
 
     /**
