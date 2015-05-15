@@ -42,8 +42,10 @@ class CurrencySelectionType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => function (Options $options) {
-                if ($options['currencies_list'] !== null && !is_array($options['currencies_list'])) {
-                    throw new LogicException('The option "currencies_list" must be null or array.');
+                if ($options['currencies_list'] !== null && !is_array($options['currencies_list'])
+                        || is_array($options['currencies_list']) && empty($options['currencies_list'])
+                ) {
+                    throw new LogicException('The option "currencies_list" must be null or not empty array.');
                 }
 
                 if (count($options['currencies_list'])) {

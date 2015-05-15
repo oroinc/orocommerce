@@ -153,7 +153,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @expectedException \Symfony\Component\Form\Exception\LogicException
-     * @expectedExceptionMessage The option "currencies_list" must be null or array.
+     * @expectedExceptionMessage The option "currencies_list" must be null or not empty array.
      */
     public function testInvalidTypeOfCurrenciesListOption()
     {
