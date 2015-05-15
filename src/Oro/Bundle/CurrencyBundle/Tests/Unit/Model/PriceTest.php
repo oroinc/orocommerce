@@ -17,7 +17,7 @@ class PriceTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyValueException()
     {
-        new Price(null, null);
+        (new Price())->setValue(null);
     }
 
     /**
@@ -26,7 +26,7 @@ class PriceTest extends \PHPUnit_Framework_TestCase
      */
     public function testEmptyCurrencyException()
     {
-        new Price(100, null);
+        (new Price())->setCurrency(null);
     }
 
     /**
@@ -36,7 +36,7 @@ class PriceTest extends \PHPUnit_Framework_TestCase
      */
     public function testSettersAndGetters($property, $value)
     {
-        $obj = new Price(self::VALUE, self::CURRENCY);
+        $obj = new Price();
 
         $accessor = PropertyAccess::createPropertyAccessor();
         $accessor->setValue($obj, $property, $value);

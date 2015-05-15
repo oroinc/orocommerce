@@ -11,16 +11,6 @@ class Price
     protected $currency;
 
     /**
-     * @param int $value
-     * @param string $currency
-     */
-    public function __construct($value, $currency)
-    {
-        $this->setValue($value);
-        $this->setCurrency($currency);
-    }
-
-    /**
      * @return int
      */
     public function getValue()
@@ -30,6 +20,7 @@ class Price
 
     /**
      * @param int $value
+     * @return $this
      */
     public function setValue($value)
     {
@@ -38,6 +29,8 @@ class Price
         }
 
         $this->value = $value;
+
+        return $this;
     }
 
     /**
@@ -50,6 +43,7 @@ class Price
 
     /**
      * @param string $currency
+     * @return $this
      */
     public function setCurrency($currency)
     {
@@ -58,5 +52,7 @@ class Price
         }
 
         $this->currency = $currency;
+
+        return $this;
     }
 }

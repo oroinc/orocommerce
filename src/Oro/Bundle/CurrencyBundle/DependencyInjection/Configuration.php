@@ -4,7 +4,6 @@ namespace Oro\Bundle\CurrencyBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
@@ -22,10 +21,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'allowed_currencies' => [
-                    'value' => array_keys(Intl::getCurrencyBundle()->getCurrencyNames('en')),
-                    'type' => 'array'
-                ],
+                'allowed_currencies' => ['value' => [], 'type' => 'array'],
             ]
         );
 
