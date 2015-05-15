@@ -16,14 +16,14 @@ class CurrencySelectionType extends AbstractType
     const NAME = 'oro_currency_selection';
 
     /**
-     * @var array
+     * @var ConfigManager
      */
-    protected $currencies = [];
+    protected $configManager;
 
     /**
-     * @var string
+     * @var LocaleSettings
      */
-    protected $locale;
+    protected $localeSettings;
 
     /**
      * @param ConfigManager $configManager
@@ -31,15 +31,8 @@ class CurrencySelectionType extends AbstractType
      */
     public function __construct(ConfigManager $configManager, LocaleSettings $localeSettings)
     {
-        $this->currencies = $configManager->get('oro_currency.allowed_currencies');
-
-        if (empty($this->currencies)) {
-            //TODO: Change the getting currency list from system configuration option
-            //TODO: "functional currency of organization" when it will be added.
-            $this->currencies = [$localeSettings->getCurrency()];
-        }
-
-        $this->locale = $localeSettings->getLocale();
+        $this->configManager = $configManager;
+        $this->localeSettings = $localeSettings;
     }
 
     /**
@@ -50,12 +43,24 @@ class CurrencySelectionType extends AbstractType
         $resolver->setDefaults([
             'choices' => function (Options $options) {
                 if ($options['currencies_list'] !== null && !is_array($options['currencies_list'])) {
-                    throw new LogicException('The option "currencies_list" must be array.');
+                    throw new LogicException('The option "currencies_list" must be null or array.');
                 }
 
-                $currencies = count($options['currencies_list']) ? $options['currencies_list'] : $this->currencies;
+                if (count($options['currencies_list'])) {
+                    $currencies = $options['currencies_list'];
+                } else {
+                    $currencies = $this->configManager->get('oro_currency.allowed_currencies');
+                }
 
-                return $this->getCurrencies($currencies, $options['compact']);
+                if (empty($currencies)) {
+                    //TODO: Change the getting currency list from system configuration option
+                    //TODO: "functional currency of organization" when it will be added.
+                    $currencies = [$this->localeSettings->getCurrency()];
+                }
+
+                $this->checkCurrencies($currencies);
+
+                return $this->getChoices($currencies, $options['compact']);
             },
             'compact' => false,
             'currencies_list' => null,
@@ -67,20 +72,17 @@ class CurrencySelectionType extends AbstractType
      * @param boolean $isCompact
      * @return array
      */
-    protected function getCurrencies(array $currencies, $isCompact)
+    protected function getChoices(array $currencies, $isCompact)
     {
-        $this->checkCurrencies($currencies);
-
         if ($isCompact) {
-            $currencies = array_combine($currencies, $currencies);
+            $choices = array_combine($currencies, $currencies);
         } else {
-            $currencies = array_intersect_key(
-                Intl::getCurrencyBundle()->getCurrencyNames($this->locale),
-                array_fill_keys($currencies, null)
-            );
+            $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->localeSettings->getLocale());
+
+            $choices = array_intersect_key($currencyNames, array_fill_keys($currencies, null));
         }
 
-        return $currencies;
+        return $choices;
     }
 
     /**
@@ -92,7 +94,7 @@ class CurrencySelectionType extends AbstractType
         $invalidCurrencies = [];
 
         foreach ($currencies as $currency) {
-            $name = Intl::getCurrencyBundle()->getCurrencyName($currency, $this->locale);
+            $name = Intl::getCurrencyBundle()->getCurrencyName($currency, $this->localeSettings->getLocale());
 
             if (!$name) {
                 $invalidCurrencies[] = $currency;
