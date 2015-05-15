@@ -168,11 +168,6 @@ datagrid:
                 join:
                     left:
                         - { join: customer.parent, alias: parent }
-        columns:
-            name:
-                label: orob2b.customeradmin.customer.name.label
-            parent_name:
-                label: orob2b.customeradmin.customer.parent.label
         properties:
             id: ~
             view_link:
@@ -193,8 +188,6 @@ datagrid:
                     data_name: customer.name
                 parent_name:
                     data_name: parent_name
-            default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
                 name:
@@ -210,7 +203,6 @@ datagrid:
                 link:         view_link
                 icon:         eye-open
                 acl_resource: orob2b_customer_admin_customer_view
-                rowAction:    true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
@@ -229,3 +221,57 @@ datagrid:
                         - customer.group = :group
             bind_parameters:
                 - group
+        columns:
+            name:
+                label: orob2b.customeradmin.customer.name.label
+            parent_name:
+                label: orob2b.customeradmin.customer.parent.label
+        sorters:
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        actions:
+            view:
+                rowAction: true
+
+    customer-group-customers-grid-update:
+        extends: customer-group-customers-grid-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:group IS NOT NULL) THEN
+                            CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        ELSE
+                            CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        END) as hasGroup
+            bind_parameters:
+                - group
+        columns:
+            hasGroup:
+                label: orob2b.customeradmin.customer.has_group.label
+                editable: true
+                frontend_type: boolean
+            name:
+                label: orob2b.customeradmin.customer.name.label
+            parent_name:
+                label: orob2b.customeradmin.customer.parent.label
+        filters:
+            columns:
+                hasGroup:
+                    type: boolean
+                    data_name: hasGroup
+        sorters:
+            columns:
+                hasGroup:
+                    data_name: hasGroup
+            default:
+                hasGroup: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        options:
+            rowSelection:
+                dataField: id
+                columnName: hasGroup
+                selectors:
+                    included: '#groupAppendCustomers'
+                    excluded: '#groupRemoveCustomers'

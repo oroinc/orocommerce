@@ -1,9 +1,13 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
 {% set formAction = entity.id ? path('orob2b_customer_admin_group_update', {id: entity.id}) : path('orob2b_customer_admin_group_create') %}
 
 {% oro_title_set({params : {"%customerGroupName%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.customeradmin.customergroup.entity_label'|trans} }) %}
+
+{% set gridName = 'customer-group-customers-grid-update' %}
 
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
@@ -56,6 +60,19 @@
             ]
         }
     ] %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title' : 'orob2b.customeradmin.sections.customergroup.customers'|trans,
+        'subblocks': [{
+            'title' : null,
+            'useSpan': false,
+            'data' : [
+                form_widget(form.appendCustomers, {'id': 'groupAppendCustomers'}),
+                form_widget(form.removeCustomers, {'id': 'groupRemoveCustomers'}),
+                dataGrid.renderGrid(gridName, {group: entity.id}, { cssClass: 'inner-grid' })
+            ]
+        }]
+    }] ) %}
 
     {% set data = {
         'formErrors': form_errors(form),

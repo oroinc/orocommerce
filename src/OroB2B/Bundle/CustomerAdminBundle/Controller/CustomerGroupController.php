@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerAdminBundle\Controller;
 
+use Doctrine\Common\Util\ClassUtils;
+use OroB2B\Bundle\CustomerAdminBundle\Form\Handler\CustomerGroupHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -92,9 +94,16 @@ class CustomerGroupController extends Controller
      */
     protected function update(CustomerGroup $group)
     {
+        $form = $this->createForm(CustomerGroupType::NAME, $group);
+        $handler = new CustomerGroupHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($group))
+        );
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $group,
-            $this->createForm(CustomerGroupType::NAME, $group),
+            $form,
             function (CustomerGroup $group) {
                 return [
                     'route' => 'orob2b_customer_admin_group_update',
@@ -107,7 +116,8 @@ class CustomerGroupController extends Controller
                     'parameters' => ['id' => $group->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.customeradmin.controller.customergroup.saved.message')
+            $this->get('translator')->trans('orob2b.customeradmin.controller.customergroup.saved.message'),
+            $handler
         );
     }
 
