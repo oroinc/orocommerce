@@ -11,6 +11,8 @@ parameters:
     orob2b_customer_admin.customer_tree_handler.class: OroB2B\Bundle\CustomerAdminBundle\JsTree\CustomerTreeHandler
     orob2b_customer_admin.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
+    orob2b_customer_admin.form.autocomplete.group.search_handler.class: OroB2B\Bundle\CustomerAdminBundle\Autocomplete\ParentCustomerSearchHandler
+
 services:
     orob2b_customer_admin.customer_tree_handler:
         class: %orob2b_customer_admin.customer_tree_handler.class%
@@ -57,11 +59,21 @@ services:
             - %orob2b_customer_admin.entity.customer.class%
             - @doctrine.orm.entity_manager
 
-    orocrm_sales.form.autocomplete.b2bcustomer.search_handler:
+    orob2b_customer_admin.form.autocomplete.customer.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - %orob2b_customer_admin.entity.customer_group.class%
             - ["name"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_admin_customer_group, acl_resource: orob2b_customer_admin_customer_view }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_admin_customer_group, acl_resource: orob2b_customer_admin_group_view }
+        lazy: true
+
+    orob2b_customer_admin.form.autocomplete.group.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: %orob2b_customer_admin.form.autocomplete.group.search_handler.class%
+        arguments:
+            - %orob2b_customer_admin.entity.customer.class%
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_admin_customer_parent, acl_resource: orob2b_customer_admin_customer_view }
         lazy: true

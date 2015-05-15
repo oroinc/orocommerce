@@ -26,11 +26,9 @@ class CustomerType extends AbstractType
             )
             ->add(
                 'parent',
-                'entity',
+                'orob2b_customer_admin_customer_parent_select',
                 [
                     'label' => 'orob2b.customeradmin.customer.parent.label',
-                    'class' => 'OroB2B\Bundle\CustomerAdminBundle\Entity\Customer',
-                    'property' => 'name',
                     'required' => false
                 ]
             );

@@ -7,6 +7,7 @@ orob2b.customeradmin:
         children.label: 'Children'
         id.label: 'Id'
         parent.label: 'Parent'
+        form.choose_parent: 'Choose Parent...'
 
     customergroup:
         entity_label: 'Customer Group'
