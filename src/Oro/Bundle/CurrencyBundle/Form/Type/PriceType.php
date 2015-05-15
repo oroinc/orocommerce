@@ -19,7 +19,7 @@ class PriceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('value', 'text', ['required' => true])
+            ->add('value', 'number', ['required' => true])
             ->add(
                 'currency',
                 CurrencySelectionType::NAME,

@@ -4,5 +4,9 @@
             <td>{{ form_widget(form.value) }}</td>
             <td>{{ form_widget(form.currency) }}</td>
         </tr>
+        <tr>
+            <td>{{ form_errors(form.value) }}</td>
+            <td>{{ form_errors(form.currency) }}</td>
+        </tr>
     </table>
 {% endblock %}
