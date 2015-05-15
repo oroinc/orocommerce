@@ -57,7 +57,7 @@ class User extends BaseUser
      * @param Customer $customer
      * @return $this
      */
-    public function setCustomer($customer)
+    public function setCustomer(Customer $customer = null)
     {
         $this->customer = $customer;
 
