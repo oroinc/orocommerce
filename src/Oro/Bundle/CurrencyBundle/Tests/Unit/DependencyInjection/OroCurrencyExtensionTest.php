@@ -25,6 +25,11 @@ class OroCurrencyExtensionTest extends ExtensionTestCase
         ];
         $this->assertParametersLoaded($expectedParameters);
 
+        $expectedDefinitions = [
+            'oro_currency.twig.currency',
+        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
+
         $expectedExtensionConfigs = [
             'oro_currency',
         ];

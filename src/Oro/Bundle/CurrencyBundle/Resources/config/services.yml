@@ -1,5 +1,11 @@
 parameters:
     oro_currency.price.model: Oro\Bundle\CurrencyBundle\Model\Price
+    oro_currency.twig.currency.class: Oro\Bundle\CurrencyBundle\Twig\CurrencyExtension
 
 services:
-
+    oro_currency.twig.currency:
+        class: %oro_currency.twig.currency.class%
+        arguments:
+            - @oro_locale.formatter.number
+        tags:
+            - { name: twig.extension }
