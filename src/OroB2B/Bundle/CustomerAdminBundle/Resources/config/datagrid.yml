@@ -31,6 +31,14 @@ datagrid:
                 type:   url
                 route:  orob2b_customer_admin_customer_view
                 params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_customer_admin_customer_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_customer_admin_delete_customer
+                params: [ id ]
         sorters:
             columns:
                 name:
@@ -70,3 +78,78 @@ datagrid:
                 icon:         eye-open
                 acl_resource: orob2b_customer_admin_customer_view
                 rowAction:    true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_customer_admin_customer_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_customer_admin_customer_delete
+
+    customer-groups-grid:
+        extended_entity_name: %orob2b_customer_admin.entity.customer_group.class%
+        options:
+            entityHint:        customer group
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_customer_admin_group_view
+            type:         orm
+            query:
+                select:
+                    - customer_group.id
+                    - customer_group.name
+                from:
+                    - { table: %orob2b_customer_admin.entity.customer_group.class%, alias: customer_group }
+        columns:
+            name:
+                label: orob2b.customeradmin.customergroup.name.label
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_customer_admin_group_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_customer_admin_group_update
+                params: [ id ]
+#            delete_link:
+#                type:   url
+#                route:  orob2b_api_customer_admin_delete_customer_group
+#                params: [ id ]
+        sorters:
+            columns:
+                name:
+                    data_name: customer_group.name
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: customer_group.name
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_customer_admin_group_view
+                rowAction:    true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_customer_admin_group_update
+#            delete:
+#                type:          delete
+#                label:         oro.grid.action.delete
+#                link:          delete_link
+#                icon:          trash
+#                acl_resource:  orob2b_customer_admin_group_delete

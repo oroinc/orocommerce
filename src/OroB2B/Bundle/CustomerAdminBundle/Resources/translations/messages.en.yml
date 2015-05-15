@@ -14,6 +14,7 @@ orob2b.customeradmin:
         name.label: 'Name'
         id.label: 'Id'
         customers.label: 'Customers'
+        form.choose: 'Choose a customer group...'
 
     sections:
         general: 'General'
@@ -21,4 +22,12 @@ orob2b.customeradmin:
     menu:
         customer_tab.label: 'Customers'
         customer_list.description: 'List of Customers'
+        customer_group_list.description: 'List of Customer Groups'
         shortcut_customer_list.description: 'List of Customers'
+        shortcut_customer_group_list.description: 'List of Customer Groupss'
+
+    controller:
+        customer:
+            saved.message: 'Customer saved'
+        customergroup:
+            saved.message: 'Customer group saved'
