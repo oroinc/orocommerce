@@ -1,0 +1,69 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%title%": entity.name } }) %}
+
+{% set gridName = 'customer-group-customers-grid-view' %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_customer_admin_group_index'),
+        'indexLabel': 'orob2b.customeradmin.customergroup.entity_plural_label'|trans,
+        'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_customer_admin_group_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.customeradmin.customergroup.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_customer_admin_delete_customer_group', {'id': entity.id}),
+            'dataRedirect': path('orob2b_customer_admin_group_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.customeradmin.customergroup.entity_label'|trans,
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set customerGroupInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_customer_admin_group_info', {id: entity.id}),
+            'alias': 'customer-group-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set customersGrid = dataGrid.renderGrid(gridName, {group: entity.id}, { cssClass: 'inner-grid' }) %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.customeradmin.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [customerGroupInfo]}]
+        },
+        {
+            'title': 'orob2b.customeradmin.sections.customergroup.customers'|trans,
+            'subblocks': [{'data' : [customersGrid]}]
+        }
+    ] %}
+
+    {% set id = 'pageView' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block stats %}
+    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+{% endblock stats %}

@@ -1,0 +1,7 @@
+orob2b_customer_admin_customer_api:
+    resource: "@OroB2BCustomerAdminBundle/Controller/Api/Rest/CustomerController.php"
+    type:     rest
+
+orob2b_customer_admin_group_api:
+    resource: "@OroB2BCustomerAdminBundle/Controller/Api/Rest/CustomerGroupController.php"
+    type:     rest
