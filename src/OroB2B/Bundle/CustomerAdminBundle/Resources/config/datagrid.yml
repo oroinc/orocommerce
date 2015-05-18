@@ -63,13 +63,8 @@ datagrid:
                             class:    %orob2b_customer_admin.entity.customer_group.class%
                             property: name
                 parent_name:
-                    type:      entity
-                    data_name: parent.id
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %orob2b_customer_admin.entity.customer.class%
-                            property: name
+                    type:      string
+                    data_name: parent.name
         actions:
             view:
                 type:         navigate
