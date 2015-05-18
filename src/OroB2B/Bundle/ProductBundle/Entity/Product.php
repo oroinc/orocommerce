@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -132,6 +133,18 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     protected $organization;
 
     /**
+     * @var ArrayCollection|ProductUnitPrecision[]
+     *
+     * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $unitPrecisions;
+
+    public function __construct()
+    {
+        $this->unitPrecisions = new ArrayCollection();
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -251,6 +264,46 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->category = $category;
 
         return $this;
+    }
+
+    /**
+     * Add unitPrecisions
+     *
+     * @param ProductUnitPrecision $unitPrecisions
+     * @return Product
+     */
+    public function addUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    {
+        if (!$this->unitPrecisions->contains($unitPrecisions)) {
+            $this->unitPrecisions->add($unitPrecisions);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove unitPrecisions
+     *
+     * @param ProductUnitPrecision $unitPrecisions
+     * @return Product
+     */
+    public function removeUnitPrecision(ProductUnitPrecision $unitPrecisions)
+    {
+        if ($this->unitPrecisions->contains($unitPrecisions)) {
+            $this->unitPrecisions->removeElement($unitPrecisions);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get unitPrecisions
+     *
+     * @return ArrayCollection
+     */
+    public function getUnitPrecisions()
+    {
+        return $this->unitPrecisions;
     }
 
     /**
