@@ -94,9 +94,7 @@ class RoundingServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
-     * @expectedExceptionMessage The type of the rounding is not valid.
-     *                           Allowed the following types: half_up, half_down, ceil, floor.
+     * @throws \OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
      */
     public function testInvalidRoundingTypeException()
     {
@@ -104,6 +102,11 @@ class RoundingServiceTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->with('orob2b_product.unit_rounding_type')
             ->willReturn('test');
+
+        $this->setExpectedException(
+            '\OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException',
+            'The type of the rounding is not valid. Allowed the following types: half_up, half_down, ceil, floor.'
+        );
 
         $this->service->round(1.15, 1);
     }
