@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orob2bcustomeradmin/js/app/components/customer-tree-component': 'bundles/orob2bcustomeradmin/js/app/components/customer-tree-component.js'

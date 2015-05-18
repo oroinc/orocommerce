@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class UserTest extends \PHPUnit_Framework_TestCase

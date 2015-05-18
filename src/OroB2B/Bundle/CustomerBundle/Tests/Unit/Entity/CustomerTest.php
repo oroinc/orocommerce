@@ -35,7 +35,7 @@ class CustomerTest extends EntityTestCase
         $customer = $this->createCustomerEntity();
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomer',
+            'OroB2B\Bundle\CustomerBundle\Entity\Customer',
             $parentCustomer->addChild($customer)
         );
 
