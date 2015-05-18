@@ -14,7 +14,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;
 use OroB2B\Bundle\UserAdminBundle\Form\Type\UserType;
-use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 class UserTypeTest extends FormIntegrationTestCase
 {

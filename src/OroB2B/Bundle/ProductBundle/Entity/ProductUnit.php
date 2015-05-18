@@ -80,4 +80,12 @@ class ProductUnit
     {
         return $this->defaultPrecision;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->code;
+    }
 }

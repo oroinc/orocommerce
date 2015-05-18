@@ -42,3 +42,14 @@ orob2b:
 
         controller:
             product.saved.message: Product has been saved
+
+    product_unit.kg:
+        label:
+            full: kilogramm
+            compact: kg
+
+    product_unit.item:
+        label:
+            full: item
+            compact: item
+

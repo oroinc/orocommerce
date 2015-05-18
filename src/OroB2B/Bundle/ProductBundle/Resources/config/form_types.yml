@@ -1,5 +1,6 @@
 parameters:
     orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
+    orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
 
 services:
     # Product form types
@@ -7,3 +8,9 @@ services:
         class: %orob2b_product.form.type.product.class%
         tags:
             - { name: form.type, alias: orob2b_product }
+    orob2b_product.form.type.product_unit_selection:
+        class: %orob2b_product.form.type.product_unit_selection.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+        tags:
+            - { name: form.type, alias: oro_b2b_product_unit_selection }
