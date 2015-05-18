@@ -73,7 +73,7 @@ class OroB2BProductBundle implements Migration
         $table = $schema->createTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
         $table->addColumn('product_id', 'integer');
         $table->addColumn('unit_code', 'string', ['length' => 255]);
-        $table->addColumn('precision', 'integer');
+        $table->addColumn('unit_precision', 'integer');
         $table->setPrimaryKey(['product_id', 'unit_code']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
         $table->addIndex(['product_id'], 'IDX_47015B824584665A', []);

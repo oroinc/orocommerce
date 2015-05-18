@@ -307,6 +307,42 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * Get unitPrecisions by unit code
+     *
+     * @param string $unitCode
+     * @return ProductUnitPrecision
+     */
+    public function getUnitPrecision($unitCode)
+    {
+        $result = null;
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            if ($unitPrecision->getUnit()->getCode() == $unitCode) {
+                $result = $unitPrecision;
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get available unit codes
+     *
+     * @return string[]
+     */
+    public function getAvailableUnitCodes()
+    {
+        $result = [];
+
+        foreach ($this->unitPrecisions as $unitPrecision) {
+            $result[] = $unitPrecision->getUnit()->getCode();
+        }
+
+        return $result;
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist

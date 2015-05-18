@@ -35,7 +35,7 @@ class ProductUnitPrecision
     /**
      * @var integer
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="unit_precision",type="integer")
      */
     protected $precision;
 
