@@ -1,9 +1,0 @@
-OroB2B\Bundle\CustomerAdminBundle\Entity\Customer:
-    properties:
-        name:
-            - NotBlank: ~
-
-OroB2B\Bundle\CustomerAdminBundle\Entity\CustomerGroup:
-    properties:
-        name:
-            - NotBlank: ~

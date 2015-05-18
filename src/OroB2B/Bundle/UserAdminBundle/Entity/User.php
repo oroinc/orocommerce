@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\CustomerAdminBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
 
 /**
@@ -40,7 +40,7 @@ class User extends BaseUser
     /**
      * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerAdminBundle\Entity\Customer")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
      * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $customer;

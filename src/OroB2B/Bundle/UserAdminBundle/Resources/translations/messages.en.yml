@@ -25,6 +25,7 @@ orob2b.useradmin:
         roles.label:                 'Roles'
         salt.label:                  'Salt'
         username_canonical.label:    'Canonical username'
+        customer.label:              'Customer'
     group:
         entity_label:                'Frontend Role'
         entity_plural_label:         'Frontend Roles'

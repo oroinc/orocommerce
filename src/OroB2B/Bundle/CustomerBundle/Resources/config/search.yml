@@ -1,0 +1,35 @@
+OroB2B\Bundle\CustomerBundle\Entity\Customer:
+    alias:                          orob2b_customer
+    title_fields:                   [name]
+    route:
+        name:                       orob2b_customer_view
+        parameters:
+            id:                     id
+    search_template:                OroB2BCustomerBundle:Customer:searchResult.html.twig
+    fields:
+        -
+            name:                   name
+            target_type:            text
+            target_fields:          [name]
+        -
+            name:                   group
+            relation_type:          many-to-one
+            relation_fields:
+                -
+                    name:           name
+                    target_type:    text
+                    target_fields:  [group]
+
+OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup:
+    alias:                          orob2b_customer_group
+    title_fields:                   [name]
+    route:
+        name:                       orob2b_customer_group_view
+        parameters:
+            id:                     id
+    search_template:                OroB2BCustomerBundle:CustomerGroup:searchResult.html.twig
+    fields:
+        -
+            name:                   name
+            target_type:            text
+            target_fields:          [name]
