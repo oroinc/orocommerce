@@ -9,7 +9,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * @ORM\Table(name="orob2b_product_unit")
  * @ORM\Entity
- * @Config
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-edit"
+ *          }
+ *      }
+ * )
  */
 class ProductUnit
 {
