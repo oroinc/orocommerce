@@ -32,6 +32,13 @@ orob2b:
             shortcut_new_product.description: Create new product item
             shortcut_products_list.description: Show list of existing products
 
+        rounding:
+            type:
+                half_up.label: Half Up
+                half_down.label: Half Down
+                ceil.label: Ceil
+                floor.label: Floor
+
         sections:
             general: General
             additional: Additional
@@ -42,3 +49,10 @@ orob2b:
 
         controller:
             product.saved.message: Product has been saved
+
+        system_configuration:
+            groups:
+                product.title: 'Product'
+                product_unit_settings.title: 'Product Unit Settings'
+            fields:
+                unit_rounding_type.label: 'Unit Rounding Type'

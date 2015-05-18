@@ -2,6 +2,7 @@ parameters:
     orob2b_product.product.class: OroB2B\Bundle\ProductBundle\Entity\Product
     orob2b_product.form.handler.product.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductHandler
     orob2b_product.product.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_product.service.rounding.class: OroB2B\Bundle\ProductBundle\Rounding\RoundingService
 
 services:
     orob2b_product.form.product:
@@ -24,3 +25,8 @@ services:
         arguments:
             - %orob2b_product.product.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_product.service.rounding:
+        class: %orob2b_product.service.rounding.class%
+        arguments:
+            - @oro_config.manager
