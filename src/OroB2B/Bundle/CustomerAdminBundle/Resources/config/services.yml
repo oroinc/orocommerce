@@ -52,11 +52,18 @@ services:
             - %orob2b_customer_admin.model.customer_group.class%
             - %orob2b_customer_admin.entity.customer_group.class%
 
-    orob2b_customer_admin.manager.api.attribute:
+    orob2b_customer_admin.manager.customer.api.attribute:
         class:  %orob2b_customer_admin.manager.api.attribute.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_customer_admin.entity.customer.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_customer_admin.manager.group.api.attribute:
+        class:  %orob2b_customer_admin.manager.api.attribute.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_customer_admin.entity.customer_group.class%
             - @doctrine.orm.entity_manager
 
     orob2b_customer_admin.form.autocomplete.customer.search_handler:

@@ -63,13 +63,8 @@ datagrid:
                             class:    %orob2b_customer_admin.entity.customer_group.class%
                             property: name
                 parent_name:
-                    type:      entity
-                    data_name: parent.id
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %orob2b_customer_admin.entity.customer.class%
-                            property: name
+                    type:      string
+                    data_name: parent.name
         actions:
             view:
                 type:         navigate
@@ -118,10 +113,10 @@ datagrid:
                 type:   url
                 route:  orob2b_customer_admin_group_update
                 params: [ id ]
-#            delete_link:
-#                type:   url
-#                route:  orob2b_api_customer_admin_delete_customer_group
-#                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_customer_admin_delete_customer_group
+                params: [ id ]
         sorters:
             columns:
                 name:
@@ -147,9 +142,131 @@ datagrid:
                 link:          update_link
                 icon:          edit
                 acl_resource:  orob2b_customer_admin_group_update
-#            delete:
-#                type:          delete
-#                label:         oro.grid.action.delete
-#                link:          delete_link
-#                icon:          trash
-#                acl_resource:  orob2b_customer_admin_group_delete
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_customer_admin_group_delete
+
+    customer-group-customers-grid-basic:
+        source:
+            type: orm
+            acl_resource: orob2b_customer_admin_customer_view
+            query:
+                select:
+                    - customer.id
+                    - customer.name
+                    - parent.name as parent_name
+                from:
+                    - { table: %orob2b_customer_admin.entity.customer.class%, alias: customer }
+                join:
+                    left:
+                        - { join: customer.parent, alias: parent }
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_customer_admin_customer_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_customer_admin_customer_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_customer_admin_delete_customer
+                params: [ id ]
+        sorters:
+            columns:
+                name:
+                    data_name: customer.name
+                parent_name:
+                    data_name: parent_name
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: customer.name
+                parent_name:
+                    type:      string
+                    data_name: parent_name
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_customer_admin_customer_view
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_customer_admin_customer_update
+        options:
+            entityHint: customer
+
+    customer-group-customers-grid-view:
+        extends: customer-group-customers-grid-basic
+        source:
+            query:
+                where:
+                    and:
+                        - customer.group = :group
+            bind_parameters:
+                - group
+        columns:
+            name:
+                label: orob2b.customeradmin.customer.name.label
+            parent_name:
+                label: orob2b.customeradmin.customer.parent.label
+        sorters:
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        actions:
+            view:
+                rowAction: true
+
+    customer-group-customers-grid-update:
+        extends: customer-group-customers-grid-basic
+        source:
+            query:
+                select:
+                    - >
+                        (CASE WHEN (:group IS NOT NULL) THEN
+                            CASE WHEN (:group = customer.group OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        ELSE
+                            CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        END) as hasGroup
+            bind_parameters:
+                - group
+        columns:
+            hasGroup:
+                label: orob2b.customeradmin.customer.has_group.label
+                editable: true
+                frontend_type: boolean
+            name:
+                label: orob2b.customeradmin.customer.name.label
+            parent_name:
+                label: orob2b.customeradmin.customer.parent.label
+        filters:
+            columns:
+                hasGroup:
+                    type: boolean
+                    data_name: hasGroup
+        sorters:
+            columns:
+                hasGroup:
+                    data_name: hasGroup
+            default:
+                hasGroup: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        options:
+            rowSelection:
+                dataField: id
+                columnName: hasGroup
+                selectors:
+                    included: '#groupAppendCustomers'
+                    excluded: '#groupRemoveCustomers'

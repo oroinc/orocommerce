@@ -8,6 +8,7 @@ orob2b.customeradmin:
         id.label: 'Id'
         parent.label: 'Parent'
         form.choose_parent: 'Choose Parent...'
+        has_group.label: 'Has group'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -19,6 +20,8 @@ orob2b.customeradmin:
 
     sections:
         general: 'General'
+        customergroup:
+            customers: 'Customers'
 
     menu:
         customer_tab.label: 'Customers'

@@ -22,6 +22,26 @@ class CustomerGroupType extends AbstractType
                     'label' => 'orob2b.customeradmin.customergroup.name.label',
                     'required' => true
                 ]
+            )
+            ->add(
+                'appendCustomers',
+                'oro_entity_identifier',
+                [
+                    'class'    => 'OroB2B\Bundle\CustomerAdminBundle\Entity\Customer',
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true
+                ]
+            )
+            ->add(
+                'removeCustomers',
+                'oro_entity_identifier',
+                [
+                    'class'    => 'OroB2B\Bundle\CustomerAdminBundle\Entity\Customer',
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true
+                ]
             );
     }
 

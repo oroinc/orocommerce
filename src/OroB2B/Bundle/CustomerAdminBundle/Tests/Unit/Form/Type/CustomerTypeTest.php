@@ -61,8 +61,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
         $customerGroupSelectType = new CustomerGroupSelectTypeStub($registry);
 
         return [
-            new PreloadedExtension([$entityType->getName() => $entityType], []),
-            new PreloadedExtension([$customerGroupSelectType->getName() => $customerGroupSelectType], [])
+            new PreloadedExtension(
+                [
+                    $entityType->getName() => $entityType,
+                    $customerGroupSelectType->getName() => $customerGroupSelectType
+                ],
+                []
+            )
         ];
     }
 

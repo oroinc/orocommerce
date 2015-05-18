@@ -6,8 +6,16 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.customeradmin.customer.name.label'|trans, entity.name) }}
             {% if entity.group %}
-                {# @todo: add link to group view #}
-                {{ UI.renderProperty('orob2b.customeradmin.customer.group.label'|trans, entity.group.name) }}
+                {% if is_granted('VIEW', entity.group) %}
+                    {% set groupData %}
+                    <a href="{{ path('orob2b_customer_admin_group_view', {id: entity.group.id}) }}">
+                        {{ entity.group.name }}
+                    </a>
+                    {% endset %}
+                    {{ UI.renderHtmlProperty('orob2b.customeradmin.customer.group.label'|trans, groupData) }}
+                {% else %}
+                    {{ UI.renderProperty('orob2b.customeradmin.customer.group.label'|trans, entity.group.name) }}
+                {% endif %}
             {% endif %}
             {% if entity.parent %}
                 {% if is_granted('VIEW', entity.parent) %}
