@@ -19,6 +19,12 @@ class CustomerRepository extends EntityRepository
             ->where($qb->expr()->eq('customer.parent', ':parent'))
             ->setParameter('parent', $customerId);
         $result = $aclHelper->apply($qb)->getArrayResult();
+        $result = array_map(
+            function($item) {
+                return $item['customer_id'];
+            },
+            $result
+        );
         $children = $result;
 
         if ($result) {

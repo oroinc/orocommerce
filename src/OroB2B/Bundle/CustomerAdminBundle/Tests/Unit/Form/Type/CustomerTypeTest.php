@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\CustomerAdminBundle\Tests\Unit\Form\Type\Stub\ParentCustomerSelectTypeStub;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -59,12 +60,14 @@ class CustomerTypeTest extends FormIntegrationTestCase
 
         $entityType = new EntityType($registry);
         $customerGroupSelectType = new CustomerGroupSelectTypeStub($registry);
+        $parentCustomerSelectType = new ParentCustomerSelectTypeStub($registry);
 
         return [
             new PreloadedExtension(
                 [
                     $entityType->getName() => $entityType,
-                    $customerGroupSelectType->getName() => $customerGroupSelectType
+                    $customerGroupSelectType->getName() => $customerGroupSelectType,
+                    $parentCustomerSelectType->getName() => $parentCustomerSelectType
                 ],
                 []
             )

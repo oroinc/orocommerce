@@ -12,6 +12,9 @@ class ParentCustomerSearchHandler extends SearchHandler
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
+        if (strpos($search, ';') === false) {
+            return [];
+        }
         list($searchTerm, $customerId) = explode(';', $search);
 
         $entityIds = $this->searchIds($searchTerm, $firstResult, $maxResults);
