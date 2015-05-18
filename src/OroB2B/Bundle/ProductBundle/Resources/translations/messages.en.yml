@@ -9,6 +9,21 @@ orob2b:
         owner.label: Owner
         organization.label: Organization
         in_category.label: In category
+        unit_precisions.label: Unit Precisions
+
+        productunit:
+            entity_label: Product Unit
+            entity_plural_label: Product Units
+            entity_description: Represents product units information
+            code.label: Code
+            default_precision.label: Default Precision
+
+        productunitprecision:
+            entity_label: Product Unit Precision
+            entity_plural_label: Product Unit Precisions
+            product.label: Product
+            unit.label: Unit
+            precision.label: Precision
 
         menu:
             products_tab.label: Product management
