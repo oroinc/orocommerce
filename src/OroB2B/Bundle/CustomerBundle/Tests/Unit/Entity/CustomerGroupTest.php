@@ -33,7 +33,7 @@ class CustomerGroupTest extends EntityTestCase
         $customer = $this->createCustomerEntity();
 
         $this->assertInstanceOf(
-            'OroB2B\Bundle\CustomerBundle\Entity\AbstractCustomerGroup',
+            'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup',
             $customerGroup->addCustomer($customer)
         );
 
