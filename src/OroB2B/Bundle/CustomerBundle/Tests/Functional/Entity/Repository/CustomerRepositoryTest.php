@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerAdminBundle\Tests\Functional\Entity\Repository;
+namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
