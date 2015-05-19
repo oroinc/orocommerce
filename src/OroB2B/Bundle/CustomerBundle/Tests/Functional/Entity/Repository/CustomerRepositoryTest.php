@@ -67,10 +67,10 @@ class CustomerRepositoryTest extends WebTestCase
     public function customerReferencesDataProvider()
     {
         return [
-            'orphan' => ['orphan', []],
-            'level_1' => ['level_1', ['level_1.1', 'level_1.1.1', 'level_1.2']],
-            'level_1.1' => ['level_1.1', ['level_1.1.1']],
-            ['level_1.2', []]
+            'orphan' => ['customer.orphan', []],
+            'level_1' => ['customer.level_1', ['customer.level_1.1', 'customer.level_1.1.1', 'customer.level_1.2']],
+            'level_1.1' => ['customer.level_1.1', ['customer.level_1.1.1']],
+            'level_1.2' => ['customer.level_1.2', []]
         ];
     }
 }

@@ -14,14 +14,14 @@ class LoadCustomers extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
-        $this->createCustomer($manager, 'orphan');
+        $this->createCustomer($manager, 'customer.orphan');
 
-        $levelOne = $this->createCustomer($manager, 'level_1');
+        $levelOne = $this->createCustomer($manager, 'customer.level_1');
 
-        $levelTwoFirst = $this->createCustomer($manager, 'level_1.1', $levelOne);
-        $this->createCustomer($manager, 'level_1.1.1', $levelTwoFirst);
+        $levelTwoFirst = $this->createCustomer($manager, 'customer.level_1.1', $levelOne);
+        $this->createCustomer($manager, 'customer.level_1.1.1', $levelTwoFirst);
 
-        $this->createCustomer($manager, 'level_1.2', $levelOne);
+        $this->createCustomer($manager, 'customer.level_1.2', $levelOne);
 
         $manager->flush();
     }
