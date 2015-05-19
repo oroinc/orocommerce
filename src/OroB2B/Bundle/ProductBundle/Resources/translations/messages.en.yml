@@ -56,3 +56,14 @@ orob2b:
                 product_unit_settings.title: 'Product Unit Settings'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
+
+    product_unit.kg:
+        label:
+            full: kilogram
+            short: kg
+
+    product_unit.item:
+        label:
+            full: item
+            short: item
+
