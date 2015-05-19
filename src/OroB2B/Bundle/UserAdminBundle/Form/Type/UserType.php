@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Form\Type;
 
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -38,7 +39,11 @@ class UserType extends AbstractType
             )
             ->add('lastName', 'text', ['required' => true, 'label' => 'orob2b.useradmin.user.last_name.label'])
             ->add('email', 'email', ['required' => true, 'label' => 'orob2b.useradmin.user.email.label'])
-
+            ->add(
+                'customer',
+                CustomerSelectType::NAME,
+                ['required' => false, 'label' => 'orob2b.useradmin.user.customer.label']
+            )
             ->add(
                 'enabled',
                 'checkbox',

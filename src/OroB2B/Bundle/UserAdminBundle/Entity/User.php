@@ -12,6 +12,7 @@ use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_user")
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_user_admin_user_index",
  *      routeView="orob2b_user_admin_user_view",
@@ -36,31 +37,4 @@ class User extends BaseUser
      * )
      */
     protected $groups;
-
-    /**
-     * @var Customer
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
-     **/
-    protected $customer;
-
-    /**
-     * @return Customer
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-    /**
-     * @param Customer $customer
-     * @return $this
-     */
-    public function setCustomer(Customer $customer = null)
-    {
-        $this->customer = $customer;
-
-        return $this;
-    }
 }

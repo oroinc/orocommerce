@@ -1,8 +1,7 @@
 datagrid:
-    customer-customers-grid:
+    customer-customers-select-grid:
         options:
             entityHint:        customer
-            entity_pagination: true
         source:
             acl_resource: orob2b_customer_view
             type:         orm
@@ -27,18 +26,6 @@ datagrid:
                 label: orob2b.customer.parent.label
         properties:
             id: ~
-            view_link:
-                type:   url
-                route:  orob2b_customer_view
-                params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_customer_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_customer_delete_customer
-                params: [ id ]
         sorters:
             columns:
                 name:
@@ -65,6 +52,24 @@ datagrid:
                 parent_name:
                     type:      string
                     data_name: parent.name
+
+    customer-customers-grid:
+        extends: customer-customers-select-grid
+        options:
+            entity_pagination: true
+        properties:
+            view_link:
+                type:   url
+                route:  orob2b_customer_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_customer_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_customer_delete_customer
+                params: [ id ]
         actions:
             view:
                 type:         navigate
@@ -86,11 +91,9 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_customer_delete
 
-    customer-groups-grid:
-        extended_entity_name: %orob2b_customer.entity.customer_group.class%
+    customer-groups-select-grid:
         options:
             entityHint:        customer group
-            entity_pagination: true
         source:
             acl_resource: orob2b_customer_group_view
             type:         orm
@@ -105,6 +108,23 @@ datagrid:
                 label: orob2b.customer.customergroup.name.label
         properties:
             id: ~
+        sorters:
+            columns:
+                name:
+                    data_name: customer_group.name
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: customer_group.name
+
+    customer-groups-grid:
+        extends: customer-groups-select-grid
+        options:
+            entity_pagination: true
+        properties:
             view_link:
                 type:   url
                 route:  orob2b_customer_group_view
@@ -117,17 +137,6 @@ datagrid:
                 type:   url
                 route:  orob2b_api_customer_delete_customer_group
                 params: [ id ]
-        sorters:
-            columns:
-                name:
-                    data_name: customer_group.name
-            default:
-                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: customer_group.name
         actions:
             view:
                 type:         navigate

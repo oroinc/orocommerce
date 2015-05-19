@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use OroB2B\Bundle\UserAdminBundle\Entity\User;
+
 /**
  * @ORM\Entity()
  * @ORM\Table(
@@ -23,6 +25,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-user"
+ *          },
+ *          "form"={
+ *              "form_type"="orob2b_customer_select",
+ *              "grid_name"="customer-customers-select-grid",
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -74,11 +80,21 @@ class Customer
     protected $group;
 
     /**
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\UserAdminBundle\Entity\User",
+     *      mappedBy="customer",
+     *      cascade={"persist"}
+     * )
+     **/
+    protected $users;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->children = new ArrayCollection();
+        $this->users = new ArrayCollection();
     }
 
     /**
@@ -180,6 +196,7 @@ class Customer
      * Remove child
      *
      * @param Customer $child
+     * @return Customer
      */
     public function removeChild(Customer $child)
     {
@@ -187,6 +204,8 @@ class Customer
             $child->setParent(null);
             $this->children->removeElement($child);
         }
+
+        return $this;
     }
 
     /**
@@ -197,5 +216,43 @@ class Customer
     public function getChildren()
     {
         return $this->children;
+    }
+
+    /**
+     * @param User $user
+     * @return Customer
+     */
+    public function addUser(User $user)
+    {
+        if (!$this->users->contains($user)) {
+            $user->setCustomer($this);
+            $this->users->add($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param User $user
+     * @return Customer
+     */
+    public function removeUser(User $user)
+    {
+        if ($this->users->contains($user)) {
+            $user->setCustomer(null);
+            $this->users->removeElement($user);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get children
+     *
+     * @return Collection|User[]
+     */
+    public function getUsers()
+    {
+        return $this->users;
     }
 }

@@ -23,4 +23,23 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test@example.com', $user->getEmail());
         $this->assertEquals($customer, $user->getCustomer());
     }
+
+    public function testCreateCustomer()
+    {
+        $user = new User();
+        $user->setFirstName('John')
+            ->setLastName('Doe');
+        $this->assertEmpty($user->getCustomer());
+
+        // createCustomer is triggered on prePersist event
+        $user->createCustomer();
+        $customer = $user->getCustomer();
+        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\Customer', $customer);
+        $this->assertEquals('John Doe', $customer->getName());
+
+        // new customer created only if it not defined
+        $user->setFirstName('Jane');
+        $user->createCustomer();
+        $this->assertEquals('John Doe', $user->getCustomer()->getName());
+    }
 }
