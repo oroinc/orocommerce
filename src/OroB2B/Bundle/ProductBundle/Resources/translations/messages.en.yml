@@ -42,3 +42,26 @@ orob2b:
 
         controller:
             product.saved.message: Product has been saved
+
+        system_configuration:
+            groups:
+                product.title: 'Product'
+                product_unit_settings.title: 'Product Unit Settings'
+            fields:
+                unit_rounding_type.label: 'Unit Rounding Type'
+
+    product_unit.kg:
+        label:
+            full: kilogram
+            short: kg
+        value:
+            full: '{0} none|{1} one kilogram|]1,Inf] %count% kilograms'
+            short: '{0} none|{1} one kg|]1,Inf] %count% kg'
+
+    product_unit.item:
+        label:
+            full: item
+            short: item
+        value:
+            full: '{0} none|{1} one item|]1,Inf] %count% items'
+            short: '{0} none|{1} one item|]1,Inf] %count% items'
