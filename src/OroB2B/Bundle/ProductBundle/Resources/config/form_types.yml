@@ -22,4 +22,4 @@ services:
         arguments:
             - @doctrine.orm.entity_manager
         tags:
-            - { name: form.type, alias: oro_b2b_product_unit_selection }
+            - { name: form.type, alias: orob2b_product_unit_selection }

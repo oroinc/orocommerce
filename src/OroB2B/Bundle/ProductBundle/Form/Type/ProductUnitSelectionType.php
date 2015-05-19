@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class ProductUnitSelectionType extends AbstractType
 {
-    const NAME = 'oro_b2b_product_unit_selection';
+    const NAME = 'orob2b_product_unit_selection';
 
     /**
      * {@inheritDoc}
@@ -25,7 +25,7 @@ class ProductUnitSelectionType extends AbstractType
 
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $labelSuffix = $options['compact'] ? '.compact' : '.full';
+        $labelSuffix = $options['compact'] ? '.short' : '.full';
 
         foreach ($view->vars['choices'] as &$choice) {
             $choice->label = 'orob2b.product_unit.'. $choice->label .'.label'. $labelSuffix;

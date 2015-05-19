@@ -7,29 +7,24 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var ProductUnitSelectionType
-     */
+    /** @var ProductUnitSelectionType */
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Doctrine\Common\Persistence\ManagerRegistry
+     * @var array
      */
-    protected $registry;
-
-    /** @var array  */
     protected $units = ['test01', 'test02'];
 
-    /** @var array  */
-    protected $choices = [];
-
-    /** @var array  */
+    /**
+     * @var array
+     */
     protected $labels = [];
 
     /**
@@ -37,12 +32,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        foreach ($this->units as $unitCode) {
-            $unit = new ProductUnit();
-            $unit->setCode($unitCode);
-            $this->choices[] = $unit;
-        }
-
         $this->formType = new ProductUnitSelectionType();
 
         parent::setUp();
@@ -53,8 +42,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType($this->registry);
-        $entityType->setChoices($this->choices);
+        $entityType = new EntityType();
+        $entityType->setChoices($this->prepareChoices());
 
         return [
             new PreloadedExtension(['entity' => $entityType], []),
@@ -86,7 +75,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             $this->assertEquals($label, $choice->label);
         }
 
-
         $this->assertNull($form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -98,12 +86,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $choices = [];
-        foreach ($this->units as $unitCode) {
-            $unit = new ProductUnit();
-            $unit->setCode($unitCode);
-            $choices[] = $unit;
-        }
+        $choices = $this->prepareChoices();
 
         return [
             'without compact option' => [
@@ -127,8 +110,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'choices' => $choices
                 ],
                 'expectedLabels' => [
-                    'orob2b.product_unit.test01.label.compact',
-                    'orob2b.product_unit.test02.label.compact',
+                    'orob2b.product_unit.test01.label.short',
+                    'orob2b.product_unit.test02.label.short',
                 ],
                 'submittedData' => 1
             ]
@@ -143,5 +126,20 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     public function testGetParent()
     {
         $this->assertEquals('entity', $this->formType->getParent());
+    }
+
+    /**
+     * @return array
+     */
+    protected function prepareChoices()
+    {
+        $choices = [];
+        foreach ($this->units as $unitCode) {
+            $unit = new ProductUnit();
+            $unit->setCode($unitCode);
+            $choices[] = $unit;
+        }
+
+        return $choices;
     }
 }

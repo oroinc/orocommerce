@@ -59,11 +59,11 @@ orob2b:
 
     product_unit.kg:
         label:
-            full: kilogramm
-            compact: kg
+            full: kilogram
+            short: kg
 
     product_unit.item:
         label:
             full: item
-            compact: item
+            short: item
 
