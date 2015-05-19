@@ -1,42 +1,8 @@
 parameters:
-    oro_application.listener.request.class: Oro\Bundle\ApplicationBundle\EventListener\RequestListener
-    oro_application.listener.navigation_listener.class: Oro\Bundle\ApplicationBundle\EventListener\NavigationListener
-    oro_distribution.script_runner.class: Oro\Bundle\ApplicationBundle\Script\Runner
     oro_application.config_manager.class: Oro\Bundle\ApplicationBundle\Config\ConfigManager
     oro_application.factory.class: Oro\Bundle\ApplicationBundle\Factory\ModelFactory
     oro_application.repository.class: Oro\Bundle\ApplicationBundle\Repository\ModelRepository
 
 services:
-    kernel.listener.install.event:
-        class: %oro_application.listener.request.class%
-        arguments:
-            - "@router"
-            - %installed%
-            - %application_host.install%
-            - %kernel.debug%
-        tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onRequest, priority: 10 }
-
-    oro_distribution.listener.navigation_listener:
-        class: %oro_application.listener.navigation_listener.class%
-        arguments:
-            - @security.context
-            - %application_host.install%
-        tags:
-            - { name: kernel.event_listener, event: oro_menu.configure.application_menu, method: onNavigationConfigure }
-        calls:
-            - [setRequest, ["@?request="]]
-
-    oro_distribution.script_runner:
-        class: %oro_distribution.script_runner.class%
-        public: false
-        arguments:
-            - @oro_distribution.composer.installation_manager
-            - @logger
-            - %kernel.root_dir%
-            - %kernel.environment%
-        tags:
-            - { name: monolog.logger, channel: oro_distribution }
-
     oro_application.config_manager:
         class: %oro_application.config_manager.class%
