@@ -14,7 +14,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;
 use OroB2B\Bundle\UserAdminBundle\Form\Type\UserType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class UserTypeTest extends FormIntegrationTestCase
 {
@@ -62,8 +62,10 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType($this->registry);
-        $entityType->setChoices([new Group('TestGroup01'), new Group('TestGroup02')]);
+        $entityType = new EntityType([
+            'TestGroup01' => new Group('TestGroup01'),
+            'TestGroup02' => new Group('TestGroup02')
+        ]);
 
         return [
             new PreloadedExtension(['entity' => $entityType], []),

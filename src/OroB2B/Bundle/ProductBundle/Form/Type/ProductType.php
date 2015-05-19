@@ -25,7 +25,6 @@ class ProductType extends AbstractType
                 [
                     'label' => 'orob2b.product.unit_precisions.label',
                     'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
-                    'type' => 'orob2b_product_unit_precision',
                     'required' => false
                 ]
             )

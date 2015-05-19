@@ -42,8 +42,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType();
-        $entityType->setChoices($this->prepareChoices());
+        $entityType = new EntityType($this->prepareChoices());
 
         return [
             new PreloadedExtension(['entity' => $entityType], []),
@@ -86,20 +85,17 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $choices = $this->prepareChoices();
-
         return [
             'without compact option' => [
                 'inputOptions' => [],
                 'expectedOptions' => [
-                    'compact' => false,
-                    'choices' => $choices
+                    'compact' => false
                 ],
                 'expectedLabels' => [
                     'orob2b.product_unit.test01.label.full',
                     'orob2b.product_unit.test02.label.full',
                 ],
-                'submittedData' => 0
+                'submittedData' => 'test01'
             ],
             'with compact option' => [
                 'inputOptions' => [
@@ -107,13 +103,12 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'compact' => true,
-                    'choices' => $choices
                 ],
                 'expectedLabels' => [
                     'orob2b.product_unit.test01.label.short',
                     'orob2b.product_unit.test02.label.short',
                 ],
-                'submittedData' => 1
+                'submittedData' => 'test02'
             ]
         ];
     }
@@ -137,7 +132,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         foreach ($this->units as $unitCode) {
             $unit = new ProductUnit();
             $unit->setCode($unitCode);
-            $choices[] = $unit;
+            $choices[$unitCode] = $unit;
         }
 
         return $choices;

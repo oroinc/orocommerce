@@ -3,26 +3,39 @@
 namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
-use Doctrine\Common\Collections\ArrayCollection;
 
 class EntityType extends AbstractType
 {
     const NAME = 'entity';
 
     /** @var array  */
-    protected $choices = [];
+    protected $choiceList = [];
+
+    /** @var string  */
+    protected $name;
 
     /**
      * @param array $choices
+     * @param string $name
      */
-    public function setChoices(array $choices)
+    public function __construct(array $choices, $name = 'entity')
     {
-        $this->choices = $choices;
+        $this->name = $name;
+
+        $keys = array_map('strval', array_keys($choices));
+        $values = array_values($choices);
+
+        $this->choiceList = new ChoiceList([], []);
+
+        $keysReflection = new \ReflectionProperty(get_class($this->choiceList), 'values');
+        $keysReflection->setAccessible(true);
+        $keysReflection->setValue($this->choiceList, $keys);
+
+        $valuesReflection = new \ReflectionProperty(get_class($this->choiceList), 'choices');
+        $valuesReflection->setAccessible(true);
+        $valuesReflection->setValue($this->choiceList, $values);
     }
 
     /**
@@ -30,32 +43,7 @@ class EntityType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        parent::setDefaultOptions($resolver);
-
-        $resolver->setDefaults(
-            [
-                'class' => '',
-                'property' => '',
-                'choices' => $this->choices,
-            ]
-        );
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-                if ($data instanceof ArrayCollection) {
-                    $event->setData($data->toArray());
-                }
-            }
-        );
+        $resolver->setDefaults(['choice_list' => $this->choiceList]);
     }
 
     /**
