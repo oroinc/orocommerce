@@ -20,17 +20,9 @@ class CustomerControllerTest extends WebTestCase
     const CUSTOMER_NAME = 'Customer_name';
     const UPDATED_NAME = 'Customer_name_UP';
 
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
-        $this->entityManager = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BCustomerBundle:Customer');
 
         $this->loadFixtures(
             [
@@ -76,7 +68,7 @@ class CustomerControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_customer_update', array('id' => $result['id']))
+            $this->getUrl('orob2b_customer_update', ['id' => $result['id']])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200, 'Update form loading failed');
@@ -98,7 +90,7 @@ class CustomerControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_customer_view', array('id' => $id))
+            $this->getUrl('orob2b_customer_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();

@@ -77,7 +77,7 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $appendForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue(array($appendedCustomer)));
+            ->will($this->returnValue([$appendedCustomer]));
         $this->form->expects($this->at(3))
             ->method('get')
             ->with('appendCustomers')
@@ -88,7 +88,7 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $removeForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue(array($removedCustomer)));
+            ->will($this->returnValue([$removedCustomer]));
         $this->form->expects($this->at(4))
             ->method('get')
             ->with('removeCustomers')
