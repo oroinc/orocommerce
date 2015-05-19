@@ -20,15 +20,20 @@ class ProductUnitPrecision
 {
     /**
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
      */
     protected $product;
 
     /**
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code")
      */
     protected $unit;
 

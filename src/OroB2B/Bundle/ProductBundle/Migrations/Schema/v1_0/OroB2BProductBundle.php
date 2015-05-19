@@ -43,6 +43,7 @@ class OroB2BProductBundle implements Migration
         $table->addColumn('sku', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku'], 'UNIQ_5F9796C9F9038C4');
         $table->addIndex(['business_unit_owner_id'], 'IDX_5F9796C959294170', []);
@@ -71,10 +72,11 @@ class OroB2BProductBundle implements Migration
     protected function createOroB2BProductUnitPrecisionTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
-        $table->addColumn('product_id', 'integer');
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
-        $table->addColumn('unit_precision', 'integer');
-        $table->setPrimaryKey(['product_id', 'unit_code']);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('unit_precision', 'integer', []);
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
         $table->addIndex(['product_id'], 'IDX_47015B824584665A', []);
         $table->addIndex(['unit_code'], 'IDX_47015B82FBD3D1C2', []);
@@ -120,13 +122,13 @@ class OroB2BProductBundle implements Migration
             $schema->getTable(self::PRODUCT_TABLE_NAME),
             ['product_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => null, 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable(self::PRODUCT_UNIT_TABLE_NAME),
             ['unit_code'],
             ['code'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => null, 'onUpdate' => null]
         );
     }
 }
