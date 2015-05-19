@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
  * @ORM\Table(name="orob2b_product")
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository")
+ * @ORM\Entity
  * @Config(
  *      routeName="orob2b_product_index",
  *      routeView="orob2b_product_view",

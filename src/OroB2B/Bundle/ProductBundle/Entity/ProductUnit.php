@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * @Config(
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-edit"
+ *              "icon"="icon-briefcase"
  *          }
  *      }
  * )
