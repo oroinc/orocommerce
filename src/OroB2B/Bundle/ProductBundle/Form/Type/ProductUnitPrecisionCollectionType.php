@@ -24,6 +24,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'type' => ProductUnitPrecisionType::NAME,
+            'show_form_when_empty' => false
         ]);
     }
 
