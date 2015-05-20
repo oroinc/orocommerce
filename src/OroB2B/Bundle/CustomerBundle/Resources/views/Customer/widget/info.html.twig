@@ -43,7 +43,7 @@
                     {% endif %}
                     {% set users = users|merge([userView]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.customer.users.label'|trans, users|join('<br />')) }}
+                {{ UI.renderHtmlProperty('orob2b.customer.users.label'|trans, UI.renderList(users)) }}
             {% endif %}
 
             {% if entity.children.count() %}

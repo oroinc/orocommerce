@@ -63,14 +63,18 @@ class CustomerTest extends EntityTestCase
 
         $user = $this->createUserEntity();
 
-        $customer->addUser($user)
-            ->addUser($user);
-
+        $customer->addUser($user);
         $this->assertEquals([$user], $customer->getUsers()->toArray());
 
-        $customer->removeUser($user)
-            ->removeUser($user);
+        // entity added only once
+        $customer->addUser($user);
+        $this->assertEquals([$user], $customer->getUsers()->toArray());
 
+        $customer->removeUser($user);
+        $this->assertCount(0, $customer->getUsers());
+
+        // undefined user can't be removed
+        $customer->removeUser($user);
         $this->assertCount(0, $customer->getUsers());
     }
 

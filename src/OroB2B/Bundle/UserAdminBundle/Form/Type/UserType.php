@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 
 class UserType extends AbstractType
 {

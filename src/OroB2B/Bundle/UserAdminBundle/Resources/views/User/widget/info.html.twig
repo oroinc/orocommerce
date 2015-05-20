@@ -20,10 +20,15 @@
 
             {% if entity.groups.count() %}
                 {% set groups = [] %}
-                {% for entityGroup in entity.groups %}
-                    {% set groups = groups|merge([entityGroup.name]) %}
+                {% for group in entity.groups %}
+                    {% if resource_granted('EDIT', group) %}
+                        {% set groupView = UI.renderUrl(path('orob2b_user_admin_group_update', {'id': group.id}), group.name) %}
+                    {% else %}
+                        {% set groupView = group.name|escape %}
+                    {% endif %}
+                    {% set groups = groups|merge([groupView]) %}
                 {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.useradmin.user.groups.label'|trans, groups|join('<br />')) }}
+                {{ UI.renderHtmlProperty('orob2b.useradmin.user.groups.label'|trans, UI.renderList(groups)) }}
             {% endif %}
         </div>
     </div>

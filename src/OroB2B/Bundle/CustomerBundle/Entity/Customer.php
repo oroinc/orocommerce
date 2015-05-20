@@ -184,7 +184,7 @@ class Customer
      */
     public function addChild(Customer $child)
     {
-        if (!$this->children->contains($child)) {
+        if (!$this->hasChild($child)) {
             $child->setParent($this);
             $this->children->add($child);
         }
@@ -200,7 +200,7 @@ class Customer
      */
     public function removeChild(Customer $child)
     {
-        if ($this->children->contains($child)) {
+        if ($this->hasChild($child)) {
             $child->setParent(null);
             $this->children->removeElement($child);
         }
@@ -219,12 +219,21 @@ class Customer
     }
 
     /**
+     * @param Customer $child
+     * @return bool
+     */
+    protected function hasChild(Customer $child)
+    {
+        return $this->children->contains($child);
+    }
+
+    /**
      * @param User $user
      * @return Customer
      */
     public function addUser(User $user)
     {
-        if (!$this->users->contains($user)) {
+        if (!$this->hasUser($user)) {
             $user->setCustomer($this);
             $this->users->add($user);
         }
@@ -238,7 +247,7 @@ class Customer
      */
     public function removeUser(User $user)
     {
-        if ($this->users->contains($user)) {
+        if ($this->hasUser($user)) {
             $user->setCustomer(null);
             $this->users->removeElement($user);
         }
@@ -254,5 +263,14 @@ class Customer
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * @param User $user
+     * @return bool
+     */
+    protected function hasUser(User $user)
+    {
+        return $this->users->contains($user);
     }
 }
