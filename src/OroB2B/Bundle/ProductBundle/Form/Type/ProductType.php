@@ -21,7 +21,7 @@ class ProductType extends AbstractType
             ->add('category', CategoryTreeType::NAME, ['required' => false, 'label' => 'orob2b.product.category.label'])
             ->add(
                 'unitPrecisions',
-                'orob2b_product_unit_precision_collection',
+                ProductUnitPrecisionCollectionType::NAME,
                 [
                     'label' => 'orob2b.product.unit_precisions.label',
                     'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
