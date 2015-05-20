@@ -11,3 +11,11 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [ product, unit ]
+    properties:
+        precision:
+            - NotBlank: ~
+            - Type: integer
