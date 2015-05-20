@@ -54,16 +54,28 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $defaultData
-     * @param $submittedData
-     * @param $expectedData
+     * @param ProductUnitPrecision $defaultData
+     * @param array $expectedOptions
+     * @param array|ProductUnitPrecision $submittedData
+     * @param ProductUnitPrecision $expectedData
      * @dataProvider submitProvider
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        ProductUnitPrecision $defaultData,
+        array $expectedOptions,
+        $submittedData,
+        ProductUnitPrecision $expectedData
+    ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
+
+        $unitConfig = $form->get('unit')->getConfig();
+        foreach ($expectedOptions as $key => $value) {
+            $this->assertTrue($unitConfig->hasOption($key));
+            $this->assertEquals($value, $unitConfig->getOption($key));
+        }
+
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
@@ -75,13 +87,31 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         return [
-            'price without value' => [
+            'existing unit precision' => [
+                'defaultData'   => (new ProductUnitPrecision())
+                    ->setUnit((new ProductUnit())->setCode('kg'))
+                    ->setPrecision(0),
+                '$expectedOptions' => [
+                    'disabled' => true
+                ],
+                'submittedData' => [],
+                'expectedData'  => (new ProductUnitPrecision())
+                    ->setUnit((new ProductUnit())->setCode('kg'))
+                    ->setPrecision(0)
+            ],
+            'unit precision without value' => [
                 'defaultData'   => new ProductUnitPrecision(),
+                '$expectedOptions' => [
+                    'disabled' => false
+                ],
                 'submittedData' => [],
                 'expectedData'  => new ProductUnitPrecision()
             ],
-            'price with value' => [
+            'unit precision with value' => [
                 'defaultData'   => new ProductUnitPrecision(),
+                '$expectedOptions' => [
+                    'disabled' => false
+                ],
                 'submittedData' => [
                     'unit' => 'kg',
                     'precision' => 5
