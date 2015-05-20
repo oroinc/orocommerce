@@ -1,0 +1,16 @@
+orob2b:
+    sale:
+        quote:
+            entity_label: Quote
+            entity_plural_label: Quotes
+            
+            id.label: Numberic ID
+            qid.label: ID
+            owner.label: Owner
+            valid_until.label: Valid Until
+            
+            sections:
+                general: General
+            
+            widgets:
+                quote_information: Quote Information
