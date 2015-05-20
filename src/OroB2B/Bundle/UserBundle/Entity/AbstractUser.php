@@ -7,8 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use FOS\UserBundle\Entity\User as BaseUser;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-
 abstract class AbstractUser extends BaseUser
 {
     /**
@@ -27,18 +25,6 @@ abstract class AbstractUser extends BaseUser
      * @ORM\Column(name="last_name", type="string", length=255)
      */
     protected $lastName;
-
-    /**
-     * @var Customer
-     *
-     * @ORM\ManyToOne(
-     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer",
-     *      inversedBy="users",
-     *      cascade={"persist"}
-     * )
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
-     **/
-    protected $customer;
 
     public function __construct()
     {
@@ -95,35 +81,5 @@ abstract class AbstractUser extends BaseUser
         $this->lastName = $lastName;
 
         return $this;
-    }
-
-    /**
-     * @return Customer
-     */
-    public function getCustomer()
-    {
-        return $this->customer;
-    }
-
-    /**
-     * @param Customer $customer
-     * @return $this
-     */
-    public function setCustomer(Customer $customer = null)
-    {
-        $this->customer = $customer;
-
-        return $this;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function createCustomer()
-    {
-        if (!$this->customer) {
-            $this->customer = new Customer();
-            $this->customer->setName(sprintf('%s %s', $this->firstName, $this->lastName));
-        }
     }
 }
