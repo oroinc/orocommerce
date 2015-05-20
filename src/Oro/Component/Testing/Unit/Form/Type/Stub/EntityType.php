@@ -4,13 +4,14 @@ namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
+use Symfony\Component\Form\Extension\Core\View\ChoiceView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class EntityType extends AbstractType
 {
     const NAME = 'entity';
 
-    /** @var array  */
+    /** @var ChoiceList  */
     protected $choiceList = [];
 
     /** @var string  */
@@ -36,6 +37,15 @@ class EntityType extends AbstractType
         $valuesReflection = new \ReflectionProperty(get_class($this->choiceList), 'choices');
         $valuesReflection->setAccessible(true);
         $valuesReflection->setValue($this->choiceList, $values);
+
+        $remainingViews = [];
+        foreach ($choices as $key => $value) {
+            $remainingViews[] = new ChoiceView($value, $key, $key);
+        }
+
+        $valuesReflection = new \ReflectionProperty(get_class($this->choiceList), 'remainingViews');
+        $valuesReflection->setAccessible(true);
+        $valuesReflection->setValue($this->choiceList, $remainingViews);
     }
 
     /**
