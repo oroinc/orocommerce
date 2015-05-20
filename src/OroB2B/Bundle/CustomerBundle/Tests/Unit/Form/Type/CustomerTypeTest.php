@@ -58,7 +58,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ->will($this->returnValue($this->em));
 
         $entityType = new EntityType($registry);
-        $customerGroupSelectType = new CustomerGroupSelectTypeStub($registry);
+        $customerGroupSelectType = new CustomerGroupSelectTypeStub();
 
         return [
             new PreloadedExtension(

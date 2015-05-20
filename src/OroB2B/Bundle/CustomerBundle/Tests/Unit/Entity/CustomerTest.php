@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class CustomerTest extends EntityTestCase
 {
@@ -51,6 +52,33 @@ class CustomerTest extends EntityTestCase
     }
 
     /**
+     * Test users
+     */
+    public function testUsersCollection()
+    {
+        $customer = $this->createCustomerEntity();
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $customer->getUsers());
+        $this->assertCount(0, $customer->getUsers());
+
+        $user = $this->createUserEntity();
+
+        $customer->addUser($user);
+        $this->assertEquals([$user], $customer->getUsers()->toArray());
+
+        // entity added only once
+        $customer->addUser($user);
+        $this->assertEquals([$user], $customer->getUsers()->toArray());
+
+        $customer->removeUser($user);
+        $this->assertCount(0, $customer->getUsers());
+
+        // undefined user can't be removed
+        $customer->removeUser($user);
+        $this->assertCount(0, $customer->getUsers());
+    }
+
+    /**
      * @return CustomerGroup
      */
     protected function createCustomerGroupEntity()
@@ -64,5 +92,13 @@ class CustomerTest extends EntityTestCase
     protected function createCustomerEntity()
     {
         return new Customer();
+    }
+
+    /**
+     * @return User
+     */
+    protected function createUserEntity()
+    {
+        return new User();
     }
 }

@@ -26,7 +26,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          },
  *          "form"={
  *              "form_type"="orob2b_customer_group_select",
- *              "grid_name"="customer-groups-grid",
+ *              "grid_name"="customer-groups-select-grid",
  *          }
  *      }
  * )

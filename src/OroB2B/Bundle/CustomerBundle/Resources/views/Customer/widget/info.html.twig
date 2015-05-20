@@ -5,6 +5,7 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.customer.name.label'|trans, entity.name) }}
+
             {% if entity.group %}
                 {% if is_granted('VIEW', entity.group) %}
                     {% set groupData %}
@@ -17,6 +18,7 @@
                     {{ UI.renderProperty('orob2b.customer.group.label'|trans, entity.group.name) }}
                 {% endif %}
             {% endif %}
+
             {% if entity.parent %}
                 {% if is_granted('VIEW', entity.parent) %}
                     {% set parentData %}
@@ -29,6 +31,21 @@
                     {{ UI.renderProperty('orob2b.customer.parent.label'|trans, entity.parent.name) }}
                 {% endif %}
             {% endif %}
+
+            {% if entity.users.count() %}
+                {% set users = [] %}
+                {% for user in entity.users %}
+                    {% set username = user.firstName ~ ' ' ~ user.lastName %}
+                    {% if resource_granted('VIEW', user) %}
+                        {% set userView = UI.renderUrl(path('orob2b_user_admin_user_view', {'id': user.id}), username) %}
+                    {% else %}
+                        {% set userView = username|escape %}
+                    {% endif %}
+                    {% set users = users|merge([userView]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.customer.users.label'|trans, UI.renderList(users)) }}
+            {% endif %}
+
             {% if entity.children.count() %}
                 {% set customerTree %}
                     <div class="b2b-tree">
