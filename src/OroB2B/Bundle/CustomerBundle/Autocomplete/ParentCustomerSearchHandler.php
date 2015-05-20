@@ -7,6 +7,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 
 class ParentCustomerSearchHandler extends SearchHandler
 {
+    const DELIMITER = ';';
+
     /**
      * {@inheritdoc}
      */
@@ -15,7 +17,7 @@ class ParentCustomerSearchHandler extends SearchHandler
         if (strpos($search, ';') === false) {
             return [];
         }
-        list($searchTerm, $customerId) = explode(';', $search);
+        list($searchTerm, $customerId) = $this->explodeSearchTerm($search);
 
         $entityIds = $this->searchIds($searchTerm, $firstResult, $maxResults);
 
@@ -33,5 +35,23 @@ class ParentCustomerSearchHandler extends SearchHandler
         }
 
         return $resultEntities;
+    }
+
+    /**
+     * @param string $search
+     * @return array
+     */
+    protected function explodeSearchTerm($search)
+    {
+        $delimiterPos = strrpos($search, self::DELIMITER);
+        $searchTerm = substr($search, 0, $delimiterPos);
+        $customerId = substr($search, $delimiterPos + 1);
+        if ($customerId === false) {
+            $customerId = '';
+        } else {
+            $customerId = (int)$customerId;
+        }
+
+        return [$searchTerm, $customerId];
     }
 }

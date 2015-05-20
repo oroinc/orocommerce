@@ -16,11 +16,11 @@ class CustomerRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('customer');
         $qb->select('customer.id as customer_id')
-            ->where($qb->expr()->eq('customer.parent', ':parent'))
+            ->where($qb->expr()->eq('IDENTITY(customer.parent)', ':parent'))
             ->setParameter('parent', $customerId);
         $result = $aclHelper->apply($qb)->getArrayResult();
         $result = array_map(
-            function($item) {
+            function ($item) {
                 return $item['customer_id'];
             },
             $result
