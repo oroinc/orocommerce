@@ -44,6 +44,7 @@ class QuoteHandler
 
             if ($this->form->isValid()) {
                 $this->manager->persist($quote);
+                $quote->setQid('');
                 $this->manager->flush();
 
                 $quote->setQid($quote->getId());

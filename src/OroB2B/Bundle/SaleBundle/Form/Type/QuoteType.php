@@ -20,8 +20,8 @@ class QuoteType extends AbstractType
                 'required' => true, 
                 'label' => 'orob2b.sale.quote.owner.label'
             ])
-            ->add('valid_until', 'datetime', [
-                'required' => false, 
+            ->add('validUntil', null, [
+                'required' => false,
                 'label' => 'orob2b.sale.quote.valid_until.label'
             ])
         ;

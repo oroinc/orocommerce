@@ -21,6 +21,10 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *          "entity"={
  *              "icon"="icon-list-alt"
  *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          }
@@ -39,7 +43,7 @@ class Quote extends ExtendQuote
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField
      * ConfigField(
      *      defaultValues={
@@ -100,8 +104,7 @@ class Quote extends ExtendQuote
      * @var \DateTime
      *
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
-     * @ConfigField
-     * ConfigField(
+     * @ConfigField(
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.updated_at"

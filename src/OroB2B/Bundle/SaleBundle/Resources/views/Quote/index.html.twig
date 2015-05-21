@@ -4,7 +4,7 @@
 {% set pageTitle = 'orob2b.sale.quote.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if true or resource_granted('orob2b_sale_quote_create') %}
+    {% if resource_granted('orob2b_sale_quote_create') %}
         {{ UI.addButton({
             'path': path('orob2b_sale_quote_create'),
             'entity_label': 'orob2b.sale.quote.entity_label'|trans
