@@ -4,12 +4,14 @@ namespace OroB2B\Bundle\UserBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\UserBundle\Entity\User as BaseUser;
+
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_user")
  * @ORM\HasLifecycleCallbacks()
  */
-class User extends AbstractUser
+class User extends BaseUser
 {
     /**
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\UserBundle\Entity\Group")

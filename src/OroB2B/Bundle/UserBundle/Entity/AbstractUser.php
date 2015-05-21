@@ -82,4 +82,6 @@ abstract class AbstractUser extends BaseUser
 
         return $this;
     }
+
+
 }
