@@ -61,9 +61,14 @@ orob2b:
         label:
             full: kilogram
             short: kg
+        value:
+            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
 
     product_unit.item:
         label:
             full: item
             short: item
-
+        value:
+            full: '{0} none|{1} %count% item|]1,Inf] %count% items'
+            short: '{0} none|{1} %count% item|]1,Inf] %count% items'
