@@ -20,6 +20,13 @@ class ProductControllerTest extends WebTestCase
     const CATEGORY_NAME = 'Test First Level';
     const UPDATED_CATEGORY_NAME = 'Test Third Level 2';
 
+    const FIRST_UNIT_CODE = 'item';
+    const FIRST_UNIT_FULL_NAME = 'item';
+    const FIRST_UNIT_PRECISION = '5';
+    const SECOND_UNIT_CODE = 'kg';
+    const SECOND_UNIT_FULL_NAME = 'kilogram';
+    const SECOND_UNIT_PRECISION = '1';
+
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -37,12 +44,11 @@ class ProductControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_create'));
-        $businessUnit = $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
-        $form['orob2b_product_form[owner]'] = $businessUnit;
+        $form['orob2b_product_form[owner]'] = $this->getBusinessUnitId();
 
         $category = $this->getCategoryByDefaultTitle(self::CATEGORY_NAME);
         $form['orob2b_product_form[category]'] = $category->getId();
@@ -56,7 +62,7 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @depend testCreate
+     * @depends testCreate
      * @return int
      */
     public function testUpdate()
@@ -76,16 +82,48 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product_form[sku]'] = self::UPDATED_SKU;
-        $category = $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME);
-        $form['orob2b_product_form[category]'] = $category->getId();
+
+        $submittedData = [
+            'input_action' => 'save_and_stay',
+            'orob2b_product_form' => [
+                '_token' => $form['orob2b_product_form[_token]']->getValue(),
+                'sku' => self::UPDATED_SKU,
+                'owner' => $this->getBusinessUnitId(),
+                'category' => $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME),
+                'unitPrecisions' => [
+                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
+                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
+                ]
+            ]
+        ];
 
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Product has been saved", $crawler->html());
+
+        // Check product unit precisions
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+
+        $this->assertEquals(
+            self::FIRST_UNIT_FULL_NAME,
+            $crawler->filter('select[name="orob2b_product_form[unitPrecisions][0][unit]"] :selected')->html()
+        );
+        $this->assertEquals(
+            self::FIRST_UNIT_PRECISION,
+            $crawler->filter('input[name="orob2b_product_form[unitPrecisions][0][precision]"]')
+                ->extract('value')[0]
+        );
+        $this->assertEquals(
+            self::SECOND_UNIT_FULL_NAME,
+            $crawler->filter('select[name="orob2b_product_form[unitPrecisions][1][unit]"] :selected')->html()
+        );
+        $this->assertEquals(
+            self::SECOND_UNIT_PRECISION,
+            $crawler->filter('input[name="orob2b_product_form[unitPrecisions][1][precision]"]')
+                ->extract('value')[0]
+        );
 
         return $id;
     }
@@ -106,6 +144,17 @@ class ProductControllerTest extends WebTestCase
             ->getRepository('OroB2BProductBundle:Product')
             ->findOneBy(['sku' => self::UPDATED_SKU]);
         $this->assertNotEmpty($product->getCategory());
+
+        $productUnitPrecision = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
+            ->findOneBy(['product' => $id, 'unit' => self::FIRST_UNIT_CODE]);
+        $this->assertEquals(self::FIRST_UNIT_PRECISION, $productUnitPrecision->getPrecision());
+
+        $productUnitPrecision = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
+            ->findOneBy(['product' => $id, 'unit' => self::SECOND_UNIT_CODE]);
+        $this->assertEquals(self::SECOND_UNIT_PRECISION, $productUnitPrecision->getPrecision());
+
         $this->assertEquals(self::UPDATED_CATEGORY_NAME, $product->getCategory()->getDefaultTitle());
 
         return $id;
@@ -137,5 +186,13 @@ class ProductControllerTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BCatalogBundle:Category')
             ->findOneByDefaultTitle($title);
+    }
+
+    /**
+     * @return int
+     */
+    protected function getBusinessUnitId()
+    {
+        return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
     }
 }
