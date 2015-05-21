@@ -18,7 +18,7 @@ class CustomerType extends AbstractType
             ->add('name', 'text', ['label' => 'orob2b.customer.name.label'])
             ->add(
                 'group',
-                'orob2b_customer_group_select',
+                CustomerGroupSelectType::NAME,
                 [
                     'label' => 'orob2b.customer.group.label',
                     'required' => false
@@ -26,11 +26,9 @@ class CustomerType extends AbstractType
             )
             ->add(
                 'parent',
-                'entity',
+                ParentCustomerSelectType::NAME,
                 [
                     'label' => 'orob2b.customer.parent.label',
-                    'class' => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
-                    'property' => 'name',
                     'required' => false
                 ]
             );

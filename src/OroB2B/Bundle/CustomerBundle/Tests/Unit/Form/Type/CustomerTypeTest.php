@@ -12,6 +12,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\CustomerGroupSelectTypeStub;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\ParentCustomerSelectTypeStub;
 
 class CustomerTypeTest extends FormIntegrationTestCase
 {
@@ -58,13 +59,15 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ->will($this->returnValue($this->em));
 
         $entityType = new EntityType($registry);
-        $customerGroupSelectType = new CustomerGroupSelectTypeStub();
+        $customerGroupSelectType = new CustomerGroupSelectTypeStub($registry);
+        $parentCustomerSelectType = new ParentCustomerSelectTypeStub($registry);
 
         return [
             new PreloadedExtension(
                 [
                     $entityType->getName() => $entityType,
-                    $customerGroupSelectType->getName() => $customerGroupSelectType
+                    $customerGroupSelectType->getName() => $customerGroupSelectType,
+                    $parentCustomerSelectType->getName() => $parentCustomerSelectType
                 ],
                 []
             )

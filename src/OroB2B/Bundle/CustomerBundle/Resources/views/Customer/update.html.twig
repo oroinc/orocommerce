@@ -19,7 +19,7 @@
     {% endif %}
     {{ UI.cancelButton(path('orob2b_customer_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_customer_index') %}
+    {% if entity.id or resource_granted('orob2b_customer_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

@@ -9,6 +9,7 @@ orob2b.customer:
     has_group.label: 'Has group'
     users.label: 'Users'
     form.choose: 'Choose a customer...'
+    form.choose_parent: 'Choose Parent...'
 
     customergroup:
         entity_label: 'Customer Group'
