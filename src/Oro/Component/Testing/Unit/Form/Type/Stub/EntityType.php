@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub;
+namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
