@@ -22,8 +22,11 @@ define(function (require) {
         /**
          * @property {array}
          */
-        $precisions : {},
+        precisions : {},
 
+        /**
+         * @inheritDoc
+         */
         initialize: function (options) {
             var containerId = options['containerId'];
             if (!containerId) {
@@ -32,7 +35,7 @@ define(function (require) {
 
             var precisions = options['precisions'];
             if (precisions) {
-                this.$precisions = precisions;
+                this.precisions = precisions;
             }
 
             this.$container = $(containerId);
@@ -44,9 +47,12 @@ define(function (require) {
             this.$container.trigger('content:changed');
         },
 
+        /**
+         * Handle change select
+         */
         onChange: function () {
             var selects = this.$container.find('select'),
-                _this = this;
+                self = this;
 
             selects.each( function(index) {
                 var select = $(this);
@@ -64,13 +70,13 @@ define(function (require) {
                 });
 
                 if (select.find('option').length <= 1) {
-                    this.$addButton.hide();
+                    self.$addButton.hide();
                 }
 
                 var option = select.find('option:selected');
 
                 if (option.val() != select.data('prevValue') && !select.attr('disabled')) {
-                    var value = _this.$precisions[option.val()];
+                    var value = self.precisions[option.val()];
 
                     if (value != undefined) {
                         select.parents('div.oro-multiselect-holder').find('input').val(value);
@@ -80,10 +86,15 @@ define(function (require) {
                 select
                     .data('prevValue', option.val())
                     .data('prevText', option.text())
-                    .on('change', _.bind(_this.onSelectChange, _this));
+                    .on('change', _.bind(self.onSelectChange, self));
             });
         },
 
+        /**
+         * Handle remove item
+         *
+         * @param {jQuery.Event} e
+         */
         onRemoveItem: function (e) {
             var option = $(e.target).find('select option:selected');
 
@@ -93,6 +104,11 @@ define(function (require) {
             }
         },
 
+        /**
+         * Handle select change
+         *
+         * @param {jQuery.Event}  e
+         */
         onSelectChange: function (e) {
             var select = $(e.target);
 
@@ -100,6 +116,12 @@ define(function (require) {
             this.onChange();
         },
 
+        /**
+         * Add available options to selects
+         *
+         * @param {String} value
+         * @param {String} text
+         */
         addOptionToAllSelects: function (value, text) {
             this.$container.find('select').each(function () {
                 var select = $(this);
