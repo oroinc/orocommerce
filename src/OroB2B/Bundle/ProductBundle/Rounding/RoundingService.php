@@ -50,6 +50,7 @@ class RoundingService
     public function round($value, $precision)
     {
         $roundType = $this->configManager->get('orob2b_product.unit_rounding_type');
+        $multiplier = pow(10, $precision);
 
         switch ($roundType) {
             case self::HALF_UP:
@@ -59,10 +60,10 @@ class RoundingService
                 $value = round($value, $precision, PHP_ROUND_HALF_DOWN);
                 break;
             case self::CEIL:
-                $value = ceil($value);
+                $value = ceil($value * $multiplier) / $multiplier;
                 break;
             case self::FLOOR:
-                $value = floor($value);
+                $value = floor($value * $multiplier) / $multiplier;
                 break;
             default:
                 throw new InvalidRoundingTypeException(
