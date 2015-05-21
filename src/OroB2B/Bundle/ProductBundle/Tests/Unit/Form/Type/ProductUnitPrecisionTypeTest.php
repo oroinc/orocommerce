@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -45,9 +46,11 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionType(),
-                    'entity' => $entityType
+                    'entity' => $entityType,
                 ],
-                []
+                [
+                    'form' => [new IntegerExtension()]
+                ]
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
