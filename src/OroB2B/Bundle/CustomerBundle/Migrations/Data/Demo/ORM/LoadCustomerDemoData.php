@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
@@ -42,9 +41,7 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
 
         // create customers
         foreach ($users as $index => $user) {
-            $customer = new Customer();
-            $customer->setName($user->getFirstName() . ' ' . $user->getLastName());
-
+            $customer = $user->getCustomer();
             switch ($index % 3) {
                 case 0:
                     $customer->setGroup($rootGroup);
@@ -60,9 +57,6 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
                         ->setParent($firstLevelCustomer);
                     break;
             }
-
-            $manager->persist($customer);
-            $user->setCustomer($customer);
         }
 
         $manager->flush();
