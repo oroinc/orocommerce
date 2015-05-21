@@ -1,5 +1,5 @@
 Product Unit Value Formatting
-==================
+=============================
 
 Table of Contents
 -----------------
@@ -14,8 +14,8 @@ Table of Contents
       - [orob2b_format_short_product_unit_value](#orob2b_format_short_product_unit_value)
 
 Formats source
-================
-Product Unit formats may be found in messages.<locale>.yml.
+==============
+Product Unit formats may be found in ``messages.<locale>.yml``.
 
 Example of format configuration for en_US:
 
@@ -34,7 +34,7 @@ Possible format placeholders:
 * *count* - product unit value
 
 PHP Name Formatter
-====================
+==================
 
 **Class:** OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
 
@@ -71,7 +71,7 @@ Code:
 // $unit implements ProductUnit
 $unit->setCode('kg');
 
-$formatter = $container->get('orob2b_product.formatter.product_unit_value');
+$formatter = $this->container->get('orob2b_product.formatter.product_unit_value');
 echo $formatter->format(5, $unit);
 ```
 
@@ -108,7 +108,7 @@ Code:
 // $unit implements ProductUnit
 $unit->setCode('kg');
 
-$formatter = $container->get('orob2b_product.formatter.product_unit_value');
+$formatter = $this->container->get('orob2b_product.formatter.product_unit_value');
 echo $formatter->formatShort(5, $unit);
 ```
 

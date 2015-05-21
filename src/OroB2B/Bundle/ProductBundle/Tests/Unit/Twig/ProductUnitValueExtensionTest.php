@@ -13,7 +13,7 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
     protected $extension;
 
     /**
-     * @var ProductUnitValueExtension|\PHPUnit_Framework_MockObject_MockObject
+     * @var \OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $formatter;
 
@@ -31,6 +31,7 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFilters()
     {
+        /** @var \Twig_SimpleFilter[] $filters */
         $filters = $this->extension->getFilters();
 
         $this->assertCount(2, $filters);

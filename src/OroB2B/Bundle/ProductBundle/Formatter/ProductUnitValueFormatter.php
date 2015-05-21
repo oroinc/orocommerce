@@ -55,8 +55,8 @@ class ProductUnitValueFormatter
             );
         }
 
-        $translationId ='orob2b.product_unit.%s.value.' . ($isShort ? 'short' : 'full');
+        $translationKey = sprintf('orob2b.product_unit.%s.value.' . ($isShort ? 'short' : 'full'), $unit->getCode());
 
-        return $this->translator->transChoice(sprintf($translationId, $unit->getCode()), $value, ['%count%' => $value]);
+        return $this->translator->transChoice($translationKey, $value, ['%count%' => $value]);
     }
 }
