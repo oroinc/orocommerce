@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block orob2b_product_unit_precision_collection_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection unit-precisions-collection' }) %}
     {{ block('oro_collection_widget') }}
 
     {% set precisions = {} %}
