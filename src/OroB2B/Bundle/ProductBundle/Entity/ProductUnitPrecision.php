@@ -20,13 +20,18 @@ class ProductUnitPrecision
 {
     /**
      * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
 
     /**
-     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="ProductUnit")
      * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE")
      */

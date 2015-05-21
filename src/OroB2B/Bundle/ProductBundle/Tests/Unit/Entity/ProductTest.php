@@ -48,6 +48,7 @@ class ProductTest extends EntityTestCase
     public function testAttributeRelations()
     {
         $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
         $unitPrecision->setPrecision(0);
 
         $product = new Product();

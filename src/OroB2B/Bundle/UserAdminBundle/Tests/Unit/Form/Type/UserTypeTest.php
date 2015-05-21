@@ -9,29 +9,17 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;
 use OroB2B\Bundle\UserAdminBundle\Form\Type\UserType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class UserTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
-
-    /**
      * @var UserType
      */
     protected $formType;
-
-    /**
-     * @var Group
-     */
-    protected $group;
 
     /**
      * @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,15 +31,7 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->group = new Group('test');
-
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $builder = new FormFactoryBuilder();
-        $builder->addExtensions($this->getExtensions())
-            ->addExtension(new CoreExtension());
-
-        $this->factory = $builder->getFormFactory();
+        parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType = new UserType($this->translator);
@@ -62,8 +42,10 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType($this->registry);
-        $entityType->setChoices([new Group('TestGroup01'), new Group('TestGroup02')]);
+        $entityType = new EntityType([
+            'TestGroup01' => new Group('TestGroup01'),
+            'TestGroup02' => new Group('TestGroup02')
+        ]);
 
         return [
             new PreloadedExtension(['entity' => $entityType], []),

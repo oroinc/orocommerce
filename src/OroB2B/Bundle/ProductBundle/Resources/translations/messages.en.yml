@@ -24,6 +24,7 @@ orob2b:
             product.label: Product
             unit.label: Unit
             precision.label: Precision
+            representation: "{{ label }} with precision {{ precision }} decimal places"
 
         menu:
             products_tab.label: Product management

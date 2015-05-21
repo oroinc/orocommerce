@@ -71,10 +71,11 @@ class OroB2BProductBundle implements Migration
     protected function createOroB2BProductUnitPrecisionTable(Schema $schema)
     {
         $table = $schema->createTable(self::PRODUCT_UNIT_PRECISION_TABLE_NAME);
-        $table->addColumn('product_id', 'integer');
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
-        $table->addColumn('unit_precision', 'integer');
-        $table->setPrimaryKey(['product_id', 'unit_code']);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('unit_precision', 'integer', []);
+        $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
         $table->addIndex(['product_id'], 'IDX_47015B824584665A', []);
         $table->addIndex(['unit_code'], 'IDX_47015B82FBD3D1C2', []);

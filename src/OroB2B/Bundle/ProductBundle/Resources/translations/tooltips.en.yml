@@ -2,3 +2,4 @@ orob2b.product:
     form:
         tooltip:
             unit_rounding_type: 'Select the rounding type that can be used for product units.'
+            unit_precision: 'Product unit precision of decimal places'
