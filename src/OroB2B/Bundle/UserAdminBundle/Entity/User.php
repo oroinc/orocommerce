@@ -12,6 +12,7 @@ use OroB2B\Bundle\UserBundle\Entity\AbstractUser as BaseUser;
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_user")
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_user_admin_user_index",
  *      routeView="orob2b_user_admin_user_view",
@@ -40,7 +41,11 @@ class User extends BaseUser
     /**
      * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\ManyToOne(
+     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer",
+     *      inversedBy="users",
+     *      cascade={"persist"}
+     * )
      * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $customer;
@@ -62,5 +67,16 @@ class User extends BaseUser
         $this->customer = $customer;
 
         return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function createCustomer()
+    {
+        if (!$this->customer) {
+            $this->customer = new Customer();
+            $this->customer->setName(sprintf('%s %s', $this->firstName, $this->lastName));
+        }
     }
 }

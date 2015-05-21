@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_user")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User extends AbstractUser
 {
