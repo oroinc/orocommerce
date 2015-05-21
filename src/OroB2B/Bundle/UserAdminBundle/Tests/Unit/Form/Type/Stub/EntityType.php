@@ -2,43 +2,27 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-class EntityType extends AbstractType
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+
+class EntityType extends StubEntityType
 {
-    const NAME = 'entity';
-
-    /** @var array  */
-    protected $choices = [];
-
-    /**
-     * @param array $choices
-     */
-    public function setChoices(array $choices)
-    {
-        $this->choices = $choices;
-    }
-
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        parent::setDefaultOptions($resolver);
-
-        $resolver->setDefaults(
-            [
-                'class' => '',
-                'property' => '',
-                'choices' => $this->choices,
-            ]
-        );
+        $resolver->setDefaults([
+            'class' => '',
+            'property' => '',
+            'choice_list' => $this->choiceList
+        ]);
     }
 
     /**
@@ -56,21 +40,5 @@ class EntityType extends AbstractType
                 }
             }
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getParent()
-    {
-        return 'choice';
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 }
