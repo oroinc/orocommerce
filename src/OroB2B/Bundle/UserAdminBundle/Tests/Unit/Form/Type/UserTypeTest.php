@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Core\CoreExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormFactoryBuilder;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
@@ -13,6 +11,7 @@ use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;
 use OroB2B\Bundle\UserAdminBundle\Form\Type\UserType;
 use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 class UserTypeTest extends FormIntegrationTestCase
 {
@@ -25,6 +24,11 @@ class UserTypeTest extends FormIntegrationTestCase
      * @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $translator;
+
+    /**
+     * @var Customer[]
+     */
+    protected static $customers = [];
 
     /**
      * {@inheritdoc}
@@ -47,8 +51,16 @@ class UserTypeTest extends FormIntegrationTestCase
             'TestGroup02' => new Group('TestGroup02')
         ]);
 
+        $customerSelectType = new EntityType($this->getCustomers());
+
         return [
-            new PreloadedExtension(['entity' => $entityType], []),
+            new PreloadedExtension(
+                [
+                    'entity' => $entityType,
+                    $customerSelectType->getName() => $customerSelectType,
+                ],
+                []
+            ),
             new ValidatorExtension(Validation::createValidator())
         ];
     }
@@ -81,24 +93,37 @@ class UserTypeTest extends FormIntegrationTestCase
         $class = new \ReflectionClass($existingUser);
         $prop  = $class->getProperty('id');
         $prop->setAccessible(true);
-
         $prop->setValue($existingUser, 42);
 
         $existingUser->setFirstName('John');
         $existingUser->setLastName('Doe');
         $existingUser->setEmail('johndoe@example.com');
         $existingUser->setPassword('123456');
+        $existingUser->setCustomer($this->getCustomer(1));
+
+        $alteredExistingUser = clone $existingUser;
+        $alteredExistingUser->setCustomer($this->getCustomer(2));
 
         return [
             'new user' => [
+                'defaultData' => $newUser,
+                'submittedData' => [],
+                'expectedData' => $newUser
+            ],
+            'existing user' => [
                 'defaultData' => $existingUser,
                 'submittedData' => [],
                 'expectedData' => $existingUser
             ],
-            'existing user' => [
-                'defaultData' => $newUser,
-                'submittedData' => [],
-                'expectedData' => $newUser
+            'altered existing user' => [
+                'defaultData' => $existingUser,
+                'submittedData' => [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'customer' => 2
+                ],
+                'expectedData' => $alteredExistingUser
             ]
         ];
     }
@@ -109,5 +134,49 @@ class UserTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(UserType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @return Customer[]
+     */
+    protected function getCustomers()
+    {
+        if (!self::$customers) {
+            self::$customers = [
+                '1' => $this->createCustomer(1, 'first'),
+                '2' => $this->createCustomer(2, 'second'),
+            ];
+        }
+
+        return self::$customers;
+    }
+
+    /**
+     * @param int $id
+     * @return Customer
+     */
+    protected function getCustomer($id)
+    {
+        $customers = $this->getCustomers();
+
+        return $customers[$id];
+    }
+
+    /**
+     * @param int $id
+     * @param string $name
+     * @return Customer
+     */
+    protected static function createCustomer($id, $name)
+    {
+        $customer = new Customer();
+
+        $reflection = new \ReflectionProperty(get_class($customer), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($customer, $id);
+
+        $customer->setName($name);
+
+        return $customer;
     }
 }

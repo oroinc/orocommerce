@@ -20,6 +20,7 @@ class OroB2BUserAdminBundle implements Migration
         $this->createOroB2BUserGroupTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroB2BUserForeignKeys($schema);
         $this->addOroB2BUserGroupForeignKeys($schema);
     }
 
@@ -65,6 +66,7 @@ class OroB2BUserAdminBundle implements Migration
         $table->addColumn('credentials_expire_at', 'datetime', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
         $table->addColumn('last_name', 'string', ['length' => 255]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['email_canonical'], 'UNIQ_27572461A0D96FBF');
         $table->addUniqueIndex(['username_canonical'], 'UNIQ_27572461F5A5DC32');
@@ -83,6 +85,22 @@ class OroB2BUserAdminBundle implements Migration
         $table->setPrimaryKey(['user_id', 'group_id']);
         $table->addIndex(['user_id'], 'IDX_7BC99A1CA76ED395', []);
         $table->addIndex(['group_id'], 'IDX_7BC99A1CFE54D947', []);
+    }
+
+    /**
+     * Add orob2b_user foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BUserForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_user');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
