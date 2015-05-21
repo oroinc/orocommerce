@@ -78,17 +78,29 @@ class RoundingServiceTest extends \PHPUnit_Framework_TestCase
                 'precision' => 3,
                 'expectedValue' => 5.555,
             ],
-            'ceil' => [
+            'ceil less then half fraction' => [
                 'roundingType' => RoundingService::CEIL,
-                'value' => 5.5555,
+                'value' => 5.5551,
                 'precision' => 3,
-                'expectedValue' => 6,
+                'expectedValue' => 5.556,
             ],
-            'floor' => [
-                'roundingType' => RoundingService::FLOOR,
-                'value' => 5.5555,
+            'ceil more then half fraction' => [
+                'roundingType' => RoundingService::CEIL,
+                'value' => 5.5559,
                 'precision' => 3,
-                'expectedValue' => 5,
+                'expectedValue' => 5.556,
+            ],
+            'floor less then half fraction' => [
+                'roundingType' => RoundingService::FLOOR,
+                'value' => 5.5551,
+                'precision' => 3,
+                'expectedValue' => 5.555,
+            ],
+            'floor more then half fraction' => [
+                'roundingType' => RoundingService::FLOOR,
+                'value' => 5.5559,
+                'precision' => 3,
+                'expectedValue' => 5.555,
             ]
         ];
     }

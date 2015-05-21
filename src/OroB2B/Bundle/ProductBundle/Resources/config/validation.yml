@@ -18,4 +18,7 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     properties:
         precision:
             - NotBlank: ~
+            - Range:
+                min: 0
+                max: 10
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
