@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 
 class UserType extends AbstractType
 {
@@ -38,7 +39,11 @@ class UserType extends AbstractType
             )
             ->add('lastName', 'text', ['required' => true, 'label' => 'orob2b.useradmin.user.last_name.label'])
             ->add('email', 'email', ['required' => true, 'label' => 'orob2b.useradmin.user.email.label'])
-
+            ->add(
+                'customer',
+                CustomerSelectType::NAME,
+                ['required' => false, 'label' => 'orob2b.useradmin.user.customer.label']
+            )
             ->add(
                 'enabled',
                 'checkbox',
