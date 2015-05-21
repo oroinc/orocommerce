@@ -21,7 +21,7 @@ class ProductUnitPrecisionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('precision', 'integer', ['required' => false])
+            ->add('precision', 'integer', ['type' => 'text', 'required' => false])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
