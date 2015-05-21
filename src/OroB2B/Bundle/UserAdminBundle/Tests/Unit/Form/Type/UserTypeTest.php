@@ -31,11 +31,7 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $builder = new FormFactoryBuilder();
-        $builder->addExtensions($this->getExtensions())
-            ->addExtension(new CoreExtension());
-
-        $this->factory = $builder->getFormFactory();
+        parent::setUp();
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType = new UserType($this->translator);
