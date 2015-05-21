@@ -12,7 +12,9 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $formType;
 
-
+    /**
+     * @inheritdoc
+     */
     protected function setUp()
     {
         $this->formType = new ProductUnitPrecisionCollectionType();

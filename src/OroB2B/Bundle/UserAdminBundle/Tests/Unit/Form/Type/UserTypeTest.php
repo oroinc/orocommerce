@@ -9,8 +9,6 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;
 use OroB2B\Bundle\UserAdminBundle\Form\Type\UserType;
@@ -19,19 +17,9 @@ use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType;
 class UserTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
-
-    /**
      * @var UserType
      */
     protected $formType;
-
-    /**
-     * @var Group
-     */
-    protected $group;
 
     /**
      * @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -43,10 +31,6 @@ class UserTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->group = new Group('test');
-
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
         $builder = new FormFactoryBuilder();
         $builder->addExtensions($this->getExtensions())
             ->addExtension(new CoreExtension());

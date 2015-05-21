@@ -274,16 +274,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        $exist = false;
+        $existingUnitPrecision = $this->getUnitPrecision($unitPrecision->getUnit()->getCode());
 
-        foreach ($this->unitPrecisions as &$existingUnitPrecision) {
-            if ($existingUnitPrecision->getUnit() == $unitPrecision->getUnit()) {
-                $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
-                $exist = true;
-            }
-        }
-
-        if (!$exist) {
+        if ($existingUnitPrecision) {
+            $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
+        } else {
             $unitPrecision->setProduct($this);
             $this->unitPrecisions->add($unitPrecision);
         }

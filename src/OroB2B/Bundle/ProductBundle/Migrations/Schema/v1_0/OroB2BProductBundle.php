@@ -43,7 +43,6 @@ class OroB2BProductBundle implements Migration
         $table->addColumn('sku', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku'], 'UNIQ_5F9796C9F9038C4');
         $table->addIndex(['business_unit_owner_id'], 'IDX_5F9796C959294170', []);
@@ -122,13 +121,13 @@ class OroB2BProductBundle implements Migration
             $schema->getTable(self::PRODUCT_TABLE_NAME),
             ['product_id'],
             ['id'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable(self::PRODUCT_UNIT_TABLE_NAME),
             ['unit_code'],
             ['code'],
-            ['onDelete' => null, 'onUpdate' => null]
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

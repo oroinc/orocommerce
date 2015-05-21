@@ -18,4 +18,4 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     properties:
         precision:
             - NotBlank: ~
-            - Type: integer
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~

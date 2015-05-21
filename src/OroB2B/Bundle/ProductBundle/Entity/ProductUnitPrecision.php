@@ -27,13 +27,13 @@ class ProductUnitPrecision
 
     /**
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
 
     /**
      * @ORM\ManyToOne(targetEntity="ProductUnit")
-     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code")
+     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE")
      */
     protected $unit;
 
