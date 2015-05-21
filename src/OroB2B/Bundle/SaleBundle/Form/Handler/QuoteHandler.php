@@ -44,11 +44,12 @@ class QuoteHandler
 
             if ($this->form->isValid()) {
                 $this->manager->persist($quote);
-                $quote->setQid('');
                 $this->manager->flush();
-
-                $quote->setQid($quote->getId());
-                $this->manager->flush();
+                
+                if (!$quote->getQid()) {
+                    $quote->setQid($quote->getId());
+                    $this->manager->flush();
+                }
                 
                 return true;
             }

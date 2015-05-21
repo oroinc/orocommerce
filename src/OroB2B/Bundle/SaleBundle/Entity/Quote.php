@@ -113,7 +113,15 @@ class Quote extends ExtendQuote
      * )
      */
     protected $validUntil;
+    
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->qid = '';
+    }
     
 
     /**

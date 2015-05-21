@@ -16,13 +16,14 @@ class QuoteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('qid', 'hidden')
             ->add('owner', null, [
                 'required' => true, 
-                'label' => 'orob2b.sale.quote.owner.label'
+                'label' => 'orob2b.sale.quote.owner.label',
             ])
             ->add('validUntil', null, [
                 'required' => false,
-                'label' => 'orob2b.sale.quote.valid_until.label'
+                'label' => 'orob2b.sale.quote.valid_until.label',
             ])
         ;
     }
@@ -35,7 +36,7 @@ class QuoteType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
             'intention' => 'sale_quote',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
 

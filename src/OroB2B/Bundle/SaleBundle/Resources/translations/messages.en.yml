@@ -14,3 +14,7 @@ orob2b:
             
             widgets:
                 quote_information: Quote Information
+                
+        controller:
+            quote:
+                saved.message: "Quote has been saved"
