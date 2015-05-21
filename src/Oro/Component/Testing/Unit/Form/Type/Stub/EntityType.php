@@ -9,8 +9,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class EntityType extends AbstractType
 {
-    const NAME = 'entity';
-
     /** @var ChoiceList  */
     protected $choiceList = [];
 
@@ -69,6 +67,6 @@ class EntityType extends AbstractType
      */
     public function getName()
     {
-        return self::NAME;
+        return $this->name;
     }
 }

@@ -7,11 +7,13 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as CustomerSelectTypeStub;
+
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 use OroB2B\Bundle\UserAdminBundle\Entity\Group;
 use OroB2B\Bundle\UserAdminBundle\Form\Type\UserType;
-use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\UserAdminBundle\Tests\Unit\Form\Type\Stub\EntityType ;
 
 class UserTypeTest extends FormIntegrationTestCase
 {
@@ -51,7 +53,7 @@ class UserTypeTest extends FormIntegrationTestCase
             'TestGroup02' => new Group('TestGroup02')
         ]);
 
-        $customerSelectType = new EntityType($this->getCustomers());
+        $customerSelectType = new CustomerSelectTypeStub($this->getCustomers(), 'orob2b_customer_select');
 
         return [
             new PreloadedExtension(
