@@ -7,7 +7,7 @@
             {{ UI.renderProperty('orob2b.sale.quote.id.label'|trans, entity.id) }}
             {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
             {{ UI.renderProperty('orob2b.sale.quote.owner.label'|trans, entity.owner.username) }}
-            {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil.format('Y-m-d H:i:s') : '') }}
+            {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|date('F j, Y, g:i A') : '') }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

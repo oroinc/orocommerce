@@ -22,7 +22,7 @@ class QuoteController extends RestController implements ClassResourceInterface
      *      description="Delete quote",
      *      resource=true
      * )
-     * Acl(
+     * @Acl(
      *      id="orob2b_sale_quote_delete",
      *      type="entity",
      *      class="OroB2BSaleBundle:Quote",
