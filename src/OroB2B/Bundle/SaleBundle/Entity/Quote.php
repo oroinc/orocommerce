@@ -104,30 +104,15 @@ class Quote extends ExtendQuote
      * @var \DateTime
      *
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
+     * @ConfigField
      */
     protected $validUntil;
-    
 
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->qid = '';
-    }
-    
 
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -150,7 +135,7 @@ class Quote extends ExtendQuote
     /**
      * Get qid
      *
-     * @return string 
+     * @return string
      */
     public function getQid()
     {
@@ -173,7 +158,7 @@ class Quote extends ExtendQuote
     /**
      * Get createdAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -196,7 +181,7 @@ class Quote extends ExtendQuote
     /**
      * Get updatedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -219,7 +204,7 @@ class Quote extends ExtendQuote
     /**
      * Get validUntil
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getValidUntil()
     {
@@ -242,7 +227,7 @@ class Quote extends ExtendQuote
     /**
      * Get owner
      *
-     * @return \Oro\Bundle\UserBundle\Entity\User 
+     * @return \Oro\Bundle\UserBundle\Entity\User
      */
     public function getOwner()
     {

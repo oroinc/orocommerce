@@ -13,7 +13,7 @@ class QuoteTest extends EntityTestCase
         $now = new \DateTime('now');
         $properties = [
             ['id', '123'],
-            ['qid', 'sku-test-01'],
+            ['qid', 'QID-123456'],
             ['owner', new User()],
             ['validUntil', $now, false],
             ['createdAt', $now, false],

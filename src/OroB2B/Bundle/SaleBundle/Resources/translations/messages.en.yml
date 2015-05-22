@@ -1,20 +1,20 @@
 orob2b:
     sale:
         quote:
-            entity_label: Quote
-            entity_plural_label: Quotes
+            entity_label: 'Quote'
+            entity_plural_label: 'Quotes'
             
-            id.label: Numberic ID
-            qid.label: ID
-            owner.label: Owner
-            valid_until.label: Valid Until
+            id.label: 'Numeric ID'
+            qid.label: 'ID'
+            owner.label: 'Owner'
+            valid_until.label: 'Valid Until'
             
             sections:
-                general: General
+                general: 'General'
             
             widgets:
-                quote_information: Quote Information
+                quote_information: 'Quote Information'
                 
         controller:
             quote:
-                saved.message: "Quote has been saved"
+                saved.message: 'Quote has been saved'

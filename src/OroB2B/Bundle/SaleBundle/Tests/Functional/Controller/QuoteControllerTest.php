@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @outputBuffering enabled
@@ -14,44 +15,39 @@ class QuoteControllerTest extends WebTestCase
 {
     public static $qid;
     public static $qidUpdated;
-    
+
     public static $validUntil           = '2015-05-15T15:15:15+0000';
     public static $validUntilUpdated    = '2016-06-16T16:16:16+0000';
 
     public static function setUpBeforeClass()
     {
-        self::$qid = 'TestQuoteID - ' . time() . '-' . rand();
-        self::$qidUpdated = self::$qid . '- updated';
+        self::$qid          = 'TestQuoteID - ' . time() . '-' . rand();
+        self::$qidUpdated   = self::$qid . ' - updated';
     }
 
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
-    }
-    
-    public function testIndex()
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
-        $result = $this->client->getResponse();
-        
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("quotes-grid", $crawler->html());
+
+        $this->loadFixtures([
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+        ]);
     }
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
-        $owner = $this->getContainer()->get('security.context')->getToken()->getUser();
-        
-        /** @var Form $form */
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $owner      = $this->getUser(LoadUserData::USER1);
+
+        /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_sale_quote_form[owner]']      = $owner->getId();
         $form['orob2b_sale_quote_form[qid]']        = self::$qid;
         $form['orob2b_sale_quote_form[validUntil]'] = self::$validUntil;
-        
+
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
-        
+
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains("Quote has been saved", $crawler->html());
@@ -61,24 +57,49 @@ class QuoteControllerTest extends WebTestCase
      * @depends testCreate
      * @return int
      */
-    public function testUpdate()
+    public function testIndex()
     {
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
+        $owner      = $this->getUser(LoadUserData::USER1);
+
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains("quotes-grid", $crawler->html());
+
         $response = $this->client->requestGrid(
             'quotes-grid',
             ['quotes-grid[_filter][qid][value]' => self::$qid]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-        $this->assertEquals(self::$qid, $result['qid']);
-        $this->assertEquals(self::$validUntil, $result['validUntil']);
-        
-        $id = $result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+        $this->assertCount(1, $result['data']);
 
-        /** @var Form $form */
+        $row = reset($result['data']);
+
+        $id = $row['id'];
+
+        $this->assertEquals(self::$qid, $row['qid']);
+        $this->assertEquals($owner->getUsername(), $row['owner']);
+        $this->assertEquals(self::$validUntil, $row['validUntil']);
+
+        return $id;
+    }
+
+    /**
+     * @depends testIndex
+     * @param int $id
+     * @return int
+     */
+    public function testUpdate($id)
+    {
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+        $owner      = $this->getUser(LoadUserData::USER2);
+
+        /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_sale_quote_form[qid]'] = self::$qidUpdated;
+        $form['orob2b_sale_quote_form[owner]']      = $owner->getId();
+        $form['orob2b_sale_quote_form[qid]']        = self::$qidUpdated;
         $form['orob2b_sale_quote_form[validUntil]'] = self::$validUntilUpdated;
 
         $this->client->followRedirects(true);
@@ -87,7 +108,22 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains("Quote has been saved", $crawler->html());
-        
+
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
+        $response   = $this->client->requestGrid(
+            'quotes-grid',
+            ['quotes-grid[_filter][id][value]' => $id]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertEquals(1, sizeof($result['data']));
+
+        $row = reset($result['data']);
+
+        $this->assertEquals(self::$qidUpdated, $row['qid']);
+        $this->assertEquals($owner->getUsername(), $row['owner']);
+        $this->assertEquals(self::$validUntilUpdated, $row['validUntil']);
+
         return $id;
     }
 
@@ -102,7 +138,7 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        
+
         return $id;
     }
 
@@ -121,5 +157,17 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    /**
+     * @param string $username
+     * @return User
+     */
+    protected function getUser($username)
+    {
+        /* @var $repository \Oro\Bundle\UserBundle\Entity\Repository\UserRepository */
+        $repository = $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User');
+
+        return $repository->findOneByUsername($username);
     }
 }

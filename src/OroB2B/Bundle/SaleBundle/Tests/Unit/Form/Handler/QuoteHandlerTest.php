@@ -13,7 +13,7 @@ class QuoteHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity = new Quote();
-        $this->handler = new QuoteHandler($this->form, $this->request, $this->manager);
+        $this->entity   = new Quote();
+        $this->handler  = new QuoteHandler($this->form, $this->request, $this->manager);
     }
 }

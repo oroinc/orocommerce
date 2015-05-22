@@ -1,10 +1,17 @@
 parameters:
+    orob2b_sale.doctrine.subscriber.entity.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
+    
     orob2b_sale.quote.class: OroB2B\Bundle\SaleBundle\Entity\Quote
     orob2b_sale.form.handler.quote.class: OroB2B\Bundle\SaleBundle\Form\Handler\QuoteHandler
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_sale.form.type.quote.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteType
 
 services:
+    orob2b_sale.doctrine.subscriber.entity:
+        class: %orob2b_sale.doctrine.subscriber.entity.class%
+        tags:
+            - { name: doctrine.event_subscriber }
+            
     orob2b_sale.form.quote:
         class: Symfony\Component\Form\Form
         factory_method: createNamed
