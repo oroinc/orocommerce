@@ -2,8 +2,12 @@ OroB2B\Bundle\CustomerBundle\Entity\Customer:
     properties:
         name:
             - NotBlank: ~
+        priceList:
+            - Valid: ~
 
 OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup:
     properties:
         name:
             - NotBlank: ~
+        priceList:
+            - Valid: ~
