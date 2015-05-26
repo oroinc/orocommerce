@@ -13,11 +13,17 @@ class PriceListStateManager
      */
     protected $doctrineHelper;
 
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    /**
+     * @param PriceList $priceList
+     */
     public function applyDefault(PriceList $priceList)
     {
         $this->dropDefaultState($priceList);

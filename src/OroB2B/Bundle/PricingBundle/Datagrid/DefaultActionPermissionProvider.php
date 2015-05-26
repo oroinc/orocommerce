@@ -8,6 +8,11 @@ class DefaultActionPermissionProvider
 {
     const DEFAULT_ACTION_KEY = 'is_default';
 
+    /**
+     * @param ResultRecordInterface $record
+     * @param array $actions
+     * @return array
+     */
     public function getPermissions(ResultRecordInterface $record, array $actions)
     {
         $actions = array_keys($actions);

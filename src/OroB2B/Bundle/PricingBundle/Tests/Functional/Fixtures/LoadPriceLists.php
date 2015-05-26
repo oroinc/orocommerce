@@ -45,12 +45,16 @@ class LoadPriceLists extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
+        $now = new \DateTime();
+
         foreach ($this->data as $priceListData) {
             $priceList = new PriceList();
 
             $priceList
                 ->setName($priceListData['name'])
-                ->setDefault($priceListData['default']);
+                ->setDefault($priceListData['default'])
+                ->setCreatedAt($now)
+                ->setUpdatedAt($now);
 
             $manager->persist($priceList);
             $this->setReference($priceListData['reference'], $priceList);

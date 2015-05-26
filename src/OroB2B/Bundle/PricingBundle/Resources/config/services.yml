@@ -15,6 +15,8 @@ services:
         class: %orob2b_pricing.acl.voter.class%
         arguments:
             - @oro_entity.doctrine_helper
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.price_list.class%]]
         tags:
             - { name: security.voter, priority: 10 }
 

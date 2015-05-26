@@ -5,6 +5,7 @@ orob2b.pricing:
         entity_description: Represents price list information
         id.label: Id
         name.label: Name
+        set_default: Set default
 
     menu:
         price_lists_tab.label: Price lists management
