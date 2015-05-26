@@ -13,5 +13,4 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
             - NotBlank: ~
         currency:
             - NotBlank: ~
-            - Length:
-                max: 3
+            - Currency: ~
