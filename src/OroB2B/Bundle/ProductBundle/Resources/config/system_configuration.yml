@@ -1,0 +1,34 @@
+oro_system_configuration:
+    groups:
+        product:
+            title: orob2b.product.system_configuration.groups.product.title
+            icon: 'icon-briefcase'
+            page_reload: true
+        product_unit_settings:
+            title: orob2b.product.system_configuration.groups.product_unit_settings.title
+
+    fields:
+        orob2b_product.unit_rounding_type:
+            data_type: string
+            type: orob2b_product_unit_rounding_type
+            priority: 10
+            options:
+                label: orob2b.product.system_configuration.fields.unit_rounding_type.label
+                tooltip: orob2b.product.form.tooltip.unit_rounding_type
+                required: true
+                constraints:
+                    - NotBlank: ~
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    general_setup:
+                        children:
+                            product:
+                                priority: 220
+                                children:
+                                    product_unit_settings:
+                                        priority: 100
+                                        children:
+                                            - orob2b_product.unit_rounding_type

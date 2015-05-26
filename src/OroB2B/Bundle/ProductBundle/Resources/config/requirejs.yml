@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2bproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/orob2bproduct/js/app/components/product-unit-selection-limitations-component.js'

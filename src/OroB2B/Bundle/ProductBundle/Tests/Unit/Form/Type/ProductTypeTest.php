@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 
 class ProductTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,6 +33,18 @@ class ProductTypeTest extends \PHPUnit_Framework_TestCase
                 'category',
                 CategoryTreeType::NAME,
                 ['required' => false, 'label' => 'orob2b.product.category.label']
+            )
+            ->will($this->returnSelf());
+        $builder->expects($this->at(2))
+            ->method('add')
+            ->with(
+                'unitPrecisions',
+                ProductUnitPrecisionCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.unit_precisions.label',
+                    'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
+                    'required' => false
+                ]
             )
             ->will($this->returnSelf());
 

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\UserBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use FOS\UserBundle\Entity\User as BaseUser;
@@ -24,6 +25,13 @@ abstract class AbstractUser extends BaseUser
      * @ORM\Column(name="last_name", type="string", length=255)
      */
     protected $lastName;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->groups = new ArrayCollection();
+    }
 
     /**
      * @param string $email

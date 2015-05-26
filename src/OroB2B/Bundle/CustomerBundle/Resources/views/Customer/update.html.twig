@@ -1,0 +1,68 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
+
+{% set formAction = entity.id ? path('orob2b_customer_update', {id: entity.id}) : path('orob2b_customer_create') %}
+
+{% oro_title_set({params : {"%customerName%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.customer.entity_label'|trans} }) %}
+
+{% block navButtons %}
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_customer_delete_customer', {'id': entity.id}),
+            'dataRedirect': path('orob2b_customer_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.customer.entity_label'|trans,
+        }) }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
+    {{ UI.cancelButton(path('orob2b_customer_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_customer_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_customer_index'),
+            'indexLabel': 'orob2b.customer.entity_plural_label'|trans,
+            'entityTitle': entity.name|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.customer.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'customer-edit' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.customer.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.name),
+                        form_row(form.group),
+                        form_row(form.parent),
+                    ]
+                }
+            ]
+        }
+    ] %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}
