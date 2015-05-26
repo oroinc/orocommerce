@@ -75,7 +75,7 @@ class QuoteProduct
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -154,7 +154,7 @@ class QuoteProduct
     /**
      * Get quoteProductItems
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getQuoteProductItems()
     {

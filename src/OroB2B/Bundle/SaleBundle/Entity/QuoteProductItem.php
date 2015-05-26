@@ -40,7 +40,7 @@ class QuoteProductItem extends Price
     protected $id;
 
     /**
-     * @var \Oro\Bundle\UserBundle\Entity\User
+     * @var QuoteProduct
      *
      * @ORM\ManyToOne(targetEntity="QuoteProduct", inversedBy="quoteProductItems")
      * @ORM\JoinColumn(name="quote_product_id", referencedColumnName="id", onDelete="CASCADE")
@@ -55,7 +55,7 @@ class QuoteProductItem extends Price
     protected $quantity;
 
     /**
-     * @var \Oro\Bundle\UserBundle\Entity\User
+     * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", onDelete="CASCADE")
@@ -80,7 +80,7 @@ class QuoteProductItem extends Price
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -103,7 +103,7 @@ class QuoteProductItem extends Price
     /**
      * Get quantity
      *
-     * @return integer 
+     * @return integer
      */
     public function getQuantity()
     {
