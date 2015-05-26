@@ -17,7 +17,7 @@ class PriceListType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.price_list.name.label'])
+            ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
         ;
     }
 

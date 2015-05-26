@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
 
 class PriceListTypeTest extends FormIntegrationTestCase
@@ -19,6 +19,11 @@ class PriceListTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->type = new PriceListType();
+    }
+
+    protected function tearDown()
+    {
+        unset($this->type);
     }
 
     /**
@@ -72,18 +77,18 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     'name' => 'Test Price List',
                     'default' => false
-                ],
+                ]
             ],
             'update price list' => [
                 'defaultData' => [
-                    'name' => 'Test Price List',
+                    'name' => 'Test Price List'
                 ],
                 'submittedData' => [
-                    'name' => 'Test Price List 01',
+                    'name' => 'Test Price List 01'
                 ],
                 'expectedData' => [
-                    'name' => 'Test Price List 01',
-                ],
+                    'name' => 'Test Price List 01'
+                ]
             ]
         ];
     }
