@@ -1,5 +1,5 @@
 parameters:
-    orob2b_pricing.form.type.price_list.class: OroB2B\Bundle\PricingBundle\Form\Type\PricingType
+    orob2b_pricing.form.type.price_list.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListType
 
 services:
     orob2b_pricing.form.type.price_list:

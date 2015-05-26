@@ -11,12 +11,15 @@ class PriceListTest extends EntityTestCase
 {
     public function testAccessors()
     {
+        $now = new \DateTime('now');
         $this->assertPropertyAccessors(
             $this->createPriceList(),
             [
                 ['id', 42],
                 ['name', 'new price list'],
-                ['default', false]
+                ['default', false],
+                ['createdAt', $now, false],
+                ['updatedAt', $now, false],
             ]
         );
     }
@@ -60,5 +63,20 @@ class PriceListTest extends EntityTestCase
     protected function createPriceListCurrency()
     {
         return new PriceListCurrency();
+    }
+
+    public function testPrePersist()
+    {
+        $priceList = $this->createPriceList();
+        $priceList->prePersist();
+        $this->assertInstanceOf('\DateTime', $priceList->getCreatedAt());
+        $this->assertInstanceOf('\DateTime', $priceList->getUpdatedAt());
+    }
+
+    public function testPreUpdate()
+    {
+        $priceList = $this->createPriceList();
+        $priceList->preUpdate();
+        $this->assertInstanceOf('\DateTime', $priceList->getUpdatedAt());
     }
 }
