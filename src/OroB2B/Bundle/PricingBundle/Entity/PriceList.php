@@ -25,9 +25,9 @@ class PriceList
     /**
      * @var string
      *
-     * @ORM\Column(name="label", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255)
      */
-    protected $label;
+    protected $name;
 
     /**
      * @var PriceListCurrency[]|Collection
@@ -60,13 +60,13 @@ class PriceList
     }
 
     /**
-     * @param string $label
+     * @param string $name
      *
      * @return PriceList
      */
-    public function setLabel($label)
+    public function setName($name)
     {
-        $this->label = $label;
+        $this->name = $name;
 
         return $this;
     }
@@ -74,9 +74,9 @@ class PriceList
     /**
      * @return string
      */
-    public function getLabel()
+    public function getName()
     {
-        return $this->label;
+        return $this->name;
     }
 
     /**
