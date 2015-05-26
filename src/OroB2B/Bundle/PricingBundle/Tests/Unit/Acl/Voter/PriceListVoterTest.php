@@ -2,16 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Acl\Voter;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use OroB2B\Bundle\PricingBundle\Acl\Voter\DefaultActionVoter;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class DefaultActionVoterTest extends \PHPUnit_Framework_TestCase
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+
+use OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+
+class PriceListVoterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DefaultActionVoter
+     * @var PriceListVoter
      */
     protected $voter;
 
@@ -26,7 +27,7 @@ class DefaultActionVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->voter = new DefaultActionVoter($this->doctrineHelper);
+        $this->voter = new PriceListVoter($this->doctrineHelper);
     }
 
     protected function tearDown()
@@ -78,8 +79,8 @@ class DefaultActionVoterTest extends \PHPUnit_Framework_TestCase
         return [
             'VIEW' => ['VIEW', false],
             'CREATE' => ['CREATE', false],
-            'EDIT' => ['EDIT', true],
-            'DELETE' => ['DELETE', false],
+            'EDIT' => ['EDIT', false],
+            'DELETE' => ['DELETE', true],
             'ASSIGN' => ['ASSIGN', false]
         ];
     }
@@ -107,7 +108,7 @@ class DefaultActionVoterTest extends \PHPUnit_Framework_TestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->assertEquals(
             $expected,
-            $this->voter->vote($token, $object, ['EDIT'])
+            $this->voter->vote($token, $object, ['DELETE'])
         );
     }
 

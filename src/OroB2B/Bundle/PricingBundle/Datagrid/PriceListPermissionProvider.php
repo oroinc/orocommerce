@@ -4,10 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 
-class DefaultActionPermissionProvider
+class PriceListPermissionProvider
 {
-    const DEFAULT_ACTION_KEY = 'is_default';
-
     /**
      * @param ResultRecordInterface $record
      * @param array $actions
@@ -22,7 +20,11 @@ class DefaultActionPermissionProvider
         }
 
         if (array_key_exists('default', $permissions)) {
-            $permissions['default'] = !$record->getValue(self::DEFAULT_ACTION_KEY);
+            $permissions['default'] = !$record->getValue('default');
+        }
+
+        if (array_key_exists('delete', $permissions)) {
+            $permissions['delete'] = !$record->getValue('default');
         }
 
         return $permissions;

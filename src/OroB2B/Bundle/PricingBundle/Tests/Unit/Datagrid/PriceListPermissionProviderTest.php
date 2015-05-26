@@ -5,18 +5,18 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 
-use OroB2B\Bundle\PricingBundle\Datagrid\DefaultActionPermissionProvider;
+use OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider;
 
-class DefaultActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
+class PriceListPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DefaultActionPermissionProvider
+     * @var PriceListPermissionProvider
      */
     protected $provider;
 
     protected function setUp()
     {
-        $this->provider = new DefaultActionPermissionProvider();
+        $this->provider = new PriceListPermissionProvider();
     }
 
     protected function tearDown()
@@ -46,19 +46,19 @@ class DefaultActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'without action' => [
-                new ResultRecord(['is_default' => true]),
+                new ResultRecord(['default' => true]),
                 ['some_action' => ['config']],
                 ['some_action' => true]
             ],
             'already default' => [
-                new ResultRecord(['is_default' => true]),
-                ['some_action' => ['config'], 'default' => ['config']],
-                ['some_action' => true, 'default' => false]
+                new ResultRecord(['default' => true]),
+                ['some_action' => ['config'], 'default' => ['config'], 'delete' => ['config']],
+                ['some_action' => true, 'default' => false, 'delete' => false]
             ],
             'set default allowed' => [
-                new ResultRecord(['is_default' => false]),
-                ['some_action' => ['config'], 'default' => ['config']],
-                ['some_action' => true, 'default' => true]
+                new ResultRecord(['default' => false]),
+                ['some_action' => ['config'], 'default' => ['config'], 'delete' => ['config']],
+                ['some_action' => true, 'default' => true, 'delete' => true]
             ]
         ];
     }

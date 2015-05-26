@@ -8,14 +8,14 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
-class DefaultActionVoter extends AbstractEntityVoter
+class PriceListVoter extends AbstractEntityVoter
 {
-    const ATTRIBUTE_EDIT = 'EDIT';
+    const ATTRIBUTE_DELETE = 'DELETE';
 
     /**
      * @var array
      */
-    protected $supportedAttributes = [self::ATTRIBUTE_EDIT];
+    protected $supportedAttributes = [self::ATTRIBUTE_DELETE];
 
     /**
      * @var PriceList

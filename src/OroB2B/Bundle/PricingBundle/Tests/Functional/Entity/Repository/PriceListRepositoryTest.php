@@ -1,15 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
+namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 /**
  * @dbIsolation
  */
-class PriceListStateManagerTest extends WebTestCase
+class PriceListRepositoryTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -18,21 +19,27 @@ class PriceListStateManagerTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\Fixtures\LoadPriceLists']);
     }
 
-    public function testApplyDefault()
+    public function testDefaultState()
     {
         $this->assertEquals([$this->getReference('price_list_3')], $this->getDefaultPriceList());
 
-        $manager = $this->getContainer()->get('orob2b_pricing.model.price_list_state_manager');
+        $repository = $this->getRepository();
+
+        $repository->dropDefaults();
+        $this->assertEquals([], $this->getDefaultPriceList());
 
         /** @var PriceList $priceList1 */
         $priceList1 = $this->getReference('price_list_1');
-        $manager->applyDefault($priceList1);
+        $repository->setDefault($priceList1);
         $this->assertEquals([$priceList1], $this->getDefaultPriceList());
 
         /** @var PriceList $priceList2 */
         $priceList2 = $this->getReference('price_list_2');
-        $manager->applyDefault($priceList2);
+        $repository->setDefault($priceList2);
         $this->assertEquals([$priceList2], $this->getDefaultPriceList());
+
+        $repository->dropDefaults();
+        $this->assertEquals([], $this->getDefaultPriceList());
     }
 
     /**
@@ -40,9 +47,14 @@ class PriceListStateManagerTest extends WebTestCase
      */
     public function getDefaultPriceList()
     {
-        return $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroB2BPricingBundle:PriceList')
-            ->findBy(['default' => true]);
+        return $this->getRepository()->findBy(['default' => true]);
+    }
+
+    /**
+     * @return PriceListRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceList');
     }
 }

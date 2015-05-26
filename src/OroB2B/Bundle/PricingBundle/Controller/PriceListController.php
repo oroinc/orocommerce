@@ -6,7 +6,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -126,33 +125,5 @@ class PriceListController extends Controller
             },
             $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message')
         );
-    }
-
-    /**
-     * @Route("/default/{id}", name="orob2b_pricing_price_list_default", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_pricing_price_list_update")
-     *
-     * @param PriceList $priceList
-     * @return JsonResponse
-     */
-    public function defaultAction(PriceList $priceList)
-    {
-        $successful = true;
-
-        try {
-            $this->get('orob2b_pricing.model.price_list_state_manager')->applyDefault($priceList);
-        } catch (\Exception $e) {
-            $this->get('logger')->error(
-                sprintf(
-                    'Set default price list failed: %s: %s',
-                    $e->getCode(),
-                    $e->getMessage()
-                )
-            );
-
-            $successful = false;
-        }
-
-        return new JsonResponse(['successful' => $successful]);
     }
 }

@@ -4,14 +4,12 @@ parameters:
 
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
-    orob2b_pricing.acl.voter.class: OroB2B\Bundle\PricingBundle\Acl\Voter\DefaultActionVoter
-    orob2b_pricing.datagrid.default_action_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\DefaultActionPermissionProvider
-
-    orob2b_pricing.model.price_list_state_manager.class: OroB2B\Bundle\PricingBundle\Model\PriceListStateManager
+    orob2b_pricing.acl.voter.product_list.class: OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter
+    orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
 
 services:
-    orob2b_pricing.acl.voter:
-        class: %orob2b_pricing.acl.voter.class%
+    orob2b_pricing.acl.voter.product_list:
+        class: %orob2b_pricing.acl.voter.product_list.class%
         arguments:
             - @oro_entity.doctrine_helper
         calls:
@@ -19,13 +17,8 @@ services:
         tags:
             - { name: security.voter, priority: 10 }
 
-    orob2b_pricing.datagrid.default_action_permissions_provider:
-        class: %orob2b_pricing.datagrid.default_action_permissions_provider.class%
-
-    orob2b_pricing.model.price_list_state_manager:
-        class: %orob2b_pricing.model.price_list_state_manager.class%
-        arguments:
-            - @oro_entity.doctrine_helper
+    orob2b_pricing.datagrid.price_list_permissions_provider:
+        class: %orob2b_pricing.datagrid.price_list_permissions_provider.class%
 
     orob2b_pricing.form.price_list:
         class: Symfony\Component\Form\Form

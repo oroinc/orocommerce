@@ -9,7 +9,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 /**
  * @dbIsolation
  */
-class PriceListControllerTest extends WebTestCase
+class AjaxPriceListControllerTest extends WebTestCase
 {
     protected function setUp()
     {

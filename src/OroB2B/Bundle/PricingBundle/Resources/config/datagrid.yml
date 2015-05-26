@@ -13,7 +13,6 @@ datagrid:
                     - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
-                    - priceList.default as OroB2B\Bundle\PricingBundle\Datagrid\DefaultActionPermissionProvider::DEFAULT_ACTION_KEY
                 from:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
         columns:
@@ -99,4 +98,4 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_pricing_price_list_delete
-        action_configuration: [@orob2b_pricing.datagrid.default_action_permissions_provider, "getPermissions"]
+        action_configuration: [@orob2b_pricing.datagrid.price_list_permissions_provider, "getPermissions"]
