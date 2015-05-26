@@ -34,7 +34,9 @@ class PriceList
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency",
-     *      mappedBy="priceList"
+     *      mappedBy="priceList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
      * )
      */
     protected $currencies;
@@ -46,9 +48,22 @@ class PriceList
      */
     protected $default = false;
 
+    /**
+     * @var Collection|ProductPrice[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\ProductPrice",
+     *      mappedBy="priceList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $prices;
+
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     /**
@@ -107,6 +122,7 @@ class PriceList
     public function addCurrency(PriceListCurrency $currency)
     {
         if (!$this->currencies->contains($currency)) {
+            $currency->setPriceList($this);
             $this->currencies->add($currency);
         }
 
@@ -135,5 +151,40 @@ class PriceList
     public function getCurrencies()
     {
         return $this->currencies;
+    }
+
+    /**
+     * @param ProductPrice $price
+     * @return PriceList
+     */
+    public function addPrice(ProductPrice $price)
+    {
+        if (!$this->prices->contains($price)) {
+            $price->setPriceList($this);
+            $this->prices->add($price);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductPrice $price
+     * @return PriceList
+     */
+    public function removePrice(ProductPrice $price)
+    {
+        if ($this->prices->contains($price)) {
+            $this->prices->removeElement($price);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductPrice[]
+     */
+    public function getPrices()
+    {
+        return $this->prices;
     }
 }
