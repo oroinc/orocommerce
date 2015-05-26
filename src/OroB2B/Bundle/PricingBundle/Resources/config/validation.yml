@@ -1,0 +1,16 @@
+OroB2B\Bundle\PricingBundle\Entity\PriceList:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        currencies:
+            - Valid: ~
+
+OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
+    properties:
+        priceList:
+            - NotBlank: ~
+        currency:
+            - NotBlank: ~
+            - Currency: ~

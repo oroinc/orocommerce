@@ -1,0 +1,69 @@
+<?php
+
+namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_0;
+
+use Doctrine\DBAL\Schema\Schema;
+
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
+class OroB2BPricingBundle implements Migration
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function up(Schema $schema, QueryBag $queries)
+    {
+        /** Tables generation **/
+        $this->createOrob2BPriceListTable($schema);
+        $this->createOrob2BPriceListCurrencyTable($schema);
+
+        /** Foreign keys generation **/
+        $this->addOrob2BPriceListCurrencyForeignKeys($schema);
+    }
+
+    /**
+     * Create orob2b_price_list table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('name', 'string', ['length' => 255]);
+        $table->addColumn('is_default', 'boolean', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_price_list_currency table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BPriceListCurrencyTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_price_list_currency');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('price_list_id', 'integer', []);
+        $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['price_list_id'], 'IDX_F468ECAA5688DED7', []);
+    }
+
+    /**
+     * Add orob2b_price_list_currency foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BPriceListCurrencyForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_price_list_currency');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list'),
+            ['price_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+}
