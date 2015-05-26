@@ -15,11 +15,11 @@ class OroB2BPricingBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BPriceListTable($schema);
-        $this->createOrob2BPriceListCurrencyTable($schema);
+        $this->createOroB2BriceListTable($schema);
+        $this->createOroB2BriceListCurrencyTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BPriceListCurrencyForeignKeys($schema);
+        $this->addOroB2BriceListCurrencyForeignKeys($schema);
     }
 
     /**
@@ -27,12 +27,14 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListTable(Schema $schema)
+    protected function createOroB2BriceListTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('is_default', 'boolean', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -41,7 +43,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListCurrencyTable(Schema $schema)
+    protected function createOroB2BriceListCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_currency');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -56,7 +58,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListCurrencyForeignKeys(Schema $schema)
+    protected function addOroB2BriceListCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_currency');
         $table->addForeignKeyConstraint(

@@ -10,6 +10,7 @@ datagrid:
                 select:
                     - priceList.id
                     - priceList.name
+                    - priceList.default
                     - priceList.createdAt
                     - priceList.updatedAt
                     - priceList.default as OroB2B\Bundle\PricingBundle\Datagrid\DefaultActionPermissionProvider::DEFAULT_ACTION_KEY
@@ -18,6 +19,9 @@ datagrid:
         columns:
             name:
                 label:         orob2b.pricing.price_list.name.label
+            default:
+                label:         orob2b.pricing.price_list.default.label
+                frontend_type: boolean
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -51,6 +55,8 @@ datagrid:
                     data_name: priceList.createdAt
                 updatedAt:
                     data_name: priceList.updatedAt
+                default:
+                    data_name: priceList.default
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
@@ -64,6 +70,9 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: priceList.updatedAt
+                default:
+                    type:      boolean
+                    data_name: priceList.default
         actions:
             default:
                 type:          ajax

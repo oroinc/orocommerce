@@ -6,6 +6,7 @@ orob2b.pricing:
         id.label: Id
         name.label: Name
         set_default: Set default
+        default.label: Default
 
     menu:
         price_lists_tab.label: Price lists management
