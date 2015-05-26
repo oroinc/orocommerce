@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
 
 class PriceListController extends Controller
 {
@@ -45,7 +46,7 @@ class PriceListController extends Controller
     public function infoAction(PriceList $priceList)
     {
         return [
-            'priceList' => $priceList
+            'entity' => $priceList
         ];
     }
 
@@ -106,9 +107,11 @@ class PriceListController extends Controller
      */
     protected function update(PriceList $priceList)
     {
+        $form = $this->createForm(PriceListType::NAME);
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,
-            $this->get('orob2b_pricing.form.price_list'),
+            $form,
             function (PriceList $priceList) {
                 return array(
                     'route' => 'orob2b_pricing_price_list_update',
@@ -121,8 +124,7 @@ class PriceListController extends Controller
                     'parameters' => array('id' => $priceList->getId())
                 );
             },
-            $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message'),
-            $this->get('orob2b_pricing.form.handler.price_list')
+            $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message')
         );
     }
 

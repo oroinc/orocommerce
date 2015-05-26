@@ -6,8 +6,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class PricingType extends AbstractType
+class PriceListType extends AbstractType
 {
+    const NAME = 'orob2b_pricing_price_list';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -15,7 +17,7 @@ class PricingType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.price_list.name.label'])
+            ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
         ;
     }
 
@@ -34,6 +36,6 @@ class PricingType extends AbstractType
      */
     public function getName()
     {
-        return 'orob2b_pricing_price_list';
+        return self::NAME;
     }
 }

@@ -237,7 +237,9 @@ class PriceList
      */
     public function prePersist()
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (!$this->createdAt) {
+            $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 

@@ -1,5 +1,5 @@
 orob2b.pricing:
-    price_list:
+    pricelist:
         entity_label: Price List
         entity_plural_label: Price Lists
         entity_description: Represents price list information
@@ -7,6 +7,8 @@ orob2b.pricing:
         name.label: Name
         set_default: Set default
         default.label: Default
+        default.label: Is Default
+        currencies.label: Currencies
 
     menu:
         price_lists_tab.label: Price lists management

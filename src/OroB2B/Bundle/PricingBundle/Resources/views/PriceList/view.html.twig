@@ -6,7 +6,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_pricing_price_list_index'),
-        'indexLabel': 'orob2b.pricing.price_list.entity_plural_label'|trans,
+        'indexLabel': 'orob2b.pricing.pricelist.entity_plural_label'|trans,
         'entityTitle': entity.name|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -16,7 +16,7 @@
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_pricing_price_list_update', { 'id': entity.id }),
-            'entity_label': 'orob2b.pricing.price_list.entity_label'|trans
+            'entity_label': 'orob2b.pricing.pricelist.entity_label'|trans
         }) }}
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
@@ -26,7 +26,7 @@
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-account',
-            'entity_label': 'orob2b.pricing.price_list.entity_label'|trans
+            'entity_label': 'orob2b.pricing.pricelist.entity_label'|trans
         }) }}
     {% endif %}
 {% endblock navButtons %}

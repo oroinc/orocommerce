@@ -1,7 +1,7 @@
 oro_menu_config:
     items:
         pricing_price_lists_list:
-            label:           'orob2b.pricing.price_list.entity_plural_label'
+            label:           'orob2b.pricing.pricelist.entity_plural_label'
             route:           'orob2b_pricing_price_list_index'
             extras:
                 position:    10
@@ -9,7 +9,7 @@ oro_menu_config:
                 description: 'orob2b.pricing.menu.price_lists_list.description'
 
         shortcut_pricing_price_list:
-            label:           'orob2b.pricing.price_list.entity_plural_label'
+            label:           'orob2b.pricing.pricelist.entity_plural_label'
             route:           'orob2b_pricing_price_list_index'
             extras:
                 description: 'orob2b.pricing.menu.shortcut_price_lists.description'
@@ -36,4 +36,4 @@ oro_titles:
     orob2b_pricing_price_list_index:   ~
     orob2b_pricing_price_list_view:   '%%name%%'
     orob2b_pricing_price_list_update: '%%name%% - Edit'
-    orob2b_pricing_price_list_create: 'Create Price List'
+    orob2b_pricing_price_list_create: oro.ui.create_entity

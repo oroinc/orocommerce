@@ -15,11 +15,11 @@ class OroB2BPricingBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BriceListTable($schema);
-        $this->createOroB2BriceListCurrencyTable($schema);
+        $this->createOroB2BPriceListTable($schema);
+        $this->createOroB2BPriceListCurrencyTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BriceListCurrencyForeignKeys($schema);
+        $this->addOroB2BPriceListCurrencyForeignKeys($schema);
     }
 
     /**
@@ -27,7 +27,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BriceListTable(Schema $schema)
+    protected function createOroB2BPriceListTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -43,7 +43,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroB2BriceListCurrencyTable(Schema $schema)
+    protected function createOroB2BPriceListCurrencyTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_currency');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -58,7 +58,7 @@ class OroB2BPricingBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOroB2BriceListCurrencyForeignKeys(Schema $schema)
+    protected function addOroB2BPriceListCurrencyForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_currency');
         $table->addForeignKeyConstraint(

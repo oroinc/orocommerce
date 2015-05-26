@@ -18,9 +18,9 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
         columns:
             name:
-                label:         orob2b.pricing.price_list.name.label
+                label:         orob2b.pricing.pricelist.name.label
             default:
-                label:         orob2b.pricing.price_list.default.label
+                label:         orob2b.pricing.pricelist.default.label
                 frontend_type: boolean
             createdAt:
                 label:         oro.ui.created_at
