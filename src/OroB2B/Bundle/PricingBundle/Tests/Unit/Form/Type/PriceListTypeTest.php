@@ -1,11 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
@@ -19,6 +21,18 @@ class PriceListTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->type = new PriceListType();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        $currencySelectType = new CurrencySelectionTypeStub();
+
+        return [
+            new PreloadedExtension([$currencySelectType->getName() => $currencySelectType], [])
+        ];
     }
 
     /**
@@ -56,6 +70,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
         /** @var PriceList $result */
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
+        $this->assertEquals($expectedData['currencies'], $result->getCurrencies());
     }
     
     /**
@@ -67,23 +82,28 @@ class PriceListTypeTest extends FormIntegrationTestCase
             'new price list' => [
                 'defaultData' => null,
                 'submittedData' => [
-                    'name' => 'Test Price List'
+                    'name' => 'Test Price List',
+                    'currencies' => []
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List',
+                    'currencies' => [],
                     'default' => false
-                ],
+                ]
             ],
             'update price list' => [
                 'defaultData' => [
                     'name' => 'Test Price List',
+                    'currencies' => ['USD', 'UAH']
                 ],
                 'submittedData' => [
                     'name' => 'Test Price List 01',
+                    'currencies' => ['USD', 'EUR']
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List 01',
-                ],
+                    'currencies' => ['USD', 'EUR']
+                ]
             ]
         ];
     }
