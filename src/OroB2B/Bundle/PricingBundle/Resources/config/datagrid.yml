@@ -17,9 +17,9 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
         columns:
             name:
-                label:         orob2b.pricing.price_list.name.label
+                label:         orob2b.pricing.pricelist.name.label
             default:
-                label:         orob2b.pricing.price_list.default.label
+                label:         orob2b.pricing.pricelist.default.label
                 frontend_type: boolean
             createdAt:
                 label:         oro.ui.created_at
@@ -41,6 +41,10 @@ datagrid:
             delete_link:
                 type: url
                 route: orob2b_api_pricing_delete_price_list
+                params: [ id ]
+            default_link:
+                type: url
+                route: orob2b_pricing_price_list_default
                 params: [ id ]
         sorters:
             columns:
@@ -69,6 +73,12 @@ datagrid:
                     type:      boolean
                     data_name: priceList.default
         actions:
+            default:
+                type:          ajax
+                label:         orob2b.pricing.pricelist.set_default.label
+                link:          default_link
+                icon:          check
+                acl_resource:  orob2b_pricing_price_list_update
             view:
                 type:          navigate
                 label:         oro.grid.action.view
@@ -88,3 +98,4 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_pricing_price_list_delete
+        action_configuration: [@orob2b_pricing.datagrid.price_list_permissions_provider, "getPermissions"]

@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_price_list")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
  * @Config(
  *      routeName="orob2b_pricing_price_list_index",
  *      routeView="orob2b_pricing_price_list_view",
@@ -289,7 +289,9 @@ class PriceList
      */
     public function prePersist()
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (!$this->createdAt) {
+            $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 

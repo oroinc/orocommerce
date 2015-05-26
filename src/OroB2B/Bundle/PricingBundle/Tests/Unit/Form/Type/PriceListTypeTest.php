@@ -23,6 +23,11 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $this->type = new PriceListType();
     }
 
+    protected function tearDown()
+    {
+        unset($this->type);
+    }
+
     /**
      * @return array
      */
