@@ -5,20 +5,6 @@ parameters:
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
-    orob2b_pricing.form.price_list:
-        class: Symfony\Component\Form\Form
-        factory_method: createNamed
-        factory_service: form.factory
-        arguments: ["orob2b_pricing_price_list_form", "orob2b_pricing_price_list"]
-
-    orob2b_pricing.form.handler.price_list:
-        class: %orob2b_pricing.form.handler.price_list.class%
-        scope: request
-        arguments:
-            - @orob2b_pricing.form.price_list
-            - @request
-            - @doctrine.orm.entity_manager
-
     orob2b_pricing.price_list.manager.api:
         class: %orob2b_pricing.price_list.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
