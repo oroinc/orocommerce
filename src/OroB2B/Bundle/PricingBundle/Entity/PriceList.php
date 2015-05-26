@@ -29,6 +29,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          }
  *      }
  * )
+ * @ORM\HasLifecycleCallbacks()
  */
 class PriceList
 {
