@@ -1,0 +1,8 @@
+parameters:
+    orob2b_pricing.form.type.price_list.class: OroB2B\Bundle\PricingBundle\Form\Type\PricingType
+
+services:
+    orob2b_pricing.form.type.price_list:
+        class: %orob2b_pricing.form.type.price_list.class%
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_list }
