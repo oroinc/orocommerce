@@ -1,0 +1,57 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%name%": entity.name }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_pricing_price_list_index'),
+        'indexLabel': 'orob2b.pricing.pricelist.entity_plural_label'|trans,
+        'entityTitle': entity.name|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_pricing_price_list_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.pricing.pricelist.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_pricing_delete_price_list', {'id': entity.id}),
+            'dataRedirect': path('orob2b_pricing_price_list_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.pricing.pricelist.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set pricingInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'orob2b.pricing.widgets.pricing_information'|trans,
+            'url': path('orob2b_pricing_price_list_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [pricingInformationWidget]}]%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.pricing.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% set id = 'pricingView' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
