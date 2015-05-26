@@ -2,4 +2,23 @@ parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
 
+    orob2b_pricing.acl.voter.class: OroB2B\Bundle\PricingBundle\Acl\Voter\DefaultActionVoter
+    orob2b_pricing.datagrid.default_action_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\DefaultActionPermissionProvider
+
+    orob2b_pricing.model.price_list_state_manager.class: OroB2B\Bundle\PricingBundle\Model\PriceListStateManager
+
 services:
+    orob2b_pricing.acl.voter:
+        class: %orob2b_pricing.acl.voter.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        tags:
+            - { name: security.voter, priority: 10 }
+
+    orob2b_pricing.datagrid.default_action_permissions_provider:
+        class: %orob2b_pricing.datagrid.default_action_permissions_provider.class%
+
+    orob2b_pricing.model.price_list_state_manager:
+        class: %orob2b_pricing.model.price_list_state_manager.class%
+        arguments:
+            - @oro_entity.doctrine_helper
