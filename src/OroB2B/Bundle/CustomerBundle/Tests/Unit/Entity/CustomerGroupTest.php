@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
+use Oro\Component\Testing\Unit\EntityTestCase;
+
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-
-use Oro\Component\Testing\Unit\EntityTestCase;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class CustomerGroupTest extends EntityTestCase
 {
@@ -16,7 +17,8 @@ class CustomerGroupTest extends EntityTestCase
     {
         $this->assertPropertyAccessors($this->createCustomerGroupEntity(), [
             ['id', 42],
-            ['name', 'Illuminatenorden']
+            ['name', 'Illuminatenorden'],
+            ['priceList', new PriceList()]
         ]);
     }
 
