@@ -75,7 +75,7 @@ datagrid:
         actions:
             default:
                 type:          ajax
-                label:         orob2b.pricing.price_list.set_default
+                label:         orob2b.pricing.pricelist.set_default.label
                 link:          default_link
                 icon:          check
                 acl_resource:  orob2b_pricing_price_list_update

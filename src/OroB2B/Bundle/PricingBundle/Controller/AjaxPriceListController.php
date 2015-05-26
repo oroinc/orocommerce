@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
@@ -23,10 +24,14 @@ class AjaxPriceListController extends Controller
      */
     public function defaultAction(PriceList $priceList)
     {
-        $successful = true;
-
         try {
             $this->getRepository()->setDefault($priceList);
+
+            $response = [
+                'successful' => true,
+                'message' => $this->getTranslator()->trans('orob2b.pricing.pricelist.set_default.message')
+            ];
+
         } catch (\Exception $e) {
             $this->get('logger')->error(
                 sprintf(
@@ -36,10 +41,10 @@ class AjaxPriceListController extends Controller
                 )
             );
 
-            $successful = false;
+            $response = ['successful' => false];
         }
 
-        return new JsonResponse(['successful' => $successful]);
+        return new JsonResponse($response);
     }
 
     /**
@@ -50,5 +55,13 @@ class AjaxPriceListController extends Controller
         return $this->container
             ->get('doctrine')
             ->getRepository($this->container->getParameter('orob2b_pricing.entity.price_list.class'));
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->container->get('translator');
     }
 }
