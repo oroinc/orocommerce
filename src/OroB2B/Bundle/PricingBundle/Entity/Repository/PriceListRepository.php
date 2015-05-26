@@ -27,6 +27,8 @@ class PriceListRepository extends EntityRepository
      */
     public function setDefault(PriceList $priceList)
     {
+        $this->dropDefaults();
+
         $qb = $this->createQueryBuilder('pl');
 
         $qb

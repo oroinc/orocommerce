@@ -26,10 +26,7 @@ class AjaxPriceListController extends Controller
         $successful = true;
 
         try {
-            $repository = $this->getRepository();
-
-            $repository->dropDefaults();
-            $repository->setDefault($priceList);
+            $this->getRepository()->setDefault($priceList);
         } catch (\Exception $e) {
             $this->get('logger')->error(
                 sprintf(
