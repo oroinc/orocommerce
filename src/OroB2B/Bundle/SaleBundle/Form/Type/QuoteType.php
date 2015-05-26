@@ -18,7 +18,7 @@ class QuoteType extends AbstractType
         $builder
             ->add('qid', 'hidden')
             ->add('owner', null, [
-                'required' => true, 
+                'required' => true,
                 'label' => 'orob2b.sale.quote.owner.label',
             ])
             ->add('validUntil', null, [
