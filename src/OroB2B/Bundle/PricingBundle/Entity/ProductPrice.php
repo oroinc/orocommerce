@@ -163,11 +163,15 @@ class ProductPrice
      */
     public function getPrice()
     {
-        if (null === $this->price && null !== $this->value && null !== $this->currency) {
-            $this->price = Price::create($this->value, $this->currency);
-        }
-
         return $this->price;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadPrice()
+    {
+        $this->price = Price::create($this->value, $this->currency);
     }
 
     /**
@@ -176,12 +180,7 @@ class ProductPrice
      */
     public function updatePrice()
     {
-        $price = $this->getPrice();
-        if (!$price) {
-            throw new \LogicException('Price can not be empty');
-        }
-
-        $this->value    = $price->getValue();
-        $this->currency = $price->getCurrency();
+        $this->value    = $this->price->getValue();
+        $this->currency = $this->price->getCurrency();
     }
 }

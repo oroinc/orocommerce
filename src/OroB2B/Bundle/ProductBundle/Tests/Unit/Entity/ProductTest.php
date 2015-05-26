@@ -146,4 +146,20 @@ class ProductTest extends EntityTestCase
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
         $this->assertNotContains($price, $actual->toArray());
     }
+
+    public function testSetSku()
+    {
+        $originalSku = 'original';
+        $alteredSku = 'altered';
+
+        $price = new ProductPrice();
+
+        $product = new Product();
+        $product->setSku($originalSku)
+            ->addPrice($price);
+        $this->assertEquals($originalSku, $price->getProductSku());
+
+        $product->setSku($alteredSku);
+        $this->assertEquals($alteredSku, $price->getProductSku());
+    }
 }

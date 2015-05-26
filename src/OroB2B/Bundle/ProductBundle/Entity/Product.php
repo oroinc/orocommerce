@@ -185,6 +185,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         $this->sku = $sku;
 
+        // refresh product SKU
+        foreach ($this->prices as $price) {
+            $price->setProduct($this);
+        }
+
         return $this;
     }
 

@@ -44,6 +44,7 @@ class ProductPriceTest extends EntityTestCase
         $currency = 'EUR';
         $this->setProperty($productPrice, 'value', $value);
         $this->setProperty($productPrice, 'currency', $currency);
+        $productPrice->loadPrice();
 
         $price = $productPrice->getPrice();
         $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Model\Price', $price);
@@ -57,16 +58,6 @@ class ProductPriceTest extends EntityTestCase
         $productPrice->updatePrice();
         $this->assertAttributeEquals($price->getValue(), 'value', $productPrice);
         $this->assertAttributeEquals($price->getCurrency(), 'currency', $productPrice);
-    }
-
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Price can not be empty
-     */
-    public function testSaveWithNoPrice()
-    {
-        $productPrice = new ProductPrice();
-        $productPrice->updatePrice();
     }
 
     /**
