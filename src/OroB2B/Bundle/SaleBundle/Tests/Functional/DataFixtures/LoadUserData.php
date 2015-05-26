@@ -65,7 +65,6 @@ class LoadUserData extends AbstractFixture implements ContainerAwareInterface
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->users as $item) {
-
             /* @var $user User */
             $user = $userManager->createUser();
 

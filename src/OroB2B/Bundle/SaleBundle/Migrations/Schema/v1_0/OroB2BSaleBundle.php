@@ -158,5 +158,4 @@ class OroB2BSaleBundle implements
     {
         $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_sale_quote');
     }
-
 }
