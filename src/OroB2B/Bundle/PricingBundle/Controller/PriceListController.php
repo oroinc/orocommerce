@@ -141,7 +141,8 @@ class PriceListController extends Controller
             $this->get('orob2b_pricing.model.price_list_state_manager')->applyDefault($priceList);
         } catch (\Exception $e) {
             $this->get('logger')->error(
-                sprintf('Set default price list failed: %s: %s',
+                sprintf(
+                    'Set default price list failed: %s: %s',
                     $e->getCode(),
                     $e->getMessage()
                 )
