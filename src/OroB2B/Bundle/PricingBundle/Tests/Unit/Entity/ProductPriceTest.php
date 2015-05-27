@@ -8,6 +8,7 @@ use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceTest extends EntityTestCase
 {
@@ -18,8 +19,9 @@ class ProductPriceTest extends EntityTestCase
             [
                 ['id', 42],
                 ['product', new Product()],
+                ['unit', new ProductUnit()],
                 ['priceList', new PriceList()],
-                ['quantity', 12],
+                ['quantity', 12]
             ]
         );
     }
