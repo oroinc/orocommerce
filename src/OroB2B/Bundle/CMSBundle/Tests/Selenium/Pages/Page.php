@@ -185,22 +185,11 @@ class Page extends AbstractPageEntity
         return $this;
     }
 
-    public function assertSlugInputValue($slug)
-    {
-        $this->test->assertEquals(
-            $slug,
-            $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_slug')]")->value(),
-            sprintf('Slug input does not contain slug %s', $slug)
-        );
-
-        return $this;
-    }
-
     public function waitForApiCall()
     {
         sleep(1);
         $this->waitForAjax();
-        sleep(5);
+        sleep(1);
 
         return $this;
     }
