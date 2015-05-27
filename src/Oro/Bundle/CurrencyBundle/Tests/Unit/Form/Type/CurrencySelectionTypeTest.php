@@ -147,7 +147,40 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => 'RUB',
-            ]
+            ],
+            'full currency name, data from system config and additional currencies' => [
+                'allowedCurrencies' => ['USD', 'UAH'],
+                'localeCurrency' => 'EUR',
+                'inputOptions' => [
+                    'additional_currencies' => ['GBP'],
+                ],
+                'expectedOptions' => [
+                    'compact' => false,
+                    'choices' => [
+                        'GBP' => 'British Pound Sterling',
+                        'USD' => 'US Dollar',
+                        'UAH' => 'Ukrainian Hryvnia',
+                    ]
+                ],
+                'submittedData' => 'UAH',
+            ],
+            'compact currency name, data from currencies_list option and additional currencies' => [
+                'allowedCurrencies' => ['USD', 'UAH'],
+                'localeCurrency' => 'EUR',
+                'inputOptions' => [
+                    'compact' => true,
+                    'currencies_list' => ['RUB'],
+                    'additional_currencies' => ['GBP'],
+                ],
+                'expectedOptions' => [
+                    'compact' => true,
+                    'choices' => [
+                        'GBP' => 'GBP',
+                        'RUB' => 'RUB',
+                    ]
+                ],
+                'submittedData' => 'GBP',
+            ],
         ];
     }
 
@@ -167,6 +200,15 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     public function testUnknownCurrency()
     {
         $this->factory->create($this->formType, null, ['currencies_list' => ['CUR', 'TST']]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\LogicException
+     * @expectedExceptionMessage The option "additional_currencies" must be null or not empty array.
+     */
+    public function testInvalidTypeOfAdditionalCurrenciesOption()
+    {
+        $this->factory->create($this->formType, null, ['additional_currencies' => 'string']);
     }
 
     public function testGetName()

@@ -30,7 +30,7 @@ class PriceListType extends AbstractType
                     'multiple' => true,
                     'required' => true,
                     'label' => 'orob2b.pricing.pricelist.currencies.label',
-                    'additional_currencies' => $priceList->getCurrencies(),
+                    'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
             )
         ;
