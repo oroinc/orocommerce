@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
@@ -30,12 +31,14 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager', ['get'])
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->setMethods(['get'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->localeSettings = $this
-            ->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings', ['getCurrency', 'getLocale'])
+            ->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+            ->setMethods(['getCurrency', 'getLocale'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->localeSettings->expects($this->any())
@@ -89,6 +92,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $currencyBundle = Intl::getCurrencyBundle();
+
         return [
             'full currency name and data from system config' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
@@ -97,8 +102,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        'USD' => 'US Dollar',
-                        'UAH' => 'Ukrainian Hryvnia',
+                        'USD' => $currencyBundle->getCurrencyName('USD'),
+                        'UAH' => $currencyBundle->getCurrencyName('UAH'),
                     ]
                 ],
                 'submittedData' => 'UAH',
@@ -128,7 +133,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        'EUR' => 'Euro',
+                        'EUR' => $currencyBundle->getCurrencyName('EUR'),
                     ]
                 ],
                 'submittedData' => 'EUR',
@@ -143,7 +148,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        'RUB' => 'Russian Ruble',
+                        'RUB' => $currencyBundle->getCurrencyName('RUB'),
                     ]
                 ],
                 'submittedData' => 'RUB',
@@ -157,9 +162,9 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'expectedOptions' => [
                     'compact' => false,
                     'choices' => [
-                        'GBP' => 'British Pound Sterling',
-                        'USD' => 'US Dollar',
-                        'UAH' => 'Ukrainian Hryvnia',
+                        'GBP' => $currencyBundle->getCurrencyName('GBP'),
+                        'USD' => $currencyBundle->getCurrencyName('USD'),
+                        'UAH' => $currencyBundle->getCurrencyName('UAH'),
                     ]
                 ],
                 'submittedData' => 'UAH',

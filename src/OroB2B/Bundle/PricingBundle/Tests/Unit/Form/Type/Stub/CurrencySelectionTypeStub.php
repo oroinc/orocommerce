@@ -14,9 +14,11 @@ class CurrencySelectionTypeStub extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults([
-            'additional_currencies' => null,
-        ]);
+        $resolver->setDefaults(
+            [
+                'additional_currencies' => null,
+            ]
+        );
     }
 
     /**
