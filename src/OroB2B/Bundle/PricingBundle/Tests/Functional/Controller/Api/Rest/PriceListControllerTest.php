@@ -13,7 +13,7 @@ class PriceListControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
 
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\Fixtures\LoadPriceLists']);
     }
@@ -41,6 +41,6 @@ class PriceListControllerTest extends WebTestCase
             $this->getUrl('orob2b_api_pricing_delete_price_list', ['id' => $priceList->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 403);
+        $this->assertJsonResponseStatusCodeEquals($result, 403);
     }
 }
