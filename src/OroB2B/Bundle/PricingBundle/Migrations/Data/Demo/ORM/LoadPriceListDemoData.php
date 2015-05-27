@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency;
-
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\AbstractFixture;
 
 class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -17,16 +17,6 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
      * @var ContainerInterface
      */
     protected $container;
-
-    /**
-     * @var array
-     */
-    protected $pages = [];
-
-    /**
-     * @var array
-     */
-    protected $priceLists = [];
 
     /**
      * {@inheritdoc}
@@ -58,11 +48,11 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
             $priceList->setName($row['name']);
             $priceList->setDefault((bool)$row['default']);
 
-            $currencies = explode(', ', $row['currencies']);
+            $currencies = explode(',', $row['currencies']);
             foreach ($currencies as $currency) {
                 $priceListCurrency = new PriceListCurrency();
                 $priceListCurrency->setPriceList($priceList);
-                $priceListCurrency->setCurrency($currency);
+                $priceListCurrency->setCurrency(trim($currency));
                 $priceList->addCurrency($priceListCurrency);
             }
 
