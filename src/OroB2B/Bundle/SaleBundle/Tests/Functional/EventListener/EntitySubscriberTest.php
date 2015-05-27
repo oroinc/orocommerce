@@ -51,5 +51,4 @@ class EntitySubscriberTest extends WebTestCase
 
         $this->assertEquals($quote->getId(), $quote->getQid());
     }
-
 }

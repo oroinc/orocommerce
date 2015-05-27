@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\SaleBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
 /**
@@ -56,7 +59,7 @@ class Quote extends ExtendQuote
     protected $qid;
 
     /**
-     * @var \Oro\Bundle\UserBundle\Entity\User
+     * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
      * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
@@ -108,6 +111,20 @@ class Quote extends ExtendQuote
      */
     protected $validUntil;
 
+    /**
+     * @var Collection|QuoteProduct[]
+     *
+     * @ORM\OneToMany(targetEntity="QuoteProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $quoteProducts;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->quoteProducts = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -214,10 +231,10 @@ class Quote extends ExtendQuote
     /**
      * Set owner
      *
-     * @param \Oro\Bundle\UserBundle\Entity\User $owner
+     * @param User $owner
      * @return Quote
      */
-    public function setOwner(\Oro\Bundle\UserBundle\Entity\User $owner = null)
+    public function setOwner(User $owner = null)
     {
         $this->owner = $owner;
 
@@ -227,10 +244,43 @@ class Quote extends ExtendQuote
     /**
      * Get owner
      *
-     * @return \Oro\Bundle\UserBundle\Entity\User
+     * @return User
      */
     public function getOwner()
     {
         return $this->owner;
+    }
+
+    /**
+     * Add quoteProducts
+     *
+     * @param QuoteProductItem $quoteProducts
+     * @return Quote
+     */
+    public function addQuoteProduct(QuoteProductItem $quoteProducts)
+    {
+        $this->quoteProducts[] = $quoteProducts;
+
+        return $this;
+    }
+
+    /**
+     * Remove quoteProducts
+     *
+     * @param QuoteProductItem $quoteProducts
+     */
+    public function removeQuoteProduct(QuoteProductItem $quoteProducts)
+    {
+        $this->quoteProducts->removeElement($quoteProducts);
+    }
+
+    /**
+     * Get quoteProducts
+     *
+     * @return Collection|QuoteProduct[]
+     */
+    public function getQuoteProducts()
+    {
+        return $this->quoteProducts;
     }
 }

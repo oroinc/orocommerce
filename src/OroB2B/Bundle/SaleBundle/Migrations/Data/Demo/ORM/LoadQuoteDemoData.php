@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
-
 class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     /**

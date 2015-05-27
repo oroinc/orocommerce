@@ -12,6 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_0\OroB2BSaleBundle as OroB2BSaleBundle10;
+use OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_1\OroB2BSaleBundle as OroB2BSaleBundle11;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -67,7 +68,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -79,6 +80,9 @@ class OroB2BSaleBundleInstaller implements
         $migration->setNoteExtension($this->noteExtension);
         $migration->setAttachmentExtension($this->attachmentExtension);
         $migration->setActivityExtension($this->activityExtension);
+        $migration->up($schema, $queries);
+
+        $migration = new OroB2BSaleBundle11();
         $migration->up($schema, $queries);
     }
 }
