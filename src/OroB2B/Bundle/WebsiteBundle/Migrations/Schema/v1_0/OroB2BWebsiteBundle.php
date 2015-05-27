@@ -75,11 +75,14 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+
         $table->setPrimaryKey(['id']);
+
         $table->addUniqueIndex(['name'], 'UNIQ_CBB2CF835E237E06');
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
         $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
         $table->addIndex(['organization_id'], 'IDX_CBB2CF8332C8A3DE', []);
+        $table->addIndex(['price_list_id'], 'IDX_CBB2CF835688DED7', []);
     }
 
     /**

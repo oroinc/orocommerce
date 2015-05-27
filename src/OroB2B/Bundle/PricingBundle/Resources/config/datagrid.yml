@@ -104,3 +104,199 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_pricing_price_list_delete
         action_configuration: [@orob2b_pricing.datagrid.price_list_permissions_provider, "getPermissions"]
+
+    price-list-customers-grid:
+        source:
+            acl_resource:       orob2b_pricing_price_list_update
+            type:               orm
+            query:
+                select:
+                    - customer.id
+                    - customer.name
+                    - customerGroup.name as groupName
+                    - parent.name as parentName
+                    - >
+                      (CASE WHEN (:price_list_id IS NOT NULL) THEN
+                        CASE WHEN (:price_list_id = customer.priceList OR customer.id IN (:data_in)) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ELSE
+                        CASE WHEN customer.id IN (:data_in) AND customer.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      END) as has_price_list
+                from:
+                    - { table: %orob2b_customer.entity.customer.class%, alias: customer }
+                join:
+                    left:
+                        - { join: customer.group, alias: customerGroup }
+                        - { join: customer.parent, alias: parent }
+            bind_parameters:
+                - price_list_id
+        columns:
+            has_price_list:
+                label:          orob2b.pricing.pricelist.has_price_list.label
+                editable:       true
+                frontend_type:  boolean
+            name:
+                label:          orob2b.customer.name.label
+            groupName:
+                label:          orob2b.customer.group.label
+            parentName:
+                label:          orob2b.customer.parent.label
+        filters:
+            columns:
+                has_price_list:
+                    type:       boolean
+                    data_name:  has_price_list
+                name:
+                    type:       string
+                    data_name:  customer.name
+                groupName:
+                    type:       string
+                    data_name:  groupName
+                parentName:
+                    type:       string
+                    data_name:  parentName
+        sorters:
+            multiple_sorting:   true
+            columns:
+                has_price_list:
+                    data_name:  has_price_list
+                name:
+                    data_name:  customer.name
+                groupName:
+                    data_name:  groupName
+                parentName:
+                    data_name:  parentName
+            default:
+                id:             %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                has_price_list: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                name:           %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+        options:
+            rowSelection:
+                dataField:      id
+                columnName:     has_price_list
+                selectors:
+                    included:   '#priceListAppendCustomers'
+                    excluded:   '#priceListRemoveCustomers'
+
+    price-list-customer-groups-grid:
+        source:
+            acl_resource:       orob2b_pricing_price_list_update
+            type:               orm
+            query:
+                select:
+                    - customerGroup.id
+                    - customerGroup.name
+                    - >
+                      (CASE WHEN (:price_list_id IS NOT NULL) THEN
+                        CASE WHEN (:price_list_id = customerGroup.priceList OR customerGroup.id IN (:data_in)) AND customerGroup.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ELSE
+                        CASE WHEN customerGroup.id IN (:data_in) AND customerGroup.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      END) as has_price_list
+                from:
+                    - { table: %orob2b_customer.entity.customer_group.class%, alias: customerGroup }
+            bind_parameters:
+                - price_list_id
+        columns:
+            has_price_list:
+                label:          orob2b.pricing.pricelist.has_price_list.label
+                editable:       true
+                frontend_type:  boolean
+            name:
+                label:          orob2b.customer.customergroup.name.label
+        filters:
+            columns:
+                has_price_list:
+                    type:       boolean
+                    data_name:  has_price_list
+                name:
+                    type:       string
+                    data_name:  customerGroup.name
+        sorters:
+            multiple_sorting:   true
+            columns:
+                has_price_list:
+                    data_name:  has_price_list
+                name:
+                    data_name:  customerGroup.name
+            default:
+                id:             %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                has_price_list: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                name:           %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+        options:
+            rowSelection:
+                dataField:      id
+                columnName:     has_price_list
+                selectors:
+                    included:   '#priceListAppendCustomerGroups'
+                    excluded:   '#priceListRemoveCustomerGroups'
+
+    price-list-websites-grid:
+        source:
+            acl_resource:       orob2b_pricing_price_list_update
+            type:               orm
+            query:
+                select:
+                    - website.id
+                    - website.name
+                    - website.url
+                    - >
+                      (CASE WHEN (:price_list_id IS NOT NULL) THEN
+                        CASE WHEN (:price_list_id = website.priceList OR website.id IN (:data_in)) AND website.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ELSE
+                        CASE WHEN website.id IN (:data_in) AND website.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      END) as has_price_list
+                from:
+                    - { table: %orob2b_website.website.class%, alias: website }
+            bind_parameters:
+                - price_list_id
+        columns:
+            has_price_list:
+                label:          orob2b.pricing.pricelist.has_price_list.label
+                editable:       true
+                frontend_type:  boolean
+            name:
+                label:          orob2b.website.name.label
+            url:
+                label:          orob2b.website.url.label
+        filters:
+            columns:
+                has_price_list:
+                    type:       boolean
+                    data_name:  has_price_list
+                name:
+                    type:       string
+                    data_name:  website.name
+                url:
+                    type:       string
+                    data_name:  website.url
+        sorters:
+            multiple_sorting:   true
+            columns:
+                has_price_list:
+                    data_name:  has_price_list
+                name:
+                    data_name:  website.name
+                url:
+                    data_name:  website.url
+            default:
+                id:             %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                has_price_list: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                name:           %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+        options:
+            rowSelection:
+                dataField:      id
+                columnName:     has_price_list
+                selectors:
+                    included:   '#priceListAppendWebsites'
+                    excluded:   '#priceListRemoveWebsites'

@@ -35,9 +35,11 @@ class OroB2BCustomerBundle implements Migration
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('group_id', 'integer', ['notnull' => false]);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_name_idx', []);
+        $table->addIndex(['price_list_id'], 'IDX_CB6AF6DA5688DED7', []);
     }
 
     /**
@@ -50,9 +52,11 @@ class OroB2BCustomerBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_group_name_idx', []);
+        $table->addIndex(['price_list_id'], 'IDX_5A485C2B5688DED7', []);
     }
 
     /**

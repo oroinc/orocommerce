@@ -123,8 +123,8 @@ class GroupTypeTest extends FormIntegrationTestCase
     ) {
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
-            ->setMethods(['execute', 'getSQL', '_doExecute'])
-            ->getMock();
+            ->setMethods(['execute'])
+            ->getMockForAbstractClass();
         $query->expects($this->any())
             ->method('execute')
             ->willReturnCallback(

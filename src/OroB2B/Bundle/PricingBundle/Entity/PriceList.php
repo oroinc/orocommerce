@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
 /**
  * @ORM\Table(name="orob2b_price_list")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
@@ -71,6 +75,27 @@ class PriceList
      * )
      */
     protected $currencies;
+
+    /**
+     * @var Customer[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer", mappedBy="priceList")
+     */
+    protected $customers;
+
+    /**
+     * @var CustomerGroup[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup", mappedBy="priceList")
+     */
+    protected $customerGroups;
+
+    /**
+     * @var Website[]|Collection
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website", mappedBy="priceList")
+     */
+    protected $websites;
     
     /**
      * @var \DateTime $createdAt
@@ -110,6 +135,9 @@ class PriceList
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
+        $this->customers = new ArrayCollection();
+        $this->customerGroups = new ArrayCollection();
+        $this->websites = new ArrayCollection();
     }
 
     /**
@@ -246,6 +274,120 @@ class PriceList
             ->where(Criteria::expr()->eq('currency', $currency));
 
         return $this->currencies->matching($criteria)->first();
+    }
+
+    /**
+     * @param Customer $customer
+     *
+     * @return PriceList
+     */
+    public function addCustomer(Customer $customer)
+    {
+        if (!$this->customers->contains($customer)) {
+            $this->customers->add($customer);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Customer $customer
+     *
+     * @return PriceList
+     */
+    public function removeCustomer(Customer $customer)
+    {
+        if ($this->customers->contains($customer)) {
+            $this->customers->removeElement($customer);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get customers
+     *
+     * @return Collection|Customer[]
+     */
+    public function getCustomers()
+    {
+        return $this->customers;
+    }
+
+    /**
+     * @param CustomerGroup $customerGroup
+     *
+     * @return PriceList
+     */
+    public function addCustomerGroup(CustomerGroup $customerGroup)
+    {
+        if (!$this->customerGroups->contains($customerGroup)) {
+            $this->customerGroups->add($customerGroup);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param CustomerGroup $customerGroup
+     *
+     * @return PriceList
+     */
+    public function removeCustomerGroup(CustomerGroup $customerGroup)
+    {
+        if ($this->customerGroups->contains($customerGroup)) {
+            $this->customerGroups->removeElement($customerGroup);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get customer groups
+     *
+     * @return Collection|CustomerGroup[]
+     */
+    public function getCustomerGroups()
+    {
+        return $this->customerGroups;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return PriceList
+     */
+    public function addWebsite(Website $website)
+    {
+        if (!$this->websites->contains($website)) {
+            $this->websites->add($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     *
+     * @return PriceList
+     */
+    public function removeWebsite(Website $website)
+    {
+        if ($this->websites->contains($website)) {
+            $this->websites->removeElement($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get websites
+     *
+     * @return Collection|Website[]
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
     }
     
     /**

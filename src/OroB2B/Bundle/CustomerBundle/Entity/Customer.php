@@ -288,7 +288,7 @@ class Customer
      *
      * @return Customer
      */
-    public function setPriceList(PriceList $priceList)
+    public function setPriceList(PriceList $priceList = null)
     {
         $this->priceList = $priceList;
 
