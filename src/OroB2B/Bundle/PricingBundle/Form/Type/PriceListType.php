@@ -6,7 +6,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListType extends AbstractType
 {
@@ -18,15 +21,19 @@ class PriceListType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var PriceList $priceList */
+        $priceList = $builder->getData();
+
         $builder
             ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
             ->add(
                 'currencies',
-                'oro_currency_selection',
+                CurrencySelectionType::NAME,
                 [
                     'multiple' => true,
                     'required' => true,
-                    'label' => 'orob2b.pricing.pricelist.currencies.label'
+                    'label' => 'orob2b.pricing.pricelist.currencies.label',
+                    'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
             )
             ->add(

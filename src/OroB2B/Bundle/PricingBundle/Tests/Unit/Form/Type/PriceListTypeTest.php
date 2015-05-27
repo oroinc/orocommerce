@@ -109,6 +109,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
             $prop->setValue($existingPriceList, 42);
             $existingPriceList->setName($defaultData['name']);
 
+            foreach ($defaultData['currencies'] as $currency) {
+                $existingPriceList->addCurrencyByCode($currency);
+            }
+
             $defaultData = $existingPriceList;
         }
 
@@ -127,7 +131,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
         /** @var PriceList $result */
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
-        $this->assertEquals($expectedData['currencies'], $result->getCurrencies());
+        $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
         $this->assertEquals($expectedData['appendCustomers'], $form->get('appendCustomers')->getData());
         $this->assertEquals($expectedData['removeCustomers'], $form->get('removeCustomers')->getData());
         $this->assertEquals($expectedData['appendCustomerGroups'], $form->get('appendCustomerGroups')->getData());
