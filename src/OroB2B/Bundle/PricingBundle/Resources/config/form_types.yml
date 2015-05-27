@@ -1,0 +1,10 @@
+parameters:
+    orob2b_pricing.form.type.product_price_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType
+
+services:
+    orob2b_pricing.form.type.product_price_collection:
+        class: %orob2b_pricing.form.type.product_price_collection.class%
+        arguments:
+            - %orob2b_pricing.entity.product_price.class%
+        tags:
+            - { name: form.type, alias: orob2b_pricing_product_price_collection }
