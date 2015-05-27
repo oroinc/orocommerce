@@ -65,7 +65,8 @@ class PriceList
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency",
-     *      mappedBy="priceList"
+     *      mappedBy="priceList",
+     *      cascade={"persist"}
      * )
      */
     protected $currencies;
