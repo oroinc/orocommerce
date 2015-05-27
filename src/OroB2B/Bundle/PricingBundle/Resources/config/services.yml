@@ -32,3 +32,12 @@ services:
         arguments:
             - %orob2b_pricing.entity.price_list.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_pricing.form.autocomplete.price_list.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_pricing.entity.price_list.class%
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
+        lazy: true

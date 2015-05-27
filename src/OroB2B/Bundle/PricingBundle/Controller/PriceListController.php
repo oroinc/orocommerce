@@ -37,7 +37,7 @@ class PriceListController extends Controller
 
     /**
      * @Route("/info/{id}", name="orob2b_pricing_price_list_info", requirements={"id"="\d+"})
-     * @Template
+     * @Template("OroB2BPricingBundle:PriceList/widget:info.html.twig")
      * @AclAncestor("orob2b_pricing_price_list_view")
      * @param PriceList $priceList
      * @return array
@@ -106,7 +106,7 @@ class PriceListController extends Controller
      */
     protected function update(PriceList $priceList)
     {
-        $form = $this->createForm(PriceListType::NAME);
+        $form = $this->createForm(PriceListType::NAME, $priceList);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,

@@ -1,8 +1,14 @@
 parameters:
     orob2b_pricing.form.type.price_list.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListType
+    orob2b_pricing.form.type.price_list_select.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType
 
 services:
     orob2b_pricing.form.type.price_list:
         class: %orob2b_pricing.form.type.price_list.class%
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
+
+    orob2b_pricing.form.type.price_list_select:
+        class: %orob2b_pricing.form.type.price_list_select.class%
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_list_select }
