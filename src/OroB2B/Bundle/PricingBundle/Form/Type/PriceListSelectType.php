@@ -21,8 +21,8 @@ class PriceListSelectType extends AbstractType
                 'autocomplete_alias' => 'orob2b_pricing_price_list',
                 'create_form_route' => 'orob2b_pricing_price_list_create',
                 'configs' => [
-                    'placeholder' => 'orob2b.pricing.form.choose_price_list',
-                ],
+                    'placeholder' => 'orob2b.pricing.form.choose_price_list'
+                ]
             ]
         );
     }
