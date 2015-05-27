@@ -24,9 +24,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
  *          }
  *      }
  * )
@@ -129,26 +126,27 @@ class QuoteProduct
     }
 
     /**
-     * Add quoteProductItems
+     * Add quoteProductItem
      *
-     * @param QuoteProductItem $quoteProductItems
+     * @param QuoteProductItem $quoteProductItem
      * @return QuoteProduct
      */
-    public function addQuoteProductItem(QuoteProductItem $quoteProductItems)
+    public function addQuoteProductItem(QuoteProductItem $quoteProductItem)
     {
-        $this->quoteProductItems[] = $quoteProductItems;
+        $this->quoteProductItems[] = $quoteProductItem;
+        $quoteProductItem->setQuoteProduct($this);
 
         return $this;
     }
 
     /**
-     * Remove quoteProductItems
+     * Remove quoteProductItem
      *
-     * @param QuoteProductItem $quoteProductItems
+     * @param QuoteProductItem $quoteProductItem
      */
-    public function removeQuoteProductItem(QuoteProductItem $quoteProductItems)
+    public function removeQuoteProductItem(QuoteProductItem $quoteProductItem)
     {
-        $this->quoteProductItems->removeElement($quoteProductItems);
+        $this->quoteProductItems->removeElement($quoteProductItem);
     }
 
     /**

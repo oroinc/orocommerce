@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class QuoteType extends AbstractType
+class QuoteProductItemType extends PriceType
 {
-    
+    const NAME = 'orob2b_sale_quote_product_item';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -16,24 +17,18 @@ class QuoteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('qid', 'hidden')
-            ->add('owner', null, [
+            ->add('quantity', null, [
                 'required' => true,
-                'label' => 'orob2b.sale.quote.owner.label',
+                'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label',
             ])
-            ->add('validUntil', null, [
-                'required' => false,
-                'label' => 'orob2b.sale.quote.valid_until.label',
+            ->add('productUnit', null, [
+                'required' => true,
+                'label' => 'orob2b.product.productunit.entity_label',
             ])
-            ->add(
-                'quoteProducts',
-                QuoteProductCollectionType::NAME,
-                [
-                    'label' => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
-                    'required' => false
-                ]
-            )
         ;
+        $options['currencies_list'] = null;
+        $options['compact'] = false;
+        parent::buildForm($builder, $options);
     }
 
     /**
@@ -42,8 +37,8 @@ class QuoteType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
-            'intention' => 'sale_quote',
+            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
+            'intention' => 'sale_quote_product_item',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
@@ -53,6 +48,6 @@ class QuoteType extends AbstractType
      */
     public function getName()
     {
-        return 'orob2b_sale_quote';
+        return self::NAME;
     }
 }

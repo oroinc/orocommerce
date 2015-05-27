@@ -6,9 +6,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class QuoteType extends AbstractType
+class QuoteProductType extends AbstractType
 {
-    
+    const NAME = 'orob2b_sale_quote_product';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -16,20 +17,16 @@ class QuoteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('qid', 'hidden')
-            ->add('owner', null, [
+            ->add('product', null, [
                 'required' => true,
-                'label' => 'orob2b.sale.quote.owner.label',
-            ])
-            ->add('validUntil', null, [
-                'required' => false,
-                'label' => 'orob2b.sale.quote.valid_until.label',
+                'property' => 'sku',
+                'label' => 'orob2b.product.entity_label',
             ])
             ->add(
-                'quoteProducts',
-                QuoteProductCollectionType::NAME,
+                'quoteProductItems',
+                QuoteProductItemCollectionType::NAME,
                 [
-                    'label' => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
+                    'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
                     'required' => false
                 ]
             )
@@ -42,8 +39,8 @@ class QuoteType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
-            'intention' => 'sale_quote',
+            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
+            'intention' => 'sale_quote_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
@@ -53,6 +50,6 @@ class QuoteType extends AbstractType
      */
     public function getName()
     {
-        return 'orob2b_sale_quote';
+        return self::NAME;
     }
 }
