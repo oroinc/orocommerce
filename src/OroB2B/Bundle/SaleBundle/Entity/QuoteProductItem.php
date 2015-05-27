@@ -23,9 +23,6 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
  *          }
  *      }
  * )

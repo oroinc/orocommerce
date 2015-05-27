@@ -27,9 +27,6 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
- *          },
- *          "dataaudit"={
- *              "auditable"=true
  *          }
  *      }
  * )
@@ -254,12 +251,13 @@ class Quote extends ExtendQuote
     /**
      * Add quoteProducts
      *
-     * @param QuoteProductItem $quoteProducts
+     * @param QuoteProduct $quoteProduct
      * @return Quote
      */
-    public function addQuoteProduct(QuoteProductItem $quoteProducts)
+    public function addQuoteProduct(QuoteProduct $quoteProduct)
     {
-        $this->quoteProducts[] = $quoteProducts;
+        $this->quoteProducts[] = $quoteProduct;
+        $quoteProduct->setQuote($this);
 
         return $this;
     }
@@ -267,11 +265,11 @@ class Quote extends ExtendQuote
     /**
      * Remove quoteProducts
      *
-     * @param QuoteProductItem $quoteProducts
+     * @param QuoteProduct $quoteProduct
      */
-    public function removeQuoteProduct(QuoteProductItem $quoteProducts)
+    public function removeQuoteProduct(QuoteProduct $quoteProduct)
     {
-        $this->quoteProducts->removeElement($quoteProducts);
+        $this->quoteProducts->removeElement($quoteProduct);
     }
 
     /**
@@ -282,5 +280,15 @@ class Quote extends ExtendQuote
     public function getQuoteProducts()
     {
         return $this->quoteProducts;
+    }
+
+    /**
+     * To String function
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->qid;
     }
 }

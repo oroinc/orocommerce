@@ -14,7 +14,17 @@ orob2b:
             
             widgets:
                 quote_information: 'Quote Information'
-                
+
+            quoteproduct:
+                entity_label: 'Quote Product'
+                entity_plural_label: 'Quote Products'
+
+                quoteproductitem:
+                    entity_label: 'Quote Product Line'
+                    entity_plural_label: 'Quote Product Lines'
+                    quantity.label: 'Quantity'
+                    product_unit.label: 'Product Unit'
+
         controller:
             quote:
                 saved.message: 'Quote has been saved'
