@@ -42,9 +42,7 @@ class CurrencySelectionType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => function (Options $options) {
-                if ($options['currencies_list'] !== null && !is_array($options['currencies_list'])
-                        || is_array($options['currencies_list']) && empty($options['currencies_list'])
-                ) {
+                if ($this->isInvalidOptionCurrenciesParameter($options, 'currencies_list')) {
                     throw new LogicException('The option "currencies_list" must be null or not empty array.');
                 }
 
@@ -53,6 +51,12 @@ class CurrencySelectionType extends AbstractType
                 } else {
                     $currencies = $this->configManager->get('oro_currency.allowed_currencies');
                 }
+
+                if ($this->isInvalidOptionCurrenciesParameter($options, 'additional_currencies')) {
+                    throw new LogicException('The option "additional_currencies" must be null or not empty array.');
+                }
+
+                $currencies = array_merge($currencies, (array) $options['additional_currencies']);
 
                 if (empty($currencies)) {
                     //TODO: Change the getting currency list from system configuration option
@@ -66,7 +70,19 @@ class CurrencySelectionType extends AbstractType
             },
             'compact' => false,
             'currencies_list' => null,
+            'additional_currencies' => null,
         ]);
+    }
+
+    /**
+     * @param Options $options
+     * @param string $parameterName
+     * @return boolean
+     */
+    protected function isInvalidOptionCurrenciesParameter(Options $options, $parameterName)
+    {
+        return $options[$parameterName] !== null && !is_array($options[$parameterName])
+            || is_array($options[$parameterName]) && empty($options[$parameterName]);
     }
 
     /**
