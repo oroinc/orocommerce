@@ -82,7 +82,6 @@ class OroB2BWebsiteBundle implements Migration
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
         $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
         $table->addIndex(['organization_id'], 'IDX_CBB2CF8332C8A3DE', []);
-        $table->addIndex(['price_list_id'], 'IDX_CBB2CF835688DED7', []);
     }
 
     /**

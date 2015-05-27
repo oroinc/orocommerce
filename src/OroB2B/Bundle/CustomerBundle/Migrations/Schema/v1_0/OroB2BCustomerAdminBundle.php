@@ -39,7 +39,6 @@ class OroB2BCustomerBundle implements Migration
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_name_idx', []);
-        $table->addIndex(['price_list_id'], 'IDX_CB6AF6DA5688DED7', []);
     }
 
     /**
@@ -56,7 +55,6 @@ class OroB2BCustomerBundle implements Migration
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_group_name_idx', []);
-        $table->addIndex(['price_list_id'], 'IDX_5A485C2B5688DED7', []);
     }
 
     /**
