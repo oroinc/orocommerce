@@ -326,8 +326,12 @@
         <attribute name="mailer-encryption" default="null"/>
         <attribute name="mailer-user" default="null"/>
         <attribute name="mailer-password" default="null"/>
-        <attribute name="websocket-host" default="127.0.0.1"/>
-        <attribute name="websocket-port" default="8080"/>
+        <attribute name="websocket-bind-address" default="0.0.0.0"/>
+        <attribute name="websocket-bind-port" default="8080"/>
+        <attribute name="websocket-frontend-host" default="*"/>
+        <attribute name="websocket-frontend-port" default="8080"/>
+        <attribute name="websocket-backend-host" default="*"/>
+        <attribute name="websocket-backend-port" default="8080"/>
         <attribute name="session-handler" default="null"/>
         <attribute name="locale" default="en"/>
         <attribute name="secret" default="ThisTokenIsNotSoSecretChangeIt"/>
@@ -357,8 +361,12 @@
             <echo file="${appconfig.filename}" append="true">    mailer_encryption: @{mailer-encryption}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    mailer_user: @{mailer-user}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    mailer_password: @{mailer-password}${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    websocket_host: @{websocket-host}${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    websocket_port: @{websocket-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_bind_address: @{websocket-bind-address}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_bind_port: @{websocket-bind-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_frontend_host: @{websocket-frontend-host}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_frontend_port: @{websocket-frontend-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_backend_host: @{websocket-backend-host}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    websocket_backend_port: @{websocket-backend-port}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    session_handler: @{session-handler}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    locale: @{locale}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    secret: @{secret}${line.separator}</echo>
