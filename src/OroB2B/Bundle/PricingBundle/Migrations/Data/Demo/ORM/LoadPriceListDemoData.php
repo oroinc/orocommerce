@@ -9,7 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency;
 
 class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -43,18 +42,13 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
+            $currencies = array_map('trim', explode(',', $row['currencies']));
 
             $priceList = new PriceList();
-            $priceList->setName($row['name']);
-            $priceList->setDefault((bool)$row['default']);
-
-            $currencies = explode(',', $row['currencies']);
-            foreach ($currencies as $currency) {
-                $priceListCurrency = new PriceListCurrency();
-                $priceListCurrency->setPriceList($priceList);
-                $priceListCurrency->setCurrency(trim($currency));
-                $priceList->addCurrency($priceListCurrency);
-            }
+            $priceList
+                ->setName($row['name'])
+                ->setDefault((bool)$row['default'])
+                ->setCurrencies($currencies);
 
             $manager->persist($priceList);
         }
