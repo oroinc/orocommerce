@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
- * @dpIsolation
+ * @dbIsolation
  */
 class PriceListControllerTest extends WebTestCase
 {
@@ -29,12 +29,18 @@ class PriceListControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
+    }
+
+    public function testDeleteDefault()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_3');
 
         $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_pricing_price_list_view', ['id' => $priceList->getId()])
+            'DELETE',
+            $this->getUrl('orob2b_api_customer_delete_customer', ['id' => $priceList->getId()])
         );
         $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 404);
+        $this->assertEmptyResponseStatusCodeEquals($result, 403);
     }
 }
