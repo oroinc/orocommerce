@@ -6,6 +6,8 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
                 max: 255
         currencies:
             - Valid: ~
+        prices:
+            - Valid: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
@@ -14,3 +16,19 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
         currency:
             - NotBlank: ~
             - Currency: ~
+
+OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        quantity:
+            - NotBlank: ~
+            - GreaterThanOrEqual:
+                value: 0
+        price:
+            - NotBlank: ~
+            - Valid: ~

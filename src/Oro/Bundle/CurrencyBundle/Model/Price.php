@@ -4,14 +4,14 @@ namespace Oro\Bundle\CurrencyBundle\Model;
 
 class Price
 {
-    /** @var  int */
+    /** @var float */
     protected $value;
 
-    /** @var  string */
+    /** @var string */
     protected $currency;
 
     /**
-     * @return int
+     * @return float
      */
     public function getValue()
     {
@@ -19,12 +19,26 @@ class Price
     }
 
     /**
-     * @param int $value
+     * @param float $value
+     * @param string $currency
+     * @return Price
+     */
+    public static function create($value, $currency)
+    {
+        $price = new self();
+        $price->setValue($value)
+            ->setCurrency($currency);
+
+        return $price;
+    }
+
+    /**
+     * @param float $value
      * @return $this
      */
     public function setValue($value)
     {
-        if (empty($value)) {
+        if (null === $value) {
             throw new \InvalidArgumentException('Price value can not be empty');
         }
 
