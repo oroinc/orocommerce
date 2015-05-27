@@ -51,7 +51,7 @@
                 'title': '',
                 'data': [
                     form_row(form.name),
-                    form_row(form.currencies)
+                    form_row(form.currencies),
                     form_widget(form.appendCustomers, {'id': 'priceListAppendCustomers'}),
                     form_widget(form.removeCustomers, {'id': 'priceListRemoveCustomers'}),
                     form_widget(form.appendCustomerGroups, {'id': 'priceListAppendCustomerGroups'}),
@@ -70,7 +70,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-customers-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-select-customers-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
@@ -83,7 +83,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-customer-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-select-customer-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
@@ -96,7 +96,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-select-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }

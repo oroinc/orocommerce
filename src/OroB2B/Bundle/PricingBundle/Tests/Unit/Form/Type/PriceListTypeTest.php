@@ -41,7 +41,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->type);
+        unset($this->type, $this->query);
     }
 
     /**
@@ -88,24 +88,16 @@ class PriceListTypeTest extends FormIntegrationTestCase
     public function testSubmit($defaultData, $submittedData, $expectedData, $appendAndRemoveForms = false)
     {
         if ($appendAndRemoveForms) {
-            $this->query->expects($this->at(0))
+            $this->query->expects($this->exactly(6))
                 ->method('execute')
-                ->willReturn([$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1)]);
-            $this->query->expects($this->at(1))
-                ->method('execute')
-                ->willReturn([$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2)]);
-            $this->query->expects($this->at(2))
-                ->method('execute')
-                ->willReturn([$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 3)]);
-            $this->query->expects($this->at(3))
-                ->method('execute')
-                ->willReturn([$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 4)]);
-            $this->query->expects($this->at(4))
-                ->method('execute')
-                ->willReturn([$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5)]);
-            $this->query->expects($this->at(5))
-                ->method('execute')
-                ->willReturn([$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)]);
+                ->willReturnOnConsecutiveCalls(
+                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1)],
+                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2)],
+                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 3)],
+                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 4)],
+                    [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5)],
+                    [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)]
+                );
         }
 
         if ($defaultData) {

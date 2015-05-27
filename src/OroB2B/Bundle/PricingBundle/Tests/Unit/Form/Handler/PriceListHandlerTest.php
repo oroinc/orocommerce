@@ -59,6 +59,14 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler = new PriceListHandler($this->form, $this->request, $this->manager);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->manager, $this->request, $this->form, $this->entity, $this->handler);
+    }
+
     public function testProcessValidData()
     {
         $appendedCustomer = new Customer();
@@ -84,38 +92,16 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->willReturn(true);
 
-        // Customers
-        $this->form->expects($this->at(3))
+        $this->form->expects($this->atLeastOnce())
             ->method('get')
-            ->with('appendCustomers')
-            ->willReturn($this->getFormForEntity($appendedCustomer));
-
-        $this->form->expects($this->at(4))
-            ->method('get')
-            ->with('removeCustomers')
-            ->willReturn($this->getFormForEntity($removedCustomer));
-
-        // Customer Groups
-        $this->form->expects($this->at(5))
-            ->method('get')
-            ->with('appendCustomerGroups')
-            ->willReturn($this->getFormForEntity($appendedCustomerGroup));
-
-        $this->form->expects($this->at(6))
-            ->method('get')
-            ->with('removeCustomerGroups')
-            ->willReturn($this->getFormForEntity($removedCustomerGroup));
-
-        //Websites
-        $this->form->expects($this->at(7))
-            ->method('get')
-            ->with('appendWebsites')
-            ->willReturn($this->getFormForEntity($appendedWebsite));
-
-        $this->form->expects($this->at(8))
-            ->method('get')
-            ->with('removeWebsites')
-            ->willReturn($this->getFormForEntity($removedWebsite));
+            ->willReturnMap([
+                ['appendCustomers', $this->getFormForEntity($appendedCustomer)],
+                ['removeCustomers', $this->getFormForEntity($removedCustomer)],
+                ['appendCustomerGroups', $this->getFormForEntity($appendedCustomerGroup)],
+                ['removeCustomerGroups', $this->getFormForEntity($removedCustomerGroup)],
+                ['appendWebsites', $this->getFormForEntity($appendedWebsite)],
+                ['removeWebsites', $this->getFormForEntity($removedWebsite)],
+            ]);
 
         //Object Manager
         $this->manager->expects($this->at(0))
