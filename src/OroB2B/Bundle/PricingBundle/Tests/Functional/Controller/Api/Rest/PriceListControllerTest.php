@@ -25,7 +25,7 @@ class PriceListControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_customer_delete_customer', ['id' => $priceList->getId()])
+            $this->getUrl('orob2b_api_pricing_delete_price_list', ['id' => $priceList->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
@@ -38,7 +38,7 @@ class PriceListControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_customer_delete_customer', ['id' => $priceList->getId()])
+            $this->getUrl('orob2b_api_pricing_delete_price_list', ['id' => $priceList->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 403);
