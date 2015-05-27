@@ -32,13 +32,13 @@ class CurrencyExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var Twig_SimpleFilter[] $filters */
         $filters = $this->extension->getFilters();
 
-        $this->assertCount(1, $filters);
+        $this->assertCount(2, $filters);
 
-        $availableFilters = ['oro_format_price'];
+        $availableFilters = ['oro_format_price', 'oro_localized_currency_name'];
 
         foreach ($filters as $filter) {
             $this->assertInstanceOf('Twig_SimpleFilter', $filter);
-            $this->assertTrue(in_array($filter->getName(), $availableFilters));
+            $this->assertTrue(in_array($filter->getName(), $availableFilters, true));
         }
     }
 
@@ -76,7 +76,7 @@ class CurrencyExtensionTest extends \PHPUnit_Framework_TestCase
                     'attributes' => ['grouping_size' => 3],
                     'textAttributes' => ['grouping_separator_symbol' => ','],
                     'symbols' => ['symbols' => '$'],
-                    'locale' => 'en_US',
+                    'locale' => 'en_US'
                 ],
                 'expected' => '$1,234.5'
             ]

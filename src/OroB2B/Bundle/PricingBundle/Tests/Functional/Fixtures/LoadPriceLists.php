@@ -53,6 +53,7 @@ class LoadPriceLists extends AbstractFixture
             $priceList
                 ->setName($priceListData['name'])
                 ->setDefault($priceListData['default'])
+                ->setCurrencies(['USD'])
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now);
 

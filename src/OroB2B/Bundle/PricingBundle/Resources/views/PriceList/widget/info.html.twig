@@ -5,6 +5,14 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.pricing.pricelist.name.label'|trans, entity.name) }}
+
+            {% if entity.currencies %}
+                {% set currencies = [] %}
+                {% for currency in entity.currencies %}
+                    {% set currencies = currencies|merge([currency|oro_localized_currency_name]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.currencies.label'|trans, UI.renderList(currencies)) }}
+            {% endif %}
         </div>
     </div>
 </div>
