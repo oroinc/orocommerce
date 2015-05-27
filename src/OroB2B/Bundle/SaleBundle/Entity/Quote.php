@@ -281,14 +281,4 @@ class Quote extends ExtendQuote
     {
         return $this->quoteProducts;
     }
-
-    /**
-     * To String function
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->qid;
-    }
 }
