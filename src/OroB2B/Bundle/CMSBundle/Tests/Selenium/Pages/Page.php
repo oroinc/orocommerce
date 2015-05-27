@@ -33,18 +33,9 @@ class Page extends AbstractPageEntity
      */
     public function setTitle($title)
     {
-        $this->test->byId('orob2b_cms_page_title')->value($title);
-
-        return $this;
-    }
-
-    /**
-     * @param string $content
-     * @return $this
-     */
-    public function setContent($content)
-    {
-        $this->test->byId('orob2b_cms_page_content')->value($content);
+        $element = $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_title')]");
+        $element->clear();
+        $element->value($title);
 
         return $this;
     }
@@ -55,7 +46,9 @@ class Page extends AbstractPageEntity
      */
     public function setSlug($slug)
     {
-        $this->test->byId('orob2b_cms_page_slug_slug')->value($slug);
+        $element = $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_slug')]");
+        $element->clear();
+        $element->value($slug);
 
         return $this;
     }
@@ -68,10 +61,10 @@ class Page extends AbstractPageEntity
     {
         switch ($slugMode) {
             case self::SLUG_MODE_NEW:
-                $this->test->byId('orob2b_cms_page_slug_mode_1')->click();
+                $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_1')]")->click();
                 break;
             case self::SLUG_MODE_OLD:
-                $this->test->byId('orob2b_cms_page_slug_mode_0')->click();
+                $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_0')]")->click();
                 break;
         }
 
@@ -83,7 +76,7 @@ class Page extends AbstractPageEntity
      */
     public function setSlugRedirect()
     {
-        $this->test->byId('orob2b_cms_page_slug_redirect')->click();
+        $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_redirect')]")->click();
 
         return $this;
     }
@@ -180,66 +173,22 @@ class Page extends AbstractPageEntity
 
     public function clickLeaveAsIsRadioButton()
     {
-        $this->test->byId('orob2b_cms_page_slug_mode_0')->click();
+        $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_0')]")->click();
 
         return $this;
     }
 
     public function clickUpdateRadioButton()
     {
-        $this->test->byId('orob2b_cms_page_slug_mode_1')->click();
-
-        return $this;
-    }
-
-    public function assertLeaveAsIsRadioButtonSelected()
-    {
-        $this->assertIsSelected(
-            $this->test->byName('orob2b_cms_page[slug][mode]'),
-            self::SLUG_MODE_OLD,
-            '"Leave Slug As Is" radio button is not selected'
-        );
-
-        return $this;
-    }
-
-    public function assertLeaveAsIsRadioButtonNotSelected()
-    {
-        $this->assertIsNotSelected(
-            $this->test->byName('orob2b_cms_page[slug][mode]'),
-            self::SLUG_MODE_OLD,
-            '"Leave Slug As Is" radio button is selected'
-        );
-
-        return $this;
-    }
-
-    public function assertUpdateRadioButtonSelected()
-    {
-        $this->assertIsSelected(
-            $this->test->byName('orob2b_cms_page[slug][mode]'),
-            self::SLUG_MODE_NEW,
-            '"Update Slug" radio button is not selected'
-        );
-
-        return $this;
-    }
-
-    public function assertUpdateRadioButtonNotSelected()
-    {
-        $this->assertIsNotSelected(
-            $this->test->byName('orob2b_cms_page[slug][mode]'),
-            self::SLUG_MODE_NEW,
-            '"Update Slug" radio button is selected'
-        );
+        $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_mode_1')]")->click();
 
         return $this;
     }
 
     public function assertSlugInputValue($slug)
     {
-        $this->assertElementValueEquals(
-            $this->test->byId('orob2b_cms_page_slug_slug'),
+        $this->test->assertEquals(
+            $this->test->byXpath("//input[starts-with(@id,'orob2b_cms_page_slug_slug')]")->value(),
             $slug,
             sprintf('Slug input does not contain slug %s', $slug)
         );

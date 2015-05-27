@@ -25,7 +25,8 @@ class Category extends AbstractPageEntity
     {
         parent::__construct($testCase, $redirect);
 
-        $this->defaultTitle = $this->test->byId('orob2b_catalog_category_titles_values_default');
+        $this->defaultTitle
+            = $this->test->byXpath("//input[starts-with(@id,'orob2b_catalog_category_titles_values_default')]");
     }
 
     /**
