@@ -50,8 +50,8 @@ class OroB2BSaleBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quote_product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('quantity', 'integer', []);
-        $table->addColumn('value', 'integer', []);
+        $table->addColumn('quantity', 'float', []);
+        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['quote_product_id'], 'IDX_3ED01F0AF5D31CE1', []);

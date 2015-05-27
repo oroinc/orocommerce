@@ -45,9 +45,9 @@ class QuoteProductItem extends Price
     protected $quoteProduct;
 
     /**
-     * @var integer
+     * @var float
      *
-     * @ORM\Column(name="quantity", type="integer")
+     * @ORM\Column(name="quantity", type="float")
      */
     protected $quantity;
 
@@ -60,9 +60,9 @@ class QuoteProductItem extends Price
     protected $productUnit;
 
     /**
-     * @var integer
+     * @var float
      *
-     * @ORM\Column(name="value", type="integer")
+     * @ORM\Column(name="value", type="money")
      */
     protected $value;
 
@@ -87,7 +87,7 @@ class QuoteProductItem extends Price
     /**
      * Set quantity
      *
-     * @param integer $quantity
+     * @param float $quantity
      * @return QuoteProductItem
      */
     public function setQuantity($quantity)
@@ -100,7 +100,7 @@ class QuoteProductItem extends Price
     /**
      * Get quantity
      *
-     * @return integer
+     * @return float
      */
     public function getQuantity()
     {
