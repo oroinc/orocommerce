@@ -27,7 +27,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *      }
  * )
  */
-class QuoteProductItem extends Price
+class QuoteProductItem
 {
     /**
      * @ORM\Id
@@ -72,6 +72,11 @@ class QuoteProductItem extends Price
      * @ORM\Column(name="currency", type="string")
      */
     protected $currency;
+
+    /**
+     * @var Price
+     */
+    protected $price;
 
 
     /**
@@ -151,5 +156,39 @@ class QuoteProductItem extends Price
     public function getProductUnit()
     {
         return $this->productUnit;
+    }
+
+    /**
+     * @param Price $price
+     * @return QuoteProductItem
+     */
+    public function setPrice(Price $price)
+    {
+        $this->price = $price;
+        $this->value = $this->price->getValue();
+        $this->currency = $this->price->getCurrency();
+
+        return $this;
+    }
+
+    /**
+     * @return Price|null
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function loadPrice()
+    {
+        // ToDo: waiting for merge method Price::create
+        //$this->price = Price::create($this->value, $this->currency);
+        $this->price = new Price();
+        $this->price->setValue($this->value)
+            ->setCurrency($this->currency)
+        ;
     }
 }

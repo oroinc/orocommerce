@@ -1,0 +1,11 @@
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
+    properties:
+        quantity:
+            - NotBlank: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        price:
+            - NotBlank: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Valid: ~
+
