@@ -13,7 +13,7 @@ class PriceListControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateWsseAuthHeader());
 
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\Fixtures\LoadPriceLists']);
     }
