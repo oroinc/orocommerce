@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @ORM\Entity
@@ -55,6 +56,14 @@ class CustomerGroup
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer", mappedBy="group")
      **/
     protected $customers;
+
+    /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", cascade={"persist"})
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $priceList;
 
     /**
      * Constructor
@@ -132,5 +141,25 @@ class CustomerGroup
     public function getCustomers()
     {
         return $this->customers;
+    }
+
+    /**
+     * @param PriceList $priceList
+     *
+     * @return CustomerGroup
+     */
+    public function setPriceList(PriceList $priceList)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
+    }
+
+    /**
+     * @return PriceList
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
     }
 }

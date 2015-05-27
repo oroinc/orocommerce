@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -20,8 +21,9 @@ class WebsiteTest extends EntityTestCase
             ['url', 'www.test.com'],
             ['owner', new User()],
             ['organization', new Organization()],
+            ['priceList', new PriceList()],
             ['createdAt', $now, false],
-            ['updatedAt', $now, false],
+            ['updatedAt', $now, false]
         ];
 
         $this->assertPropertyAccessors(new Website(), $properties);

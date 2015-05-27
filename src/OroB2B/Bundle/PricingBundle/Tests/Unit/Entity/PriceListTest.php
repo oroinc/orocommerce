@@ -19,7 +19,7 @@ class PriceListTest extends EntityTestCase
                 ['name', 'new price list'],
                 ['default', false],
                 ['createdAt', $now, false],
-                ['updatedAt', $now, false],
+                ['updatedAt', $now, false]
             ]
         );
     }
@@ -28,25 +28,34 @@ class PriceListTest extends EntityTestCase
     {
         $priceList = $this->createPriceList();
 
-        $this->assertInstanceOf(
-            'Doctrine\Common\Collections\ArrayCollection',
-            $priceList->getCurrencies()
-        );
+        $this->assertInternalType('array', $priceList->getCurrencies());
         $this->assertCount(0, $priceList->getCurrencies());
-
-        $currency = $this->createPriceListCurrency();
 
         $this->assertInstanceOf(
             'OroB2B\Bundle\PricingBundle\Entity\PriceList',
-            $priceList->addCurrency($currency)
+            $priceList->setCurrencies(['EUR', 'USD'])
         );
-        $this->assertCount(1, $priceList->getCurrencies());
+        $this->assertCount(2, $priceList->getCurrencies());
+        $this->assertEquals(['EUR', 'USD'], $priceList->getCurrencies());
 
-        $priceList->addCurrency($currency);
-        $this->assertCount(1, $priceList->getCurrencies());
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+            $priceList->setCurrencies(['EUR', 'PLN'])
+        );
+        $currentCurrencies = $priceList->getCurrencies();
+        $this->assertCount(2, $currentCurrencies);
+        $this->assertEquals(['EUR', 'PLN'], array_values($currentCurrencies));
 
-        $priceList->removeCurrency($currency);
-        $this->assertCount(0, $priceList->getCurrencies());
+        $this->assertTrue($priceList->hasCurrencyCode('EUR'));
+        $this->assertFalse($priceList->hasCurrencyCode('USD'));
+
+        $priceListCurrency = $priceList->getPriceListCurrencyByCode('EUR');
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency',
+            $priceListCurrency
+        );
+        $this->assertEquals($priceList, $priceListCurrency->getPriceList());
+        $this->assertEquals('EUR', $priceListCurrency->getCurrency());
     }
 
     /**
@@ -55,14 +64,6 @@ class PriceListTest extends EntityTestCase
     protected function createPriceList()
     {
         return new PriceList();
-    }
-
-    /**
-     * @return PriceListCurrency
-     */
-    protected function createPriceListCurrency()
-    {
-        return new PriceListCurrency();
     }
 
     public function testPrePersist()

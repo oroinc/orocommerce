@@ -18,6 +18,15 @@ class PriceListType extends AbstractType
     {
         $builder
             ->add('name', 'text', ['required' => true, 'label' => 'orob2b.pricing.pricelist.name.label'])
+            ->add(
+                'currencies',
+                'oro_currency_selection',
+                [
+                    'multiple' => true,
+                    'required' => true,
+                    'label' => 'orob2b.pricing.pricelist.currencies.label'
+                ]
+            )
         ;
     }
 
