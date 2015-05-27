@@ -27,3 +27,6 @@ orob2b.pricing:
 
     controller:
         price_list.saved.message: Price List has been saved
+
+    form:
+        choose_price_list: Choose a Price List...

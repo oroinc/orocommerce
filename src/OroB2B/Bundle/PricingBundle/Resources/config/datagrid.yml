@@ -1,11 +1,10 @@
 datagrid:
-    pricing-price-list-grid:
+    pricing-price-list-select-grid:
         options:
             entityHint:        priceList
-            entity_pagination: true
         source:
-            acl_resource: orob2b_pricing_price_list_view
-            type:         orm
+            acl_resource:      orob2b_pricing_price_list_view
+            type:              orm
             query:
                 select:
                     - priceList.id
@@ -29,6 +28,38 @@ datagrid:
                 frontend_type: datetime
         properties:
             id: ~
+        sorters:
+            columns:
+                name:
+                    data_name: priceList.name
+                createdAt:
+                    data_name: priceList.createdAt
+                updatedAt:
+                    data_name: priceList.updatedAt
+                default:
+                    data_name: priceList.default
+            default:
+                createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: priceList.name
+                createdAt:
+                    type:      datetime
+                    data_name: priceList.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: priceList.updatedAt
+                default:
+                    type:      boolean
+                    data_name: priceList.default
+
+    pricing-price-list-grid:
+        extends: pricing-price-list-select-grid
+        options:
+            entity_pagination: true
+        properties:
             view_link:
                 type:  url
                 route: orob2b_pricing_price_list_view
@@ -46,32 +77,6 @@ datagrid:
                 type: url
                 route: orob2b_pricing_price_list_default
                 params: [ id ]
-        sorters:
-            columns:
-                name:
-                    data_name: priceList.name
-                createdAt:
-                    data_name: priceList.createdAt
-                updatedAt:
-                    data_name: priceList.updatedAt
-                default:
-                    data_name: priceList.default
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: priceList.name
-                createdAt:
-                    type:      datetime
-                    data_name: priceList.createdAt
-                updatedAt:
-                    type:      datetime
-                    data_name: priceList.updatedAt
-                default:
-                    type:      boolean
-                    data_name: priceList.default
         actions:
             default:
                 type:          ajax

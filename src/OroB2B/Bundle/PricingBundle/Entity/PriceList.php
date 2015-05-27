@@ -26,6 +26,10 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "form"={
+ *              "form_type"="orob2b_pricing_price_list_select",
+ *              "grid_name"="pricing-price-list-select-grid",
  *          }
  *      }
  * )
