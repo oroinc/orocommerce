@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\Intl\Intl;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -13,6 +15,7 @@ class PriceListControllerTest extends WebTestCase
 {
     const PRICE_LIST_NAME = 'oldPriceList';
     const PRICE_LIST_NAME_EDIT = 'newPriceList';
+    const CURRENCY = 'USD';
 
     protected function setUp()
     {
@@ -98,7 +101,10 @@ class PriceListControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton('Save and Close')->form(
-            ['orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME_EDIT]
+            [
+                'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME_EDIT,
+                'orob2b_pricing_price_list[currencies]' => self::CURRENCY
+            ]
         );
 
         $this->client->followRedirects(true);
@@ -130,6 +136,7 @@ class PriceListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $html);
+        $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $html);
     }
 
     /**
