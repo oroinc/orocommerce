@@ -25,7 +25,7 @@ class Price
      */
     public static function create($value, $currency)
     {
-        $price = new Price();
+        $price = new self();
         $price->setValue($value)
             ->setCurrency($currency);
 
