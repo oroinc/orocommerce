@@ -328,9 +328,9 @@
         <attribute name="mailer-password" default="null"/>
         <attribute name="websocket-bind-address" default="0.0.0.0"/>
         <attribute name="websocket-bind-port" default="8080"/>
-        <attribute name="websocket-frontend-host" default="*"/>
+        <attribute name="websocket-frontend-host" default="'*'"/>
         <attribute name="websocket-frontend-port" default="8080"/>
-        <attribute name="websocket-backend-host" default="*"/>
+        <attribute name="websocket-backend-host" default="'*'"/>
         <attribute name="websocket-backend-port" default="8080"/>
         <attribute name="session-handler" default="null"/>
         <attribute name="locale" default="en"/>
