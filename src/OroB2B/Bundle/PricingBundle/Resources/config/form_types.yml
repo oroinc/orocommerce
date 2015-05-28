@@ -12,3 +12,5 @@ services:
         class: %orob2b_product.form.type.product_price.class%
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price }
+        calls:
+            - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]

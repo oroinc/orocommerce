@@ -58,6 +58,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new ProductPriceType();
+        $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
         parent::setUp();
     }
 

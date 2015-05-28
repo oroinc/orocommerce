@@ -14,6 +14,9 @@ class ProductPriceType extends AbstractType
 {
     const NAME = 'orob2b_pricing_product_price';
 
+    /** @var  string */
+    protected $dataClass;
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -38,10 +41,21 @@ class ProductPriceType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice',
+            'data_class' => $this->dataClass,
         ]);
     }
 
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @return string
+     */
     public function getName()
     {
         return self::NAME;
