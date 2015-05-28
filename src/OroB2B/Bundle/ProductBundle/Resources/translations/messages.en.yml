@@ -11,6 +11,7 @@ orob2b:
         in_category.label: In category
         unit_precisions.label: Unit Precisions
         prices.label: Prices
+        form.choose: 'Choose Product...'
 
         productunit:
             entity_label: Product Unit
