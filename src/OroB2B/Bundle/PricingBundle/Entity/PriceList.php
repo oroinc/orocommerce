@@ -38,6 +38,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class PriceList
 {

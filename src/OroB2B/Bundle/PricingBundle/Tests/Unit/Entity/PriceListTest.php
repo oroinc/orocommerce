@@ -64,15 +64,13 @@ class PriceListTest extends EntityTestCase
      * @dataProvider relationsDataProvider
      *
      * @param Customer|CustomerGroup|Website $entity
+     * @param string $getCollectionMethod
+     * @param string $addMethod
+     * @param string $removeMethod
      */
-    public function testRelations($entity)
+    public function testRelations($entity, $getCollectionMethod, $addMethod, $removeMethod)
     {
         $priceList = $this->createPriceList();
-
-        $entityClassName = (new \ReflectionClass($entity))->getShortName();
-        $getCollectionMethod = 'get' . $entityClassName . 's';
-        $addMethod = 'add' . $entityClassName;
-        $removeMethod = 'remove' . $entityClassName;
 
         $this->assertInstanceOf(
             'Doctrine\Common\Collections\ArrayCollection',
@@ -99,9 +97,24 @@ class PriceListTest extends EntityTestCase
     public function relationsDataProvider()
     {
         return [
-            'customer' => [new Customer()],
-            'customerGroup' => [new CustomerGroup()],
-            'website' => [new Website()],
+            'customer' => [
+                'entity' => new Customer(),
+                'getCollectionMethod' => 'getCustomers',
+                'addMethod' => 'addCustomer',
+                'removeMethod' => 'removeCustomer',
+            ],
+            'customerGroup' => [
+                'entity' => new CustomerGroup(),
+                'getCollectionMethod' => 'getCustomerGroups',
+                'addMethod' => 'addCustomerGroup',
+                'removeMethod' => 'removeCustomerGroup',
+            ],
+            'website' => [
+                'entity' => new Website(),
+                'getCollectionMethod' => 'getWebsites',
+                'addMethod' => 'addWebsite',
+                'removeMethod' => 'removeWebsite',
+            ],
         ];
     }
 

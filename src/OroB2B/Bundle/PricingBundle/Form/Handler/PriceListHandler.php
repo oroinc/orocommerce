@@ -97,43 +97,97 @@ class PriceListHandler
         array $appendWebsites,
         array $removeWebsites
     ) {
-        $this->setPriceList($entity, $appendCustomers);
-        $this->removePriceList($entity, $removeCustomers);
-        $this->setPriceList($entity, $appendCustomerGroups);
-        $this->removePriceList($entity, $removeCustomerGroups);
-        $this->setPriceList($entity, $appendWebsites);
-        $this->removePriceList($entity, $removeWebsites);
+        $this->setPriceListToCustomers($entity, $appendCustomers);
+        $this->removePriceListFromCustomers($entity, $removeCustomers);
+        $this->setPriceListToCustomerGroups($entity, $appendCustomerGroups);
+        $this->removePriceListFromCustomerGroups($entity, $removeCustomerGroups);
+        $this->setPriceListToWebsites($entity, $appendWebsites);
+        $this->removePriceListFromWebsites($entity, $removeWebsites);
 
         $this->manager->persist($entity);
         $this->manager->flush();
     }
 
     /**
-     * @param PriceList                            $priceList
-     * @param Customer[]|CustomerGroup[]|Website[] $entities
+     * @param PriceList $priceList
+     * @param array $customers
      */
-    protected function setPriceList(PriceList $priceList, array $entities)
+    protected function setPriceListToCustomers(PriceList $priceList, array $customers)
     {
-        foreach ($entities as $entity) {
-            $entity->setPriceList($priceList);
-
-            $method = 'add' . (new \ReflectionClass($entity))->getShortName();
-            $priceList->$method($entity);
+        /** @var Customer[] $customers */
+        foreach ($customers as $customer) {
+            $customer->setPriceList($priceList);
+            $priceList->addCustomer($customer);
         }
     }
 
     /**
-     * @param PriceList                            $priceList
-     * @param Customer[]|CustomerGroup[]|Website[] $entities
+     * @param PriceList $priceList
+     * @param array $customers
      */
-    protected function removePriceList(PriceList $priceList, array $entities)
+    protected function removePriceListFromCustomers(PriceList $priceList, array $customers)
     {
-        foreach ($entities as $entity) {
-            if ($entity->getPriceList()->getId() === $priceList->getId()) {
-                $entity->setPriceList(null);
+        /** @var Customer[] $customers */
+        foreach ($customers as $customer) {
+            if ($customer->getPriceList()->getId() === $priceList->getId()) {
+                $customer->setPriceList(null);
+                $priceList->removeCustomer($customer);
+            }
+        }
+    }
 
-                $method = 'remove' . (new \ReflectionClass($entity))->getShortName();
-                $priceList->$method($entity);
+    /**
+     * @param PriceList $priceList
+     * @param array $customerGroups
+     */
+    protected function setPriceListToCustomerGroups(PriceList $priceList, array $customerGroups)
+    {
+        /** @var CustomerGroup[] $customerGroups */
+        foreach ($customerGroups as $customerGroup) {
+            $customerGroup->setPriceList($priceList);
+            $priceList->addCustomer($customerGroup);
+        }
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $customerGroups
+     */
+    protected function removePriceListFromCustomerGroups(PriceList $priceList, array $customerGroups)
+    {
+        /** @var CustomerGroup[] $customerGroups */
+        foreach ($customerGroups as $customerGroup) {
+            if ($customerGroup->getPriceList()->getId() === $priceList->getId()) {
+                $customerGroup->setPriceList(null);
+                $priceList->removeCustomer($customerGroup);
+            }
+        }
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $websites
+     */
+    protected function setPriceListToWebsites(PriceList $priceList, array $websites)
+    {
+        /** @var Website[] $websites */
+        foreach ($websites as $website) {
+            $website->setPriceList($priceList);
+            $priceList->addCustomer($website);
+        }
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param array $websites
+     */
+    protected function removePriceListFromWebsites(PriceList $priceList, array $websites)
+    {
+        /** @var Website[] $websites */
+        foreach ($websites as $website) {
+            if ($website->getPriceList()->getId() === $priceList->getId()) {
+                $website->setPriceList(null);
+                $priceList->removeCustomer($website);
             }
         }
     }
