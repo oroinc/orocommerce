@@ -1,0 +1,46 @@
+<div class="widget-container">
+    {% if savedId is defined and savedId %}
+    <script type="text/javascript">
+        require(['oroui/js/widget-manager'],
+        function(widgetManager) {
+            widgetManager.getWidgetInstance(
+                {{ app.request.get('_wid')|json_encode|raw }},
+                function (widget) {
+                    widget.trigger('formSave', {{ savedId|json_encode|raw }});
+                }
+            );
+        });
+    </script>
+    {% elseif form.vars.errors|length > 0 %}
+        <script type="text/javascript">
+            require(['oroui/js/widget-manager'],
+            function(widgetManager){
+                widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                    widget.trigger('formSaveError');
+                });
+            });
+        </script>
+
+        <div class="alert alert-error">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <form method="post"
+          data-nohash="true"
+          data-disable-autofocus="true"
+          data-collect="true"
+          id="{{ form.vars.id }}"
+          name="{{ form.vars.name }}"
+          action="{{ app.request.uri }}"
+          class="form-dialog"
+            >
+        {{ form_row(form) }}
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'Save'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+</div>
