@@ -209,7 +209,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @expectedException \Symfony\Component\Form\Exception\LogicException
-     * @expectedExceptionMessage The option "additional_currencies" must be null or not empty array.
+     * @expectedExceptionMessage The option "additional_currencies" must be null or array.
      */
     public function testInvalidTypeOfAdditionalCurrenciesOption()
     {

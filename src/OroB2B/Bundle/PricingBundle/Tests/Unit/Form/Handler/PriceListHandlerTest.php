@@ -70,13 +70,16 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
     public function testProcessValidData()
     {
         $appendedCustomer = new Customer();
-        $removedCustomer = (new Customer())->setPriceList($this->entity);
+        $removedCustomer = new Customer();
+        $this->entity->addCustomer($removedCustomer);
 
         $appendedCustomerGroup = new CustomerGroup();
-        $removedCustomerGroup = (new CustomerGroup())->setPriceList($this->entity);
+        $removedCustomerGroup = new CustomerGroup();
+        $this->entity->addCustomerGroup($removedCustomerGroup);
 
         $appendedWebsite = new Website();
-        $removedWebsite = (new Website())->setPriceList($this->entity);
+        $removedWebsite = new Website();
+        $this->entity->addWebsite($removedWebsite);
 
         $this->form->expects($this->once())
             ->method('setData')
@@ -106,7 +109,7 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
         //Object Manager
         $this->manager->expects($this->at(0))
             ->method('persist')
-            ->with($this->entity);
+            ->with($this->isType('object'));
 
         $this->manager->expects($this->once())
             ->method('flush');

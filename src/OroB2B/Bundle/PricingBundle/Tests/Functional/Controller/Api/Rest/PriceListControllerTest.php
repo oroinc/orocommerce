@@ -15,7 +15,7 @@ class PriceListControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateWsseAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\Fixtures\LoadPriceLists']);
+        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
     public function testDelete()

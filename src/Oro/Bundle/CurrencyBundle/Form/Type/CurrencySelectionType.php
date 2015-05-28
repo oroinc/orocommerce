@@ -54,7 +54,7 @@ class CurrencySelectionType extends AbstractType
                     $currencies = $this->configManager->get('oro_currency.allowed_currencies');
                 }
 
-                if ($options['currencies_list'] !== null && !is_array($options['additional_currencies'])) {
+                if ($options['additional_currencies'] !== null && !is_array($options['additional_currencies'])) {
                     throw new LogicException('The option "additional_currencies" must be null or array.');
                 }
 

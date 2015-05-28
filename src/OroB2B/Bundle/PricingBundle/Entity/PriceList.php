@@ -287,6 +287,7 @@ class PriceList
     {
         if (!$this->customers->contains($customer)) {
             $this->customers->add($customer);
+            $customer->setPriceList($this);
         }
 
         return $this;

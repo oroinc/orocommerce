@@ -11,6 +11,9 @@ orob2b.pricing:
         set_default:
             label: Set default
             message: Item has been set default
+        customer_groups.label: Customer Groups
+        customers.label: Customers
+        websites.label: Websites
 
     menu:
         price_lists_tab.label: Price lists management
