@@ -14,8 +14,8 @@ class LoadProductUnits extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
-        $this->createProductUnit($manager, 'kg');
-        $this->createProductUnit($manager, 'item');
+        $this->createProductUnit($manager, 'kg', 3);
+        $this->createProductUnit($manager, 'item', 0);
 
         $manager->flush();
     }
@@ -23,12 +23,14 @@ class LoadProductUnits extends AbstractFixture
     /**
      * @param ObjectManager $manager
      * @param string $code
+     * @param int $precision
      * @return ProductUnit
      */
-    protected function createProductUnit(ObjectManager $manager, $code)
+    protected function createProductUnit(ObjectManager $manager, $code, $precision)
     {
         $productUnit = new ProductUnit();
         $productUnit->setCode($code);
+        $productUnit->setDefaultPrecision($precision);
 
         $manager->persist($productUnit);
         $this->addReference('product_unit.' . $code, $productUnit);
