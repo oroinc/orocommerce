@@ -10,6 +10,7 @@ orob2b:
         organization.label: Organization
         in_category.label: In category
         unit_precisions.label: Unit Precisions
+        form.choose: 'Choose Product...'
 
         productunit:
             entity_label: Product Unit
