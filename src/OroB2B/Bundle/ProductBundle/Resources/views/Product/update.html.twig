@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
+{% form_theme form with 'OroB2BPricingBundle:Form:fields.html.twig' %}
 
 {% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A'|trans)} }) %}
 

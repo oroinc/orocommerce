@@ -21,7 +21,7 @@ class ProductPriceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('priceList', PriceListSelectType::NAME, ['create_enabled' => false])
+            ->add('priceList', PriceListSelectType::NAME, ['create_enabled' => false, 'required' => true])
             ->add('quantity')
             ->add('unit', ProductUnitSelectionType::NAME)
             ->add('price', PriceType::NAME)
@@ -38,6 +38,9 @@ class ProductPriceType extends AbstractType
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return self::NAME;

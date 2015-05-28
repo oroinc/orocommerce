@@ -1,0 +1,19 @@
+.oro-product-price-collection input[type="text"].quantity,
+.oro-product-price-collection input[type="text"].price-value,
+.oro-product-price-collection .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 280px;
+}
+
+.oro-product-price-collection .entity-select-btn {
+    float: right;
+}
+
+.oro-product-price-collection .oro-multiselect-holder {
+    padding-left: 10px;
+}
+
+.oro-product-price-collection .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 293px;
+}
