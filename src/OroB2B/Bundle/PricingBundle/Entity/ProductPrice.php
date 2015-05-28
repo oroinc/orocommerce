@@ -7,9 +7,18 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * @ORM\Table(name="orob2b_price_product")
+ * @ORM\Table(
+ *      name="orob2b_price_product",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_pricing_price_list_uidx",
+ *              columns={"product_id", "price_list_id", "quantity", "unit_code", "currency"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks()
  */
@@ -53,6 +62,14 @@ class ProductPrice
      * @ORM\Column(name="quantity", type="float")
      */
     protected $quantity;
+
+    /**
+     * @var ProductUnit
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
+     **/
+    protected $unit;
 
     /**
      * @var float
@@ -145,6 +162,25 @@ class ProductPrice
     public function getQuantity()
     {
         return $this->quantity;
+    }
+
+    /**
+     * @return ProductUnit
+     */
+    public function getUnit()
+    {
+        return $this->unit;
+    }
+
+    /**
+     * @param ProductUnit $unit
+     * @return ProductPrice
+     */
+    public function setUnit(ProductUnit $unit)
+    {
+        $this->unit = $unit;
+
+        return $this;
     }
 
     /**

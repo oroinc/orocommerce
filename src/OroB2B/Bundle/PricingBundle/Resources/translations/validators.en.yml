@@ -1,0 +1,5 @@
+orob2b:
+    pricing:
+          validators:
+              product_price:
+                  unique_entity.message: "Product price for this product with same quantity, unit_code, currency already exist in product list"
