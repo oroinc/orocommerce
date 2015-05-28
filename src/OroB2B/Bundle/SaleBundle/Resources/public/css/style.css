@@ -1,0 +1,25 @@
+.quote-product-items-collection input[type="text"] {
+    width: 170px !important;
+}
+
+.quote-product-items-collection table {
+    max-width: 95% !important;
+}
+
+.quote-product-items-collection table td {
+    vertical-align: top;
+}
+
+.quote-product-items-collection .add-list-item {
+    margin-left: 0 !important;
+}
+
+.quote-product-items-collection select {
+    width: 120px !important;
+}
+
+.quote-product-items-collection > div {
+    margin: 0 0 8px !important;
+    padding-left: 5px !important;
+}
+

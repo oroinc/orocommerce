@@ -24,6 +24,7 @@ orob2b:
                     entity_plural_label: 'Quote Product Lines'
                     quantity.label: 'Quantity'
                     product_unit.label: 'Product Unit'
+                    price.label: 'Price'
 
         controller:
             quote:

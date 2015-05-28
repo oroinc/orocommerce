@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -22,12 +23,18 @@ class QuoteProductItemType extends AbstractType
                 'required' => true,
                 'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'
             ])
-            ->add('productUnit', null, [
-                'required' => true,
-                'label' => 'orob2b.product.productunit.entity_label'
-            ])
+            ->add(
+                'productUnit',
+                ProductUnitSelectionType::NAME,
+                [
+                    'compact' => false,
+                    'disabled' => false,
+                    'label' => 'orob2b.product.productunit.entity_label'
+                ]
+            )
             ->add('price', PriceType::NAME, [
-                'required' => true
+                'required' => true,
+                'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.price.label'
             ])
         ;
     }
