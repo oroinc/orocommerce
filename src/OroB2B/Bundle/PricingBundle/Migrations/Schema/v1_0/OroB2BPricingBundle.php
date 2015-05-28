@@ -66,6 +66,7 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_sku', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'float', []);
@@ -109,6 +110,12 @@ class OroB2BPricingBundle implements Migration
             $schema->getTable('orob2b_product'),
             ['product_id'],
             ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product_unit'),
+            ['unit_code'],
+            ['code'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }

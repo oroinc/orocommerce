@@ -33,7 +33,8 @@ class ProductType extends AbstractType
                 'prices',
                 ProductPriceCollectionType::NAME,
                 [
-                    'label' => 'orob2b.product.prices.label'
+                    'label' => 'orob2b.product.prices.label',
+                    'required' => false
                 ]
             )
         ;

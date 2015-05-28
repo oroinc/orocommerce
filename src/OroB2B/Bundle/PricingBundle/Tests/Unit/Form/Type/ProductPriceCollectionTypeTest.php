@@ -16,6 +16,9 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $formType;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -23,6 +26,9 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType = new ProductPriceCollectionType('\stdClass');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function tearDown()
     {
         unset($this->formType);
