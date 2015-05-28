@@ -418,7 +418,7 @@ class Website
      *
      * @return Website
      */
-    public function setPriceList(PriceList $priceList)
+    public function setPriceList(PriceList $priceList = null)
     {
         $this->priceList = $priceList;
 

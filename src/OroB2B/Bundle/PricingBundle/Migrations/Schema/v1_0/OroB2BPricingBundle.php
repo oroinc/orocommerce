@@ -50,7 +50,6 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['price_list_id'], 'IDX_F468ECAA5688DED7', []);
     }
 
     /**

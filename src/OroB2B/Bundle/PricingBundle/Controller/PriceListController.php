@@ -12,6 +12,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
 
 class PriceListController extends Controller
@@ -107,6 +108,11 @@ class PriceListController extends Controller
     protected function update(PriceList $priceList)
     {
         $form = $this->createForm(PriceListType::NAME, $priceList);
+        $handler = new PriceListHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList')
+        );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $priceList,
@@ -123,7 +129,8 @@ class PriceListController extends Controller
                     'parameters' => array('id' => $priceList->getId())
                 );
             },
-            $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message')
+            $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message'),
+            $handler
         );
     }
 }
