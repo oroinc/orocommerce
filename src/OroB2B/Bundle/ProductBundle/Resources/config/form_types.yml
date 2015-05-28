@@ -26,6 +26,7 @@ services:
             - @doctrine.orm.entity_manager
         tags:
             - { name: form.type, alias: orob2b_product_unit_selection }
+
     orob2b_product.form.type.product_unit_precision:
         class: %orob2b_product.form.type.product_unit_precision.class%
         tags:
