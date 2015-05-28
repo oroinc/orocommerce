@@ -23,7 +23,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'product' => 'product.1',
             'priceList' => 'price_list_1',
             'qty' => 10,
-            'unit' => 'product_unit.kg',
+            'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',
             'reference' => 'product_price.1'
@@ -32,7 +32,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'product' => 'product.1',
             'priceList' => 'price_list_1',
             'qty' => 10,
-            'unit' => 'product_unit.item',
+            'unit' => 'product_unit.bottle',
             'price' => 12.2,
             'currency' => 'EUR',
             'reference' => 'product_price.2'
@@ -41,7 +41,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'product' => 'product.2',
             'priceList' => 'price_list_1',
             'qty' => 10,
-            'unit' => 'product_unit.kg',
+            'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',
             'reference' => 'product_price.3'
@@ -50,7 +50,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'product' => 'product.2',
             'priceList' => 'price_list_2',
             'qty' => 10,
-            'unit' => 'product_unit.kg',
+            'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',
             'reference' => 'product_price.4'
@@ -59,7 +59,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'product' => 'product.2',
             'priceList' => 'price_list_2',
             'qty' => 10,
-            'unit' => 'product_unit.item',
+            'unit' => 'product_unit.bottle',
             'price' => 12.2,
             'currency' => 'USD',
             'reference' => 'product_price.5'
@@ -68,7 +68,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'product' => 'product.1',
             'priceList' => 'price_list_2',
             'qty' => 10,
-            'unit' => 'product_unit.kg',
+            'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',
             'reference' => 'product_price.6'

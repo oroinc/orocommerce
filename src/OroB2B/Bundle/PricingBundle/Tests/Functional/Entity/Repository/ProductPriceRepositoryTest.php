@@ -39,9 +39,9 @@ class ProductPriceRepositoryTest extends WebTestCase
         /** @var Product $notRemovedProduct */
         $notRemovedProduct = $this->getReference('product.2');
         /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.kg');
+        $unit = $this->getReference('product_unit.liter');
         /** @var ProductUnit $unit */
-        $notRemovedUnit = $this->getReference('product_unit.item');
+        $notRemovedUnit = $this->getReference('product_unit.bottle');
 
         $this->repository->deleteByProductUnit($product, $unit);
 
