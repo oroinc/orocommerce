@@ -49,25 +49,18 @@ class PriceListHandler
     {
         $this->form->setData($priceList);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
-                $appendCustomers      = $this->form->get('appendCustomers')->getData();
-                $removeCustomers      = $this->form->get('removeCustomers')->getData();
-                $appendCustomerGroups = $this->form->get('appendCustomerGroups')->getData();
-                $removeCustomerGroups = $this->form->get('removeCustomerGroups')->getData();
-                $appendWebsites       = $this->form->get('appendWebsites')->getData();
-                $removeWebsites       = $this->form->get('removeWebsites')->getData();
-
                 $this->onSuccess(
                     $priceList,
-                    $appendCustomers,
-                    $removeCustomers,
-                    $appendCustomerGroups,
-                    $removeCustomerGroups,
-                    $appendWebsites,
-                    $removeWebsites
+                    $this->form->get('appendCustomers')->getData(),
+                    $this->form->get('removeCustomers')->getData(),
+                    $this->form->get('appendCustomerGroups')->getData(),
+                    $this->form->get('removeCustomerGroups')->getData(),
+                    $this->form->get('appendWebsites')->getData(),
+                    $this->form->get('removeWebsites')->getData()
                 );
 
                 return true;
@@ -99,8 +92,10 @@ class PriceListHandler
     ) {
         $this->setPriceListToCustomers($entity, $appendCustomers);
         $this->removePriceListFromCustomers($entity, $removeCustomers);
+
         $this->setPriceListToCustomerGroups($entity, $appendCustomerGroups);
         $this->removePriceListFromCustomerGroups($entity, $removeCustomerGroups);
+
         $this->setPriceListToWebsites($entity, $appendWebsites);
         $this->removePriceListFromWebsites($entity, $removeWebsites);
 

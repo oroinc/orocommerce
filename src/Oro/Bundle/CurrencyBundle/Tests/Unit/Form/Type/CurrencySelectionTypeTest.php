@@ -43,7 +43,7 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
             ->getMock();
         $this->localeSettings->expects($this->any())
             ->method('getLocale')
-            ->willReturn('en');
+            ->willReturn(\Locale::getDefault());
 
         $this->formType = new CurrencySelectionType($this->configManager, $this->localeSettings);
     }
