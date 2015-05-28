@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
 
-class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
+class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductPriceCollectionType
@@ -28,65 +28,42 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         unset($this->formType);
     }
 
-    /**
-     * @return array
-     */
-    protected function getExtensions()
+    public function testGetParent()
     {
-        $collection = new CollectionType();
-
-        return [
-            new PreloadedExtension(
-                [
-                    $collection->getName() => $collection
-                ],
-                []
-            )
-        ];
+        $this->assertInternalType('string', $this->formType->getParent());
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
     }
 
-    /**
-     * @param array $options
-     * @param array $defaultData
-     * @param array $viewData
-     * @param array $submittedData
-     * @param array $expectedData
-     *
-     * @dataProvider submitDataProvider
-     */
-    public function testSubmit(
-        array $options,
-        array $defaultData,
-        array $viewData,
-        array $submittedData,
-        array $expectedData
-    ) {
-        $form = $this->factory->create($this->formType, $defaultData, $options);
-
-        $formConfig = $form->getConfig();
-        $this->assertNull($formConfig->getOption('data_class'));
-
-        $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
-
-        $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+    public function testGetName()
+    {
+        $this->assertInternalType('string', $this->formType->getName());
+        $this->assertEquals(ProductPriceCollectionType::NAME, $this->formType->getName());
     }
 
-    /**
-     * @return array
-     */
-    public function submitDataProvider()
+    public function testSetDefaultOptions()
     {
-        return [
-            'default' => [
-                'options' => [],
-                'defaultData' => [],
-                'viewData' => [],
-                'submittedData' => [],
-                'expectedData' => []
-            ]
-        ];
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(
+                $this->callback(
+                    function (array $options) {
+                        $this->assertArrayHasKey('type', $options);
+                        $this->assertEquals(ProductPriceType::NAME, $options['type']);
+
+                        $this->assertArrayHasKey('show_form_when_empty', $options);
+                        $this->assertEquals(false, $options['show_form_when_empty']);
+
+                        $this->assertArrayHasKey('options', $options);
+                        $this->assertNotEmpty($options['options']);
+                        $this->assertArrayHasKey('data_class', $options['options']);
+
+                        return true;
+                    }
+                )
+            );
+
+        $this->formType->setDefaultOptions($resolver);
     }
 }

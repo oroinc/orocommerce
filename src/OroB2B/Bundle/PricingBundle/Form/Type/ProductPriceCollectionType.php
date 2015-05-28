@@ -31,7 +31,7 @@ class ProductPriceCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => 'orob2b_pricing_product_price',
+                'type' => ProductPriceType::NAME,
                 'show_form_when_empty' => false,
                 'options' => ['data_class' => $this->dataClass]
             ]
