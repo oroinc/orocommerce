@@ -367,4 +367,12 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->sku;
+    }
 }

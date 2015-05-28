@@ -3,10 +3,11 @@
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class QuoteProductItemType extends PriceType
+class QuoteProductItemType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote_product_item';
 
@@ -19,16 +20,16 @@ class QuoteProductItemType extends PriceType
         $builder
             ->add('quantity', null, [
                 'required' => true,
-                'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label',
+                'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'
             ])
             ->add('productUnit', null, [
                 'required' => true,
-                'label' => 'orob2b.product.productunit.entity_label',
+                'label' => 'orob2b.product.productunit.entity_label'
+            ])
+            ->add('price', PriceType::NAME, [
+                'required' => true
             ])
         ;
-        $options['currencies_list'] = null;
-        $options['compact'] = false;
-        parent::buildForm($builder, $options);
     }
 
     /**

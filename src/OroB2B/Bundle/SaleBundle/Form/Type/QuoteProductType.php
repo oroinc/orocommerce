@@ -19,15 +19,16 @@ class QuoteProductType extends AbstractType
         $builder
             ->add('product', null, [
                 'required' => true,
-                'property' => 'sku',
-                'label' => 'orob2b.product.entity_label',
+                'label' => 'orob2b.product.entity_label'
             ])
             ->add(
                 'quoteProductItems',
-                QuoteProductItemCollectionType::NAME,
+                'oro_collection',
                 [
                     'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
-                    'required' => false
+                    'required' => false,
+                    'type' => QuoteProductItemType::NAME,
+                    'show_form_when_empty' => false
                 ]
             )
         ;
@@ -41,7 +42,7 @@ class QuoteProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
             'intention' => 'sale_quote_product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 
