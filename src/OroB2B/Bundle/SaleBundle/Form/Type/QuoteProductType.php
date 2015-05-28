@@ -23,12 +23,10 @@ class QuoteProductType extends AbstractType
             ])
             ->add(
                 'quoteProductItems',
-                'oro_collection',
+                QuoteProductItemCollectionType::NAME,
                 [
                     'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
-                    'required' => false,
-                    'type' => QuoteProductItemType::NAME,
-                    'show_form_when_empty' => false
+                    'required' => false
                 ]
             )
         ;

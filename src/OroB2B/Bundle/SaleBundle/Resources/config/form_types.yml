@@ -1,6 +1,7 @@
 parameters:
     orob2b_sale.form.type.quote_product.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType
     orob2b_sale.form.type.quote_product_item.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType
+    orob2b_sale.form.type.quote_product_item_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType
 
 services:
     # Quote form types
@@ -13,3 +14,8 @@ services:
         class: %orob2b_sale.form.type.quote_product_item.class%
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_item }
+
+    orob2b_sale.form.type.quote_product_item_collection:
+        class: %orob2b_sale.form.type.quote_product_item_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_product_item_collection }

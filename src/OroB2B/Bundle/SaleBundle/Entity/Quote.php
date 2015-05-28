@@ -120,6 +120,7 @@ class Quote extends ExtendQuote
      */
     public function __construct()
     {
+        parent::__construct();
         $this->quoteProducts = new ArrayCollection();
     }
 

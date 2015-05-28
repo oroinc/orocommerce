@@ -8,6 +8,20 @@
             {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
             {{ UI.renderProperty('orob2b.sale.quote.owner.label'|trans, entity.owner.username) }}
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A') }}
+
+            {% for quoteProduct in entity.quoteProducts %}
+                <h3>{{ UI.renderHtmlProperty('orob2b.product.entity_label'|trans, quoteProduct.product) }}</h3>
+                <ul class="without-markers">
+                    {% for quoteProductItem in quoteProduct.quoteProductItems %}
+                        <li><ul class="without-markers">
+                            {{ UI.renderHtmlProperty('orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'|trans, quoteProductItem.quantity) }}
+                            {{ UI.renderHtmlProperty('orob2b.product.productunit.entity_label'|trans, ('orob2b.product_unit.'~ quoteProductItem.productUnit.code ~'.label.full')|trans)}}
+                            {{ UI.renderHtmlProperty('orob2b.sale.quote.quoteproduct.quoteproductitem.price.label'|trans, quoteProductItem.price|oro_format_price) }}
+                        </ul></li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
