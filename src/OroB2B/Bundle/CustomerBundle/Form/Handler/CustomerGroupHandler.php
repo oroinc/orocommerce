@@ -47,9 +47,11 @@ class CustomerGroupHandler
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
-                $append = $this->form->get('appendCustomers')->getData();
-                $remove = $this->form->get('removeCustomers')->getData();
-                $this->onSuccess($entity, $append, $remove);
+                $this->onSuccess(
+                    $entity,
+                    $this->form->get('appendCustomers')->getData(),
+                    $this->form->get('removeCustomers')->getData()
+                );
 
                 return true;
             }

@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
@@ -35,6 +36,66 @@ class PriceListType extends AbstractType
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
                 ]
             )
+            ->add(
+                'appendCustomers',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => 'OroB2BCustomerBundle:Customer',
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeCustomers',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => 'OroB2BCustomerBundle:Customer',
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'appendCustomerGroups',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => 'OroB2BCustomerBundle:CustomerGroup',
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeCustomerGroups',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => 'OroB2BCustomerBundle:CustomerGroup',
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'appendWebsites',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => 'OroB2BWebsiteBundle:Website',
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeWebsites',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => 'OroB2BWebsiteBundle:Website',
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            );
         ;
     }
 

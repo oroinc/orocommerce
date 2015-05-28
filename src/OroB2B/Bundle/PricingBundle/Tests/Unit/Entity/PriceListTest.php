@@ -4,8 +4,10 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListTest extends EntityTestCase
 {
@@ -56,6 +58,64 @@ class PriceListTest extends EntityTestCase
         );
         $this->assertEquals($priceList, $priceListCurrency->getPriceList());
         $this->assertEquals('EUR', $priceListCurrency->getCurrency());
+    }
+
+    /**
+     * @dataProvider relationsDataProvider
+     *
+     * @param Customer|CustomerGroup|Website $entity
+     * @param string $getCollectionMethod
+     * @param string $addMethod
+     * @param string $removeMethod
+     */
+    public function testRelations($entity, $getCollectionMethod, $addMethod, $removeMethod)
+    {
+        $priceList = $this->createPriceList();
+
+        $this->assertInstanceOf(
+            'Doctrine\Common\Collections\ArrayCollection',
+            $priceList->$getCollectionMethod()
+        );
+        $this->assertCount(0, $priceList->$getCollectionMethod());
+
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+            $priceList->$addMethod($entity)
+        );
+        $this->assertCount(1, $priceList->$getCollectionMethod());
+
+        $priceList->$addMethod($entity);
+        $this->assertCount(1, $priceList->$getCollectionMethod());
+
+        $priceList->$removeMethod($entity);
+        $this->assertCount(0, $priceList->$getCollectionMethod());
+    }
+
+    /**
+     * @return array
+     */
+    public function relationsDataProvider()
+    {
+        return [
+            'customer' => [
+                'entity' => new Customer(),
+                'getCollectionMethod' => 'getCustomers',
+                'addMethod' => 'addCustomer',
+                'removeMethod' => 'removeCustomer',
+            ],
+            'customerGroup' => [
+                'entity' => new CustomerGroup(),
+                'getCollectionMethod' => 'getCustomerGroups',
+                'addMethod' => 'addCustomerGroup',
+                'removeMethod' => 'removeCustomerGroup',
+            ],
+            'website' => [
+                'entity' => new Website(),
+                'getCollectionMethod' => 'getWebsites',
+                'addMethod' => 'addWebsite',
+                'removeMethod' => 'removeWebsite',
+            ],
+        ];
     }
 
     /**

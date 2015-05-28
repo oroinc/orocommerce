@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -23,7 +24,8 @@ class WebsiteTest extends EntityTestCase
             ['organization', new Organization()],
             ['priceList', new PriceList()],
             ['createdAt', $now, false],
-            ['updatedAt', $now, false]
+            ['updatedAt', $now, false],
+            ['priceList', $this->createPriceListEntity()]
         ];
 
         $this->assertPropertyAccessors(new Website(), $properties);
@@ -147,5 +149,13 @@ class WebsiteTest extends EntityTestCase
         $website = new Website();
         $website->preUpdate();
         $this->assertInstanceOf('\DateTime', $website->getUpdatedAt());
+    }
+
+    /**
+     * @return PriceList
+     */
+    protected function createPriceListEntity()
+    {
+        return new PriceList();
     }
 }

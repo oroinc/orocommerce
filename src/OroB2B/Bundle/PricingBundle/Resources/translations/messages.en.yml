@@ -7,6 +7,7 @@ orob2b.pricing:
         name.label: Name
         default.label: Is Default
         currencies.label: Currencies
+        has_price_list.label: Has Price List
         set_default:
             label: Set default
             message: Item has been set default

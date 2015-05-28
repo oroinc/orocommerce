@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
@@ -148,7 +149,7 @@ class CustomerGroup
      *
      * @return CustomerGroup
      */
-    public function setPriceList(PriceList $priceList)
+    public function setPriceList(PriceList $priceList = null)
     {
         $this->priceList = $priceList;
 
