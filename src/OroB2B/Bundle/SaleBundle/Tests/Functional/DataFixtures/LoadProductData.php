@@ -33,9 +33,6 @@ class LoadProductData extends AbstractFixture
 
         $defaultUser    = $this->getUser($manager);
 
-        $businessUnit   = $defaultUser->getOwner();
-        $organization   = $defaultUser->getOrganization();
-
         foreach ($this->products as $item) {
             /* @var $user User */
             $product = new Product();

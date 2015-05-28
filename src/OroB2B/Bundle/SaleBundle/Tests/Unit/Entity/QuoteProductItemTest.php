@@ -14,7 +14,6 @@ class QuoteProductItemTest extends EntityTestCase
 {
     public function testProperties()
     {
-        $now = new \DateTime('now');
         $properties = [
             ['id', 123],
             ['quoteProduct', new QuoteProduct()],
