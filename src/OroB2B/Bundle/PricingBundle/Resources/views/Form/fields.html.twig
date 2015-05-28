@@ -1,0 +1,16 @@
+{% block orob2b_pricing_product_price_widget %}
+    <table>
+        <tr>
+            <td>{{ form_widget(form.priceList) }}</td>
+            <td>{{ form_widget(form.quantity) }}</td>
+            <td>{{ form_widget(form.unit) }}</td>
+            <td>{{ form_widget(form.price) }}</td>
+        </tr>
+        <tr>
+            <td>{{ form_errors(form.priceList) }}</td>
+            <td>{{ form_errors(form.quantity) }}</td>
+            <td>{{ form_errors(form.unit) }}</td>
+            <td>{{ form_errors(form.price) }}</td>
+        </tr>
+    </table>
+{% endblock %}
