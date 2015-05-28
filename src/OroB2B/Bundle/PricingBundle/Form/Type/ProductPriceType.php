@@ -21,10 +21,14 @@ class ProductPriceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('priceList', PriceListSelectType::NAME, ['create_enabled' => false])
-            ->add('quantity')
-            ->add('unit', ProductUnitSelectionType::NAME)
-            ->add('price', PriceType::NAME)
+            ->add(
+                'priceList',
+                PriceListSelectType::NAME,
+                ['label' => 'orob2b.pricing.price_list.entity_label', 'create_enabled' => false, 'required' => true]
+            )
+            ->add('quantity', 'number', ['label' => 'orob2b.pricing.quantity.label'])
+            ->add('unit', ProductUnitSelectionType::NAME, ['label' => 'orob2b.pricing.unit.label'])
+            ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label'])
         ;
     }
 

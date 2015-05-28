@@ -149,6 +149,15 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     {
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
+        $expectedUnit = (new ProductUnit())->setCode('kg');
+        $expectedPrice = (new Price())->setValue(42)->setCurrency('USD');
+
+        $expectedProductPrice = new ProductPrice();
+        $expectedProductPrice
+            ->setPriceList($expectedPriceList)
+            ->setQuantity(123)
+            ->setUnit($expectedUnit)
+            ->setPrice($expectedPrice);
 
         return [
             'product price without data' => [
@@ -167,10 +176,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                         'currency' => 'USD'
                     ]
                 ],
-                'expectedData' => (new ProductPrice())->setQuantity(123)
-                    ->setPriceList($expectedPriceList)
-                    ->setUnit((new ProductUnit())->setCode('kg'))
-                    ->setPrice((new Price())->setValue(42)->setCurrency('USD'))
+                'expectedData' => $expectedProductPrice
             ]
 
         ];
@@ -182,21 +188,6 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(ProductPriceType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * @return array
-     */
-    protected function preparePriceListSelectionChoices()
-    {
-        $choices = [];
-        foreach ($this->priceLists as $key => $priceListName) {
-            $priceList = new PriceList();
-            $priceList->setName($priceListName);
-            $choices[] = $priceList;
-        }
-
-        return $choices;
     }
 
     /**
