@@ -6,6 +6,5 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         price:
             - NotBlank: ~
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Valid: ~
 
