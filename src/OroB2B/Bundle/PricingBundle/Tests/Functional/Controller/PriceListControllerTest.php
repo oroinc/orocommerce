@@ -83,11 +83,11 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains($this->getCustomer('customer.orphan')->getName(), $customersGrid);
         $this->assertContains($this->getCustomer('customer.level_1')->getName(), $customersGrid);
 
-        $customersGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');;
+        $customersGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
         $this->assertContains($this->getCustomerGroup('customer_group.group1')->getName(), $customersGroupGrid);
         $this->assertContains($this->getCustomerGroup('customer_group.group2')->getName(), $customersGroupGrid);
 
-        $websitesGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');;
+        $websitesGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
         $this->assertContains($this->getWebsite('US')->getName(), $websitesGrid);
     }
 
@@ -163,12 +163,12 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
 
-        $customersGrid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');;
+        $customersGrid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
         $this->assertContains($this->getCustomer('customer.level_1')->getName(), $customersGrid);
         $this->assertContains($this->getCustomer('customer.level_1.1')->getName(), $customersGrid);
         $this->assertNotContains($this->getCustomer('customer.orphan')->getName(), $customersGrid);
 
-        $customersGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');;
+        $customersGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
         $this->assertContains($this->getCustomerGroup('customer_group.group3')->getName(), $customersGroupGrid);
         $this->assertNotContains($this->getCustomerGroup('customer_group.group1')->getName(), $customersGroupGrid);
         $this->assertNotContains($this->getCustomerGroup('customer_group.group2')->getName(), $customersGroupGrid);
