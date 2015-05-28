@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 
 class QuoteTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,13 +23,13 @@ class QuoteTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock()
         ;
-        
+
         $builder->expects($this->at(0))
             ->method('add')
             ->with('qid', 'hidden')
             ->will($this->returnSelf())
         ;
-        
+
         $builder->expects($this->at(1))
             ->method('add')
             ->with('owner', null, ['required' => true, 'label' => 'orob2b.sale.quote.owner.label'])
@@ -40,7 +41,18 @@ class QuoteTypeTest extends \PHPUnit_Framework_TestCase
             ->with('validUntil', null, ['required' => false, 'label' => 'orob2b.sale.quote.valid_until.label'])
             ->will($this->returnSelf())
         ;
-        
+
+        $builder->expects($this->at(3))
+            ->method('add')
+            ->with('quoteProducts', 'oro_collection', [
+                'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
+                'required'  => false,
+                'type'      => QuoteProductType::NAME,
+                'show_form_when_empty' => false
+            ])
+            ->will($this->returnSelf())
+        ;
+
         $this->type->buildForm($builder, []);
     }
 
