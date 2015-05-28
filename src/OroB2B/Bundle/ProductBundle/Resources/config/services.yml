@@ -44,3 +44,12 @@ services:
             - @orob2b_product.formatter.product_unit_value
         tags:
             - { name: twig.extension }
+
+    orob2b_product.form.autocomplete.product.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_product.product.class%
+            - ["sku"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product, acl_resource: orob2b_product_view }
+        lazy: true
