@@ -5,6 +5,10 @@
     width: 280px;
 }
 
+.oro-product-price-collection .select2-container {
+    float: left;
+}
+
 .oro-product-price-collection .entity-select-btn {
     float: right;
 }
