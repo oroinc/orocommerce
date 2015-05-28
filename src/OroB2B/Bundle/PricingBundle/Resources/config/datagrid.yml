@@ -144,3 +144,25 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_pricing_price_list_delete
+
+    pricing-product-price-grid:
+        options:
+            entityHint:        productPrice
+        source:
+            acl_resource:      orob2b_pricing_product_price_view
+            type:              orm
+            query:
+                select:
+                    - productPrice.id
+                    - product.name as productName
+                    - productPrice.productSku
+                    - priceList.name as priceListName
+                    - productPrice.quantity
+                    - productPrice.value
+                    - productPrice.currency
+                from:
+                    - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                join:
+                    left:
+                        - { join: productPrice.product, alias: product }
+                        - { join: productPrice.priceList, alias: priceList }
