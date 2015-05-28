@@ -145,7 +145,7 @@ class PriceListHandler
         /** @var CustomerGroup[] $customerGroups */
         foreach ($customerGroups as $customerGroup) {
             $customerGroup->setPriceList($priceList);
-            $priceList->addCustomer($customerGroup);
+            $priceList->addCustomerGroup($customerGroup);
         }
     }
 
@@ -159,7 +159,7 @@ class PriceListHandler
         foreach ($customerGroups as $customerGroup) {
             if ($customerGroup->getPriceList()->getId() === $priceList->getId()) {
                 $customerGroup->setPriceList(null);
-                $priceList->removeCustomer($customerGroup);
+                $priceList->removeCustomerGroup($customerGroup);
             }
         }
     }
@@ -173,7 +173,7 @@ class PriceListHandler
         /** @var Website[] $websites */
         foreach ($websites as $website) {
             $website->setPriceList($priceList);
-            $priceList->addCustomer($website);
+            $priceList->addWebsite($website);
         }
     }
 
@@ -187,7 +187,7 @@ class PriceListHandler
         foreach ($websites as $website) {
             if ($website->getPriceList()->getId() === $priceList->getId()) {
                 $website->setPriceList(null);
-                $priceList->removeCustomer($website);
+                $priceList->removeWebsite($website);
             }
         }
     }
