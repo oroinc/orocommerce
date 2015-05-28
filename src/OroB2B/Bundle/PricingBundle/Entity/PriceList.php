@@ -301,6 +301,7 @@ class PriceList
     {
         if ($this->customers->contains($customer)) {
             $this->customers->removeElement($customer);
+            $customer->setPriceList(null);
         }
 
         return $this;
@@ -325,6 +326,7 @@ class PriceList
     {
         if (!$this->customerGroups->contains($customerGroup)) {
             $this->customerGroups->add($customerGroup);
+            $customerGroup->setPriceList($this);
         }
 
         return $this;
@@ -339,6 +341,7 @@ class PriceList
     {
         if ($this->customerGroups->contains($customerGroup)) {
             $this->customerGroups->removeElement($customerGroup);
+            $customerGroup->setPriceList(null);
         }
 
         return $this;
@@ -363,6 +366,7 @@ class PriceList
     {
         if (!$this->websites->contains($website)) {
             $this->websites->add($website);
+            $website->setPriceList($this);
         }
 
         return $this;
@@ -377,6 +381,7 @@ class PriceList
     {
         if ($this->websites->contains($website)) {
             $this->websites->removeElement($website);
+            $website->setPriceList(null);
         }
 
         return $this;
