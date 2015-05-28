@@ -2,10 +2,20 @@ parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
+    orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+    
     orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_pricing.listener.product_unit_precision.class: OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener
 
 services:
+    orob2b_pricing.listener.product_unit_precision:
+        class: %orob2b_pricing.listener.product_unit_precision.class%
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setEventDispatcher, [@event_dispatcher]]
+        tags:
+            - { name: doctrine.event_listener, event: preRemove }
     orob2b_pricing.form.price_list:
         class: Symfony\Component\Form\Form
         factory_method: createNamed

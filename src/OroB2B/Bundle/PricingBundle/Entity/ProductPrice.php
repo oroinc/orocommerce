@@ -11,7 +11,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @ORM\Table(name="orob2b_price_product")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
  * @ORM\HasLifecycleCallbacks()
  */
 class ProductPrice
