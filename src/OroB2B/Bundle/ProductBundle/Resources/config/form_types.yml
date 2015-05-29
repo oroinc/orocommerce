@@ -4,6 +4,7 @@ parameters:
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
+    orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
 
 services:
     # Product form types
@@ -25,11 +26,18 @@ services:
             - @doctrine.orm.entity_manager
         tags:
             - { name: form.type, alias: orob2b_product_unit_selection }
+
     orob2b_product.form.type.product_unit_precision:
         class: %orob2b_product.form.type.product_unit_precision.class%
         tags:
             - { name: form.type, alias: orob2b_product_unit_precision }
+
     orob2b_product.form.type.product_unit_precision_collection:
         class: %orob2b_product.form.type.product_unit_precision_collection.class%
         tags:
             - { name: form.type, alias: orob2b_product_unit_precision_collection }
+
+    orob2b_product.form.type.product_select:
+        class: %orob2b_product.form.type.product_select.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_select }

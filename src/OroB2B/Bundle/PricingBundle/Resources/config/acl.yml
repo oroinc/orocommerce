@@ -4,3 +4,9 @@ orob2b_pricing_product_price_view:
     permission: VIEW
     group_name: ""
     bindings: ~
+
+orob2b_pricing_price_list_view:
+    type: entity
+    class: OroB2BPricingBundle:PriceList
+    permission: VIEW
+    group_name: ""

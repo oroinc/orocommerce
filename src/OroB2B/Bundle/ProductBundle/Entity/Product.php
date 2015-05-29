@@ -40,6 +40,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "form"={
+ *              "form_type"="orob2b_product_select",
+ *              "grid_name"="products-select-grid"
  *          }
  *      }
  * )
