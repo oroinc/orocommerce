@@ -10,6 +10,13 @@ orob2b.pricing:
     unit.label: Unit
     price.label: Price
 
+    productprice:
+        productSku.label: Product SKU
+        quantity.label: Quantity
+        value.label: Value
+        currency.label: Currency
+        unitCode.label: Unit
+
     menu:
         price_lists_tab.label: Price lists management
         price_lists_list.description: List of existing price lists

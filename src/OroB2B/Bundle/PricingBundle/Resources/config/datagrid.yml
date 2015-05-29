@@ -153,16 +153,65 @@ datagrid:
             type:              orm
             query:
                 select:
-                    - productPrice.id
-                    - product.name as productName
                     - productPrice.productSku
-                    - priceList.name as priceListName
                     - productPrice.quantity
+                    - unit.code as unitCode
                     - productPrice.value
                     - productPrice.currency
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
                 join:
                     left:
-                        - { join: productPrice.product, alias: product }
                         - { join: productPrice.priceList, alias: priceList }
+                        - { join: productPrice.unit, alias: unit }
+                where:
+                    and:
+                        - priceList.id = :priceListId
+            bind_parameters:
+                - priceListId
+        columns:
+            productSku:
+                label:         orob2b.pricing.productprice.productSku.label
+            quantity:
+                label:         orob2b.pricing.productprice.quantity.label
+            unitCode:
+                label:         orob2b.pricing.productprice.unitCode.label
+            value:
+                label:         orob2b.pricing.productprice.value.label
+            currency:
+                label:         orob2b.pricing.productprice.currency.label
+        sorters:
+            columns:
+                productSku:
+                    data_name: productPrice.productSku
+                quantity:
+                    data_name: productPrice.quantity
+                unitCode:
+                    data_name: unit.code
+                value:
+                    data_name: productPrice.value
+                currency:
+                    data_name: productPrice.currency
+            default:
+                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                productSku:
+                    type:      string
+                    data_name: productPrice.productSku
+                quantity:
+                    type:      number
+                    data_name: productPrice.quantity
+                unitCode:
+                    type:      choice
+                    data_name: unit
+                    options:
+                        field_type: orob2b_product_unit_selection
+                value:
+                    type:      number
+                    data_name: productPrice.currency
+                currency:
+                    type:      choice
+                    data_name: currency
+                    options:
+                        field_type: oro_currency_selection
