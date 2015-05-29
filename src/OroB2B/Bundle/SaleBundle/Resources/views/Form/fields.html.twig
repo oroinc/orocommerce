@@ -1,3 +1,10 @@
+{% block orob2b_sale_quote_product_widget %}
+    {{ form_row(form.product, {'attr': {'class': 'quoteproduct-product-select'}}) }}
+
+    {{ form_rest(form) }}
+{% endblock %}
+
+
 {% block orob2b_sale_quote_product_item_widget %}
     <table>
         <tr>
@@ -17,8 +24,8 @@
     </table>
 {% endblock %}
 
-{% block orob2b_sale_quote_product_item_collection_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection quote-product-items-collection' }) %}
+{% block orob2b_sale_quote_product_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection quote-product-collection' }) %}
     {{ block('oro_collection_widget') }}
 
     {% set componentOptions = {
@@ -27,4 +34,10 @@
 
     <span data-page-component-module="orob2bsale/js/app/components/quote-product-item-unit-selection-limitations-component"
           data-page-component-options="{{ componentOptions|json_encode }}"></span>
+{% endblock %}
+
+
+{% block orob2b_sale_quote_product_item_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection quote-product-items-collection' }) %}
+    {{ block('oro_collection_widget') }}
 {% endblock %}
