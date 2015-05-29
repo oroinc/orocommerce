@@ -1,0 +1,20 @@
+parameters:
+    orob2b_payment.entity.payment_term.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
+    orob2b_payment.payment_term.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+
+services:
+    orob2b_payment.payment_term.manager.api:
+        class: %orob2b_payment.payment_term.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_payment.entity.payment_term.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_payment.form.autocomplete.payment_term.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_payment.entity.payment_term.class%
+            - ["label"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_payment_term, acl_resource: orob2b_payment_term_view }
+        lazy: true

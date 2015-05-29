@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
@@ -10,12 +11,23 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
-class LoadWebsiteData extends AbstractFixture
+class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface
 {
+    /**
+     * @var array
+     */
     protected $webSites = [
         ['name' => 'US', 'url' => 'www.us.com', 'locales' => ['en_US']],
         ['name' => 'Canada', 'url' => 'www.canada.com', 'locales' => ['en_CA']]
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [__NAMESPACE__ . '\LoadLocaleData'];
+    }
 
     /**
      * Load websites
@@ -43,6 +55,8 @@ class LoadWebsiteData extends AbstractFixture
                 ->setName($webSite['name'])
                 ->setUrl($webSite['url'])
                 ->resetLocales($siteLocales);
+
+            $this->setReference($site->getName(), $site);
 
             $manager->persist($site);
         }

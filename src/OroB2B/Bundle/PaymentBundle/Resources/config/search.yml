@@ -1,0 +1,13 @@
+OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm:
+    alias:                          orob2b_payment_term
+    title_fields:                   [label]
+    route:
+        name:                       orob2b_payment_term_view
+        parameters:
+            id:                     id
+    search_template:                OroB2BPaymentBundle:PaymentTerm:searchResult.html.twig
+    fields:
+        -
+            name:                   label
+            target_type:            text
+            target_fields:          [label]

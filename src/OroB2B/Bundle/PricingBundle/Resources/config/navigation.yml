@@ -1,0 +1,39 @@
+oro_menu_config:
+    items:
+        pricing_price_lists_list:
+            label:           'orob2b.pricing.pricelist.entity_plural_label'
+            route:           'orob2b_pricing_price_list_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_pricing/']
+                description: 'orob2b.pricing.menu.price_lists_list.description'
+
+        shortcut_pricing_price_list:
+            label:           'orob2b.pricing.pricelist.entity_plural_label'
+            route:           'orob2b_pricing_price_list_index'
+            extras:
+                description: 'orob2b.pricing.menu.shortcut_price_lists.description'
+
+        shortcut_pricing_new_price_list:
+            label:           'orob2b.pricing.menu.shortcut_new_price_list.label'
+            route:           'orob2b_pricing_price_list_create'
+            extras:
+                description:    'orob2b.pricing.menu.shortcut_price_lists.description'
+                isCustomAction: true
+
+    tree:
+        application_menu:
+            children:
+                products_tab:
+                    children:
+                        pricing_price_lists_list: ~
+        shortcuts:
+            children:
+                shortcut_pricing_price_list: ~
+                shortcut_pricing_new_price_list:   ~
+
+oro_titles:
+    orob2b_pricing_price_list_index:   ~
+    orob2b_pricing_price_list_view:   '%%name%%'
+    orob2b_pricing_price_list_update: '%%name%% - Edit'
+    orob2b_pricing_price_list_create: oro.ui.create_entity

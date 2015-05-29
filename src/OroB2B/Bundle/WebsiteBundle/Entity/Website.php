@@ -12,6 +12,8 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+
 /**
  * @ORM\Table(name="orob2b_website")
  * @ORM\Entity

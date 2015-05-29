@@ -74,7 +74,9 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('url', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+
         $table->setPrimaryKey(['id']);
+
         $table->addUniqueIndex(['name'], 'UNIQ_CBB2CF835E237E06');
         $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
         $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
