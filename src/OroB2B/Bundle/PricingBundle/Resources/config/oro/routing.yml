@@ -10,6 +10,7 @@ orob2b_pricing_ajax:
 
 orob2b_pricing_bundle_api:
     resource:     "@OroB2BPricingBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
     requirements:
         version:  latest|v1
         _format:  json

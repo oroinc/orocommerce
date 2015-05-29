@@ -118,16 +118,16 @@ class PriceListController extends Controller
             $priceList,
             $form,
             function (PriceList $priceList) {
-                return array(
+                return [
                     'route' => 'orob2b_pricing_price_list_update',
-                    'parameters' => array('id' => $priceList->getId())
-                );
+                    'parameters' => ['id' => $priceList->getId()]
+                ];
             },
             function (PriceList $priceList) {
-                return array(
+                return [
                     'route' => 'orob2b_pricing_price_list_view',
-                    'parameters' => array('id' => $priceList->getId())
-                );
+                    'parameters' => ['id' => $priceList->getId()]
+                ];
             },
             $this->get('translator')->trans('orob2b.pricing.controller.price_list.saved.message'),
             $handler
