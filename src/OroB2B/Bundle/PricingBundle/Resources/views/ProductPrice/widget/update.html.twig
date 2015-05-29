@@ -1,12 +1,16 @@
 <div class="widget-content">
     {% if savedId is defined and savedId %}
     <script type="text/javascript">
-        require(['oroui/js/widget-manager'],
-        function(widgetManager) {
+        require(['oroui/js/widget-manager', 'oroui/js/messenger', 'oroui/js/mediator', 'orotranslation/js/translator'],
+        function(widgetManager, messenger, mediator, __) {
             widgetManager.getWidgetInstance(
                 {{ app.request.get('_wid')|json_encode|raw }},
                 function (widget) {
+                    messenger.notificationFlashMessage('success', __('orob2b.pricing.product_price_save.flash.success'));
+                    mediator.trigger('widget_success:' + widget.getAlias());
+                    mediator.trigger('widget_success:' + widget.getWid());
                     widget.trigger('formSave', {{ savedId|json_encode|raw }});
+                    widget.remove();
                 }
             );
         });

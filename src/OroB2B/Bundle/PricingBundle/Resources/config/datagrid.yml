@@ -399,11 +399,11 @@ datagrid:
                 - price_list_id
         columns:
             productSku:
-                label:         orob2b.pricing.productprice.productSku.label
+                label:         orob2b.pricing.productprice.product_sku.label
             quantity:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unitCode.label
+                label:         orob2b.pricing.productprice.unit.label
                 type: twig
                 frontend_type: html
                 template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
