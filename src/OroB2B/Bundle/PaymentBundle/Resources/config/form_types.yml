@@ -1,0 +1,15 @@
+parameters:
+    orob2b_payment.form.type.payment_term.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType
+    orob2b_payment.form.type.payment_term_select.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType
+
+services:
+    orob2b_payment.form.type.payment_term:
+        class: %orob2b_payment.form.type.payment_term.class%
+        arguments: [%orob2b_payment.entity.payment_term.class%]
+        tags:
+            - { name: form.type, alias: orob2b_payment_term }
+
+    orob2b_payment.form.type.payment_term_select:
+        class: %orob2b_payment.form.type.payment_term_select.class%
+        tags:
+            - { name: form.type, alias: orob2b_payment_term_select }
