@@ -69,7 +69,6 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_sku', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float', []);
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('value', 'float', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->addUniqueIndex(

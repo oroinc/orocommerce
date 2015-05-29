@@ -190,6 +190,7 @@ class ProductPrice
     public function setPrice(Price $price)
     {
         $this->price = $price;
+        $this->updatePrice();
 
         return $this;
     }
