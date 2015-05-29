@@ -28,7 +28,7 @@ class PriceListProductPriceType extends AbstractType
     {
         /** @var ProductPrice $data */
         $data = $builder->getData();
-        $isNew = $data && $data->getId();
+        $isNew = $data && !$data->getId();
         $hasProduct = $data && $data->getProduct();
 
         $builder
@@ -65,7 +65,7 @@ class PriceListProductPriceType extends AbstractType
                 PriceType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.unit.label'
+                    'label' => 'orob2b.pricing.productprice.price.label'
                 ]
             );
     }
@@ -75,9 +75,11 @@ class PriceListProductPriceType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice', //$this->dataClass
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => $this->dataClass
+            ]
+        );
     }
 
     /**

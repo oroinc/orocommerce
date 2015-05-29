@@ -1,4 +1,4 @@
-<div class="widget-container">
+<div class="widget-content">
     {% if savedId is defined and savedId %}
     <script type="text/javascript">
         require(['oroui/js/widget-manager'],
@@ -26,16 +26,18 @@
         </div>
     {% endif %}
 
-    <form method="post"
-          data-nohash="true"
-          data-disable-autofocus="true"
-          data-collect="true"
-          id="{{ form.vars.id }}"
-          name="{{ form.vars.name }}"
-          action="{{ app.request.uri }}"
-          class="form-dialog"
-            >
-        {{ form_row(form) }}
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
+        <fieldset class="form-horizontal">
+            {{ form_row(form.product) }}
+            {{ form_row(form.quantity) }}
+            {{ form_row(form.unit) }}
+            {{ form_row(form.price) }}
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
 
         <div class="widget-actions">
             <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>

@@ -15,7 +15,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 
-class ProductPriceController extends Controller
+class AjaxProductPriceController extends Controller
 {
     /**
      * Create product form
@@ -32,7 +32,7 @@ class ProductPriceController extends Controller
      *      class="OroB2BPricingBundle:ProductPrice",
      *      permission="CREATE"
      * )
-     * @ParamConverter("priceList", class="OroB2BPricingBundle:ProductPrice", options={"id" = "priceListId"})
+     * @ParamConverter("priceList", class="OroB2BPricingBundle:PriceList", options={"id" = "priceListId"})
      *
      * @param PriceList $priceList
      * @return array|RedirectResponse

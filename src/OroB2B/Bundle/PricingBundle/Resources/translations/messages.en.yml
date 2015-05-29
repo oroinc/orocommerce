@@ -17,6 +17,7 @@ orob2b.pricing:
     quantity.label: Quantity
     unit.label: Unit
     price.label: Price
+    add_product_price: Add Product Price
 
     productprice:
         entity_label: Product Price
@@ -30,7 +31,7 @@ orob2b.pricing:
         quantity.label: Quantity
         value.label: Value
         unit.label: Unit
-        price: Price
+        price.label: Price
 
     menu:
         price_lists_tab.label: Price lists management

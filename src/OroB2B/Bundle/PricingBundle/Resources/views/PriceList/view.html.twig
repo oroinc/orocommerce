@@ -91,6 +91,46 @@
         {#}#}
     {#]) %}#}
 
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [
+                        UI.clientLink({
+                            'dataUrl': path(
+                                'orob2b_product_price_create_widget', {
+                                    priceListId: entity.id
+                            }),
+                            'aCss': 'no-hash btn',
+                            'label' : 'orob2b.pricing.add_product_price'|trans,
+                            'widget' : {
+                                'type' : 'dialog',
+                                'multiple' : true,
+                                'reload-grid-name' : 'activity-call-grid',
+                                'options' : {
+                                    'alias': 'add-product-price-dialog',
+                                    'dialogOptions' : {
+                                        'stateEnabled': false,
+                                        'incrementalPosition': false,
+                                        'title' : 'orob2b.pricing.add_product_price'|trans,
+                                        'allowMaximize': true,
+                                        'allowMinimize': true,
+                                        'dblclick': 'maximize',
+                                        'maximizedHeightDecreaseBy': 'minimize-bar',
+                                        'width': 600
+                                    }
+                                }
+                            }
+                        })
+                    ]
+                }
+            ]
+        }
+    ]) %}
+
     {% set id = 'pricingView' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
