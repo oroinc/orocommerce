@@ -15,6 +15,7 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Valid: ~
         prices:
             - Valid: ~
+            - OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:

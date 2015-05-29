@@ -1,0 +1,6 @@
+config:
+    paths:
+        'orob2bpricing/js/app/modules/validator-constraints-module': 'bundles/orob2bpricing/js/app/modules/validator-constraints-module.js'
+        'orob2bpricing/js/validator/unique-product-prices': 'bundles/orob2bpricing/js/validator/unique-product-prices.js'
+    appmodules:
+        - orob2bpricing/js/app/modules/validator-constraints-module
