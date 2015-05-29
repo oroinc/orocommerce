@@ -1,3 +1,6 @@
+imports:
+    - { resource: services/form_types.yml }
+    - { resource: services/twig_extensions.yml }  
 parameters:
     orob2b_sale.doctrine.subscriber.entity.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.quote.class: OroB2B\Bundle\SaleBundle\Entity\Quote

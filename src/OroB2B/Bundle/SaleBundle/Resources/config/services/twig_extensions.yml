@@ -1,0 +1,9 @@
+parameters:
+    orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
+services:
+    orob2b_sale.twig.quote:
+        class: %orob2b_sale.twig.quote.class%
+        arguments:
+            - @service_container
+        tags:
+            - { name: twig.extension }
