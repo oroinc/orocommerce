@@ -23,3 +23,15 @@
     padding-left: 5px !important;
 }
 
+.sale-quote-info-product {
+    float: left;
+}
+
+.sale-quote-info-product-items {
+    display: inline-block; 
+    margin-left: 5px;
+}
+
+.sale-quote-info-product-item {
+    margin-bottom: 5px;
+}
