@@ -26,7 +26,8 @@ class PriceType extends AbstractType
                 [
                     'currencies_list' => $options['currencies_list'],
                     'compact' => $options['compact'],
-                    'required' => true
+                    'required' => true,
+                    'empty_value' => 'oro.currency.currency.form.choose'
                 ]
             )
         ;

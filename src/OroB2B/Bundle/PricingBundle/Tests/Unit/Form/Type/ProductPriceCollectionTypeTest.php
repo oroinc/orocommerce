@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -17,13 +20,23 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
+     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $em;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new ProductPriceCollectionType('\stdClass');
+        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new ProductPriceCollectionType($this->em);
+        $this->formType->setDataClass('\stdClass');
     }
 
     /**
@@ -71,5 +84,32 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->formType->setDefaultOptions($resolver);
+    }
+
+    public function testFinishView()
+    {
+        /** @var \Symfony\Component\Form\FormView|\PHPUnit_Framework_MockObject_MockObject $view */
+        $view = new FormView();
+
+        /** @var \Symfony\Component\Form\FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->once())
+            ->method('findAll')
+            ->will($this->returnValue([]));
+
+        $this->em->expects($this->once())
+            ->method('getRepository')
+            ->with('OroB2BPricingBundle:PriceList')
+            ->will($this->returnValue($repository));
+
+        $this->formType->finishView($view, $form, []);
+        $this->assertEquals(json_encode([]), $view->vars['attr']['data-currencies']);
     }
 }

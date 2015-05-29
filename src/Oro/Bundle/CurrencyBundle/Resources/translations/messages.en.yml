@@ -5,3 +5,4 @@ oro.currency:
             currency_settings.title: 'Currency settings'
         fields:
             allowed_currencies.label: 'Allowed Currencies'
+    currency.form.choose: 'Choose Currency...'
