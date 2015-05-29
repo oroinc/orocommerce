@@ -27,7 +27,7 @@ class ProductPriceType extends AbstractType
             ->add(
                 'priceList',
                 PriceListSelectType::NAME,
-                ['label' => 'orob2b.pricing.price_list.entity_label', 'create_enabled' => false, 'required' => true]
+                ['label' => 'orob2b.pricing.pricelist.entity_label', 'create_enabled' => false, 'required' => true]
             )
             ->add('quantity', 'number', ['label' => 'orob2b.pricing.quantity.label'])
             ->add('unit', ProductUnitSelectionType::NAME, ['label' => 'orob2b.pricing.unit.label'])
@@ -41,7 +41,7 @@ class ProductPriceType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
+            'data_class' => $this->dataClass
         ]);
     }
 

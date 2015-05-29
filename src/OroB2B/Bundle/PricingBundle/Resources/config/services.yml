@@ -5,15 +5,21 @@ parameters:
     orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.listener.product_unit_precision.class: OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener
+    orob2b_pricing.acl.voter.product_list.class: OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter
+    orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
 
 services:
-    orob2b_pricing.listener.product_unit_precision:
-        class: %orob2b_pricing.listener.product_unit_precision.class%
+    orob2b_pricing.acl.voter.product_list:
+        class: %orob2b_pricing.acl.voter.product_list.class%
+        arguments:
+            - @oro_entity.doctrine_helper
         calls:
-            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
-            - [setEventDispatcher, [@event_dispatcher]]
+            - [setClassName, [%orob2b_pricing.entity.price_list.class%]]
         tags:
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: security.voter, priority: 10 }
+
+    orob2b_pricing.datagrid.price_list_permissions_provider:
+        class: %orob2b_pricing.datagrid.price_list_permissions_provider.class%
 
     orob2b_pricing.form.price_list:
         class: Symfony\Component\Form\Form
@@ -44,3 +50,11 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
         lazy: true
+        
+    orob2b_pricing.listener.product_unit_precision:
+        class: %orob2b_pricing.listener.product_unit_precision.class%
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setEventDispatcher, [@event_dispatcher]]
+        tags:
+            - { name: doctrine.event_listener, event: preRemove }

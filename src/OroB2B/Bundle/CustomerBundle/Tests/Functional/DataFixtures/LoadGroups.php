@@ -16,6 +16,7 @@ class LoadGroups extends AbstractFixture
     {
         $this->createGroup($manager, 'customer_group.group1');
         $this->createGroup($manager, 'customer_group.group2');
+        $this->createGroup($manager, 'customer_group.group3');
 
         $manager->flush();
     }

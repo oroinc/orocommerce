@@ -9,6 +9,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadLocaleData extends AbstractFixture
 {
+    /**
+     * @var array
+     */
     protected $locales = [
         ['code' => 'en_US', 'parent' => null],
         ['code' => 'en_CA', 'parent' => 'en_US']

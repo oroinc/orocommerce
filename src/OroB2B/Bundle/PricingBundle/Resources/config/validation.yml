@@ -5,6 +5,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
             - Length:
                 max: 255
         currencies:
+            - NotBlank: ~
             - Valid: ~
         prices:
             - Valid: ~
