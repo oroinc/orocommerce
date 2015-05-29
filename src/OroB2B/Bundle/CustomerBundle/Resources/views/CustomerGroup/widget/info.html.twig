@@ -5,6 +5,19 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.customer.customergroup.name.label'|trans, entity.name) }}
+
+            {% if entity.priceList %}
+                {% if is_granted('VIEW', entity.priceList) %}
+                    {% set priceListData %}
+                        <a href="{{ path('orob2b_pricing_price_list_view', {id: entity.priceList.id}) }}">
+                            {{ entity.priceList.name }}
+                        </a>
+                    {% endset %}
+                    {{ UI.renderHtmlProperty('orob2b.customer.customergroup.price_list.label'|trans, priceListData) }}
+                {% else %}
+                    {{ UI.renderProperty('orob2b.customer.customergroup.price_list.label'|trans, entity.priceList.name) }}
+                {% endif %}
+            {% endif %}
         </div>
     </div>
 </div>

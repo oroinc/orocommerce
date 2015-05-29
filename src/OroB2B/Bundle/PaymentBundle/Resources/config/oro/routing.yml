@@ -1,0 +1,14 @@
+orob2b_payment:
+    resource:     "@OroB2BPaymentBundle/Controller/PaymentTermController.php"
+    type:         annotation
+    prefix:       /payment/term
+
+oro_organziation_api:
+    resource:     "@OroB2BPaymentBundle/Controller/Api/Rest/PaymentTermController.php"
+    type:         rest
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest

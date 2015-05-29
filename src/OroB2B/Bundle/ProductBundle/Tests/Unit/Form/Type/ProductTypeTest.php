@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 
@@ -43,6 +44,17 @@ class ProductTypeTest extends \PHPUnit_Framework_TestCase
                 [
                     'label' => 'orob2b.product.unit_precisions.label',
                     'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
+                    'required' => false
+                ]
+            )
+            ->will($this->returnSelf());
+        $builder->expects($this->at(3))
+            ->method('add')
+            ->with(
+                'prices',
+                ProductPriceCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.prices.label',
                     'required' => false
                 ]
             )

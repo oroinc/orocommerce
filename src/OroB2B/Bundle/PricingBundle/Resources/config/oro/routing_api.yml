@@ -1,0 +1,3 @@
+orob2b_pricing_api:
+    resource: "@OroB2BPricingBundle/Controller/Api/Rest/PriceListController.php"
+    type:     rest

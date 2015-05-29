@@ -1,0 +1,6 @@
+# TODO: Remove this file after https://magecore.atlassian.net/browse/BB-428 merge
+orob2b_pricing_price_list_view:
+    type: entity
+    class: OroB2BPricingBundle:PriceList
+    permission: VIEW
+    group_name: ""

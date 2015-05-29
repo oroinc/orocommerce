@@ -1,0 +1,8 @@
+{% extends 'OroSearchBundle:Search:searchResultItem.html.twig' %}
+
+{% set showImage = false %}
+
+{% set recordUrl = indexer_item.recordUrl %}
+{% set title = indexer_item.recordTitle %}
+
+{% set entityType = 'orob2b.payment.paymentterm.entity_label'|trans %}

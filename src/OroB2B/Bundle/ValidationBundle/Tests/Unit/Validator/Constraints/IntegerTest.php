@@ -18,12 +18,25 @@ class IntegerTest extends \PHPUnit_Framework_TestCase
     /** @var IntegerValidator */
     protected $validator;
 
+    /** @var string */
+    protected $locale;
+
     protected function setUp()
     {
         $this->constraint = new Integer();
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
         $this->validator = new IntegerValidator();
         $this->validator->initialize($this->context);
+
+        $this->locale = \Locale::getDefault();
+        \Locale::setDefault('en');
+    }
+
+    protected function tearDown()
+    {
+        \Locale::setDefault($this->locale);
+
+        unset($this->constraint, $this->context, $this->validator, $this->locale);
     }
 
     public function testConfiguration()

@@ -16,9 +16,9 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
         columns:
             name:
-                label:         orob2b.pricing.price_list.name.label
+                label:         orob2b.pricing.pricelist.name.label
             default:
-                label:         orob2b.pricing.price_list.default.label
+                label:         orob2b.pricing.pricelist.default.label
                 frontend_type: boolean
             createdAt:
                 label:         oro.ui.created_at
@@ -56,35 +56,10 @@ datagrid:
                     data_name: priceList.default
 
     pricing-price-list-grid:
+        extends: pricing-price-list-select-grid
         options:
-            entityHint:        priceList
             entity_pagination: true
-        source:
-            acl_resource: orob2b_pricing_price_list_view
-            type:         orm
-            query:
-                select:
-                    - priceList.id
-                    - priceList.name
-                    - priceList.default
-                    - priceList.createdAt
-                    - priceList.updatedAt
-                from:
-                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
-        columns:
-            name:
-                label:         orob2b.pricing.price_list.name.label
-            default:
-                label:         orob2b.pricing.price_list.default.label
-                frontend_type: boolean
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
         properties:
-            id: ~
             view_link:
                 type:  url
                 route: orob2b_pricing_price_list_view
@@ -98,33 +73,17 @@ datagrid:
                 type: url
                 route: orob2b_api_pricing_delete_price_list
                 params: [ id ]
-        sorters:
-            columns:
-                name:
-                    data_name: priceList.name
-                createdAt:
-                    data_name: priceList.createdAt
-                updatedAt:
-                    data_name: priceList.updatedAt
-                default:
-                    data_name: priceList.default
-            default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-        filters:
-            columns:
-                name:
-                    type:      string
-                    data_name: priceList.name
-                createdAt:
-                    type:      datetime
-                    data_name: priceList.createdAt
-                updatedAt:
-                    type:      datetime
-                    data_name: priceList.updatedAt
-                default:
-                    type:      boolean
-                    data_name: priceList.default
+            default_link:
+                type: url
+                route: orob2b_pricing_price_list_default
+                params: [ id ]
         actions:
+            default:
+                type:          ajax
+                label:         orob2b.pricing.pricelist.set_default.label
+                link:          default_link
+                icon:          check
+                acl_resource:  orob2b_pricing_price_list_update
             view:
                 type:          navigate
                 label:         oro.grid.action.view
@@ -144,3 +103,271 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_pricing_price_list_delete
+        action_configuration: [@orob2b_pricing.datagrid.price_list_permissions_provider, "getPermissions"]
+
+    base-price-list-relations-grid:
+        options:
+            entity_pagination: true
+        source:
+            acl_resource:      orob2b_pricing_price_list_view
+            type:              orm
+            query:
+                select:
+                    - relatedEntity.id
+                    - relatedEntity.name
+                where:
+                    and:
+                        - relatedEntity.priceList = :price_list_id
+            bind_parameters:
+                - price_list_id
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                params: [ id ]
+        sorters:
+            columns:
+                name:
+                    data_name: relatedEntity.name
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: relatedEntity.name
+        actions:
+            view:
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                rowAction:    true
+
+    price-list-customers-grid:
+        extends:                base-price-list-relations-grid
+        source:
+            query:
+                select:
+                    - customerGroup.name as groupName
+                    - parent.name as parentName
+                from:
+                    - { table: %orob2b_customer.entity.customer.class%, alias: relatedEntity }
+                join:
+                    left:
+                        - { join: relatedEntity.group, alias: customerGroup }
+                        - { join: relatedEntity.parent, alias: parent }
+        columns:
+            name:
+                label: orob2b.customer.name.label
+            groupName:
+                label: orob2b.customer.group.label
+            parentName:
+                label: orob2b.customer.parent.label
+        properties:
+            view_link:
+                route:  orob2b_customer_view
+        sorters:
+            columns:
+                groupName:
+                    data_name: groupName
+                parentName:
+                    data_name: parentName
+        filters:
+            columns:
+                groupName:
+                    type:      entity
+                    data_name: customerGroup.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_customer.entity.customer_group.class%
+                            property: name
+                parentName:
+                    type:      string
+                    data_name: parent.name
+        actions:
+            view:
+                acl_resource: orob2b_customer_view
+
+    price-list-customer-groups-grid:
+        extends:                base-price-list-relations-grid
+        source:
+            query:
+                from:
+                    - { table: %orob2b_customer.entity.customer_group.class%, alias: relatedEntity }
+        columns:
+            name:
+                label: orob2b.customer.customergroup.name.label
+        properties:
+            view_link:
+                route:  orob2b_customer_group_view
+        actions:
+            view:
+                acl_resource: orob2b_customer_group_view
+
+#    TODO: FIX This grid after correct relation config
+#    price-list-websites-grid:
+#        extends:                base-price-list-relations-grid
+#        source:
+#            query:
+#                select:
+#                    - relatedEntity.url
+#                from:
+#                    - { table: %orob2b_website.website.class%, alias: relatedEntity }
+#        columns:
+#            name:
+#                label:          orob2b.website.name.label
+#            url:
+#                label:          orob2b.website.url.label
+#        properties:
+#            view_link:
+#                route:  orob2b_website_view
+#        sorters:
+#            columns:
+#                url:
+#                    data_name:  relatedEntity.url
+#        filters:
+#            columns:
+#                url:
+#                    type:       string
+#                    data_name:  relatedEntity.url
+#        actions:
+#            view:
+#                acl_resource: orob2b_website_view
+
+    base-price-list-select-relations-grid:
+        source:
+            acl_resource:       orob2b_pricing_price_list_update
+            type:               orm
+            query:
+                select:
+                    - relatedEntity.id
+                    - relatedEntity.name
+                    - >
+                      (CASE WHEN (:price_list_id IS NOT NULL) THEN
+                        CASE WHEN (:price_list_id = relatedEntity.priceList OR relatedEntity.id IN (:data_in)) AND relatedEntity.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      ELSE
+                        CASE WHEN relatedEntity.id IN (:data_in) AND relatedEntity.id NOT IN (:data_not_in)
+                        THEN true ELSE false END
+                      END) as has_price_list
+            bind_parameters:
+                - price_list_id
+        columns:
+            has_price_list:
+                label:          orob2b.pricing.pricelist.has_price_list.label
+                editable:       true
+                frontend_type:  boolean
+        filters:
+            columns:
+                has_price_list:
+                    type:       boolean
+                    data_name:  has_price_list
+                name:
+                    type:       string
+                    data_name:  relatedEntity.name
+        sorters:
+            multiple_sorting:   true
+            columns:
+                has_price_list:
+                    data_name:  has_price_list
+                name:
+                    data_name:  relatedEntity.name
+            default:
+                has_price_list: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                name:           %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+        options:
+            rowSelection:
+                dataField:      id
+                columnName:     has_price_list
+
+    price-list-select-customers-grid:
+        extends:                base-price-list-select-relations-grid
+        source:
+            query:
+                select:
+                    - customerGroup.name as groupName
+                    - parent.name as parentName
+                from:
+                    - { table: %orob2b_customer.entity.customer.class%, alias: relatedEntity }
+                join:
+                    left:
+                        - { join: relatedEntity.group, alias: customerGroup }
+                        - { join: relatedEntity.parent, alias: parent }
+        columns:
+            name:
+                label:          orob2b.customer.name.label
+            groupName:
+                label:          orob2b.customer.group.label
+            parentName:
+                label:          orob2b.customer.parent.label
+        filters:
+            columns:
+                groupName:
+                    type:      entity
+                    data_name: customerGroup.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_customer.entity.customer_group.class%
+                            property: name
+                parentName:
+                    type:       string
+                    data_name:  parentName
+        sorters:
+            columns:
+                groupName:
+                    data_name:  groupName
+                parentName:
+                    data_name:  parentName
+        options:
+            rowSelection:
+                selectors:
+                    included:   '#priceListAppendCustomers'
+                    excluded:   '#priceListRemoveCustomers'
+
+    price-list-select-customer-groups-grid:
+        extends:                base-price-list-select-relations-grid
+        source:
+            query:
+                from:
+                    - { table: %orob2b_customer.entity.customer_group.class%, alias: relatedEntity }
+        columns:
+            name:
+                label:          orob2b.customer.customergroup.name.label
+        options:
+            rowSelection:
+                selectors:
+                    included:   '#priceListAppendCustomerGroups'
+                    excluded:   '#priceListRemoveCustomerGroups'
+
+    price-list-select-websites-grid:
+        extends:                base-price-list-select-relations-grid
+        source:
+            query:
+                select:
+                    - relatedEntity.url
+                from:
+                    - { table: %orob2b_website.website.class%, alias: relatedEntity }
+        columns:
+            name:
+                label:          orob2b.website.name.label
+            url:
+                label:          orob2b.website.url.label
+        filters:
+            columns:
+                url:
+                    type:       string
+                    data_name:  relatedEntity.url
+        sorters:
+            columns:
+                url:
+                    data_name:  relatedEntity.url
+        options:
+            rowSelection:
+                selectors:
+                    included:   '#priceListAppendWebsites'
+                    excluded:   '#priceListRemoveWebsites'
