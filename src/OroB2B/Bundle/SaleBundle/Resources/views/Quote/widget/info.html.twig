@@ -13,11 +13,11 @@
                 <h3>{{ UI.renderHtmlProperty('orob2b.product.entity_label'|trans, quoteProduct.product) }}</h3>
                 <ul class="without-markers">
                     {% for quoteProductItem in quoteProduct.quoteProductItems %}
-                        <li><ul class="without-markers">
-                            <li>{{ UI.renderHtmlProperty('orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'|trans, quoteProductItem.quantity) }}</li>
-                            <li>{{ UI.renderHtmlProperty('orob2b.product.productunit.entity_label'|trans, ('orob2b.product_unit.'~ quoteProductItem.productUnit.code ~'.label.full')|trans)}}</li>
-                            <li>{{ UI.renderHtmlProperty('orob2b.sale.quote.quoteproduct.quoteproductitem.price.label'|trans, quoteProductItem.price|oro_format_price) }}</li>
-                        </ul></li>
+                        <ul class="without-markers">
+                            {{ UI.renderHtmlProperty('orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'|trans, quoteProductItem.quantity) }}
+                            {{ UI.renderHtmlProperty('orob2b.product.productunit.entity_label'|trans, ('orob2b.product_unit.'~ quoteProductItem.productUnit.code ~'.label.full')|trans)}}
+                            {{ UI.renderHtmlProperty('orob2b.sale.quote.quoteproduct.quoteproductitem.price.label'|trans, quoteProductItem.price|oro_format_price) }}
+                        </ul>
                     {% endfor %}
                 </ul>
             {% endfor %}
