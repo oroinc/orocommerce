@@ -19,6 +19,9 @@ orob2b.pricing:
     price.label: Price
 
     productprice:
+        entity_label: Product Price
+        entity_plural_label: Product Prices
+        entity_description: Represents product price
         productSku.label: Product SKU
         quantity.label: Quantity
         value.label: Value

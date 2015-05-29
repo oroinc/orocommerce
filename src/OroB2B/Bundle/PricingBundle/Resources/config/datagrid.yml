@@ -394,9 +394,9 @@ datagrid:
                         - { join: productPrice.unit, alias: unit }
                 where:
                     and:
-                        - priceList.id = :priceListId
+                        - priceList.id = :price_list_id
             bind_parameters:
-                - priceListId
+                - price_list_id
         columns:
             productSku:
                 label:         orob2b.pricing.productprice.productSku.label
@@ -404,6 +404,9 @@ datagrid:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
                 label:         orob2b.pricing.productprice.unitCode.label
+                type: twig
+                frontend_type: html
+                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
             value:
                 label:         orob2b.pricing.productprice.value.label
             currency:
