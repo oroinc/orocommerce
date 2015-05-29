@@ -27,7 +27,7 @@ class AjaxProductPriceController extends Controller
      * )
      * @Template("OroB2BPricingBundle:ProductPrice:widget/update.html.twig")
      * @Acl(
-     *      id="orob2b_product_price_create",
+     *      id="orob2b_pricing_product_price_create",
      *      type="entity",
      *      class="OroB2BPricingBundle:ProductPrice",
      *      permission="CREATE"
@@ -51,7 +51,7 @@ class AjaxProductPriceController extends Controller
      * @Route("/update/{id}", name="orob2b_product_price_update_widget", requirements={"id"="\d+"})
      * @Template("OroB2BPricingBundle:ProductPrice:widget/update.html.twig")
      * @Acl(
-     *      id="orob2b_product_price_update",
+     *      id="orob2b_pricing_product_price_update",
      *      type="entity",
      *      class="OroB2BPricingBundle:ProductPrice",
      *      permission="EDIT"

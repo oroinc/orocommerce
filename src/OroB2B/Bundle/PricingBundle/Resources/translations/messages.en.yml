@@ -30,7 +30,9 @@ orob2b.pricing:
         currency.label: Currency
         quantity.label: Quantity
         value.label: Value
-        unit.label: Unit
+        unit:
+            label: Unit
+            choose: Choose unit...
         price.label: Price
 
     menu:

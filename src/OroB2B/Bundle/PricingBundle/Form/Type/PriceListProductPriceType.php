@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
@@ -26,11 +25,6 @@ class PriceListProductPriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var ProductPrice $data */
-        $data = $builder->getData();
-        $isNew = $data && !$data->getId();
-        $hasProduct = $data && $data->getProduct();
-
         $builder
             ->add(
                 'product',
@@ -38,7 +32,6 @@ class PriceListProductPriceType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.product.label',
-                    'disabled' => !$isNew,
                     'create_enabled' => false
                 ]
             )
@@ -47,8 +40,7 @@ class PriceListProductPriceType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.quantity.label',
-                    'disabled' => !$hasProduct
+                    'label' => 'orob2b.pricing.productprice.quantity.label'
                 ]
             )
             ->add(
@@ -57,7 +49,8 @@ class PriceListProductPriceType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.unit.label',
-                    'disabled' => !$hasProduct
+                    'empty_data' => null,
+                    'empty_value' => 'orob2b.pricing.productprice.unit.choose'
                 ]
             )
             ->add(
@@ -65,6 +58,7 @@ class PriceListProductPriceType extends AbstractType
                 PriceType::NAME,
                 [
                     'required' => true,
+                    'compact' => true,
                     'label' => 'orob2b.pricing.productprice.price.label'
                 ]
             );
