@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 
 class ProductType extends AbstractType
@@ -25,6 +26,14 @@ class ProductType extends AbstractType
                 [
                     'label' => 'orob2b.product.unit_precisions.label',
                     'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'prices',
+                ProductPriceCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.prices.label',
                     'required' => false
                 ]
             )

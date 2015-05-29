@@ -5,7 +5,15 @@ orob2b.pricing:
         entity_description: Represents price list information
         id.label: Id
         name.label: Name
-        default.label: Default
+        default.label: Is Default
+        currencies.label: Currencies
+        has_price_list.label: Has Price List
+        set_default:
+            label: Set default
+            message: Item has been set default
+        customer_groups.label: Customer Groups
+        customers.label: Customers
+        websites.label: Websites
     quantity.label: Quantity
     unit.label: Unit
     price.label: Price
