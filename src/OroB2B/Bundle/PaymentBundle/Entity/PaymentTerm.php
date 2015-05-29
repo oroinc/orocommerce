@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
@@ -43,6 +44,13 @@ class PaymentTerm
     /**
      * @var string
      * @ORM\Column(name="label", type="string")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $label;
 

@@ -32,14 +32,18 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param mixed $submittedData
+     * @param array $submittedData
      */
-    public function testSubmit($submittedData)
+    public function testSubmit(array $submittedData)
     {
         $form = $this->factory->create($this->formType, $this->newPaymentTerm);
 
         $form->submit($submittedData);
-        $this->assertEquals($this->newPaymentTerm, $form->getData());
+
+        $this->assertTrue($form->isValid());
+        $expected = new PaymentTerm();
+        $expected->setLabel($submittedData['label']);
+        $this->assertEquals($expected, $form->getData());
     }
 
     public function testGetName()
@@ -55,8 +59,8 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
         return [
             'submit' => [
                 'submittedData' => [
-                    'label' => 'net 10',
-                ],
+                    'label' => 'net 10'
+                ]
             ]
         ];
     }

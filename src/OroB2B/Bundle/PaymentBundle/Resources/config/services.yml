@@ -1,10 +1,10 @@
 parameters:
     orob2b_payment.entity.payment_term.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
-    orob2b_payment.entity.payment_term.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_payment.payment_term.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
     orob2b_payment.payment_term.manager.api:
-        class: %orob2b_payment.entity.payment_term.api.class%
+        class: %orob2b_payment.payment_term.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_payment.entity.payment_term.class%
