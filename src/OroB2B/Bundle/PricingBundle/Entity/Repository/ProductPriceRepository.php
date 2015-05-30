@@ -45,7 +45,6 @@ class ProductPriceRepository extends EntityRepository
             ->getQuery()
             ->getArrayResult();
 
-
         $result = [];
         foreach ($currencies as $currency) {
             $currencyName = reset($currency);
