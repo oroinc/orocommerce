@@ -22,11 +22,11 @@ orob2b.pricing:
         entity_label: Product Price
         entity_plural_label: Product Prices
         entity_description: Represents product price
-        productSku.label: Product SKU
+        product_sku.label: Product SKU
         quantity.label: Quantity
         value.label: Value
         currency.label: Currency
-        unitCode.label: Unit
+        unit_code.label: Unit
 
     menu:
         price_lists_tab.label: Price lists management
