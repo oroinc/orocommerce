@@ -5,9 +5,15 @@ define(function (require) {
 
     var ProductUnitPrecisionLimitationsComponent,
         mediator = require('oroui/js/mediator'),
+        _ = require('underscore'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
     ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
+        /**
+         * @property {array}
+         */
+        units: {},
+
         /**
          * @inheritDoc
          */
@@ -17,46 +23,45 @@ define(function (require) {
                 return;
             }
             this.$container = $(containerId);
+            this.$container.on('content:changed', _.bind(this.onChange, this));
+            mediator.on('product:precision:remove', this.onChange, this);
+            mediator.on('product:precision:add', this.onChange, this);
 
-            mediator.on('product:precision:remove', this.removeOptions, this);
-            mediator.on('product:precision:add', this.addOptions, this);
+            this.$container.trigger('content:changed');
         },
 
         /**
-         * Ask options on remove event
-         *
-         * @param {Object} data with structure {value: value, text: text}
+         * Change options in selects
          */
-        removeOptions: function (data) {
-            var contentChanged = false;
+        onChange: function () {
+            var units = $(':data(units)').data('units') || {},
+                updateRequired = false;
 
             $.each(this.getSelects(), function (index, select) {
-                $(select).find("option[value='" + data.value + "']").remove();
+                _.each($(select).find('option'), function (option) {
+                    if (!option.value) {
+                        return;
+                    }
 
-                contentChanged = true;
-            });
+                    if (!units.hasOwnProperty(option.value)) {
+                        option.remove();
 
-            this.triggerContentChanged(contentChanged);
-        },
+                        updateRequired = true;
+                    }
+                });
 
-        /**
-         * Add options on add event
-         *
-         * @param {Object} data with structure {value: value, text: text}
-         */
-        addOptions: function (data) {
-            var contentChanged = false;
+                _.each(units, function (text, value) {
+                    if (!$(select).find("option[value='" + value + "']").length) {
+                        $(select).append($('<option></option>').val(value).text(text));
 
-            $.each(this.getSelects(), function (index, select) {
-                if (!$(select).find("option[value='" + data.value + "']").length) {
-                    $(select).append($('<option></option>').val(data.value).text(data.text));
+                        updateRequired = true;
+                    }
+                });
 
-                    contentChanged = true
-
+                if (updateRequired) {
+                    $(select).trigger('change');
                 }
             });
-
-            this.triggerContentChanged(contentChanged);
         },
 
         /**
@@ -66,19 +71,6 @@ define(function (require) {
          */
         getSelects: function () {
             return this.$container.find("select[name^='orob2b_product_form[prices]'][name$='[unit]']")
-        },
-
-        /**
-         * Triggers content update if needed
-         *
-         * @param {Boolean} contentChanged
-         */
-        triggerContentChanged: function (contentChanged) {
-            if (!contentChanged) {
-                return;
-            }
-
-            this.$container.trigger('content:changed');
         }
     });
 

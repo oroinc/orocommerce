@@ -47,6 +47,7 @@ define(function (require) {
                 .on('content:remove', _.bind(this.askConfirmation, this));
 
             this.$addButton = this.$container.next('a.add-list-item');
+
             this.$container.trigger('content:changed');
         },
 
@@ -56,6 +57,11 @@ define(function (require) {
         onChange: function () {
             var selects = this.$container.find('select'),
                 self = this;
+
+            selects.each(function () {
+                var option = $(this).find('option:selected');
+                self.addData({value: option.val(), text: option.text()});
+            });
 
             selects.each(function (index) {
                 var select = $(this);
@@ -91,7 +97,7 @@ define(function (require) {
                     .data('prevText', option.text())
                     .on('change', _.bind(self.onSelectChange, self));
 
-                mediator.trigger('product:precision:add', {value: option.val(), text: option.text()});
+                self.addData({value: option.val(), text: option.text()});
             });
         },
 
@@ -104,8 +110,7 @@ define(function (require) {
             var option = $(e.target).find('select option:selected');
 
             if (option) {
-                mediator.trigger('product:precision:remove', {value: option.val(), text: option.text()});
-
+                this.removeData({value: option.val(), text: option.text()});
                 this.addOptionToAllSelects(option.val(), option.text());
                 this.$addButton.show();
             }
@@ -118,12 +123,7 @@ define(function (require) {
          */
         onSelectChange: function (e) {
             var select = $(e.target);
-
-            mediator.trigger('product:precision:remove', {
-                value: select.data('prevValue'),
-                text: select.data('prevText')
-            });
-
+            this.removeData({value: select.data('prevValue'), text: select.data('prevText')});
             this.addOptionToAllSelects(select.data('prevValue'), select.data('prevText'));
             this.onChange();
         },
@@ -139,7 +139,7 @@ define(function (require) {
                 var select = $(this);
 
                 if (select.data('prevValue') != value) {
-                    select.append('<option value="' + value + '">' + text + '</option>');
+                    select.append($('<option></option>').val(value).text(text));
                 }
             });
         },
@@ -170,6 +170,33 @@ define(function (require) {
                     self.off();
                 }, this))
                 .open();
+        },
+
+        /**
+         * @param {Object} data with structure {value: value, text: text}
+         */
+        addData: function (data) {
+            var storedData = this.$container.data('units') || {};
+            if (storedData.hasOwnProperty(data.value)) {
+                return;
+            }
+
+            storedData[data.value] = data.text;
+
+            this.$container.data('units', storedData);
+            mediator.trigger('product:precision:add', data);
+        },
+
+        /**
+         * @param {Object} data with structure {value: value, text: text}
+         */
+        removeData: function (data) {
+            var storedData = this.$container.data('units') || {};
+            delete storedData[data.value];
+
+            this.$container.data('units', storedData);
+
+            mediator.trigger('product:precision:remove', data);
         },
 
         dispose: function () {
