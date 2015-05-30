@@ -443,7 +443,7 @@ datagrid:
                     data_name: productPrice.currency
                 currency:
                     type:      choice
-                    data_name: currency
+                    data_name: productPrice.currency
                     options:
-                        field_type: oro_currency_selection
-
+                        field_options:
+                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
