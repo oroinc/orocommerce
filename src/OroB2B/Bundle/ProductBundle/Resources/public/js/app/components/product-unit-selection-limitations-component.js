@@ -58,11 +58,6 @@ define(function (require) {
             var selects = this.$container.find('select'),
                 self = this;
 
-            selects.each(function () {
-                var option = $(this).find('option:selected');
-                self.addData({value: option.val(), text: option.text()});
-            });
-
             selects.each(function (index) {
                 var select = $(this);
 
@@ -176,6 +171,8 @@ define(function (require) {
          * @param {Object} data with structure {value: value, text: text}
          */
         addData: function (data) {
+            console.log(data)
+
             var storedData = this.$container.data('units') || {};
             if (storedData.hasOwnProperty(data.value)) {
                 return;
