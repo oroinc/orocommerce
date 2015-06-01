@@ -3,7 +3,7 @@
         {% if label is not sameas(false) %}
             {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
         {% endif %}
-        <div style="" class="controls{% if errors|length > 0 %} validation-error{% endif %}">
+        <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
             {{ form_widget(form.product) }}
             {{ form_errors(form.product) }}
         </div>
