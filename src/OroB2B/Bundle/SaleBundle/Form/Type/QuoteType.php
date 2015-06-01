@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class QuoteType extends AbstractType
 {
-    
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -29,8 +29,9 @@ class QuoteType extends AbstractType
                 'quoteProducts',
                 QuoteProductCollectionType::NAME,
                 [
-                    'label' => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
-                    'required' => false
+                    'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
+                    // 'add_label' => 'orob2b.sale.quote.quoteproduct.add_label', // TODO
+                    'required'  => false
                 ]
             )
         ;

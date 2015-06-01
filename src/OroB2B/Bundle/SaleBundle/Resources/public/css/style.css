@@ -1,26 +1,62 @@
-.quote-product-items-collection input[type="text"] {
-    width: 170px !important;
+.sale-quote-product-collection .btn.add-list-item {
+    margin-left: 90px;
 }
 
-.quote-product-items-collection table {
+.sale-quote-product-collection .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    top: 0;
+    left: 460px;
+}
+
+.sale-quote-product-widget.control-group  {
+    max-width: 1100px;
+}
+
+.sale-quote-product-widget .btn.add-list-item {
+    margin: 2px 0 2px 0;
+}
+
+.sale-quote-product-widget .selector {
+    margin-left: 0;
+}
+
+.sale-quote-product-widget .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    right: 4px;
+    left: auto;
+}
+
+.sale-quote-product-item-collection {
+    float: left;
+    margin-left: 50px;
+}
+
+.sale-quote-product-item-collection > div > div > div {
+    padding-right: 14px;
+    
+}
+
+.sale-quote-product-item-widget {
+    margin-right: 15px;
+}
+
+.sale-quote-product-item-widget table {
     max-width: 95% !important;
 }
 
-.quote-product-items-collection table td {
+.sale-quote-product-item-widget table td {
     vertical-align: top;
+    padding: 0px;
 }
 
-.quote-product-items-collection .add-list-item {
-    margin-left: 0 !important;
-}
-
-.quote-product-items-collection select {
+.sale-quote-product-item-widget input[type="text"] {
     width: 120px !important;
 }
 
-.quote-product-items-collection > div {
-    margin: 0 0 8px !important;
-    padding-left: 5px !important;
+.sale-quote-product-item-widget select {
+    width: 120px !important;
 }
 
 .sale-quote-info-product {
