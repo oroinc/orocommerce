@@ -31,7 +31,7 @@ define(function (require) {
 
             this.$container = $(containerId);
 
-            this.$productSelect = this.$container.closest('.quoteproduct-form').find('select.quoteproduct-product-select');
+            this.$productSelect = this.$container.closest('.sale-quote-product-widget').find('select.quoteproduct-product-select');
             this.$productSelect.on('change', _.bind(this.onChange, this));
         },
 
@@ -47,7 +47,7 @@ define(function (require) {
                         return;
                     }
                     var newOptions = data.data;
-                    var selects = self.$container.find('.quoteproduct-productunit-select');
+                    var selects = self.$container.find('.sale-quoteproduct-product-select');
 
                     $.each(selects, function(index, select) {
                         var currentValue = $(select).val();

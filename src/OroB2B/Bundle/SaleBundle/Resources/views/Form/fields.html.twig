@@ -4,7 +4,7 @@
             {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
         {% endif %}
         <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
-            {{ form_widget(form.product) }}
+            {{ form_widget(form.product, {'attr': {'class': 'quoteproduct-product-select'}}) }}
             {{ form_errors(form.product) }}
         </div>
         <div class="sale-quote-product-item-collection{% if errors|length > 0 %} validation-error{% endif %}">
@@ -27,7 +27,7 @@
     <table class="sale-quote-product-item-widget">
         <tr>
             <td>{{ form_widget(form.quantity) }}<td>
-            <td>{{ form_widget(form.productUnit) }}<td>
+            <td>{{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproduct-product-select'})}) }}<td>
             <td colspan="2">{{ form_widget(form.price) }}<td>
         </tr>
         <tr>
@@ -45,7 +45,14 @@
 
 {% block orob2b_sale_quote_product_item_collection_widget %}
     {% set add_label = 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label' %}
-    {{ block('orob2b_sale_collection_widget') }}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'quote-product-items-collection' }) %}
+    {% set componentOptions = {
+        'containerId': '#' ~ form.vars.id ~ '_collection'
+    } %}
+
+    <span data-page-component-module="orob2bsale/js/app/components/quote-product-item-unit-selection-limitations-component"
+          data-page-component-options="{{ componentOptions|json_encode }}"></span>
+    {{ block('oro_collection_widget') }}
 {% endblock %}
 
 
