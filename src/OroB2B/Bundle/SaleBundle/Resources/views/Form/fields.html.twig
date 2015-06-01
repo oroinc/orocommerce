@@ -1,8 +1,15 @@
+{% block orob2b_sale_quote_product_widget %}
+    <div class="quoteproduct-form">
+        {{ form_row(form.product, {'attr': {'class': 'quoteproduct-product-select'}}) }}
+        {{ form_rest(form) }}
+    </div>
+{% endblock %}
+
 {% block orob2b_sale_quote_product_item_widget %}
     <table>
         <tr>
             <td>{{ form_widget(form.quantity) }}</td>
-            <td>{{ form_widget(form.productUnit) }}</td>
+            <td>{{ form_widget(form.productUnit, {'attr': {'class': 'quoteproduct-productunit-select'}}) }}</td>
         </tr>
         <tr>
             <td>{{ form_errors(form.quantity) }}</td>
@@ -15,6 +22,11 @@
             <td colspan="2">{{ form_errors(form.price) }}</td>
         </tr>
     </table>
+{% endblock %}
+
+{% block orob2b_sale_quote_product_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection quote-product-collection' }) %}
+    {{ block('oro_collection_widget') }}
 {% endblock %}
 
 {% block orob2b_sale_quote_product_item_collection_widget %}
