@@ -1,43 +1,101 @@
 {% block orob2b_sale_quote_product_widget %}
-    {{ form_row(form.product, {'attr': {'class': 'quoteproduct-product-select'}}) }}
-
-    {{ form_rest(form) }}
+    <div class="sale-quote-product-widget control-group">
+        {% if label is not sameas(false) %}
+            {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+        {% endif %}
+        <div style="" class="controls{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_widget(form.product) }}
+            {{ form_errors(form.product) }}
+        </div>
+        <div class="sale-quote-product-item-collection{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_row(form.quoteProductItems) }}
+        </div>
+    </div>
 {% endblock %}
 
+{% block orob2b_sale_quote_product_collection_row %}
+    <div class="sale-quote-product-collection">
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block orob2b_sale_quote_product_item_collection_row %}
+    {{ form_widget(form) }}
+{% endblock %}
 
 {% block orob2b_sale_quote_product_item_widget %}
-    <table>
+    <table class="sale-quote-product-item-widget">
         <tr>
-            <td>{{ form_widget(form.quantity) }}</td>
-            <td>{{ form_widget(form.productUnit) }}</td>
+            <td>{{ form_widget(form.quantity) }}<td>
+            <td>{{ form_widget(form.productUnit) }}<td>
+            <td colspan="2">{{ form_widget(form.price) }}<td>
         </tr>
         <tr>
             <td>{{ form_errors(form.quantity) }}</td>
             <td>{{ form_errors(form.productUnit) }}</td>
-        </tr>
-        <tr>
-            <td colspan="2">{{ form_widget(form.price) }}</td>
-        </tr>
-        <tr>
             <td colspan="2">{{ form_errors(form.price) }}</td>
         </tr>
     </table>
 {% endblock %}
 
 {% block orob2b_sale_quote_product_collection_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection quote-product-collection' }) %}
-    {{ block('oro_collection_widget') }}
+    {% set add_label = 'orob2b.sale.quote.quoteproduct.add_label' %}
+    {{ block('orob2b_sale_collection_widget') }}
+{% endblock %}
 
-    {% set componentOptions = {
-        'containerId': '#' ~ form.vars.id ~ '_collection'
-    } %}
-
-    <span data-page-component-module="orob2bsale/js/app/components/quote-product-item-unit-selection-limitations-component"
-          data-page-component-options="{{ componentOptions|json_encode }}"></span>
+{% block orob2b_sale_quote_product_item_collection_widget %}
+    {% set add_label = 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label' %}
+    {{ block('orob2b_sale_collection_widget') }}
 {% endblock %}
 
 
-{% block orob2b_sale_quote_product_item_collection_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-options-collection quote-product-items-collection' }) %}
-    {{ block('oro_collection_widget') }}
+{# TODO: copy from OroFormBundle:Form:fields.html twig #}
+{% macro oro_collection_item_prototype(widget) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.prototype.vars.name %}
+        {% set disabled = widget.vars.disabled %}
+        {% set allow_delete = widget.vars.allow_delete %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+        {% set disabled = widget.parent.vars.disabled %}
+        {% set allow_delete = widget.parent.vars.allow_delete %}
+    {% endif %}
+    <div data-content="{{ name }}" data-validation-optional-group>
+        <div class="row-oro oro-multiselect-holder{% if not allow_delete %} not-removable{% endif %}">
+            {{ form_widget(form, {disabled: disabled}) }}
+            {% if allow_delete %}
+            <button class="removeRow btn btn-action btn-link" type="button" data-related="{{ name }}">×</button>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
+
+{# TODO: copy from OroFormBundle:Form:fields.html twig #}
+{% block orob2b_sale_collection_widget %}
+    {% spaceless %}
+        {% if prototype is defined %}
+            {% set prototype_html = _self.oro_collection_item_prototype(form) %}
+        {% endif %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection collection-fields-list' }) %}
+        {% set id = id ~ '_collection' %}
+        <div class="row-oro">
+            <div {{ block('widget_container_attributes') }}{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self.oro_collection_item_prototype(child) }}
+                    {% endfor %}
+                {% elseif show_form_when_empty and prototype_html is defined %}
+                    {{ prototype_html|replace({'__name__': '0'})|raw }}
+                {% endif %}
+            </div>
+            {% if allow_add %}
+            <a class="btn add-list-item" href="javascript: void(0);"><i class="icon-plus"></i>{{ add_label|trans }}</a>
+            {% endif %}
+        </div>
+        {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}
+            {{ _self.oro_collection_validate_primary_js(_context) }}
+        {% endif %}
+    {% endspaceless %}
 {% endblock %}

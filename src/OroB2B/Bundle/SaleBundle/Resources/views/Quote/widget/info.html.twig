@@ -11,23 +11,19 @@
 
             <div class="sale-quote-info-products">
                 {% for quoteProduct in entity.quoteProducts %}
-                    <div class="control-group">
-                        <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
-                        <div class="controls">
-                            <div class="control-label">
-                                <div class="sale-quote-info-product">
-                                    <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product | raw }}</a>
-                                </div>
-                                <div class="sale-quote-info-product-items">
-                                    {% for quoteProductItem in quoteProduct.quoteProductItems %}
-                                        <div class="sale-quote-info-product-item">
-                                            {{ quoteProductItem | orob2b_format_sale_quote_product_item }}
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
+                    {% set itemData %}
+                        <div class="sale-quote-info-product">
+                            <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product | raw }}</a>
                         </div>
-                    </div>
+                        <div class="sale-quote-info-product-items">
+                            {% for quoteProductItem in quoteProduct.quoteProductItems %}
+                                <div class="sale-quote-info-product-item">
+                                    {{ quoteProductItem | orob2b_format_sale_quote_product_item }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endset %}
+                    {{ UI.renderHtmlProperty('orob2b.product.entity_label'|trans, itemData ) }}
                 {% endfor %}
             </div>
         </div>
