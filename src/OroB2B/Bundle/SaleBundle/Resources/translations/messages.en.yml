@@ -18,10 +18,13 @@ orob2b:
             quoteproduct:
                 entity_label: 'Quote Product'
                 entity_plural_label: 'Quote Products'
+                add_label: 'Add Line Item'
 
                 quoteproductitem:
+                    item: '{units}, {price} per {unit}'
                     entity_label: 'Quote Product Line'
                     entity_plural_label: 'Quote Product Lines'
+                    add_label: 'Add Offer'
                     quantity.label: 'Quantity'
                     product_unit.label: 'Product Unit'
                     price.label: 'Price'

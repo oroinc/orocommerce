@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 
 class QuoteTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,11 +44,9 @@ class QuoteTypeTest extends \PHPUnit_Framework_TestCase
 
         $builder->expects($this->at(3))
             ->method('add')
-            ->with('quoteProducts', 'oro_collection', [
+            ->with('quoteProducts', QuoteProductCollectionType::NAME, [
                 'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
                 'required'  => false,
-                'type'      => QuoteProductType::NAME,
-                'show_form_when_empty' => false
             ])
             ->will($this->returnSelf())
         ;
