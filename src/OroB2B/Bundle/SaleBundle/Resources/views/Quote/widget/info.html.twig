@@ -9,15 +9,15 @@
             {{ UI.renderProperty('orob2b.sale.quote.owner.label'|trans, entity.owner.username) }}
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A') }}
 
-            <div class="sale-quote-info-products">
+            <div class="sale-quoteproducts-info">
                 {% for quoteProduct in entity.quoteProducts %}
                     {% set itemData %}
-                        <div class="sale-quote-info-product">
+                        <div class="sale-quoteproduct-info">
                             <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product | raw }}</a>
                         </div>
-                        <div class="sale-quote-info-product-items">
+                        <div class="sale-quoteproductitems-info">
                             {% for quoteProductItem in quoteProduct.quoteProductItems %}
-                                <div class="sale-quote-info-product-item">
+                                <div class="sale-quoteproductitem-info">
                                     {{ quoteProductItem | orob2b_format_sale_quote_product_item }}
                                 </div>
                             {% endfor %}

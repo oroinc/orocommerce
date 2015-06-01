@@ -31,7 +31,7 @@ define(function (require) {
 
             this.$container = $(containerId);
 
-            this.$productSelect = this.$container.closest('.sale-quote-product-widget').find('select.quoteproduct-product-select');
+            this.$productSelect = this.$container.closest('.sale-quoteproduct-widget').find('select.sale-quoteproduct-product-select');
             this.$productSelect.on('change', _.bind(this.onChange, this));
         },
 

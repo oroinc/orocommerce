@@ -1,73 +1,73 @@
-.sale-quote-product-collection .btn.add-list-item {
+.sale-quoteproduct-collection .btn.add-list-item {
     margin-left: 90px;
 }
 
-.sale-quote-product-collection .btn.removeRow {
+.sale-quoteproduct-collection .btn.removeRow {
     position: absolute;
     width: 28px;
     top: 0;
     left: 460px;
 }
 
-.sale-quote-product-widget.control-group  {
+.sale-quoteproduct-widget.control-group  {
     max-width: 1100px;
 }
 
-.sale-quote-product-widget .btn.add-list-item {
+.sale-quoteproduct-widget .btn.add-list-item {
     margin: 2px 0 2px 0;
 }
 
-.sale-quote-product-widget .selector {
+.sale-quoteproduct-widget .selector {
     margin-left: 0;
 }
 
-.sale-quote-product-widget .btn.removeRow {
+.sale-quoteproduct-widget .btn.removeRow {
     position: absolute;
     width: 28px;
     right: 4px;
     left: auto;
 }
 
-.sale-quote-product-item-collection {
+.sale-quoteproductitem-collection {
     float: left;
     margin-left: 50px;
 }
 
-.sale-quote-product-item-collection > div > div > div {
+.sale-quoteproductitem-collection > div > div > div {
     padding-right: 14px;
     
 }
 
-.sale-quote-product-item-widget {
+.sale-quoteproductitem-widget {
     margin-right: 15px;
 }
 
-.sale-quote-product-item-widget table {
+.sale-quoteproductitem-widget table {
     max-width: 95% !important;
 }
 
-.sale-quote-product-item-widget table td {
+.sale-quoteproductitem-widget table td {
     vertical-align: top;
-    padding: 0px;
+    padding: 0;
 }
 
-.sale-quote-product-item-widget input[type="text"] {
+.sale-quoteproductitem-widget input[type="text"] {
     width: 120px !important;
 }
 
-.sale-quote-product-item-widget select {
+.sale-quoteproductitem-widget select {
     width: 120px !important;
 }
 
-.sale-quote-info-product {
+.sale-quoteproduct-info {
     float: left;
 }
 
-.sale-quote-info-product-items {
+.sale-quoteproductitems-info {
     display: inline-block; 
     margin-left: 5px;
 }
 
-.sale-quote-info-product-item {
+.sale-quoteproductitem-info {
     margin-bottom: 5px;
 }
