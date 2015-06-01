@@ -12,7 +12,7 @@ class UniqueProductPrices extends Constraint
     /**
      * @var string
      */
-    public $message = 'All product prices should be unique.';
+    public $message = 'orob2b.pricing.validators.product_price.unique_entity.message';
 
     /**
      * {@inheritdoc}
