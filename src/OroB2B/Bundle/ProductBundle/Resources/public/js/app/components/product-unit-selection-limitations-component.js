@@ -171,26 +171,61 @@ define(function (require) {
          * @param {Object} data with structure {value: value, text: text}
          */
         addData: function (data) {
-            var storedData = this.$container.data('units') || {};
+            var storedData = this.getData();
             if (storedData.hasOwnProperty(data.value)) {
                 return;
             }
 
             storedData[data.value] = data.text;
 
-            this.$container.data('units', storedData);
-            mediator.trigger('product:precision:add', data);
+            this.saveData(storedData);
+            this.triggerAddEvent(storedData);
         },
 
         /**
          * @param {Object} data with structure {value: value, text: text}
          */
         removeData: function (data) {
-            var storedData = this.$container.data('units') || {};
+            var storedData = this.getData();
             delete storedData[data.value];
 
-            this.$container.data('units', storedData);
+            this.saveData(storedData);
+            this.triggerRemoveEvent(storedData);
+        },
 
+        /**
+         * Return units from data attribute
+         *
+         * @returns {jQuery.Element}
+         */
+        getData: function () {
+            return this.$container.data('units') || {}
+        },
+
+        /**
+         * Save data to data attribute
+         *
+         * @param {Object} data
+         */
+        saveData: function (data) {
+            this.$container.data('units', data);
+        },
+
+        /**
+         * Trigger add event
+         *
+         * @param {Object} data
+         */
+        triggerAddEvent: function (data) {
+            mediator.trigger('product:precision:add', data);
+        },
+
+        /**
+         * Trigger add event
+         *
+         * @param {Object} data
+         */
+        triggerRemoveEvent: function (data) {
             mediator.trigger('product:precision:remove', data);
         },
 

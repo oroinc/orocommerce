@@ -34,34 +34,61 @@ define(function (require) {
          * Change options in selects
          */
         onChange: function () {
-            var units = this.getUnits,
-                updateRequired = false;
+            var self = this;
 
-            $.each(this.getSelects(), function (index, select) {
-                _.each($(select).find('option'), function (option) {
-                    if (!option.value) {
-                        return;
-                    }
-
-                    if (!units.hasOwnProperty(option.value)) {
-                        option.remove();
-
-                        updateRequired = true;
-                    }
-                });
-
-                _.each(units, function (text, value) {
-                    if (!$(select).find("option[value='" + value + "']").length) {
-                        $(select).append($('<option></option>').val(value).text(text));
-
-                        updateRequired = true;
-                    }
-                });
-
-                if (updateRequired) {
+            _.each(this.getSelects(), function (select) {
+                if (self.clearOptions(select) || self.addOptions(select)) {
                     $(select).trigger('change');
                 }
             });
+        },
+
+        /**
+         * Clear options from selects
+         *
+         * @param {jQuery.Element} select
+         *
+         * @return {Boolean}
+         */
+        clearOptions: function (select) {
+            var units = this.getUnits(),
+                updateRequired = false;
+
+            _.each($(select).find('option'), function (option) {
+                if (!option.value) {
+                    return;
+                }
+
+                if (!units.hasOwnProperty(option.value)) {
+                    option.remove();
+
+                    updateRequired = true;
+                }
+            });
+
+            return updateRequired;
+        },
+
+        /**
+         * Add options based on units configuration
+         *
+         * @param {jQuery.Element} select
+         *
+         * @return {Boolean}
+         */
+        addOptions: function(select) {
+            var units = this.getUnits(),
+                updateRequired = false;
+
+            _.each(units, function (text, value) {
+                if (!$(select).find("option[value='" + value + "']").length) {
+                    $(select).append($('<option></option>').val(value).text(text));
+
+                    updateRequired = true;
+                }
+            });
+
+            return updateRequired;
         },
 
         /**
