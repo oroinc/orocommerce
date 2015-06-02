@@ -24,8 +24,8 @@ class PriceListSelectTypeStub extends AbstractType
     {
         $resolver->setDefaults([
             'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
-            'create_enabled' =>false,
-            'property' => 'name'
+            'property' => 'name',
+            'create_enabled' => false
         ]);
     }
 
