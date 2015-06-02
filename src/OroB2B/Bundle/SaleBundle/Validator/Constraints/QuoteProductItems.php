@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 
 class QuoteProductItems extends Constraint
 {
-    public $message = 'This value is incorrect.';
+    public $message = 'This value is not valid.';
     public $service = 'orob2b.validator.sale.product_unit';
 
     /**
@@ -19,6 +19,6 @@ class QuoteProductItems extends Constraint
 
     public function getTargets()
     {
-        return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
+        return [self::PROPERTY_CONSTRAINT];
     }
 }

@@ -23,8 +23,7 @@ class QuoteProductItemsValidator extends ConstraintValidator
         if (empty($quoteProductItems)) {
             return;
         }
-        if (!$quoteProductItems->first() instanceof QuoteProductItem
-        ) {
+        if (!$quoteProductItems->first() instanceof QuoteProductItem) {
             throw new UnexpectedTypeException(
                 $quoteProductItems->first(),
                 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem'
@@ -35,7 +34,7 @@ class QuoteProductItemsValidator extends ConstraintValidator
         $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
         foreach ($quoteProductItems as $key => $quoteProductItem) {
             if (!in_array($quoteProductItem->getProductUnit()->getCode(), $allowedUnits)) {
-                $this->context->addViolationAt("[$key].productUnit", $constraint->message);
+                $this->context->addViolationAt("[{$key}].productUnit", $constraint->message);
             }
         }
     }
