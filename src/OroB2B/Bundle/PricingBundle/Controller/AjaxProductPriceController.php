@@ -21,7 +21,7 @@ class AjaxProductPriceController extends Controller
      * Create product form
      *
      * @Route(
-     *      "/create/price-list/{priceListId}",
+     *      "/create/{priceListId}",
      *      name="orob2b_product_price_create_widget",
      *      requirements={"priceListId"="\d+"}
      * )
