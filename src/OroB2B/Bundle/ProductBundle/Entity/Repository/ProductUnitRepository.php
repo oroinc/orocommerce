@@ -25,6 +25,7 @@ class ProductUnitRepository extends EntityRepository
                 Join::WITH,
                 $qb->expr()->eq('productUnitPrecision.unit', 'unit')
             )
+            ->addOrderBy('unit.code')
             ->where($qb->expr()->eq('productUnitPrecision.product', ':product'))
             ->setParameter('product', $product);
 
