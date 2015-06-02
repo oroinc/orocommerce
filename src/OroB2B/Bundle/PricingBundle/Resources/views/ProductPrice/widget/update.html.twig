@@ -31,11 +31,12 @@
     {% endif %}
 
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-          method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
+          data-page-component-module="orob2bpricing/js/app/components/product-price-product-unit-component">
         <fieldset class="form-horizontal">
-            {{ form_row(form.product) }}
-            {{ form_row(form.quantity) }}
-            {{ form_row(form.unit) }}
+            {{ form_row(form.product, { 'attr': {'class': 'price-product-product'} }) }}
+            {{ form_row(form.quantity, { 'attr': {'class': 'price-product-quantity'} }) }}
+            {{ form_row(form.unit, { 'attr': {'class': 'price-product-unit'} }) }}
             {{ form_row(form.price) }}
         </fieldset>
 
