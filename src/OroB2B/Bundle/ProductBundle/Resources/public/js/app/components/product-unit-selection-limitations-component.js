@@ -44,11 +44,23 @@ define(function (require) {
             this.$container = $(containerId);
             this.$container
                 .on('content:changed', _.bind(this.onChange, this))
-                .on('content:remove', _.bind(this.askConfirmation, this));
+                .on('content:remove', _.bind(this.askConfirmation, this))
+                .on('click', '.removeRow', _.bind(this.removeRow, this));
 
             this.$addButton = this.$container.next('a.add-list-item');
 
             this.$container.trigger('content:changed');
+        },
+
+        /**
+         * Handle remove row
+         *
+         * @param {jQuery.Event} e
+         */
+        removeRow: function (e) {
+            e.stopPropagation();
+
+            $(e.target).closest('*[data-content]').trigger('content:remove');
         },
 
         /**
@@ -108,6 +120,7 @@ define(function (require) {
                 this.removeData({value: option.val(), text: option.text()});
                 this.addOptionToAllSelects(option.val(), option.text());
                 this.$addButton.show();
+                $(e.target).remove();
             }
         },
 
@@ -145,15 +158,9 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         askConfirmation: function (e) {
-            var self = this;
-
             if (!this.confirm) {
                 this.confirm = new DeleteConfirmation({
                     content: __('orob2b.product.productunit.delete.confirmation')
-                });
-
-                this.confirm.on('cancel', function () {
-                    self.off();
                 });
             }
 
@@ -161,8 +168,6 @@ define(function (require) {
                 .off('ok')
                 .on('ok', _.bind(function () {
                     this.onRemoveItem(e);
-
-                    self.off();
                 }, this))
                 .open();
         },
@@ -237,8 +242,6 @@ define(function (require) {
                 this.confirm
                     .off()
                     .remove();
-
-                delete this.confirm;
             }
 
             ProductUnitSelectionLimitationsComponent.__super__.dispose.call(this);
