@@ -25,13 +25,6 @@ define(function (require) {
         },
 
         /**
-         * @property {Object}
-         */
-        events: {
-            'click .removeRow': 'onRemoveRow'
-        },
-
-        /**
          * @inheritDoc
          */
         initialize: function (options) {
@@ -39,7 +32,8 @@ define(function (require) {
 
             this.options._sourceElement
                 .on('content:changed', _.bind(this.onChange, this))
-                .on('content:remove', _.bind(this.askConfirmation, this));
+                .on('content:remove', _.bind(this.askConfirmation, this))
+                .on('click', '.removeRow', _.bind(this.onRemoveRow, this));
 
             this.options._sourceElement.trigger('content:changed');
         },
