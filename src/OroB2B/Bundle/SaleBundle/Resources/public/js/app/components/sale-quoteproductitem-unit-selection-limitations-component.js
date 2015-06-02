@@ -99,7 +99,6 @@ define(function (require) {
                 $(select).uniform('update');
             });
             if (afterLoad) {
-                alert("111");
                 self.$container.data('allowedUnitsData', data);
                 self.loadingMask.hide();
             }
