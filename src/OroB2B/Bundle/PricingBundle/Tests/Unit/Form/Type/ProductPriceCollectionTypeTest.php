@@ -5,12 +5,13 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -20,9 +21,9 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
-     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $em;
+    protected $registry;
 
     /**
      * {@inheritDoc}
@@ -31,11 +32,11 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
 
-        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new ProductPriceCollectionType($this->em);
+        $this->formType = new ProductPriceCollectionType($this->registry);
         $this->formType->setDataClass('\stdClass');
     }
 
@@ -88,6 +89,18 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testFinishView()
     {
+        $firstPriceList = new PriceList();
+        $this->setProperty($firstPriceList, 'id', 1);
+        $firstPriceList->setName('First Price List')
+            ->setCurrencies(['USD', 'EUR']);
+
+        $secondPriceList = new PriceList();
+        $this->setProperty($secondPriceList, 'id', 2);
+        $secondPriceList->setName('Second Price List')
+            ->setCurrencies(['CAD', 'USD']);
+
+        $priceLists = [$firstPriceList, $secondPriceList];
+
         /** @var \Symfony\Component\Form\FormView|\PHPUnit_Framework_MockObject_MockObject $view */
         $view = new FormView();
 
@@ -102,14 +115,32 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->once())
             ->method('findAll')
-            ->will($this->returnValue([]));
+            ->will($this->returnValue($priceLists));
 
-        $this->em->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getRepository')
             ->with('OroB2BPricingBundle:PriceList')
             ->will($this->returnValue($repository));
 
         $this->formType->finishView($view, $form, []);
-        $this->assertEquals(json_encode([]), $view->vars['attr']['data-currencies']);
+        $this->assertEquals(
+            json_encode([
+                '1' => ['USD', 'EUR'],
+                '2' => ['CAD', 'USD']
+            ]),
+            $view->vars['attr']['data-currencies']
+        );
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @param mixed $value
+     */
+    protected function setProperty($object, $property, $value)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+        $reflection->setValue($object, $value);
     }
 }

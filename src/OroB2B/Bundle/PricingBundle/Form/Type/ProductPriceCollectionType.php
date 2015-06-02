@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
@@ -16,9 +16,9 @@ class ProductPriceCollectionType extends AbstractType
     const NAME = 'orob2b_pricing_product_price_collection';
 
     /**
-     * @var ObjectManager
+     * @var ManagerRegistry
      */
-    protected $em;
+    protected $registry;
 
     /**
      * @var string
@@ -26,11 +26,11 @@ class ProductPriceCollectionType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param ObjectManager $objectManager
+     * @param ManagerRegistry $registry
      */
-    public function __construct($objectManager)
+    public function __construct($registry)
     {
-        $this->em = $objectManager;
+        $this->registry = $registry;
     }
 
     /**
@@ -52,7 +52,7 @@ class ProductPriceCollectionType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $priceLists = $this->em->getRepository('OroB2BPricingBundle:PriceList')->findAll();
+        $priceLists = $this->registry->getRepository('OroB2BPricingBundle:PriceList')->findAll();
 
         $currencies = [];
         foreach ($priceLists as $priceList) {

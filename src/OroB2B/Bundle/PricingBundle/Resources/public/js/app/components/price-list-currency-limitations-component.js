@@ -9,14 +9,23 @@ define(function (require) {
 
     PriceListCurrencyLimitationComponent = BaseComponent.extend({
         /**
+         * @property {Object}
+         */
+        options: {
+            priceListSelector: 'input[name$="[priceList]"]',
+            currencySelector: 'select[name$="[price][currency]"]',
+            container: '.oro-product-price-collection'
+        },
+
+        /**
          * @property {array}
          */
         currencies: {},
 
         /**
-         * @property {Object}
+         * @property {array}
          */
-        $systemSupportedCurrencyOptions: null,
+        systemSupportedCurrencyOptions: {},
 
         /**
          * @property {Object}
@@ -32,12 +41,12 @@ define(function (require) {
          * @inheritDoc
          */
         initialize: function (options) {
-            this.$elem = options._sourceElement;
+            this.options = _.defaults(options || {}, this.options);
 
-            this.currencies = this.$elem.closest('.oro-product-price-collection').data('currencies');
-            this.$priceListSelect = this.$elem.find('input[name$="[priceList]"]');
-            this.$currencySelect = this.$elem.find('select[name$="[price][currency]"]');
-            this.systemSupportedCurrencyOptions = {};
+            var $elem = options._sourceElement;
+            this.currencies = $elem.closest(options.container).data('currencies');
+            this.$priceListSelect = $elem.find(options.priceListSelector);
+            this.$currencySelect = $elem.find(options.currencySelector);
             this.$currencySelect.find('option').clone().each(
                 _.bind(
                     function (idx, option) {
@@ -76,6 +85,16 @@ define(function (require) {
 
             this.$currencySelect.html(newOptions);
             this.$currencySelect.removeAttr("disabled");
+        },
+
+        dispose: function () {
+            if (this.disposed) {
+                return;
+            }
+
+            this.options._sourceElement.off();
+
+            PriceListCurrencyLimitationComponent.__super__.dispose.call(this);
         }
     });
 
