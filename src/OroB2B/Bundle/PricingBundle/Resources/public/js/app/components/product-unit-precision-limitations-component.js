@@ -4,30 +4,36 @@ define(function (require) {
     'use strict';
 
     var ProductUnitPrecisionLimitationsComponent,
-        mediator = require('oroui/js/mediator'),
         _ = require('underscore'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
     ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
         /**
-         * @property {array}
+         * @property {Object}
          */
-        units: {},
+        options: {
+            selectSelector: "select[name^='orob2b_product_form[prices]'][name$='[unit]']",
+            unitsAttribute: 'units'
+        },
+
+        /**
+         * @property {Object}
+         */
+        listen: {
+            'product:precision:remove mediator': 'onChange',
+            'product:precision:add mediator': 'onChange'
+        },
 
         /**
          * @inheritDoc
          */
         initialize: function (options) {
-            var containerId = options['containerId'];
-            if (!containerId) {
-                return;
-            }
-            this.$container = $(containerId);
-            this.$container.on('content:changed', _.bind(this.onChange, this));
-            mediator.on('product:precision:remove', this.onChange, this);
-            mediator.on('product:precision:add', this.onChange, this);
+            this.options = _.defaults(options || {}, this.options);
 
-            this.$container.trigger('content:changed');
+            this.options._sourceElement
+                .on('content:changed', _.bind(this.onChange, this));
+
+            this.options._sourceElement.trigger('content:changed');
         },
 
         /**
@@ -76,7 +82,7 @@ define(function (require) {
          *
          * @return {Boolean}
          */
-        addOptions: function(select) {
+        addOptions: function (select) {
             var units = this.getUnits(),
                 updateRequired = false;
 
@@ -97,16 +103,26 @@ define(function (require) {
          * @returns {jQuery.Element}
          */
         getSelects: function () {
-            return this.$container.find("select[name^='orob2b_product_form[prices]'][name$='[unit]']")
+            return this.options._sourceElement.find(this.options.selectSelector);
         },
 
         /**
          * Return units from data attribute
          *
-         * @returns {jQuery.Element}
+         * @returns {Object}
          */
         getUnits: function () {
-            return $(':data(units)').data('units') || {};
+            return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+        },
+
+        dispose: function () {
+            if (this.disposed) {
+                return;
+            }
+
+            this.options._sourceElement.off();
+
+            ProductUnitPrecisionLimitationsComponent.__super__.dispose.call(this);
         }
     });
 

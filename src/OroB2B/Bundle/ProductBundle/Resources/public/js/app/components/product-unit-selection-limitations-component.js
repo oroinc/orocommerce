@@ -15,41 +15,49 @@ define(function (require) {
         /**
          * @property {Object}
          */
-        $container: null,
+        options: {
+            unitsAttribute: 'units',
+            deleteMessage: 'orob2b.product.productunit.delete.confirmation',
+            addButtonSelector: 'a.add-list-item',
+            selectParent: '.oro-multiselect-holder',
+            dataContent: '*[data-content]'
+        },
 
         /**
          * @property {Object}
          */
-        $addButton: null,
+        listen: {
+            'content:changed _sourceElement': 'onChange',
+            'content:remove _sourceElement': 'askConfirmation'
+        },
 
         /**
-         * @property {array}
+         * @property {Object}
          */
-        precisions: {},
+        events: {
+            'click .removeRow': 'onRemoveRow'
+        },
 
         /**
          * @inheritDoc
          */
         initialize: function (options) {
-            var containerId = options['containerId'];
-            if (!containerId) {
-                return;
-            }
+            this.options = _.defaults(options || {}, this.options);
 
-            var precisions = options['precisions'];
-            if (precisions) {
-                this.precisions = precisions;
-            }
-
-            this.$container = $(containerId);
-            this.$container
+            this.options._sourceElement
                 .on('content:changed', _.bind(this.onChange, this))
-                .on('content:remove', _.bind(this.askConfirmation, this))
-                .on('click', '.removeRow', _.bind(this.removeRow, this));
+                .on('content:remove', _.bind(this.askConfirmation, this));
 
-            this.$addButton = this.$container.next('a.add-list-item');
+            this.options._sourceElement.trigger('content:changed');
+        },
 
-            this.$container.trigger('content:changed');
+        /**
+         * Return add button
+         *
+         * @returns {jQuery.Element}
+         */
+        getAddButton: function () {
+            return this.options._sourceElement.find(this.options.addButtonSelector);
         },
 
         /**
@@ -57,17 +65,17 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        removeRow: function (e) {
+        onRemoveRow: function (e) {
             e.stopPropagation();
 
-            $(e.target).closest('*[data-content]').trigger('content:remove');
+            $(e.target).closest(this.options.dataContent).trigger('content:remove');
         },
 
         /**
          * Handle change select
          */
         onChange: function () {
-            var selects = this.$container.find('select'),
+            var selects = this.options._sourceElement.find('select'),
                 self = this;
 
             selects.each(function (index) {
@@ -86,16 +94,16 @@ define(function (require) {
                 });
 
                 if (select.find('option').length <= 1) {
-                    self.$addButton.hide();
+                    self.getAddButton().hide();
                 }
 
                 var option = select.find('option:selected');
 
                 if (option.val() != select.data('prevValue') && !select.attr('disabled')) {
-                    var value = self.precisions[option.val()];
+                    var value = self.options.precisions[option.val()];
 
                     if (value != undefined) {
-                        select.parents('div.oro-multiselect-holder').find('input').val(value);
+                        select.parents(self.options.selectParent).find('input').val(value);
                     }
                 }
 
@@ -119,7 +127,7 @@ define(function (require) {
             if (option) {
                 this.removeData({value: option.val(), text: option.text()});
                 this.addOptionToAllSelects(option.val(), option.text());
-                this.$addButton.show();
+                this.getAddButton().show();
                 $(e.target).remove();
             }
         },
@@ -143,7 +151,7 @@ define(function (require) {
          * @param {String} text
          */
         addOptionToAllSelects: function (value, text) {
-            this.$container.find('select').each(function () {
+            this.options._sourceElement.find('select').each(function () {
                 var select = $(this);
 
                 if (select.data('prevValue') != value) {
@@ -160,7 +168,7 @@ define(function (require) {
         askConfirmation: function (e) {
             if (!this.confirm) {
                 this.confirm = new DeleteConfirmation({
-                    content: __('orob2b.product.productunit.delete.confirmation')
+                    content: __(this.options.deleteMessage)
                 });
             }
 
@@ -204,7 +212,7 @@ define(function (require) {
          * @returns {jQuery.Element}
          */
         getData: function () {
-            return this.$container.data('units') || {}
+            return this.options._sourceElement.data(this.options.unitsAttribute) || {}
         },
 
         /**
@@ -213,7 +221,7 @@ define(function (require) {
          * @param {Object} data
          */
         saveData: function (data) {
-            this.$container.data('units', data);
+            this.options._sourceElement.data(this.options.unitsAttribute, data);
         },
 
         /**
@@ -243,6 +251,8 @@ define(function (require) {
                     .off()
                     .remove();
             }
+
+            this.options._sourceElement.off();
 
             ProductUnitSelectionLimitationsComponent.__super__.dispose.call(this);
         }
