@@ -8,7 +8,7 @@ parameters:
     orob2b_sale.form.type.quote.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteType
     orob2b_sale.form.handler.quote.class: OroB2B\Bundle\SaleBundle\Form\Handler\QuoteHandler
     #Validators
-    orob2b_sale.validator.product_unit_validator.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItemsValidator
+    orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItemsValidator
 
 services:
     orob2b_sale.doctrine.subscriber.entity:
@@ -42,7 +42,7 @@ services:
             - @request
             - @doctrine.orm.entity_manager
 
-    validator.sale.quote_product_unit:
-        class: %orob2b_sale.validator.product_unit_validator.class%
+    orob2b_sale.validator.quote_product_unit:
+        class: %orob2b_sale.validator.quote_product_unit.class%
         tags:
-            - { name: validator.constraint_validator, alias: orob2b.validator.sale.product_unit }
+            - { name: validator.constraint_validator, alias: orob2b_sale.validator.quote_product_unit }
