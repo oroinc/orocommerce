@@ -4,8 +4,11 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class QuoteProductItemType extends AbstractType
@@ -23,20 +26,14 @@ class QuoteProductItemType extends AbstractType
                 'required' => true,
                 'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'
             ])
-            ->add(
-                'productUnit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'compact' => false,
-                    'disabled' => false,
-                    'label' => 'orob2b.product.productunit.entity_label'
-                ]
-            )
             ->add('price', PriceType::NAME, [
                 'required' => true,
                 'label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.price.label'
             ])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
     /**
@@ -47,7 +44,7 @@ class QuoteProductItemType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
             'intention' => 'sale_quote_product_item',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 
@@ -57,5 +54,52 @@ class QuoteProductItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        /** @var $quoteProductItem QuoteProductItem */
+        $quoteProductItem = $event->getData();
+        $form = $event->getForm();
+        $choices = null;
+        if ($quoteProductItem && null !== $quoteProductItem->getId()) {
+            $product = $quoteProductItem->getQuoteProduct()->getProduct();
+            if ($product) {
+                $choices = [];
+                foreach ($product->getUnitPrecisions() as $unitPrecision) {
+                    $choices[] = $unitPrecision->getUnit();
+                }
+            }
+        }
+        $form->add(
+            'productUnit',
+            ProductUnitSelectionType::NAME,
+            [
+                'compact' => false,
+                'disabled' => false,
+                'label' => 'orob2b.product.productunit.entity_label',
+                'required' => true,
+                'choices' => $choices
+            ]
+        );
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmit(FormEvent $event)
+    {
+        $event->getForm()->add(
+            'productUnit',
+            ProductUnitSelectionType::NAME,
+            [
+                'compact' => false,
+                'disabled' => false,
+                'label' => 'orob2b.product.productunit.entity_label'
+            ]
+        );
     }
 }

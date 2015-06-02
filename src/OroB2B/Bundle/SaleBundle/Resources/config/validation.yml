@@ -9,4 +9,3 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
         price:
             - NotBlank: ~
             - Valid: ~
-
