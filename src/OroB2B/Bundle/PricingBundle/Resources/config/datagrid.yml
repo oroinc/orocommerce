@@ -371,3 +371,94 @@ datagrid:
                 selectors:
                     included:   '#priceListAppendWebsites'
                     excluded:   '#priceListRemoveWebsites'
+
+
+    pricing-product-price-grid:
+        options:
+            entityHint:        productPrice
+        source:
+            acl_resource:      orob2b_pricing_product_price_view
+            type:              orm
+            query:
+                select:
+                    - productPrice.id
+                    - productPrice.productSku
+                    - productPrice.quantity
+                    - unit.code as unitCode
+                    - productPrice.value
+                    - productPrice.currency
+                from:
+                    - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                join:
+                    left:
+                        - { join: productPrice.priceList, alias: priceList }
+                        - { join: productPrice.unit, alias: unit }
+                where:
+                    and:
+                        - priceList.id = :price_list_id
+            bind_parameters:
+                - price_list_id
+        columns:
+            productSku:
+                label:         orob2b.pricing.productprice.product_sku.label
+            quantity:
+                label:         orob2b.pricing.productprice.quantity.label
+            unitCode:
+                label:         orob2b.pricing.productprice.unit.label
+                type: twig
+                frontend_type: html
+                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+            value:
+                label:         orob2b.pricing.productprice.value.label
+            currency:
+                label:         orob2b.pricing.productprice.currency.label
+        sorters:
+            columns:
+                productSku:
+                    data_name: productPrice.productSku
+                quantity:
+                    data_name: productPrice.quantity
+                unitCode:
+                    data_name: unit.code
+                value:
+                    data_name: productPrice.value
+                currency:
+                    data_name: productPrice.currency
+            default:
+                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                productSku:
+                    type:      string
+                    data_name: productPrice.productSku
+                quantity:
+                    type:      number
+                    data_name: productPrice.quantity
+                unitCode:
+                    type:      choice
+                    data_name: unit
+                    options:
+                        field_type: orob2b_product_unit_selection
+                value:
+                    type:      number
+                    data_name: productPrice.currency
+                currency:
+                    type:      choice
+                    data_name: currency
+                    options:
+                        field_type: oro_currency_selection
+        properties:
+            id: ~
+            update_link:
+                type: url
+                route: orob2b_product_price_update_widget
+                params: [ id ]
+        actions:
+            update:
+                type:          dialog
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_pricing_product_price_update
+                widgetOptions:
+                    reload-grid-name: pricing-product-price-grid

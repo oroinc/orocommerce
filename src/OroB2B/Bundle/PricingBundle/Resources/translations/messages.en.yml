@@ -17,6 +17,23 @@ orob2b.pricing:
     quantity.label: Quantity
     unit.label: Unit
     price.label: Price
+    add_product_price: Add Product Price
+
+    productprice:
+        entity_label: Product Price
+        entity_plural_label: Product Prices
+        entity_description: Represents product price for price list
+        id.label: ID
+        product.label: Product
+        product_sku.label: Product SKU
+        price_list.label: Proce List
+        currency.label: Currency
+        quantity.label: Quantity
+        value.label: Value
+        unit:
+            label: Unit
+            choose: Choose unit...
+        price.label: Price
 
     menu:
         price_lists_tab.label: Price lists management
@@ -33,6 +50,7 @@ orob2b.pricing:
 
     controller:
         price_list.saved.message: Price List has been saved
+        product_price.saved.message: Product Price has been saved
 
     form:
         choose_price_list: Choose a Price List...
