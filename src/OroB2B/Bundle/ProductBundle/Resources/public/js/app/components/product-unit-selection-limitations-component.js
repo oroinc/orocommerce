@@ -171,8 +171,6 @@ define(function (require) {
          * @param {Object} data with structure {value: value, text: text}
          */
         addData: function (data) {
-            console.log(data)
-
             var storedData = this.$container.data('units') || {};
             if (storedData.hasOwnProperty(data.value)) {
                 return;
