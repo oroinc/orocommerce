@@ -21,6 +21,7 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -122,19 +123,31 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      * @param $defaultData
      * @param $submittedData
      * @param $expectedData
+     * @param boolean $rounding
      * @dataProvider submitProvider
      */
     public function testSubmit(
         $defaultData,
         $submittedData,
-        $expectedData
+        $expectedData,
+        $rounding = false
     ) {
+        if ($rounding) {
+            $this->roundingService->expects($this->once())
+                ->method('round')
+                ->willReturnCallback(
+                    function ($value, $precision) {
+                        return round($value, $precision);
+                    }
+                );
+        }
+
         $this->query->expects($this->atLeastOnce())
             ->method('execute')
             ->willReturn(
                 [
-                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
-                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2)
+                    $this->getProductEntityWithPrecision(1, 'kg', 3),
+                    $this->getProductEntityWithPrecision(2, 'kg', 3),
                 ]
             );
 
@@ -154,16 +167,18 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         /** @var Product $expectedProduct */
-        $expectedProduct = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2);
-        $expectedUnit = (new ProductUnit())->setCode('kg');
+        $expectedProduct = $this->getProductEntityWithPrecision(2, 'kg', 3);
         $expectedPrice = (new Price())->setValue(42)->setCurrency('USD');
 
         $expectedProductPrice = new ProductPrice();
         $expectedProductPrice
             ->setProduct($expectedProduct)
             ->setQuantity(123)
-            ->setUnit($expectedUnit)
+            ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setPrice($expectedPrice);
+
+        $expectedProductPrice2 = clone $expectedProductPrice;
+        $expectedProductPrice2->setQuantity(123.556);
 
         $defaultProductPrice = new ProductPrice();
 
@@ -171,7 +186,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             'product price without data' => [
                 'defaultData'   => $defaultProductPrice,
                 'submittedData' => [],
-                'expectedData'  => $defaultProductPrice
+                'expectedData'  => $defaultProductPrice,
+                'rounding'      => false,
             ],
             'product price with data' => [
                 'defaultData'   => $defaultProductPrice,
@@ -184,9 +200,23 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                         'currency' => 'USD'
                     ]
                 ],
-                'expectedData' => $expectedProductPrice
+                'expectedData' => $expectedProductPrice,
+                'rounding'      => true,
+            ],
+            'product price with data for rounding' => [
+                'defaultData'   => $defaultProductPrice,
+                'submittedData' => [
+                    'product' => 1,
+                    'quantity'  => 123.5555,
+                    'unit'      => 'kg',
+                    'price'     => [
+                        'value'    => 42,
+                        'currency' => 'USD'
+                    ]
+                ],
+                'expectedData' => $expectedProductPrice2,
+                'rounding'     => true,
             ]
-
         ];
     }
 
@@ -270,7 +300,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->getMock();
         $repo->expects($this->any())
             ->method('find')
-            ->willReturn($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1));
+            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -303,5 +333,28 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @param integer $productId
+     * @param string $unitCode
+     * @param integer $precision
+     * @return Product
+     */
+    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
+    {
+        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setPrecision($precision)
+            ->setUnit($unit)
+            ->setProduct($product);
+
+        return $product->addUnitPrecision($unitPrecision);
     }
 }

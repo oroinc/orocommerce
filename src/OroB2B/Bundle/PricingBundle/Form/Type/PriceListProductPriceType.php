@@ -109,7 +109,7 @@ class PriceListProductPriceType extends AbstractType
             $unitPrecision = $product->getUnitPrecision($data['unit']);
 
             if ($unitPrecision) {
-                $price['quantity'] = $this->roundingService->round($data['quantity'], $unitPrecision->getPrecision());
+                $data['quantity'] = $this->roundingService->round($data['quantity'], $unitPrecision->getPrecision());
 
                 $event->setData($data);
             }
