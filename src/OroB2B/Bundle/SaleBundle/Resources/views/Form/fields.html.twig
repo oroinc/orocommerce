@@ -26,14 +26,22 @@
 {% block orob2b_sale_quote_product_item_widget %}
     <table class="sale-quoteproductitem-widget">
         <tr>
-            <td>{{ form_widget(form.quantity) }}<td>
-            <td>{{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}<td>
-            <td colspan="2">{{ form_widget(form.price) }}<td>
-        </tr>
-        <tr>
-            <td>{{ form_errors(form.quantity) }}</td>
-            <td>{{ form_errors(form.productUnit) }}</td>
-            <td colspan="2">{{ form_errors(form.price) }}</td>
+            <td>
+                {{ form_widget(form.quantity) }}
+                {{ form_errors(form.quantity) }}
+            </td>
+            <td>
+                {{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}
+                {{ form_errors(form.productUnit) }}
+            </td>
+            <td>
+                {{ form_widget(form.price.value) }}
+                {{ form_errors(form.price.value) }}
+            </td>
+            <td>
+                {{ form_widget(form.price.currency) }}
+                {{ form_errors(form.price.currency) }}
+            </td>
         </tr>
     </table>
 {% endblock %}

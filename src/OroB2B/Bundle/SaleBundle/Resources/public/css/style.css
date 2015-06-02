@@ -10,11 +10,11 @@
 }
 
 .sale-quoteproduct-widget.control-group  {
-    max-width: 1100px;
+    max-width: 1200px;
 }
 
 .sale-quoteproduct-widget .btn.add-list-item {
-    margin: 2px 0 2px 0;
+    margin: 2px 0 2px 1px;
 }
 
 .sale-quoteproduct-widget .selector {
@@ -42,13 +42,13 @@
     margin-right: 15px;
 }
 
-.sale-quoteproductitem-widget table {
-    max-width: 95% !important;
+.sale-quoteproductitem-widget td {
+    vertical-align: top;
+    width: 140px;
 }
 
-.sale-quoteproductitem-widget table td {
-    vertical-align: top;
-    padding: 0;
+.sale-quoteproductitem-widget td span.validation-failed {
+    padding-top: 2px;
 }
 
 .sale-quoteproductitem-widget input[type="text"] {
