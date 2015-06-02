@@ -1,0 +1,48 @@
+<div class="widget-content">
+    {% if savedId is defined and savedId %}
+    <script type="text/javascript">
+        require(['oroui/js/widget-manager'],
+        function(widgetManager) {
+            widgetManager.getWidgetInstance(
+                {{ app.request.get('_wid')|json_encode|raw }},
+                function (widget) {
+                    widget.trigger('formSave', {{ savedId|json_encode|raw }});
+                }
+            );
+        });
+    </script>
+    {% elseif form.vars.errors|length > 0 %}
+        <script type="text/javascript">
+            require(['oroui/js/widget-manager'],
+            function(widgetManager){
+                widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                    widget.trigger('formSaveError');
+                });
+            });
+        </script>
+
+        <div class="alert alert-error">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
+        <fieldset class="form-horizontal">
+            {{ form_row(form.product) }}
+            {{ form_row(form.quantity) }}
+            {{ form_row(form.unit) }}
+            {{ form_row(form.price) }}
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'Save'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+</div>
