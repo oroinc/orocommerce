@@ -4,7 +4,8 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
             - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank: ~
         price:
             - NotBlank: ~
             - Valid: ~
-

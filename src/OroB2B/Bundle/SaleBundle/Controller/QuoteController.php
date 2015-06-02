@@ -106,7 +106,7 @@ class QuoteController extends Controller
     {
         /* @var $handler \Oro\Bundle\FormBundle\Model\UpdateHandler */
         $handler = $this->get('oro_form.model.update_handler');
-        
+
         return $handler->handleUpdate(
             $quote,
             $this->get('orob2b_sale.form.quote'),

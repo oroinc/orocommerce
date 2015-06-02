@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItems;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -24,7 +25,10 @@ class QuoteProductItemCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'type' => QuoteProductItemType::NAME,
-            'show_form_when_empty' => false
+            'show_form_when_empty' => false,
+            'constraints' => [
+                new QuoteProductItems()
+            ]
         ]);
     }
 
