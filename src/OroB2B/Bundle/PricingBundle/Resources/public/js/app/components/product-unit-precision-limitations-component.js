@@ -34,7 +34,7 @@ define(function (require) {
          * Change options in selects
          */
         onChange: function () {
-            var units = $(':data(units)').data('units') || {},
+            var units = this.getUnits,
                 updateRequired = false;
 
             $.each(this.getSelects(), function (index, select) {
@@ -71,6 +71,15 @@ define(function (require) {
          */
         getSelects: function () {
             return this.$container.find("select[name^='orob2b_product_form[prices]'][name$='[unit]']")
+        },
+
+        /**
+         * Return units from data attribute
+         *
+         * @returns {jQuery.Element}
+         */
+        getUnits: function () {
+            return $(':data(units)').data('units') || {};
         }
     });
 
