@@ -20,15 +20,8 @@ define(function (require) {
             deleteMessage: 'orob2b.product.productunit.delete.confirmation',
             addButtonSelector: 'a.add-list-item',
             selectParent: '.oro-multiselect-holder',
-            dataContent: '*[data-content]'
-        },
-
-        /**
-         * @property {Object}
-         */
-        listen: {
-            'content:changed _sourceElement': 'onChange',
-            'content:remove _sourceElement': 'askConfirmation'
+            dataContent: '*[data-content]',
+            precisions: {}
         },
 
         /**
