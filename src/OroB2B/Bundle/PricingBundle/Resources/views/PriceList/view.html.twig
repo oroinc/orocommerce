@@ -77,6 +77,19 @@
         }
     ]) %}
 
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
     {# TODO: Enable websites grid after correct relation between bundles #}
     {#{% set dataBlocks = dataBlocks|merge([#}
         {#{#}
