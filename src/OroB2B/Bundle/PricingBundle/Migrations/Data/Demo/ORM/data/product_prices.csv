@@ -1,17 +1,17 @@
 productCode,priceListName,unitCode,quantity,price,currency
-CAA,Default price list,kg,0.1,4.5,USD
-YJHLV82/ACWU90,Default price list,kg,0.1,0.9,USD
-YJV,Default price list,kg,2.5,0.5,USD
-COIA,Default price list,kg,2.5,9.5,USD
-YJAV 5*10,Default price list,kg,0.5,0.8,USD
-WDZ-YJV,Default price list,kg,1.5,0.3,USD
-ACS,Default price list,kg,1.2,0.8,USD
-YJHL82,Default price list,kg,1,1.5,USD
-VV22 3*120+1*70 / VLV 22,Default price list,kg,0.2,1.2,USD
-Medium voltage XLPE,Default price list,kg,0.2,0.8,USD
-N2xS2Y cable 240mm2,Default price list,kg,1.5,1.2,USD
-BVR/BV/RVV,Default price list,kg,2.5,3.2,USD
-H05VV-F,Default price list,kg,1.2,0.5,USD
+CAA,"Default price list",kg,0.1,4.5,EUR
+YJHLV82/ACWU90,"Default price list",kg,0.1,0.9,EUR
+YJV,"Default price list",kg,2.5,0.5,EUR
+COIA,"Default price list",kg,2.5,9.5,EUR
+"YJAV 5*10","Default price list",kg,0.5,0.8,EUR
+WDZ-YJV,"Default price list",kg,1.5,0.3,EUR
+ACS,"Default price list",kg,1.2,0.8,EUR
+YJHL82,"Default price list",kg,1,1.5,EUR
+"VV22 3*120+1*70 / VLV 22","Default price list",kg,0.2,1.2,EUR
+"Medium voltage XLPE","Default price list",kg,0.2,0.8,EUR
+"N2xS2Y cable 240mm2","Default price list",kg,1.5,1.2,EUR
+BVR/BV/RVV,"Default price list",kg,2.5,3.2,EUR
+H05VV-F,"Default price list",kg,1.2,0.5,EUR
 S10_1678,Default price list,item,1,48.81,USD
 S10_1949,Default price list,item,1,98.58,USD
 S10_2016,Default price list,item,1,68.99,USD
