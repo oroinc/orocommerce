@@ -383,18 +383,14 @@ datagrid:
                 select:
                     - productPrice.productSku
                     - productPrice.quantity
-                    - unit.code as unitCode
+                    - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
-                join:
-                    left:
-                        - { join: productPrice.priceList, alias: priceList }
-                        - { join: productPrice.unit, alias: unit }
                 where:
                     and:
-                        - priceList.id = :price_list_id
+                        - IDENTITY(productPrice.priceList) = :price_list_id
             bind_parameters:
                 - price_list_id
         columns:
@@ -435,7 +431,7 @@ datagrid:
                     data_name: productPrice.quantity
                 unitCode:
                     type:      choice
-                    data_name: unit
+                    data_name: unitCode
                     options:
                         field_type: orob2b_product_unit_selection
                 value:
