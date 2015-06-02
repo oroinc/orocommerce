@@ -32,6 +32,9 @@ services:
 
     orob2b_pricing.form.type.price_list_product_price:
         class: %orob2b_pricing.form.type.price_list_product_price.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.service.rounding
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:

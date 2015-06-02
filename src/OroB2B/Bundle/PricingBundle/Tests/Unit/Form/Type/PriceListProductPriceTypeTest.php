@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -23,6 +24,7 @@ use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 
 class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 {
@@ -30,6 +32,11 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      * @var PriceListProductPriceType
      */
     protected $formType;
+
+    /**
+     * @var RoundingService|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $roundingService;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|AbstractQuery
@@ -49,7 +56,11 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new PriceListProductPriceType();
+        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new PriceListProductPriceType($this->getRegistry(), $this->roundingService);
         $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
 
         parent::setUp();
@@ -245,6 +256,35 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->will($this->returnValue($em));
+
+        return $registry;
+    }
+
+    /**
+     * @return RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getRegistry()
+    {
+        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->any())
+            ->method('find')
+            ->willReturn($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1));
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with($this->isType('string'))
+            ->willReturn($repo);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        $registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
         return $registry;
     }
