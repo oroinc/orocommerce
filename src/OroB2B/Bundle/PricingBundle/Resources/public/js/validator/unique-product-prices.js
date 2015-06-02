@@ -34,16 +34,16 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
     }
 
     /**
-     * @param {array} array
+     * @param {Array} prices
      * @param {Object} search
-     * @returns {bool}
+     * @returns {Object}
      */
-    function findDuplication(array, search) {
-        return _.find(array, function (obj) {
-            return obj.priceList == search.priceList &&
-                obj.quantity == search.quantity &&
-                obj.unit == search.unit &&
-                obj.currency == search.currency;
+    function findDuplication(prices, search) {
+        return _.find(prices, function (obj) {
+            return obj.priceList === search.priceList &&
+                parseFloat(obj.quantity) === parseFloat(search.quantity) &&
+                obj.unit === search.unit &&
+                obj.currency === search.currency;
         });
     }
 
@@ -54,9 +54,9 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
         'OroB2B\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
         function (value, element) {
             var noDuplicationFound = true,
-                processed = [];
+                processedPrices = [];
 
-            getRealElement(element).find('.oro-multiselect-holder').each(function(index, price){
+            _.each(getRealElement(element).find('.oro-multiselect-holder'), function(price, index){
                 var data = getPriceValues(price);
 
                 if (_.isEmpty(data.priceList.trim()) ||
@@ -67,8 +67,8 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
                     return;
                 }
 
-                if (findDuplication(processed, data) == undefined) {
-                    processed.push(data);
+                if (findDuplication(processedPrices, data) === undefined) {
+                    processedPrices.push(data);
                 } else {
                     noDuplicationFound = false;
                 }
@@ -76,7 +76,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
 
             return noDuplicationFound;
         },
-        function (param, element) {
+        function (param) {
             param = _.extend({}, defaultParam, param);
 
             return __(param.message, {});

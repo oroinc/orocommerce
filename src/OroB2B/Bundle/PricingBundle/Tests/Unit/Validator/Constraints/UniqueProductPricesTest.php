@@ -50,50 +50,37 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 
     public function testGetDefaultOption()
     {
-        $this->assertEquals(null, $this->constraint->getDefaultOption());
+        $this->assertNull($this->constraint->getDefaultOption());
     }
 
-    /**
-     * @dataProvider validateDataProvider
-     *
-     * @param mixed $data
-     * @param boolean $correct
-     */
-    public function testValidate($data, $correct)
+    public function testValidateWithoutDuplications()
     {
-        if ($correct) {
-            $this->context->expects($this->never())
-                ->method('addViolation');
-        } else {
-            $this->context->expects($this->once())
-                ->method('addViolation')
-                ->with($this->constraint->message);
-        }
+        $this->context->expects($this->never())
+            ->method('addViolation');
+
+        $data = new ArrayCollection([
+            $this->createPriceList(1, 10, 'kg', 'USD'),
+            $this->createPriceList(2, 10, 'kg', 'USD'),
+            $this->createPriceList(1, 100, 'kg', 'USD'),
+            $this->createPriceList(1, 10, 'item', 'USD'),
+            $this->createPriceList(1, 10, 'kg', 'EUR'),
+        ]);
 
         $this->validator->validate($data, $this->constraint);
     }
 
-    public function validateDataProvider()
+    public function testValidateWithDuplications()
     {
-        return [
-            'no duplication' => [
-                'data' => new ArrayCollection([
-                    $this->createPriceList(1, 10, 'kg', 'USD'),
-                    $this->createPriceList(2, 10, 'kg', 'USD'),
-                    $this->createPriceList(1, 100, 'kg', 'USD'),
-                    $this->createPriceList(1, 10, 'item', 'USD'),
-                    $this->createPriceList(1, 10, 'kg', 'EUR'),
-                ]),
-                'correct' => true
-            ],
-            'with duplication by productList' => [
-                'data' => new ArrayCollection([
-                    $this->createPriceList(1, 10, 'kg', 'USD'),
-                    $this->createPriceList(1, 10, 'kg', 'USD')
-                ]),
-                'correct' => false
-            ],
-        ];
+        $this->context->expects($this->once())
+            ->method('addViolation')
+            ->with($this->constraint->message);
+
+        $data = new ArrayCollection([
+            $this->createPriceList(1, 10, 'kg', 'USD'),
+            $this->createPriceList(1, 10, 'kg', 'USD')
+        ]);
+
+        $this->validator->validate($data, $this->constraint);
     }
 
     /**
@@ -105,8 +92,13 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
      */
     protected function createPriceList($priceListId, $quantity, $unitCode, $currency)
     {
-        $unit = (new ProductUnit())->setCode($unitCode);
-        $price = (new Price())->setValue(100)->setCurrency($currency);
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        $price = new Price();
+        $price
+            ->setValue(100)
+            ->setCurrency($currency);
 
         $productPrice = new ProductPrice();
         $productPrice
