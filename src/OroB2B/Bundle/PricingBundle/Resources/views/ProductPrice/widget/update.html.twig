@@ -1,30 +1,12 @@
-<div class="widget-content">
-    {% if savedId is defined and savedId %}
-    <script type="text/javascript">
-        require(['oroui/js/widget-manager', 'oroui/js/messenger', 'oroui/js/mediator', 'orotranslation/js/translator'],
-        function(widgetManager, messenger, mediator, __) {
-            widgetManager.getWidgetInstance(
-                {{ app.request.get('_wid')|json_encode|raw }},
-                function (widget) {
-                    messenger.notificationFlashMessage('success', __('orob2b.pricing.product_price_save.flash.success'));
-                    mediator.trigger('widget_success:' + widget.getAlias());
-                    mediator.trigger('widget_success:' + widget.getWid());
-                    widget.trigger('formSave', {{ savedId|json_encode|raw }});
-                    widget.remove();
-                }
-            );
-        });
-    </script>
-    {% elseif form.vars.errors|length > 0 %}
-        <script type="text/javascript">
-            require(['oroui/js/widget-manager'],
-            function(widgetManager){
-                widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
-                    widget.trigger('formSaveError');
-                });
-            });
-        </script>
-
+{% set pageComponentOptions = {
+    '_wid': app.request.get('_wid'),
+    'savedId': savedId is defined and savedId ? savedId : null
+} %}
+<div class="widget-content"
+     data-page-component-module="orob2bpricing/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|json_encode }}"
+>
+    {% if form.vars.errors|length > 0 %}
         <div class="alert alert-error">
             {{ form_errors(form) }}
         </div>
