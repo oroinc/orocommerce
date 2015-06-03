@@ -14,6 +14,35 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% if resource_granted('orob2b_pricing_product_price_create') %}
+        {{ UI.clientButton({
+            'dataUrl': path(
+            'orob2b_product_price_create_widget', {
+                priceListId: entity.id
+            }),
+            'aCss': 'no-hash btn',
+            'label' : 'orob2b.pricing.add_product_price'|trans,
+            'widget' : {
+                'type' : 'dialog',
+                'multiple' : true,
+                'reload-grid-name' : 'pricing-product-price-grid',
+                'options' : {
+                    'alias': 'add-product-price-dialog',
+                    'dialogOptions' : {
+                        'stateEnabled': false,
+                        'incrementalPosition': false,
+                        'title' : 'orob2b.pricing.add_product_price'|trans,
+                        'allowMaximize': true,
+                        'allowMinimize': true,
+                        'dblclick': 'maximize',
+                        'maximizedHeightDecreaseBy': 'minimize-bar',
+                        'width': 600
+                    }
+                }
+            }
+        }) }}
+    {% endif %}
+
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_pricing_price_list_update', { 'id': entity.id }),
@@ -77,39 +106,6 @@
         }
     ]) %}
 
-    {% set addPriceButton %}
-        <div class="clearfix">
-            <div class="pull-right">
-                {{ UI.clientLink({
-                    'dataUrl': path(
-                        'orob2b_product_price_create_widget', {
-                            priceListId: entity.id
-                    }),
-                    'aCss': 'no-hash btn',
-                    'label' : 'orob2b.pricing.add_product_price'|trans,
-                    'widget' : {
-                        'type' : 'dialog',
-                        'multiple' : true,
-                        'reload-grid-name' : 'pricing-product-price-grid',
-                        'options' : {
-                            'alias': 'add-product-price-dialog',
-                            'dialogOptions' : {
-                                'stateEnabled': false,
-                                'incrementalPosition': false,
-                                'title' : 'orob2b.pricing.add_product_price'|trans,
-                                'allowMaximize': true,
-                                'allowMinimize': true,
-                                'dblclick': 'maximize',
-                                'maximizedHeightDecreaseBy': 'minimize-bar',
-                                'width': 600
-                            }
-                        }
-                    }
-                }) }}
-            </div>
-        </div>
-    {% endset %}
-
     {% set dataBlocks = dataBlocks|merge([
         {
             'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
@@ -117,10 +113,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [
-                        addPriceButton,
-                        dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })
-                    ]
+                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
