@@ -15,8 +15,6 @@ OroB2B\Bundle\WebsiteBundle\Entity\Website:
             - NotBlank: ~
         organization:
             - NotBlank: ~
-        priceList:
-            - Valid: ~
 
 OroB2B\Bundle\WebsiteBundle\Entity\Locale:
     constraints:

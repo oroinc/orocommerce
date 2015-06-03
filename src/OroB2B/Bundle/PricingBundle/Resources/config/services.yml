@@ -7,6 +7,9 @@ parameters:
     orob2b_pricing.acl.voter.product_list.class: OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter
     orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
 
+    orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
+    orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
+
 services:
     orob2b_pricing.acl.voter.product_list:
         class: %orob2b_pricing.acl.voter.product_list.class%
@@ -19,12 +22,6 @@ services:
 
     orob2b_pricing.datagrid.price_list_permissions_provider:
         class: %orob2b_pricing.datagrid.price_list_permissions_provider.class%
-
-    orob2b_pricing.form.price_list:
-        class: Symfony\Component\Form\Form
-        factory_method: createNamed
-        factory_service: form.factory
-        arguments: ["orob2b_pricing_price_list_form", "orob2b_pricing_price_list"]
 
     orob2b_pricing.price_list.manager.api:
         class: %orob2b_pricing.price_list.manager.api.class%
@@ -41,3 +38,21 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
         lazy: true
+
+    orob2b_pricing.event_listener.form_view:
+        class: %orob2b_pricing.event_listener.form_view.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+
+    orob2b_pricing.event_listener.datagrid:
+        class: %orob2b_pricing.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }

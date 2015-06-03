@@ -11,6 +11,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 class PriceListHandler
 {
@@ -90,29 +91,39 @@ class PriceListHandler
         array $appendWebsites,
         array $removeWebsites
     ) {
-        $this->setPriceListToCustomers($entity, $appendCustomers);
+        $this->manager->persist($entity);
+
+        // first stage - remove relations to entities, used to prevent unique key conflicts
+        $this->setPriceListToCustomers(null, $appendCustomers);
         $this->removePriceListFromCustomers($entity, $removeCustomers);
 
-        $this->setPriceListToCustomerGroups($entity, $appendCustomerGroups);
+        $this->setPriceListToCustomerGroups(null, $appendCustomerGroups);
         $this->removePriceListFromCustomerGroups($entity, $removeCustomerGroups);
 
-        $this->setPriceListToWebsites($entity, $appendWebsites);
+        $this->setPriceListToWebsites(null, $appendWebsites);
         $this->removePriceListFromWebsites($entity, $removeWebsites);
 
-        $this->manager->persist($entity);
+        $this->manager->flush();
+
+        // second stage - set correct relations
+        $this->setPriceListToCustomers($entity, $appendCustomers);
+        $this->setPriceListToCustomerGroups($entity, $appendCustomerGroups);
+        $this->setPriceListToWebsites($entity, $appendWebsites);
+
         $this->manager->flush();
     }
 
     /**
-     * @param PriceList $priceList
+     * @param PriceList|null $priceList
      * @param array $customers
      */
-    protected function setPriceListToCustomers(PriceList $priceList, array $customers)
+    protected function setPriceListToCustomers($priceList, array $customers)
     {
+        $repository = $this->getPriceListRepository();
+
         /** @var Customer[] $customers */
         foreach ($customers as $customer) {
-            $priceList->addCustomer($customer);
-            $this->manager->persist($customer);
+            $repository->setPriceListToCustomer($customer, $priceList);
         }
     }
 
@@ -124,23 +135,21 @@ class PriceListHandler
     {
         /** @var Customer[] $customers */
         foreach ($customers as $customer) {
-            if ($customer->getPriceList()->getId() === $priceList->getId()) {
-                $priceList->removeCustomer($customer);
-                $this->manager->persist($customer);
-            }
+            $priceList->removeCustomer($customer);
         }
     }
 
     /**
-     * @param PriceList $priceList
+     * @param PriceList|null $priceList
      * @param array $customerGroups
      */
-    protected function setPriceListToCustomerGroups(PriceList $priceList, array $customerGroups)
+    protected function setPriceListToCustomerGroups($priceList, array $customerGroups)
     {
+        $repository = $this->getPriceListRepository();
+
         /** @var CustomerGroup[] $customerGroups */
         foreach ($customerGroups as $customerGroup) {
-            $priceList->addCustomerGroup($customerGroup);
-            $this->manager->persist($customerGroup);
+            $repository->setPriceListToCustomerGroup($customerGroup, $priceList);
         }
     }
 
@@ -152,23 +161,21 @@ class PriceListHandler
     {
         /** @var CustomerGroup[] $customerGroups */
         foreach ($customerGroups as $customerGroup) {
-            if ($customerGroup->getPriceList()->getId() === $priceList->getId()) {
-                $priceList->removeCustomerGroup($customerGroup);
-                $this->manager->persist($customerGroup);
-            }
+            $priceList->removeCustomerGroup($customerGroup);
         }
     }
 
     /**
-     * @param PriceList $priceList
+     * @param PriceList|null $priceList
      * @param array $websites
      */
-    protected function setPriceListToWebsites(PriceList $priceList, array $websites)
+    protected function setPriceListToWebsites($priceList, array $websites)
     {
+        $repository = $this->getPriceListRepository();
+
         /** @var Website[] $websites */
         foreach ($websites as $website) {
-            $priceList->addWebsite($website);
-            $this->manager->persist($website);
+            $repository->setPriceListToWebsite($website, $priceList);
         }
     }
 
@@ -180,10 +187,15 @@ class PriceListHandler
     {
         /** @var Website[] $websites */
         foreach ($websites as $website) {
-            if ($website->getPriceList()->getId() === $priceList->getId()) {
-                $priceList->removeWebsite($website);
-                $this->manager->persist($website);
-            }
+            $priceList->removeWebsite($website);
         }
+    }
+
+    /**
+     * @return PriceListRepository
+     */
+    protected function getPriceListRepository()
+    {
+        return $this->manager->getRepository('OroB2BPricingBundle:PriceList');
     }
 }

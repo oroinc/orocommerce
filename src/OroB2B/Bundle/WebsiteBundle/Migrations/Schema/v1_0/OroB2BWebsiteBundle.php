@@ -74,7 +74,6 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('url', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
 
@@ -154,12 +153,6 @@ class OroB2BWebsiteBundle implements Migration
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_business_unit'),
             ['business_unit_owner_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
