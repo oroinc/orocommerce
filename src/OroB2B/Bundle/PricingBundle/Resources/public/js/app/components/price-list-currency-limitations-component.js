@@ -61,14 +61,25 @@ define(function (require) {
                 )
             );
 
-            this.prepareCurrencySelect();
-            this.$elem.on('change', this.$priceListSelect, _.bind(this.prepareCurrencySelect, this));
+            this.prepareCurrencySelect(true);
+            this.$elem.on(
+                'change',
+                options.priceListSelector,
+                _.bind(
+                    function () {
+                        this.prepareCurrencySelect(false);
+                    },
+                    this
+                )
+            );
         },
 
         /**
          * Prepare currency list select for selected price list
+         *
+         *  @param {Boolean} skipClear
          */
-        prepareCurrencySelect: function () {
+        prepareCurrencySelect: function (skipClear) {
             var priceListId = this.$priceListSelect.val();
 
             if (!priceListId) {
@@ -79,7 +90,7 @@ define(function (require) {
             var priceListCurrencies = this.currencies[priceListId];
 
             if (priceListCurrencies) {
-                this.handleCurrencies(priceListCurrencies);
+                this.handleCurrencies(priceListCurrencies, skipClear);
             } else {
                 var self = this;
                 $.ajax({
@@ -91,8 +102,8 @@ define(function (require) {
                     success: function (response) {
                         priceListCurrencies = response;
                         self.currencies[priceListId] = priceListCurrencies;
-                        self.$elem.closest(self.options.container).data('currencies', {self.currencies});
-                        self.handleCurrencies(priceListCurrencies);
+                        self.$elem.closest(self.options.container).data('currencies', self.currencies);
+                        self.handleCurrencies(priceListCurrencies, skipClear);
                     },
                     complete: function () {
                         self.loadingMaskView.hide();
@@ -106,8 +117,9 @@ define(function (require) {
 
         /**
          * @param {array} priceListCurrencies
+         * @param {Boolean} skipClear
          */
-        handleCurrencies: function (priceListCurrencies) {
+        handleCurrencies: function (priceListCurrencies, skipClear) {
             // Add empty key for empty value placeholder
             priceListCurrencies.unshift('');
 
@@ -120,6 +132,11 @@ define(function (require) {
 
             this.$currencySelect.html(newOptions);
             this.$currencySelect.removeAttr("disabled");
+
+            if (!skipClear) {
+                this.$currencySelect.val('');
+                this.$currencySelect.trigger('change');
+            }
         },
 
         dispose: function () {

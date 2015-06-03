@@ -64,7 +64,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         array $expectedOptions,
         $submittedData
     ) {
-        $this->configManager->expects(isset($inputOptions['currencies_list']) ? $this->never() : $this->once())
+        $hasCustomCurrencies = isset($inputOptions['currencies_list']) || !empty($inputOptions['full_currency_list']);
+        $this->configManager->expects($hasCustomCurrencies ? $this->never() : $this->once())
             ->method('get')
             ->with('oro_currency.allowed_currencies')
             ->willReturn($allowedCurrencies);
@@ -186,6 +187,18 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'submittedData' => 'GBP',
             ],
+            'full currencies list' => [
+                'allowedCurrencies' => ['USD', 'UAH'],
+                'localeCurrency' => 'EUR',
+                'inputOptions' => [
+                    'full_currency_list' => true
+                ],
+                'expectedOptions' => [
+                    'full_currency_list' => true,
+                    'choices' => Intl::getCurrencyBundle()->getCurrencyNames('en')
+                ],
+                'submittedData' => 'GBP'
+            ]
         ];
     }
 
