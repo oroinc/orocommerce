@@ -1,0 +1,4 @@
+orob2b:
+    product:
+        productunit:
+            delete.confirmation: Are you sure you want to delete this unit precision?

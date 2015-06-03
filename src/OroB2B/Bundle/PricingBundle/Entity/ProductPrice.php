@@ -5,14 +5,34 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * @ORM\Table(name="orob2b_price_product")
+ * @ORM\Table(
+ *      name="orob2b_price_product",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_pricing_price_list_uidx",
+ *              columns={"product_id", "price_list_id", "quantity", "unit_code", "currency"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-usd"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          }
+ *      }
+ * )
  */
 class ProductPrice
 {
@@ -182,6 +202,7 @@ class ProductPrice
     public function setPrice(Price $price)
     {
         $this->price = $price;
+        $this->updatePrice();
 
         return $this;
     }
