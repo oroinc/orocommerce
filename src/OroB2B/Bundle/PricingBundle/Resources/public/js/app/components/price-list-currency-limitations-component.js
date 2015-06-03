@@ -5,6 +5,9 @@ define(function (require) {
 
     var PriceListCurrencyLimitationComponent,
         _ = require('underscore'),
+        routing = require('routing'),
+        messenger = require('oroui/js/messenger'),
+        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
         BaseComponent = require('oroui/js/app/components/base/component');
 
     PriceListCurrencyLimitationComponent = BaseComponent.extend({
@@ -14,7 +17,8 @@ define(function (require) {
         options: {
             priceListSelector: 'input[name$="[priceList]"]',
             currencySelector: 'select[name$="[price][currency]"]',
-            container: '.oro-product-price-collection'
+            container: '.oro-item-collection',
+            currenciesRoute: 'orob2b_pricing_price_list_currency_list'
         },
 
         /**
@@ -42,11 +46,12 @@ define(function (require) {
          */
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
+            this.$elem = options._sourceElement;
 
-            var $elem = options._sourceElement;
-            this.currencies = $elem.closest(options.container).data('currencies');
-            this.$priceListSelect = $elem.find(options.priceListSelector);
-            this.$currencySelect = $elem.find(options.currencySelector);
+            this.loadingMaskView = new LoadingMaskView({container: this.$elem});
+            this.currencies = this.$elem.closest(options.container).data('currencies');
+            this.$priceListSelect = this.$elem.find(options.priceListSelector);
+            this.$currencySelect = this.$elem.find(options.currencySelector);
             this.$currencySelect.find('option').clone().each(
                 _.bind(
                     function (idx, option) {
@@ -57,7 +62,7 @@ define(function (require) {
             );
 
             this.prepareCurrencySelect();
-            this.$priceListSelect.on('change', _.bind(this.prepareCurrencySelect, this));
+            this.options._sourceElement.on('change', this.$priceListSelect, _.bind(this.prepareCurrencySelect, this));
         },
 
         /**
@@ -73,6 +78,36 @@ define(function (require) {
 
             var priceListCurrencies = this.currencies[priceListId];
 
+            if (priceListCurrencies) {
+                this.handleCurrencies(priceListCurrencies);
+            } else {
+                var self = this;
+                $.ajax({
+                    url: routing.generate(this.options.currenciesRoute, {'id': priceListId}),
+                    type: 'GET',
+                    beforeSend: function () {
+                        self.loadingMaskView.show();
+                    },
+                    success: function (response) {
+                        priceListCurrencies = response;
+                        self.currencies[priceListId] = priceListCurrencies;
+                        self.$elem.closest(self.options.container).data('currencies', {priceListId: priceListCurrencies});
+                        self.handleCurrencies(priceListCurrencies);
+                    },
+                    complete: function () {
+                        self.loadingMaskView.hide();
+                    },
+                    error: function (xhr) {
+                        Error.handle({}, xhr, {enforce: true});
+                    }
+                });
+            }
+        },
+
+        /**
+         * @param {array} priceListCurrencies
+         */
+        handleCurrencies: function (priceListCurrencies) {
             // Add empty key for empty value placeholder
             priceListCurrencies.unshift('');
 
@@ -92,7 +127,7 @@ define(function (require) {
                 return;
             }
 
-            this.options._sourceElement.off();
+            this.$elem.off();
 
             PriceListCurrencyLimitationComponent.__super__.dispose.call(this);
         }

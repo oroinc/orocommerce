@@ -48,6 +48,20 @@ class AjaxPriceListController extends Controller
     }
 
     /**
+     * @Route("/get-pricelist-currency-list/{id}",
+     *      name="orob2b_pricing_price_list_currency_list",
+     *      requirements={"id"="\d+"})
+     * @AclAncestor("orob2b_product_update")
+     *
+     * @param PriceList $priceList
+     * @return JsonResponse
+     */
+    public function getPriceListCurrencyList(PriceList $priceList)
+    {
+        return new JsonResponse($priceList->getCurrencies());
+    }
+
+    /**
      * @return PriceListRepository
      */
     protected function getRepository()
