@@ -74,7 +74,7 @@ class PriceListHandler
     /**
      * "Success" form handler
      *
-     * @param PriceList  $entity
+     * @param PriceList $entity
      * @param Customer[] $appendCustomers
      * @param Customer[] $removeCustomers
      * @param CustomerGroup[] $appendCustomerGroups
@@ -94,100 +94,56 @@ class PriceListHandler
         $this->manager->persist($entity);
 
         // first stage - remove relations to entities, used to prevent unique key conflicts
-        $this->setPriceListToCustomers(null, $appendCustomers);
-        $this->removePriceListFromCustomers($entity, $removeCustomers);
-
-        $this->setPriceListToCustomerGroups(null, $appendCustomerGroups);
-        $this->removePriceListFromCustomerGroups($entity, $removeCustomerGroups);
-
-        $this->setPriceListToWebsites(null, $appendWebsites);
-        $this->removePriceListFromWebsites($entity, $removeWebsites);
+        $this->setPriceListToCustomers(array_merge($appendCustomers, $removeCustomers));
+        $this->setPriceListToCustomerGroups(array_merge($appendCustomerGroups, $removeCustomerGroups));
+        $this->setPriceListToWebsites(array_merge($appendWebsites, $removeWebsites));
 
         $this->manager->flush();
 
         // second stage - set correct relations
-        $this->setPriceListToCustomers($entity, $appendCustomers);
-        $this->setPriceListToCustomerGroups($entity, $appendCustomerGroups);
-        $this->setPriceListToWebsites($entity, $appendWebsites);
+        $this->setPriceListToCustomers($appendCustomers, $entity);
+        $this->setPriceListToCustomerGroups($appendCustomerGroups, $entity);
+        $this->setPriceListToWebsites($appendWebsites, $entity);
 
         $this->manager->flush();
     }
 
     /**
+     * @param Customer[] $customers
      * @param PriceList|null $priceList
-     * @param array $customers
      */
-    protected function setPriceListToCustomers($priceList, array $customers)
+    protected function setPriceListToCustomers(array $customers, PriceList $priceList = null)
     {
         $repository = $this->getPriceListRepository();
 
-        /** @var Customer[] $customers */
         foreach ($customers as $customer) {
             $repository->setPriceListToCustomer($customer, $priceList);
         }
     }
 
     /**
-     * @param PriceList $priceList
-     * @param array $customers
-     */
-    protected function removePriceListFromCustomers(PriceList $priceList, array $customers)
-    {
-        /** @var Customer[] $customers */
-        foreach ($customers as $customer) {
-            $priceList->removeCustomer($customer);
-        }
-    }
-
-    /**
+     * @param CustomerGroup[] $customerGroups
      * @param PriceList|null $priceList
-     * @param array $customerGroups
      */
-    protected function setPriceListToCustomerGroups($priceList, array $customerGroups)
+    protected function setPriceListToCustomerGroups(array $customerGroups, PriceList $priceList = null)
     {
         $repository = $this->getPriceListRepository();
 
-        /** @var CustomerGroup[] $customerGroups */
         foreach ($customerGroups as $customerGroup) {
             $repository->setPriceListToCustomerGroup($customerGroup, $priceList);
         }
     }
 
     /**
-     * @param PriceList $priceList
-     * @param array $customerGroups
-     */
-    protected function removePriceListFromCustomerGroups(PriceList $priceList, array $customerGroups)
-    {
-        /** @var CustomerGroup[] $customerGroups */
-        foreach ($customerGroups as $customerGroup) {
-            $priceList->removeCustomerGroup($customerGroup);
-        }
-    }
-
-    /**
+     * @param Website[] $websites
      * @param PriceList|null $priceList
-     * @param array $websites
      */
-    protected function setPriceListToWebsites($priceList, array $websites)
+    protected function setPriceListToWebsites(array $websites, PriceList $priceList = null)
     {
         $repository = $this->getPriceListRepository();
 
-        /** @var Website[] $websites */
         foreach ($websites as $website) {
             $repository->setPriceListToWebsite($website, $priceList);
-        }
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param array $websites
-     */
-    protected function removePriceListFromWebsites(PriceList $priceList, array $websites)
-    {
-        /** @var Website[] $websites */
-        foreach ($websites as $website) {
-            $priceList->removeWebsite($website);
         }
     }
 
