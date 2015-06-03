@@ -381,6 +381,7 @@ datagrid:
             type:              orm
             query:
                 select:
+                    - productPrice.id
                     - productPrice.productSku
                     - productPrice.quantity
                     - IDENTITY(productPrice.unit) as unitCode
@@ -443,3 +444,18 @@ datagrid:
                     options:
                         field_options:
                             choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
+        properties:
+            id: ~
+            update_link:
+                type: url
+                route: orob2b_product_price_update_widget
+                params: [ id ]
+        actions:
+            update:
+                type:          dialog
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_pricing_product_price_update
+                widgetOptions:
+                    reload-grid-name: pricing-product-price-grid
