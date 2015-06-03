@@ -81,5 +81,4 @@ class QuoteProductType extends AbstractType
             }
         }
     }
-
 }
