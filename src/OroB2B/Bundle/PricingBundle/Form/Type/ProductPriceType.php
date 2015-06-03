@@ -30,7 +30,14 @@ class ProductPriceType extends AbstractType
                 ['label' => 'orob2b.pricing.pricelist.entity_label', 'create_enabled' => false, 'required' => true]
             )
             ->add('quantity', 'number', ['label' => 'orob2b.pricing.quantity.label'])
-            ->add('unit', ProductUnitSelectionType::NAME, ['label' => 'orob2b.pricing.unit.label'])
+            ->add(
+                'unit',
+                ProductUnitSelectionType::NAME,
+                [
+                    'label' => 'orob2b.pricing.unit.label',
+                    'empty_value' => 'orob2b.product.productunit.form.choose'
+                ]
+            )
             ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label'])
         ;
     }

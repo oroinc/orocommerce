@@ -22,7 +22,7 @@ orob2b.pricing:
     productprice:
         entity_label: Product Price
         entity_plural_label: Product Prices
-        entity_description: Represents product price for price list
+        entity_description: Represents product price
         id.label: ID
         product.label: Product
         product_sku.label: Product SKU
@@ -33,6 +33,7 @@ orob2b.pricing:
         unit:
             label: Unit
             choose: Choose unit...
+        unit_code.label: Unit
         price.label: Price
 
     menu:

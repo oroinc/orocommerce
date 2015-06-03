@@ -384,18 +384,14 @@ datagrid:
                     - productPrice.id
                     - productPrice.productSku
                     - productPrice.quantity
-                    - unit.code as unitCode
+                    - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
-                join:
-                    left:
-                        - { join: productPrice.priceList, alias: priceList }
-                        - { join: productPrice.unit, alias: unit }
                 where:
                     and:
-                        - priceList.id = :price_list_id
+                        - IDENTITY(productPrice.priceList) = :price_list_id
             bind_parameters:
                 - price_list_id
         columns:
@@ -404,7 +400,7 @@ datagrid:
             quantity:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unit.label
+                label:         orob2b.pricing.productprice.unit_code.label
                 type: twig
                 frontend_type: html
                 template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
@@ -436,7 +432,7 @@ datagrid:
                     data_name: productPrice.quantity
                 unitCode:
                     type:      choice
-                    data_name: unit
+                    data_name: unitCode
                     options:
                         field_type: orob2b_product_unit_selection
                 value:
@@ -444,9 +440,10 @@ datagrid:
                     data_name: productPrice.currency
                 currency:
                     type:      choice
-                    data_name: currency
+                    data_name: productPrice.currency
                     options:
-                        field_type: oro_currency_selection
+                        field_options:
+                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
         properties:
             id: ~
             update_link:
