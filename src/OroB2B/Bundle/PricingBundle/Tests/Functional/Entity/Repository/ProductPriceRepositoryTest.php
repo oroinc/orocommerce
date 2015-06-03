@@ -2,8 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -24,7 +27,8 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
             ]
         );
 
@@ -70,6 +74,45 @@ class ProductPriceRepositoryTest extends WebTestCase
                     'unit' => $notRemovedUnit
                 ]
             )
+        );
+    }
+
+    public function testGetAvailableCurrencies()
+    {
+        $this->assertEquals(
+            ['EUR' => 'EUR', 'USD' => 'USD'],
+            $this->repository->getAvailableCurrencies()
+        );
+
+        $em = $this->getContainer()->get('doctrine')->getManager();
+
+        $price = new Price();
+        $price->setValue(1);
+        $price->setCurrency('UAH');
+
+        /** @var Product $product */
+        $product = $this->getReference('product.1');
+
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $productPrice = new ProductPrice();
+        $productPrice
+            ->setPrice($price)
+            ->setProduct($product)
+            ->setQuantity(1)
+            ->setUnit($unit)
+            ->setPriceList($priceList);
+
+        $em->persist($productPrice);
+        $em->flush();
+
+        $this->assertEquals(
+            ['EUR' => 'EUR', 'UAH' => 'UAH', 'USD' => 'USD'],
+            $this->repository->getAvailableCurrencies()
         );
     }
 }

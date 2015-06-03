@@ -35,6 +35,16 @@ orob2b.pricing:
             choose: Choose unit...
         price.label: Price
 
+    productprice:
+        entity_label: Product Price
+        entity_plural_label: Product Prices
+        entity_description: Represents product price
+        product_sku.label: Product SKU
+        quantity.label: Quantity
+        value.label: Value
+        currency.label: Currency
+        unit_code.label: Unit
+
     menu:
         price_lists_tab.label: Price lists management
         price_lists_list.description: List of existing price lists
