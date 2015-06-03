@@ -1,0 +1,5 @@
+orob2b:
+    pricing:
+          validators:
+              product_price:
+                  unique_entity.message: 'Product has duplication of product prices. Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
