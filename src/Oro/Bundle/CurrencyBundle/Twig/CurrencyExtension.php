@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CurrencyBundle\Twig;
 
+use Symfony\Component\Intl\Intl;
+
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
@@ -28,8 +30,12 @@ class CurrencyExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'oro_format_price',
-                array($this, 'formatPrice'),
-                array('is_safe' => array('html'))
+                [$this, 'formatPrice'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFilter(
+                'oro_localized_currency_name',
+                [Intl::getCurrencyBundle(), 'getCurrencyName']
             )
         ];
     }

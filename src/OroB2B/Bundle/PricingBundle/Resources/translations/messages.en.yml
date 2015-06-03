@@ -1,0 +1,35 @@
+orob2b.pricing:
+    pricelist:
+        entity_label: Price List
+        entity_plural_label: Price Lists
+        entity_description: Represents price list information
+        id.label: Id
+        name.label: Name
+        default.label: Is Default
+        currencies.label: Currencies
+        has_price_list.label: Has Price List
+        set_default:
+            label: Set default
+            message: The "{{ priceListName }}" has been made default
+        customer_groups.label: Customer Groups
+        customers.label: Customers
+        websites.label: Websites
+
+    menu:
+        price_lists_tab.label: Price lists management
+        price_lists_list.description: List of existing price lists
+        shortcut_new_price_list.label: Create new price list
+        shortcut_new_price_list.description: Create new price list item
+        shortcut_price_lists.description: Show list of existing price lists
+
+    sections:
+        general: General
+
+    widgets:
+        pricing_information: Price List Information
+
+    controller:
+        price_list.saved.message: Price List has been saved
+
+    form:
+        choose_price_list: Choose a Price List...

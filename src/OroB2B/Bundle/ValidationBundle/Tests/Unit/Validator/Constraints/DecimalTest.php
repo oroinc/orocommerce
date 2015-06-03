@@ -18,12 +18,25 @@ class DecimalTest extends \PHPUnit_Framework_TestCase
     /** @var DecimalValidator */
     protected $validator;
 
+    /** @var string */
+    protected $locale;
+
     protected function setUp()
     {
         $this->constraint = new Decimal();
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
         $this->validator = new DecimalValidator();
         $this->validator->initialize($this->context);
+
+        $this->locale = \Locale::getDefault();
+        \Locale::setDefault('en');
+    }
+
+    protected function tearDown()
+    {
+        \Locale::setDefault($this->locale);
+
+        unset($this->constraint, $this->context, $this->validator, $this->locale);
     }
 
     public function testConfiguration()

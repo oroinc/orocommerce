@@ -3,13 +3,16 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
@@ -17,6 +20,11 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      * @var CustomerGroupType
      */
     protected $formType;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractQuery
+     */
+    protected $query;
 
     protected function setUp()
     {
@@ -27,7 +35,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
 
     protected function tearDown()
     {
-        unset($this->em, $this->formType);
+        unset($this->formType, $this->query);
     }
 
     /**
@@ -37,10 +45,20 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
     {
         $registry = $this->getRegistryForEntityIdentifierType();
 
+        $entityType = new EntityType($registry);
         $entityIdentifierType = new EntityIdentifierType($registry);
+        $priceListSelectStub = new PriceListSelectTypeStub();
+
 
         return [
-            new PreloadedExtension([$entityIdentifierType->getName() => $entityIdentifierType], [])
+            new PreloadedExtension(
+                [
+                    $entityType->getName() => $entityType,
+                    $priceListSelectStub->getName() => $priceListSelectStub,
+                    $entityIdentifierType->getName() => $entityIdentifierType
+                ],
+                []
+            )
         ];
     }
 
@@ -59,6 +77,15 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         array $submittedData,
         array $expectedData
     ) {
+        $this->query->expects($this->atLeastOnce())
+            ->method('execute')
+            ->willReturn(
+                [
+                    $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
+                    $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
+                ]
+            );
+
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertTrue($form->has('appendCustomers'));
@@ -86,10 +113,25 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_group_name'
+                    'name' => 'customer_group_name',
+                    'priceList' => null
                 ],
                 'expectedData' => [
-                    'name' => 'customer_group_name'
+                    'name' => 'customer_group_name',
+                    'priceList' => null
+                ]
+            ],
+            'with list' => [
+                'options' => [],
+                'defaultData' => [],
+                'viewData' => [],
+                'submittedData' => [
+                    'name' => 'customer_group_name',
+                    'priceList' => 1
+                ],
+                'expectedData' => [
+                    'name' => 'customer_group_name',
+                    'priceList' => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
                 ]
             ]
         ];
@@ -121,13 +163,54 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
             ->method('getClassMetadata')
             ->will($this->returnValue($metadata));
 
+        $this->query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
+            ->disableOriginalConstructor()
+            ->setMethods(['execute'])
+            ->getMockForAbstractClass();
+
+        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $qb->expects($this->any())
+            ->method('getQuery')
+            ->will($this->returnValue($this->query));
+
+        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->any())
+            ->method('createQueryBuilder')
+            ->will($this->returnValue($qb));
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with($this->isType('string'))
+            ->will($this->returnValue($repo));
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->willReturnMap([['OroB2B\Bundle\CustomerBundle\Entity\Customer', $em]]);
+            ->will($this->returnValue($em));
 
         return $registry;
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }

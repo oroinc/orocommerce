@@ -12,6 +12,8 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+
 /**
  * @ORM\Table(name="orob2b_website")
  * @ORM\Entity
@@ -151,6 +153,14 @@ class Website
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+
+    /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", cascade={"persist"})
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $priceList;
 
     public function __construct()
     {
@@ -401,5 +411,25 @@ class Website
         }
 
         return $this;
+    }
+
+    /**
+     * @param PriceList $priceList
+     *
+     * @return Website
+     */
+    public function setPriceList(PriceList $priceList = null)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
+    }
+
+    /**
+     * @return PriceList
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
     }
 }
