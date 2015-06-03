@@ -17,8 +17,8 @@ class CustomerFormExtension extends AbstractPriceListExtension
     {
         /** @var Customer|null $customer */
         $customer = $event->getData();
-        if (!$customer) {
-            return null;
+        if (!$customer || !$customer->getId()) {
+            return;
         }
 
         $priceList = $this->getPriceListRepository()->getPriceListByCustomer($customer);
@@ -33,11 +33,15 @@ class CustomerFormExtension extends AbstractPriceListExtension
     {
         /** @var Customer|null $customer */
         $customer = $event->getData();
-        if (!$customer) {
-            return null;
+        if (!$customer || !$customer->getId()) {
+            return;
         }
 
-        /** @var PriceList|null $customer */
+        if (!$event->getForm()->isValid()) {
+            return;
+        }
+
+        /** @var PriceList|null $priceList */
         $priceList = $event->getForm()->get('priceList')->getData();
 
         $this->getPriceListRepository()->setPriceListToCustomer($customer, $priceList);

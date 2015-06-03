@@ -17,8 +17,8 @@ class CustomerGroupFormExtension extends AbstractPriceListExtension
     {
         /** @var CustomerGroup|null $customerGroup */
         $customerGroup = $event->getData();
-        if (!$customerGroup) {
-            return null;
+        if (!$customerGroup || !$customerGroup->getId()) {
+            return;
         }
 
         $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup);
@@ -33,8 +33,12 @@ class CustomerGroupFormExtension extends AbstractPriceListExtension
     {
         /** @var CustomerGroup|null $customerGroup */
         $customerGroup = $event->getData();
-        if (!$customerGroup) {
-            return null;
+        if (!$customerGroup || !$customerGroup->getId()) {
+            return;
+        }
+
+        if (!$event->getForm()->isValid()) {
+            return;
         }
 
         /** @var PriceList|null $customer */
