@@ -48,11 +48,13 @@
 
 {% block orob2b_sale_quote_product_collection_widget %}
     {% set add_label = 'orob2b.sale.quote.quoteproduct.add_label' %}
+    {% set prototype_name = '__namequoteproduct__' %}
     {{ block('orob2b_sale_collection_widget') }}
 {% endblock %}
 
 {% block orob2b_sale_quote_product_item_collection_widget %}
     {% set add_label = 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label' %}
+    {% set prototype_name = '__namequoteproductitem__' %}
     {% set componentOptions = {
         'containerId': '#' ~ form.vars.id ~ '_collection'
     } %}
@@ -101,11 +103,11 @@
                         {{ _self.oro_collection_item_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
-                    {{ prototype_html|replace({'__name__': '0'})|raw }}
+                    {{ prototype_html|replace({(prototype_name|default('__name__')): '0'})|raw }}
                 {% endif %}
             </div>
             {% if allow_add %}
-            <a class="btn add-list-item" href="javascript: void(0);"><i class="icon-plus"></i>{{ add_label|trans }}</a>
+            <a class="btn add-list-item" data-prototype-name="{{ prototype_name|default('__name__') }}" href="javascript: void(0);"><i class="icon-plus"></i>{{ add_label|trans }}</a>
             {% endif %}
         </div>
         {% if handle_primary and (prototype is not defined or prototype.primary is defined) %}

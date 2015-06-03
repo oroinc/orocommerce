@@ -16,24 +16,29 @@ class QuoteProductItemsValidator extends ConstraintValidator
      */
     public function validate($quoteProductItems, Constraint $constraint)
     {
-        /** @var $quoteProductItems Collection|QuoteProductItem[] */
-        if (!$quoteProductItems instanceof Collection) {
-            throw new UnexpectedTypeException($quoteProductItems, 'Doctrine\Common\Collections\Collection');
+        /** @var $quoteProductItems array|Collection|QuoteProductItem[] */
+        if (!is_array($quoteProductItems) && !$quoteProductItems instanceof Collection) {
+            throw new UnexpectedTypeException($quoteProductItems, 'Doctrine\Common\Collections\Collection|array');
         }
         if (empty($quoteProductItems)) {
             return;
         }
-        if (!$quoteProductItems->first() instanceof QuoteProductItem) {
-            throw new UnexpectedTypeException(
-                $quoteProductItems->first(),
-                'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem'
-            );
-        }
         /** @var $product Product */
-        $product = $quoteProductItems->first()->getQuoteProduct()->getProduct();
-        $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
+        $product = null;
+        $allowedUnits = [];
         foreach ($quoteProductItems as $key => $quoteProductItem) {
+            if ($quoteProductItem && !$quoteProductItem instanceof QuoteProductItem) {
+                throw new UnexpectedTypeException(
+                    $quoteProductItem,
+                    'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem'
+                );
+            }
+            if ($quoteProductItem && !$product) {
+                $product = $quoteProductItem->getQuoteProduct()->getProduct();
+                $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
+            }
             if (!in_array($quoteProductItem->getProductUnit()->getCode(), $allowedUnits)) {
+                /** @var $constraint QuoteProductItems */
                 $this->context->addViolationAt("[{$key}].productUnit", $constraint->message);
             }
         }

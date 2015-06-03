@@ -35,7 +35,13 @@ define(function (require) {
 
             this.$container = $(containerId);
 
-            this.$productSelect = this.$container.closest('.sale-quoteproduct-widget').find('select.sale-quoteproduct-product-select');
+            // reassign Add button onclick - ToDo: wait for merge #BB-569
+            $(document).off('click', '.add-list-item');
+            $(document).on('click', '.add-list-item', _.bind(this.onAddClick, this));
+
+            this.$productSelect = this.$container
+                .closest('.sale-quoteproduct-widget')
+                .find('select.sale-quoteproduct-product-select');
             this.$productSelect.on('change', _.bind(this.onChange, this));
             this.$container.on('content:changed', _.bind(this.onContentChange, this));
 
@@ -71,6 +77,26 @@ define(function (require) {
             }
         },
 
+        /**
+         * Handle add button click
+         *
+         * @param {jQuery.Event} e
+         */
+        onAddClick: function (e) {
+            var self = this;
+            var target = e.srcElement || e.target;
+            e.preventDefault();
+            var $listContainer, index, html, placeholder, placeholderRegexp;
+            placeholder = $(target).data('prototype-name') || '__name__';
+            placeholderRegexp =  new RegExp(self.escapeRegExp(placeholder), 'g');
+            $listContainer = $(target).siblings('.collection-fields-list');
+            index = $listContainer.data('last-index') || $listContainer.children().length;
+
+            html = $listContainer.attr('data-prototype').replace(placeholderRegexp, index);
+            $listContainer.append(html)
+                .trigger('content:changed')
+                .data('last-index', index + 1);
+        },
 
         /**
          * Update available ProductUnit select
@@ -102,6 +128,14 @@ define(function (require) {
                 self.$container.data('allowedUnitsData', data);
                 self.loadingMask.hide();
             }
+        },
+        /**
+         * Escape string for using in regexp
+         *
+         * @param {String} s
+         */
+        escapeRegExp: function(s){
+            return s.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
         }
     });
 
