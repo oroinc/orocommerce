@@ -18,5 +18,9 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
             'Ships' => [],
             'Trains' => [],
         ],
+        'Cables' => [
+            'Aluminum' => [],
+            'Copper' => [],
+        ],
     ];
 }

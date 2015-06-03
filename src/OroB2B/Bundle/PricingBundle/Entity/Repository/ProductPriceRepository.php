@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -28,5 +29,28 @@ class ProductPriceRepository extends EntityRepository
             ->setParameter('product', $product);
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAvailableCurrencies()
+    {
+        $qb = $this->createQueryBuilder('productPrice');
+
+        $currencies = $qb
+            ->distinct()
+            ->select('productPrice.currency')
+            ->orderBy('productPrice.currency', Criteria::ASC)
+            ->getQuery()
+            ->getArrayResult();
+
+        $result = [];
+        foreach ($currencies as $currency) {
+            $currencyName = reset($currency);
+            $result[$currencyName] = $currencyName;
+        }
+
+        return $result;
     }
 }

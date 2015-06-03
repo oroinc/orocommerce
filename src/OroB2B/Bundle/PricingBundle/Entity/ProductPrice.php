@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -21,6 +22,17 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
  * @ORM\HasLifecycleCallbacks()
+ * @Config(
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-usd"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          }
+ *      }
+ * )
  */
 class ProductPrice
 {

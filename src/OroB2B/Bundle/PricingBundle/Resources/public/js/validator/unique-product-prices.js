@@ -11,7 +11,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      * @param {Element} element
      */
     function getRealElement(element) {
-        return $(element).parents('.oro-product-price-collection');
+        return $(element).closest('.oro-item-collection');
     }
 
     /**
@@ -56,7 +56,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
             var noDuplicationFound = true,
                 processedPrices = [];
 
-            _.each(getRealElement(element).find('.oro-multiselect-holder'), function(price, index){
+            _.each(getRealElement(element).find('.oro-multiselect-holder'), function (price) {
                 var data = getPriceValues(price);
 
                 if (_.isEmpty(data.priceList.trim()) ||
