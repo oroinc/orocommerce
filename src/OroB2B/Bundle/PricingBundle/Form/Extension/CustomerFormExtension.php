@@ -37,12 +37,13 @@ class CustomerFormExtension extends AbstractPriceListExtension
             return;
         }
 
-        if (!$event->getForm()->isValid()) {
+        $form = $event->getForm();
+        if (!$form->isValid()) {
             return;
         }
 
         /** @var PriceList|null $priceList */
-        $priceList = $event->getForm()->get('priceList')->getData();
+        $priceList = $form->get('priceList')->getData();
 
         $this->getPriceListRepository()->setPriceListToCustomer($customer, $priceList);
     }

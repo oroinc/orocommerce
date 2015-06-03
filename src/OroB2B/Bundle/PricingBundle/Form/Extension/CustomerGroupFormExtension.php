@@ -37,12 +37,13 @@ class CustomerGroupFormExtension extends AbstractPriceListExtension
             return;
         }
 
-        if (!$event->getForm()->isValid()) {
+        $form = $event->getForm();
+        if (!$form->isValid()) {
             return;
         }
 
         /** @var PriceList|null $customer */
-        $priceList = $event->getForm()->get('priceList')->getData();
+        $priceList = $form->get('priceList')->getData();
 
         $this->getPriceListRepository()->setPriceListToCustomerGroup($customerGroup, $priceList);
     }
