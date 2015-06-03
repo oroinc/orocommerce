@@ -33,6 +33,7 @@ class OroB2BSaleBundle implements Migration
         $table = $schema->createTable('orob2b_sale_quote_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_sku', 'string', ['length' => 255]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['quote_id'], 'IDX_D9ADA158DB805178', []);
@@ -48,14 +49,15 @@ class OroB2BSaleBundle implements Migration
     {
         $table = $schema->createTable('orob2b_sale_quote_product_item');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quote_product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['quote_product_id'], 'IDX_3ED01F0AF5D31CE1', []);
-        $table->addIndex(['product_unit_code'], 'IDX_3ED01F0A29646BBD', []);
+        $table->addIndex(['product_unit_id'], 'IDX_3ED01F0A29646BBD', []);
     }
 
     /**
@@ -90,9 +92,9 @@ class OroB2BSaleBundle implements Migration
         $table = $schema->getTable('orob2b_sale_quote_product_item');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product_unit'),
-            ['product_unit_code'],
+            ['product_unit_id'],
             ['code'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_sale_quote_product'),

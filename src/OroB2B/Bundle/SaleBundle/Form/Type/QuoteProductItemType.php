@@ -65,6 +65,14 @@ class QuoteProductItemType extends AbstractType
         $quoteProductItem = $event->getData();
         $form = $event->getForm();
         $choices = null;
+
+        $productUnitOptons = [
+            'compact' => false,
+            'disabled' => false,
+            'label' => 'orob2b.product.productunit.entity_label',
+            'required' => true
+        ];
+
         if ($quoteProductItem && null !== $quoteProductItem->getId()) {
             $product = $quoteProductItem->getQuoteProduct()->getProduct();
             if ($product) {
@@ -73,17 +81,17 @@ class QuoteProductItemType extends AbstractType
                     $choices[] = $unitPrecision->getUnit();
                 }
             }
+            $productUnit = $quoteProductItem->getProductUnit();
+            if (!$productUnit || ($product && !in_array($productUnit->getCode(), $choices))) {
+                // ProductUnit was removed
+                $productUnitOptons['empty_value'] =  $quoteProductItem->getProductUnitCode() . ' - removed';
+            }
         }
+        $productUnitOptons['choices'] = $choices;
         $form->add(
             'productUnit',
             ProductUnitSelectionType::NAME,
-            [
-                'compact' => false,
-                'disabled' => false,
-                'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
-                'choices' => $choices
-            ]
+            $productUnitOptons
         );
     }
 

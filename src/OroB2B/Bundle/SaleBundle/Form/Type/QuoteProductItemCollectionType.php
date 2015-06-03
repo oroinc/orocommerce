@@ -26,10 +26,7 @@ class QuoteProductItemCollectionType extends AbstractType
         $resolver->setDefaults([
             'type' => QuoteProductItemType::NAME,
             'show_form_when_empty' => false,
-            'prototype_name'       => '__namequoteproductitem__',
-            'constraints' => [
-                new QuoteProductItems()
-            ]
+            'prototype_name'       => '__namequoteproductitem__'
         ]);
     }
 

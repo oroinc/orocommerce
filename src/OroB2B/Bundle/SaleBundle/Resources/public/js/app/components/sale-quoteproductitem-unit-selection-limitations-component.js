@@ -59,8 +59,13 @@ define(function (require) {
             var self = this;
             var productId = self.$productSelect.val();
             self.loadingMask.show();
-            $.get(routing.generate('orob2b_api_get_product_available_units', {'id': productId}))
-                .done(_.bind(this.updateProductUnits, this));
+            if (productId) {
+                $.get(routing.generate('orob2b_api_get_product_available_units', {'id': productId}))
+                    .done(_.bind(this.updateProductUnits, this));
+            } else {
+                var data = {successful: true, data: []};
+                this.updateProductUnits(data, true);
+            }
         },
 
         /**

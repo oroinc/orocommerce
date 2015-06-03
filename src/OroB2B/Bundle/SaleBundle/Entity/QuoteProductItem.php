@@ -55,9 +55,16 @@ class QuoteProductItem
      * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_code", referencedColumnName="code", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
      */
     protected $productUnit;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="product_unit_code", type="string", length=255)
+     */
+    protected $productUnitCode;
 
     /**
      * @var float
@@ -144,6 +151,9 @@ class QuoteProductItem
     public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
+        if ($productUnit) {
+            $this->productUnitCode = $productUnit->getCode();
+        }
 
         return $this;
     }
@@ -156,6 +166,29 @@ class QuoteProductItem
     public function getProductUnit()
     {
         return $this->productUnit;
+    }
+
+    /**
+     * Set productUnitCode
+     *
+     * @param string $productUnitCode
+     * @return QuoteProductItem
+     */
+    public function setProductUnitCode($productUnitCode)
+    {
+        $this->productUnitCode = $productUnitCode;
+
+        return $this;
+    }
+
+    /**
+     * Get productUnitCode
+     *
+     * @return ProductUnit
+     */
+    public function getProductUnitCode()
+    {
+        return $this->productUnitCode;
     }
 
     /**
