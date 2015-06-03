@@ -2,12 +2,14 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 
-class QuoteProductItemTypeTest extends \PHPUnit_Framework_TestCase
+class QuoteProductItemTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var QuoteProductItemType
@@ -16,6 +18,8 @@ class QuoteProductItemTypeTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        parent::setUp();
+
         $this->type = new QuoteProductItemType();
     }
 
@@ -36,16 +40,6 @@ class QuoteProductItemTypeTest extends \PHPUnit_Framework_TestCase
         ;
 
         $builder->expects($this->at(1))
-            ->method('add')
-            ->with('productUnit', ProductUnitSelectionType::NAME, [
-                'compact'   => false,
-                'disabled'  => false,
-                'label'     => 'orob2b.product.productunit.entity_label',
-            ])
-            ->will($this->returnSelf())
-        ;
-
-        $builder->expects($this->at(2))
             ->method('add')
             ->with('price', PriceType::NAME, [
                 'required'  => true,
