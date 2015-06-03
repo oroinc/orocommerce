@@ -62,7 +62,7 @@ define(function (require) {
             );
 
             this.prepareCurrencySelect();
-            this.options._sourceElement.on('change', this.$priceListSelect, _.bind(this.prepareCurrencySelect, this));
+            this.$elem.on('change', this.$priceListSelect, _.bind(this.prepareCurrencySelect, this));
         },
 
         /**
@@ -91,7 +91,7 @@ define(function (require) {
                     success: function (response) {
                         priceListCurrencies = response;
                         self.currencies[priceListId] = priceListCurrencies;
-                        self.$elem.closest(self.options.container).data('currencies', {priceListId: priceListCurrencies});
+                        self.$elem.closest(self.options.container).data('currencies', {priceListId: self.currencies});
                         self.handleCurrencies(priceListCurrencies);
                     },
                     complete: function () {
