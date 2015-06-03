@@ -28,7 +28,7 @@ class ProductPriceCollectionType extends AbstractType
     /**
      * @param ManagerRegistry $registry
      */
-    public function __construct($registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
