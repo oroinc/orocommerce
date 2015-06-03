@@ -118,13 +118,6 @@ class AjaxProductPriceControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(
-            "messenger.notificationFlashMessage('success', __('orob2b.pricing.product_price_save.flash.success'))",
-            $html
-        );
-        $this->assertContains(
-            "mediator.trigger('widget_success:' + widget.getAlias());",
-            $html
-        );
+        $this->assertRegExp('/"savedId":\s*\d+/i', $html);
     }
 }
