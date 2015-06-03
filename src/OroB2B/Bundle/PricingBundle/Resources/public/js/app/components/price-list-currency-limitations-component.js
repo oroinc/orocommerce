@@ -91,7 +91,7 @@ define(function (require) {
                     success: function (response) {
                         priceListCurrencies = response;
                         self.currencies[priceListId] = priceListCurrencies;
-                        self.$elem.closest(self.options.container).data('currencies', {priceListId: self.currencies});
+                        self.$elem.closest(self.options.container).data('currencies', {self.currencies});
                         self.handleCurrencies(priceListCurrencies);
                     },
                     complete: function () {
