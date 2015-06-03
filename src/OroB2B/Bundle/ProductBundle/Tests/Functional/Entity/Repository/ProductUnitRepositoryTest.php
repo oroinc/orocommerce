@@ -34,9 +34,16 @@ class ProductUnitRepositoryTest extends WebTestCase
 
         $expectedUnits = array_map(
             function ($reference) {
-                return $this->getProductUnit($reference);
+                return $this->getProductUnit($reference)->getCode();
             },
             $expectedUnitReferences
+        );
+
+        $units = array_map(
+            function (ProductUnit $unit) {
+                return $unit->getCode();
+            },
+            $units
         );
 
         $this->assertEquals($expectedUnits, $units);
@@ -48,8 +55,8 @@ class ProductUnitRepositoryTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            ['product.1', ['product_unit_precision.product.1.bottle', 'product_unit_precision.product.1.liter']],
-            ['product.2', ['product_unit_precision.product.1.bottle', 'product_unit_precision.product.1.liter']]
+            ['product.1', ['product_unit.bottle', 'product_unit.liter']],
+            ['product.2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter']]
         ];
     }
 

@@ -34,10 +34,12 @@ define(function (require) {
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.options._sourceElement.find(this.options.productSelector)
-                .on('change', _.bind(this.onProductChange, this));
-
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
+
+            this.options._sourceElement
+                .on('change', this.options.productSelector, _.bind(this.onProductChange, this));
+
+            this.options._sourceElement.find(this.options.productSelector).trigger('change');
         },
 
         /**
@@ -48,10 +50,7 @@ define(function (require) {
                 self = this;
 
             if (!value) {
-                this.handleQuantityState(true);
-                this.handleUnitsState(true, null);
-
-                return;
+                return this._dropValues();
             }
 
             var routeParams = $.extend({}, this.options.routingParams, {'id': value});
@@ -71,7 +70,13 @@ define(function (require) {
          */
         _beforeSend: function () {
             this.loadingMaskView.show();
+            this._dropValues();
+        },
 
+        /**
+         * @private
+         */
+        _dropValues: function () {
             this.handleQuantityState(true);
             this.handleUnitsState(true, null);
         },

@@ -39,7 +39,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertEquals($expectedData, $data);
+        $this->assertArrayHasKey('units', $data);
+        $this->assertEquals($expectedData, $data['units']);
     }
 
     /**
@@ -48,8 +49,18 @@ class AjaxProductUnitControllerTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            ['product.1', []],
-            ['product.2', []]
+            [
+                'product.1',
+                ['bottle' => 'orob2b.product_unit.bottle.label.full', 'liter' => 'orob2b.product_unit.liter.label.full']
+            ],
+            [
+                'product.2',
+                [
+                    'bottle' => 'orob2b.product_unit.bottle.label.full',
+                    'box' => 'orob2b.product_unit.box.label.full',
+                    'liter' => 'orob2b.product_unit.liter.label.full'
+                ]
+            ]
         ];
     }
 
