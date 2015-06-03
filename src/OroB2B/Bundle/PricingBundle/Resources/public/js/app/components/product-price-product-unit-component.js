@@ -15,10 +15,10 @@ define(function (require) {
          * @property {Object}
          */
         options: {
-            productSelector: '.price-product-product',
+            productSelector: '.price-product-product input.select2',
             quantitySelector: '.price-product-quantity input',
             unitSelector: '.price-product-unit select',
-            router: 'orob2b_product_unit_product_units',
+            routeName: 'orob2b_product_unit_product_units',
             routingParams: {},
             errorMessage: 'Sorry, unexpected error was occurred'
         },
@@ -27,6 +27,21 @@ define(function (require) {
          * @property {LoadingMaskView}
          */
         loadingMaskView: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        productSelector: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        quantitySelector: null,
+
+        /**
+         * @property {jQuery.Element}
+         */
+        unitSelector: null,
 
         /**
          * @inheritDoc
@@ -39,7 +54,12 @@ define(function (require) {
             this.options._sourceElement
                 .on('change', this.options.productSelector, _.bind(this.onProductChange, this));
 
-            this.options._sourceElement.find(this.options.productSelector).trigger('change');
+            this.quantitySelector = this.options._sourceElement.find(this.options.quantitySelector);
+            this.unitSelector = this.options._sourceElement.find(this.options.unitSelector);
+            this.productSelector = this.options._sourceElement.find(this.options.productSelector);
+            if (!this.productSelector.val()) {
+                this._dropValues();
+            }
         },
 
         /**
@@ -55,7 +75,7 @@ define(function (require) {
 
             var routeParams = $.extend({}, this.options.routingParams, {'id': value});
             $.ajax({
-                url: routing.generate(this.options.router, routeParams),
+                url: routing.generate(this.options.routeName, routeParams),
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
@@ -102,7 +122,7 @@ define(function (require) {
          * @param {Boolean} disabled
          */
         handleQuantityState: function (disabled) {
-            this.options._sourceElement.find(this.options.quantitySelector).prop('disabled', disabled).val(null);
+            this.quantitySelector.prop('disabled', disabled).val(null);
         },
 
         /**
@@ -110,9 +130,9 @@ define(function (require) {
          * @param {Object} units
          */
         handleUnitsState: function (disabled, units) {
-            var unitSelector = this.options._sourceElement.find(this.options.unitSelector);
+            var self = this;
 
-            unitSelector
+            this.unitSelector
                 .prop('disabled', disabled)
                 .val(null)
                 .find('option')
@@ -123,18 +143,18 @@ define(function (require) {
 
             if (units) {
                 $.each(units, function (code, label) {
-                    if (!unitSelector.find("option[value='" + code + "']").length) {
-                        unitSelector.append($('<option></option>').val(code).text(label));
+                    if (!self.unitSelector.find("option[value='" + code + "']").length) {
+                        self.unitSelector.append($('<option/>').val(code).text(label));
                     }
                 });
             }
 
-            unitSelector.trigger('change');
+            this.unitSelector.trigger('change');
 
             if (disabled) {
-                unitSelector.parent('.selector').addClass('disabled');
+                this.unitSelector.parent('.selector').addClass('disabled');
             } else {
-                unitSelector.parent('.selector').removeClass('disabled');
+                this.unitSelector.parent('.selector').removeClass('disabled');
             }
         },
 
