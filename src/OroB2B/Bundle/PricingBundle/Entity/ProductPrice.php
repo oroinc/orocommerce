@@ -11,7 +11,15 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
- * @ORM\Table(name="orob2b_price_product")
+ * @ORM\Table(
+ *      name="orob2b_price_product",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_pricing_price_list_uidx",
+ *              columns={"product_id", "price_list_id", "quantity", "unit_code", "currency"}
+ *          )
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
@@ -194,6 +202,7 @@ class ProductPrice
     public function setPrice(Price $price)
     {
         $this->price = $price;
+        $this->updatePrice();
 
         return $this;
     }

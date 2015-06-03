@@ -71,6 +71,10 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('quantity', 'float', []);
         $table->addColumn('value', 'float', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
+        $table->addUniqueIndex(
+            ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'],
+            'orob2b_pricing_price_list_uidx'
+        );
         $table->addIndex(['price_list_id'], 'idx_bcde766d5688ded7', []);
         $table->addIndex(['product_id'], 'idx_bcde766d4584665a', []);
         $table->addIndex(['unit_code'], 'idx_bcde766dfbd3d1c2', []);
