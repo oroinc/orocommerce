@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductData extends AbstractFixture
@@ -31,10 +30,8 @@ class LoadProductData extends AbstractFixture
     {
         $em = $this->entityManager;
 
-        $defaultUser    = $this->getUser($manager);
-
         foreach ($this->products as $item) {
-            /* @var $user User */
+            /* @var $product Product */
             $product = new Product();
 
             $product

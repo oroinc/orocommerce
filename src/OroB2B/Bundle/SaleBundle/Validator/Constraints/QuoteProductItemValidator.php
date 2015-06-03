@@ -14,7 +14,7 @@ class QuoteProductItemValidator extends ConstraintValidator
      */
     public function validate($quoteProductItem, Constraint $constraint)
     {
-        /** @var $quoteProductItem QuoteProductItem */
+        /** @var $quoteProductItem \OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem */
         if (!$quoteProductItem instanceof \OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem) {
             throw new UnexpectedTypeException(
                 $quoteProductItem,
@@ -25,7 +25,7 @@ class QuoteProductItemValidator extends ConstraintValidator
         $product = $quoteProductItem->getQuoteProduct()->getProduct();
         $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
         if (!in_array($quoteProductItem->getProductUnit()->getCode(), $allowedUnits)) {
-            /** @var $constraint QuoteProductItems */
+            /** @var $constraint QuoteProductItem */
             $this->context->addViolationAt('productUnit', $constraint->message);
         }
     }

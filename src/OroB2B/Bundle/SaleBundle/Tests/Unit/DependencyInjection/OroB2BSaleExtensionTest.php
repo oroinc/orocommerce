@@ -17,6 +17,15 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.form.handler.quote.class',
             'orob2b_sale.quote.manager.api.class',
             'orob2b_sale.doctrine.subscriber.entity.class',
+            // validators
+            'orob2b_sale.validator.quote_product_unit.class',
+            // form types
+            'orob2b_sale.form.type.quote_product.class',
+            'orob2b_sale.form.type.quote_product_item.class',
+            'orob2b_sale.form.type.quote_product_collection.class',
+            'orob2b_sale.form.type.quote_product_item_collection.class',
+            // twig extensions
+            'orob2b_sale.twig.quote.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 
@@ -26,6 +35,15 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.form.handler.quote',
             'orob2b_sale.quote.manager.api',
             'orob2b_sale.doctrine.subscriber.entity',
+            // validators
+            'orob2b_sale.validator.quote_product_unit',
+            // form types
+            'orob2b_sale.form.type.quote_product',
+            'orob2b_sale.form.type.quote_product_item',
+            'orob2b_sale.form.type.quote_product_collection',
+            'orob2b_sale.form.type.quote_product_item_collection',
+            // twig extensions
+            'orob2b_sale.twig.quote',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
