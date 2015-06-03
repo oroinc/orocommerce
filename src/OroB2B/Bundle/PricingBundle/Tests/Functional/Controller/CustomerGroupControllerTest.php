@@ -16,12 +16,7 @@ class CustomerGroupControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
-            ]
-        );
+        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
     public function testUpdate()
