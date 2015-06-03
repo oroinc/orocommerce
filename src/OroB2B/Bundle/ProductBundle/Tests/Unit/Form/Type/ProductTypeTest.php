@@ -159,18 +159,20 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
+        $defaultProduct = new Product();
+
         return [
             'product without unitPrecisions and prices' => [
-                'defaultData'   => new Product(),
+                'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
                     'category' => 2,
                 ],
-                'expectedData'  => $this->getProductEntity(),
+                'expectedData'  => $this->createExpectedProductEntity($defaultProduct),
                 'rounding' => false,
             ],
             'product with unitPrecisions and without prices' => [
-                'defaultData'   => new Product(),
+                'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
                     'category' => 2,
@@ -181,11 +183,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ]
                     ],
                 ],
-                'expectedData'  => $this->getProductEntity(true),
+                'expectedData'  => $this->createExpectedProductEntity($defaultProduct, true),
                 'rounding' => false,
             ],
             'product with unitPrecisions and prices' => [
-                'defaultData'   => new Product(),
+                'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
                     'category' => 2,
@@ -207,31 +209,42 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ]
                     ],
                 ],
-                'expectedData'  => $this->getProductEntity(true, true),
+                'expectedData'  => $this->createExpectedProductEntity($defaultProduct, true, true),
                 'rounding' => true,
             ]
         ];
     }
 
     /**
+     * @param Product $product
      * @param boolean $withProductUnitPrecision
      * @param boolean $withPrice
      * @return Product
      */
-    protected function getProductEntity($withProductUnitPrecision = false, $withPrice = false)
-    {
-        $category    = (new Category())->addTitle((new LocalizedFallbackValue())->setString('Test Category Second'));
-        $product     = new Product();
-        $productUnit = (new ProductUnit())->setCode('kg');
+    protected function createExpectedProductEntity(
+        Product $product,
+        $withProductUnitPrecision = false,
+        $withPrice = false
+    ) {
+        $expectedProduct = clone $product;
 
+        $title = new LocalizedFallbackValue();
+        $title->setString('Test Category Second');
+
+        $category = new Category();
+        $category->addTitle($title);
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('kg');
 
         if ($withProductUnitPrecision) {
-            $productUnitPrecision = (new ProductUnitPrecision())
-                ->setProduct($product)
+            $productUnitPrecision = new ProductUnitPrecision();
+            $productUnitPrecision
+                ->setProduct($expectedProduct)
                 ->setUnit($productUnit)
                 ->setPrecision(3);
 
-            $product->addUnitPrecision($productUnitPrecision);
+            $expectedProduct->addUnitPrecision($productUnitPrecision);
         }
 
         if ($withPrice) {
@@ -239,16 +252,16 @@ class ProductTypeTest extends FormIntegrationTestCase
 
             $productPrice = new ProductPrice();
             $productPrice
-                ->setProduct($product)
+                ->setProduct($expectedProduct)
                 ->setUnit($productUnit)
                 ->setPrice(Price::create(0.9999, 'USD'))
                 ->setPriceList($priceList)
                 ->setQuantity(5.556);
 
-            $product->addPrice($productPrice);
+            $expectedProduct->addPrice($productPrice);
         }
 
-        return $product
+        return $expectedProduct
             ->setSku('test sku')
             ->setCategory($category);
     }

@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -25,7 +26,7 @@ class PriceListProductPriceType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var RegistryInterface
+     * @var ManagerRegistry
      */
     protected $registry;
 
@@ -35,10 +36,10 @@ class PriceListProductPriceType extends AbstractType
     protected $roundingService;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param RoundingService $roundingService
      */
-    public function __construct(RegistryInterface $registry, RoundingService $roundingService)
+    public function __construct(ManagerRegistry $registry, RoundingService $roundingService)
     {
         $this->registry = $registry;
         $this->roundingService = $roundingService;
