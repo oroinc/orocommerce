@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -73,8 +74,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
-                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2)
+                $this->getProductEntityWithPrecision(1, 'kg', 3),
+                $this->getProductEntityWithPrecision(2, 'kg', 3)
             ]
         );
 
@@ -229,7 +230,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getRegistry()
     {
@@ -241,7 +242,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getRepository')
             ->with($this->isType('string'))
