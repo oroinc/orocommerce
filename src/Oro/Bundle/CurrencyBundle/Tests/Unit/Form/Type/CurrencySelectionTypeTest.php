@@ -94,6 +94,11 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         $currencyBundle = Intl::getCurrencyBundle();
+        $usdName = $currencyBundle->getCurrencyName('USD');
+        $eurName = $currencyBundle->getCurrencyName('EUR');
+        $gbpName = $currencyBundle->getCurrencyName('GBP');
+        $rubName = $currencyBundle->getCurrencyName('RUB');
+        $uahName = $currencyBundle->getCurrencyName('UAH');
 
         return [
             'full currency name and data from system config' => [
@@ -102,73 +107,62 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'USD' => $currencyBundle->getCurrencyName('USD'),
-                        'UAH' => $currencyBundle->getCurrencyName('UAH'),
-                    ]
+                    'choices' => ['USD' => $usdName, 'UAH' => $uahName]
                 ],
-                'submittedData' => 'UAH',
+                'submittedData' => 'UAH'
             ],
             'compact currency name and data from system config' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
-                    'compact' => true,
+                    'compact' => true
                 ],
                 'expectedOptions' => [
                     'compact' => true,
                     'choices' => [
                         'USD' => 'USD',
-                        'UAH' => 'UAH',
+                        'UAH' => 'UAH'
                     ]
                 ],
-                'submittedData' => 'UAH',
+                'submittedData' => 'UAH'
             ],
             'full currency name and data from locale settings' => [
                 'allowedCurrencies' => [],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => false,
-                    'currencies_list' => null,
+                    'currencies_list' => null
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'EUR' => $currencyBundle->getCurrencyName('EUR'),
-                    ]
+                    'choices' => ['EUR' => $eurName]
                 ],
-                'submittedData' => 'EUR',
+                'submittedData' => 'EUR'
             ],
             'full currency name and data from currencies_list option' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => false,
-                    'currencies_list' => ['RUB'],
+                    'currencies_list' => ['RUB']
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'RUB' => $currencyBundle->getCurrencyName('RUB'),
-                    ]
+                    'choices' => ['RUB' => $rubName]
                 ],
-                'submittedData' => 'RUB',
+                'submittedData' => 'RUB'
             ],
             'full currency name, data from system config and additional currencies' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
-                    'additional_currencies' => ['GBP'],
+                    'additional_currencies' => ['GBP']
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'GBP' => $currencyBundle->getCurrencyName('GBP'),
-                        'USD' => $currencyBundle->getCurrencyName('USD'),
-                        'UAH' => $currencyBundle->getCurrencyName('UAH'),
-                    ]
+                    'choices' => ['GBP' => $gbpName, 'USD' => $usdName, 'UAH' => $uahName]
                 ],
-                'submittedData' => 'UAH',
+                'submittedData' => 'UAH'
             ],
             'compact currency name, data from currencies_list option and additional currencies' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
@@ -176,26 +170,21 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [
                     'compact' => true,
                     'currencies_list' => ['RUB'],
-                    'additional_currencies' => ['GBP'],
+                    'additional_currencies' => ['GBP']
                 ],
                 'expectedOptions' => [
                     'compact' => true,
-                    'choices' => [
-                        'GBP' => 'GBP',
-                        'RUB' => 'RUB',
-                    ]
+                    'choices' => ['GBP' => 'GBP', 'RUB' => 'RUB']
                 ],
-                'submittedData' => 'GBP',
+                'submittedData' => 'GBP'
             ],
             'full currencies list' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
                 'localeCurrency' => 'EUR',
-                'inputOptions' => [
-                    'full_currency_list' => true
-                ],
+                'inputOptions' => ['full_currency_list' => true],
                 'expectedOptions' => [
                     'full_currency_list' => true,
-                    'choices' => Intl::getCurrencyBundle()->getCurrencyNames('en')
+                    'choices' => $currencyBundle->getCurrencyNames('en')
                 ],
                 'submittedData' => 'GBP'
             ]
