@@ -23,6 +23,9 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $context;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
@@ -31,6 +34,9 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator->initialize($this->context);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     protected function tearDown()
     {
         unset($this->validator, $this->context);
@@ -63,7 +69,7 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'valid' => [$this->getProductPrice('EUR', ['USD', 'EUR'])],
-            'invalid' => [$this->getProductPrice('UAH', ['USD', 'EUR']), 'UAH'],
+            'invalid' => [$this->getProductPrice('UAH', ['USD', 'EUR']), 'UAH']
         ];
     }
 
