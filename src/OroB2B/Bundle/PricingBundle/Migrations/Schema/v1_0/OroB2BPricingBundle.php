@@ -17,9 +17,7 @@ class OroB2BPricingBundle implements Migration
         /** Tables generation **/
         $this->createOrob2BPriceListCurrencyTable($schema);
         $this->createOrob2BPriceListTable($schema);
-        $this->createOrob2BPriceListToWebsiteTable($schema);
-        $this->createOrob2BPriceListToCustomerTable($schema);
-        $this->createOrob2BPriceListToCustomerGroupTable($schema);
+        $this->createOrob2BPriceListIntersectionTables($schema);
         $this->createOroB2BPriceProductTable($schema);
 
         /** Foreign keys generation **/
@@ -57,8 +55,6 @@ class OroB2BPricingBundle implements Migration
     }
 
     /**
-     * Create orob2b_price_product table
-     *
      * @param Schema $schema
      */
     protected function createOroB2BPriceProductTable(Schema $schema)
@@ -85,32 +81,20 @@ class OroB2BPricingBundle implements Migration
     /**
      * @param Schema $schema
      */
-    protected function createOrob2BPriceListToWebsiteTable(Schema $schema)
+    protected function createOrob2BPriceListIntersectionTables(Schema $schema)
     {
         $table = $schema->createTable('orob2b_price_list_to_website');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'website_id']);
         $table->addUniqueIndex(['website_id'], 'uniq_8f1e263218f45c82');
-    }
 
-    /**
-     * @param Schema $schema
-     */
-    protected function createOrob2BPriceListToCustomerTable(Schema $schema)
-    {
         $table = $schema->createTable('orob2b_price_list_to_customer');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('customer_id', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'customer_id']);
         $table->addUniqueIndex(['customer_id'], 'uniq_7748d9299395c3f3');
-    }
 
-    /**
-     * @param Schema $schema
-     */
-    protected function createOrob2BPriceListToCustomerGroupTable(Schema $schema)
-    {
         $table = $schema->createTable('orob2b_price_list_to_c_group');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('customer_group_id', 'integer', []);
@@ -193,8 +177,6 @@ class OroB2BPricingBundle implements Migration
     }
 
     /**
-     * Add orob2b_price_product foreign keys.
-     *
      * @param Schema $schema
      */
     protected function addOroB2BPriceProductForeignKeys(Schema $schema)
