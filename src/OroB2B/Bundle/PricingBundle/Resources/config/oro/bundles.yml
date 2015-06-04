@@ -1,3 +1,2 @@
-# TODO: Fix priority after relation from customer to pricing remove
 bundles:
-    - { name: OroB2B\Bundle\PricingBundle\OroB2BPricingBundle, priority: 18 }
+    - { name: OroB2B\Bundle\PricingBundle\OroB2BPricingBundle, priority: 40 }

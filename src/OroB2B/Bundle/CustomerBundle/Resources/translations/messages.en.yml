@@ -10,7 +10,6 @@ orob2b.customer:
     users.label: 'Users'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
-    price_list.label: Price List
 
     customergroup:
         entity_label: 'Customer Group'
@@ -19,7 +18,6 @@ orob2b.customer:
         id.label: 'Id'
         customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
-        price_list.label: Price List
 
     sections:
         general: 'General'
