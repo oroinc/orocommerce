@@ -11,6 +11,9 @@ parameters:
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
 
+    orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
+    orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
+
 services:
     orob2b_pricing.acl.voter.product_list:
         class: %orob2b_pricing.acl.voter.product_list.class%
@@ -79,3 +82,21 @@ services:
         class: %orob2b_pricing.validator.unique_product_prices.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_unique_product_prices_validator }
+
+    orob2b_pricing.event_listener.form_view:
+        class: %orob2b_pricing.event_listener.form_view.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+
+    orob2b_pricing.event_listener.datagrid:
+        class: %orob2b_pricing.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }

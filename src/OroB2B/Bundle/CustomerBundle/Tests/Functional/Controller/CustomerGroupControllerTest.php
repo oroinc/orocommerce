@@ -50,7 +50,7 @@ class CustomerGroupControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_group_create'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200, 'Create form loading failed');
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertCustomerGroupSave(
             $crawler,
@@ -73,7 +73,7 @@ class CustomerGroupControllerTest extends WebTestCase
             $this->getUrl('orob2b_customer_group_update', ['id' => $id])
         );
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200, 'Update form loading failed');
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertCustomerGroupSave(
             $crawler,
             self::UPDATED_NAME,

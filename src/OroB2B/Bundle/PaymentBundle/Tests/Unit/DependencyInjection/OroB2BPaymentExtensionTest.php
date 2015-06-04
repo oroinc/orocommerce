@@ -13,7 +13,7 @@ class OroB2BPaymentExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             'orob2b_payment.entity.payment_term.class',
-            'orob2b_payment.payment_term.manager.api.class'
+            'orob2b_payment.payment_term.manager.api.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 

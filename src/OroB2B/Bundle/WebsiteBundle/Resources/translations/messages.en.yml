@@ -11,7 +11,6 @@ orob2b:
         locales.label: Locales
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
-        price_list.label: Price List
 
         locale:
             entity_label: Locale
