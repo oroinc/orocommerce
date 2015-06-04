@@ -35,6 +35,7 @@ orob2b.pricing:
             choose: Choose unit...
         unit_code.label: Unit
         price.label: Price
+        import: Import Product Prices
 
     menu:
         price_lists_tab.label: Price lists management

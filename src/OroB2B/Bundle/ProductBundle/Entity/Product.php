@@ -66,6 +66,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "identity"=true
      *          }
      *      }
      * )
