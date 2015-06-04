@@ -9,7 +9,6 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
@@ -41,21 +40,11 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
-            [
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2),
-            ]
-        );
-
         $entityIdentifierType = new EntityIdentifierType([]);
-        $priceListSelectStub = new PriceListSelectTypeStub();
 
         return [
             new PreloadedExtension(
                 [
-                    $entityType->getName() => $entityType,
-                    $priceListSelectStub->getName() => $priceListSelectStub,
                     $entityIdentifierType->getName() => $entityIdentifierType
                 ],
                 []
@@ -106,11 +95,9 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'viewData' => [],
                 'submittedData' => [
                     'name' => 'customer_group_name',
-                    'priceList' => null
                 ],
                 'expectedData' => [
                     'name' => 'customer_group_name',
-                    'priceList' => null
                 ]
             ],
             'with list' => [
@@ -119,11 +106,9 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'viewData' => [],
                 'submittedData' => [
                     'name' => 'customer_group_name',
-                    'priceList' => 1
                 ],
                 'expectedData' => [
                     'name' => 'customer_group_name',
-                    'priceList' => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
                 ]
             ]
         ];
