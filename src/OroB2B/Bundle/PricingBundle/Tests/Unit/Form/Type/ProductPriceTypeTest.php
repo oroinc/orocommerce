@@ -69,8 +69,8 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
+                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
             ]
         );
 
@@ -140,7 +140,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             'product price with data' => [
                 'defaultData'   => new ProductPrice(),
                 'submittedData' => [
-                    'priceList' => 1,
+                    'priceList' => 2,
                     'quantity'  => 123,
                     'unit'      => 'kg',
                     'price'     => [

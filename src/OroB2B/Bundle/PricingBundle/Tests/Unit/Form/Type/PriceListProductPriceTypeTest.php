@@ -9,6 +9,8 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -74,8 +76,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                $this->getProductEntityWithPrecision(1, 'kg', 3),
-                $this->getProductEntityWithPrecision(2, 'kg', 3)
+                1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
+                2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
             ]
         );
 
@@ -84,6 +86,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -93,6 +96,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->with('oro_currency.allowed_currencies')
             ->will($this->returnValue(['USD', 'EUR']));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
@@ -178,7 +182,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             'product price with data' => [
                 'defaultData'   => $defaultProductPrice,
                 'submittedData' => [
-                    'product' => 1,
+                    'product' => 2,
                     'quantity'  => 123,
                     'unit'      => 'kg',
                     'price'     => [
@@ -192,7 +196,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             'product price with data for rounding' => [
                 'defaultData'   => $defaultProductPrice,
                 'submittedData' => [
-                    'product' => 1,
+                    'product' => 2,
                     'quantity'  => 123.5555,
                     'unit'      => 'kg',
                     'price'     => [
