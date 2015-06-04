@@ -115,4 +115,21 @@ class ProductPriceRepositoryTest extends WebTestCase
             $this->repository->getAvailableCurrencies()
         );
     }
+
+    public function testDeleteByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $this->repository->deleteByPriceList($priceList);
+
+        $this->assertEmpty($this->repository->findBy(['priceList' => $priceList->getId()]));
+
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getReference('price_list_2');
+        $this->assertNotEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+
+        $this->repository->deleteByPriceList($priceList2);
+        $this->assertEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+    }
 }

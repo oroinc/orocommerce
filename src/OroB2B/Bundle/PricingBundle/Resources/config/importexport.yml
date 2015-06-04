@@ -1,0 +1,9 @@
+parameters:
+    orob2b_pricing.importexport.strategy.price_list.reset.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\PriceListResetStrategy
+
+services:
+    orob2b_pricing.importexport.strategy.price_list.reset:
+        class: %orob2b_pricing.importexport.strategy.price_list.reset.class%
+        parent: oro_importexport.strategy.configurable_add_or_replace
+        calls:
+            - [setProductPriceClassName, [%orob2b_pricing.entity.product_price.class%]]
