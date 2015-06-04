@@ -107,9 +107,12 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPriceListExist) {
-            $this->assertEquals([$templateHtml], $scrollData['dataBlocks'][0]['subblocks'][0]['data']);
+            $this->assertEquals(
+                [$templateHtml],
+                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+            );
         } else {
-            $this->assertEmpty($scrollData['dataBlocks'][0]['subblocks'][0]['data']);
+            $this->assertEmpty($scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]);
         }
     }
 
@@ -156,9 +159,12 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPriceListExist) {
-            $this->assertEquals([$templateHtml], $scrollData['dataBlocks'][0]['subblocks'][0]['data']);
+            $this->assertEquals(
+                [$templateHtml],
+                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+            );
         } else {
-            $this->assertEmpty($scrollData['dataBlocks'][0]['subblocks'][0]['data']);
+            $this->assertEmpty($scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]);
         }
     }
 
@@ -178,7 +184,10 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onEntityEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertEquals([$templateHtml], $scrollData['dataBlocks'][0]['subblocks'][0]['data']);
+        $this->assertEquals(
+            [$templateHtml],
+            $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
     }
 
     /**
@@ -189,11 +198,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     protected function createEvent(\Twig_Environment $environment, FormView $formView = null)
     {
         $defaultData = [
-            'dataBlocks' => [
+            ScrollData::DATA_BLOCKS => [
                 [
-                    'subblocks' => [
+                    ScrollData::SUB_BLOCKS => [
                         [
-                            'data' => []
+                            ScrollData::DATA => []
                         ]
                     ]
                 ]
