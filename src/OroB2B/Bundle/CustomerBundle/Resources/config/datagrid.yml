@@ -11,14 +11,12 @@ datagrid:
                     - customer.name
                     - customer_group.name as group_name
                     - parent.name as parent_name
-                    - priceList.name as price_list_name
                 from:
                     - { table: %orob2b_customer.entity.customer.class%, alias: customer }
                 join:
                     left:
                         - { join: customer.group, alias: customer_group }
                         - { join: customer.parent, alias: parent }
-                        - { join: customer.priceList, alias: priceList }
         columns:
             name:
                 label: orob2b.customer.name.label
@@ -26,8 +24,6 @@ datagrid:
                 label: orob2b.customer.group.label
             parent_name:
                 label: orob2b.customer.parent.label
-            price_list_name:
-                label: orob2b.customer.price_list.label
         properties:
             id: ~
         sorters:
@@ -38,8 +34,6 @@ datagrid:
                     data_name: group_name
                 parent_name:
                     data_name: parent_name
-                price_list_name:
-                    data_name: price_list_name
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -58,14 +52,6 @@ datagrid:
                 parent_name:
                     type:      string
                     data_name: parent.name
-                price_list_name:
-                    type:      entity
-                    data_name: priceList.id
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %orob2b_pricing.entity.price_list.class%
-                            property: name
 
     customer-customers-grid:
         extends: customer-customers-select-grid
@@ -115,25 +101,17 @@ datagrid:
                 select:
                     - customer_group.id
                     - customer_group.name
-                    - priceList.name as price_list_name
                 from:
                     - { table: %orob2b_customer.entity.customer_group.class%, alias: customer_group }
-                join:
-                    left:
-                        - { join: customer_group.priceList, alias: priceList }
         columns:
             name:
                 label: orob2b.customer.customergroup.name.label
-            price_list_name:
-                label: orob2b.customer.customergroup.price_list.label
         properties:
             id: ~
         sorters:
             columns:
                 name:
                     data_name: customer_group.name
-                price_list_name:
-                    data_name: price_list_name
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -141,14 +119,6 @@ datagrid:
                 name:
                     type:      string
                     data_name: customer_group.name
-                price_list_name:
-                    type:      entity
-                    data_name: priceList.id
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %orob2b_pricing.entity.price_list.class%
-                            property: name
 
     customer-groups-grid:
         extends: customer-groups-select-grid

@@ -13,7 +13,6 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\CustomerGroupSelectTypeStub;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\ParentCustomerSelectTypeStub;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 
 class CustomerTypeTest extends FormIntegrationTestCase
 {
@@ -62,7 +61,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
         $entityType = new EntityType($registry);
         $customerGroupSelectType = new CustomerGroupSelectTypeStub();
         $parentCustomerSelectType = new ParentCustomerSelectTypeStub();
-        $priceListSelectStub = new PriceListSelectTypeStub();
 
         return [
             new PreloadedExtension(
@@ -70,7 +68,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     $entityType->getName() => $entityType,
                     $customerGroupSelectType->getName() => $customerGroupSelectType,
                     $parentCustomerSelectType->getName() => $parentCustomerSelectType,
-                    $priceListSelectStub->getName() => $priceListSelectStub
                 ],
                 []
             )
@@ -99,10 +96,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                 [
                     $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1),
                     $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2)
-                ],
-                [
-                    $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                    $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
                 ]
             );
 
@@ -135,13 +128,11 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 0,
                     'parent' => 1,
-                    'priceList' => 1
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'priceList' => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
                 ]
             ],
             'empty parent' => [
@@ -152,13 +143,11 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 0,
                     'parent' => null,
-                    'priceList' => 1
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
-                    'priceList' => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
                 ]
             ],
             'empty group' => [
@@ -169,32 +158,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => 1,
-                    'priceList' => 1
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'priceList' => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
                 ]
             ],
-            'empty price list' => [
-                'options' => [],
-                'defaultData' => [],
-                'viewData' => [],
-                'submittedData' => [
-                    'name' => 'customer_name',
-                    'group' => 0,
-                    'parent' => 1,
-                    'priceList' => null
-                ],
-                'expectedData' => [
-                    'name' => 'customer_name',
-                    'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
-                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'priceList' => null
-                ]
-            ]
         ];
     }
 
