@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 use OroB2B\Bundle\PricingBundle\EventListener\DatagridListener;
@@ -66,8 +67,14 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new DatagridListener();
     }
 
+    protected function tearDown()
+    {
+        unset($this->listener);
+    }
+
     public function testOnBuildBeforeCustomers()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
@@ -82,6 +89,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBuildBeforeCustomerGroups()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 

@@ -34,12 +34,19 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new FormViewListener($this->doctrineHelper);
     }
 
+    protected function tearDown()
+    {
+        unset($this->doctrineHelper, $this->listener);
+    }
+
     public function testOnViewNoRequest()
     {
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
-        $event = $this->createEvent($this->getMock('\Twig_Environment'));
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        $env = $this->getMock('\Twig_Environment');
+        $event = $this->createEvent($env);
         $this->listener->onCustomerView($event);
         $this->listener->onCustomerGroupView($event);
     }
@@ -51,7 +58,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'price list does not exist' => [false],
-            'price list does exists'    => [true],
+            'price list does exists' => [true],
         ];
     }
 
@@ -85,17 +92,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BPricingBundle:PriceList')
             ->willReturn($priceRepository);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
 
-        if ($isPriceListExist) {
-            $environment->expects($this->once())
-                ->method('render')
-                ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
-                ->willReturn($templateHtml);
-        } else {
-            $environment->expects($this->never())
-                ->method('render');
-        }
+        $environment->expects($isPriceListExist ? $this->once() : $this->never())
+            ->method('render')
+            ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
+            ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
         $this->listener->onCustomerView($event);
@@ -138,17 +141,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BPricingBundle:PriceList')
             ->willReturn($priceRepository);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
 
-        if ($isPriceListExist) {
-            $environment->expects($this->once())
-                ->method('render')
-                ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
-                ->willReturn($templateHtml);
-        } else {
-            $environment->expects($this->never())
-                ->method('render');
-        }
+        $environment->expects($isPriceListExist ? $this->once() : $this->never())
+            ->method('render')
+            ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
+            ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
         $this->listener->onCustomerGroupView($event);
@@ -166,6 +165,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $formView = new FormView();
         $templateHtml = 'template_html';
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')

@@ -29,7 +29,7 @@ class DatagridListener
      * @param DatagridConfiguration $config
      * @param string $joinCondition
      */
-    protected function addPriceListRelation(DatagridConfiguration$config, $joinCondition)
+    protected function addPriceListRelation(DatagridConfiguration $config, $joinCondition)
     {
         // select
         $select = 'priceList.name as ' . self::PRICE_COLUMN;
