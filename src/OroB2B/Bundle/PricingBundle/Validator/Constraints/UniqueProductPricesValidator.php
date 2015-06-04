@@ -49,7 +49,7 @@ class UniqueProductPricesValidator extends ConstraintValidator
                 '%s_%s_%s_%s_%s',
                 $productPrice->getProduct()->getId(),
                 $productPrice->getPriceList()->getId(),
-                floatval($productPrice->getQuantity()),
+                (float)$productPrice->getQuantity(),
                 $productPrice->getUnit()->getCode(),
                 $productPrice->getPrice()->getCurrency()
             )

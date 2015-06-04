@@ -2,13 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\AbstractQuery;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListType;
@@ -20,11 +17,6 @@ class PriceListTypeTest extends FormIntegrationTestCase
      * @var PriceListType
      */
     protected $type;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractQuery
-     */
-    protected $query;
 
     /**
      * {@inheritDoc}
@@ -41,7 +33,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->type, $this->query);
+        unset($this->type);
     }
 
     /**
@@ -50,7 +42,16 @@ class PriceListTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $currencySelectType = new CurrencySelectionTypeStub();
-        $entityIdentifierType = new EntityIdentifierType($this->getRegistryForEntityIdentifierType());
+        $entityIdentifierType = new EntityIdentifierType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1),
+                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
+                3 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 3),
+                4 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 4),
+                5 => $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5),
+                6 => $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)
+            ]
+        );
 
         return [
             new PreloadedExtension(
@@ -83,23 +84,9 @@ class PriceListTypeTest extends FormIntegrationTestCase
      * @param mixed $defaultData
      * @param mixed $submittedData
      * @param mixed $expectedData
-     * @param boolean $appendAndRemoveForms
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData, $appendAndRemoveForms = false)
+    public function testSubmit($defaultData, $submittedData, $expectedData)
     {
-        if ($appendAndRemoveForms) {
-            $this->query->expects($this->exactly(6))
-                ->method('execute')
-                ->willReturnOnConsecutiveCalls(
-                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1)],
-                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2)],
-                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 3)],
-                    [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 4)],
-                    [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5)],
-                    [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)]
-                );
-        }
-
         if ($defaultData) {
             $existingPriceList = new PriceList();
             $class = new \ReflectionClass($existingPriceList);
@@ -204,70 +191,9 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     ],
                     'appendWebsites' => [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5)],
                     'removeWebsites' => [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)],
-                ],
-                'appendAndRemoveForms' => true,
+                ]
             ]
         ];
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRegistryForEntityIdentifierType()
-    {
-        $metadata = $this->getMockBuilder('\Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects($this->any())
-            ->method('getSingleIdentifierFieldName')
-            ->willReturn('id');
-
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->any())
-            ->method('getClassMetadata')
-            ->willReturn($metadata);
-
-        $this->query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['execute'])
-            ->getMockForAbstractClass();
-
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $qb->expects($this->any())
-            ->method('where')
-            ->willReturnSelf();
-        $qb->expects($this->any())
-            ->method('setParameter')
-            ->with('ids')
-            ->willReturnSelf();
-        $qb->expects($this->any())
-            ->method('getQuery')
-            ->willReturn($this->query);
-
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->any())
-            ->method('createQueryBuilder')
-            ->willReturn($qb);
-
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->with($this->isType('string'))
-            ->willReturn($repository);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        return $registry;
     }
 
     public function testGetName()

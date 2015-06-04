@@ -117,7 +117,7 @@ datagrid:
                     - relatedEntity.name
                 where:
                     and:
-                        - relatedEntity.priceList = :price_list_id
+                        - priceList.id = :price_list_id
             bind_parameters:
                 - price_list_id
         properties:
@@ -152,8 +152,10 @@ datagrid:
                     - customerGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %orob2b_customer.entity.customer.class%, alias: relatedEntity }
+                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
+                    inner:
+                        - { join: priceList.customers, alias: relatedEntity }
                     left:
                         - { join: relatedEntity.group, alias: customerGroup }
                         - { join: relatedEntity.parent, alias: parent }
@@ -195,7 +197,10 @@ datagrid:
         source:
             query:
                 from:
-                    - { table: %orob2b_customer.entity.customer_group.class%, alias: relatedEntity }
+                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
+                join:
+                    inner:
+                        - { join: priceList.customerGroups, alias: relatedEntity }
         columns:
             name:
                 label: orob2b.customer.customergroup.name.label
@@ -206,35 +211,37 @@ datagrid:
             view:
                 acl_resource: orob2b_customer_group_view
 
-#    TODO: FIX This grid after correct relation config
-#    price-list-websites-grid:
-#        extends:                base-price-list-relations-grid
-#        source:
-#            query:
-#                select:
-#                    - relatedEntity.url
-#                from:
-#                    - { table: %orob2b_website.website.class%, alias: relatedEntity }
-#        columns:
-#            name:
-#                label:          orob2b.website.name.label
-#            url:
-#                label:          orob2b.website.url.label
-#        properties:
-#            view_link:
-#                route:  orob2b_website_view
-#        sorters:
-#            columns:
-#                url:
-#                    data_name:  relatedEntity.url
-#        filters:
-#            columns:
-#                url:
-#                    type:       string
-#                    data_name:  relatedEntity.url
-#        actions:
-#            view:
-#                acl_resource: orob2b_website_view
+    price-list-websites-grid:
+        extends:                base-price-list-relations-grid
+        source:
+            query:
+                select:
+                    - relatedEntity.url
+                from:
+                    - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
+                join:
+                    inner:
+                        - { join: priceList.websites, alias: relatedEntity }
+        columns:
+            name:
+                label:          orob2b.website.name.label
+            url:
+                label:          orob2b.website.url.label
+        properties:
+            view_link:
+                route:  orob2b_website_view
+        sorters:
+            columns:
+                url:
+                    data_name:  relatedEntity.url
+        filters:
+            columns:
+                url:
+                    type:       string
+                    data_name:  relatedEntity.url
+        actions:
+            view:
+                acl_resource: orob2b_website_view
 
     base-price-list-select-relations-grid:
         source:
@@ -246,7 +253,7 @@ datagrid:
                     - relatedEntity.name
                     - >
                       (CASE WHEN (:price_list_id IS NOT NULL) THEN
-                        CASE WHEN (:price_list_id = relatedEntity.priceList OR relatedEntity.id IN (:data_in)) AND relatedEntity.id NOT IN (:data_not_in)
+                        CASE WHEN (:price_list_id = priceList.id OR relatedEntity.id IN (:data_in)) AND relatedEntity.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ELSE
                         CASE WHEN relatedEntity.id IN (:data_in) AND relatedEntity.id NOT IN (:data_not_in)
@@ -295,6 +302,7 @@ datagrid:
                     - { table: %orob2b_customer.entity.customer.class%, alias: relatedEntity }
                 join:
                     left:
+                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customers' }
                         - { join: relatedEntity.group, alias: customerGroup }
                         - { join: relatedEntity.parent, alias: parent }
         columns:
@@ -335,6 +343,9 @@ datagrid:
             query:
                 from:
                     - { table: %orob2b_customer.entity.customer_group.class%, alias: relatedEntity }
+                join:
+                    left:
+                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customerGroups' }
         columns:
             name:
                 label:          orob2b.customer.customergroup.name.label
@@ -352,6 +363,9 @@ datagrid:
                     - relatedEntity.url
                 from:
                     - { table: %orob2b_website.website.class%, alias: relatedEntity }
+                join:
+                    left:
+                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.websites' }
         columns:
             name:
                 label:          orob2b.website.name.label
@@ -371,7 +385,6 @@ datagrid:
                 selectors:
                     included:   '#priceListAppendWebsites'
                     excluded:   '#priceListRemoveWebsites'
-
 
     pricing-product-price-grid:
         options:

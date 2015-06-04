@@ -11,6 +11,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 class PriceListHandler
 {
@@ -58,9 +59,9 @@ class PriceListHandler
                     $this->form->get('appendCustomers')->getData(),
                     $this->form->get('removeCustomers')->getData(),
                     $this->form->get('appendCustomerGroups')->getData(),
-                    $this->form->get('removeCustomerGroups')->getData()/**,
+                    $this->form->get('removeCustomerGroups')->getData(),
                     $this->form->get('appendWebsites')->getData(),
-                    $this->form->get('removeWebsites')->getData()**/
+                    $this->form->get('removeWebsites')->getData()
                 );
 
                 return true;
@@ -73,7 +74,7 @@ class PriceListHandler
     /**
      * "Success" form handler
      *
-     * @param PriceList  $entity
+     * @param PriceList $entity
      * @param Customer[] $appendCustomers
      * @param Customer[] $removeCustomers
      * @param CustomerGroup[] $appendCustomerGroups
@@ -86,95 +87,71 @@ class PriceListHandler
         array $appendCustomers,
         array $removeCustomers,
         array $appendCustomerGroups,
-        array $removeCustomerGroups/**,
+        array $removeCustomerGroups,
         array $appendWebsites,
-        array $removeWebsites**/
+        array $removeWebsites
     ) {
-        $this->setPriceListToCustomers($entity, $appendCustomers);
-        $this->removePriceListFromCustomers($entity, $removeCustomers);
-
-        $this->setPriceListToCustomerGroups($entity, $appendCustomerGroups);
-        $this->removePriceListFromCustomerGroups($entity, $removeCustomerGroups);
-
-        // TODO Check price list collection after dependency fix
-        //$this->setPriceListToWebsites($entity, $appendWebsites);
-        //$this->removePriceListFromWebsites($entity, $removeWebsites);
-
         $this->manager->persist($entity);
+
+        // first stage - remove relations to entities, used to prevent unique key conflicts
+        $this->setPriceListToCustomers(array_merge($appendCustomers, $removeCustomers));
+        $this->setPriceListToCustomerGroups(array_merge($appendCustomerGroups, $removeCustomerGroups));
+        $this->setPriceListToWebsites(array_merge($appendWebsites, $removeWebsites));
+
+        $this->manager->flush();
+
+        // second stage - set correct relations
+        $this->setPriceListToCustomers($appendCustomers, $entity);
+        $this->setPriceListToCustomerGroups($appendCustomerGroups, $entity);
+        $this->setPriceListToWebsites($appendWebsites, $entity);
+
         $this->manager->flush();
     }
 
     /**
-     * @param PriceList $priceList
-     * @param array $customers
+     * @param Customer[] $customers
+     * @param PriceList|null $priceList
      */
-    protected function setPriceListToCustomers(PriceList $priceList, array $customers)
+    protected function setPriceListToCustomers(array $customers, PriceList $priceList = null)
     {
-        /** @var Customer[] $customers */
+        $repository = $this->getPriceListRepository();
+
         foreach ($customers as $customer) {
-            $priceList->addCustomer($customer);
-            $this->manager->persist($customer);
+            $repository->setPriceListToCustomer($customer, $priceList);
         }
     }
 
     /**
-     * @param PriceList $priceList
-     * @param array $customers
+     * @param CustomerGroup[] $customerGroups
+     * @param PriceList|null $priceList
      */
-    protected function removePriceListFromCustomers(PriceList $priceList, array $customers)
+    protected function setPriceListToCustomerGroups(array $customerGroups, PriceList $priceList = null)
     {
-        /** @var Customer[] $customers */
-        foreach ($customers as $customer) {
-            if ($customer->getPriceList()->getId() === $priceList->getId()) {
-                $priceList->removeCustomer($customer);
-                $this->manager->persist($customer);
-            }
-        }
-    }
+        $repository = $this->getPriceListRepository();
 
-    /**
-     * @param PriceList $priceList
-     * @param array $customerGroups
-     */
-    protected function setPriceListToCustomerGroups(PriceList $priceList, array $customerGroups)
-    {
-        /** @var CustomerGroup[] $customerGroups */
         foreach ($customerGroups as $customerGroup) {
-            $priceList->addCustomerGroup($customerGroup);
-            $this->manager->persist($customerGroup);
+            $repository->setPriceListToCustomerGroup($customerGroup, $priceList);
         }
     }
 
     /**
-     * @param PriceList $priceList
-     * @param array $customerGroups
+     * @param Website[] $websites
+     * @param PriceList|null $priceList
      */
-    protected function removePriceListFromCustomerGroups(PriceList $priceList, array $customerGroups)
+    protected function setPriceListToWebsites(array $websites, PriceList $priceList = null)
     {
-        /** @var CustomerGroup[] $customerGroups */
-        foreach ($customerGroups as $customerGroup) {
-            if ($customerGroup->getPriceList()->getId() === $priceList->getId()) {
-                $priceList->removeCustomerGroup($customerGroup);
-                $this->manager->persist($customerGroup);
-            }
+        $repository = $this->getPriceListRepository();
+
+        foreach ($websites as $website) {
+            $repository->setPriceListToWebsite($website, $priceList);
         }
     }
 
     /**
-     * @param PriceList $priceList
-     * @param array $websites
+     * @return PriceListRepository
      */
-    protected function setPriceListToWebsites(PriceList $priceList, array $websites)
+    protected function getPriceListRepository()
     {
-        // TODO: handle relation here
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param array $websites
-     */
-    protected function removePriceListFromWebsites(PriceList $priceList, array $websites)
-    {
-        // TODO: handle relation here
+        return $this->manager->getRepository('OroB2BPricingBundle:PriceList');
     }
 }

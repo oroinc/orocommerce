@@ -20,7 +20,6 @@ class OroB2BCustomerBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOroB2BCustomerForeignKeys($schema);
-        $this->addOroB2BCustomerGroupForeignKeys($schema);
     }
 
     /**
@@ -34,7 +33,6 @@ class OroB2BCustomerBundle implements Migration
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('group_id', 'integer', ['notnull' => false]);
-        $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
 
@@ -50,7 +48,6 @@ class OroB2BCustomerBundle implements Migration
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
 
@@ -72,26 +69,6 @@ class OroB2BCustomerBundle implements Migration
         $table->addForeignKeyConstraint(
             $table,
             ['parent_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function addOroB2BCustomerGroupForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_customer_group');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_price_list'),
-            ['price_list_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

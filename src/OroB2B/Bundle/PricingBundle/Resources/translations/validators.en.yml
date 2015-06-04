@@ -3,3 +3,4 @@ orob2b:
           validators:
               product_price:
                   unique_entity.message: 'Product has duplication of product prices. Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
+                  currency.message: Currency %invalidCurrency% is not valid for current price list

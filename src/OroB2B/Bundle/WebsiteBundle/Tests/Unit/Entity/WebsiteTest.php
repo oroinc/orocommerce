@@ -22,7 +22,7 @@ class WebsiteTest extends EntityTestCase
             ['owner', new User()],
             ['organization', new Organization()],
             ['createdAt', $now, false],
-            ['updatedAt', $now, false]
+            ['updatedAt', $now, false],
         ];
 
         $this->assertPropertyAccessors(new Website(), $properties);

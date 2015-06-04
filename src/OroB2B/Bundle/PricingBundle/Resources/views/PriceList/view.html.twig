@@ -45,7 +45,7 @@
                         'allowMinimize': true,
                         'dblclick': 'maximize',
                         'maximizedHeightDecreaseBy': 'minimize-bar',
-                        'width': 600
+                        'width': 650
                     }
                 }
             }
@@ -91,6 +91,19 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
+            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
             'title' : 'orob2b.customer.entity_plural_label'|trans,
             'subblocks': [
                 {
@@ -117,30 +130,16 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'title' : 'orob2b.website.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
     ]) %}
-
-    {# TODO: Enable websites grid after correct relation between bundles #}
-    {#{% set dataBlocks = dataBlocks|merge([#}
-        {#{#}
-            {#'title' : 'orob2b.website.entity_plural_label'|trans,#}
-            {#'subblocks': [#}
-                {#{#}
-                    {#'title' : '',#}
-                    {#'useSpan': false,#}
-                    {#'data' : [dataGrid.renderGrid('price-list-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]#}
-                {#}#}
-            {#]#}
-        {#}#}
-    {#]) %}#}
 
     {% set id = 'pricingView' %}
     {% set data = {'dataBlocks': dataBlocks} %}
