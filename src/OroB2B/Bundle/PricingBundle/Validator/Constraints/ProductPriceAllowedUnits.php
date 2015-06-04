@@ -1,0 +1,29 @@
+<?php
+
+namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
+
+use Symfony\Component\Validator\Constraint;
+
+class ProductPriceAllowedUnits extends Constraint
+{
+    /**
+     * @var string
+     */
+    public $message = 'Unit "%unit%" is not allowed for product "%product%".';
+
+    /**
+     * {@inheritDoc}
+     */
+    public function validatedBy()
+    {
+        return 'orob2b_pricing_product_price_allowed_units_validator';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTargets()
+    {
+        return self::CLASS_CONSTRAINT;
+    }
+}

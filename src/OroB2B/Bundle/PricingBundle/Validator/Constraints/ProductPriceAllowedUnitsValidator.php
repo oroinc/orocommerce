@@ -7,7 +7,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
-class PriceProductAllowedUnitsValidator extends ConstraintValidator
+class ProductPriceAllowedUnitsValidator extends ConstraintValidator
 {
     /**
      * {@inheritdoc}
@@ -25,7 +25,7 @@ class PriceProductAllowedUnitsValidator extends ConstraintValidator
         }
 
         if (!in_array($priceUnit, $availableUnits)) {
-            /** @var PriceProductAllowedUnits $constraint */
+            /** @var ProductPriceAllowedUnits $constraint */
             $this->context->addViolation(
                 $constraint->message,
                 [
