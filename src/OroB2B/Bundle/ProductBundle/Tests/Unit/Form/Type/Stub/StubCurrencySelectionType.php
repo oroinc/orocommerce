@@ -16,7 +16,8 @@ class StubCurrencySelectionType extends StubEntityType
         $resolver->setDefaults([
             'compact' => false,
             'currencies_list' => null,
-            'choice_list' => $this->choiceList
+            'choice_list' => $this->choiceList,
+            'full_currency_list' => null
         ]);
     }
 }

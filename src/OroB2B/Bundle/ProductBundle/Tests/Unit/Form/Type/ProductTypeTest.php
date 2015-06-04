@@ -74,17 +74,19 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        $productPriceCollectionType = new ProductPriceCollectionType($registry);
+        $productPriceCollectionType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+
         return [
             new PreloadedExtension(
                 [
                     CategoryTreeType::NAME => new StubEntityType(
                         [
-                            1 => (new Category())
-                                ->addTitle((new LocalizedFallbackValue())->setString('Test Category First')),
-                            2 => (new Category())
-                                ->addTitle((new LocalizedFallbackValue())->setString('Test Category Second')),
-                            3 => (new Category())
-                                ->addTitle((new LocalizedFallbackValue())->setString('Test Category Third')),
+                            1 => $this->createCategory('Test Category First'),
+                            2 => $this->createCategory('Test Category Second'),
+                            3 => $this->createCategory('Test Category Third')
                         ],
                         CategoryTreeType::NAME
                     ),
@@ -97,7 +99,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ),
                     PriceListSelectType::NAME => new StubPriceListSelectType(
                         [
-                            1 => (new PriceList())->setName('Default price list'),
+                            1 => (new PriceList())->setName('Default price list')
                         ],
                         PriceListSelectType::NAME
                     ),
@@ -107,14 +109,12 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductUnitSelectionType::NAME => new StubProductUnitSelectionType(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
-                            'kg' => (new ProductUnit())->setCode('kg'),
+                            'kg' => (new ProductUnit())->setCode('kg')
                         ],
                         ProductUnitSelectionType::NAME
                     ),
-                    ProductPriceCollectionType::NAME => new ProductPriceCollectionType(
-                        'OroB2B\Bundle\PricingBundle\Entity\ProductPrice'
-                    ),
-                    ProductPriceType::NAME => new ProductPriceType(),
+                    ProductPriceCollectionType::NAME => $productPriceCollectionType,
+                    ProductPriceType::NAME => new ProductPriceType()
                 ],
                 [
                     'form' => [
@@ -151,7 +151,15 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+
+        /** @var Product $data */
+        $data = $form->getData();
+        $expectedData
+            ->getCategory()
+            ->setCreatedAt($data->getCategory()->getCreatedAt())
+            ->setUpdatedAt($data->getCategory()->getUpdatedAt());
+
+        $this->assertEquals($expectedData, $data);
     }
 
     /**
@@ -167,9 +175,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'category' => 2,
+                    'unitPrecisions' => [],
+                    'prices' => []
                 ],
-                'expectedData'  => $this->createExpectedProductEntity($defaultProduct),
-                'rounding' => false,
+                'expectedData'  => $this->createExpectedProductEntity(),
+                'rounding' => false
             ],
             'product with unitPrecisions and without prices' => [
                 'defaultData'   => $defaultProduct,
@@ -182,9 +192,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                             'precision' => 3
                         ]
                     ],
+                    'prices' => []
                 ],
-                'expectedData'  => $this->createExpectedProductEntity($defaultProduct, true),
-                'rounding' => false,
+                'expectedData'  => $this->createExpectedProductEntity(true),
+                'rounding' => false
             ],
             'product with unitPrecisions and prices' => [
                 'defaultData'   => $defaultProduct,
@@ -207,32 +218,24 @@ class ProductTypeTest extends FormIntegrationTestCase
                             'quantity' => 5.5555,
                             'unit' => 'kg'
                         ]
-                    ],
+                    ]
                 ],
-                'expectedData'  => $this->createExpectedProductEntity($defaultProduct, true, true),
-                'rounding' => true,
+                'expectedData'  => $this->createExpectedProductEntity(true, true),
+                'rounding' => true
             ]
         ];
     }
 
     /**
-     * @param Product $product
      * @param boolean $withProductUnitPrecision
      * @param boolean $withPrice
      * @return Product
      */
-    protected function createExpectedProductEntity(
-        Product $product,
-        $withProductUnitPrecision = false,
-        $withPrice = false
-    ) {
-        $expectedProduct = clone $product;
+    protected function createExpectedProductEntity($withProductUnitPrecision = false, $withPrice = false)
+    {
+        $expectedProduct = new Product();
 
-        $title = new LocalizedFallbackValue();
-        $title->setString('Test Category Second');
-
-        $category = new Category();
-        $category->addTitle($title);
+        $category = $this->createCategory('Test Category Second');
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
@@ -279,5 +282,19 @@ class ProductTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals('orob2b_product', $this->type->getName());
+    }
+
+    /**
+     * @param string $title
+     * @return Category
+     */
+    protected function createCategory($title)
+    {
+        $localizedTitle = new LocalizedFallbackValue();
+        $localizedTitle->setString($title);
+
+        $category = new Category();
+
+        return $category->addTitle($localizedTitle);
     }
 }
