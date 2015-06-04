@@ -23,6 +23,7 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:  [ product, priceList, quantity, unit, currency ]
             message: orob2b.pricing.validators.product_price.unique_entity.message
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceProductAllowedUnits: ~
     properties:
         product:
             - NotBlank: ~
