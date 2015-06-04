@@ -2,20 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\AbstractQuery;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -38,11 +34,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      * @var RoundingService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $roundingService;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractQuery
-     */
-    protected $query;
 
     /**
      * @var array
@@ -72,7 +63,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->query, $this->formType);
+        unset($this->formType);
     }
 
     /**
@@ -80,11 +71,14 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $registry = $this->getRegistryForEntityIdentifierType();
+        $entityType = new EntityType(
+            [
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2)
+            ]
+        );
 
-        $entityType = new EntityType($registry);
-
-        $productUnitSelection = new StubEntityType(
+        $productUnitSelection = new EntityType(
             $this->prepareProductUnitSelectionChoices(),
             ProductUnitSelectionType::NAME
         );
@@ -141,15 +135,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     }
                 );
         }
-
-        $this->query->expects($this->atLeastOnce())
-            ->method('execute')
-            ->willReturn(
-                [
-                    $this->getProductEntityWithPrecision(1, 'kg', 3),
-                    $this->getProductEntityWithPrecision(2, 'kg', 3)
-                ]
-            );
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
@@ -241,53 +226,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         }
 
         return $choices;
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRegistryForEntityIdentifierType()
-    {
-        $metadata = $this->getMockBuilder('\Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects($this->any())
-            ->method('getSingleIdentifierFieldName')
-            ->will($this->returnValue('id'));
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->any())
-            ->method('getClassMetadata')
-            ->will($this->returnValue($metadata));
-        $this->query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['execute'])
-            ->getMockForAbstractClass();
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $qb->expects($this->any())
-            ->method('getQuery')
-            ->will($this->returnValue($this->query));
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->any())
-            ->method('createQueryBuilder')
-            ->will($this->returnValue($qb));
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->with($this->isType('string'))
-            ->will($this->returnValue($repo));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->will($this->returnValue($em));
-
-        return $registry;
     }
 
     /**
