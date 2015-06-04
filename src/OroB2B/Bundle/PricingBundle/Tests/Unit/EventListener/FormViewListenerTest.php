@@ -2,16 +2,18 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 {
