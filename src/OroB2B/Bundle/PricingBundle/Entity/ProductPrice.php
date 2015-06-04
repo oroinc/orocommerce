@@ -90,7 +90,8 @@ class ProductPrice
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "header"="Price List ID (Optional)",
+     *              "order"=60
      *          }
      *      }
      * )
