@@ -76,8 +76,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2)
+                1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
+                2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
             ]
         );
 
