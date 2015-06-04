@@ -72,10 +72,10 @@ class ProductWithPricesTest extends WebTestCase
                         'priceList' => $priceList->getId(),
                         'price'     => [
                             'value'    => self::FIRST_PRICE_VALUE,
-                            'currency' => self::FIRST_PRICE_CURRENCY,
+                            'currency' => self::FIRST_PRICE_CURRENCY
                         ],
                         'quantity'  => self::FIRST_QUANTITY,
-                        'unit'      => self::FIRST_UNIT_CODE,
+                        'unit'      => self::FIRST_UNIT_CODE
                     ]
                 ]
             ]
@@ -111,6 +111,7 @@ class ProductWithPricesTest extends WebTestCase
 
     /**
      * @depends testCreate
+     * @return integer
      */
     public function testUpdate()
     {
@@ -147,7 +148,7 @@ class ProductWithPricesTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Product has been saved", $crawler->html());
+        $this->assertContains('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
@@ -172,6 +173,35 @@ class ProductWithPricesTest extends WebTestCase
             $crawler->filter('select[name="orob2b_product_form[prices][0][price][currency]"] :selected')
                 ->extract('value')[0]
         );
+
+        return $id;
+    }
+
+    /**
+     * @depends testUpdate
+     * @param integer $id
+     */
+    public function testDelete($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        unset($form['orob2b_product_form[prices]']);
+
+        $this->client->followRedirects(true);
+
+        $crawler = $this->client->submit($form);
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Product has been saved', $crawler->html());
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+
+        $this->assertContains('orob2b_product_form[unitPrecisions][0]', $crawler->html());
+        $this->assertNotContains('orob2b_product_form[prices][0]', $crawler->html());
     }
 
     /**
