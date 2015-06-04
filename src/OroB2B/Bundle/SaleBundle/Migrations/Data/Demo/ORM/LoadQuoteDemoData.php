@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\SaleBundle\Migrations\Data\Demo\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\Intl\Intl;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
@@ -16,10 +16,9 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
-class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterface
+class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     /**
      * @var ContainerInterface
@@ -32,6 +31,19 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
+            /* ToDo: waiting for merge this file
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData'
+            */
+        ];
     }
 
     /**
@@ -116,39 +128,22 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     }
 
     /**
-     * @param EntityManager $manager
-     * @return Collection|ProductUnit[]
-     * @throws \LogicException
-     */
-    protected function getProductUnits(EntityManager $manager)
-    {
-        $productUnits = $manager->getRepository('OroB2BProductBundle:ProductUnit')
-            ->createQueryBuilder('pu')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-
-        if (!$productUnits) {
-            throw new \LogicException('There are no product units in system');
-        }
-
-        return $productUnits;
-    }
-
-    /**
      * @return array
      * @throws \LogicException
      */
     protected function getCurrencies()
     {
-        $currencies = Intl::getCurrencyBundle()->getCurrencyNames();
-
-        if (!$currencies) {
-            throw new \LogicException('There are no product units in system');
+        $currencies = $this->container->get('oro_config.global')->get('oro_currency.allowed_currencies');
+        if (empty($currencies)) {
+            $currency = $this->container->get('oro_locale.settings')->getCurrency();
+            $currencies = $currency ? [$currency] : [];
         }
 
-        return array_keys($currencies);
+        if (!$currencies) {
+            throw new \LogicException('There are no currencies in system');
+        }
+
+        return $currencies;
     }
 
     /**
@@ -158,14 +153,18 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     protected function processQuoteProducts(Quote $quote, EntityManager $manager)
     {
         $products = $this->getProducts($manager);
-        $productUnits = $this->getProductUnits($manager);
         $currencies = $this->getCurrencies();
         for ($i = 0; $i < 3; $i++) {
-            $quoteProduct = new QuoteProduct();
             $product = $products[rand(0, count($products) - 1)];
+            $unitPrecisions = $product->getUnitPrecisions();
+            $quoteProduct = new QuoteProduct();
             $quoteProduct->setProduct($product);
             for ($j = 0; $j < 3; $j++) {
-                $productUnit = $productUnits[rand(0, count($productUnits) - 1)];
+                if (!count($unitPrecisions)) {
+                    continue;
+                }
+                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
+
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $quoteProductItem = new QuoteProductItem();
                 $price = new Price();
