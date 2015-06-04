@@ -10,6 +10,7 @@ parameters:
     orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
+    orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
     orob2b_pricing.validator.product_price_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator
 
 services:
@@ -80,6 +81,11 @@ services:
         class: %orob2b_pricing.validator.unique_product_prices.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_unique_product_prices_validator }
+
+    orob2b_pricing.validator.product_price_allowed_units:
+        class: %orob2b_pricing.validator.product_price_allowed_units.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_allowed_units_validator }
 
     orob2b_pricing.validator.product_price_currency:
         class: %orob2b_pricing.validator.product_price_currency.class%
