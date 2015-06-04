@@ -450,6 +450,10 @@ datagrid:
                 type: url
                 route: orob2b_product_price_update_widget
                 params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_pricing_delete_product_price
+                params: [ id ]
         actions:
             update:
                 type:          dialog
@@ -459,3 +463,9 @@ datagrid:
                 acl_resource:  orob2b_pricing_product_price_update
                 widgetOptions:
                     reload-grid-name: pricing-product-price-grid
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_pricing_product_price_delete
