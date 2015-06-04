@@ -10,6 +10,8 @@ services:
     # Product form types
     orob2b_product.form.type.product:
         class: %orob2b_product.form.type.product.class%
+        arguments:
+            - @orob2b_product.service.rounding
         tags:
             - { name: form.type, alias: orob2b_product }
 

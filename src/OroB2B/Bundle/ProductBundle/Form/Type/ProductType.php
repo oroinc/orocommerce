@@ -4,13 +4,29 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 
 class ProductType extends AbstractType
 {
+    /**
+     * @var RoundingService
+     */
+    protected $roundingService;
+
+    /**
+     * @param RoundingService $roundingService
+     */
+    public function __construct(RoundingService $roundingService)
+    {
+        $this->roundingService = $roundingService;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -38,6 +54,34 @@ class ProductType extends AbstractType
                 ]
             )
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmitData(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        if (!isset($data['unitPrecisions'], $data['prices'])) {
+            return;
+        }
+
+        $unitPrecisions = [];
+        foreach ($data['unitPrecisions'] as $unitPrecision) {
+            $unitPrecisions[$unitPrecision['unit']] = $unitPrecision['precision'];
+        }
+
+        foreach ($data['prices'] as &$price) {
+            if (array_key_exists($price['unit'], $unitPrecisions)) {
+                $price['quantity'] = $this->roundingService
+                    ->round($price['quantity'], $unitPrecisions[$price['unit']]);
+            }
+        }
+
+        $event->setData($data);
     }
 
     /**
