@@ -2,7 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -12,16 +16,21 @@ class ProductPriceCollectionType extends AbstractType
     const NAME = 'orob2b_pricing_product_price_collection';
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @var string
      */
     protected $dataClass;
 
     /**
-     * @param string $dataClass
+     * @param ManagerRegistry $registry
      */
-    public function __construct($dataClass)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->dataClass = $dataClass;
+        $this->registry = $registry;
     }
 
     /**
@@ -36,6 +45,29 @@ class ProductPriceCollectionType extends AbstractType
                 'options' => ['data_class' => $this->dataClass]
             ]
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $priceLists = $this->registry->getRepository('OroB2BPricingBundle:PriceList')->findAll();
+
+        $currencies = [];
+        foreach ($priceLists as $priceList) {
+            $currencies[$priceList->getId()] = $priceList->getCurrencies();
+        }
+
+        $view->vars['attr']['data-currencies'] = json_encode($currencies);
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
     }
 
     /**

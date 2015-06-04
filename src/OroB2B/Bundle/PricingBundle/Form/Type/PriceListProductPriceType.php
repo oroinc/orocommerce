@@ -50,6 +50,9 @@ class PriceListProductPriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $data = $builder->getData();
+        $isExisting = $data && $data->getId();
+
         $builder
             ->add(
                 'product',
@@ -57,7 +60,8 @@ class PriceListProductPriceType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.product.label',
-                    'create_enabled' => false
+                    'create_enabled' => false,
+                    'disabled' => $isExisting
                 ]
             )
             ->add(

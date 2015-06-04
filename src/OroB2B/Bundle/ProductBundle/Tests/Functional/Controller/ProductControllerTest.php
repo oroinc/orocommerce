@@ -23,6 +23,7 @@ class ProductControllerTest extends WebTestCase
     const FIRST_UNIT_CODE = 'item';
     const FIRST_UNIT_FULL_NAME = 'item';
     const FIRST_UNIT_PRECISION = '5';
+
     const SECOND_UNIT_CODE = 'kg';
     const SECOND_UNIT_FULL_NAME = 'kilogram';
     const SECOND_UNIT_PRECISION = '1';
@@ -38,7 +39,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("products-grid", $crawler->html());
+        $this->assertContains('products-grid', $crawler->html());
     }
 
     public function testCreate()
@@ -58,7 +59,7 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Product has been saved", $crawler->html());
+        $this->assertContains('Product has been saved', $crawler->html());
     }
 
     /**

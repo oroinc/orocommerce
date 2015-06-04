@@ -38,7 +38,7 @@ class ProductPriceType extends AbstractType
                     'empty_value' => 'orob2b.product.productunit.form.choose'
                 ]
             )
-            ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label'])
+            ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label', 'full_currency_list' => true])
         ;
     }
 
