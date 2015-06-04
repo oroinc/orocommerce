@@ -15,6 +15,9 @@ class PriceListControllerTest extends WebTestCase
     const PRICE_LIST_NAME_EDIT = 'newPriceList';
     const CURRENCY = 'USD';
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -24,7 +27,7 @@ class PriceListControllerTest extends WebTestCase
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
             ]
         );
     }
@@ -75,11 +78,11 @@ class PriceListControllerTest extends WebTestCase
 
         foreach ($prices as $price) {
             $gridPrice = array_shift($gridData);
-            $this->assertEquals($gridPrice->productSku, $price->getProduct()->getSku());
-            $this->assertEquals($gridPrice->quantity, $price->getQuantity());
+            $this->assertEquals($price->getProduct()->getSku(), $gridPrice->productSku);
+            $this->assertEquals($price->getQuantity(), $gridPrice->quantity);
             $this->assertContains($price->getUnit()->getCode(), $gridPrice->unitCode);
-            $this->assertEquals($gridPrice->value, $price->getPrice()->getValue());
-            $this->assertEquals($gridPrice->currency, $price->getPrice()->getCurrency());
+            $this->assertEquals($price->getPrice()->getValue(), $gridPrice->value);
+            $this->assertEquals($price->getPrice()->getCurrency(), $gridPrice->currency);
         }
     }
 
