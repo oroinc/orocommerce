@@ -90,6 +90,18 @@ class FormViewListener
     }
 
     /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onProductEdit(BeforeListRenderEvent $event)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroB2BPricingBundle:Product:prices_update.html.twig',
+            ['form' => $event->getFormView()]
+        );
+        $event->getScrollData()->addSubBlockData(0, 0, $template);
+    }
+
+    /**
      * @param Request $request
      */
     public function setRequest($request)

@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
@@ -27,19 +29,43 @@ class ProductPriceType extends AbstractType
             ->add(
                 'priceList',
                 PriceListSelectType::NAME,
-                ['label' => 'orob2b.pricing.pricelist.entity_label', 'create_enabled' => false, 'required' => true]
+                [
+                    'label' => 'orob2b.pricing.pricelist.entity_label',
+                    'create_enabled' => false,
+                    'required' => true,
+                    'constraints' => [new NotBlank()],
+                ]
             )
-            ->add('quantity', 'number', ['label' => 'orob2b.pricing.quantity.label'])
+            ->add(
+                'quantity',
+                'number',
+                [
+                    'label' => 'orob2b.pricing.quantity.label',
+                    'constraints' => [new NotBlank(), new GreaterThanOrEqual(['value' => 0])],
+                ]
+            )
             ->add(
                 'unit',
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.pricing.unit.label',
-                    'empty_value' => 'orob2b.product.productunit.form.choose'
+                    'empty_value' => 'orob2b.product.productunit.form.choose',
+                    'constraints' => [new NotBlank()],
                 ]
             )
-            ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label', 'full_currency_list' => true])
-        ;
+            ->add(
+                'price',
+                PriceType::NAME,
+                [
+                    'label' => 'orob2b.pricing.price.label',
+                    'full_currency_list' => true,
+                ]
+            );
+
+        // make value not empty
+        $builder->get('price')
+            ->remove('value')
+            ->add('value', 'number', ['required' => true, 'constraints' => [new NotBlank()]]);
     }
 
     /**

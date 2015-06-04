@@ -6,9 +6,6 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 
@@ -16,12 +13,6 @@ use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -31,8 +22,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubCurrencySelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubPriceListSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
 class ProductTypeTest extends FormIntegrationTestCase
@@ -76,9 +65,6 @@ class ProductTypeTest extends FormIntegrationTestCase
     {
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $productPriceCollectionType = new ProductPriceCollectionType($registry);
-        $productPriceCollectionType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
-
         return [
             new PreloadedExtension(
                 [
@@ -91,19 +77,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                         CategoryTreeType::NAME
                     ),
                     OroCollectionType::NAME => new OroCollectionType(),
-                    CurrencySelectionType::NAME => new StubCurrencySelectionType(
-                        [
-                            'USD' => 'USD'
-                        ],
-                        CurrencySelectionType::NAME
-                    ),
-                    PriceListSelectType::NAME => new StubPriceListSelectType(
-                        [
-                            1 => (new PriceList())->setName('Default price list')
-                        ],
-                        PriceListSelectType::NAME
-                    ),
-                    PriceType::NAME => new PriceType(),
                     ProductUnitPrecisionType::NAME => new ProductUnitPrecisionType(),
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectionType::NAME => new StubProductUnitSelectionType(
@@ -113,8 +86,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ],
                         ProductUnitSelectionType::NAME
                     ),
-                    ProductPriceCollectionType::NAME => $productPriceCollectionType,
-                    ProductPriceType::NAME => new ProductPriceType()
                 ],
                 [
                     'form' => [
@@ -170,18 +141,17 @@ class ProductTypeTest extends FormIntegrationTestCase
         $defaultProduct = new Product();
 
         return [
-            'product without unitPrecisions and prices' => [
+            'product without unitPrecisions' => [
                 'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
                     'category' => 2,
                     'unitPrecisions' => [],
-                    'prices' => []
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
             ],
-            'product with unitPrecisions and without prices' => [
+            'product with unitPrecisions' => [
                 'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
@@ -192,46 +162,18 @@ class ProductTypeTest extends FormIntegrationTestCase
                             'precision' => 3
                         ]
                     ],
-                    'prices' => []
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
             ],
-            'product with unitPrecisions and prices' => [
-                'defaultData'   => $defaultProduct,
-                'submittedData' => [
-                    'sku' => 'test sku',
-                    'category' => 2,
-                    'unitPrecisions' => [
-                        [
-                            'unit' => 'kg',
-                            'precision' => 3
-                        ]
-                    ],
-                    'prices' => [
-                        [
-                            'priceList' => 1,
-                            'price' => [
-                                'value' => 0.9999,
-                                'currency' => 'USD'
-                            ],
-                            'quantity' => 5.5555,
-                            'unit' => 'kg'
-                        ]
-                    ]
-                ],
-                'expectedData'  => $this->createExpectedProductEntity(true, true),
-                'rounding' => true
-            ]
         ];
     }
 
     /**
      * @param boolean $withProductUnitPrecision
-     * @param boolean $withPrice
      * @return Product
      */
-    protected function createExpectedProductEntity($withProductUnitPrecision = false, $withPrice = false)
+    protected function createExpectedProductEntity($withProductUnitPrecision = false)
     {
         $expectedProduct = new Product();
 
@@ -250,20 +192,6 @@ class ProductTypeTest extends FormIntegrationTestCase
             $expectedProduct->addUnitPrecision($productUnitPrecision);
         }
 
-        if ($withPrice) {
-            $priceList = (new PriceList())->setName('Default price list');
-
-            $productPrice = new ProductPrice();
-            $productPrice
-                ->setProduct($expectedProduct)
-                ->setUnit($productUnit)
-                ->setPrice(Price::create(0.9999, 'USD'))
-                ->setPriceList($priceList)
-                ->setQuantity(5.556);
-
-            $expectedProduct->addPrice($productPrice);
-        }
-
         return $expectedProduct
             ->setSku('test sku')
             ->setCategory($category);
@@ -276,7 +204,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('category'));
         $this->assertTrue($form->has('unitPrecisions'));
-        $this->assertTrue($form->has('prices'));
     }
 
     public function testGetName()

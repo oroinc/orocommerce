@@ -94,6 +94,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.datagrid:
         class: %orob2b_pricing.event_listener.datagrid.class%

@@ -14,14 +14,6 @@ services:
         factory_service: form.factory
         arguments: ["orob2b_product_form", "orob2b_product"]
 
-    orob2b_product.form.handler.product:
-        class: %orob2b_product.form.handler.product.class%
-        scope: request
-        arguments:
-            - @orob2b_product.form.product
-            - @request
-            - @doctrine.orm.entity_manager
-
     orob2b_product.product.manager.api:
         class: %orob2b_product.product.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract

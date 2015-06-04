@@ -121,8 +121,7 @@ class ProductController extends Controller
                     'parameters' => array('id' => $product->getId())
                 );
             },
-            $this->get('translator')->trans('orob2b.product.controller.product.saved.message'),
-            $this->get('orob2b_product.form.handler.product')
+            $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
         );
     }
 }
