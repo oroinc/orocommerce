@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
 class QuoteProductItemCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,9 +25,7 @@ class QuoteProductItemCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->with([
                 'type'  => QuoteProductItemType::NAME,
                 'show_form_when_empty' => false,
-                'constraints' => [
-                    new Constraints\QuoteProductItem(),
-                ],
+                'prototype_name'       => '__namequoteproductitem__',
             ])
         ;
 
