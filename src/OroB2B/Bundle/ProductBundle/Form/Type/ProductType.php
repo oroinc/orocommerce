@@ -65,7 +65,7 @@ class ProductType extends AbstractType
     {
         $data = $event->getData();
 
-        if (!isset($data['unitPrecisions']) || !isset($data['prices'])) {
+        if (!isset($data['unitPrecisions'], $data['prices'])) {
             return;
         }
 

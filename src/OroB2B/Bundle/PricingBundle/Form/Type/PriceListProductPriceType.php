@@ -98,11 +98,11 @@ class PriceListProductPriceType extends AbstractType
     {
         $data = $event->getData();
 
-        if (!isset($data['product']) || !isset($data['unit']) || !isset($data['quantity'])) {
+        if (!isset($data['product'], $data['unit'], $data['quantity'])) {
             return;
         }
 
-        $product = $this->registry->getManagerForClass('OroB2BProductBundle:Product')
+        $product = $this->registry
             ->getRepository('OroB2BProductBundle:Product')
             ->find($data['product']);
 

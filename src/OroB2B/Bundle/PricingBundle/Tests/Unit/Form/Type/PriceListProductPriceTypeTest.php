@@ -147,7 +147,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->willReturn(
                 [
                     $this->getProductEntityWithPrecision(1, 'kg', 3),
-                    $this->getProductEntityWithPrecision(2, 'kg', 3),
+                    $this->getProductEntityWithPrecision(2, 'kg', 3)
                 ]
             );
 
@@ -187,7 +187,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $defaultProductPrice,
                 'submittedData' => [],
                 'expectedData'  => $defaultProductPrice,
-                'rounding'      => false,
+                'rounding'      => false
             ],
             'product price with data' => [
                 'defaultData'   => $defaultProductPrice,
@@ -201,7 +201,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => $expectedProductPrice,
-                'rounding'      => true,
+                'rounding'      => true
             ],
             'product price with data for rounding' => [
                 'defaultData'   => $defaultProductPrice,
@@ -215,7 +215,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => $expectedProductPrice2,
-                'rounding'     => true,
+                'rounding'     => true
             ]
         ];
     }
@@ -302,19 +302,12 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
             ->method('find')
             ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->with($this->isType('string'))
-            ->willReturn($repo);
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
         $registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
         $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
+            ->method('getRepository')
+            ->with($this->isType('string'))
+            ->willReturn($repo);
 
         return $registry;
     }
