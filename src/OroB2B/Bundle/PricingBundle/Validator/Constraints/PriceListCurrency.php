@@ -37,6 +37,6 @@ class PriceListCurrency extends Constraint
      */
     public function getDefaultOption()
     {
-        return 'use_intl';
+        return 'useIntl';
     }
 }
