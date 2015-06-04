@@ -27,7 +27,7 @@ class QuoteProductItemCollectionTypeTest extends \PHPUnit_Framework_TestCase
                 'type'  => QuoteProductItemType::NAME,
                 'show_form_when_empty' => false,
                 'constraints' => [
-                    new Constraints\QuoteProductItems(),
+                    new Constraints\QuoteProductItem(),
                 ],
             ])
         ;

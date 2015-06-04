@@ -54,6 +54,13 @@ class QuoteProduct
     protected $product;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="product_sku", type="string", length=255)
+     */
+    protected $productSku;
+
+    /**
      * @var Collection|QuoteProductItem[]
      *
      * @ORM\OneToMany(targetEntity="QuoteProductItem", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
@@ -111,6 +118,9 @@ class QuoteProduct
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
+        if ($product) {
+            $this->productSku = $product->getSku();
+        }
 
         return $this;
     }
@@ -123,6 +133,29 @@ class QuoteProduct
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * Set productSku
+     *
+     * @param string $productSku
+     * @return Product
+     */
+    public function setProductSku($productSku)
+    {
+        $this->productSku = $productSku;
+
+        return $this;
+    }
+
+    /**
+     * Get productSku
+     *
+     * @return string
+     */
+    public function getProductSku()
+    {
+        return $this->productSku;
     }
 
     /**

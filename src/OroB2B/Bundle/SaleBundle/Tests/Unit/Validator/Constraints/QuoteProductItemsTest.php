@@ -4,25 +4,25 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-use OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItems;
-use OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItemsValidator;
+use OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItemValidator;
 
 class QuoteProductItemsTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var QuoteProductItems */
+    /** @var QuoteProductItem */
     protected $constraint;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
     protected $context;
 
-    /** @var QuoteProductItemsValidator */
+    /** @var QuoteProductItemValidator */
     protected $validator;
 
     protected function setUp()
     {
         $this->context      = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->constraint   = new QuoteProductItems();
-        $this->validator    = new QuoteProductItemsValidator();
+        $this->constraint   = new QuoteProductItem();
+        $this->validator    = new QuoteProductItemValidator();
         $this->validator->initialize($this->context);
     }
 

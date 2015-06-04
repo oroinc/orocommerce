@@ -33,11 +33,7 @@ define(function (require) {
                 return;
             }
 
-            this.$container = $(containerId);
-
-            // reassign Add button onclick - ToDo: wait for merge #BB-569
-            $(document).off('click', '.add-list-item');
-            $(document).on('click', '.add-list-item', _.bind(this.onAddClick, this));
+            this.$container = $(containerId).closest('.row-oro');
 
             this.$productSelect = this.$container
                 .closest('.sale-quoteproduct-widget')
@@ -59,8 +55,13 @@ define(function (require) {
             var self = this;
             var productId = self.$productSelect.val();
             self.loadingMask.show();
-            $.get(routing.generate('orob2b_api_get_product_available_units', {'id': productId}))
-                .done(_.bind(this.updateProductUnits, this));
+            if (productId) {
+                $.get(routing.generate('orob2b_api_get_product_available_units', {'id': productId}))
+                    .done(_.bind(this.updateProductUnits, this));
+            } else {
+                var data = {successful: true, data: []};
+                this.updateProductUnits(data, true);
+            }
         },
 
         /**
@@ -75,27 +76,6 @@ define(function (require) {
             } else {
                 this.$productSelect.trigger('change');
             }
-        },
-
-        /**
-         * Handle add button click
-         *
-         * @param {jQuery.Event} e
-         */
-        onAddClick: function (e) {
-            var self = this;
-            var target = e.srcElement || e.target;
-            e.preventDefault();
-            var $listContainer, index, html, placeholder, placeholderRegexp;
-            placeholder = $(target).data('prototype-name') || '__name__';
-            placeholderRegexp =  new RegExp(self.escapeRegExp(placeholder), 'g');
-            $listContainer = $(target).siblings('.collection-fields-list');
-            index = $listContainer.data('last-index') || $listContainer.children().length;
-
-            html = $listContainer.attr('data-prototype').replace(placeholderRegexp, index);
-            $listContainer.append(html)
-                .trigger('content:changed')
-                .data('last-index', index + 1);
         },
 
         /**

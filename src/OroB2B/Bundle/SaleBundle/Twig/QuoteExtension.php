@@ -55,9 +55,12 @@ class QuoteExtension extends \Twig_Extension
         $unitFormatter  = $twig->getFilter('orob2b_format_product_unit_value')->getCallable();
         $priceFormatter = $twig->getFilter('oro_format_price')->getCallable();
 
-        $units  = $unitFormatter($item->getQuantity(), $item->getProductUnit());
+        $units  = $item->getProductUnit()
+            ? $unitFormatter($item->getQuantity(), $item->getProductUnit())
+            : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
+        ;
         $price  = $priceFormatter($item->getPrice());
-        $unit   = $translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnit()->getCode()));
+        $unit   = $translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
 
         $str = $translator->trans(
             'orob2b.sale.quote.quoteproduct.quoteproductitem.item',

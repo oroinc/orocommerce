@@ -2,8 +2,11 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class QuoteProductType extends AbstractType
@@ -26,11 +29,12 @@ class QuoteProductType extends AbstractType
                 QuoteProductItemCollectionType::NAME,
                 [
                     'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
-                    // 'add_label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label', // TODO
+                    'add_label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label',
                     'required'  => false
                 ]
             )
         ;
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
@@ -51,5 +55,30 @@ class QuoteProductType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        /** @var $quoteProduct QuoteProduct */
+        $quoteProduct = $event->getData();
+        $form = $event->getForm();
+        $choices = null;
+        if ($quoteProduct && null !== $quoteProduct->getId()) {
+            $product = $quoteProduct->getProduct();
+            if (!$product) {
+                $form->add(
+                    'product',
+                    null,
+                    [
+                        'required' => true,
+                        'label' => 'orob2b.product.entity_label',
+                        'empty_value'   => $quoteProduct->getProductSku() . ' - removed'
+                    ]
+                );
+            }
+        }
     }
 }

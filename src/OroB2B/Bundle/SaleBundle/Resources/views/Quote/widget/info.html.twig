@@ -13,12 +13,16 @@
                 {% for quoteProduct in entity.quoteProducts %}
                     {% set itemData %}
                         <div class="sale-quoteproduct-info">
-                            <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product | raw }}</a>
+                            {% if quoteProduct.product %}
+                                <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
+                            {% else %}
+                                {{ quoteProduct.productSku|raw }}
+                            {% endif %}
                         </div>
                         <div class="sale-quoteproductitems-info">
                             {% for quoteProductItem in quoteProduct.quoteProductItems %}
                                 <div class="sale-quoteproductitem-info">
-                                    {{ quoteProductItem | orob2b_format_sale_quote_product_item }}
+                                    {{ quoteProductItem|orob2b_format_sale_quote_product_item }}
                                 </div>
                             {% endfor %}
                         </div>

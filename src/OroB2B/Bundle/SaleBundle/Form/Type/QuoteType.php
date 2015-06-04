@@ -30,7 +30,7 @@ class QuoteType extends AbstractType
                 QuoteProductCollectionType::NAME,
                 [
                     'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
-                    // 'add_label' => 'orob2b.sale.quote.quoteproduct.add_label', // TODO
+                    'add_label' => 'orob2b.sale.quote.quoteproduct.add_label',
                     'required'  => false
                 ]
             )

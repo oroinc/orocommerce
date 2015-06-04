@@ -1,4 +1,21 @@
+OroB2B\Bundle\SaleBundle\Entity\Quote:
+    properties:
+        quoteProducts:
+            - Valid:
+                traverse: true
+
+OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
+    properties:
+        product:
+            - NotBlank:
+                message: 'Please choose not removed Product'
+        quoteProductItems:
+            - Valid:
+                traverse: true
+
 OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
+    constraints:
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem: ~
     properties:
         quantity:
             - NotBlank: ~
