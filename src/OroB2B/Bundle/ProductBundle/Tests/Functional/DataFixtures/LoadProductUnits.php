@@ -16,6 +16,7 @@ class LoadProductUnits extends AbstractFixture
     {
         $this->createProductUnit($manager, 'liter', 3);
         $this->createProductUnit($manager, 'bottle', 0);
+        $this->createProductUnit($manager, 'box', 0);
 
         $manager->flush();
     }

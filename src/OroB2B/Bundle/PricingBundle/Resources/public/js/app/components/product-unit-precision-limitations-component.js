@@ -88,7 +88,7 @@ define(function (require) {
 
             _.each(units, function (text, value) {
                 if (!$(select).find("option[value='" + value + "']").length) {
-                    $(select).append($('<option></option>').val(value).text(text));
+                    $(select).append($('<option/>').val(value).text(text));
 
                     updateRequired = true;
                 }
