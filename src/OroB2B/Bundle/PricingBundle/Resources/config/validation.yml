@@ -1,6 +1,4 @@
 OroB2B\Bundle\PricingBundle\Entity\PriceList:
-    constraints:
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListCurrency: ~
     properties:
         name:
             - NotBlank: ~
@@ -22,6 +20,7 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
 
 OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:  [ product, priceList, quantity, unit, currency ]
             message: orob2b.pricing.validators.product_price.unique_entity.message
