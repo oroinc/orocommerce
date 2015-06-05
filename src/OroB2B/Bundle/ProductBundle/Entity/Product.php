@@ -331,7 +331,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * Get unitPrecisions
      *
-     * @return Collection
+     * @return Collection|ProductUnitPrecision[]
      */
     public function getUnitPrecisions()
     {
@@ -402,7 +402,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @return Collection
+     * @return Collection|ProductPrice[]
      */
     public function getPrices()
     {

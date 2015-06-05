@@ -4,11 +4,14 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceType extends AbstractType
 {
@@ -29,17 +32,40 @@ class ProductPriceType extends AbstractType
                 PriceListSelectType::NAME,
                 ['label' => 'orob2b.pricing.pricelist.entity_label', 'create_enabled' => false, 'required' => true]
             )
-            ->add('quantity', 'number', ['label' => 'orob2b.pricing.quantity.label'])
             ->add(
                 'unit',
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.pricing.unit.label',
-                    'empty_value' => 'orob2b.product.productunit.form.choose'
+                    'empty_value' => 'orob2b.product.productunit.form.choose',
                 ]
             )
             ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label', 'full_currency_list' => true])
         ;
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+            $precision = null;
+
+            if ($data && $data->getProduct()) {
+                /** @var Product $product */
+                $product = $data->getProduct();
+                $productUnitPrecisions = $product->getUnitPrecisions();
+
+
+                foreach ($productUnitPrecisions as $productUnitPrecision) {
+                    if ($productUnitPrecision->getUnit() == $data->getUnit()) {
+                        $precision = $productUnitPrecision->getPrecision();
+                    }
+                }
+            }
+
+            $form->add('quantity', 'number', [
+                'label' => 'orob2b.pricing.quantity.label',
+                'precision' => $precision
+            ]);
+        });
     }
 
     /**

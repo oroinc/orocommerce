@@ -21,6 +21,8 @@ define(function (require) {
             addButtonSelector: 'a.add-list-item',
             selectParent: '.oro-multiselect-holder',
             dataContent: '*[data-content]',
+            unitSelect: 'select[name$="[unit]"]',
+            hiddenUnitClass: 'hidden-unit',
             precisions: {}
         },
 
@@ -62,7 +64,7 @@ define(function (require) {
          * Handle change select
          */
         onChange: function () {
-            var selects = this.options._sourceElement.find('select[name$="[unit]"]'),
+            var selects = this.options._sourceElement.find(this.options.unitSelect),
                 self = this;
 
             selects.each(function (index) {
@@ -86,7 +88,7 @@ define(function (require) {
 
                 var option = select.find('option:selected');
 
-                if (option.val() != select.data('prevValue') && !select.hasClass('hidden-unit')) {
+                if (option.val() != select.data('prevValue') && !select.hasClass(self.options.hiddenUnitClass)) {
                     var value = self.options.precisions[option.val()];
 
                     if (value != undefined) {
@@ -138,7 +140,7 @@ define(function (require) {
          * @param {String} text
          */
         addOptionToAllSelects: function (value, text) {
-            this.options._sourceElement.find('select[name$="[unit]"]').each(function () {
+            this.options._sourceElement.find(this.options.unitSelect).each(function () {
                 var select = $(this);
 
                 if (select.data('prevValue') != value) {
