@@ -42,6 +42,14 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
         $this->validator->initialize($this->context);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->constraint, $this->context, $this->validator);
+    }
+
     public function testConfiguration()
     {
         $this->assertEquals('orob2b_pricing_unique_product_prices_validator', $this->constraint->validatedBy());
@@ -63,7 +71,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
             $this->createPriceList(2, 10, 'kg', 'USD'),
             $this->createPriceList(1, 100, 'kg', 'USD'),
             $this->createPriceList(1, 10, 'item', 'USD'),
-            $this->createPriceList(1, 10, 'kg', 'EUR'),
+            $this->createPriceList(1, 10, 'kg', 'EUR')
         ]);
 
         $this->validator->validate($data, $this->constraint);

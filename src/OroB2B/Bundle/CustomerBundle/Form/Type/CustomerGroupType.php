@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-
 class CustomerGroupType extends AbstractType
 {
     const NAME = 'orob2b_customer_group_type';
@@ -43,14 +41,6 @@ class CustomerGroupType extends AbstractType
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
-                ]
-            )
-            ->add(
-                'priceList',
-                PriceListSelectType::NAME,
-                [
-                    'label' => 'orob2b.customer.customergroup.price_list.label',
-                    'required' => false
                 ]
             );
     }

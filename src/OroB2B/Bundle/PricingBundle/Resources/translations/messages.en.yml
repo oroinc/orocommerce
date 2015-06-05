@@ -10,7 +10,7 @@ orob2b.pricing:
         has_price_list.label: Has Price List
         set_default:
             label: Set default
-            message: Item has been set default
+            message: The "{{ priceListName }}" has been made default
         customer_groups.label: Customer Groups
         customers.label: Customers
         websites.label: Websites
@@ -35,6 +35,7 @@ orob2b.pricing:
             choose: Choose unit...
         unit_code.label: Unit
         price.label: Price
+        import: Import Product Prices
 
     menu:
         price_lists_tab.label: Price lists management

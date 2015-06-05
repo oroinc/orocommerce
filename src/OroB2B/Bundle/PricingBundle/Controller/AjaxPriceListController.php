@@ -29,7 +29,12 @@ class AjaxPriceListController extends Controller
 
             $response = [
                 'successful' => true,
-                'message' => $this->getTranslator()->trans('orob2b.pricing.pricelist.set_default.message')
+                'message' => $this->getTranslator()->trans(
+                    'orob2b.pricing.pricelist.set_default.message',
+                    [
+                        '{{ priceListName }}' => $priceList->getName()
+                    ]
+                )
             ];
 
         } catch (\Exception $e) {

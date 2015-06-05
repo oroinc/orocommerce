@@ -5,6 +5,9 @@ parameters:
     orob2b_pricing.form.type.product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
 
+    orob2b_pricing.form.extension.customer_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerFormExtension
+    orob2b_pricing.form.extension.customer_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension
+
 services:
     orob2b_pricing.form.type.price_list:
         class: %orob2b_pricing.form.type.price_list.class%
@@ -38,3 +41,17 @@ services:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
+
+    orob2b_pricing.form.extension.customer_type:
+        class: %orob2b_pricing.form.extension.customer_type.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type_extension, alias: orob2b_customer_type }
+
+    orob2b_pricing.form.extension.customer_group_type:
+        class: %orob2b_pricing.form.extension.customer_group_type.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type_extension, alias: orob2b_customer_group_type }

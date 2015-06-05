@@ -10,6 +10,13 @@ parameters:
     orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
+    orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
+    orob2b_pricing.validator.product_price_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator
+    orob2b_pricing.importexport.data_converter.product_price.class: OroB2B\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter
+    orob2b_pricing.importexport.strategy.product_price.add_or_replace.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy
+
+    orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
+    orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -79,3 +86,60 @@ services:
         class: %orob2b_pricing.validator.unique_product_prices.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_unique_product_prices_validator }
+
+    orob2b_pricing.event_listener.form_view:
+        class: %orob2b_pricing.event_listener.form_view.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+
+    orob2b_pricing.event_listener.datagrid:
+        class: %orob2b_pricing.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }
+
+    orob2b_pricing.validator.product_price_allowed_units:
+        class: %orob2b_pricing.validator.product_price_allowed_units.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_allowed_units_validator }
+
+    orob2b_pricing.validator.product_price_currency:
+        class: %orob2b_pricing.validator.product_price_currency.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_currency_validator }
+
+    ## ImportExport
+
+    # Converter
+    orob2b_pricing.importexport.data_converter.product_price:
+        parent: oro_importexport.data_converter.configurable
+        class: %orob2b_pricing.importexport.data_converter.product_price.class%
+
+    # Strategy
+    orob2b_pricing.importexport.strategy.product_price.add_or_replace:
+        parent: oro_importexport.strategy.configurable_add_or_replace
+        class: %orob2b_pricing.importexport.strategy.product_price.add_or_replace.class%
+
+    # Import processor
+    orob2b_pricing.importexport.processor.import.product_price:
+        parent: oro_importexport.processor.import_abstract
+        calls:
+             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+             - [setStrategy, [@orob2b_pricing.importexport.strategy.product_price.add_or_replace]]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
+
+    orob2b_pricing.importexport.processor.export.product_price:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }

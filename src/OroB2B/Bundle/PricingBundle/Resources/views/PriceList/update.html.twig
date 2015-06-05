@@ -44,26 +44,6 @@
 {% block content_data %}
     {% set id = 'pricing-edit' %}
 
-    {# TODO: Enable websites grid after correct relation between bundles #}
-    {#{% set dataBlocks = [{#}
-            {#'title': 'General'|trans,#}
-            {#'class': 'active',#}
-            {#'subblocks': [{#}
-                {#'title': '',#}
-                {#'data': [#}
-                    {#form_row(form.name),#}
-                    {#form_row(form.currencies),#}
-                    {#form_widget(form.appendCustomers, {'id': 'priceListAppendCustomers'}),#}
-                    {#form_widget(form.removeCustomers, {'id': 'priceListRemoveCustomers'}),#}
-                    {#form_widget(form.appendCustomerGroups, {'id': 'priceListAppendCustomerGroups'}),#}
-                    {#form_widget(form.removeCustomerGroups, {'id': 'priceListRemoveCustomerGroups'}),#}
-                    {#form_widget(form.appendWebsites, {'id': 'priceListAppendWebsites'}),#}
-                    {#form_widget(form.removeWebsites, {'id': 'priceListRemoveWebsites'}),#}
-                {#]#}
-            {#}]#}
-        {#}]#}
-    {#%}#}
-
     {% set dataBlocks = [{
             'title': 'General'|trans,
             'class': 'active',
@@ -75,7 +55,9 @@
                     form_widget(form.appendCustomers, {'id': 'priceListAppendCustomers'}),
                     form_widget(form.removeCustomers, {'id': 'priceListRemoveCustomers'}),
                     form_widget(form.appendCustomerGroups, {'id': 'priceListAppendCustomerGroups'}),
-                    form_widget(form.removeCustomerGroups, {'id': 'priceListRemoveCustomerGroups'})
+                    form_widget(form.removeCustomerGroups, {'id': 'priceListRemoveCustomerGroups'}),
+                    form_widget(form.appendWebsites, {'id': 'priceListAppendWebsites'}),
+                    form_widget(form.removeWebsites, {'id': 'priceListRemoveWebsites'}),
                 ]
             }]
         }]
@@ -107,19 +89,18 @@
         }
     ]) %}
 
-    {# TODO: Enable websites grid after correct relation between bundles #}
-    {#{% set dataBlocks = dataBlocks|merge([#}
-        {#{#}
-            {#'title' : 'orob2b.website.entity_plural_label'|trans,#}
-            {#'subblocks': [#}
-                {#{#}
-                    {#'title' : '',#}
-                    {#'useSpan': false,#}
-                    {#'data' : [dataGrid.renderGrid('price-list-select-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]#}
-                {#}#}
-            {#]#}
-        {#}#}
-    {#]) %}#}
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.website.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('price-list-select-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
 
     {% set data = {
         'formErrors': form_errors(form),

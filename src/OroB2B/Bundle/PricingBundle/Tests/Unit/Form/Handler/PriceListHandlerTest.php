@@ -55,7 +55,7 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entity  = new PriceList();
+        $this->entity = new PriceList();
         $this->handler = new PriceListHandler($this->form, $this->request, $this->manager);
     }
 
@@ -69,57 +69,115 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessValidData()
     {
-        $appendedCustomer = new Customer();
-        $removedCustomer = new Customer();
+        /** @var Customer $appendedCustomer */
+        $appendedCustomer = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1);
+        /** @var Customer $removedCustomer */
+        $removedCustomer = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2);
         $this->entity->addCustomer($removedCustomer);
 
-        $appendedCustomerGroup = new CustomerGroup();
-        $removedCustomerGroup = new CustomerGroup();
+        /** @var CustomerGroup $appendedCustomerGroup */
+        $appendedCustomerGroup = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1);
+        /** @var CustomerGroup $removedCustomerGroup */
+        $removedCustomerGroup = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 2);
         $this->entity->addCustomerGroup($removedCustomerGroup);
 
-        $appendedWebsite = new Website();
-        $removedWebsite = new Website();
+        /** @var Website $appendedWebsite */
+        $appendedWebsite = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1);
+        /** @var Website $removedWebsite */
+        $removedWebsite = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 2);
         $this->entity->addWebsite($removedWebsite);
-
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->entity);
-
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->request);
-
-        $this->request->setMethod('POST');
-
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->willReturn(true);
 
         $this->form->expects($this->atLeastOnce())
             ->method('get')
-            ->willReturnMap([
-                ['appendCustomers', $this->getFormForEntity($appendedCustomer)],
-                ['removeCustomers', $this->getFormForEntity($removedCustomer)],
-                ['appendCustomerGroups', $this->getFormForEntity($appendedCustomerGroup)],
-                ['removeCustomerGroups', $this->getFormForEntity($removedCustomerGroup)],
-                /**['appendWebsites', $this->getFormForEntity($appendedWebsite)],
-                ['removeWebsites', $this->getFormForEntity($removedWebsite)]**/
-            ]);
+            ->willReturnMap(
+                [
+                    ['appendCustomers', $this->getFormForEntity($appendedCustomer)],
+                    ['removeCustomers', $this->getFormForEntity($removedCustomer)],
+                    ['appendCustomerGroups', $this->getFormForEntity($appendedCustomerGroup)],
+                    ['removeCustomerGroups', $this->getFormForEntity($removedCustomerGroup)],
+                    ['appendWebsites', $this->getFormForEntity($appendedWebsite)],
+                    ['removeWebsites', $this->getFormForEntity($removedWebsite)],
+                ]
+            );
 
-        //Object Manager
-        $this->manager->expects($this->at(0))
-            ->method('persist')
-            ->with($this->isType('object'));
-
-        $this->manager->expects($this->once())
-            ->method('flush');
+        $this->prepareServices();
 
         $this->assertTrue($this->handler->process($this->entity));
 
-        $this->assertEquals($this->entity, $appendedCustomer->getPriceList());
-        $this->assertEquals($this->entity, $appendedCustomerGroup->getPriceList());
-        $this->assertNull($removedCustomer->getPriceList());
-        $this->assertNull($removedCustomerGroup->getPriceList());
+        $this->assertFalse($this->entity->getCustomers()->contains($removedCustomer));
+        $this->assertFalse($this->entity->getCustomerGroups()->contains($removedCustomerGroup));
+        $this->assertFalse($this->entity->getWebsites()->contains($removedWebsite));
+
+        $this->assertTrue($this->entity->getCustomers()->contains($appendedCustomer));
+        $this->assertTrue($this->entity->getCustomerGroups()->contains($appendedCustomerGroup));
+        $this->assertTrue($this->entity->getWebsites()->contains($appendedWebsite));
+    }
+
+    protected function prepareServices()
+    {
+        $this->form->expects($this->once())->method('setData')->with($this->entity);
+        $this->form->expects($this->once())->method('submit')->with($this->request);
+        $this->request->setMethod('POST');
+        $this->form->expects($this->once())->method('isValid')->willReturn(true);
+        $this->manager->expects($this->at(0))->method('persist')->with($this->isType('object'));
+
+        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
+            ->disableOriginalConstructor()->getMock();
+
+        $repository->expects($this->any())->method('setPriceListToCustomer')->will(
+            $this->returnCallback(
+                function (Customer $customer, PriceList $priceList = null) {
+                    $this->entity->removeCustomer($customer);
+                    if ($priceList) {
+                        $this->entity->addCustomer($customer);
+                    }
+                }
+            )
+        );
+
+        $repository->expects($this->any())->method('setPriceListToCustomerGroup')->will(
+            $this->returnCallback(
+                function (CustomerGroup $customerGroup, PriceList $priceList = null) {
+                    $this->entity->removeCustomerGroup($customerGroup);
+                    if ($priceList) {
+                        $this->entity->addCustomerGroup($customerGroup);
+                    }
+                }
+            )
+        );
+
+        $repository->expects($this->any())->method('setPriceListToWebsite')->will(
+            $this->returnCallback(
+                function (Website $website, PriceList $priceList = null) {
+                    $this->entity->removeWebsite($website);
+                    if ($priceList) {
+                        $this->entity->addWebsite($website);
+                    }
+                }
+            )
+        );
+
+        $this->manager->expects($this->any())->method('getRepository')->with($this->isType('string'))
+            ->willReturn($repository);
+
+        $this->manager->expects($this->exactly(2))->method('flush');
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 
     /**

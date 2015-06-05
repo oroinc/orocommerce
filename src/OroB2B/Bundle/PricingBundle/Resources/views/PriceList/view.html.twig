@@ -14,6 +14,15 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
+        entity_class: product_price_entity,
+        exportProcessor: 'orob2b_pricing_product_price',
+        importProcessor: 'orob2b_pricing_product_price.add_or_replace',
+        importTitle: 'orob2b.pricing.productprice.import'|trans,
+        dataGridName: 'pricing-product-price-grid',
+        options: {'price_list_id': entity.id}
+    } %}
+
     {% if resource_granted('orob2b_pricing_product_price_create') %}
         {{ UI.clientButton({
             'dataUrl': path(
@@ -36,7 +45,7 @@
                         'allowMinimize': true,
                         'dblclick': 'maximize',
                         'maximizedHeightDecreaseBy': 'minimize-bar',
-                        'width': 600
+                        'width': 650
                     }
                 }
             }
@@ -82,6 +91,19 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
+            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
             'title' : 'orob2b.customer.entity_plural_label'|trans,
             'subblocks': [
                 {
@@ -108,30 +130,16 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.pricing.productprice.entity_plural_label'|trans,
+            'title' : 'orob2b.website.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
     ]) %}
-
-    {# TODO: Enable websites grid after correct relation between bundles #}
-    {#{% set dataBlocks = dataBlocks|merge([#}
-        {#{#}
-            {#'title' : 'orob2b.website.entity_plural_label'|trans,#}
-            {#'subblocks': [#}
-                {#{#}
-                    {#'title' : '',#}
-                    {#'useSpan': false,#}
-                    {#'data' : [dataGrid.renderGrid('price-list-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]#}
-                {#}#}
-            {#]#}
-        {#}#}
-    {#]) %}#}
 
     {% set id = 'pricingView' %}
     {% set data = {'dataBlocks': dataBlocks} %}

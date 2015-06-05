@@ -22,7 +22,11 @@ class PriceListCurrency
     /**
      * @var PriceList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="currencies")
+     * @ORM\ManyToOne(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList",
+     *      inversedBy="currencies",
+     *      cascade={"persist"}
+     * )
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $priceList;

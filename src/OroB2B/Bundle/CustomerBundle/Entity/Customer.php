@@ -8,7 +8,6 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 /**
@@ -88,15 +87,6 @@ class Customer
      * )
      **/
     protected $users;
-
-    /**
-     * @todo Remove this relation
-     * @var PriceList
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", cascade={"persist"})
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
-     */
-    protected $priceList;
 
     /**
      * Constructor
@@ -282,25 +272,5 @@ class Customer
     protected function hasUser(User $user)
     {
         return $this->users->contains($user);
-    }
-
-    /**
-     * @param PriceList $priceList
-     *
-     * @return Customer
-     */
-    public function setPriceList(PriceList $priceList = null)
-    {
-        $this->priceList = $priceList;
-
-        return $this;
-    }
-
-    /**
-     * @return PriceList
-     */
-    public function getPriceList()
-    {
-        return $this->priceList;
     }
 }

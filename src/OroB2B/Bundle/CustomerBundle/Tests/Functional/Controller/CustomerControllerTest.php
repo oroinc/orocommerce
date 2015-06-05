@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityManager;
-
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -43,7 +41,7 @@ class CustomerControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_create'));
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200, 'Create form loading failed');
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Customer $parent */
         $parent = $this->getReference('customer.level_1');
@@ -59,7 +57,7 @@ class CustomerControllerTest extends WebTestCase
     {
         $response = $this->client->requestGrid(
             'customer-customers-grid',
-            array('customer-customers-grid[_filter][name][value]' => self::CUSTOMER_NAME)
+            ['customer-customers-grid[_filter][name][value]' => self::CUSTOMER_NAME]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
@@ -71,7 +69,7 @@ class CustomerControllerTest extends WebTestCase
             $this->getUrl('orob2b_customer_update', ['id' => $result['id']])
         );
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200, 'Update form loading failed');
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Customer $newParent */
         $newParent = $this->getReference('customer.level_1.1');

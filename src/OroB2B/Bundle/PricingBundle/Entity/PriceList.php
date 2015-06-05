@@ -81,21 +81,48 @@ class PriceList
     /**
      * @var Customer[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer", mappedBy="priceList")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinTable(
+     *      name="orob2b_price_list_to_customer",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      */
     protected $customers;
 
     /**
      * @var CustomerGroup[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup", mappedBy="priceList")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup")
+     * @ORM\JoinTable(
+     *      name="orob2b_price_list_to_c_group",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      */
     protected $customerGroups;
 
     /**
      * @var Website[]|Collection
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website", mappedBy="priceList")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinTable(
+     *      name="orob2b_price_list_to_website",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      */
     protected $websites;
     
@@ -300,7 +327,6 @@ class PriceList
     {
         if (!$this->customers->contains($customer)) {
             $this->customers->add($customer);
-            $customer->setPriceList($this);
         }
 
         return $this;
@@ -315,7 +341,6 @@ class PriceList
     {
         if ($this->customers->contains($customer)) {
             $this->customers->removeElement($customer);
-            $customer->setPriceList(null);
         }
 
         return $this;
@@ -340,7 +365,6 @@ class PriceList
     {
         if (!$this->customerGroups->contains($customerGroup)) {
             $this->customerGroups->add($customerGroup);
-            $customerGroup->setPriceList($this);
         }
 
         return $this;
@@ -355,7 +379,6 @@ class PriceList
     {
         if ($this->customerGroups->contains($customerGroup)) {
             $this->customerGroups->removeElement($customerGroup);
-            $customerGroup->setPriceList(null);
         }
 
         return $this;

@@ -6,7 +6,6 @@ use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class CustomerTest extends EntityTestCase
@@ -21,7 +20,6 @@ class CustomerTest extends EntityTestCase
             ['name', 'Adam Weishaupt'],
             ['parent', $this->createCustomerEntity()],
             ['group', $this->createCustomerGroupEntity()],
-            ['priceList', new PriceList()]
         ]);
     }
 
