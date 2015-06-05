@@ -1,6 +1,19 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
+{% set productUnitPrecisions %}
+    <ul class="without-markers">
+        {% for unitPrecision in product.unitPrecisions %}
+            <li>
+                {{ 'orob2b.product.productunitprecision.representation'|trans({
+                    '{{ label }}': ('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
+                    '{{ precision }}': unitPrecision.precision
+                })|raw }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endset %}
+
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
@@ -12,6 +25,9 @@
                 {% set category = product.category ? product.category.defaultTitle : '' %}
             {%- endif -%}
             {{ UI.renderHtmlProperty('orob2b.product.category.label'|trans, category) }}
+            {% if product.unitPrecisions.count %}
+                {{ UI.renderHtmlProperty('orob2b.product.unit_precisions.label'|trans, productUnitPrecisions) }}
+            {% endif %}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(product) }}

@@ -1,0 +1,15 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set gridName = 'customer-groups-grid' %}
+{% set pageTitle = 'orob2b.customer.customergroup.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_customer_group_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_customer_group_create'),
+            'entity_label': 'orob2b.customer.customergroup.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

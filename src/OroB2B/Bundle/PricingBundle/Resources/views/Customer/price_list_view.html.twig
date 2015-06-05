@@ -1,0 +1,16 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="row-fluid form-horizontal">
+    <div class="responsive-block">
+        {% if is_granted('VIEW', priceList) %}
+            {% set priceListData %}
+                <a href="{{ path('orob2b_pricing_price_list_view', {id: priceList.id}) }}">
+                    {{ priceList.name }}
+                </a>
+            {% endset %}
+            {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.entity_label'|trans, priceListData) }}
+        {% else %}
+            {{ UI.renderProperty('orob2b.pricing.pricelist.entity_label'|trans, priceList.name) }}
+        {% endif %}
+    </div>
+</div>

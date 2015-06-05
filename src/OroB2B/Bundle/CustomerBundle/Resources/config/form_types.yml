@@ -1,0 +1,33 @@
+parameters:
+    orob2b_customer.form.type.customer.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType
+    orob2b_customer.form.type.customer_group.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType
+
+    orob2b_customer.form.type.customer_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType
+    orob2b_customer.form.type.customer_group_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType
+    orob2b_customer.form.type.customer_parent_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType
+
+services:
+    orob2b_customer.form.type.customer:
+        class: %orob2b_customer.form.type.customer.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_type }
+
+    orob2b_customer.form.type.customer_group:
+        class: %orob2b_customer.form.type.customer_group.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_group_type }
+
+    orob2b_customer.form.type.customer_select:
+        class: %orob2b_customer.form.type.customer_select.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_select }
+
+    orob2b_customer.form.type.customer_group_select:
+        class: %orob2b_customer.form.type.customer_group_select.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_group_select }
+
+    orob2b_customer.form.type.parent_select:
+        class: %orob2b_customer.form.type.customer_parent_select.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_parent_select }

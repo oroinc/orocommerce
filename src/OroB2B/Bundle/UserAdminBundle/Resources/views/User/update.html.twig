@@ -53,7 +53,8 @@
         form_row(form.firstName),
         form_row(form.lastName),
         form_row(form.email),
-        form_widget(form.plainPassword, { 'attr': {'class': 'password'} })
+        form_widget(form.plainPassword, { 'attr': {'class': 'password'} }),
+        form_row(form.customer),
     ] %}
 
     {% if form.passwordGenerate is defined %}
