@@ -5,11 +5,12 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class ProductPriceType extends AbstractType
@@ -41,7 +42,7 @@ class ProductPriceType extends AbstractType
                 'number',
                 [
                     'label' => 'orob2b.pricing.quantity.label',
-                    'constraints' => [new NotBlank(), new GreaterThanOrEqual(['value' => 0])],
+                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
                 ]
             )
             ->add(
@@ -65,7 +66,14 @@ class ProductPriceType extends AbstractType
         // make value not empty
         $builder->get('price')
             ->remove('value')
-            ->add('value', 'number', ['required' => true, 'constraints' => [new NotBlank()]]);
+            ->add(
+                'value',
+                'number',
+                [
+                    'required' => true,
+                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()]
+                ]
+            );
     }
 
     /**

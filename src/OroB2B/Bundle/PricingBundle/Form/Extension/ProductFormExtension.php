@@ -15,6 +15,7 @@ use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -96,9 +97,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $prices = $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
-            ->getRepository('OroB2BPricingBundle:ProductPrice')
-            ->getPricesByProduct($product);
+        $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
 
         $event->getForm()->get('prices')->setData($prices);
     }
@@ -121,11 +120,28 @@ class ProductFormExtension extends AbstractTypeExtension
 
         $entityManager = $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice');
 
+        // persist existing prices
         /** @var ProductPrice[] $prices */
         $prices = $form->get('prices')->getData();
+        $persistedPriceIds = [];
         foreach ($prices as $price) {
+            $priceId = $price->getId();
+            if ($priceId) {
+                $persistedPriceIds[] = $priceId;
+            }
+
             $price->setProduct($product);
             $entityManager->persist($price);
+        }
+
+        // remove deleted prices
+        if ($product->getId()) {
+            $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+            foreach ($existingPrices as $price) {
+                if (!in_array($price->getId(), $persistedPriceIds)) {
+                    $entityManager->remove($price);
+                }
+            }
         }
     }
 
@@ -135,5 +151,14 @@ class ProductFormExtension extends AbstractTypeExtension
     public function getExtendedType()
     {
         return ProductType::NAME;
+    }
+
+    /**
+     * @return ProductPriceRepository
+     */
+    protected function getProductPriceRepository()
+    {
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:ProductPrice')
+            ->getRepository('OroB2BPricingBundle:ProductPrice');
     }
 }
