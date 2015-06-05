@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
+use OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -20,7 +20,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 class ProductPriceImportStrategyTest extends WebTestCase
 {
     /**
-     * @var ProductPriceResetStrategy
+     * @var ProductPriceImportStrategy
      */
     protected $strategy;
 
