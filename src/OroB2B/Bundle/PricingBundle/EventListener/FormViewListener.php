@@ -3,9 +3,11 @@
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -13,6 +15,11 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 class FormViewListener
 {
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
     /**
      * @var DoctrineHelper
      */
@@ -24,10 +31,12 @@ class FormViewListener
     protected $request;
 
     /**
+     * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
     {
+        $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -92,13 +101,33 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
+    public function onProductView(BeforeListRenderEvent $event)
+    {
+        if (!$this->request) {
+            return;
+        }
+
+        $productId = $this->request->get('id');
+        /** @var Customer $customer */
+        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+
+        $template = $event->getEnvironment()->render(
+            'OroB2BPricingBundle:Product:prices_view.html.twig',
+            ['entity' => $product]
+        );
+        $this->addProductPricesBlock($event->getScrollData(), $template);
+    }
+
+    /**
+     * @param BeforeListRenderEvent $event
+     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:Product:prices_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $event->getScrollData()->addSubBlockData(0, 0, $template);
+        $this->addProductPricesBlock($event->getScrollData(), $template);
     }
 
     /**
@@ -115,5 +144,17 @@ class FormViewListener
     protected function getPriceListRepository()
     {
         return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceList');
+    }
+
+    /**
+     * @param ScrollData $scrollData
+     * @param string $html
+     */
+    protected function addProductPricesBlock(ScrollData $scrollData, $html)
+    {
+        $blockLabel = $this->translator->trans('orob2b.pricing.productprice.entity_plural_label');
+        $blockId = $scrollData->addBlock($blockLabel);
+        $subBlockId = $scrollData->addSubBlock($blockId);
+        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }
 }

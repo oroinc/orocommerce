@@ -86,6 +86,7 @@ services:
     orob2b_pricing.event_listener.form_view:
         class: %orob2b_pricing.event_listener.form_view.class%
         arguments:
+            - @translator
             - @oro_entity.doctrine_helper
         calls:
             - [setRequest, ["@?request="]]
@@ -94,6 +95,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.datagrid:

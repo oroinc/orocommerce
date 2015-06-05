@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
@@ -17,6 +17,11 @@ use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
     /**
      * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -29,11 +34,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new FormViewListener($this->doctrineHelper);
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
     }
 
     protected function tearDown()

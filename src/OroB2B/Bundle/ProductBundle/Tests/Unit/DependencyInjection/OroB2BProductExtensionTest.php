@@ -19,7 +19,6 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             'orob2b_product.product.class',
-            'orob2b_product.form.handler.product.class',
             'orob2b_product.form.type.product.class',
             'orob2b_product.form.type.product_unit_rounding_type.class',
             'orob2b_product.product.manager.api.class',
