@@ -140,7 +140,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'no product'       => [null],
             'new product'      => [$this->createProduct()],
-            'existing product' => [$this->createProduct(1)],
+            'existing product' => [$this->createProduct(1)]
         ];
     }
 
@@ -172,21 +172,21 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'empty data' => [
                 'sourceData' => [],
-                'expectedData' => [],
+                'expectedData' => []
             ],
             'no prices' => [
                 'sourceData' => [
                     'unitPrecisions' => [
                         ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3],
+                        ['unit' => 'kg', 'precision' => 3]
                     ]
                 ],
                 'expectedData' => [
                     'unitPrecisions' => [
                         ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3],
+                        ['unit' => 'kg', 'precision' => 3]
                     ]
-                ],
+                ]
             ],
             'no unit precisions' => [
                 'sourceData' => [
@@ -198,29 +198,29 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'prices' => [
                         ['quantity' => 12.345, 'unit' => 'kg']
                     ]
-                ],
+                ]
             ],
             'valid rounding data' => [
                 'sourceData' => [
                     'unitPrecisions' => [
                         ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3],
+                        ['unit' => 'kg', 'precision' => 3]
                     ],
                     'prices' => [
                         ['quantity' => 12.3, 'unit' => 'item'],
-                        ['quantity' => 12.3456, 'unit' => 'kg'],
-                    ],
+                        ['quantity' => 12.3456, 'unit' => 'kg']
+                    ]
                 ],
                 'expectedData' => [
                     'unitPrecisions' => [
                         ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3],
+                        ['unit' => 'kg', 'precision' => 3]
                     ],
                     'prices' => [
                         ['quantity' => 12, 'unit' => 'item'],
-                        ['quantity' => 12.346, 'unit' => 'kg'],
-                    ],
-                ],
+                        ['quantity' => 12.346, 'unit' => 'kg']
+                    ]
+                ]
             ]
         ];
     }
@@ -251,6 +251,48 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getData');
 
         $this->extension->onPostSubmit($event);
+    }
+
+    public function testOnPostSubmitNewProduct()
+    {
+        $product = $this->createProduct();
+        $event = $this->createEvent($product);
+
+        $priceOne = $this->createProductPrice(1);
+        $priceTwo = $this->createProductPrice(2);
+
+        $this->assertPriceAdd($event, [$priceOne, $priceTwo]);
+        $this->priceRepository->expects($this->never())
+            ->method('getPricesByProduct');
+
+        $this->extension->onPostSubmit($event);
+
+        $this->assertEquals($product, $priceOne->getProduct());
+        $this->assertEquals($product, $priceTwo->getProduct());
+    }
+
+    public function testOnPostSubmitExistingProduct()
+    {
+        $product = $this->createProduct(1);
+        $event = $this->createEvent($product);
+
+        $priceOne = $this->createProductPrice(1);
+        $priceTwo = $this->createProductPrice(2);
+        $removedPrice = $this->createProductPrice(3);
+
+        $this->assertPriceAdd($event, [$priceOne, $priceTwo]);
+        $this->priceRepository->expects($this->once())
+            ->method('getPricesByProduct')
+            ->will($this->returnValue([$removedPrice]));
+
+        $this->priceManager->expects($this->once())
+            ->method('remove')
+            ->with($removedPrice);
+
+        $this->extension->onPostSubmit($event);
+
+        $this->assertEquals($product, $priceOne->getProduct());
+        $this->assertEquals($product, $priceTwo->getProduct());
     }
 
     /**
@@ -304,5 +346,27 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         }
 
         return $entity;
+    }
+
+    /**
+     * @param FormEvent $event
+     * @param array $prices
+     */
+    protected function assertPriceAdd(FormEvent $event, array $prices)
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
+        $mainForm = $event->getForm();
+        $mainForm->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $pricesForm */
+        $pricesForm = $mainForm->get('prices');
+        $pricesForm->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue($prices));
+
+        $this->priceManager->expects($this->exactly(count($prices)))
+            ->method('persist');
     }
 }
