@@ -27,8 +27,10 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      */
     protected function loadProduct(ProductPrice $entity)
     {
-        /** @var Product $product */
-        $product = $this->findExistingEntity($entity->getProduct());
-        $entity->setProduct($product);
+        if ($entity->getProduct()) {
+            /** @var Product $product */
+            $product = $this->findExistingEntity($entity->getProduct());
+            $entity->setProduct($product);
+        }
     }
 }
