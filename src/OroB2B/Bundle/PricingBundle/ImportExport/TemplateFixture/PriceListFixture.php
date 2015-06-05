@@ -25,7 +25,7 @@ class PriceListFixture extends AbstractTemplateRepository implements TemplateFix
      */
     public function getData()
     {
-        return $this->getEntityData('Jerry Coleman');
+        return $this->getEntityData('Example Price List');
     }
 
     /**
