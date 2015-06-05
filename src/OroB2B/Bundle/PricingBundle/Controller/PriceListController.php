@@ -32,7 +32,8 @@ class PriceListController extends Controller
     public function viewAction(PriceList $priceList)
     {
         return [
-            'entity' => $priceList
+            'entity' => $priceList,
+            'product_price_entity_class' => $this->container->getParameter('orob2b_pricing.entity.product_price.class')
         ];
     }
 
