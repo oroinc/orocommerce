@@ -81,7 +81,7 @@ abstract class AbstractPriceListExtensionTest extends \PHPUnit_Framework_TestCas
             ->with(FormEvents::POST_SET_DATA, [$extension, 'onPostSetData']);
         $builder->expects($this->at(2))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$extension, 'onPostSubmit']);
+            ->with(FormEvents::POST_SUBMIT, [$extension, 'onPostSubmit'], 10);
 
         $extension->buildForm($builder, []);
     }

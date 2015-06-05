@@ -13,26 +13,6 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         unitPrecisions:
             - Valid: ~
-        prices:
-            # We need to use Collection constraint instead of Valid constraint on collection type field,
-            # because Valid constraint generate additional violation messages on each incorrect element of collection
-            - Collection:
-                fields:
-                    product:
-                        - NotBlank: ~
-                    productSku:
-                        - NotBlank: ~
-                    priceList:
-                        - NotBlank: ~
-                    quantity:
-                        - NotBlank: ~
-                        - GreaterThanOrEqual:
-                            value: 0
-                    price:
-                        - NotBlank: ~
-                allowMissingFields: true
-                allowExtraFields: true
-            - OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:

@@ -132,11 +132,6 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setPrice($expectedPrice);
 
         return [
-            'product price without data' => [
-                'defaultData'   => new ProductPrice(),
-                'submittedData' => [],
-                'expectedData'  => new ProductPrice()
-            ],
             'product price with data' => [
                 'defaultData'   => new ProductPrice(),
                 'submittedData' => [

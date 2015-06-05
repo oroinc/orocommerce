@@ -386,7 +386,7 @@ datagrid:
                     included:   '#priceListAppendWebsites'
                     excluded:   '#priceListRemoveWebsites'
 
-    pricing-product-price-grid:
+    price-list-product-prices-grid:
         options:
             entityHint:        productPrice
         source:
@@ -394,6 +394,7 @@ datagrid:
             type:              orm
             query:
                 select:
+                    - IDENTITY(productPrice.product) as productId
                     - productPrice.id
                     - productPrice.productSku
                     - productPrice.quantity
@@ -459,6 +460,12 @@ datagrid:
                             choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
         properties:
             id: ~
+            productId: ~
+            view_product_link:
+                type:  url
+                route: orob2b_product_view
+                params:
+                    id: productId
             update_link:
                 type: url
                 route: orob2b_product_price_update_widget
@@ -468,6 +475,13 @@ datagrid:
                 route: orob2b_api_pricing_delete_product_price
                 params: [ id ]
         actions:
+            view_product:
+                type:          navigate
+                label:         orob2b.pricing.grid.action.view.product
+                link:          view_product_link
+                icon:          eye-open
+                acl_resource:  orob2b_product_view
+                rowAction:     true
             update:
                 type:          dialog
                 label:         oro.grid.action.update
@@ -475,10 +489,106 @@ datagrid:
                 icon:          edit
                 acl_resource:  orob2b_pricing_product_price_update
                 widgetOptions:
-                    reload-grid-name: pricing-product-price-grid
+                    reload-grid-name: price-list-product-prices-grid
+                    options:
+                        dialogOptions:
+                            width: 650
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_pricing_product_price_delete
+
+    product-prices-grid:
+        options:
+            entityHint:        price
+        source:
+            acl_resource:      orob2b_pricing_product_price_view
+            type:              orm
+            query:
+                select:
+                    - priceList.id as priceListId
+                    - priceList.name as priceListName
+                    - productPrice.quantity
+                    - IDENTITY(productPrice.unit) as unitCode
+                    - productPrice.value
+                    - productPrice.currency
+                from:
+                    - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                join:
+                    left:
+                        - { join: productPrice.priceList, alias: priceList }
+                where:
+                    and:
+                        - IDENTITY(productPrice.product) = :product_id
+            bind_parameters:
+                - product_id
+        columns:
+            priceListName:
+                label:         orob2b.pricing.pricelist.entity_label
+            quantity:
+                label:         orob2b.pricing.productprice.quantity.label
+            unitCode:
+                label:         orob2b.pricing.productprice.unit_code.label
+                type: twig
+                frontend_type: html
+                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+            value:
+                label:         orob2b.pricing.productprice.value.label
+            currency:
+                label:         orob2b.pricing.productprice.currency.label
+        sorters:
+            columns:
+                priceListName:
+                    data_name: priceList.name
+                quantity:
+                    data_name: productPrice.quantity
+                unitCode:
+                    data_name: unit.code
+                value:
+                    data_name: productPrice.value
+                currency:
+                    data_name: productPrice.currency
+        filters:
+            columns:
+                priceListName:
+                    type:      entity
+                    data_name: priceList.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_pricing.entity.price_list.class%
+                            property: name
+                quantity:
+                    type:      number
+                    data_name: productPrice.quantity
+                unitCode:
+                    type:      choice
+                    data_name: unitCode
+                    options:
+                        field_type: orob2b_product_unit_selection
+                value:
+                    type:      number
+                    data_name: productPrice.currency
+                currency:
+                    type:      choice
+                    data_name: productPrice.currency
+                    options:
+                        field_options:
+                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
+        properties:
+            priceListId: ~
+            view_price_list_link:
+                type:  url
+                route: orob2b_pricing_price_list_view
+                params:
+                    id: priceListId
+        actions:
+            view:
+                type:          navigate
+                label:         orob2b.pricing.grid.action.view.price_list
+                link:          view_price_list_link
+                icon:          eye-open
+                acl_resource:  orob2b_pricing_price_list_view
+                rowAction:     true
