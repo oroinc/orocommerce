@@ -5,11 +5,9 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 

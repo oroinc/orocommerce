@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Form;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
-use Symfony\Component\DomCrawler\Form;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @outputBuffering enabled

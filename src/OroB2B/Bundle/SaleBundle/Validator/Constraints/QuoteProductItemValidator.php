@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class QuoteProductItemValidator extends ConstraintValidator
 {

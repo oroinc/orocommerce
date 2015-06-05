@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Entity;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadProductData;
 

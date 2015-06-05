@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Entity;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\UserBundle\Entity\User;
 

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
@@ -11,6 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+
 use OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_0\OroB2BSaleBundle as OroB2BSaleBundle10;
 use OroB2B\Bundle\SaleBundle\Migrations\Schema\v1_1\OroB2BSaleBundle as OroB2BSaleBundle11;
 

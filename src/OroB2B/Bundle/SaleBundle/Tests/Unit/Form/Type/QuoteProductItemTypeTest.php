@@ -9,12 +9,10 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 
 class QuoteProductItemTypeTest extends FormIntegrationTestCase

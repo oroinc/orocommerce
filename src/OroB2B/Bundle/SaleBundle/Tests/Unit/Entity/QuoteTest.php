@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
+
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteTest extends EntityTestCase

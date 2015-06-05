@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\SaleBundle\Test\Functional\EventListener;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use Doctrine\ORM\EntityManager;
+
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;

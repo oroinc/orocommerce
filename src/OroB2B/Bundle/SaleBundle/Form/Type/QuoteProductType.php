@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
 {

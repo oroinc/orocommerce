@@ -65,7 +65,6 @@ class LoadProductData extends AbstractFixture
         $em = $this->entityManager;
 
         foreach ($this->products as $item) {
-
             $product = $this->createProduct($item);
 
             $em->persist($product);

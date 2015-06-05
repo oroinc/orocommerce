@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Model\Price;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;

@@ -2,14 +2,16 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
 class QuoteProductItemType extends AbstractType
 {
