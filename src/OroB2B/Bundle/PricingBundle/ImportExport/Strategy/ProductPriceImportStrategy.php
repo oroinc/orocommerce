@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\ImportExport\Strategy;
 
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
+
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
