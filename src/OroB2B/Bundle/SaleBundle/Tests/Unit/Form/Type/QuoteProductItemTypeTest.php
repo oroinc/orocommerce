@@ -13,13 +13,8 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 
 class QuoteProductItemTypeTest extends FormIntegrationTestCase
