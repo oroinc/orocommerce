@@ -62,7 +62,7 @@ define(function (require) {
          * Handle change select
          */
         onChange: function () {
-            var selects = this.options._sourceElement.find('select'),
+            var selects = this.options._sourceElement.find('select[name$="[unit]"]'),
                 self = this;
 
             selects.each(function (index) {
@@ -86,7 +86,7 @@ define(function (require) {
 
                 var option = select.find('option:selected');
 
-                if (option.val() != select.data('prevValue') && !select.attr('disabled')) {
+                if (option.val() != select.data('prevValue') && !select.hasClass('hidden-unit')) {
                     var value = self.options.precisions[option.val()];
 
                     if (value != undefined) {
@@ -138,7 +138,7 @@ define(function (require) {
          * @param {String} text
          */
         addOptionToAllSelects: function (value, text) {
-            this.options._sourceElement.find('select').each(function () {
+            this.options._sourceElement.find('select[name$="[unit]"]').each(function () {
                 var select = $(this);
 
                 if (select.data('prevValue') != value) {

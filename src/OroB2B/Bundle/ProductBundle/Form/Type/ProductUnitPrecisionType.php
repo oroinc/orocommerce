@@ -25,22 +25,25 @@ class ProductUnitPrecisionType extends AbstractType
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
-            $unit = $event->getData();
+            $unitPrecision = $event->getData();
             $form = $event->getForm();
 
-            $disabled = false;
-            if ($unit instanceof ProductUnitPrecision && $unit->getUnit()) {
-                $disabled = true;
-            }
+            if ($unitPrecision instanceof ProductUnitPrecision && $unitPrecision->getUnit()) {
+                $form->add(
+                    'unit_disabled',
+                    ProductUnitSelectionType::NAME,
+                    [
+                        'compact'  => $options['compact'],
+                        'disabled' => true,
+                        'mapped'   => false,
+                        'data'     => $unitPrecision->getUnit()
+                    ]
+                );
 
-            $form->add(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'compact' => $options['compact'],
-                    'disabled' => $disabled
-                ]
-            );
+                $form->add('unit', ProductUnitSelectionType::NAME, ['attr' => ['class' => 'hidden-unit']]);
+            } else {
+                $form->add('unit', ProductUnitSelectionType::NAME, ['compact' => $options['compact']]);
+            }
         });
     }
 
