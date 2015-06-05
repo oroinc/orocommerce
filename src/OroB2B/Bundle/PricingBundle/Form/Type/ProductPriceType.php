@@ -7,9 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -30,7 +33,12 @@ class ProductPriceType extends AbstractType
             ->add(
                 'priceList',
                 PriceListSelectType::NAME,
-                ['label' => 'orob2b.pricing.pricelist.entity_label', 'create_enabled' => false, 'required' => true]
+                [
+                    'label' => 'orob2b.pricing.pricelist.entity_label',
+                    'create_enabled' => false,
+                    'required' => true,
+                    'constraints' => [new NotBlank()],
+                ]
             )
             ->add(
                 'unit',
@@ -38,10 +46,29 @@ class ProductPriceType extends AbstractType
                 [
                     'label' => 'orob2b.pricing.unit.label',
                     'empty_value' => 'orob2b.product.productunit.form.choose',
+                    'constraints' => [new NotBlank()],
                 ]
             )
-            ->add('price', PriceType::NAME, ['label' => 'orob2b.pricing.price.label', 'full_currency_list' => true])
-        ;
+            ->add(
+                'price',
+                PriceType::NAME,
+                [
+                    'label' => 'orob2b.pricing.price.label',
+                    'full_currency_list' => true,
+                ]
+            );
+
+        // make value not empty
+        $builder->get('price')
+            ->remove('value')
+            ->add(
+                'value',
+                'number',
+                [
+                    'required' => true,
+                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()]
+                ]
+            );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $data = $event->getData();
@@ -61,10 +88,15 @@ class ProductPriceType extends AbstractType
                 }
             }
 
-            $form->add('quantity', 'number', [
-                'label' => 'orob2b.pricing.quantity.label',
-                'precision' => $precision
-            ]);
+            $form->add(
+                'quantity',
+                'number',
+                [
+                    'label' => 'orob2b.pricing.quantity.label',
+                    'precision' => $precision,
+                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
+                ]
+            );
         });
     }
 

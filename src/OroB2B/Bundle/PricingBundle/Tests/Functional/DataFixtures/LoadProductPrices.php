@@ -94,10 +94,10 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
                 ->setPriceList($priceList)
                 ->setUnit($unit)
                 ->setQuantity($data['qty'])
-                ->setPrice($price);
-            $product->addPrice($productPrice);
+                ->setPrice($price)
+                ->setProduct($product);
 
-            $manager->persist($product);
+            $manager->persist($productPrice);
             $this->setReference($data['reference'], $productPrice);
         }
 

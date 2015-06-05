@@ -32,8 +32,10 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
             - NotBlank: ~
         quantity:
             - NotBlank: ~
-            - GreaterThanOrEqual:
-                value: 0
+            - Range:
+                min: 0
         price:
             - NotBlank: ~
             - Valid: ~
+        unit:
+            - NotBlank: ~

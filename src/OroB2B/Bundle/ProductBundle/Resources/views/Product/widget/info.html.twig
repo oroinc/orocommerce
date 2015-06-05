@@ -6,13 +6,6 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.product.sku.label'|trans, product.sku) }}
 
-            {%- if product.category and resource_granted('EDIT', product.category) -%}
-                {% set category = UI.renderUrl(path('orob2b_catalog_category_update', {'id': product.category.id}), product.category.defaultTitle) %}
-            {%- else -%}
-                {% set category = product.category ? product.category.defaultTitle : '' %}
-            {%- endif -%}
-            {{ UI.renderHtmlProperty('orob2b.product.category.label'|trans, category) }}
-
             {% if product.unitPrecisions.count %}
                 {% set productUnitPrecisions = [] %}
                 {% for unitPrecision in product.unitPrecisions %}
