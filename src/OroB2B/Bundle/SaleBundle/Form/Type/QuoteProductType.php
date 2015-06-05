@@ -66,7 +66,6 @@ class QuoteProductType extends AbstractType
         /** @var $quoteProduct QuoteProduct */
         $quoteProduct = $event->getData();
         $form = $event->getForm();
-        $choices = null;
         if ($quoteProduct && null !== $quoteProduct->getId()) {
             $product = $quoteProduct->getProduct();
             if (!$product) {

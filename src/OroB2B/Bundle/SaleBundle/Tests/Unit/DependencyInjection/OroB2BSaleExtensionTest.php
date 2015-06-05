@@ -13,8 +13,6 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             'orob2b_sale.quote.class',
-            'orob2b_sale.form.type.quote.class',
-            'orob2b_sale.form.handler.quote.class',
             'orob2b_sale.quote.manager.api.class',
             'orob2b_sale.doctrine.subscriber.entity.class',
             // validators
@@ -30,9 +28,6 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'orob2b_sale.form.quote',
-            'orob2b_sale.form.type.quote',
-            'orob2b_sale.form.handler.quote',
             'orob2b_sale.quote.manager.api',
             'orob2b_sale.doctrine.subscriber.entity',
             // validators

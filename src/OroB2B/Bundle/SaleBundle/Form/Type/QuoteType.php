@@ -9,6 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class QuoteType extends AbstractType
 {
 
+    const NAME = 'orob2b_sale_quote';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -54,6 +56,6 @@ class QuoteType extends AbstractType
      */
     public function getName()
     {
-        return 'orob2b_sale_quote';
+        return self::NAME;
     }
 }

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller;
 
+use OroB2B\Bundle\SaleBundle\Form\Handler\QuoteHandler;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -76,7 +78,7 @@ class QuoteController extends Controller
      *
      * @param Quote $quote
      *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return array|RedirectResponse
      */
     public function updateAction(Quote $quote)
     {
@@ -104,26 +106,31 @@ class QuoteController extends Controller
      */
     protected function update(Quote $quote)
     {
-        /* @var $handler \Oro\Bundle\FormBundle\Model\UpdateHandler */
-        $handler = $this->get('oro_form.model.update_handler');
+        $form = $this->createForm(new QuoteType(), $quote);
+        $handler = new QuoteHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BSaleBundle:Quote')
+        );
 
-        return $handler->handleUpdate(
+
+        return  $this->get('oro_form.model.update_handler')->handleUpdate(
             $quote,
-            $this->get('orob2b_sale.form.quote'),
+            $form,
             function (Quote $quote) {
                 return array(
                     'route' => 'orob2b_sale_quote_update',
-                    'parameters' => array('id' => $quote->getId())
+                    'parameters' => ['id' => $quote->getId()]
                 );
             },
             function (Quote $quote) {
                 return array(
                     'route' => 'orob2b_sale_quote_view',
-                    'parameters' => array('id' => $quote->getId())
+                    'parameters' => ['id' => $quote->getId()]
                 );
             },
             $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message'),
-            $this->get('orob2b_sale.form.handler.quote')
+            $handler
         );
     }
 }

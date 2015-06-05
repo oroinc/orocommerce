@@ -105,7 +105,6 @@ class Quote extends ExtendQuote
      * @var \DateTime
      *
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
-     * @ConfigField
      */
     protected $validUntil;
 
@@ -258,8 +257,10 @@ class Quote extends ExtendQuote
      */
     public function addQuoteProduct(QuoteProduct $quoteProduct)
     {
-        $this->quoteProducts[] = $quoteProduct;
-        $quoteProduct->setQuote($this);
+        if (!$this->quoteProducts->contains($quoteProduct)) {
+            $this->quoteProducts[] = $quoteProduct;
+            $quoteProduct->setQuote($this);
+        }
 
         return $this;
     }

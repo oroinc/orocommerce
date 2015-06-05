@@ -9,7 +9,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -167,8 +166,10 @@ class QuoteProduct
      */
     public function addQuoteProductItem(QuoteProductItem $quoteProductItem)
     {
-        $this->quoteProductItems[] = $quoteProductItem;
-        $quoteProductItem->setQuoteProduct($this);
+        if (!$this->quoteProductItems->contains($quoteProductItem)) {
+            $this->quoteProductItems[] = $quoteProductItem;
+            $quoteProductItem->setQuoteProduct($this);
+        }
 
         return $this;
     }

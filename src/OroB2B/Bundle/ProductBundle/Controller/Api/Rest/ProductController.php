@@ -54,7 +54,7 @@ class ProductController extends RestController implements ClassResourceInterface
      * )
      *
      * @Acl(
-     *      id="orob2b_product_view",
+     *      id="orob2b_product_unit_view",
      *      type="entity",
      *      class="OroB2BProductBundle:ProductUnit",
      *      permission="VIEW"
@@ -65,9 +65,8 @@ class ProductController extends RestController implements ClassResourceInterface
      */
     public function getAvailableUnitsAction($id)
     {
-        $em = $this->getDoctrine()->getManagerForClass('OroB2BProductBundle:Product');
         /** @var $product Product */
-        $product = $em->getRepository('OroB2BProductBundle:Product')->find($id);
+        $product = $this->getDoctrine()->getRepository('OroB2BProductBundle:Product')->find($id);
         if (!$product) {
             return $this->handleView(
                 $this->view(['successful' => false], Codes::HTTP_NOT_FOUND)
