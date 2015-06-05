@@ -9,6 +9,7 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -25,7 +26,7 @@ class QuoteProductTest extends AbstractTest
         $product = new QuoteProduct();
 
         $product
-            ->setQuote($this->findQuote(1))
+            ->setQuote($this->findQuote(LoadQuoteData::QUOTE1))
             ->setProduct($this->findProduct(LoadProductData::PRODUCT1))
         ;
 
@@ -128,17 +129,12 @@ class QuoteProductTest extends AbstractTest
      */
     protected function getQuoteProductItem($sku)
     {
-        $price = new Price();
-        $price
-            ->setValue(20)
-            ->setCurrency('USD')
-        ;
         $item = new QuoteProductItem();
-
         $item
             ->setQuoteProduct($this->getQuoteProduct($sku))
             ->setQuantity(10)
-            ->setPrice($price)
+            ->setPrice((new Price)->setValue(20)->setCurrency('USD'))
+            ->setProductUnit($this->getReference(LoadProductData::UNIT1));
         ;
 
         return $item;

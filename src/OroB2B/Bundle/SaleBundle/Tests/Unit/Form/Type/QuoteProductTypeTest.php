@@ -37,6 +37,7 @@ class QuoteProductTypeTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with('quoteProductItems', QuoteProductItemCollectionType::NAME, [
                 'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
+                'add_label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label',
                 'required'  => false,
             ])
             ->will($this->returnSelf())

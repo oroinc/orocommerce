@@ -13,6 +13,11 @@
     max-width: 1200px;
 }
 
+.sale-quoteproduct-widget .controls.validation-error {
+    float: left; 
+    margin-left: 10px;    
+}
+
 .sale-quoteproduct-widget .btn.add-list-item {
     margin: 2px 0 2px 1px;
 }

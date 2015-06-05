@@ -7,6 +7,8 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadProductData;
+
 /**
  * @dbIsolation
  */
@@ -19,17 +21,10 @@ class QuoteProductItemTest extends AbstractTest
     {
         $em = $this->entityManager;
 
-        $item = new QuoteProductItem();
-
-        $price = new Price();
-        $price
-            ->setValue(2.2)
-            ->setCurrency('USD')
-        ;
-
-        $item
+        $item = (new QuoteProductItem())
             ->setQuantity(1.1)
-            ->setPrice($price)
+            ->setPrice((new Price())->setValue(2.2)->setCurrency('USD'))
+            ->setProductUnit($this->getReference(LoadProductData::UNIT1));
         ;
 
         $this->assertNull($item->getId());
@@ -45,7 +40,7 @@ class QuoteProductItemTest extends AbstractTest
 
         $this->assertNotNull($item);
         $this->assertEquals(1.1, $item->getQuantity());
-        $this->assertEquals($price, $item->getPrice());
+        $this->assertEquals((new Price())->setValue(2.2)->setCurrency('USD'), $item->getPrice());
 
         return $item;
     }

@@ -25,6 +25,7 @@ class QuoteProductCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->with([
                 'type'  => QuoteProductType::NAME,
                 'show_form_when_empty' => false,
+                'prototype_name'       => '__namequoteproduct__',
             ])
         ;
 
