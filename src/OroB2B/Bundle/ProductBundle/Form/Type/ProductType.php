@@ -19,6 +19,7 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add('category', CategoryTreeType::NAME, ['required' => false, 'label' => 'orob2b.product.category.label'])
+            ->add('inventoryStatus', InventoryStatusType::NAME, ['label' => 'orob2b.product.inventory_status.label'])
             ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,

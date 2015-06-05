@@ -1,5 +1,6 @@
 parameters:
     orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
+    orob2b_product.form.type.inventory_status.class: OroB2B\Bundle\ProductBundle\Form\Type\InventoryStatusType
     orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
@@ -11,6 +12,11 @@ services:
         class: %orob2b_product.form.type.product.class%
         tags:
             - { name: form.type, alias: orob2b_product }
+
+    orob2b_product.form.type.inventory_status:
+        class: %orob2b_product.form.type.inventory_status.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_inventory_status }
 
     orob2b_product.form.type.product_unit_rounding_type:
         class: %orob2b_product.form.type.product_unit_rounding_type.class%

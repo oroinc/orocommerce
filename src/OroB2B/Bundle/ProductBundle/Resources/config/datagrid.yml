@@ -11,6 +11,8 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
+                    - product.inventoryStatus
+                    - product.isVisible
                     - product.createdAt
                     - product.updatedAt
                     - categoryTitle.string as category
@@ -25,6 +27,13 @@ datagrid:
                 label:         orob2b.product.sku.label
             category:
                 label:         orob2b.product.category.label
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+            isVisible:
+                label:         orob2b.product.is_visible.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

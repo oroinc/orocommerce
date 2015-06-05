@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
@@ -14,6 +15,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
+use OroB2B\Bundle\ProductBundle\Model\InventoryStatus;
 
 /**
  * @ORM\Table(name="orob2b_product")
@@ -138,6 +140,49 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $unitPrecisions;
+
+    /**
+     * @var File
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\AttachmentBundle\Entity\File")
+     * @ORM\JoinColumn(name="image_id", referencedColumnName="id", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $image;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="inventory_status", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $inventoryStatus = InventoryStatus::IN_STOCK;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="is_visible", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $isVisible;
 
     public function __construct()
     {
@@ -345,6 +390,63 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @return File
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    /**
+     * @param File $image
+     * @return $this
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getInventoryStatus()
+    {
+        return $this->inventoryStatus;
+    }
+
+    /**
+     * @param string $inventoryStatus
+     * @return $this
+     */
+    public function setInventoryStatus($inventoryStatus)
+    {
+        $this->inventoryStatus = $inventoryStatus;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function isVisible()
+    {
+        return $this->isVisible;
+    }
+
+    /**
+     * @param string $isVisible
+     * @return $this
+     */
+    public function setIsVisible($isVisible)
+    {
+        $this->isVisible = $isVisible;
+
+        return $this;
     }
 
     /**

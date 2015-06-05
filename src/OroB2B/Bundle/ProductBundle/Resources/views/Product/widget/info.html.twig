@@ -25,6 +25,7 @@
                 {% set category = product.category ? product.category.defaultTitle : '' %}
             {%- endif -%}
             {{ UI.renderHtmlProperty('orob2b.product.category.label'|trans, category) }}
+            {{ UI.renderHtmlProperty('orob2b.product.inventory_status.label'|trans, ('orob2b.product.inventory_status.' ~ product.inventoryStatus)|trans) }}
             {% if product.unitPrecisions.count %}
                 {{ UI.renderHtmlProperty('orob2b.product.unit_precisions.label'|trans, productUnitPrecisions) }}
             {% endif %}

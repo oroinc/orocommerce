@@ -6,10 +6,17 @@ orob2b:
         id.label: Id
         sku.label: SKU
         category.label: Category
+        inventory_status.label: Inventory Status
+        is_visible.label: Visible to Customers
         owner.label: Owner
         organization.label: Organization
         in_category.label: In category
         unit_precisions.label: Unit Precisions
+
+        inventory_status:
+            in_stock: In Stock
+            out_of_stock: Out of Stock
+            discontinued: Discontinued
 
         productunit:
             entity_label: Product Unit
