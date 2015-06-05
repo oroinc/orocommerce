@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -12,6 +14,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductPriceType extends AbstractType
 {
@@ -35,14 +38,6 @@ class ProductPriceType extends AbstractType
                     'create_enabled' => false,
                     'required' => true,
                     'constraints' => [new NotBlank()],
-                ]
-            )
-            ->add(
-                'quantity',
-                'number',
-                [
-                    'label' => 'orob2b.pricing.quantity.label',
-                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
                 ]
             )
             ->add(
@@ -74,6 +69,35 @@ class ProductPriceType extends AbstractType
                     'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()]
                 ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $data = $event->getData();
+            $form = $event->getForm();
+            $precision = null;
+
+            if ($data && $data->getProduct()) {
+                /** @var Product $product */
+                $product = $data->getProduct();
+                $productUnitPrecisions = $product->getUnitPrecisions();
+
+
+                foreach ($productUnitPrecisions as $productUnitPrecision) {
+                    if ($productUnitPrecision->getUnit() == $data->getUnit()) {
+                        $precision = $productUnitPrecision->getPrecision();
+                    }
+                }
+            }
+
+            $form->add(
+                'quantity',
+                'number',
+                [
+                    'label' => 'orob2b.pricing.quantity.label',
+                    'precision' => $precision,
+                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
+                ]
+            );
+        });
     }
 
     /**

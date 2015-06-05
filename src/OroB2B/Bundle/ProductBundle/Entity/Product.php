@@ -312,7 +312,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * Get unitPrecisions
      *
-     * @return Collection
+     * @return Collection|ProductUnitPrecision[]
      */
     public function getUnitPrecisions()
     {
