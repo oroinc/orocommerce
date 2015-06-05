@@ -10,6 +10,8 @@ use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 
 class ProductType extends AbstractType
 {
+    const NAME = 'orob2b_product';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -27,8 +29,7 @@ class ProductType extends AbstractType
                     'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
                     'required' => false
                 ]
-            )
-        ;
+            );
     }
 
     /**
@@ -48,6 +49,6 @@ class ProductType extends AbstractType
      */
     public function getName()
     {
-        return 'orob2b_product';
+        return self::NAME;
     }
 }

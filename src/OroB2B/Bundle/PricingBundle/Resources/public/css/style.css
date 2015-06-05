@@ -1,0 +1,23 @@
+.product-price-collection input[type="text"].quantity,
+.product-price-collection input[type="text"].price-value,
+.product-price-collection .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 280px;
+}
+
+.product-price-collection .select2-container {
+    float: left;
+}
+
+.product-price-collection .entity-select-btn {
+    float: right;
+}
+
+.product-price-collection .oro-multiselect-holder {
+    padding-left: 10px;
+}
+
+.product-price-collection .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 293px;
+}
