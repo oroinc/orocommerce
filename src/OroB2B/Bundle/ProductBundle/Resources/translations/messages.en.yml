@@ -45,7 +45,7 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            catalog: Master catalog
+            catalog: Master Catalog
 
         widgets:
             product_information: Product Information

@@ -476,6 +476,9 @@ datagrid:
                 acl_resource:  orob2b_pricing_product_price_update
                 widgetOptions:
                     reload-grid-name: pricing-product-price-grid
+                    options:
+                        dialogOptions:
+                            width: 650
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
