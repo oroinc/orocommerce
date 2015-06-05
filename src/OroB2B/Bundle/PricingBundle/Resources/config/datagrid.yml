@@ -451,7 +451,7 @@ datagrid:
                         field_type: orob2b_product_unit_selection
                 value:
                     type:      number
-                    data_name: productPrice.currency
+                    data_name: productPrice.value
                 currency:
                     type:      choice
                     data_name: productPrice.currency
@@ -570,7 +570,7 @@ datagrid:
                         field_type: orob2b_product_unit_selection
                 value:
                     type:      number
-                    data_name: productPrice.currency
+                    data_name: productPrice.value
                 currency:
                     type:      choice
                     data_name: productPrice.currency
