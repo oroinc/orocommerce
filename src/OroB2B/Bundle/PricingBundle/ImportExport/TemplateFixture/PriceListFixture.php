@@ -72,6 +72,9 @@ class PriceListFixture extends AbstractTemplateRepository implements TemplateFix
         return $price;
     }
 
+    /**
+     * @return ProductUnit
+     */
     protected function createProductUnit()
     {
         $productUnit = new ProductUnit();
