@@ -2,6 +2,7 @@ parameters:
     orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
+
     orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -9,11 +10,14 @@ parameters:
     orob2b_pricing.acl.voter.product_list.class: OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter
     orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
+
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
     orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
     orob2b_pricing.validator.product_price_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator
+
     orob2b_pricing.importexport.data_converter.product_price.class: OroB2B\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter
     orob2b_pricing.importexport.strategy.product_price.add_or_replace.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy
+    orob2b_pricing.importexport.reader.price_list_product_prices.class: OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader
 
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
@@ -143,3 +147,8 @@ services:
             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }
+
+    # Reader
+    orob2b_pricing.importexport.reader.price_list_product_prices:
+        parent: oro_importexport.reader.entity
+        class: %orob2b_pricing.importexport.reader.price_list_product_prices.class%
