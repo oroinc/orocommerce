@@ -55,8 +55,8 @@ class QuoteProductItemTypeTest extends WebTestCase
     }
 
     /**
-     * @param $inputData
-     * @param $expectedData
+     * @param mixed $inputData
+     * @param mixed $expectedData
      * @dataProvider preSubmitProvider
      */
     public function testSubmit($inputData, $expectedData)
@@ -69,9 +69,10 @@ class QuoteProductItemTypeTest extends WebTestCase
     }
 
     /**
-     * @param $choices
-     * @param $inputData
-     * @param $expectedData
+     * @param mixed $choices
+     * @param mixed $inputData
+     * @param mixed $expectedData
+     * @param string $message
      */
     protected function preSetDataTest($choices, $inputData, $expectedData, $message = '')
     {

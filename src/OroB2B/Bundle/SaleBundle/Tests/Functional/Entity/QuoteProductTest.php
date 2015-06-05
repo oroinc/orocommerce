@@ -134,6 +134,7 @@ class QuoteProductTest extends AbstractTest
             ->setQuoteProduct($this->getQuoteProduct($sku))
             ->setQuantity(10)
             ->setPrice((new Price)->setValue(20)->setCurrency('USD'))
+            ->setProductUnit($this->getReference(LoadProductData::UNIT1));
         ;
 
         return $item;

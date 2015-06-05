@@ -7,10 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
@@ -60,7 +56,7 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
     ];
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getDependencies()
     {
