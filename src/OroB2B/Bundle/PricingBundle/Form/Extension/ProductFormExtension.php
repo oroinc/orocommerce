@@ -61,6 +61,22 @@ class ProductFormExtension extends AbstractTypeExtension
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function onPostSetData(FormEvent $event)
+    {
+        /** @var Product|null $product */
+        $product = $event->getData();
+        if (!$product || !$product->getId()) {
+            return;
+        }
+
+        $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
+
+        $event->getForm()->get('prices')->setData($prices);
+    }
+
+    /**
      * @param FormEvent $event
      */
     public function onPreSubmit(FormEvent $event)
@@ -84,22 +100,6 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $event->setData($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSetData(FormEvent $event)
-    {
-        /** @var Product|null $product */
-        $product = $event->getData();
-        if (!$product || !$product->getId()) {
-            return;
-        }
-
-        $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
-
-        $event->getForm()->get('prices')->setData($prices);
     }
 
     /**

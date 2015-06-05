@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -35,6 +36,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id) {
+                    return $id . '.trans';
+                }
+            );
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -58,6 +66,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->createEvent($env);
         $this->listener->onCustomerView($event);
         $this->listener->onCustomerGroupView($event);
+        $this->listener->onProductView($event);
     }
 
     /**
@@ -103,7 +112,6 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-
         $environment->expects($isPriceListExist ? $this->once() : $this->never())
             ->method('render')
             ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
@@ -155,7 +163,6 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-
         $environment->expects($isPriceListExist ? $this->once() : $this->never())
             ->method('render')
             ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
@@ -194,6 +201,68 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             [$templateHtml],
             $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
+    }
+
+    public function testOnProductView()
+    {
+        $productId = 1;
+        $product = new Product();
+        $templateHtml = 'template_html';
+
+        $this->listener->setRequest(new Request(['id' => $productId]));
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroB2BProductBundle:Product', $productId)
+            ->willReturn($product);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        $environment = $this->getMock('\Twig_Environment');
+        $environment->expects($this->once())
+            ->method('render')
+            ->with('OroB2BPricingBundle:Product:prices_view.html.twig', ['entity' => $product])
+            ->willReturn($templateHtml);
+
+        $event = $this->createEvent($environment);
+        $this->listener->onProductView($event);
+        $scrollData = $event->getScrollData()->getData();
+
+        $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
+    }
+
+    public function testOnProductEdit()
+    {
+        $formView = new FormView();
+        $templateHtml = 'template_html';
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
+        $environment = $this->getMock('\Twig_Environment');
+        $environment->expects($this->once())
+            ->method('render')
+            ->with('OroB2BPricingBundle:Product:prices_update.html.twig', ['form' => $formView])
+            ->willReturn($templateHtml);
+
+        $event = $this->createEvent($environment, $formView);
+        $this->listener->onProductEdit($event);
+        $scrollData = $event->getScrollData()->getData();
+
+        $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
+    }
+
+    /**
+     * @param array $scrollData
+     * @param string $html
+     */
+    protected function assertScrollDataPriceBlock(array $scrollData, $html)
+    {
+        $this->assertEquals(
+            'orob2b.pricing.productprice.entity_plural_label.trans',
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::TITLE]
+        );
+        $this->assertEquals(
+            [$html],
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
 
