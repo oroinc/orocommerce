@@ -24,6 +24,7 @@ class PriceType extends AbstractType
                 'currency',
                 CurrencySelectionType::NAME,
                 [
+                    'additional_currencies' => $options['additional_currencies'],
                     'currencies_list' => $options['currencies_list'],
                     'full_currency_list' => $options['full_currency_list'],
                     'compact' => $options['compact'],
@@ -43,6 +44,7 @@ class PriceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => 'Oro\Bundle\CurrencyBundle\Model\Price',
+            'additional_currencies' => null,
             'cascade_validation' => true,
             'currencies_list' => null,
             'full_currency_list' => false,

@@ -19,6 +19,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
@@ -156,31 +157,39 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
+        $priceList = new PriceList();
+        $priceList->setCurrencies(['GBP']);
+
         /** @var Product $expectedProduct */
         $expectedProduct = $this->getProductEntityWithPrecision(2, 'kg', 3);
-        $expectedPrice = (new Price())->setValue(42)->setCurrency('USD');
+        $expectedPrice1 = (new Price())->setValue(42)->setCurrency('USD');
+        $expectedPrice2 = (new Price())->setValue(42)->setCurrency('GBP');
 
         $expectedProductPrice = new ProductPrice();
         $expectedProductPrice
             ->setProduct($expectedProduct)
             ->setQuantity(123)
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
-            ->setPrice($expectedPrice);
+            ->setPrice($expectedPrice1)
+            ->setPriceList($priceList);
 
         $expectedProductPrice2 = clone $expectedProductPrice;
-        $expectedProductPrice2->setQuantity(123.556);
+        $expectedProductPrice2
+            ->setQuantity(123.556)
+            ->setPrice($expectedPrice2);
 
         $defaultProductPrice = new ProductPrice();
+        $defaultProductPrice->setPriceList($priceList);
 
         return [
             'product price without data' => [
                 'defaultData'   => $defaultProductPrice,
                 'submittedData' => [],
-                'expectedData'  => $defaultProductPrice,
+                'expectedData'  => clone $defaultProductPrice,
                 'rounding'      => false
             ],
             'product price with data' => [
-                'defaultData'   => $defaultProductPrice,
+                'defaultData'   => clone $defaultProductPrice,
                 'submittedData' => [
                     'product' => 2,
                     'quantity'  => 123,
@@ -194,14 +203,14 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                 'rounding'      => true
             ],
             'product price with data for rounding' => [
-                'defaultData'   => $defaultProductPrice,
+                'defaultData'   => clone $defaultProductPrice,
                 'submittedData' => [
                     'product' => 2,
                     'quantity'  => 123.5555,
                     'unit'      => 'kg',
                     'price'     => [
                         'value'    => 42,
-                        'currency' => 'USD'
+                        'currency' => 'GBP'
                     ]
                 ],
                 'expectedData' => $expectedProductPrice2,
