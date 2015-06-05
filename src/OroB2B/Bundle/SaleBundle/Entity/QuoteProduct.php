@@ -140,7 +140,7 @@ class QuoteProduct
      * Set productSku
      *
      * @param string $productSku
-     * @return Product
+     * @return QuoteProduct
      */
     public function setProductSku($productSku)
     {
