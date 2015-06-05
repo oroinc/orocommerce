@@ -1,9 +1,46 @@
 parameters:
-    orob2b_pricing.importexport.strategy.price_list.reset.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\PriceListResetStrategy
+    orob2b_pricing.importexport.data_converter.product_price.class: OroB2B\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter
+
+    orob2b_pricing.importexport.strategy.product_price.reset.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy
+    orob2b_pricing.importexport.strategy.product_price.add_or_replace.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy
 
 services:
-    orob2b_pricing.importexport.strategy.price_list.reset:
-        class: %orob2b_pricing.importexport.strategy.price_list.reset.class%
+    # Converter
+    orob2b_pricing.importexport.data_converter.product_price:
+        parent: oro_importexport.data_converter.configurable
+        class: %orob2b_pricing.importexport.data_converter.product_price.class%
+
+    # Strategy
+    orob2b_pricing.importexport.strategy.product_price.add_or_replace:
+        class: %orob2b_pricing.importexport.strategy.product_price.add_or_replace.class%
         parent: oro_importexport.strategy.configurable_add_or_replace
+
+    orob2b_pricing.importexport.strategy.product_price.reset:
+        class: %orob2b_pricing.importexport.strategy.product_price.reset.class%
+        parent: oro_importexport.strategy.configurable_add_or_replace
+
+    # Import processor
+    orob2b_pricing.importexport.processor.import.product_price:
+        parent: oro_importexport.processor.import_abstract
         calls:
-            - [setProductPriceClassName, [%orob2b_pricing.entity.product_price.class%]]
+             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+             - [setStrategy, [@orob2b_pricing.importexport.strategy.product_price.add_or_replace]]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
+            - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
+
+    orob2b_pricing.importexport.processor.import.product_price.reset:
+        parent: oro_importexport.processor.import_abstract
+        calls:
+             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+             - [setStrategy, [@orob2b_pricing.importexport.strategy.product_price.reset]]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.reset }
+            - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.reset }
+
+    orob2b_pricing.importexport.processor.export.product_price:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }

@@ -61,7 +61,8 @@ class ProductPrice
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "order"=10,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -87,6 +88,13 @@ class ProductPrice
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList", inversedBy="prices")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true
+     *          }
+     *      }
+     * )
      **/
     protected $priceList;
 
@@ -97,7 +105,8 @@ class ProductPrice
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=20
+     *              "order"=20,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -112,7 +121,8 @@ class ProductPrice
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=30
+     *              "order"=30,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -141,7 +151,8 @@ class ProductPrice
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=50
+     *              "order"=50,
+     *              "identity"=true
      *          }
      *      }
      * )
