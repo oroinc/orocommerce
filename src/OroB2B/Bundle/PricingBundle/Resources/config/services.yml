@@ -70,7 +70,7 @@ services:
             - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setEventDispatcher, [@event_dispatcher]]
         tags:
-            - { name: doctrine.event_listener, event: preRemove }
+            - { name: doctrine.event_listener, event: postRemove }
 
     orob2b_pricing.provider.currency:
         class: %orob2b_pricing.provider.currency.class%
