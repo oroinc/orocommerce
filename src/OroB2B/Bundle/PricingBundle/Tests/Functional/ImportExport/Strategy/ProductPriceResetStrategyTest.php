@@ -116,11 +116,13 @@ class ProductPriceResetStrategyTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $newProductPrice = new ProductPrice();
-        $newProductPrice->setPriceList($priceList);
-        $newProductPrice->setProduct($product);
         $price = Price::create(1.2, 'USD');
-        $newProductPrice->setPrice($price);
+        $newProductPrice = new ProductPrice();
+        $newProductPrice
+            ->setPriceList($priceList)
+            ->setProduct($product)
+            ->setQuantity(1)
+            ->setPrice($price);
 
         return $newProductPrice;
     }
