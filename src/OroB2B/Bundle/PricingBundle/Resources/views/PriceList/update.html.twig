@@ -1,0 +1,111 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
+
+{% oro_title_set({params : {"%name%": entity.name|default('N/A'|trans), '%entityName%': 'orob2b.pricing.pricelist.entity_label'|trans} }) %}
+
+{% set formAction = entity.id ? path('orob2b_pricing_price_list_update', { 'id': entity.id }) : path('orob2b_pricing_price_list_create')  %}
+
+{% block navButtons %}
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_pricing_delete_price_list', {'id': entity.id}),
+            'dataRedirect': path('orob2b_pricing_price_list_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.pricing.pricelist.entity_label'|trans,
+        }) }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
+    {{ UI.cancelButton(path('orob2b_pricing_price_list_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_pricing_price_list_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_pricing_price_list_index'),
+            'indexLabel': 'orob2b.pricing.pricelist.entity_plural_label'|trans,
+            'entityTitle': entity.name|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.pricing.pricelist.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'price-list-edit' %}
+
+    {% set dataBlocks = [{
+            'title': 'General'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.name),
+                    form_row(form.currencies),
+                    form_widget(form.appendCustomers, {'id': 'priceListAppendCustomers'}),
+                    form_widget(form.removeCustomers, {'id': 'priceListRemoveCustomers'}),
+                    form_widget(form.appendCustomerGroups, {'id': 'priceListAppendCustomerGroups'}),
+                    form_widget(form.removeCustomerGroups, {'id': 'priceListRemoveCustomerGroups'}),
+                    form_widget(form.appendWebsites, {'id': 'priceListAppendWebsites'}),
+                    form_widget(form.removeWebsites, {'id': 'priceListRemoveWebsites'}),
+                ]
+            }]
+        }]
+    %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.customer.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('price-list-select-customers-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.customer.customergroup.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('price-list-select-customer-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.website.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('price-list-select-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

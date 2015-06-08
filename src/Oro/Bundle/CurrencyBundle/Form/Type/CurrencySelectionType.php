@@ -42,17 +42,18 @@ class CurrencySelectionType extends AbstractType
     {
         $resolver->setDefaults([
             'choices' => function (Options $options) {
-                if ($options['currencies_list'] !== null && !is_array($options['currencies_list'])
-                        || is_array($options['currencies_list']) && empty($options['currencies_list'])
-                ) {
-                    throw new LogicException('The option "currencies_list" must be null or not empty array.');
+                $this->checkOptions($options);
+
+                if ($options['full_currency_list']) {
+                    return Intl::getCurrencyBundle()->getCurrencyNames('en');
                 }
 
-                if (count($options['currencies_list'])) {
-                    $currencies = $options['currencies_list'];
-                } else {
+                $currencies = $options['currencies_list'];
+                if (!count($currencies)) {
                     $currencies = $this->configManager->get('oro_currency.allowed_currencies');
                 }
+
+                $currencies = array_merge($currencies, (array)$options['additional_currencies']);
 
                 if (empty($currencies)) {
                     //TODO: Change the getting currency list from system configuration option
@@ -66,7 +67,26 @@ class CurrencySelectionType extends AbstractType
             },
             'compact' => false,
             'currencies_list' => null,
+            'additional_currencies' => null,
+            'full_currency_list' => false
         ]);
+    }
+
+    /**
+     * @param Options $options
+     * @throws LogicException
+     */
+    protected function checkOptions(Options $options)
+    {
+        if (($options['currencies_list'] !== null && !is_array($options['currencies_list']))
+            || (is_array($options['currencies_list']) && empty($options['currencies_list']))
+        ) {
+            throw new LogicException('The option "currencies_list" must be null or not empty array.');
+        }
+
+        if ($options['additional_currencies'] !== null && !is_array($options['additional_currencies'])) {
+            throw new LogicException('The option "additional_currencies" must be null or array.');
+        }
     }
 
     /**

@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\AttributeBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 class OptionsCollectionType extends AbstractType
 {
     const NAME = 'orob2b_options_collection';
@@ -28,7 +30,7 @@ class OptionsCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_collection';
+        return CollectionType::NAME;
     }
 
     /**

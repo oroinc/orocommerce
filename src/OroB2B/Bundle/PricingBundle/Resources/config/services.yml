@@ -1,0 +1,105 @@
+parameters:
+    orob2b_pricing.entity.price_list.class: OroB2B\Bundle\PricingBundle\Entity\PriceList
+    orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
+    orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
+    orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
+    orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_pricing.listener.product_unit_precision.class: OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener
+    orob2b_pricing.acl.voter.product_list.class: OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter
+    orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
+    orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
+    orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
+
+    orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
+    orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
+
+services:
+    orob2b_pricing.acl.voter.product_list:
+        class: %orob2b_pricing.acl.voter.product_list.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setClassName, [%orob2b_pricing.entity.price_list.class%]]
+        tags:
+            - { name: security.voter, priority: 10 }
+
+    orob2b_pricing.datagrid.price_list_permissions_provider:
+        class: %orob2b_pricing.datagrid.price_list_permissions_provider.class%
+
+    orob2b_pricing.form.price_list:
+        class: Symfony\Component\Form\Form
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["orob2b_pricing_price_list_form", "orob2b_pricing_price_list"]
+
+    orob2b_pricing.form.handler.price_list:
+        class: %orob2b_pricing.form.handler.price_list.class%
+        scope: request
+        arguments:
+            - @orob2b_pricing.form.price_list
+            - @request
+            - @doctrine.orm.entity_manager
+
+    orob2b_pricing.price_list.manager.api:
+        class: %orob2b_pricing.price_list.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_pricing.entity.price_list.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_pricing.product_price.manager.api:
+        class: %orob2b_pricing.product_price.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_pricing.entity.product_price.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_pricing.form.autocomplete.price_list.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_pricing.entity.price_list.class%
+            - ["name"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
+        lazy: true
+        
+    orob2b_pricing.listener.product_unit_precision:
+        class: %orob2b_pricing.listener.product_unit_precision.class%
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setEventDispatcher, [@event_dispatcher]]
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }
+
+    orob2b_pricing.provider.currency:
+        class: %orob2b_pricing.provider.currency.class%
+        arguments:
+            - @doctrine
+            - %orob2b_pricing.entity.product_price.class%
+
+    orob2b_pricing.validator.unique_product_prices:
+        class: %orob2b_pricing.validator.unique_product_prices.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_unique_product_prices_validator }
+
+    orob2b_pricing.event_listener.form_view:
+        class: %orob2b_pricing.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+
+    orob2b_pricing.event_listener.datagrid:
+        class: %orob2b_pricing.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }

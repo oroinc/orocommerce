@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
@@ -30,17 +31,19 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager', ['get'])
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->setMethods(['get'])
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->localeSettings = $this
-            ->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings', ['getCurrency', 'getLocale'])
+            ->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+            ->setMethods(['getCurrency', 'getLocale'])
             ->disableOriginalConstructor()
             ->getMock();
         $this->localeSettings->expects($this->any())
             ->method('getLocale')
-            ->willReturn('en');
+            ->willReturn(\Locale::getDefault());
 
         $this->formType = new CurrencySelectionType($this->configManager, $this->localeSettings);
     }
@@ -61,7 +64,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         array $expectedOptions,
         $submittedData
     ) {
-        $this->configManager->expects(isset($inputOptions['currencies_list']) ? $this->never() : $this->once())
+        $hasCustomCurrencies = isset($inputOptions['currencies_list']) || !empty($inputOptions['full_currency_list']);
+        $this->configManager->expects($hasCustomCurrencies ? $this->never() : $this->once())
             ->method('get')
             ->with('oro_currency.allowed_currencies')
             ->willReturn($allowedCurrencies);
@@ -89,6 +93,13 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $currencyBundle = Intl::getCurrencyBundle();
+        $usdName = $currencyBundle->getCurrencyName('USD');
+        $eurName = $currencyBundle->getCurrencyName('EUR');
+        $gbpName = $currencyBundle->getCurrencyName('GBP');
+        $rubName = $currencyBundle->getCurrencyName('RUB');
+        $uahName = $currencyBundle->getCurrencyName('UAH');
+
         return [
             'full currency name and data from system config' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
@@ -96,57 +107,86 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
                 'inputOptions' => [],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'USD' => 'US Dollar',
-                        'UAH' => 'Ukrainian Hryvnia',
-                    ]
+                    'choices' => ['USD' => $usdName, 'UAH' => $uahName]
                 ],
-                'submittedData' => 'UAH',
+                'submittedData' => 'UAH'
             ],
             'compact currency name and data from system config' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
-                    'compact' => true,
+                    'compact' => true
                 ],
                 'expectedOptions' => [
                     'compact' => true,
                     'choices' => [
                         'USD' => 'USD',
-                        'UAH' => 'UAH',
+                        'UAH' => 'UAH'
                     ]
                 ],
-                'submittedData' => 'UAH',
+                'submittedData' => 'UAH'
             ],
             'full currency name and data from locale settings' => [
                 'allowedCurrencies' => [],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => false,
-                    'currencies_list' => null,
+                    'currencies_list' => null
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'EUR' => 'Euro',
-                    ]
+                    'choices' => ['EUR' => $eurName]
                 ],
-                'submittedData' => 'EUR',
+                'submittedData' => 'EUR'
             ],
             'full currency name and data from currencies_list option' => [
                 'allowedCurrencies' => ['USD', 'UAH'],
                 'localeCurrency' => 'EUR',
                 'inputOptions' => [
                     'compact' => false,
-                    'currencies_list' => ['RUB'],
+                    'currencies_list' => ['RUB']
                 ],
                 'expectedOptions' => [
                     'compact' => false,
-                    'choices' => [
-                        'RUB' => 'Russian Ruble',
-                    ]
+                    'choices' => ['RUB' => $rubName]
                 ],
-                'submittedData' => 'RUB',
+                'submittedData' => 'RUB'
+            ],
+            'full currency name, data from system config and additional currencies' => [
+                'allowedCurrencies' => ['USD', 'UAH'],
+                'localeCurrency' => 'EUR',
+                'inputOptions' => [
+                    'additional_currencies' => ['GBP']
+                ],
+                'expectedOptions' => [
+                    'compact' => false,
+                    'choices' => ['GBP' => $gbpName, 'USD' => $usdName, 'UAH' => $uahName]
+                ],
+                'submittedData' => 'UAH'
+            ],
+            'compact currency name, data from currencies_list option and additional currencies' => [
+                'allowedCurrencies' => ['USD', 'UAH'],
+                'localeCurrency' => 'EUR',
+                'inputOptions' => [
+                    'compact' => true,
+                    'currencies_list' => ['RUB'],
+                    'additional_currencies' => ['GBP']
+                ],
+                'expectedOptions' => [
+                    'compact' => true,
+                    'choices' => ['GBP' => 'GBP', 'RUB' => 'RUB']
+                ],
+                'submittedData' => 'GBP'
+            ],
+            'full currencies list' => [
+                'allowedCurrencies' => ['USD', 'UAH'],
+                'localeCurrency' => 'EUR',
+                'inputOptions' => ['full_currency_list' => true],
+                'expectedOptions' => [
+                    'full_currency_list' => true,
+                    'choices' => $currencyBundle->getCurrencyNames('en')
+                ],
+                'submittedData' => 'GBP'
             ]
         ];
     }
@@ -167,6 +207,15 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
     public function testUnknownCurrency()
     {
         $this->factory->create($this->formType, null, ['currencies_list' => ['CUR', 'TST']]);
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Form\Exception\LogicException
+     * @expectedExceptionMessage The option "additional_currencies" must be null or array.
+     */
+    public function testInvalidTypeOfAdditionalCurrenciesOption()
+    {
+        $this->factory->create($this->formType, null, ['additional_currencies' => 'string']);
     }
 
     public function testGetName()

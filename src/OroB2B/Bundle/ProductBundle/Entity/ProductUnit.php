@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Table(name="orob2b_product_unit")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={

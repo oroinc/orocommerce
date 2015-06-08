@@ -1,0 +1,23 @@
+orob2b_pricing:
+    resource:     "@OroB2BPricingBundle/Controller/PriceListController.php"
+    type:         annotation
+    prefix:       /pricelist
+
+orob2b_pricing_ajax:
+    resource:     "@OroB2BPricingBundle/Controller/AjaxPriceListController.php"
+    type:         annotation
+    prefix:       /pricelist
+
+orob2b_product_price_ajax:
+    resource:     "@OroB2BPricingBundle/Controller/AjaxProductPriceController.php"
+    type:         annotation
+    prefix:       /productprice
+
+orob2b_pricing_bundle_api:
+    resource:     "@OroB2BPricingBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest

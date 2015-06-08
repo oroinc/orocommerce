@@ -92,24 +92,37 @@ class PagesTest extends Selenium2TestCase
         sleep(1);
 
         $page = $pages->openPage(self::$firstPage)
-            ->assertCurrentSlugUrl([self::$firstPageSlug])
-            ->editPage();
+            ->assertCurrentSlugUrl([self::$firstPageSlug]);
 
         /**
          * check call slug API on title change
          */
-        $page->clickUpdateRadioButton()
+        $page->editPage()
+            ->clickUpdateRadioButton()
             ->setTitle(self::JS_COMPONENT_TEST_TITLE)
             ->waitForApiCall()
-            ->assertSlugInputValue(self::JS_COMPONENT_TEST_SLUG);
+            ->savePage()
+            ->assertCurrentSlugUrl([self::JS_COMPONENT_TEST_SLUG]);
 
         /**
          * if slug was changed it won't update on title changing
          */
-        $page->setSlug(self::JS_COMPONENT_TEST_UPDATED_SLUG)
+        $page->editPage()
+            ->clickUpdateRadioButton()
+            ->setSlug(self::JS_COMPONENT_TEST_UPDATED_SLUG)
             ->setTitle(self::JS_COMPONENT_TEST_UPDATED_TITLE)
             ->waitForApiCall()
-            ->assertSlugInputValue(self::JS_COMPONENT_TEST_UPDATED_SLUG);
+            ->savePage()
+            ->assertCurrentSlugUrl([self::JS_COMPONENT_TEST_UPDATED_SLUG]);
+
+        /**
+         * rollback title
+         */
+        $page->editPage()
+            ->clickUpdateRadioButton()
+            ->setSlug(self::$firstPageSlug)
+            ->setTitle(self::$firstPage)
+            ->savePage();
     }
 
     /**
