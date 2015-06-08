@@ -5,6 +5,9 @@ parameters:
     # Strategy
     orob2b_pricing.importexport.strategy.product_price.add_or_replace.class: OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy
 
+    #Reader
+    orob2b_pricing.importexport.reader.price_list_product_prices.class: OroB2B\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader
+
     # Template Fixture
     orob2b_pricing.importexport.template_fixture.product_price.class: OroB2B\Bundle\PricingBundle\ImportExport\TemplateFixture\PriceListFixture
 
@@ -35,6 +38,7 @@ services:
             - { name: oro_importexport.processor, type: import, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
             - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price.add_or_replace }
 
+    # Export processor
     orob2b_pricing.importexport.processor.export.product_price:
         parent: oro_importexport.processor.export_abstract
         calls:
@@ -42,6 +46,12 @@ services:
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }
 
+    # Reader
+    orob2b_pricing.importexport.reader.price_list_product_prices:
+        parent: oro_importexport.reader.entity
+        class: %orob2b_pricing.importexport.reader.price_list_product_prices.class%
+
+    # Export template
     orocrm_contact.importexport.processor.export_template.product_price:
         parent: oro_importexport.processor.export_abstract
         calls:
