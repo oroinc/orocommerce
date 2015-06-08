@@ -53,4 +53,12 @@ class PriceTest extends \PHPUnit_Framework_TestCase
             ['currency', self::CURRENCY]
         ];
     }
+
+    public function testCreate()
+    {
+        $price = Price::create(self::VALUE, self::CURRENCY);
+        $this->assertInstanceOf('Oro\Bundle\CurrencyBundle\Model\Price', $price);
+        $this->assertEquals(self::VALUE, $price->getValue());
+        $this->assertEquals(self::CURRENCY, $price->getCurrency());
+    }
 }

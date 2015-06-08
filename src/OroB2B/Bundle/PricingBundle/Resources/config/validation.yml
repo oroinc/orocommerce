@@ -1,0 +1,41 @@
+OroB2B\Bundle\PricingBundle\Entity\PriceList:
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        currencies:
+            - NotBlank: ~
+            - Valid: ~
+        prices:
+            - Valid: ~
+
+OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
+    properties:
+        priceList:
+            - NotBlank: ~
+        currency:
+            - NotBlank: ~
+            - Currency: ~
+
+OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields:  [ product, priceList, quantity, unit, currency ]
+            message: orob2b.pricing.validators.product_price.unique_entity.message
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        quantity:
+            - NotBlank: ~
+            - Range:
+                min: 0
+        price:
+            - NotBlank: ~
+            - Valid: ~
+        unit:
+            - NotBlank: ~

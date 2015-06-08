@@ -1,0 +1,21 @@
+orob2b:
+    payment:
+        menu:
+            payments.label:            Payments
+            payment_terms.label:       Payment terms
+            payment_terms.description: List of payment terms
+
+        paymentterm:
+            entity_label: Payment Term
+            entity_plural_label: Payment Terms
+            entity_description: Represents payment terms
+
+            id.label: ID
+            label.label: Label
+            form.choose: 'Choose a payment term...'
+
+        controller:
+            paymentterm.saved.message: Payment term has been saved
+
+        sections:
+            general_information: General information

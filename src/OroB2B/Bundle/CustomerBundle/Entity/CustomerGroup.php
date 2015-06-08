@@ -16,7 +16,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          @ORM\Index(name="orob2b_customer_group_name_idx", columns={"name"})
  *      }
  * )
- *
  * @Config(
  *      routeName="orob2b_customer_group_index",
  *      routeView="orob2b_customer_group_view",

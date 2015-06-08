@@ -1,0 +1,6 @@
+orob2b_pricing_product_price_view:
+    type: entity
+    class: OroB2BPricingBundle:ProductPrice
+    permission: VIEW
+    group_name: ""
+    bindings: ~

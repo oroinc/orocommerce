@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 
@@ -18,6 +16,9 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -25,9 +26,12 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         $this->formType = new CustomerGroupType();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
-        unset($this->em, $this->formType);
+        unset($this->formType);
     }
 
     /**
@@ -35,12 +39,15 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $registry = $this->getRegistryForEntityIdentifierType();
-
-        $entityIdentifierType = new EntityIdentifierType($registry);
+        $entityIdentifierType = new EntityIdentifierType([]);
 
         return [
-            new PreloadedExtension([$entityIdentifierType->getName() => $entityIdentifierType], [])
+            new PreloadedExtension(
+                [
+                    $entityIdentifierType->getName() => $entityIdentifierType
+                ],
+                []
+            )
         ];
     }
 
@@ -86,10 +93,21 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_group_name'
+                    'name' => 'customer_group_name',
                 ],
                 'expectedData' => [
-                    'name' => 'customer_group_name'
+                    'name' => 'customer_group_name',
+                ]
+            ],
+            'with list' => [
+                'options' => [],
+                'defaultData' => [],
+                'viewData' => [],
+                'submittedData' => [
+                    'name' => 'customer_group_name',
+                ],
+                'expectedData' => [
+                    'name' => 'customer_group_name',
                 ]
             ]
         ];
@@ -102,32 +120,19 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @param string $className
+     * @param int $id
+     * @return object
      */
-    protected function getRegistryForEntityIdentifierType()
+    protected function getEntity($className, $id)
     {
-        $metadata = $this->getMockBuilder('\Doctrine\ORM\Mapping\ClassMetadata')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $metadata->expects($this->any())
-            ->method('getSingleIdentifierFieldName')
-            ->will($this->returnValue('id'));
+        $entity = new $className;
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
 
-        $em->expects($this->any())
-            ->method('getClassMetadata')
-            ->will($this->returnValue($metadata));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturnMap([['OroB2B\Bundle\CustomerBundle\Entity\Customer', $em]]);
-
-        return $registry;
+        return $entity;
     }
 }

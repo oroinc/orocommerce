@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 

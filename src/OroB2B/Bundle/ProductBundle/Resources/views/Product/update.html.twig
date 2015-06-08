@@ -1,5 +1,4 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
-{% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
 {% oro_title_set({params : {"%sku%": form.vars.value.sku|default('N/A'|trans)} }) %}
 
@@ -50,7 +49,7 @@
                 'title': '',
                 'data': [
                     form_row(form.sku),
-                    form_row(form.unitPrecisions)
+                    form_row(form.unitPrecisions),
                 ]
             }]
         }]

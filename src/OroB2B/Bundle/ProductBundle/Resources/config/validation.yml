@@ -11,6 +11,9 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+        unitPrecisions:
+            - Valid: ~
+
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:

@@ -19,7 +19,7 @@ class CustomerTest extends EntityTestCase
             ['id', 42],
             ['name', 'Adam Weishaupt'],
             ['parent', $this->createCustomerEntity()],
-            ['group', $this->createCustomerGroupEntity()]
+            ['group', $this->createCustomerGroupEntity()],
         ]);
     }
 

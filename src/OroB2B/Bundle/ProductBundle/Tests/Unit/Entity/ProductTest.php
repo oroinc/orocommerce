@@ -45,7 +45,7 @@ class ProductTest extends EntityTestCase
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
     }
 
-    public function testAttributeRelations()
+    public function testUnitRelation()
     {
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
