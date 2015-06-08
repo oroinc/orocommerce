@@ -18,8 +18,6 @@ class QuoteProductItemTest extends AbstractTest
      */
     public function testCreate()
     {
-        $em = $this->entityManager;
-
         $item = (new QuoteProductItem())
             ->setQuantity(1.1)
             ->setPrice((new Price())->setValue(2.2)->setCurrency('USD'))
@@ -28,12 +26,12 @@ class QuoteProductItemTest extends AbstractTest
 
         $this->assertNull($item->getId());
 
-        $em->persist($item);
-        $em->flush();
+        $this->entityManager->persist($item);
+        $this->entityManager->flush();
 
         $this->assertNotNull($item->getId());
 
-        $em->clear();
+        $this->entityManager->clear();
 
         $item = $this->findQuoteProductItem($item->getId());
 

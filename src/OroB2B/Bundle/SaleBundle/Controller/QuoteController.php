@@ -12,6 +12,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteController extends Controller
 {
@@ -45,7 +46,7 @@ class QuoteController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_sale.quote.class')
+            'entity_class' => $this->container->getParameter('orob2b_sale.entity.quote.class')
         ];
     }
 
@@ -76,7 +77,7 @@ class QuoteController extends Controller
      *
      * @param Quote $quote
      *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return array|RedirectResponse
      */
     public function updateAction(Quote $quote)
     {
@@ -106,24 +107,22 @@ class QuoteController extends Controller
     {
         /* @var $handler \Oro\Bundle\FormBundle\Model\UpdateHandler */
         $handler = $this->get('oro_form.model.update_handler');
-
         return $handler->handleUpdate(
             $quote,
-            $this->get('orob2b_sale.form.quote'),
+            $this->createForm(new QuoteType(), $quote),
             function (Quote $quote) {
-                return array(
-                    'route' => 'orob2b_sale_quote_update',
-                    'parameters' => array('id' => $quote->getId())
-                );
+                return [
+                    'route'         => 'orob2b_sale_quote_update',
+                    'parameters'    => ['id' => $quote->getId()]
+                ];
             },
             function (Quote $quote) {
-                return array(
-                    'route' => 'orob2b_sale_quote_view',
-                    'parameters' => array('id' => $quote->getId())
-                );
+                return [
+                    'route'         => 'orob2b_sale_quote_view',
+                    'parameters'    => ['id' => $quote->getId()]
+                ];
             },
-            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message'),
-            $this->get('orob2b_sale.form.handler.quote')
+            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message')
         );
     }
 }

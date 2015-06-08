@@ -11,8 +11,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -40,10 +41,9 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies()
     {
         return [
+            'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            /* ToDo: waiting for merge this file
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData'
-            */
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
 
@@ -72,7 +72,6 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
             $quote = new Quote();
             $quote
                 ->setOwner($user)
-                ->setQid($row['qid'])
                 ->setValidUntil($validUntil)
             ;
             $this->processQuoteProducts($quote, $manager);
@@ -92,13 +91,10 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     protected function getUser(EntityManager $manager)
     {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult()
-        ;
+        /* @var $user User */
+        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
+            'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL
+        ]);
 
         if (!$user) {
             throw new \LogicException('There are no users in system');
@@ -134,7 +130,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     protected function getCurrencies()
     {
-        $currencies = $this->container->get('oro_config.global')->get('oro_currency.allowed_currencies');
+        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
         if (empty($currencies)) {
             $currency = $this->container->get('oro_locale.settings')->getCurrency();
             $currencies = $currency ? [$currency] : [];
@@ -155,12 +151,12 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     {
         $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
-        for ($i = 0; $i < 3; $i++) {
+        for ($i = 0; $i < rand(1, 3); $i++) {
             $product = $products[rand(0, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
             $quoteProduct = new QuoteProduct();
             $quoteProduct->setProduct($product);
-            for ($j = 0; $j < 3; $j++) {
+            for ($j = 0; $j < rand(0, 3); $j++) {
                 if (!count($unitPrecisions)) {
                     continue;
                 }
@@ -168,13 +164,8 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $quoteProductItem = new QuoteProductItem();
-                $price = new Price();
-                $price
-                    ->setValue(rand(1, 100))
-                    ->setCurrency($currency)
-                ;
                 $quoteProductItem
-                    ->setPrice($price)
+                    ->setPrice(Price::create(rand(1, 100), $currency))
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit)
                 ;

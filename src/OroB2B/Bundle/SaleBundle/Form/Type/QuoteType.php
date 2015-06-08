@@ -6,24 +6,30 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+
 class QuoteType extends AbstractType
 {
+    const NAME = 'orob2b_sale_quote';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('qid', 'hidden')
             ->add('owner', null, [
-                'required' => true,
-                'label' => 'orob2b.sale.quote.owner.label'
+            //->add('owner', 'entity', [
+            //->add('owner', 'oro_entity_create_or_select', [
+            //->add('owner', 'oro_entity_create_or_select_inline', [
+                //'class'     => 'OroUserBundle:User',
+                'label'     => 'orob2b.sale.quote.owner.label',
+                'required'  => true,
             ])
-            ->add('validUntil', null, [
-                'required' => false,
-                'label' => 'orob2b.sale.quote.valid_until.label'
+            ->add('validUntil', OroDateTimeType::NAME, [
+                'label'     => 'orob2b.sale.quote.valid_until.label',
+                'required'  => false,
             ])
             ->add(
                 'quoteProducts',
@@ -31,14 +37,14 @@ class QuoteType extends AbstractType
                 [
                     'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
                     'add_label' => 'orob2b.sale.quote.quoteproduct.add_label',
-                    'required'  => false
+                    'required'  => false,
                 ]
             )
         ;
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -50,10 +56,10 @@ class QuoteType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
-        return 'orob2b_sale_quote';
+        return self::NAME;
     }
 }

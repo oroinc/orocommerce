@@ -2,10 +2,14 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 
-class QuoteTypeTest extends \PHPUnit_Framework_TestCase
+class QuoteTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var QuoteType
@@ -38,7 +42,7 @@ class QuoteTypeTest extends \PHPUnit_Framework_TestCase
 
         $builder->expects($this->at(2))
             ->method('add')
-            ->with('validUntil', null, ['required' => false, 'label' => 'orob2b.sale.quote.valid_until.label'])
+            ->with('validUntil', OroDateTimeType::NAME, ['required' => false, 'label' => 'orob2b.sale.quote.valid_until.label'])
             ->will($this->returnSelf())
         ;
 

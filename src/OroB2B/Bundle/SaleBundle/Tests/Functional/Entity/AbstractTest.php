@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Entity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -36,7 +37,7 @@ abstract class AbstractTest extends WebTestCase
     protected function findProduct($sku)
     {
         /* @var $product Product */
-        $product = $this->entityManager->getRepository('OroB2BProductBundle:Product')->findOneBySku($sku);
+        $product = $this->entityManager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
 
         $this->assertNotNull($product);
 
@@ -64,9 +65,9 @@ abstract class AbstractTest extends WebTestCase
      */
     protected function findUser($username)
     {
-        /* @var $repository \Oro\Bundle\UserBundle\Entity\Repository\UserRepository */
+        /* @var $repository UserRepository */
         $repository = $this->entityManager->getRepository('OroUserBundle:User');
 
-        return $repository->findOneByUsername($username);
+        return $repository->findOneBy(['username' => $username]);
     }
 }

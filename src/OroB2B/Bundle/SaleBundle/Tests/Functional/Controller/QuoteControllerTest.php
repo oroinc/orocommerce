@@ -6,6 +6,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
 
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -43,9 +44,9 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_sale_quote_form[owner]']      = $owner->getId();
-        $form['orob2b_sale_quote_form[qid]']        = self::$qid;
-        $form['orob2b_sale_quote_form[validUntil]'] = self::$validUntil;
+        $form['orob2b_sale_quote[owner]']      = $owner->getId();
+        $form['orob2b_sale_quote[qid]']        = self::$qid;
+        $form['orob2b_sale_quote[validUntil]'] = self::$validUntil;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -100,9 +101,9 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_sale_quote_form[owner]']      = $owner->getId();
-        $form['orob2b_sale_quote_form[qid]']        = self::$qidUpdated;
-        $form['orob2b_sale_quote_form[validUntil]'] = self::$validUntilUpdated;
+        $form['orob2b_sale_quote[owner]']      = $owner->getId();
+        $form['orob2b_sale_quote[qid]']        = self::$qidUpdated;
+        $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -111,8 +112,8 @@ class QuoteControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains("Quote has been saved", $crawler->html());
 
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
-        $response   = $this->client->requestGrid(
+        $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
+        $response = $this->client->requestGrid(
             'quotes-grid',
             ['quotes-grid[_filter][id][value]' => $id]
         );
@@ -136,7 +137,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -167,9 +168,9 @@ class QuoteControllerTest extends WebTestCase
      */
     protected function getUser($username)
     {
-        /* @var $repository \Oro\Bundle\UserBundle\Entity\Repository\UserRepository */
+        /* @var $repository UserRepository */
         $repository = $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User');
 
-        return $repository->findOneByUsername($username);
+        return $repository->findOneBy(['username' => $username]);
     }
 }

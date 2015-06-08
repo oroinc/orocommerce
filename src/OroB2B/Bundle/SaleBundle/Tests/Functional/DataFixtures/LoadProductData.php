@@ -137,7 +137,7 @@ class LoadProductData extends AbstractFixture
 
         $em = $this->entityManager;
 
-        $unit = $em->getRepository('OroB2BProductBundle:ProductUnit')->findOneByCode($code);
+        $unit = $em->getRepository('OroB2BProductBundle:ProductUnit')->findOneBy(['code' => $code]);
 
         if (!$unit) {
             $unit = new ProductUnit();

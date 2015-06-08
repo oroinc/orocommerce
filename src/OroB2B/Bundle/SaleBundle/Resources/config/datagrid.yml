@@ -1,6 +1,6 @@
 datagrid:
     quotes-grid:
-        extended_entity_name: %orob2b_sale.quote.class%
+        extended_entity_name: %orob2b_sale.entity.quote.class%
         options:
             entityHint:        quote
             entity_pagination: true
@@ -16,7 +16,7 @@ datagrid:
                     - quote.updatedAt
                     - quote.validUntil
                 from:
-                    - { table: %orob2b_sale.quote.class%, alias: quote }
+                    - { table: %orob2b_sale.entity.quote.class%, alias: quote }
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
@@ -69,6 +69,7 @@ datagrid:
         filters:
             columns:
                 id:
+                    #type:      numeric
                     type:      string
                     data_name: quote.id
                 qid:

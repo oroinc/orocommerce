@@ -18,14 +18,14 @@ class QuoteProductItemCollectionType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'type' => QuoteProductItemType::NAME,
-            'show_form_when_empty' => false,
-            'prototype_name'       => '__namequoteproductitem__'
+            'type'                  => QuoteProductItemType::NAME,
+            'show_form_when_empty'  => false,
+            'prototype_name'        => '__namequoteproductitem__'
         ]);
     }
 

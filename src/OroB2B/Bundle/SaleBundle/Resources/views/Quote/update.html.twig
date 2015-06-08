@@ -1,17 +1,17 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
-{% oro_title_set({params : {"%id%": form.vars.value.qid|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%id%": entity.qid|default('N/A'|trans)} }) %}
 
-{% set formAction = form.vars.value.id ? path('orob2b_sale_quote_update', { 'id': form.vars.value.id }) : path('orob2b_sale_quote_create')  %}
+{% set formAction = entity.id ? path('orob2b_sale_quote_update', { 'id': entity.id }) : path('orob2b_sale_quote_create')  %}
 
 {% block pageHeader %}
-    {% if form.vars.value.id %}
+    {% if entity.id %}
         {% set breadcrumbs = {
-            'entity':      form.vars.value,
+            'entity':      entity,
             'indexPath':   path('orob2b_sale_quote_index'),
             'indexLabel': 'orob2b.sale.quote.entity_plural_label'|trans,
-            'entityTitle': form.vars.value.qid|default('N/A'|trans)
+            'entityTitle': entity.qid|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
@@ -21,12 +21,12 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if form.vars.value.id and resource_granted('DELETE', form.vars.value) %}
+    {% if entity.id and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_sale_delete_quote', {'id': form.vars.value.id}),
+            'dataUrl': path('orob2b_api_sale_delete_quote', {'id': entity.id}),
             'dataRedirect': path('orob2b_sale_quote_index'),
             'aCss': 'no-hash remove-button',
-            'dataId': form.vars.value.id,
+            'dataId': entity.id,
             'id': 'btn-remove-account',
             'entity_label': 'orob2b.sale.quote.entity_label'|trans,
         }) }}
@@ -34,7 +34,7 @@
     {% endif %}
     {{ UI.cancelButton(path('orob2b_sale_quote_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if form.vars.value.id or resource_granted('orob2b_sale_quote_create') %}
+    {% if entity.id or resource_granted('orob2b_sale_quote_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

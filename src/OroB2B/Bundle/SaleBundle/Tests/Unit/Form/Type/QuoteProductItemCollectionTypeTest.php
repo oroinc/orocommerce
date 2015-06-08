@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
 
-class QuoteProductItemCollectionTypeTest extends \PHPUnit_Framework_TestCase
+class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var QuoteProductItemCollectionType

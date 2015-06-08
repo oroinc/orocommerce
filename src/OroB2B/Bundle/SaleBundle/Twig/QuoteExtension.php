@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\UIBundle\Twig;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 
@@ -14,16 +12,23 @@ class QuoteExtension extends \Twig_Extension
     const NAME = 'orob2b_sale_quote';
 
     /**
-     * @var ContainerInterface
+     * @var Translator
      */
-    protected $container;
+    protected $translator;
 
     /**
-     * @param ContainerInterface $container
+     * @var Twig\Environment
      */
-    public function __construct(ContainerInterface $container)
+    protected $twigEnvironment;
+
+    /**
+     * @param Translator $translator
+     * @param Twig\Environment $twigEnvironment
+     */
+    public function __construct(Translator $translator, Twig\Environment $twigEnvironment)
     {
-        $this->container = $container;
+        $this->translator       = $translator;
+        $this->twigEnvironment  = $twigEnvironment;
     }
 
     /**
@@ -46,23 +51,17 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductItem(QuoteProductItem $item)
     {
-        /* @var $translator Translator */
-        $translator = $this->container->get('translator');
-
-        /* @var $twig Twig\Environment */
-        $twig = $this->container->get('twig');
-
-        $unitFormatter  = $twig->getFilter('orob2b_format_product_unit_value')->getCallable();
-        $priceFormatter = $twig->getFilter('oro_format_price')->getCallable();
+        $unitFormatter  = $this->twigEnvironment->getFilter('orob2b_format_product_unit_value')->getCallable();
+        $priceFormatter = $this->twigEnvironment->getFilter('oro_format_price')->getCallable();
 
         $units  = $item->getProductUnit()
             ? $unitFormatter($item->getQuantity(), $item->getProductUnit())
             : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
         ;
         $price  = $priceFormatter($item->getPrice());
-        $unit   = $translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
+        $unit   = $this->translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
 
-        $str = $translator->trans(
+        $str = $this->translator->trans(
             'orob2b.sale.quote.quoteproduct.quoteproductitem.item',
             [
                 '{units}'   => $units,

@@ -153,6 +153,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->sku;
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -374,13 +382,5 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return $this->sku;
     }
 }

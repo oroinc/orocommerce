@@ -70,7 +70,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
 
         $builder->expects($this->at(0))
             ->method('add')
-            ->with('quantity', null, [
+            ->with('quantity', 'integer', [
                 'required'  => true,
                 'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label',
             ])
@@ -110,8 +110,8 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $inputData
-     * @param $expectedData
+     * @param mixed $inputData
+     * @param mixed $expectedData
      * @dataProvider preSetDataProvider
      */
     public function testPreSetData($inputData, $expectedData)
@@ -138,8 +138,8 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $inputData
-     * @param $expectedData
+     * @param mixed $inputData
+     * @param mixed $expectedData
      * @dataProvider preSubmitProvider
      */
     public function testPreSubmit($inputData, $expectedData)

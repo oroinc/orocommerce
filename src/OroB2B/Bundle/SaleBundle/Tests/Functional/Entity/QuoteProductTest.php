@@ -20,8 +20,6 @@ class QuoteProductTest extends AbstractTest
      */
     public function testCreate()
     {
-        $em = $this->entityManager;
-
         $product = new QuoteProduct();
 
         $product
@@ -31,12 +29,12 @@ class QuoteProductTest extends AbstractTest
 
         $this->assertNull($product->getId());
 
-        $em->persist($product);
-        $em->flush();
+        $this->entityManager->persist($product);
+        $this->entityManager->flush();
 
         $this->assertNotNull($product->getId());
 
-        $em->clear();
+        $this->entityManager->clear();
 
         $product = $this->findQuoteProduct($product->getId());
 
@@ -51,8 +49,6 @@ class QuoteProductTest extends AbstractTest
      */
     public function testQuoteProductItems(QuoteProduct $product)
     {
-        $em = $this->entityManager;
-
         $item1 = $this->getQuoteProductItem(LoadProductData::PRODUCT1);
         $item2 = $this->getQuoteProductItem(LoadProductData::PRODUCT2);
 
@@ -61,8 +57,8 @@ class QuoteProductTest extends AbstractTest
             ->addQuoteProductItem($item2)
         ;
 
-        $em->flush();
-        $em->clear();
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
         $product = $this->findQuoteProduct($product->getId());
 
@@ -72,8 +68,8 @@ class QuoteProductTest extends AbstractTest
 
         $this->assertCount(1, $product->getQuoteProductItems());
 
-        $em->flush();
-        $em->clear();
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
         $product = $this->findQuoteProduct($product->getId());
 
@@ -86,8 +82,8 @@ class QuoteProductTest extends AbstractTest
 
         $product->getQuoteProductItems()->clear();
 
-        $em->flush();
-        $em->clear();
+        $this->entityManager->flush();
+        $this->entityManager->clear();
 
         $product = $this->findQuoteProduct($product->getId());
 

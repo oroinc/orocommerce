@@ -6,8 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Gedmo\Mapping\Annotation as Gedmo;
-
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -35,6 +33,8 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 class Quote extends ExtendQuote
 {
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -45,14 +45,6 @@ class Quote extends ExtendQuote
      * @var string
      *
      * @ORM\Column(type="string", length=255)
-     * @ConfigField
-     * ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $qid;
 
@@ -75,7 +67,6 @@ class Quote extends ExtendQuote
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
-     * @Gedmo\Timestampable(on="create")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -90,7 +81,6 @@ class Quote extends ExtendQuote
      * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
-     * @Gedmo\Timestampable(on="update")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -105,7 +95,6 @@ class Quote extends ExtendQuote
      * @var \DateTime
      *
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
-     * @ConfigField
      */
     protected $validUntil;
 
@@ -123,6 +112,27 @@ class Quote extends ExtendQuote
     {
         parent::__construct();
         $this->quoteProducts = new ArrayCollection();
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -164,7 +174,7 @@ class Quote extends ExtendQuote
      * @param \DateTime $createdAt
      * @return Quote
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -187,7 +197,7 @@ class Quote extends ExtendQuote
      * @param \DateTime $updatedAt
      * @return Quote
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
 
@@ -210,7 +220,7 @@ class Quote extends ExtendQuote
      * @param \DateTime $validUntil
      * @return Quote
      */
-    public function setValidUntil($validUntil)
+    public function setValidUntil(\DateTime $validUntil = null)
     {
         $this->validUntil = $validUntil;
 
@@ -272,6 +282,8 @@ class Quote extends ExtendQuote
     public function removeQuoteProduct(QuoteProduct $quoteProduct)
     {
         $this->quoteProducts->removeElement($quoteProduct);
+
+        return $this;
     }
 
     /**

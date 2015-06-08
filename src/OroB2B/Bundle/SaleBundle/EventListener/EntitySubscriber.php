@@ -11,7 +11,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 class EntitySubscriber implements EventSubscriber
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getSubscribedEvents()
     {
@@ -51,7 +51,7 @@ class EntitySubscriber implements EventSubscriber
         if (!$entity instanceof Quote) {
             return;
         }
-        
+
         /* @var $entity Quote */
 
         if ($entity->getQid()) {

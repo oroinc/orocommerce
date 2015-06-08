@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
+
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -85,6 +84,23 @@ class QuoteProductItem
      */
     protected $price;
 
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        $this->price = Price::create($this->value, $this->currency);
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function preSave()
+    {
+        $this->value    = $this->price->getValue();
+        $this->currency = $this->price->getCurrency();
+    }
 
     /**
      * Get id
@@ -198,8 +214,6 @@ class QuoteProductItem
     public function setPrice(Price $price)
     {
         $this->price = $price;
-        $this->value = $this->price->getValue();
-        $this->currency = $this->price->getCurrency();
 
         return $this;
     }
@@ -210,18 +224,5 @@ class QuoteProductItem
     public function getPrice()
     {
         return $this->price;
-    }
-
-    /**
-     * @ORM\PostLoad
-     */
-    public function loadPrice()
-    {
-        // ToDo: waiting for merge method Price::create
-        //$this->price = Price::create($this->value, $this->currency);
-        $this->price = new Price();
-        $this->price->setValue($this->value)
-            ->setCurrency($this->currency)
-        ;
     }
 }

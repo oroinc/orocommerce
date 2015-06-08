@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
 
-class QuoteProductTypeTest extends \PHPUnit_Framework_TestCase
+class QuoteProductTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var QuoteProductType
@@ -38,7 +40,6 @@ class QuoteProductTypeTest extends \PHPUnit_Framework_TestCase
             ->with('quoteProductItems', QuoteProductItemCollectionType::NAME, [
                 'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
                 'add_label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label',
-                'required'  => false,
             ])
             ->will($this->returnSelf())
         ;

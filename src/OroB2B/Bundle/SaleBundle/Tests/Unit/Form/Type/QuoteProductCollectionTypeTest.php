@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 
-class QuoteProductCollectionTypeTest extends \PHPUnit_Framework_TestCase
+class QuoteProductCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var QuoteProductCollectionType
@@ -19,6 +22,7 @@ class QuoteProductCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDefaultOptions()
     {
+        /* @var $resolder \Mock|OptionsResolverInterface */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')

@@ -25,13 +25,13 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
             'products'  => [
                 LoadProductData::PRODUCT1 => [
                     [
-                        'quantity'     => 1,
+                        'quantity'  => 1,
                         'unit'      => LoadProductData::UNIT1,
                         'price'     => 1,
                         'currency'  => LoadProductData::CURRENCY1,
                     ],
                     [
-                        'quantity'     => 2,
+                        'quantity'  => 2,
                         'unit'      => LoadProductData::UNIT2,
                         'price'     => 2,
                         'currency'  => LoadProductData::CURRENCY1,
@@ -39,7 +39,7 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
                 ],
                 LoadProductData::PRODUCT2 => [
                     [
-                        'quantity'     => 3,
+                        'quantity'  => 3,
                         'unit'      => LoadProductData::UNIT3,
                         'price'     => 3,
                         'currency'  => LoadProductData::CURRENCY1,
@@ -50,8 +50,7 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
         ],
         [
             'qid'       => self::QUOTE2,
-            'products'  => [
-            ],
+            'products'  => [],
         ],
     ];
 
