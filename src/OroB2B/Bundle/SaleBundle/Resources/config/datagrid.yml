@@ -69,7 +69,6 @@ datagrid:
         filters:
             columns:
                 id:
-                    #type:      numeric
                     type:      string
                     data_name: quote.id
                 qid:

@@ -20,10 +20,6 @@ class QuoteType extends AbstractType
         $builder
             ->add('qid', 'hidden')
             ->add('owner', null, [
-            //->add('owner', 'entity', [
-            //->add('owner', 'oro_entity_create_or_select', [
-            //->add('owner', 'oro_entity_create_or_select_inline', [
-                //'class'     => 'OroUserBundle:User',
                 'label'     => 'orob2b.sale.quote.owner.label',
                 'required'  => true,
             ])
