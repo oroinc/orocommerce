@@ -13,6 +13,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 /**
  * @dbIsolation
@@ -116,13 +117,17 @@ class ProductPriceResetStrategyTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+
         $price = Price::create(1.2, 'USD');
         $newProductPrice = new ProductPrice();
         $newProductPrice
             ->setPriceList($priceList)
             ->setProduct($product)
             ->setQuantity(1)
-            ->setPrice($price);
+            ->setPrice($price)
+            ->setUnit($unit);
 
         return $newProductPrice;
     }
