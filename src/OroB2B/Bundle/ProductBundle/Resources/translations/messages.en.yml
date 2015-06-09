@@ -10,7 +10,6 @@ orob2b:
         organization.label: Organization
         in_category.label: In category
         unit_precisions.label: Unit Precisions
-        prices.label: Prices
         form.choose: 'Choose Product...'
 
         productunit:
@@ -46,7 +45,7 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            catalog: Master catalog
+            catalog: Master Catalog
 
         widgets:
             product_information: Product Information

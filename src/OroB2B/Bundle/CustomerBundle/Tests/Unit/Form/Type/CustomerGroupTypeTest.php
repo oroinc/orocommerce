@@ -6,7 +6,6 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 
