@@ -29,6 +29,7 @@ class ProductPriceWriterTest extends WebTestCase
         $contextRegistry = $this->getContainer()->get('oro_importexport.context_registry');
         $context = $contextRegistry->getByStepExecution($stepExecution);
         $context->setValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH, [md5('hash1'), md5('hash2')]);
+        $this->assertNotEmpty($context->getValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH));
 
         /** @var ProductPriceWriter $writer */
         $writer = $this->getContainer()->get('orob2b_pricing.importexport.writer.product_price');
