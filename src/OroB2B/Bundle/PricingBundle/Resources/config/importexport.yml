@@ -25,7 +25,7 @@ services:
 
     orob2b_pricing.importexport.strategy.product_price.reset:
         class: %orob2b_pricing.importexport.strategy.product_price.reset.class%
-        parent: oro_importexport.strategy.configurable_add_or_replace
+        parent: orob2b_pricing.importexport.strategy.product_price.add_or_replace
 
     # Template Fixture
     orob2b_pricing.importexport.template_fixture.product_price:
