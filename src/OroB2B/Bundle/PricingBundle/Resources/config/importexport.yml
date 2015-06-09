@@ -20,6 +20,8 @@ services:
     orob2b_pricing.importexport.strategy.product_price.add_or_replace:
         class: %orob2b_pricing.importexport.strategy.product_price.add_or_replace.class%
         parent: oro_importexport.strategy.configurable_add_or_replace
+        calls:
+            - [setTranslator, [@translator]]
 
     orob2b_pricing.importexport.strategy.product_price.reset:
         class: %orob2b_pricing.importexport.strategy.product_price.reset.class%
