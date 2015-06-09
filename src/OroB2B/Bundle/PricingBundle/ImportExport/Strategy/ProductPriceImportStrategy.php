@@ -68,18 +68,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
             $hash = $this->getEntityHashByUniqueFields($entity);
 
             if (!empty($processedEntities[$hash])) {
-                $this->context->incrementErrorEntriesCount();
-                $uniqueConstraint = new UniqueProductPrices();
-                $this->strategyHelper->addValidationErrors(
-                    [
-                        $this->translator->trans(
-                            $uniqueConstraint->message,
-                            [],
-                            'validators'
-                        )
-                    ],
-                    $this->context
-                );
+                $this->addEntityUniquenessViolation($entity);
 
                 $validatedEntity = null;
             } else {
@@ -109,5 +98,32 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
                 ]
             )
         );
+    }
+
+    /**
+     * @param ProductPrice $entity
+     */
+    protected function addEntityUniquenessViolation(ProductPrice $entity)
+    {
+        $uniqueConstraint = new UniqueProductPrices();
+
+        $this->context->incrementErrorEntriesCount();
+        $this->strategyHelper->addValidationErrors(
+            [
+                $this->translator->trans(
+                    $uniqueConstraint->message,
+                    [],
+                    'validators'
+                )
+            ],
+            $this->context
+        );
+
+        $identifier = $this->databaseHelper->getIdentifier($entity);
+        if ($identifier) {
+            $this->context->incrementReplaceCount(-1);
+        } else {
+            $this->context->incrementAddCount(-1);
+        }
     }
 }
