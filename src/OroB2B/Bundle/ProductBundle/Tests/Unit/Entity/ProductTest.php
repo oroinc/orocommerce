@@ -7,7 +7,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -112,54 +111,5 @@ class ProductTest extends EntityTestCase
         $product->addUnitPrecision($unitPrecision);
 
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
-    }
-
-    public function testPriceRelation()
-    {
-        $price = new ProductPrice();
-        $price->setQuantity(12);
-
-        $product = new Product();
-        $product->setSku('test');
-
-        $this->assertCount(0, $product->getPrices());
-
-        // Add new ProductUnitPrecision
-        $this->assertSame($product, $product->addPrice($price));
-        $this->assertCount(1, $product->getPrices());
-        $this->assertEquals($product, $price->getProduct());
-        $this->assertEquals($product->getSku(), $price->getProductSku());
-
-        $actual = $product->getPrices();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
-        $this->assertEquals([$price], $actual->toArray());
-
-        // Add already added ProductUnitPrecision
-        $this->assertSame($product, $product->addPrice($price));
-        $this->assertCount(1, $product->getPrices());
-
-        // Remove ProductUnitPrecision
-        $this->assertSame($product, $product->removePrice($price));
-        $this->assertCount(0, $product->getPrices());
-
-        $actual = $product->getPrices();
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
-        $this->assertNotContains($price, $actual->toArray());
-    }
-
-    public function testSetSku()
-    {
-        $originalSku = 'original';
-        $alteredSku = 'altered';
-
-        $price = new ProductPrice();
-
-        $product = new Product();
-        $product->setSku($originalSku)
-            ->addPrice($price);
-        $this->assertEquals($originalSku, $price->getProductSku());
-
-        $product->setSku($alteredSku);
-        $this->assertEquals($alteredSku, $price->getProductSku());
     }
 }

@@ -36,7 +36,7 @@
             'widget' : {
                 'type' : 'dialog',
                 'multiple' : true,
-                'reload-grid-name' : 'pricing-product-price-grid',
+                'reload-grid-name' : 'price-list-product-prices-grid',
                 'options' : {
                     'alias': 'add-product-price-dialog',
                     'dialogOptions' : {
@@ -98,7 +98,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('pricing-product-price-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-product-prices-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
@@ -143,7 +143,7 @@
         }
     ]) %}
 
-    {% set id = 'pricingView' %}
+    {% set id = 'price-list-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
     {{ parent() }}

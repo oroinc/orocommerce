@@ -36,6 +36,41 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->getRepository('OroB2BPricingBundle:ProductPrice');
     }
 
+    /**
+     * @param string $productReference
+     * @param array $priceReferences
+     * @dataProvider getPricesByProductDataProvider
+     */
+    public function testGetPricesByProduct($productReference, array $priceReferences)
+    {
+        /** @var Product $product */
+        $product = $this->getReference($productReference);
+
+        $expectedPrices = [];
+        foreach ($priceReferences as $priceReference) {
+            $expectedPrices[] = $this->getReference($priceReference);
+        }
+
+        $this->assertEquals($expectedPrices, $this->repository->getPricesByProduct($product));
+    }
+
+    /**
+     * @return array
+     */
+    public function getPricesByProductDataProvider()
+    {
+        return [
+            'first product' => [
+                'productReference' => 'product.1',
+                'priceReferences' => ['product_price.1', 'product_price.2', 'product_price.6'],
+            ],
+            'second product' => [
+                'productReference' => 'product.2',
+                'priceReferences' => ['product_price.3', 'product_price.4', 'product_price.5'],
+            ],
+        ];
+    }
+
     public function testDeleteByProductUnit()
     {
         /** @var Product $product */

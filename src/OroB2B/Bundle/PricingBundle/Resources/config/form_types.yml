@@ -7,6 +7,7 @@ parameters:
 
     orob2b_pricing.form.extension.customer_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerFormExtension
     orob2b_pricing.form.extension.customer_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension
+    orob2b_pricing.form.extension.product_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension
 
 services:
     orob2b_pricing.form.type.price_list:
@@ -37,6 +38,9 @@ services:
 
     orob2b_pricing.form.type.price_list_product_price:
         class: %orob2b_pricing.form.type.price_list_product_price.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.service.rounding
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:
@@ -55,3 +59,11 @@ services:
             - @doctrine
         tags:
             - { name: form.type_extension, alias: orob2b_customer_group_type }
+
+    orob2b_pricing.form.extension.product_type:
+        class: %orob2b_pricing.form.extension.product_type.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.service.rounding
+        tags:
+            - { name: form.type_extension, alias: orob2b_product }
