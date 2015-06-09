@@ -6,6 +6,7 @@ orob2b:
         id.label: Id
         number.label: Number
         owner.label: Owner
+        organization.label: Organization
 
         menu:
             sales_tab.label: Sales

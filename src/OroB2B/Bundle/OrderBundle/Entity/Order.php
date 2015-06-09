@@ -6,12 +6,15 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use OroB2B\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
+use OroB2B\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 
 /**
- * @ORM\Table(name="orob2b_order")
+ * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="created_at_index", columns={"created_at"})})
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_order_index",
@@ -23,7 +26,9 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *          "ownership"={
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id"
+ *              "owner_column_name"="user_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -36,7 +41,7 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Order extends ExtendOrder
+class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
      * @ORM\Id
@@ -101,6 +106,14 @@ class Order extends ExtendOrder
      * )
      */
     protected $owner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     /**
      * @return int
@@ -188,6 +201,26 @@ class Order extends ExtendOrder
         $this->owner = $owningUser;
 
         return $this;
+    }
+
+    /**
+     * @param OrganizationInterface $organization
+     *
+     * @return Order
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return OrganizationInterface
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 
     /**

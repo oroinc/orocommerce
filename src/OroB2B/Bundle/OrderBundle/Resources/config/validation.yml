@@ -9,3 +9,5 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
                 max: 255
         owner:
             - NotBlank: ~
+        organization:
+            - NotBlank: ~
