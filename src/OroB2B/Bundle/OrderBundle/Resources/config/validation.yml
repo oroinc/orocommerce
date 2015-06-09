@@ -1,0 +1,11 @@
+OroB2B\Bundle\OrderBundle\Entity\Order:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: number
+    properties:
+        number:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+        owner:
+            - NotBlank: ~
