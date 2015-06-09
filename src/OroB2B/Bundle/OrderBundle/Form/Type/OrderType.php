@@ -8,6 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class OrderType extends AbstractType
 {
+    const NAME = 'orob2b_order_type';
+
     /**
      * @param FormBuilderInterface $builder
      * @param array $options
@@ -26,7 +28,6 @@ class OrderType extends AbstractType
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
             'intention' => 'order',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 
@@ -35,6 +36,6 @@ class OrderType extends AbstractType
      */
     public function getName()
     {
-        return 'orob2b_order';
+        return self::NAME;
     }
 }

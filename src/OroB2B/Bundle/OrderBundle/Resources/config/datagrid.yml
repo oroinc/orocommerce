@@ -29,8 +29,7 @@ datagrid:
             view_link:
                 type:  url
                 route: orob2b_order_view
-                params:
-                    - id
+                params: [ id ]
             update_link:
                 type: url
                 route: orob2b_order_update

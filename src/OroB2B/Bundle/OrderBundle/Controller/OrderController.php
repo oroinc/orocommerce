@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -114,7 +115,7 @@ class OrderController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
-            $this->get('orob2b_order.form.order'),
+            $this->createForm(OrderType::NAME, $order),
             function (Order $order) {
                 return array(
                     'route'      => 'orob2b_order_update',
@@ -127,8 +128,7 @@ class OrderController extends Controller
                     'parameters' => array('id' => $order->getId())
                 );
             },
-            $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            $this->get('orob2b_order.form.handler.order')
+            $this->get('translator')->trans('orob2b.order.controller.order.saved.message')
         );
     }
 }

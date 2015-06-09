@@ -1,23 +1,8 @@
 parameters:
     orob2b_order.order.class: OroB2B\Bundle\OrderBundle\Entity\Order
-    orob2b_order.form.handler.order.class: OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
-    orob2b_order.form.order:
-        class: Symfony\Component\Form\Form
-        factory_method: createNamed
-        factory_service: form.factory
-        arguments: ["orob2b_order_form", "orob2b_order"]
-
-    orob2b_order.form.handler.order:
-        class: %orob2b_order.form.handler.order.class%
-        scope: request
-        arguments:
-            - @orob2b_order.form.order
-            - @request
-            - @doctrine.orm.entity_manager
-
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
