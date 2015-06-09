@@ -56,7 +56,7 @@ class ProductPrice
     /**
      * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product", inversedBy="prices")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
@@ -122,7 +122,7 @@ class ProductPrice
     /**
      * @var float
      *
-     * @ORM\Column(name="value", type="float")
+     * @ORM\Column(name="value", type="money")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={

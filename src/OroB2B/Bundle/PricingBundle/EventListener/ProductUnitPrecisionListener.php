@@ -29,7 +29,7 @@ class ProductUnitPrecisionListener
     /**
      * @param LifecycleEventArgs $event
      */
-    public function preRemove(LifecycleEventArgs $event)
+    public function postRemove(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
 

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -52,5 +53,18 @@ class ProductPriceRepository extends EntityRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @param Product $product
+     * @return ProductPrice[]
+     */
+    public function getPricesByProduct(Product $product)
+    {
+        return $this->createQueryBuilder('price')
+            ->andWhere('price.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->getResult();
     }
 }

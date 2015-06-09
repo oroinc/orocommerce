@@ -14,7 +14,6 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
@@ -149,24 +148,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $unitPrecisions;
 
-    /**
-     * @var Collection|ProductPrice[]
-     *
-     * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\ProductPrice",
-     *      mappedBy="product",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
-     * )
-     **/
-    protected $prices;
-
     public function __construct()
     {
         parent::__construct();
 
         $this->unitPrecisions = new ArrayCollection();
-        $this->prices = new ArrayCollection();
     }
 
     /**
@@ -192,11 +178,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function setSku($sku)
     {
         $this->sku = $sku;
-
-        // refresh product SKU
-        foreach ($this->prices as $price) {
-            $price->setProduct($this);
-        }
 
         return $this;
     }
@@ -375,41 +356,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         }
 
         return $result;
-    }
-
-    /**
-     * @param ProductPrice $price
-     * @return Product
-     */
-    public function addPrice(ProductPrice $price)
-    {
-        if (!$this->prices->contains($price)) {
-            $price->setProduct($this);
-            $this->prices->add($price);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param ProductPrice $price
-     * @return Product
-     */
-    public function removePrice(ProductPrice $price)
-    {
-        if ($this->prices->contains($price)) {
-            $this->prices->removeElement($price);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection
-     */
-    public function getPrices()
-    {
-        return $this->prices;
     }
 
     /**

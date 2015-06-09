@@ -56,3 +56,9 @@ orob2b.pricing:
 
     form:
         choose_price_list: Choose a Price List...
+
+    grid:
+        action:
+            view:
+                price_list: View Price List
+                product: View Product

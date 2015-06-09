@@ -35,7 +35,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->setProductPriceClass($this->productPriceClass);
     }
 
-    public function testPreRemoveInvalidEntity()
+    public function testPostRemoveInvalidEntity()
     {
         $entity = new \stdClass();
         $event = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
@@ -50,10 +50,10 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
         $this->eventDispatcher->expects($this->never())
             ->method($this->anything());
 
-        $this->listener->preRemove($event);
+        $this->listener->postRemove($event);
     }
 
-    public function testPreRemove()
+    public function testPostRemove()
     {
         $entity = new ProductUnitPrecision();
         $product = new Product();
@@ -102,6 +102,6 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
                 $this->isInstanceOf('OroB2B\Bundle\PricingBundle\Event\ProductPricesRemoveAfter')
             );
 
-        $this->listener->preRemove($event);
+        $this->listener->postRemove($event);
     }
 }

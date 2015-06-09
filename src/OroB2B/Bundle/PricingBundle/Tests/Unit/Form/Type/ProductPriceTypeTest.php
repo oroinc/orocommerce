@@ -20,6 +20,8 @@ use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductPriceTypeTest extends FormIntegrationTestCase
 {
@@ -69,8 +71,8 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     {
         $entityType = new EntityType(
             [
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
-                $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
+                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2)
             ]
         );
 
@@ -95,19 +97,29 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $defaultData
+     * @param ProductPrice $defaultData
      * @param $submittedData
-     * @param $expectedData
+     * @param ProductPrice $expectedData
+     * @param array $expectedOptions
      * @dataProvider submitProvider
      */
     public function testSubmit(
-        $defaultData,
+        ProductPrice $defaultData,
         $submittedData,
-        $expectedData
+        ProductPrice $expectedData,
+        array $expectedOptions = null
     ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
+
+        if ($expectedOptions) {
+            $quantityConfig = $form->get('quantity')->getConfig();
+            foreach ($expectedOptions as $key => $value) {
+                $this->assertTrue($quantityConfig->hasOption($key));
+                $this->assertEquals($value, $quantityConfig->getOption($key));
+            }
+        }
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -119,6 +131,26 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
+        $product = new Product();
+        $product->setSku('sku_test_001');
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit((new ProductUnit())->setCode('kg'));
+        $productUnitPrecision->setPrecision(5);
+        $existingUnit = (new ProductUnit())->setCode('kg');
+        $existingPrice = (new Price())->setValue(42)->setCurrency('USD');
+
+        $product->addUnitPrecision($productUnitPrecision);
+
+        /** @var PriceList $existingProductPriceList */
+        $existingProductPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
+        $existingProductPrice = new ProductPrice();
+        $existingProductPrice
+            ->setProduct($product)
+            ->setPriceList($existingProductPriceList)
+            ->setQuantity(123)
+            ->setUnit($existingUnit)
+            ->setPrice($existingPrice);
+
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
         $expectedUnit = (new ProductUnit())->setCode('kg');
@@ -131,16 +163,14 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setUnit($expectedUnit)
             ->setPrice($expectedPrice);
 
+        $updatedExpectedProductPrice = clone($expectedProductPrice);
+        $updatedExpectedProductPrice->setProduct($product);
+
         return [
-            'product price without data' => [
-                'defaultData'   => new ProductPrice(),
-                'submittedData' => [],
-                'expectedData'  => new ProductPrice()
-            ],
             'product price with data' => [
                 'defaultData'   => new ProductPrice(),
                 'submittedData' => [
-                    'priceList' => 1,
+                    'priceList' => 2,
                     'quantity'  => 123,
                     'unit'      => 'kg',
                     'price'     => [
@@ -149,8 +179,23 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => $expectedProductPrice
+            ],
+            'product price with precision' => [
+                'defaultData'   => $existingProductPrice,
+                'submittedData' => [
+                    'priceList' => 2,
+                    'quantity'  => 123,
+                    'unit'      => 'kg',
+                    'price'     => [
+                        'value'    => 42,
+                        'currency' => 'USD'
+                    ]
+                ],
+                'expectedData' => $updatedExpectedProductPrice,
+                'expectedOptions' => [
+                    'precision' => 5
+                ]
             ]
-
         ];
     }
 
