@@ -10,6 +10,8 @@ parameters:
     # Template Fixture
     orob2b_pricing.importexport.template_fixture.product_price.class: OroB2B\Bundle\PricingBundle\ImportExport\TemplateFixture\PriceListFixture
 
+    # Writer
+    orob2b_pricing.importexport.writer.product_price.class: OroB2B\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter
 services:
     # Converter
     orob2b_pricing.importexport.data_converter.product_price:
@@ -72,3 +74,8 @@ services:
             - [setDataConverter, [@orob2b_pricing.importexport.data_converter.product_price]]
         tags:
             - { name: oro_importexport.processor, type: export_template, entity: %orob2b_pricing.entity.product_price.class%, alias: orob2b_pricing_product_price }
+
+    # Writer
+    orob2b_pricing.importexport.writer.product_price:
+        class: %orob2b_pricing.importexport.writer.product_price.class%
+        parent: oro_integration.writer.persistent_batch_writer
