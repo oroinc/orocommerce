@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -30,6 +31,38 @@ class ProductPriceRepository extends EntityRepository
             ->setParameter('product', $product);
 
         $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    public function deleteByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('productPrice');
+
+        $qb
+            ->delete()
+            ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param PriceList $priceList
+     *
+     * @return int
+     */
+    public function countByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('productPrice');
+
+        return (int)$qb
+            ->select($qb->expr()->count('productPrice.id'))
+            ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
     /**
