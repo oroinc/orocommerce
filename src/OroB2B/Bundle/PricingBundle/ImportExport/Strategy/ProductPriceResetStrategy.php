@@ -24,6 +24,11 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
             $priceList = $entity->getPriceList();
             $identifier = $this->databaseHelper->getIdentifier($priceList);
             if ($identifier && empty($this->processedPriceLists[$identifier])) {
+                $recordsToDelete = $this->getProductPriceRepository()->countByPriceList($priceList);
+                if ($recordsToDelete) {
+                    $this->context->incrementDeleteCount($recordsToDelete);
+                }
+
                 $this->getProductPriceRepository()->deleteByPriceList($priceList);
 
                 $this->processedPriceLists[$identifier] = true;

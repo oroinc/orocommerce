@@ -116,6 +116,17 @@ class ProductPriceRepositoryTest extends WebTestCase
         );
     }
 
+    public function testCountByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $this->assertCount(
+            $this->repository->countByPriceList($priceList),
+            $this->repository->findBy(['priceList' => $priceList->getId()])
+        );
+    }
+
     public function testDeleteByPriceList()
     {
         /** @var PriceList $priceList */

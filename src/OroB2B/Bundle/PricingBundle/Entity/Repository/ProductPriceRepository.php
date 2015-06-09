@@ -48,6 +48,23 @@ class ProductPriceRepository extends EntityRepository
     }
 
     /**
+     * @param PriceList $priceList
+     *
+     * @return int
+     */
+    public function countByPriceList(PriceList $priceList)
+    {
+        $qb = $this->createQueryBuilder('productPrice');
+
+        return (int)$qb
+            ->select($qb->expr()->count('productPrice.id'))
+            ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
+            ->setParameter('priceList', $priceList)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
      * @return array
      */
     public function getAvailableCurrencies()
