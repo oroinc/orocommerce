@@ -85,8 +85,46 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $price->setUnit($unit);
 
         $this->context->expects($this->once())
-            ->method('addViolation')
-            ->with($this->constraint->message);
+            ->method('addViolationAt')
+            ->with('price.unit', $this->constraint->notAllowedUnitMessage);
+
+        $this->validator->validate($price, $this->constraint);
+    }
+
+    public function testValidateNotExistingUnit()
+    {
+        $price = $this->getProductPrice();
+
+        // Set null to product unit
+        $class = new \ReflectionClass($price);
+        $prop  = $class->getProperty('unit');
+        $prop->setAccessible(true);
+        $prop->setValue($price, null);
+
+        $this->context->expects($this->once())
+            ->method('addViolationAt')
+            ->with('price.unit', $this->constraint->notExistingUnitMessage);
+
+        $this->validator->validate($price, $this->constraint);
+    }
+
+    public function testValidateNotExistingProduct()
+    {
+        $price = $this->getProductPrice();
+
+        // Set null to product and productSku
+        $class = new \ReflectionClass($price);
+        $product  = $class->getProperty('product');
+        $product->setAccessible(true);
+        $product->setValue($price, null);
+
+        $productSku  = $class->getProperty('productSku');
+        $productSku->setAccessible(true);
+        $productSku->setValue($price, null);
+
+        $this->context->expects($this->once())
+            ->method('addViolationAt')
+            ->with('price.product', $this->constraint->notExistingProductMessage);
 
         $this->validator->validate($price, $this->constraint);
     }
