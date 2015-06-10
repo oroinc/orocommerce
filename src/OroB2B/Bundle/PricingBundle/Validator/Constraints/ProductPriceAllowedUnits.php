@@ -9,7 +9,7 @@ class ProductPriceAllowedUnits extends Constraint
     /**
      * @var string
      */
-    public $message = 'Unit "%unit%" is not allowed for product "%product%".';
+    public $message = 'orob2b.pricing.validators.product_price.not_allowed_unit.message';
 
     /**
      * {@inheritDoc}

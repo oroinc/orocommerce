@@ -91,6 +91,22 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($price, $this->constraint);
     }
 
+    public function testValidateNotExistingUnit()
+    {
+        $price = $this->getProductPrice();
+
+        // Set null to product unit
+        $class = new \ReflectionClass($price);
+        $prop  = $class->getProperty('unit');
+        $prop->setAccessible(true);
+        $prop->setValue($price, null);
+
+        $this->context->expects($this->once())
+            ->method('addViolation');
+
+        $this->validator->validate($price, $this->constraint);
+    }
+
     /**
      * @return ProductPrice
      */
