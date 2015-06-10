@@ -31,3 +31,16 @@ services:
             - @oro_config.global
             - @oro_email.email_renderer
             - @oro_email.direct_mailer
+
+    orob2b_user.manager:
+        class: %oro_user.manager.class%
+        arguments:
+            - %orob2b_user_admin.user.entity.class%
+            - @doctrine.orm.entity_manager
+            - @security.encoder_factory
+
+    orob2b_user.security.provider:
+        class: %oro_user.security.provider.class%
+        public: false
+        arguments:
+            - @orob2b_user.manager

@@ -1,3 +1,13 @@
+orob2b_user_admin_user_security:
+    resource: "@OroB2BUserAdminBundle/Controller/SecurityController.php"
+    type: annotation
+    prefix: /frontend/user
+
+orob2b_user_admin_test:
+    resource: "@OroB2BUserAdminBundle/Controller/TestController.php"
+    type: annotation
+    prefix: /frontend/test
+
 orob2b_user_admin_user:
     resource: "@OroB2BUserAdminBundle/Controller/UserController.php"
     type: annotation
