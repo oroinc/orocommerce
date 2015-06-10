@@ -102,7 +102,30 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
         $prop->setValue($price, null);
 
         $this->context->expects($this->once())
-            ->method('addViolation');
+            ->method('addViolation')
+            ->with('orob2b.pricing.validators.product_price.not_existing_unit.message');
+
+        $this->validator->validate($price, $this->constraint);
+    }
+
+
+    public function testValidateNotExistingProduct()
+    {
+        $price = $this->getProductPrice();
+
+        // Set null to product and productSku
+        $class = new \ReflectionClass($price);
+        $product  = $class->getProperty('product');
+        $product->setAccessible(true);
+        $product->setValue($price, null);
+
+        $productSku  = $class->getProperty('productSku');
+        $productSku->setAccessible(true);
+        $productSku->setValue($price, null);
+
+        $this->context->expects($this->once())
+            ->method('addViolation')
+            ->with('orob2b.pricing.validators.product_price.not_existing_product.message');
 
         $this->validator->validate($price, $this->constraint);
     }

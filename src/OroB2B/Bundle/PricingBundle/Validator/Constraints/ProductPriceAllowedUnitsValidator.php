@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
@@ -12,14 +11,6 @@ use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 class ProductPriceAllowedUnitsValidator extends ConstraintValidator
 {
     /**
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
@@ -27,6 +18,14 @@ class ProductPriceAllowedUnitsValidator extends ConstraintValidator
         /** @var ProductPrice $value */
         $priceProduct = $value->getProduct();
         $priceUnit = $value->getUnit();
+
+        if (!$priceProduct) {
+            $this->context->addViolation(
+                'orob2b.pricing.validators.product_price.not_existing_product.message'
+            );
+
+            return;
+        }
 
         $unitPrecisions = $priceProduct->getUnitPrecisions();
         $availableUnits = [];

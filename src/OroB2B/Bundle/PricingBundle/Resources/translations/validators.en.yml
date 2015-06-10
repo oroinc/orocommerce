@@ -5,4 +5,5 @@ orob2b:
                   unique_entity.message: 'Product has duplication of product prices. Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
                   currency.message: Currency %invalidCurrency% is not valid for current price list
                   not_allowed_unit.message: 'Unit "%unit%" is not allowed for product "%product%".'
+                  not_existing_product.message: Product is not exist
                   not_existing_unit.message: Product unit is not exist
