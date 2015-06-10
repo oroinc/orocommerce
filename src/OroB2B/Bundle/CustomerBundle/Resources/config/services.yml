@@ -61,7 +61,7 @@ services:
     orob2b_customer.event_listener.route_collection:
         class: %orob2b_customer.event_listener.route_collection.class%
         arguments:
-            - %admin_prefix%
+            - %backend_prefix%
         tags:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true
