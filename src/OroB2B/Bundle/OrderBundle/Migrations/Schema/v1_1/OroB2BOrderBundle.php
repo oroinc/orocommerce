@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\MigrationBundle\Migration\Migration;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 class OroB2BOrderBundle implements Migration, NoteExtensionAwareInterface
 {
