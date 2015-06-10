@@ -68,29 +68,31 @@ class ProductPriceCurrencyValidatorTest extends \PHPUnit_Framework_TestCase
     public function validateDataProvider()
     {
         return [
-            'valid' => [$this->getProductPrice('EUR', ['USD', 'EUR'])],
-            'invalid' => [$this->getProductPrice('UAH', ['USD', 'EUR']), 'UAH']
+            'no price' => [$this->getProductPrice(['USD', 'EUR'])],
+            'valid price' => [$this->getProductPrice(['USD', 'EUR'], 'EUR')],
+            'invalid price' => [$this->getProductPrice(['USD', 'EUR'], 'UAH'), 'UAH']
         ];
     }
 
     /**
-     * @param string $currency
      * @param array $priceListCurrencies
+     * @param string|null $currency
      *
      * @return ProductPrice
      */
-    protected function getProductPrice($currency, array $priceListCurrencies)
+    protected function getProductPrice(array $priceListCurrencies, $currency = null)
     {
         $priceList = new PriceList();
         $priceList->setCurrencies($priceListCurrencies);
 
-        $price = new Price();
-        $price->setCurrency($currency);
-
         $productPrice = new ProductPrice();
-        $productPrice
-            ->setPriceList($priceList)
-            ->setPrice($price);
+        $productPrice->setPriceList($priceList);
+
+        if ($currency) {
+            $price = new Price();
+            $price->setCurrency($currency);
+            $productPrice->setPrice($price);
+        }
 
         return $productPrice;
     }
