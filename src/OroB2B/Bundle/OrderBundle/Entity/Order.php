@@ -253,7 +253,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function postPersist(LifecycleEventArgs $event)
     {
         $entity = $event->getObject();
-        $entity->setIdentifier($entity->getId());
-        $event->getEntityManager()->persist($entity);
+        $this->setIdentifier($entity->getId());
     }
 }
