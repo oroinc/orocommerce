@@ -16,8 +16,6 @@ class OrderType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('number', 'text', ['required' => true, 'label' => 'orob2b.order.number.label']);
     }
 
     /**

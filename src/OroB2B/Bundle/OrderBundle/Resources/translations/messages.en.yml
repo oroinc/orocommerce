@@ -3,8 +3,8 @@ orob2b:
         entity_label: Order
         entity_plural_label: Orders
         entity_description: Represents order information
-        id.label: Id
-        number.label: Number
+        id.label: Numeric ID
+        identifier.label: ID
         owner.label: Owner
         organization.label: Organization
 

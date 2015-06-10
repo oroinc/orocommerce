@@ -1,6 +1,6 @@
 OroB2B\Bundle\OrderBundle\Entity\Order:
     alias:                          orob2b_order
-    title_fields:                   [number]
+    title_fields:                   [identifier]
     route:
         name:                       orob2b_order_view
         parameters:
@@ -8,6 +8,6 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
     search_template:                OroB2BOrderBundle:Order:searchResult.html.twig
     fields:
         -
-            name:                   number
+            name:                   identifier
             target_type:            text
-            target_fields:          [number]
+            target_fields:          [identifier]

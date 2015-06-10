@@ -41,6 +41,6 @@ oro_menu_config:
 
 oro_titles:
     orob2b_order_index: ~
-    orob2b_order_view:   '%%number%%'
-    orob2b_order_update: '%%number%% - Edit'
+    orob2b_order_view:   '%%identifier%%'
+    orob2b_order_update: '%%identifier%% - Edit'
     orob2b_order_create: 'Create Order'

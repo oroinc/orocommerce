@@ -34,11 +34,11 @@ class OroB2BOrderBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('number', 'string', ['length' => 255]);
+        $table->addColumn('identifier', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['number'], 'UNIQ_C036FF9096901F54');
+        $table->addUniqueIndex(['identifier'], 'UNIQ_C036FF9096901F54');
         $table->addIndex(['user_owner_id'], 'IDX_C036FF909EB185F9');
         $table->addIndex(['organization_id'], 'IDX_C036FF9032C8A3DE');
         $table->addIndex(['created_at'], 'created_at_index');

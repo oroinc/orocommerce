@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -53,7 +54,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -62,7 +63,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      *      }
      * )
      */
-    protected $number;
+    protected $identifier;
 
     /**
      * @var \DateTime $createdAt
@@ -126,19 +127,19 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @return string
      */
-    public function getNumber()
+    public function getIdentifier()
     {
-        return $this->number;
+        return $this->identifier;
     }
 
     /**
-     * @param string $number
+     * @param string $identifier
      *
      * @return Order
      */
-    public function setNumber($number)
+    public function setIdentifier($identifier)
     {
-        $this->number = $number;
+        $this->identifier = $identifier;
 
         return $this;
     }
@@ -242,5 +243,17 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @param LifecycleEventArgs $event
+     *
+     * @ORM\PostPersist
+     */
+    public function postPersist(LifecycleEventArgs $event)
+    {
+        $entity = $event->getObject();
+        $entity->setIdentifier($entity->getId());
+        $event->getEntityManager()->persist($entity);
     }
 }
