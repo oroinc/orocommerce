@@ -36,11 +36,36 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      */
     protected function beforeProcessEntity($entity)
     {
-        $entity->loadPrice();
+        $this->refreshPrice($entity);
 
         $this->loadProduct($entity);
 
         return parent::beforeProcessEntity($entity);
+    }
+
+    /**
+     * @param ProductPrice $entity
+     * @return ProductPrice
+     */
+    protected function afterProcessEntity($entity)
+    {
+        $this->refreshPrice($entity);
+
+        return parent::afterProcessEntity($entity);
+    }
+
+    /**
+     * @param ProductPrice $entity
+     */
+    protected function refreshPrice(ProductPrice $entity)
+    {
+        $value = $this->fieldHelper->getObjectValue($entity, 'value');
+        $currency = $this->fieldHelper->getObjectValue($entity, 'currency');
+        if ($value && $currency) {
+            $entity->loadPrice();
+        } else {
+            $this->fieldHelper->setObjectValue($entity, 'price', null);
+        }
     }
 
     /**
@@ -51,7 +76,12 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
         if ($entity->getProduct()) {
             /** @var Product $product */
             $product = $this->findExistingEntity($entity->getProduct());
-            $entity->setProduct($product);
+            if ($product) {
+                $entity->setProduct($product);
+            } else {
+                $this->fieldHelper->setObjectValue($entity, 'product', null);
+                $this->fieldHelper->setObjectValue($entity, 'productSku', null);
+            }
         }
     }
 
@@ -63,7 +93,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      */
     protected function validateAndUpdateContext($entity)
     {
-        $validatedEntity =  parent::validateAndUpdateContext($entity);
+        $validatedEntity = parent::validateAndUpdateContext($entity);
 
         if (null !== $validatedEntity) {
             $processedEntities = (array)$this->context->getValue(self::PROCESSED_ENTITIES_HASH);
