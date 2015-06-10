@@ -23,7 +23,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'default' => false,
             'customers' => [],
             'groups' => ['customer_group.group1'],
-            'websites' => ['US']
+            'websites' => ['US'],
+            'currencies' => ['USD', 'EUR', 'AUD', 'CAD']
         ],
         [
             'name' => 'priceList2',
@@ -31,7 +32,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'default' => false,
             'customers' => ['customer.level_1.2'],
             'groups' => [],
-            'websites' => []
+            'websites' => [],
+            'currencies' => ['USD']
         ],
         [
             'name' => 'priceList3',
@@ -39,7 +41,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'default' => true,
             'customers' => ['customer.orphan'],
             'groups' => [],
-            'websites' => ['Canada']
+            'websites' => ['Canada'],
+            'currencies' => ['CAD']
         ],
         [
             'name' => 'priceList4',
@@ -47,7 +50,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'default' => false,
             'customers' => ['customer.level_1.1'],
             'groups' => ['customer_group.group2'],
-            'websites' => []
+            'websites' => [],
+            'currencies' => ['GBP']
         ],
         [
             'name' => 'priceList5',
@@ -55,7 +59,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'default' => false,
             'customers' => ['customer.level_1.1.1'],
             'groups' => ['customer_group.group3'],
-            'websites' => []
+            'websites' => [],
+            'currencies' => ['GBP', 'EUR']
         ]
     ];
 
@@ -95,6 +100,10 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 $website = $this->getReference($websiteReference);
 
                 $priceList->addWebsite($website);
+            }
+
+            foreach ($priceListData['currencies'] as $currencyCode) {
+                $priceList->addCurrencyByCode($currencyCode);
             }
 
             $manager->persist($priceList);
