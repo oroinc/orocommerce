@@ -142,7 +142,7 @@ class User implements
      *
      * @ORM\Column(type="boolean")
      */
-    protected $enabled = true;
+    protected $enabled = false;
 
     /**
      * The salt to use for hashing
