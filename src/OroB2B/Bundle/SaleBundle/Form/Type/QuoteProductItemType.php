@@ -25,11 +25,11 @@ class QuoteProductItemType extends AbstractType
         $builder
             ->add('quantity', 'integer', [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label'
+                'label'     => 'orob2b.sale.quoteproductitem.quantity.label'
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.price.label'
+                'label'     => 'orob2b.sale.quoteproductitem.price.label'
             ])
         ;
 
@@ -84,10 +84,12 @@ class QuoteProductItemType extends AbstractType
             $productUnit = $quoteProductItem->getProductUnit();
             if (!$productUnit || ($product && !in_array($productUnit->getCode(), $choices))) {
                 // ProductUnit was removed
-                $productUnitOptons['empty_value'] =  $quoteProductItem->getProductUnitCode() . ' - removed';
+                $productUnitOptons['empty_value'] = $quoteProductItem->getProductUnitCode() . ' - removed';
             }
         }
+
         $productUnitOptons['choices'] = $choices;
+
         $form->add(
             'productUnit',
             ProductUnitSelectionType::NAME,

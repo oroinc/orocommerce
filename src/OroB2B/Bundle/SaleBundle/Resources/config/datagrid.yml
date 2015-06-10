@@ -11,7 +11,7 @@ datagrid:
                 select:
                     - quote.id
                     - quote.qid
-                    - quoteOwner.username as owner
+                    - quoteOwner.username as ownerName
                     - quote.createdAt
                     - quote.updatedAt
                     - quote.validUntil
@@ -25,7 +25,7 @@ datagrid:
                 label:         orob2b.sale.quote.id.label
             qid:
                 label:         orob2b.sale.quote.qid.label
-            owner:
+            ownerName:
                 label:         orob2b.sale.quote.owner.label
             validUntil:
                 label:         orob2b.sale.quote.valid_until.label
@@ -56,8 +56,8 @@ datagrid:
                     data_name: quote.id
                 qid:
                     data_name: quote.qid
-                owner:
-                    data_name: quoteOwner.username
+                ownerName:
+                    data_name: ownerName
                 createdAt:
                     data_name: quote.createdAt
                 updatedAt:
@@ -69,23 +69,27 @@ datagrid:
         filters:
             columns:
                 id:
-                    type:      string
+                    type:      number
                     data_name: quote.id
                 qid:
                     type:      string
                     data_name: quote.qid
-                owner:
-                    type:      string
-                    data_name: quoteOwner.username
+                ownerName:
+                    type:      entity
+                    data_name: quote.owner
+                    options:
+                        field_options:
+                            class:      %oro_user.entity.class%
+                            multiple:   true
+                validUntil:
+                    type:      datetime
+                    data_name: quote.validUntil
                 createdAt:
                     type:      datetime
                     data_name: quote.createdAt
                 updatedAt:
                     type:      datetime
                     data_name: quote.updatedAt
-                validUntil:
-                    type:      datetime
-                    data_name: quote.validUntil
         actions:
             view:
                 type:          navigate

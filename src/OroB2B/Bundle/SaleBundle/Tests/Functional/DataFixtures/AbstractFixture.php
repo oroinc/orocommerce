@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 
 abstract class AbstractFixture extends DoctrineAbstractFixture implements ContainerAwareInterface
 {
@@ -32,18 +33,26 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
+        ];
+    }
+
+    /**
      * @param EntityManager $manager
      * @return User
      * @throws \LogicException
      */
     protected function getUser(EntityManager $manager)
     {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+        /* @var $user User */
+        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
+            'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL,
+        ]);
 
         if (!$user) {
             throw new \LogicException('There are no users in system');

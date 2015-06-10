@@ -42,57 +42,6 @@ class ProductController extends RestController implements ClassResourceInterface
     }
 
     /**
-     * Get available units for the product
-     *
-     * @Get("/products/{id}/units-available", requirements={
-     *     "id": "\d+"
-     * }))
-     *
-     * @ApiDoc(
-     *      description="Get available units for the product",
-     *      resource=true
-     * )
-     *
-     * @Acl(
-     *      id="orob2b_product_unit_view",
-     *      type="entity",
-     *      class="OroB2BProductBundle:ProductUnit",
-     *      permission="VIEW"
-     * )
-     *
-     * @param int $id
-     * @return Response
-     */
-    public function getAvailableUnitsAction($id)
-    {
-        /* @var $product Product */
-        $product = $this->getDoctrine()->getRepository('OroB2BProductBundle:Product')->find($id);
-        if (!$product) {
-            return $this->handleView(
-                $this->view(['successful' => false], Codes::HTTP_NOT_FOUND)
-            );
-        }
-        $data = [];
-        $codes = $product->getAvailableUnitCodes();
-        /* @var $translator Translator */
-        $translator = $this->get('translator');
-        foreach ($codes as $code) {
-            $label = 'orob2b.product_unit.' . $code . '.label.full';
-            $data[$code] = $translator->trans($label);
-        }
-
-        return $this->handleView(
-            $this->view(
-                [
-                    'successful' => true,
-                    'data' => $data
-                ],
-                Codes::HTTP_OK
-            )
-        );
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getManager()

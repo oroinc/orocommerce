@@ -8,7 +8,7 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
     properties:
         product:
             - NotBlank:
-                message: 'Please choose not removed Product'
+                message: 'orob2b.sale.quoteproduct.product.blank'
         quoteProductItems:
             - Valid:
                 traverse: true
@@ -22,7 +22,8 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.sale.quoteproductitem.product_unit.blank'
         price:
             - NotBlank: ~
             - Valid: ~

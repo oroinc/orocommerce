@@ -1,0 +1,9 @@
+orob2b:
+    sale:
+        quoteproduct:
+            product:
+                blank: 'Please choose not removed Product.'
+
+        quoteproductitem:
+            product_unit:
+                blank: 'Please choose not removed Unit.'

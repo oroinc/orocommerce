@@ -72,7 +72,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with('quantity', 'integer', [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.quantity.label',
+                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
             ])
             ->will($this->returnSelf())
         ;
@@ -81,7 +81,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with('price', PriceType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.price.label',
+                'label'     => 'orob2b.sale.quoteproductitem.price.label',
             ])
             ->will($this->returnSelf())
         ;

@@ -8,6 +8,7 @@ orob2b:
             qid.label: 'ID'
             owner.label: 'Owner'
             valid_until.label: 'Valid Until'
+            quote_products.label: 'Quote Products'
             
             sections:
                 general: 'General'
@@ -15,20 +16,30 @@ orob2b:
             widgets:
                 quote_information: 'Quote Information'
 
-            quoteproduct:
-                entity_label: 'Quote Product'
-                entity_plural_label: 'Quote Products'
-                add_label: 'Add Line Item'
+        quoteproduct:
+            entity_label: 'Quote Product'
+            entity_plural_label: 'Quote Products'
+            add_label: 'Add Line Item'
+            id.label: 'ID'
+            product.label: 'Product'
+            product_sku.label: 'Product SKU'
+            quote.label: 'Quote'
+            quote_product_items.label: 'Quote Product Lines'
 
-                quoteproductitem:
-                    item: '{units}, {price} per {unit}'
-                    entity_label: 'Quote Product Line'
-                    entity_plural_label: 'Quote Product Lines'
-                    add_label: 'Add Offer'
-                    quantity.label: 'Quantity'
-                    product_unit.label: 'Product Unit'
-                    price.label: 'Price'
-
+        quoteproductitem:
+            item: '{units}, {price} per {unit}'
+            entity_label: 'Quote Product Line'
+            entity_plural_label: 'Quote Product Lines'
+            add_label: 'Add Offer'
+            id.label: 'ID'
+            quantity.label: 'Quantity'
+            product_unit.label: 'Product Unit'
+            product_unit_code.label: 'Product Unit Code'
+            price.label: 'Price'
+            value.label: 'Price Value'
+            currency.label: 'Price Currency'
+            quote_product.label: 'Quote Product'
+                    
         controller:
             quote:
                 saved.message: 'Quote has been saved'

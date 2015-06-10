@@ -28,6 +28,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class QuoteProduct
 {
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -163,8 +165,10 @@ class QuoteProduct
      */
     public function addQuoteProductItem(QuoteProductItem $quoteProductItem)
     {
-        $this->quoteProductItems[] = $quoteProductItem;
-        $quoteProductItem->setQuoteProduct($this);
+        if (!$this->quoteProductItems->contains($quoteProductItem)) {
+            $this->quoteProductItems[] = $quoteProductItem;
+            $quoteProductItem->setQuoteProduct($this);
+        }
 
         return $this;
     }
@@ -173,10 +177,13 @@ class QuoteProduct
      * Remove quoteProductItem
      *
      * @param QuoteProductItem $quoteProductItem
+     * @return QuoteProduct
      */
     public function removeQuoteProductItem(QuoteProductItem $quoteProductItem)
     {
-        $this->quoteProductItems->removeElement($quoteProductItem);
+        if ($this->quoteProductItems->contains($quoteProductItem)) {
+            $this->quoteProductItems->removeElement($quoteProductItem);
+        }
 
         return $this;
     }

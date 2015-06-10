@@ -23,5 +23,5 @@ oro_menu_config:
 oro_titles:
     orob2b_sale_quote_index: ~
     orob2b_sale_quote_view:   '%%id%%'
-    orob2b_sale_quote_update: '%%id%% - Edit'
-    orob2b_sale_quote_create: 'Create Quote'
+    orob2b_sale_quote_update: '%%id%% - oro.ui.edit'
+    orob2b_sale_quote_create: 'oro.ui.create_entity'

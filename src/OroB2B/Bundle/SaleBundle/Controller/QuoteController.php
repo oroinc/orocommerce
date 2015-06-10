@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -105,7 +106,7 @@ class QuoteController extends Controller
      */
     protected function update(Quote $quote)
     {
-        /* @var $handler \Oro\Bundle\FormBundle\Model\UpdateHandler */
+        /* @var $handler UpdateHandler */
         $handler = $this->get('oro_form.model.update_handler');
         return $handler->handleUpdate(
             $quote,

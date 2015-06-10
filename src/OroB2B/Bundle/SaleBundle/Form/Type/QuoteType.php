@@ -19,7 +19,7 @@ class QuoteType extends AbstractType
     {
         $builder
             ->add('qid', 'hidden')
-            ->add('owner', null, [
+            ->add('owner', 'oro_user_select', [
                 'label'     => 'orob2b.sale.quote.owner.label',
                 'required'  => true,
             ])
@@ -31,8 +31,7 @@ class QuoteType extends AbstractType
                 'quoteProducts',
                 QuoteProductCollectionType::NAME,
                 [
-                    'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
-                    'add_label' => 'orob2b.sale.quote.quoteproduct.add_label',
+                    'add_label' => 'orob2b.sale.quoteproduct.add_label',
                     'required'  => false,
                 ]
             )
@@ -45,8 +44,8 @@ class QuoteType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
-            'intention' => 'sale_quote',
+            'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
+            'intention'     => 'sale_quote',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }

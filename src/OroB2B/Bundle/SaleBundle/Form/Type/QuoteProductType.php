@@ -28,8 +28,7 @@ class QuoteProductType extends AbstractType
                 'quoteProductItems',
                 QuoteProductItemCollectionType::NAME,
                 [
-                    'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
-                    'add_label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label',
+                    'add_label' => 'orob2b.sale.quoteproductitem.add_label',
                 ]
             )
         ;
@@ -44,7 +43,7 @@ class QuoteProductType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
             'intention'     => 'sale_quote_product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
 
@@ -74,7 +73,7 @@ class QuoteProductType extends AbstractType
                     [
                         'required'      => true,
                         'label'         => 'orob2b.product.entity_label',
-                        'empty_value'   => $quoteProduct->getProductSku() . ' - removed'
+                        'empty_value'   => $quoteProduct->getProductSku() . ' - removed',
                     ]
                 );
             }

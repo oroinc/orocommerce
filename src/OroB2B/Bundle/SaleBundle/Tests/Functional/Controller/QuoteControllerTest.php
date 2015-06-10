@@ -83,7 +83,7 @@ class QuoteControllerTest extends WebTestCase
         $id = $row['id'];
 
         $this->assertEquals(self::$qid, $row['qid']);
-        $this->assertEquals($owner->getUsername(), $row['owner']);
+        $this->assertEquals($owner->getUsername(), $row['ownerName']);
         $this->assertEquals(self::$validUntil, $row['validUntil']);
 
         return $id;
@@ -124,7 +124,7 @@ class QuoteControllerTest extends WebTestCase
         $row = reset($result['data']);
 
         $this->assertEquals(self::$qidUpdated, $row['qid']);
-        $this->assertEquals($owner->getUsername(), $row['owner']);
+        $this->assertEquals($owner->getUsername(), $row['ownerName']);
         $this->assertEquals(self::$validUntilUpdated, $row['validUntil']);
 
         return $id;

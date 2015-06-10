@@ -29,6 +29,8 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 class QuoteProductItem
 {
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -214,6 +216,8 @@ class QuoteProductItem
     public function setPrice(Price $price)
     {
         $this->price = $price;
+
+        $this->preSave();
 
         return $this;
     }

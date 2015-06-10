@@ -62,7 +62,7 @@ class QuoteExtension extends \Twig_Extension
         $unit   = $this->translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
 
         $str = $this->translator->trans(
-            'orob2b.sale.quote.quoteproduct.quoteproductitem.item',
+            'orob2b.sale.quoteproductitem.item',
             [
                 '{units}'   => $units,
                 '{price}'   => $price,

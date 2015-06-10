@@ -1,26 +1,21 @@
-{% block orob2b_sale_quote_product_widget %}
-    <div class="sale-quoteproduct-widget control-group">
-        {% if label is not sameas(false) %}
-            {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
-        {% endif %}
-        <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
-            {{ form_widget(form.product, {'attr': {'class': 'sale-quoteproduct-product-select'}}) }}
-            {{ form_errors(form.product) }}
-        </div>
-        <div class="sale-quoteproductitem-collection{% if errors|length > 0 %} validation-error{% endif %}">
-            {{ form_row(form.quoteProductItems) }}
-        </div>
-    </div>
-{% endblock %}
-
 {% block orob2b_sale_quote_product_collection_row %}
     <div class="sale-quoteproduct-collection">
         {{ form_widget(form) }}
     </div>
 {% endblock %}
 
-{% block orob2b_sale_quote_product_item_collection_row %}
-    {{ form_widget(form) }}
+{% block orob2b_sale_quote_product_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
+    <div {{ block('widget_container_attributes') }} data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component">
+        {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+        <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_widget(form.product, {'attr': {'class': 'sale-quoteproduct-product-select'}}) }}
+            {{ form_errors(form.product) }}
+        </div>
+        <div class="sale-quoteproductitem-collection">
+            {{ form_widget(form.quoteProductItems) }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block orob2b_sale_quote_product_item_widget %}
@@ -44,14 +39,4 @@
             </td>
         </tr>
     </table>
-{% endblock %}
-
-{% block orob2b_sale_quote_product_item_collection_widget %}
-    {% set componentOptions = {
-        'containerId': '#' ~ form.vars.id ~ '_collection'
-    } %}
-
-    <span data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component"
-          data-page-component-options="{{ componentOptions|json_encode }}"></span>
-    {{ block('oro_collection_widget') }}
 {% endblock %}

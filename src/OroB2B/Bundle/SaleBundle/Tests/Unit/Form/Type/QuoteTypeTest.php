@@ -36,7 +36,7 @@ class QuoteTypeTest extends FormIntegrationTestCase
 
         $builder->expects($this->at(1))
             ->method('add')
-            ->with('owner', null, ['required' => true, 'label' => 'orob2b.sale.quote.owner.label'])
+            ->with('owner', 'oro_user_select', ['required' => true, 'label' => 'orob2b.sale.quote.owner.label'])
             ->will($this->returnSelf())
         ;
 
@@ -49,8 +49,7 @@ class QuoteTypeTest extends FormIntegrationTestCase
         $builder->expects($this->at(3))
             ->method('add')
             ->with('quoteProducts', QuoteProductCollectionType::NAME, [
-                'label'     => 'orob2b.sale.quote.quoteproduct.entity_plural_label',
-                'add_label' => 'orob2b.sale.quote.quoteproduct.add_label',
+                'add_label' => 'orob2b.sale.quoteproduct.add_label',
                 'required'  => false,
             ])
             ->will($this->returnSelf())
@@ -66,8 +65,8 @@ class QuoteTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
-                    'intention' => 'sale_quote',
+                    'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
+                    'intention'     => 'sale_quote',
                     'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]
             );

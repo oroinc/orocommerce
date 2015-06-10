@@ -38,8 +38,7 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
         $builder->expects($this->at(1))
             ->method('add')
             ->with('quoteProductItems', QuoteProductItemCollectionType::NAME, [
-                'label'     => 'orob2b.sale.quote.quoteproduct.quoteproductitem.entity_plural_label',
-                'add_label' => 'orob2b.sale.quote.quoteproduct.quoteproductitem.add_label',
+                'add_label' => 'orob2b.sale.quoteproductitem.add_label',
             ])
             ->will($this->returnSelf())
         ;

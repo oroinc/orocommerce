@@ -111,6 +111,7 @@ class Quote extends ExtendQuote
     public function __construct()
     {
         parent::__construct();
+
         $this->quoteProducts = new ArrayCollection();
     }
 
@@ -268,8 +269,10 @@ class Quote extends ExtendQuote
      */
     public function addQuoteProduct(QuoteProduct $quoteProduct)
     {
-        $this->quoteProducts[] = $quoteProduct;
-        $quoteProduct->setQuote($this);
+        if (!$this->quoteProducts->contains($quoteProduct)) {
+            $this->quoteProducts[] = $quoteProduct;
+            $quoteProduct->setQuote($this);
+        }
 
         return $this;
     }
@@ -278,10 +281,13 @@ class Quote extends ExtendQuote
      * Remove quoteProducts
      *
      * @param QuoteProduct $quoteProduct
+     * @return Quote
      */
     public function removeQuoteProduct(QuoteProduct $quoteProduct)
     {
-        $this->quoteProducts->removeElement($quoteProduct);
+        if ($this->quoteProducts->contains($quoteProduct)) {
+            $this->quoteProducts->removeElement($quoteProduct);
+        }
 
         return $this;
     }
