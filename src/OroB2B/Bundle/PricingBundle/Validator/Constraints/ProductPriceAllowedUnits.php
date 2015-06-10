@@ -9,7 +9,17 @@ class ProductPriceAllowedUnits extends Constraint
     /**
      * @var string
      */
-    public $message = 'orob2b.pricing.validators.product_price.not_allowed_unit.message';
+    public $notExistingProductMessage = 'orob2b.pricing.validators.product_price.not_existing_product.message';
+
+    /**
+     * @var string
+     */
+    public $notExistingUnitMessage = 'orob2b.pricing.validators.product_price.not_existing_unit.message';
+
+    /**
+     * @var string
+     */
+    public $notAllowedUnitMessage = 'orob2b.pricing.validators.product_price.not_allowed_unit.message';
 
     /**
      * {@inheritDoc}

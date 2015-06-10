@@ -11,18 +11,18 @@ use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 class ProductPriceAllowedUnitsValidator extends ConstraintValidator
 {
     /**
+     * @param ProductPrice|object $value
+     * @param ProductPriceAllowedUnits $constraint
+     *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
-        /** @var ProductPrice $value */
         $priceProduct = $value->getProduct();
         $priceUnit = $value->getUnit();
 
         if (!$priceProduct) {
-            $this->context->addViolation(
-                'orob2b.pricing.validators.product_price.not_existing_product.message'
-            );
+            $this->context->addViolationAt('price.product', $constraint->notExistingProductMessage);
 
             return;
         }
@@ -36,17 +36,16 @@ class ProductPriceAllowedUnitsValidator extends ConstraintValidator
         if (!in_array($priceUnit, $availableUnits)) {
             if ($priceUnit instanceof ProductUnit && $priceUnit->getCode()) {
                 /** @var ProductPriceAllowedUnits $constraint */
-                $this->context->addViolation(
-                    $constraint->message,
+                $this->context->addViolationAt(
+                    'price.unit',
+                    $constraint->notAllowedUnitMessage,
                     [
                         '%product%' => $priceProduct->getSku(),
                         '%unit%' => $priceUnit->getCode()
                     ]
                 );
             } else {
-                $this->context->addViolation(
-                    'orob2b.pricing.validators.product_price.not_existing_unit.message'
-                );
+                $this->context->addViolationAt('price.unit', $constraint->notExistingUnitMessage);
             }
         }
     }
