@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\UserAdminBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -13,6 +13,7 @@ use Oro\Bundle\UserBundle\Entity\LoginInfoInterface;
 use Oro\Bundle\UserBundle\Entity\OrganizationAwareUserInterface;
 use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
+
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 /**
@@ -37,7 +38,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyFields)
- * @todo Add roles for user?
+ * @todo Add roles for user BB-599
+ * @todo extend from Abstract user BB-596
  */
 class User implements
     UserInterface,
@@ -49,16 +51,6 @@ class User implements
     const ROLE_DEFAULT = 'ROLE_USER';
     const ROLE_ADMINISTRATOR = 'ROLE_ADMINISTRATOR';
     const ROLE_ANONYMOUS = 'IS_AUTHENTICATED_ANONYMOUSLY';
-
-    /**
-     * @todo disconnect groups from FOSUserBundle
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\UserAdminBundle\Entity\Group")
-     * @ORM\JoinTable(name="orob2b_user_group",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id", onDelete="CASCADE")}
-     * )
-     */
-    protected $groups;
 
     /**
      * @var Customer
@@ -322,22 +314,11 @@ class User implements
     }
 
     /**
-     * @return mixed
+     * @return integer
      */
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @param mixed $id
-     * @return User
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     /**
@@ -821,16 +802,6 @@ class User implements
     public function getOrganization()
     {
         return $this->organization;
-    }
-
-    /**
-     * Returns the true Collection of Roles.
-     *
-     * @return Collection
-     */
-    public function getRolesCollection()
-    {
-        return new ArrayCollection($this->getRoles());
     }
 
     /**

@@ -50,19 +50,7 @@ class UserType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'orob2b.useradmin.user.enabled.label',
-                    'data' => true,
-                ]
-            )
-            ->add(
-                'groups',
-                'entity',
-                [
-                    'label'     => 'orob2b.useradmin.user.groups.label',
-                    'class'     => 'OroB2BUserAdminBundle:Group',
-                    'property'  => 'name',
-                    'multiple'  => true,
-                    'expanded'  => true,
-                    'required'  => false,
+                    'data' => true
                 ]
             )
         ;

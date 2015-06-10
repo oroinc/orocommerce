@@ -1,7 +1,6 @@
 parameters:
     orob2b_user_admin.form.type.roles.class: OroB2B\Bundle\UserAdminBundle\Form\Type\FrontendRolesType
     orob2b_user_admin.form.type.user.class: OroB2B\Bundle\UserAdminBundle\Form\Type\UserType
-    orob2b_user_admin.form.type.group.class: OroB2B\Bundle\UserAdminBundle\Form\Type\GroupType
 
 services:
     orob2b_user_admin.form.type.roles:
@@ -17,8 +16,3 @@ services:
             - @translator
         tags:
             - { name: form.type, alias: orob2b_user_admin_user }
-
-    orob2b_user_admin.form.type.group:
-        class: %orob2b_user_admin.form.type.group.class%
-        tags:
-            - { name: form.type, alias: orob2b_user_admin_group }

@@ -14,7 +14,6 @@ class OroB2BUserAdminExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             "orob2b_user_admin.user.entity.class",
-            "orob2b_user_admin.group.entity.class",
             "orob2b_user_admin.form.type.roles.class"
         ];
         $this->assertParametersLoaded($expectedParameters);
