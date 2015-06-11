@@ -52,6 +52,8 @@ datagrid:
                     data_name: order1.id
                 identifier:
                     data_name: order1.identifier
+                owner:
+                    data_name: owner
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -66,6 +68,9 @@ datagrid:
                 identifier:
                     type:      string
                     data_name: order1.identifier
+                owner:
+                    type:      string
+                    data_name: owner
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
