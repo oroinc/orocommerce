@@ -12,9 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
- * @dbReindex
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ImportExportTest extends WebTestCase
@@ -199,7 +197,7 @@ class ImportExportTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains($strategy, $result->getContent());
 
-        $this->assertTrue(file_exists($this->file));
+        $this->assertFileExists($this->file);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();

@@ -40,8 +40,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
 
