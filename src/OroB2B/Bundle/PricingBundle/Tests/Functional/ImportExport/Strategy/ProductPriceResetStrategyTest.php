@@ -41,8 +41,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists'
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
 
@@ -69,17 +68,20 @@ class ProductPriceResetStrategyTest extends WebTestCase
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
 
-        $this->assertEquals(
-            [
-                $productPrice,
-                $this->getReference('product_price.2'),
-                $this->getReference('product_price.3')
-            ],
-            $this->getContainer()
-                ->get('doctrine')
-                ->getRepository('OroB2BPricingBundle:ProductPrice')
-                ->findBy(['priceList' => $priceList->getId()])
-        );
+        $actualPrices = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:ProductPrice')
+            ->findBy(['priceList' => $priceList->getId()]);
+        $this->assertCount(3, $actualPrices);
+
+        $expectedPrices = [
+            $productPrice,
+            $this->getReference('product_price.2'),
+            $this->getReference('product_price.3')
+        ];
+        foreach ($expectedPrices as $price) {
+            $this->assertContains($price, $actualPrices);
+        }
 
         $this->strategy->process($productPrice);
 
