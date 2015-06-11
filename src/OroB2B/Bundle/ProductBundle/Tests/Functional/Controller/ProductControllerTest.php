@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductVisibilityType;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -16,6 +18,7 @@ class ProductControllerTest extends WebTestCase
 {
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
+    const INVENTORY_STATUS = 'In Stock';
 
     const CATEGORY_NAME = 'Test First Level';
     const UPDATED_CATEGORY_NAME = 'Test Third Level 2';
@@ -52,13 +55,18 @@ class ProductControllerTest extends WebTestCase
 
         $category = $this->getCategoryByDefaultTitle(self::CATEGORY_NAME);
         $form['orob2b_product_form[category]'] = $category->getId();
+        $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_OUT_OF_STOCK;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Product has been saved", $crawler->html());
+
+        $html = $crawler->html();
+        $this->assertContains("Product has been saved", $html);
+        $this->assertContains(self::TEST_SKU, $html);
+        $this->assertContains('Out of Stock', $html);
     }
 
     /**
@@ -90,6 +98,7 @@ class ProductControllerTest extends WebTestCase
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'category' => $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME),
+                'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
@@ -139,7 +148,11 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $crawler->html());
+
+        $html = $crawler->html();
+        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains('In Stock', $html);
+
         $product = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BProductBundle:Product')
             ->findOneBy(['sku' => self::UPDATED_SKU]);

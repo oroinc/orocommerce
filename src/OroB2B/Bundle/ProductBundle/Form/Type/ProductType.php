@@ -35,7 +35,7 @@ class ProductType extends AbstractType
                     'required' => false
                 ]
             )
-            ->add('isVisible', 'orob2b_product_visibility_type', ['label' => 'orob2b.product.is_visible.label'])
+            ->add('isVisible', ProductVisibilityType::NAME, ['label' => 'orob2b.product.is_visible.label'])
             ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,

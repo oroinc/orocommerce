@@ -23,10 +23,12 @@ class ProductTypeTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
+
         $builder->expects($this->at(0))
             ->method('add')
             ->with('sku', 'text')
             ->will($this->returnSelf());
+
         $builder->expects($this->at(1))
             ->method('add')
             ->with(
@@ -35,7 +37,35 @@ class ProductTypeTest extends \PHPUnit_Framework_TestCase
                 ['required' => false, 'label' => 'orob2b.product.category.label']
             )
             ->will($this->returnSelf());
+
         $builder->expects($this->at(2))
+            ->method('add')
+            ->with(
+                'inventoryStatus',
+                'oro_enum_select',
+                ['label' => 'orob2b.product.inventory_status.label', 'enum_code' => 'prod_inventory_status']
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(3))
+            ->method('add')
+            ->with(
+                'image',
+                'oro_image',
+                ['label' => 'orob2b.product.image.label', 'required' => false]
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(4))
+            ->method('add')
+            ->with(
+                'isVisible',
+                'orob2b_product_visibility_type',
+                ['label' => 'orob2b.product.is_visible.label']
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(5))
             ->method('add')
             ->with(
                 'unitPrecisions',
