@@ -92,6 +92,26 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
+     * @expectedExceptionMessage Expected argument of type "array or Traversable and ArrayAccess", "string" given
+     */
+    public function testUnexpectedValue()
+    {
+        $data = 'string';
+        $this->validator->validate($data, $this->constraint);
+    }
+
+    public function testUnexpectedItem()
+    {
+        $this->setExpectedException(
+            '\Symfony\Component\Validator\Exception\UnexpectedTypeException',
+            'Expected argument of type "OroB2B\Bundle\PricingBundle\Entity\ProductPrice", "stdClass" given'
+        );
+        $data = new ArrayCollection([ new \stdClass()]);
+        $this->validator->validate($data, $this->constraint);
+    }
+
+    /**
      * @param integer $priceListId
      * @param integer $quantity
      * @param string $unitCode
@@ -118,7 +138,6 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
 
         return $productPrice;
     }
-
 
     /**
      * @param string $className

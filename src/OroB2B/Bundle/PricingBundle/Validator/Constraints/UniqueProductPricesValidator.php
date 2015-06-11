@@ -23,7 +23,7 @@ class UniqueProductPricesValidator extends ConstraintValidator
 
         foreach ($value as $productPrice) {
             if (!$productPrice instanceof ProductPrice) {
-                throw new UnexpectedTypeException($value, 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+                throw new UnexpectedTypeException($productPrice, 'OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
             }
 
             $hash = $this->getHash($productPrice);
