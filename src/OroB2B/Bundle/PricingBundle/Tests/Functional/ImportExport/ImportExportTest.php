@@ -105,7 +105,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
-            'Error in row #1. price.unit: Unit "box" is not allowed for product "product.1".'
+            'Error in row #1. unit: Unit "box" is not allowed for product "product.1".'
         );
     }
 
@@ -118,7 +118,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product_unit.csv',
-            'Error in row #1. price.unit: Product unit is not exist.'
+            'Error in row #1. unit: Product unit is not exist.'
         );
     }
 
@@ -131,7 +131,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroB2BPricingBundle/Tests/Functional/ImportExport/data/unavailable_product.csv',
-            'Error in row #1. price.product: Product is not exist.'
+            'Error in row #1. product: Product is not exist.'
         );
     }
 
