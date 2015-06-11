@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 /**
