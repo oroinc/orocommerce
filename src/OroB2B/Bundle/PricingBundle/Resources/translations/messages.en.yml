@@ -14,6 +14,7 @@ orob2b.pricing:
         customer_groups.label: Customer Groups
         customers.label: Customers
         websites.label: Websites
+        prices.label: Prices
     quantity.label: Quantity
     unit.label: Unit
     price.label: Price
