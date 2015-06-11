@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 /**
  * @outputBuffering enabled
@@ -24,12 +25,12 @@ class OrderControllerTest extends WebTestCase
 
     public function testDelete()
     {
-        /** @var Customer $customer */
-        $customer = $this->getReference('simple_order');
-        $customerId = $customer->getId();
+        /** @var Order $order */
+        $order = $this->getReference('simple_order');
+        $orderId = $order->getId();
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_order_delete_order', ['id' => $customerId])
+            $this->getUrl('orob2b_api_order_delete_order', ['id' => $orderId])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
