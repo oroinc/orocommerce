@@ -19,10 +19,49 @@ orob2b.customer:
         customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
 
+    accountuser:
+        entity_label:                'Account User'
+        entity_plural_label:         'Account Users'
+        id.label:                    'ID'
+        first_name.label:            'First Name'
+        middle_name.label:           'Middle Name'
+        last_name.label:             'Last Name'
+        username.label:              'Email'
+        email.label:                 'Email Address'
+        password.label:              'Password'
+        password_confirmation.label: 'Confirm Password'
+        enabled.label:               'Enabled'
+        password_generate.label:     'Generate Password'
+        send_email.label:            'Send Welcome Email'
+        confirmation_token.label:    'Confirmation Token'
+        birthday.label:              'Birthday'
+        last_login.label:            'Last login'
+        roles.label:                 'Roles'
+        salt.label:                  'Salt'
+        created_at.label:            'Created At'
+        updated_at.label:            'Updated At'
+        login_count.label:           'Login Count'
+        name_prefix.label:           'Name Prefix'
+        name_suffix.label:           'Name Suffix'
+        password_changed_at.label:   'Password Changed At'
+        password_requested_at.label: 'Password Requested At'
+        customer.label:              'Customer'
+        organization.label:          'Organization'
+        organizations.label:         'Organizations'
+
+    role:
+        entity_label:                'Frontend Capability'
+        entity_plural_label:         'Frontend Capabilities'
+
+    action:
+        account_user.enable:  'Enable'
+        account_user.disable: 'Disable'
+
     sections:
         general: 'General'
         customergroup:
             customers: 'Customers'
+        roles:   'Frontend Capabilities'
 
     menu:
         customer_tab.label: 'Customers'
@@ -30,9 +69,25 @@ orob2b.customer:
         customer_group_list.description: 'List of Customer Groups'
         shortcut_customer_list.description: 'List of Customers'
         shortcut_customer_group_list.description: 'List of Customer Groupss'
+        account_users.description: 'List of account users'
+        shortcut_new_account_user.label: 'Create new account user'
+        shortcut_new_account_user.description: 'Create new account user instance'
+        shortcut_list_account_users.label: 'Show account users'
+        shortcut_list_account_users.description: 'View list of account users'
 
     controller:
         customer:
             saved.message: 'Customer saved'
         customergroup:
             saved.message: 'Customer group saved'
+        accountuser:
+            saved.message:     'Account User has been saved'
+            enabled.message:   'Account User has been enabled'
+            disabled.message:  'Account User has been disabled'
+            not_found.message: 'Account User not found'
+
+    widgets:
+        account_user_information: 'Account User Information'
+
+    message:
+        password_mismatch: "The entered passwords don't match"
