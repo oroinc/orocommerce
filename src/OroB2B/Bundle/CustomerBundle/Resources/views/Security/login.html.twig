@@ -6,7 +6,7 @@
 {% block content %}
 <div class="container">
     <h1>FRONTEND</h1>
-    <form id="login-form" action="{{ path('orob2b_user_security_check') }}" method="post" class="form-signin">
+    <form id="login-form" action="{{ path('orob2b_customer_account_user_security_check') }}" method="post" class="form-signin">
         <div class="title-box">
             {% if oro_theme_logo() %}
             <h1 class="oro-title logo-{{ oro_theme_logo() ? 'image' : 'text' }}">

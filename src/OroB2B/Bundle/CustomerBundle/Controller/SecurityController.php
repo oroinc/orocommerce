@@ -12,7 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class SecurityController extends Controller
 {
     /**
-     * @Route("/login", name="orob2b_user_security_login")
+     * @Route("/login", name="orob2b_customer_account_user_security_login")
      * @Template
      */
     public function loginAction()
@@ -52,7 +52,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/login-check", name="orob2b_user_security_check")
+     * @Route("/login-check", name="orob2b_customer_account_user_security_check")
      */
     public function checkAction()
     {
@@ -63,7 +63,7 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route("/logout", name="orob2b_user_security_logout")
+     * @Route("/logout", name="orob2b_customer_account_user_security_logout")
      */
     public function logoutAction()
     {

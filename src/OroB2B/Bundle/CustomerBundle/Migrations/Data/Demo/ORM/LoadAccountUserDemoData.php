@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -30,6 +28,8 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
      */
     public function load(ObjectManager $manager)
     {
+        $userManager = $this->container->get('orob2b_account_user.manager');
+
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BCustomerBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
         if (is_array($filePath)) {
@@ -39,24 +39,31 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $organizations = $manager->getRepository('OroOrganizationBundle:Organization')->findAll();
+        $organization = reset($organizations);
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
             // create account user
-            $accountUser = new AccountUser();
+            $accountUser = $userManager->createUser();
             $accountUser
                 ->setUsername($row['email'])
                 ->setEmail($row['email'])
                 ->setPassword($row['email'])
                 ->setFirstName($row['firstName'])
                 ->setLastName($row['lastName'])
-                ->setEnabled(true);
+                ->setPlainPassword(md5(uniqid(mt_rand(), true)))
+                ->setEnabled(true)
+                ->setOrganization($organization)
+                ->addOrganization($organization)
+                ->setLoginCount(0);
 
-            $manager->persist($accountUser);
+            $userManager->updateUser($accountUser, false);
         }
 
         fclose($handler);
 
-        $manager->flush();
+        $userManager->getStorageManager()->flush();
     }
 }

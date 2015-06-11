@@ -54,8 +54,8 @@ class OroB2BCustomerBundle implements Migration
         $table->addColumn('password_changed', 'datetime', ['notnull' => false]);
         $table->addColumn('last_login', 'datetime', ['notnull' => false]);
         $table->addColumn('login_count', 'integer', ['default' => '0', 'unsigned' => true]);
-        $table->addColumn('createdAt', 'datetime', []);
-        $table->addColumn('updatedAt', 'datetime', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
 
         $table->setPrimaryKey(['id']);
 

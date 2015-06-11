@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -207,14 +208,14 @@ class AccountUser implements
     /**
      * @var \DateTime $createdAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime $updatedAt
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(name="updated_at", type="datetime")
      */
     protected $updatedAt;
 
@@ -819,6 +820,8 @@ class AccountUser implements
     }
 
     /**
+     * Pre persist event listener
+     *
      * @ORM\PrePersist
      */
     public function prePersist()
@@ -826,5 +829,21 @@ class AccountUser implements
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loginCount = 0;
+    }
+
+    /**
+     * Invoked before the entity is updated.
+     *
+     * @ORM\PreUpdate
+     *
+     * @param PreUpdateEventArgs $event
+     */
+    public function preUpdate(PreUpdateEventArgs $event)
+    {
+        $excludedFields = ['lastLogin', 'loginCount'];
+
+        if (array_diff_key($event->getEntityChangeSet(), array_flip($excludedFields))) {
+            $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
     }
 }
