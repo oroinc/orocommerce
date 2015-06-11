@@ -12,11 +12,12 @@ orob2b:
         organization.label: Organization
         in_category.label: In category
         unit_precisions.label: Unit Precisions
+        image.label: Image
 
-        inventory_status:
-            in_stock: In Stock
-            out_of_stock: Out of Stock
-            discontinued: Discontinued
+        visibility:
+            visible.label: Yes
+            not_visible.label: No
+            as_defined_in_system_config.label: As Defined in System Configuration
 
         productunit:
             entity_label: Product Unit
@@ -51,6 +52,7 @@ orob2b:
             general: General
             additional: Additional
             catalog: Master catalog
+            visibility: Visibility
 
         widgets:
             product_information: Product Information

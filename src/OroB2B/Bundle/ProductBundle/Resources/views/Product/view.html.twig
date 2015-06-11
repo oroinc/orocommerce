@@ -39,14 +39,26 @@
             'url': path('orob2b_product_info', {id: entity.id})
         }) }}
     {% endset %}
+    {% set productVisibilityWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_product_visibility', {id: entity.id})
+        }) }}
+    {% endset %}
+
 
     {% set generalSectionBlocks = [{'data' : [productInformationWidget]}]%}
+    {% set visibilitySectionBlocks = [{'data' : [productVisibilityWidget]}]%}
 
     {% set dataBlocks = [
         {
             'title': 'orob2b.product.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
+        },
+        {
+            'title': 'orob2b.product.sections.visibility'|trans,
+            'subblocks': visibilitySectionBlocks
         }
     ] %}
 

@@ -3,47 +3,111 @@
 namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaException;
 
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-use OroB2B\Bundle\ProductBundle\Model\InventoryStatus;
-
-class OroB2BProductBundle implements Migration
+class OroB2BProductBundle implements
+    Migration,
+    ExtendExtensionAwareInterface,
+    NoteExtensionAwareInterface,
+    AttachmentExtensionAwareInterface
 {
-    const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
-    const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
+    const TABLE_NAME = 'orob2b_product';
+    const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
+    const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
+
+    /** @var ExtendExtension */
+    protected $extendExtension;
+    /** @var NoteExtension */
+    protected $noteExtension;
+    /** @var AttachmentExtension */
+    protected $attachmentExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updateOroB2BProductTable($schema);
+        $this->updateProductTable($schema);
+        $this->addNoteAssociations($schema);
+        $this->addAttachmentAssociations($schema);
     }
 
     /**
-     * Create orob2b_product table
-     *
+     * @param Schema $schema
+     * @throws SchemaException
+     */
+    protected function updateProductTable(Schema $schema)
+    {
+        $table = $schema->getTable(self::TABLE_NAME);
+        $table->addColumn('is_visible', 'boolean', ['notnull' => false]);
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            self::TABLE_NAME,
+            'inventory_status',
+            'prod_inventory_status'
+        );
+    }
+
+    /**
      * @param Schema $schema
      */
-    protected function updateOroB2BProductTable(Schema $schema)
+    protected function addNoteAssociations(Schema $schema)
     {
-        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $table->addColumn('image_id', 'integer', ['notnull' => false]);
-        $table->addColumn('inventory_status', 'string', [
-            'length' => 255,
-            'default' => InventoryStatus::IN_STOCK,
-        ]);
-        $table->addColumn('is_visible', 'integer', ['notnull' => false]);
-        $table->addIndex(['image_id'], 'IDX_5F9796C93DA5256D', []);
+        $this->noteExtension->addNoteAssociation($schema, self::TABLE_NAME);
+    }
 
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_attachment_file'),
-            ['image_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+    /**
+     * @param Schema $schema
+     */
+    protected function addAttachmentAssociations(Schema $schema)
+    {
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            self::TABLE_NAME,
+            'image',
+            [],
+            self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
+        );
+
+        $this->attachmentExtension->addAttachmentAssociation(
+            $schema,
+            self::TABLE_NAME,
+            [],
+            self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
         );
     }
 }

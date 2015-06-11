@@ -50,6 +50,21 @@ class ProductController extends Controller
     }
 
     /**
+     * @Route("/visibility/{id}", name="orob2b_product_visibility", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("orob2b_product_view")
+     *
+     * @param Product $product
+     * @return array
+     */
+    public function visibilityAction(Product $product)
+    {
+        return [
+            'product' => $product
+        ];
+    }
+
+    /**
      * @Route("/", name="orob2b_product_index")
      * @Template
      * @AclAncestor("orob2b_product_view")
