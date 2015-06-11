@@ -13,6 +13,24 @@ orob2b.rfpadmin:
         status.label: 'Status'
         body.label: 'Request body'
 
+        sections:
+            general: 'General'
+
+        requestproduct:
+            entity_label: 'Request Product'
+            entity_plural_label: 'Request Products'
+            comment.label: 'Notes'
+            add_label: 'Add Line Item'
+
+            requestproductitem:
+                item: '{units}, {price} per {unit}'
+                entity_label: 'Request Product Line'
+                entity_plural_label: 'Request Product Lines'
+                add_label: 'Add Offer'
+                quantity.label: 'Quantity'
+                product_unit.label: 'Product Unit'
+                price.label: 'Price'
+
     requeststatus:
         entity_label: 'Request For Proposal Status'
         entity_plural_label: 'Request For Proposal Statuses'
@@ -46,6 +64,8 @@ orob2b.rfpadmin:
         request_status_not_found: 'Request Status not found'
         request_status_changed: 'Request For Proposal Status was successfully changed'
         request_status_not_deletable: 'Request Status is not deletable'
+        requestproduct.product.removed: '{title} - removed'
+        requestproductitem.unit.removed: '{title} - removed'
 
     datagrid:
         action_restore: 'Restore'
@@ -57,6 +77,10 @@ orob2b.rfpadmin:
 
     widget:
         change_status_title: 'Change Request For Proposal Status'
+
+    controller:
+        request:
+                saved.message: 'Request has been saved'
 
 # We MUST move this section form here in the future!
 orob2b.frontendadmin:
