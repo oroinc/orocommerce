@@ -16,29 +16,8 @@ class EntitySubscriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::prePersist,
             Events::postPersist,
         ];
-    }
-
-    /**
-     * @param LifecycleEventArgs $event
-     */
-    public function prePersist(LifecycleEventArgs $event)
-    {
-        $entity = $event->getObject();
-
-        if (!$entity instanceof Quote) {
-            return;
-        }
-
-        /* @var $entity Quote */
-
-        if ($entity->getQid()) {
-            return;
-        }
-
-        $entity->setQid('');
     }
 
     /**
@@ -61,7 +40,7 @@ class EntitySubscriber implements EventSubscriber
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
 
         $changeSet = [
-            'qid' => ['', $entity->getId()],
+            'qid' => [null, $entity->getId()],
         ];
 
         $unitOfWork->scheduleExtraUpdate($entity, $changeSet);

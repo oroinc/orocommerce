@@ -1,5 +1,7 @@
 OroB2B\Bundle\SaleBundle\Entity\Quote:
     properties:
+        owner:
+            - NotBlank: ~
         quoteProducts:
             - Valid:
                 traverse: true

@@ -6,29 +6,36 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.sale.quote.id.label'|trans, entity.id) }}
             {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
-            {{ UI.renderProperty('orob2b.sale.quote.owner.label'|trans, entity.owner.username) }}
+            {% set entityOwner %}
+                <a href="{{ path('oro_user_view', {'id': entity.owner.id}) }}">{{ entity.owner }}</a>
+            {% endset %}
+            {{ UI.renderHtmlProperty('orob2b.sale.quote.owner.label'|trans, entityOwner) }}
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A') }}
 
-            <div class="sale-quoteproducts-info">
-                {% for quoteProduct in entity.quoteProducts %}
-                    {% set itemData %}
-                        <div class="sale-quoteproduct-info">
-                            {% if quoteProduct.product %}
-                                <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
-                            {% else %}
-                                {{ quoteProduct.productSku|raw }}
-                            {% endif %}
-                        </div>
-                        <div class="sale-quoteproductitems-info">
-                            {% for quoteProductItem in quoteProduct.quoteProductItems %}
-                                <div class="sale-quoteproductitem-info">
-                                    {{ quoteProductItem|orob2b_format_sale_quote_product_item }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endset %}
-                    {{ UI.renderHtmlProperty('orob2b.product.entity_label'|trans, itemData ) }}
-                {% endfor %}
+            <div class="sale-quoteproducts-info control-group">
+                <table>
+                    {% for quoteProduct in entity.quoteProducts %}
+                        <tr>
+                            <td class="sale-quoteproduct-product">
+                                <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
+                            </td>
+                            <td class="sale-quoteproduct-info">
+                                {% if quoteProduct.product %}
+                                    <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
+                                {% else %}
+                                    {{ quoteProduct.productSku|raw }}
+                                {% endif %}
+                            </td>
+                            <td class="sale-quoteproductitems-info" style="">
+                                {% for quoteProductItem in quoteProduct.quoteProductItems %}
+                                    <div class="sale-quoteproductitem-info">
+                                        {{ quoteProductItem|orob2b_format_sale_quote_product_item }}
+                                    </div>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
             </div>
         </div>
         <div class="responsive-block">

@@ -85,7 +85,7 @@ class OroB2BSaleBundle implements
         $table = $schema->createTable('orob2b_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('qid', 'string', ['length' => 255]);
+        $table->addColumn('qid', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);

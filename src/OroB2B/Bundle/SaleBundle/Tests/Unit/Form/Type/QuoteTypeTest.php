@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
@@ -16,6 +18,9 @@ class QuoteTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->type = new QuoteType();
@@ -23,6 +28,7 @@ class QuoteTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
+        /* @var $builder \PHPUnit_Framework_MockObject_MockBuilder|FormBuilder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock()
@@ -60,6 +66,7 @@ class QuoteTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')

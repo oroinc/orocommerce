@@ -3,14 +3,19 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
@@ -22,6 +27,9 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
@@ -34,6 +42,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /* @var $configManager \PHPUnit_Framework_MockObject_MockBuilder|ConfigManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -43,6 +52,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             ->with('oro_currency.allowed_currencies')
             ->will($this->returnValue(['USD', 'EUR']));
 
+        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockBuilder|LocaleSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,6 +73,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
+        /* @var $builder \PHPUnit_Framework_MockObject_MockBuilder|FormBuilder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock()
@@ -91,6 +102,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')
