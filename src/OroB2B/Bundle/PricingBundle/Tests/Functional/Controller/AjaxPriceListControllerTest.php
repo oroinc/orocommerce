@@ -43,4 +43,22 @@ class AjaxPriceListControllerTest extends WebTestCase
 
         $this->assertEquals([$priceList], $defaultPriceLists);
     }
+
+    public function testGetPriceListCurrencyList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_pricing_price_list_currency_list', ['id' => $priceList->getId()])
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+
+        $this->assertEquals($priceList->getCurrencies(), $data);
+    }
 }

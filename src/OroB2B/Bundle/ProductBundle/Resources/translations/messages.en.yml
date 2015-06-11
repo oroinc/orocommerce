@@ -10,6 +10,7 @@ orob2b:
         organization.label: Organization
         in_category.label: In category
         unit_precisions.label: Unit Precisions
+        form.choose: 'Choose Product...'
 
         productunit:
             entity_label: Product Unit
@@ -17,6 +18,7 @@ orob2b:
             entity_description: Represents product units information
             code.label: Code
             default_precision.label: Default Precision
+            form.choose: 'Choose Unit...'
 
         productunitprecision:
             entity_label: Product Unit Precision
@@ -43,7 +45,7 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            catalog: Master catalog
+            catalog: Master Catalog
 
         widgets:
             product_information: Product Information
