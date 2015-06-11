@@ -86,7 +86,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
 
         $this->context->expects($this->once())
             ->method('addViolationAt')
-            ->with('price.unit', $this->constraint->notAllowedUnitMessage);
+            ->with('unit', $this->constraint->notAllowedUnitMessage);
 
         $this->validator->validate($price, $this->constraint);
     }
@@ -103,7 +103,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
 
         $this->context->expects($this->once())
             ->method('addViolationAt')
-            ->with('price.unit', $this->constraint->notExistingUnitMessage);
+            ->with('unit', $this->constraint->notExistingUnitMessage);
 
         $this->validator->validate($price, $this->constraint);
     }
@@ -124,7 +124,7 @@ class ProductPriceAllowedUnitsTest extends \PHPUnit_Framework_TestCase
 
         $this->context->expects($this->once())
             ->method('addViolationAt')
-            ->with('price.product', $this->constraint->notExistingProductMessage);
+            ->with('product', $this->constraint->notExistingProductMessage);
 
         $this->validator->validate($price, $this->constraint);
     }
