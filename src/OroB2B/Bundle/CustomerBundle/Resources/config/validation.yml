@@ -7,3 +7,23 @@ OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup:
     properties:
         name:
             - NotBlank: ~
+
+OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
+    properties:
+        firstName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        lastName:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        email:
+            - NotBlank: ~
+            - Email: ~
+            - Length:
+                max: 255
+        plainPassword:
+            - NotBlank: { groups: [create] }

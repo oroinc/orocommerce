@@ -279,3 +279,108 @@ datagrid:
                 selectors:
                     included: '#groupAppendCustomers'
                     excluded: '#groupRemoveCustomers'
+
+    customer-account-user-grid:
+        entity_name: %orob2b_customer.account_user.entity.class%
+        options:
+            entityHint:        account user
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_customer_account_user_view
+            type:         orm
+            query:
+                select:
+                    - accountUser.id
+                    - accountUser.firstName
+                    - accountUser.lastName
+                    - accountUser.email
+                    - accountUser.enabled
+                from:
+                    - { table: %orob2b_customer.account_user.entity.class%, alias: accountUser }
+        columns:
+            firstName:
+                label: orob2b.customer.accountuser.first_name.label
+            lastName:
+                label: orob2b.customer.accountuser.last_name.label
+            email:
+                label: orob2b.customer.accountuser.email.label
+            enabled:
+                label: orob2b.customer.accountuser.enabled.label
+                frontend_type: boolean
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_customer_account_user_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_customer_account_user_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_customer_delete_account_user
+                params: [ id ]
+            enable_link:
+                type:   url
+                route:  orob2b_api_customer_enable_account_user
+                params: [ id ]
+            disable_link:
+                type:   url
+                route:  orob2b_api_customer_disable_account_user
+                params: [ id ]
+        sorters:
+            columns:
+                firstName:
+                    data_name: accountUser.firstName
+                lastName:
+                    data_name: accountUser.lastName
+                email:
+                    data_name: accountUser.email
+                enabled:
+                    data_name: accountUser.enabled
+        filters:
+            columns:
+                firstName:
+                    type:      string
+                    data_name: accountUser.firstName
+                lastName:
+                    type:      string
+                    data_name: accountUser.lastName
+                email:
+                    type:      string
+                    data_name: accountUser.email
+                enabled:
+                    type:      boolean
+                    data_name: accountUser.enabled
+        actions:
+            enable:
+                type:         ajax
+                label:        orob2b.customer.action.account_user.enable
+                icon:         ok
+                link:         enable_link
+            disable:
+                type:         ajax
+                label:        orob2b.customer.action.account_user.disable
+                icon:         remove
+                link:         disable_link
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_customer_account_user_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_customer_account_user_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_customer_account_user_delete
+        action_configuration: [@orob2b_customer.datagrid.action_permission_provider, "getUserPermissions"]
