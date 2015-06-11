@@ -110,9 +110,6 @@ class ProductPriceCurrencyTest extends \PHPUnit_Framework_TestCase
     public function testWithoutPrice()
     {
         $productPrice = new ProductPrice();
-        $reflection = new \ReflectionProperty($productPrice, 'price');
-        $reflection->setAccessible(true);
-        $reflection->setValue($productPrice, null);
 
         $this->context->expects($this->never())
             ->method('addViolationAt');
