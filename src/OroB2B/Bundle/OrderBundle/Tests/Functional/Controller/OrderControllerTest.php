@@ -54,21 +54,28 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @depends testCreate
-     * @param int $id
      *
      * @return int
      */
-    public function testUpdate($id)
+    public function testUpdate()
     {
+        $response = $this->client->requestGrid(
+            'orders-grid',
+            ['orders-grid[_filter][owner][value]' => $this->getCurrentUser()->getFirstName()]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_update', ['id' => $id])
+            $this->getUrl('orob2b_order_update', ['id' => $result['id']])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $newOwner = $this->getReference('order_simple_user');
-        $this->assertOrderSave($crawler, $newOwner);
+        $this->assertOrderSave($crawler, $this->getCurrentUser());
 
         return $id;
     }
@@ -97,7 +104,7 @@ class OrderControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_order_type[owner]' => $owner,
+                'orob2b_order_type[owner]' => $owner->getId(),
             ]
         );
 
