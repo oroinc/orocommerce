@@ -1,0 +1,55 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
+
+{% oro_title_set({params : {"%title%": form.vars.value|default('N/A'|trans)} }) %}
+
+{% set formAction = path('orob2b_rfp_admin_request_update', { 'id': form.vars.value.id }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity':      form.vars.value,
+        'indexPath':   path('orob2b_rfp_admin_request_index'),
+        'indexLabel': 'orob2b.rfpadmin.request.entity_plural_label'|trans,
+        'entityTitle':form.vars.value|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {{ UI.cancelButton(path('orob2b_rfp_admin_request_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if form.vars.value.id or resource_granted('orob2b_rfp_admin_request_create') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block content_data %}
+
+    {% set id = 'request-edit' %}
+
+    {% set dataBlocks = [{
+            'title': 'orob2b.rfpadmin.request.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    include('OroB2BRFPAdminBundle:Request:block/infoRequest.html.twig'),
+                    form_row(form.requestProducts)
+                ]
+            }]
+        }]
+    %}
+
+    {% set additionalData = [] %}
+    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+        {% set additionalData = additionalData|merge([form_row(child)]) %}
+    {% endfor %}
+    
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

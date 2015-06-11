@@ -1,0 +1,10 @@
+parameters:
+    orob2b_rfp_admin.twig.request.class: OroB2B\Bundle\RFPAdminBundle\Twig\RequestExtension
+services:
+    orob2b_rfp_admin.twig.request:
+        class: %orob2b_rfp_admin.twig.request.class%
+        arguments:
+            - @translator
+            - @twig
+        tags:
+            - { name: twig.extension }

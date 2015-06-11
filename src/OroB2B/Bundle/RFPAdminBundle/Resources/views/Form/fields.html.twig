@@ -1,0 +1,51 @@
+{% block orob2b_rfp_admin_request_product_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' rfpadmin-requestproduct-widget control-group'}) %}
+    <div {{ block('widget_container_attributes') }} data-page-component-module="orob2brfpadmin/js/app/components/rfpadmin-requestproductitem-unit-selection-limitations-component">
+        {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+        <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_widget(form.product, {'attr': {'class': 'rfpadmin-requestproduct-product-select'}}) }}
+            {{ form_errors(form.product) }}
+        </div>
+        <div class="rfpadmin-requestproductitem-collection">
+            {{ form_row(form.requestProductItems) }}
+            <div class="rfpadmin-requestproduct-comment-control">
+                {{ form_label(form.comment, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+                {{ form_widget(form.comment) }}
+                {{ form_errors(form.comment) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block orob2b_rfp_admin_request_product_collection_row %}
+    <div class="rfpadmin-requestproduct-collection">
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block orob2b_rfp_admin_request_product_item_collection_row %}
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block orob2b_rfp_admin_request_product_item_widget %}
+    <table class="rfpadmin-requestproductitem-widget">
+        <tr>
+            <td>
+                {{ form_widget(form.quantity) }}
+                {{ form_errors(form.quantity) }}
+            </td>
+            <td>
+                {{ form_widget(form.productUnit, {attr: attr|merge({class: 'rfpadmin-requestproductitem-productunit-select'})}) }}
+                {{ form_errors(form.productUnit) }}
+            </td>
+            <td>
+                {{ form_widget(form.price.value) }}
+                {{ form_errors(form.price.value) }}
+            </td>
+            <td>
+                {{ form_widget(form.price.currency) }}
+                {{ form_errors(form.price.currency) }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

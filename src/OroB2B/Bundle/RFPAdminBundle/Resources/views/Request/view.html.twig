@@ -14,6 +14,12 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_rfp_admin_request_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.rfpadmin.request.entity_label'|trans
+        }) }}
+    {% endif %}
     {{ UI.clientButton({
         'dataUrl': path('orob2b_rfp_admin_request_change_status', {id: entity.id}),
         'aCss': 'no-hash',

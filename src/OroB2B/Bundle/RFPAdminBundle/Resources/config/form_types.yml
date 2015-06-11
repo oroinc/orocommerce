@@ -6,6 +6,10 @@ parameters:
     orob2b_rfp_admin.form.type.default_request_status.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\DefaulRequestStatusType
     orob2b_rfp_admin.form.type.request_status_translation.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestStatusTranslationType
     orob2b_rfp_admin.form.type.request_status_with_deleted_select.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestStatusWithDeletedSelectType
+    orob2b_rfp_admin.form.type.request_product.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductType
+    orob2b_rfp_admin.form.type.request_product_item.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType
+    orob2b_rfp_admin.form.type.request_product_collection.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductCollectionType
+    orob2b_rfp_admin.form.type.request_product_item_collection.class: OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemCollectionType
 
 services:
     orob2b_rfp_admin.form.type.default_request_status:
@@ -53,3 +57,28 @@ services:
             - @oro_locale.settings
         tags:
             - { name: form.type, alias: orob2b_rfp_admin_request_status }
+
+    # Request Items form types
+    orob2b_rfp_admin.form.type.request_product:
+        class: %orob2b_rfp_admin.form.type.request_product.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: orob2b_rfp_admin_request_product }
+
+    orob2b_rfp_admin.form.type.request_product_item:
+        class: %orob2b_rfp_admin.form.type.request_product_item.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: orob2b_rfp_admin_request_product_item }
+
+    orob2b_rfp_admin.form.type.request_product_collection:
+        class: %orob2b_rfp_admin.form.type.request_product_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_admin_request_product_collection }
+
+    orob2b_rfp_admin.form.type.request_product_item_collection:
+        class: %orob2b_rfp_admin.form.type.request_product_item_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_admin_request_product_item_collection }
