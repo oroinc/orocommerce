@@ -96,6 +96,9 @@ class ProductPriceRepository extends EntityRepository
     {
         return $this->createQueryBuilder('price')
             ->andWhere('price.product = :product')
+            ->addOrderBy('price.priceList', Criteria::ASC)
+            ->addOrderBy('price.unit', Criteria::ASC)
+            ->addOrderBy('price.currency', Criteria::ASC)
             ->setParameter('product', $product)
             ->getQuery()
             ->getResult();

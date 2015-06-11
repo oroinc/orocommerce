@@ -107,23 +107,28 @@ class ProductControllerTest extends WebTestCase
         // Check product unit precisions
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
+        $actualUnitPrecisions = [
+            [
+                'unit' => $crawler->filter('select[name="orob2b_product_form[unitPrecisions][0][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler->filter('input[name="orob2b_product_form[unitPrecisions][0][precision]"]')
+                    ->extract('value')[0]
+            ],
+            [
+                'unit' => $crawler->filter('select[name="orob2b_product_form[unitPrecisions][1][unit]"] :selected')
+                    ->html(),
+                'precision' => $crawler->filter('input[name="orob2b_product_form[unitPrecisions][1][precision]"]')
+                    ->extract('value')[0]
+            ],
+        ];
+        $expectedUnitPrecisions = [
+            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION],
+            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION],
+        ];
+
         $this->assertEquals(
-            self::FIRST_UNIT_FULL_NAME,
-            $crawler->filter('select[name="orob2b_product_form[unitPrecisions][0][unit]"] :selected')->html()
-        );
-        $this->assertEquals(
-            self::FIRST_UNIT_PRECISION,
-            $crawler->filter('input[name="orob2b_product_form[unitPrecisions][0][precision]"]')
-                ->extract('value')[0]
-        );
-        $this->assertEquals(
-            self::SECOND_UNIT_FULL_NAME,
-            $crawler->filter('select[name="orob2b_product_form[unitPrecisions][1][unit]"] :selected')->html()
-        );
-        $this->assertEquals(
-            self::SECOND_UNIT_PRECISION,
-            $crawler->filter('input[name="orob2b_product_form[unitPrecisions][1][precision]"]')
-                ->extract('value')[0]
+            $this->sortUnitPrecisions($expectedUnitPrecisions),
+            $this->sortUnitPrecisions($actualUnitPrecisions)
         );
 
         return $id;
@@ -195,5 +200,24 @@ class ProductControllerTest extends WebTestCase
     protected function getBusinessUnitId()
     {
         return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
+    }
+
+    /**
+     * @param array $unitPrecisions
+     * @return array
+     */
+    protected function sortUnitPrecisions(array $unitPrecisions)
+    {
+        // prices must be sort by unit and currency
+        usort($unitPrecisions, function (array $a, array $b) {
+            $unitCompare = strcmp($a['unit'], $b['unit']);
+            if ($unitCompare !== 0) {
+                return $unitCompare;
+            }
+
+            return strcmp($a['precision'], $b['precision']);
+        });
+
+        return $unitPrecisions;
     }
 }
