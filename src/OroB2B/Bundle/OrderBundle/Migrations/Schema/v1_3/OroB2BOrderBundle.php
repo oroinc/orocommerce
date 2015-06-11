@@ -35,13 +35,11 @@ class OroB2BOrderBundle implements Migration, ActivityExtensionAwareInterface
     /**
      * Enables Event activity for Order entity
      *
-     * @param Schema $schema
+     * @param Schema            $schema
      * @param ActivityExtension $activityExtension
      */
     public static function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
-        $activityExtension->addActivityAssociation(
-            $schema, 'oro_calendar_event', self::ORDER_TABLE_NAME
-        );
+        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', self::ORDER_TABLE_NAME);
     }
 }
