@@ -1,0 +1,99 @@
+datagrid:
+    orders-grid:
+        extended_entity_name: %orob2b_order.order.class%
+        options:
+            entityHint:        order
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_order_view
+            type:         orm
+            query:
+                select:
+                    - order1.id
+                    - order1.identifier
+                    - order1.createdAt
+                    - order1.updatedAt
+                    - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
+                from:
+                    - { table: %orob2b_order.order.class%, alias: order1 }
+                join:
+                    left:
+                        - { join: order1.owner, alias: order_owner }
+        columns:
+            id:
+                label:         orob2b.order.id.label
+            identifier:
+                label:         orob2b.order.identifier.label
+            owner:
+                label:         orob2b.order.owner.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_order_view
+                params: [ id ]
+            update_link:
+                type: url
+                route: orob2b_order_update
+                params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_delete_order
+                params: [ id ]
+        sorters:
+            columns:
+                id:
+                    data_name: order1.id
+                identifier:
+                    data_name: order1.identifier
+                owner:
+                    data_name: owner
+                createdAt:
+                    data_name: order1.createdAt
+                updatedAt:
+                    data_name: order1.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                id:
+                    type:      string
+                    data_name: order1.id
+                identifier:
+                    type:      string
+                    data_name: order1.identifier
+                owner:
+                    type:      string
+                    data_name: owner
+                createdAt:
+                    type:      datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: order1.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_order_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_order_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_order_delete

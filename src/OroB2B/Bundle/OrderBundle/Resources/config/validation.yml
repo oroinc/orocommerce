@@ -1,0 +1,6 @@
+OroB2B\Bundle\OrderBundle\Entity\Order:
+    properties:
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
