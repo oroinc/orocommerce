@@ -49,9 +49,14 @@ orob2b.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
 
-    role:
-        entity_label:                'Frontend Capability'
-        entity_plural_label:         'Frontend Capabilities'
+    accountuserrole:
+        entity_label:         'Account User Role'
+        entity_plural_label:  'Account User Roles'
+        id.label:             'ID'
+        role.label:           'Role'
+        label.label:          'Label'
+
+
 
     action:
         account_user.enable:  'Enable'
@@ -69,11 +74,18 @@ orob2b.customer:
         customer_group_list.description: 'List of Customer Groups'
         shortcut_customer_list.description: 'List of Customers'
         shortcut_customer_group_list.description: 'List of Customer Groupss'
+
         account_users.description: 'List of account users'
         shortcut_new_account_user.label: 'Create new account user'
         shortcut_new_account_user.description: 'Create new account user instance'
         shortcut_list_account_users.label: 'Show account users'
         shortcut_list_account_users.description: 'View list of account users'
+
+        account_user_roles.description: 'List of account user roles'
+        shortcut_new_account_user_role.label: 'Create new account user role'
+        shortcut_new_account_user_role.description: 'Create new account user role instance'
+        shortcut_list_account_user_roles.label: 'Show account user roles'
+        shortcut_list_account_user_roles.description: 'View list of account user roles'
 
     controller:
         customer:
@@ -85,6 +97,8 @@ orob2b.customer:
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
+        accountuserrole:
+            saved.message:     'Account User Role saved'
 
     widgets:
         account_user_information: 'Account User Information'

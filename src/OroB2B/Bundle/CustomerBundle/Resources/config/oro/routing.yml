@@ -13,6 +13,11 @@ orob2b_customer_account_user:
     type: annotation
     prefix: /account/user
 
+orob2b_customer_account_user_role:
+    resource: "@OroB2BCustomerBundle/Controller/AccountUserRoleController.php"
+    type: annotation
+    prefix: /account/user/role
+
 orob2b_customer_user_security:
     resource: "@OroB2BCustomerBundle/Controller/SecurityController.php"
     type: annotation

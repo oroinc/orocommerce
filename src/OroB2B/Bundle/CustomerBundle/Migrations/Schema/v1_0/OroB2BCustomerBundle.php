@@ -16,6 +16,7 @@ class OroB2BCustomerBundle implements Migration
     {
         /** Tables generation **/
         $this->createOroB2BAccountUserTable($schema);
+        $this->createOrob2BAccountUserRoleTable($schema);
         $this->createOroB2BAccountUserOrganizationTable($schema);
         $this->createOroB2BCustomerTable($schema);
         $this->createOroB2BCustomerGroupTable($schema);
@@ -112,6 +113,21 @@ class OroB2BCustomerBundle implements Migration
         $table->addColumn('organization_id', 'integer', []);
 
         $table->setPrimaryKey(['account_user_id', 'organization_id']);
+    }
+
+    /**
+     * Create orob2b_account_user_role table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BAccountUserRoleTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_account_user_role');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('role', 'string', ['length' => 64]);
+        $table->addColumn('label', 'string', ['length' => 64]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['role'], 'uniq_e153330157698a6a');
     }
 
     /**
