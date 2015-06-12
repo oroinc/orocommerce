@@ -22,8 +22,8 @@ class RequestType extends AbstractType
                 'requestProducts',
                 RequestProductCollectionType::NAME,
                 [
-                    'label'     => 'orob2b.rfpadmin.request.requestproduct.entity_plural_label',
-                    'add_label' => 'orob2b.rfpadmin.request.requestproduct.add_label',
+                    'label'     => 'orob2b.rfpadmin.requestproduct.entity_plural_label',
+                    'add_label' => 'orob2b.rfpadmin.requestproduct.add_label',
                     'required'  => false
                 ]
             )

@@ -6,7 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
+use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
+use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -25,7 +28,37 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => 'Hey, you!'
+            'body' => 'Hey, you!',
+            'products'  => [
+                LoadProductData::PRODUCT1 => [
+                    [
+                        'quantity'  => 1,
+                        'unit'      => LoadProductData::UNIT1,
+                        'price'     => 1,
+                        'currency'  => LoadProductData::CURRENCY1,
+                    ],
+                    [
+                        'quantity'  => 2,
+                        'unit'      => LoadProductData::UNIT2,
+                        'price'     => 2,
+                        'currency'  => LoadProductData::CURRENCY1,
+                    ],
+                ],
+                LoadProductData::PRODUCT2 => [
+                    [
+                        'quantity'  => 3,
+                        'unit'      => LoadProductData::UNIT3,
+                        'price'     => 3,
+                        'currency'  => LoadProductData::CURRENCY1,
+                    ]
+                ],
+                LoadProductData::PRODUCT3 => []
+            ],
+            'comments'  => [
+                LoadProductData::PRODUCT1 => 'Product1 Comment',
+                LoadProductData::PRODUCT2 => 'Product2 Comment',
+                LoadProductData::PRODUCT3 => 'Product3 Comment',
+            ]
         ]
     ];
 
@@ -36,6 +69,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     {
         return [
             'OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
+            'OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures\LoadProductData'
         ];
     }
 
@@ -62,9 +96,66 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setBody($rawRequest['body'])
                 ->setStatus($status);
 
+            foreach ($this->getRequestProducts($rawRequest['products'], $manager) as $product) {
+                /* @var $product RequestProduct */
+                $product->setComment($rawRequest['comments'][$product->getProductSku()]);
+                $request
+                    ->addRequestProduct($product)
+                ;
+            }
             $manager->persist($request);
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param array $data
+     * @param ObjectManager $manager
+     * @return array|RequestProduct[]
+     */
+    protected function getRequestProducts($data, ObjectManager $manager)
+    {
+        $products = [];
+
+        foreach ($data as $sku => $items) {
+            $products[] = $this->getRequestProduct($sku, $items, $manager);
+        }
+
+        return $products;
+    }
+
+    /**
+     * @param string $sku
+     * @param array $items
+     * @param ObjectManager $manager
+     * @return RequestProduct
+     */
+    protected function getRequestProduct($sku, $items, ObjectManager $manager)
+    {
+        $product = new RequestProduct();
+        $product
+            ->setProduct($this->getReference($sku))
+        ;
+
+        foreach ($items as $item) {
+            $productItem = new RequestProductItem();
+            $productItem
+                ->setQuantity($item['quantity'])
+                ->setProductUnit($this->getReference($item['unit']))
+                ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
+            ;
+
+            $manager->persist($productItem);
+
+            $product
+                ->addRequestProductItem($productItem)
+            ;
+        }
+
+        $manager->persist($product);
+        $manager->flush();
+
+        return $product;
     }
 }
