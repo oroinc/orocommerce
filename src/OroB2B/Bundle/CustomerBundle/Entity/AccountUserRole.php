@@ -67,7 +67,7 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getRole()
     {
@@ -75,7 +75,7 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getLabel()
     {
@@ -88,7 +88,7 @@ class AccountUserRole extends AbstractRole
      */
     public function setLabel($label)
     {
-        $this->label = (string) $label;
+        $this->label = (string)$label;
 
         return $this;
     }
