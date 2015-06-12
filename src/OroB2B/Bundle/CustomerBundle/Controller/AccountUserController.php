@@ -47,7 +47,7 @@ class AccountUserController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_customer.account_user.entity.class')
+            'entity_class' => $this->container->getParameter('orob2b_customer.entity.account_user.class')
         ];
     }
 
@@ -101,6 +101,17 @@ class AccountUserController extends Controller
     public function updateAction(AccountUser $accountUser)
     {
         return $this->update($accountUser);
+    }
+
+    /**
+     * @Route("/profile/view", name="orob2b_customer_account_user_profile_view")
+     * @Template("OroB2BCustomerBundle:AccountUser:view.html.twig")
+     */
+    public function viewProfileAction()
+    {
+        return [
+            'entity' => $this->getUser()
+        ];
     }
 
     /**

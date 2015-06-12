@@ -82,6 +82,8 @@ orob2b.customer:
         shortcut_list_account_users.label: 'Show account users'
         shortcut_list_account_users.description: 'View list of account users'
 
+        orob2b_customer_account_user_profile_view.label: My Account User
+
     controller:
         customer:
             saved.message: 'Customer saved'

@@ -1,0 +1,9 @@
+placeholders:
+    user_menu:
+        items:
+            account_menu_user:
+                order: 50
+
+items:
+    account_menu_user:
+        template: OroB2BCustomerBundle:Menu:menuProfile.html.twig
