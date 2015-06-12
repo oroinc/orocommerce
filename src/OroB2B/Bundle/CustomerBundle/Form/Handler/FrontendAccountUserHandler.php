@@ -2,17 +2,17 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\Handler;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-
-use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
 
-class AccountUserHandler
+class FrontendAccountUserHandler
 {
-    /** @var FormInterface  */
+    /** @var FormInterface */
     protected $form;
 
     /** @var Request */
@@ -36,10 +36,10 @@ class AccountUserHandler
         ObjectManager $manager,
         AccountUserManager $userManager
     ) {
-        $this->form               = $form;
-        $this->request            = $request;
-        $this->manager            = $manager;
-        $this->userManager        = $userManager;
+        $this->form = $form;
+        $this->request = $request;
+        $this->manager = $manager;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -55,14 +55,7 @@ class AccountUserHandler
 
             if ($this->form->isValid()) {
                 if (!$accountUser->getId()) {
-                    if ($this->form->get('passwordGenerate')->getData()) {
-                        $generatedPassword = $this->userManager->generatePassword(10);
-                        $accountUser->setPlainPassword($generatedPassword);
-                    }
-
-                    if ($this->form->get('sendEmail')->getData()) {
-                        $this->userManager->sendWelcomeEmail($accountUser);
-                    }
+                    $this->userManager->register($accountUser);
                 }
 
                 $this->userManager->updateUser($accountUser);

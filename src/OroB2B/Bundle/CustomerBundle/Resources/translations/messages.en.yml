@@ -81,6 +81,7 @@ orob2b.customer:
         customergroup:
             saved.message: 'Customer group saved'
         accountuser:
+            registered.message: 'Registration successful'
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'

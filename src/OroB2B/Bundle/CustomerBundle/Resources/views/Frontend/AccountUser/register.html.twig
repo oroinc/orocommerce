@@ -1,0 +1,74 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({
+    params : {
+        "%email%": entity.email|default('N/A'|trans),
+        "%entityName%": 'orob2b.customer.accountuser.entity_label'|trans
+    }
+}) %}
+
+{% set formAction = entity.id ? path('orob2b_customer_account_user_update', { 'id': entity.id }) : path('orob2b_customer_account_user_create')  %}
+
+{% block navButtons %}
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_customer_delete_account_user', {'id': entity.id}),
+            'dataRedirect': path('orob2b_customer_account_user_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.customer.accountuser.entity_label'|trans,
+        }) }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
+    {{ UI.cancelButton(path('orob2b_customer_account_user_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_customer_account_user_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_customer_account_user_index'),
+            'indexLabel': 'orob2b.customer.accountuser.entity_plural_label'|trans,
+            'entityTitle': entity.email|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.customer.accountuser.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'account-user-edit' %}
+
+    {% set formRows = [
+        form_row(form.firstName),
+        form_row(form.lastName),
+        form_row(form.email),
+        form_widget(form.plainPassword, { 'attr': {'class': 'password'} }),
+    ] %}
+
+    {% set dataBlocks = [{
+            'title': 'orob2b.customer.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': formRows
+            }]
+        }]
+    %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

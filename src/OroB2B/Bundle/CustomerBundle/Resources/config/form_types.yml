@@ -8,6 +8,7 @@ parameters:
 
     orob2b_customer.form.type.roles.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendRolesType
     orob2b_customer.form.type.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType
+    orob2b_customer.form.type.frontend.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType
 
 services:
     orob2b_customer.form.type.customer:
@@ -48,3 +49,10 @@ services:
             - @translator
         tags:
             - { name: form.type, alias: orob2b_customer_account_user }
+
+    orob2b_customer.form.type.frontend.account_user:
+        class: %orob2b_customer.form.type.frontend.account_user.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: orob2b_customer_frontend_account_user }
