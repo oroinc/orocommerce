@@ -16,8 +16,13 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
-
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 
 class QuoteProductItemTypeTest extends FormIntegrationTestCase
@@ -38,7 +43,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getExtensions()
     {
@@ -124,9 +129,10 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
     /**
      * @param mixed $inputData
      * @param mixed $expectedData
+     * @param mixed $choices
      * @dataProvider preSetDataProvider
      */
-    public function testPreSetData($inputData, $expectedData)
+    public function testPreSetData($inputData, $expectedData, $choices)
     {
         $form = $this->factory->create($this->formType);
 
@@ -142,25 +148,18 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
 
         $options = $config->getOptions();
 
-        $this->assertEquals(null, $options['choices']);
+        $this->assertEquals($choices, $options['choices']);
         $this->assertEquals(false, $options['compact']);
         $this->assertEquals(false, $options['disabled']);
         $this->assertEquals(true, $options['required']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
     }
 
-    /**
-     * @param mixed $inputData
-     * @param mixed $expectedData
-     * @dataProvider preSubmitProvider
-     */
-    public function testPreSubmit($inputData, $expectedData)
+    public function testPreSubmit()
     {
         $form = $this->factory->create($this->formType, null, []);
 
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSubmit($event);
-        $this->assertEquals($expectedData, $event->getData());
+        $this->formType->preSubmit(new FormEvent($form, null));
 
         $this->assertTrue($form->has('productUnit'));
 
@@ -179,23 +178,40 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
      */
     public function preSetDataProvider()
     {
+        $choices = [
+            (new ProductUnit())->setCode('unit1'),
+            (new ProductUnit())->setCode('unit2'),
+            (new ProductUnit())->setCode('unit3'),
+        ];
+
+        $product = new Product();
+        foreach ($choices as $unit) {
+            $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
+        }
+
+        /* @ar $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
+        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem');
+        $item
+            ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue(123))
+        ;
+        $item
+            ->expects($this->any())
+            ->method('getQuoteProduct')
+            ->will($this->returnValue((new QuoteProduct())->setProduct($product)))
+        ;
+
         return [
             'set data new item' => [
                 'inputData'     => null,
                 'expectedData'  => null,
+                'choices'       => null,
             ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function preSubmitProvider()
-    {
-        return [
-            'submit data new item' => [
-                'inputData'     => null,
-                'expectedData'  => null,
+            'set data existed item' => [
+                'inputData'     => $item,
+                'expectedData'  => $item,
+                'choices'       => $choices,
             ],
         ];
     }

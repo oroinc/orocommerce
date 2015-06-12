@@ -31,6 +31,9 @@ class QuoteProductItemTypeTest extends WebTestCase
      */
     protected $container;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient();
@@ -49,20 +52,6 @@ class QuoteProductItemTypeTest extends WebTestCase
             $message = sprintf('Error with data set "%s":', $name);
             $this->preSetDataTest($item['choices'], $item['inputData'], $item['expectedData'], $message);
         }
-    }
-
-    /**
-     * @param mixed $inputData
-     * @param mixed $expectedData
-     * @dataProvider preSubmitProvider
-     */
-    public function testSubmit($inputData, $expectedData)
-    {
-        $form = $this->container->get('form.factory')->create($this->formType, null, []);
-
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSubmit($event);
-        $this->assertEquals($expectedData, $event->getData());
     }
 
     /**
@@ -134,18 +123,5 @@ class QuoteProductItemTypeTest extends WebTestCase
         }
 
         return $units;
-    }
-
-    /**
-     * @return array
-     */
-    public function preSubmitProvider()
-    {
-        return [
-            'item1' => [
-                'inputData' => null,
-                'expectedData' => null,
-            ],
-        ];
     }
 }

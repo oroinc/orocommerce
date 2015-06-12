@@ -11,7 +11,6 @@ use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class QuoteControllerTest extends WebTestCase
@@ -22,12 +21,18 @@ class QuoteControllerTest extends WebTestCase
     public static $validUntil           = '2015-05-15T15:15:15+0000';
     public static $validUntilUpdated    = '2016-06-16T16:16:16+0000';
 
+    /**
+     * {@inheritdoc}
+     */
     public static function setUpBeforeClass()
     {
         self::$qid          = 'TestQuoteID - ' . time() . '-' . rand();
         self::$qidUpdated   = self::$qid . ' - updated';
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -168,9 +173,6 @@ class QuoteControllerTest extends WebTestCase
      */
     protected function getUser($username)
     {
-        /* @var $repository UserRepository */
-        $repository = $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User');
-
-        return $repository->findOneBy(['username' => $username]);
+        return $this->getReference($username);
     }
 }

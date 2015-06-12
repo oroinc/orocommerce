@@ -14,7 +14,7 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
     /**
      * @var QuoteProductType
      */
-    protected $type;
+    protected $formType;
 
     /**
      * {@inheritdoc}
@@ -23,7 +23,7 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteProductType();
+        $this->formType = new QuoteProductType();
     }
 
     public function testBuildForm()
@@ -51,7 +51,7 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
             ->will($this->returnSelf())
         ;
 
-        $this->type->buildForm($builder, []);
+        $this->formType->buildForm($builder, []);
     }
 
     public function testSetDefaultOptions()
@@ -67,16 +67,6 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
             ])
         ;
 
-        $this->type->setDefaultOptions($resolver);
-    }
-
-    public function testPreSetData()
-    {
-        // TODO
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('orob2b_sale_quote_product', $this->type->getName());
+        $this->formType->setDefaultOptions($resolver);
     }
 }
