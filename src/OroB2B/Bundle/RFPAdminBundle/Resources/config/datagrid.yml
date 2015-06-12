@@ -54,6 +54,10 @@ datagrid:
                 type:   url
                 route:  orob2b_rfp_admin_request_view
                 params: [ id ]
+            update_link:
+                type: url
+                route: orob2b_rfp_admin_request_update
+                params: [ id ]
             request_change_status_link:
                 type:   url
                 route:  orob2b_rfp_admin_request_change_status
@@ -122,6 +126,12 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_rfp_admin_request_view
                 rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_rfp_admin_request_update
             request_change_status:
                 type:          request-change-status-dialog
                 label:         orob2b.rfpadmin.btn.change_status

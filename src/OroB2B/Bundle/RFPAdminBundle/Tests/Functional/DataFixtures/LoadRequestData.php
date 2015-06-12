@@ -94,14 +94,13 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setCompany($rawRequest['company'])
                 ->setRole($rawRequest['role'])
                 ->setBody($rawRequest['body'])
-                ->setStatus($status);
+                ->setStatus($status)
+            ;
 
             foreach ($this->getRequestProducts($rawRequest['products'], $manager) as $product) {
                 /* @var $product RequestProduct */
                 $product->setComment($rawRequest['comments'][$product->getProductSku()]);
-                $request
-                    ->addRequestProduct($product)
-                ;
+                $request->addRequestProduct($product);
             }
             $manager->persist($request);
         }

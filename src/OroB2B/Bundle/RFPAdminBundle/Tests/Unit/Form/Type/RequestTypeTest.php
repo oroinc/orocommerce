@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
-
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductCollectionType;
 

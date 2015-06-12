@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;

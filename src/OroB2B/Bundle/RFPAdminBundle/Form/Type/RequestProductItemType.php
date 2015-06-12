@@ -82,7 +82,7 @@ class RequestProductItemType extends AbstractType
         $form = $event->getForm();
         $choices = null;
 
-        $productUnitOptons = [
+        $productUnitOptions = [
             'compact' => false,
             'disabled' => false,
             'label' => 'orob2b.product.productunit.entity_label',
@@ -100,17 +100,17 @@ class RequestProductItemType extends AbstractType
             $productUnit = $requestProductItem->getProductUnit();
             if (!$productUnit || ($product && !in_array($productUnit->getCode(), $choices))) {
                 // ProductUnit was removed
-                $productUnitOptons['empty_value'] =  $this->translator->trans(
+                $productUnitOptions['empty_value'] =  $this->translator->trans(
                     'orob2b.rfpadmin.message.requestproductitem.unit.removed',
                     ['{title}' => $requestProductItem->getProductUnitCode()]
                 );
             }
         }
-        $productUnitOptons['choices'] = $choices;
+        $productUnitOptions['choices'] = $choices;
         $form->add(
             'productUnit',
             ProductUnitSelectionType::NAME,
-            $productUnitOptons
+            $productUnitOptions
         );
     }
 
