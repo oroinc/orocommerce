@@ -96,12 +96,12 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testUpdate($id)
     {
-        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_rfp_admin_quote_update', ['id' => $id]));
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
         $owner      = $this->getUser(LoadUserData::USER2);
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_rfp_admin_quote[owner]']      = $owner->getId();
+        $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qidUpdated;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
 
