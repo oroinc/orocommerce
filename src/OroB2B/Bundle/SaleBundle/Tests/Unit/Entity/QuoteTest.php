@@ -41,10 +41,9 @@ class QuoteTest extends AbstractTest
         $quote = new Quote();
 
         $this->assertNull($quote->getUpdatedAt());
-        
+
         $quote->preUpdate();
 
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
-
 }

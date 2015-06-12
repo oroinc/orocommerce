@@ -45,7 +45,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->translator
             ->method('trans')
-            ->will($this->returnCallback(function($id, $params) {
+            ->will($this->returnCallback(function ($id, $params) {
                 $ids = [
                     'orob2b.product_unit.kg.label.full'     => 'kilogram',
                     'orob2b.product_unit.item.label.full'   => 'item',
@@ -66,7 +66,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         ;
         $this->twigFilters['orob2b_format_product_unit_value']
             ->method('getCallable')
-            ->will($this->returnValue(function($value, ProductUnit $unit) {
+            ->will($this->returnValue(function ($value, ProductUnit $unit) {
                 $code = $this->translator->trans('orob2b.product_unit.' . $unit->getCode() . '.label.full');
                 return sprintf('%d %s', $value, $code);
             }))
@@ -78,7 +78,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         ;
         $this->twigFilters['oro_format_price']
             ->method('getCallable')
-            ->will($this->returnValue(function(Price $price, array $options = []) {
+            ->will($this->returnValue(function (Price $price, array $options = []) {
                 return sprintf('%01.2f %s', $price->getValue(), $price->getCurrency());
             }))
         ;
@@ -105,19 +105,29 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param string $expected
+     * @param int $quantity
+     * @param string $unitCode
+     * @param Price $price
+     * @param ProductUnit $unit
      * @dataProvider formatProductItemProvider
      */
-    public function testFormatProductItem($expectedResult, $quantity, $productUnitCode, Price $price, ProductUnit $productUnit = null)
+    public function testFormatProductItem($expected, $quantity, $unitCode, Price $price, ProductUnit $unit = null)
     {
         $item = new QuoteProductItem();
         $item
             ->setQuantity($quantity)
-            ->setProductUnit($productUnit)
-            ->setProductUnitCode($productUnitCode)
+            ->setProductUnit($unit)
+            ->setProductUnitCode($unitCode)
             ->setPrice($price)
         ;
 
-        $this->assertEquals($expectedResult, $this->extension->formatProductItem($item));
+        $this->assertEquals($expected, $this->extension->formatProductItem($item));
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(QuoteExtension::NAME, $this->extension->getName());
     }
 
     /**
@@ -141,10 +151,5 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
                 'productUnit'       => null,
             ],
         ];
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(QuoteExtension::NAME, $this->extension->getName());
     }
 }

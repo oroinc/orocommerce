@@ -93,11 +93,11 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
                 ;
             }
 
-            $this->entityManager->persist($quote);
+            $manager->persist($quote);
 
             $this->setReference($item['qid'], $quote);
         }
-        $this->entityManager->flush();
+        $manager->flush();
     }
 
     /**
@@ -122,8 +122,6 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
      */
     protected function getQuoteProduct($sku, $items)
     {
-        $em = $this->entityManager;
-
         $product = new QuoteProduct();
         $product
             ->setProduct($this->getReference($sku))
@@ -137,16 +135,16 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
             ;
 
-            $em->persist($productItem);
+            $this->entityManager->persist($productItem);
 
             $product
                 ->addQuoteProductItem($productItem)
             ;
         }
 
-        $em->persist($product);
+        $this->entityManager->persist($product);
 
-        $em->flush();
+        $this->entityManager->flush();
 
         return $product;
     }

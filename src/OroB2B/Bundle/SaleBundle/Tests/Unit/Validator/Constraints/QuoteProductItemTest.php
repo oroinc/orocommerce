@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -16,7 +17,7 @@ class QuoteProductItemTest extends \PHPUnit_Framework_TestCase
     /** @var Constraints\QuoteProductItem */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var Constraints\QuoteProductItemValidator */
