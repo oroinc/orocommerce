@@ -20,7 +20,7 @@ class RouteCollectionListener
      */
     public function __construct($prefix)
     {
-        $this->prefix = $prefix;
+        $this->prefix = trim(trim($prefix), '/');
     }
 
     /**
@@ -28,15 +28,14 @@ class RouteCollectionListener
      */
     public function onCollectionAutoload(RouteCollectionEvent $event)
     {
-        $prefix = trim(trim($this->prefix), '/');
-        if ('' === $prefix) {
+        if ('' === $this->prefix) {
             return;
         }
 
         /** @var Route $route */
         foreach ($event->getCollection()->getIterator() as $route) {
             $path = $route->getPath();
-            if (false !== strpos($path, $prefix)) {
+            if (false !== strpos($path, $this->prefix)) {
                 continue;
             }
 
@@ -44,7 +43,7 @@ class RouteCollectionListener
                 continue;
             }
 
-            $route->setPath($prefix . $route->getPath());
+            $route->setPath($this->prefix . $route->getPath());
         }
     }
 }
