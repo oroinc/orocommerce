@@ -106,7 +106,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BAccountUserOrganizationTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user_organiz');
+        $table = $schema->createTable('orob2b_account_user_org');
 
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('organization_id', 'integer', []);
@@ -165,7 +165,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function addOroB2BAccountUserOrganizationForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_account_user_organiz');
+        $table = $schema->getTable('orob2b_account_user_org');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
             ['account_user_id'],

@@ -13,6 +13,28 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  * @ORM\Entity
  * @ORM\Table(name="orob2b_account_user")
  * @ORM\HasLifecycleCallbacks()
+ * @ORM\AssociationOverrides({
+ *      @ORM\AssociationOverride(
+ *          name="organizations",
+ *          joinTable=@ORM\JoinTable(
+ *              name="orob2b_account_user_org",
+ *              joinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="account_user_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE"
+ *                  )
+ *              },
+ *              inverseJoinColumns={
+ *                  @ORM\JoinColumn(
+ *                      name="organization_id",
+ *                      referencedColumnName="id",
+ *                      onDelete="CASCADE"
+ *                  )
+ *              }
+ *          )
+ *      )
+ * })
  * @Config(
  *      routeName="orob2b_customer_account_user_index",
  *      routeView="orob2b_customer_account_user_view",
@@ -33,6 +55,11 @@ class AccountUser extends AbstractUser implements FullNameInterface
     const ROLE_DEFAULT = 'ROLE_USER';
     const ROLE_ADMINISTRATOR = 'ROLE_ADMINISTRATOR';
     const ROLE_ANONYMOUS = 'IS_AUTHENTICATED_ANONYMOUSLY';
+
+    /**
+     * @todo remove BB-599
+     */
+    protected $roles;
 
     /**
      * @var Customer
@@ -129,7 +156,7 @@ class AccountUser extends AbstractUser implements FullNameInterface
 
     /**
      * @param Customer $customer
-     * @return $this
+     * @return AccountUser
      */
     public function setCustomer(Customer $customer = null)
     {
@@ -147,14 +174,6 @@ class AccountUser extends AbstractUser implements FullNameInterface
             $this->customer = new Customer();
             $this->customer->setName(sprintf('%s %s', $this->firstName, $this->lastName));
         }
-    }
-
-    /**
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
     }
 
     /**
