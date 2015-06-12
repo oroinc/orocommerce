@@ -1,0 +1,28 @@
+connector:
+    name: oro_importexport
+    jobs:
+        price_list_product_prices_export_to_csv:
+            title: "Export Product Prices by Price List to CSV"
+            type: export
+            steps:
+                export:
+                    title:     export
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    orob2b_pricing.importexport.reader.price_list_product_prices
+                        processor: oro_importexport.processor.export_delegate
+                        writer:    oro_importexport.writer.csv
+                    parameters: ~
+
+        price_list_product_prices_entity_import_from_csv:
+            title: "Product Prices Import from CSV"
+            type: import
+            steps:
+                import:
+                    title:     import
+                    class:     Oro\Bundle\BatchBundle\Step\ItemStep
+                    services:
+                        reader:    oro_importexport.reader.csv
+                        processor: oro_importexport.processor.import_delegate
+                        writer:    orob2b_pricing.importexport.writer.product_price
+                    parameters: ~

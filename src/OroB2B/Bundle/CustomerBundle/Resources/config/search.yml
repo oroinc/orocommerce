@@ -33,3 +33,26 @@ OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup:
             name:                   name
             target_type:            text
             target_fields:          [name]
+
+OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
+    alias: orob2b_customer_account_user
+    label: orob2b.customer.accountuser.entity_plural_label
+    title_fields: [email]
+    route:
+        name: orob2b_customer_account_user_view
+        parameters:
+            id: id
+    search_template: OroB2BCustomerBundle:Search:result.html.twig
+    fields:
+        -
+            name: email
+            target_type: text
+            target_fields: [email]
+        -
+            name: firstName
+            target_type: text
+            target_fields: [firstName]
+        -
+            name: lastName
+            target_type: text
+            target_fields: [lastName]

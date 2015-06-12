@@ -7,6 +7,11 @@ parameters:
 
     orob2b_customer.form.autocomplete.parent_customer.search_handler.class: OroB2B\Bundle\CustomerBundle\Autocomplete\ParentCustomerSearchHandler
 
+    orob2b_customer.account_user.entity.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
+    orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_customer.datagrid.action_permission_provider.class: OroB2B\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider
+    orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
+
 services:
     orob2b_customer.customer_tree_handler:
         class: %orob2b_customer.customer_tree_handler.class%
@@ -55,3 +60,34 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_parent, acl_resource: orob2b_customer_view }
         lazy: true
+
+    orob2b_customer.account_user.manager.api:
+        class: %orob2b_customer.account_user.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_customer.account_user.entity.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_customer.datagrid.action_permission_provider:
+        class: %orob2b_customer.datagrid.action_permission_provider.class%
+
+    orob2b_customer.mailer.processor:
+        class: %orob2b_customer.mailer.processor.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @oro_config.global
+            - @oro_email.email_renderer
+            - @oro_email.direct_mailer
+
+    orob2b_account_user.manager:
+        class: %oro_user.manager.base.class%
+        arguments:
+            - %orob2b_customer.account_user.entity.class%
+            - @doctrine
+            - @security.encoder_factory
+
+    orob2b_account_user.security.provider:
+        class: %oro_user.security.provider.class%
+        public: false
+        arguments:
+            - @orob2b_account_user.manager
