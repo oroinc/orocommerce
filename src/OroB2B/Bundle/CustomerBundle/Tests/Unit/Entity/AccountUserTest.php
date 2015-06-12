@@ -23,7 +23,7 @@ class AccountUserTest extends AbstractUserTest
     {
         $customer = new Customer();
 
-        $user = $this->getUser();;
+        $user = $this->getUser();
         $user->setFirstName('John');
         $user->setLastName('Doe');
         $user->setEmail('test@example.com');
@@ -38,7 +38,7 @@ class AccountUserTest extends AbstractUserTest
 
     public function testCreateCustomer()
     {
-        $user = $this->getUser();;
+        $user = $this->getUser();
         $user->setFirstName('John')
             ->setLastName('Doe');
         $this->assertEmpty($user->getCustomer());
