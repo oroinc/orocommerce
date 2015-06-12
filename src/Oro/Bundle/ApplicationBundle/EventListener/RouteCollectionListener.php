@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\EventListener;
+namespace Oro\Bundle\ApplicationBundle\EventListener;
 
 use Symfony\Component\Routing\Route;
 
@@ -20,7 +20,7 @@ class RouteCollectionListener
      */
     public function __construct($prefix)
     {
-        $this->prefix = trim(trim($prefix), '/');
+        $this->prefix = $prefix;
     }
 
     /**
@@ -28,20 +28,15 @@ class RouteCollectionListener
      */
     public function onCollectionAutoload(RouteCollectionEvent $event)
     {
-        if ('' === $this->prefix) {
+        $prefix = trim(trim($this->prefix), '/');
+        if ('' === $prefix) {
             return;
         }
-
-        $prefix = '/' . $this->prefix;
 
         /** @var Route $route */
         foreach ($event->getCollection()->getIterator() as $route) {
             $path = $route->getPath();
             if (false !== strpos($path, $prefix)) {
-                continue;
-            }
-
-            if (false !== strpos($path, $this->prefix)) {
                 continue;
             }
 

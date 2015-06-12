@@ -7,8 +7,6 @@ parameters:
 
     orob2b_customer.form.autocomplete.parent_customer.search_handler.class: OroB2B\Bundle\CustomerBundle\Autocomplete\ParentCustomerSearchHandler
 
-    orob2b_customer.event_listener.route_collection.class: OroB2B\Bundle\CustomerBundle\EventListener\RouteCollectionListener
-
 services:
     orob2b_customer.customer_tree_handler:
         class: %orob2b_customer.customer_tree_handler.class%
@@ -56,12 +54,4 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_parent, acl_resource: orob2b_customer_view }
-        lazy: true
-
-    orob2b_customer.event_listener.route_collection:
-        class: %orob2b_customer.event_listener.route_collection.class%
-        arguments:
-            - %backend_prefix%
-        tags:
-            - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true

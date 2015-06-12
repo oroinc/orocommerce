@@ -1,13 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ApplicationBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
+use Oro\Bundle\ApplicationBundle\EventListener\RouteCollectionListener;
 use Oro\Bundle\DistributionBundle\Event\RouteCollectionEvent;
-
-use OroB2B\Bundle\CustomerBundle\EventListener\RouteCollectionListener;
 
 class RouteCollectionListenerTest extends \PHPUnit_Framework_TestCase
 {
