@@ -98,4 +98,4 @@ orob2b.customer:
             account_users.title: 'Account users'
         fields:
             registration_allowed.label: 'Registration Allowed'
-            confirmation.label: 'Confirmation'
+            confirmation_required.label: 'Confirmation Required'

@@ -21,7 +21,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
-                'confirmation' => ['type' => 'boolean', 'value' => true]
+                'confirmation_required' => ['type' => 'boolean', 'value' => true]
             ]
         );
 

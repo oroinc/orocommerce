@@ -23,7 +23,7 @@ class OroB2BCustomerExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
 
-        $container->prependExtensionConfig($this->getAlias(), $config);
+        $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
     }
 
     /**

@@ -1,2 +1,2 @@
 orob2b.customer.system_configuration.fields.registration_allowed.tooltip: 'Allow account users registration'
-orob2b.customer.system_configuration.fields.confirmation.tooltip: 'Send confirmation email'
+orob2b.customer.system_configuration.fields.confirmation_required.tooltip: 'Send confirmation email'

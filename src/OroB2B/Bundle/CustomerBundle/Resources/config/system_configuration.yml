@@ -16,20 +16,20 @@ oro_system_configuration:
                 label: orob2b.customer.system_configuration.fields.registration_allowed.label
                 tooltip: orob2b.customer.system_configuration.fields.registration_allowed.tooltip
                 required: true
-        oro_b2b_customer.confirmation:
+        oro_b2b_customer.confirmation_required:
             data_type: boolean
             type: oro_config_checkbox
             priority: 90
             options:
-                label: orob2b.customer.system_configuration.fields.confirmation.label
-                tooltip: orob2b.customer.system_configuration.fields.confirmation.tooltip
+                label: orob2b.customer.system_configuration.fields.confirmation_required.label
+                tooltip: orob2b.customer.system_configuration.fields.confirmation_required.tooltip
                 required: true
 
     tree:
         system_configuration:
             platform:
                 children:
-                    general_setup:
+                    frontend_application:
                         children:
                             account:
                                 priority: 200
@@ -38,4 +38,4 @@ oro_system_configuration:
                                         priority: 100
                                         children:
                                             - oro_b2b_customer.registration_allowed
-                                            - oro_b2b_customer.confirmation
+                                            - oro_b2b_customer.confirmation_required
