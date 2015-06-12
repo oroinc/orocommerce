@@ -6,10 +6,51 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 
-class OroB2BOrderBundle implements Migration
+class OroB2BOrderBundle implements
+    Migration,
+    NoteExtensionAwareInterface,
+    AttachmentExtensionAwareInterface,
+    ActivityExtensionAwareInterface
 {
     const ORDER_TABLE_NAME = 'orob2b_order';
+
+    /** @var  NoteExtension */
+    protected $noteExtension;
+    /** @var  AttachmentExtension */
+    protected $attachmentExtension;
+    /** @var  ActivityExtension */
+    protected $activityExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -21,6 +62,10 @@ class OroB2BOrderBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOroB2BOrderForeignKeys($schema);
+
+        $this->addNoteAssociations($schema);
+        $this->addAttachmentAssociations($schema);
+        $this->addActivityAssociations($schema);
     }
 
     /**
@@ -63,6 +108,43 @@ class OroB2BOrderBundle implements Migration
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Enable notes for Order entity
+     *
+     * @param Schema $schema
+     */
+    public function addNoteAssociations(Schema $schema)
+    {
+        $this->noteExtension->addNoteAssociation($schema, self::ORDER_TABLE_NAME);
+    }
+
+    /**
+     * Enable attachments for Order entity
+     *
+     * @param Schema $schema
+     */
+    public function addAttachmentAssociations(Schema $schema)
+    {
+        $this->attachmentExtension->addAttachmentAssociation(
+            $schema,
+            self::ORDER_TABLE_NAME
+        );
+    }
+
+    /**
+     * Enables Event activity for Order entity
+     *
+     * @param Schema $schema
+     */
+    public function addActivityAssociations(Schema $schema)
+    {
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            'oro_calendar_event',
+            self::ORDER_TABLE_NAME
         );
     }
 }

@@ -1,6 +1,6 @@
 datagrid:
     orders-grid:
-        extended_entity_name: %orob2b_order.order.class%
+        extended_entity_name: %orob2b_order.order.entity.class%
         options:
             entityHint:        order
             entity_pagination: true
@@ -15,7 +15,7 @@ datagrid:
                     - order1.updatedAt
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
                 from:
-                    - { table: %orob2b_order.order.class%, alias: order1 }
+                    - { table: %orob2b_order.order.entity.class%, alias: order1 }
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }

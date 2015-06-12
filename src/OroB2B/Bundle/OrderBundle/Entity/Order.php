@@ -7,15 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 
 /**
- * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="created_at_index", columns={"created_at"})})
+ * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_order_index",
@@ -54,7 +53,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
+     * @ORM\Column(name="identifier", type="string", length=255, unique=true, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -109,7 +108,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $owner;
 
     /**
-     * @var Organization
+     * @var OrganizationInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
@@ -157,7 +156,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      *
      * @return Order
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -177,7 +176,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      *
      * @return Order
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
 
@@ -193,11 +192,11 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @param $owningUser
+     * @param User $owningUser
      *
      * @return Order
      */
-    public function setOwner($owningUser)
+    public function setOwner(User $owningUser)
     {
         $this->owner = $owningUser;
 

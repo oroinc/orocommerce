@@ -2,11 +2,10 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Api\Rest;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class OrderControllerTest extends WebTestCase

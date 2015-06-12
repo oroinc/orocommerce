@@ -63,7 +63,7 @@ class OrderController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_order.order.class')
+            'entity_class' => $this->container->getParameter('orob2b_order.order.entity.class')
         ];
     }
 
@@ -118,16 +118,16 @@ class OrderController extends Controller
             $order,
             $this->createForm(OrderType::NAME, $order),
             function (Order $order) {
-                return array(
+                return [
                     'route'      => 'orob2b_order_update',
-                    'parameters' => array('id' => $order->getId())
-                );
+                    'parameters' => ['id' => $order->getId()]
+                ];
             },
             function (Order $order) {
-                return array(
+                return [
                     'route'      => 'orob2b_order_view',
-                    'parameters' => array('id' => $order->getId())
-                );
+                    'parameters' => ['id' => $order->getId()]
+                ];
             },
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message')
         );

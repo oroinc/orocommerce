@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Symfony\Component\DomCrawler\Crawler;
+
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class OrderControllerTest extends WebTestCase

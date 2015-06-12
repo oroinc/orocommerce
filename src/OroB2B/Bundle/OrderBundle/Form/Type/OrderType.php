@@ -11,21 +11,13 @@ class OrderType extends AbstractType
     const NAME = 'orob2b_order_type';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-    }
-
-    /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
-            'intention' => 'order',
+            'intention' => 'order'
         ]);
     }
 

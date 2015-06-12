@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\UserBundle\Entity\User;
-use Doctrine\ORM\EntityManager;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
+
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 class LoadOrders extends AbstractFixture implements ContainerAwareInterface
 {
