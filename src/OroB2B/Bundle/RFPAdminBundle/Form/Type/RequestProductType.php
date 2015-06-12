@@ -44,14 +44,14 @@ class RequestProductType extends AbstractType
                 'requestProductItems',
                 RequestProductItemCollectionType::NAME,
                 [
-                    'label'     => 'orob2b.rfpadmin.request.requestproduct.requestproductitem.entity_plural_label',
-                    'add_label' => 'orob2b.rfpadmin.request.requestproduct.requestproductitem.add_label',
+                    'label'     => 'orob2b.rfpadmin.requestproductitem.entity_plural_label',
+                    'add_label' => 'orob2b.rfpadmin.requestproductitem.add_label',
                     'required'  => false
                 ]
             )
             ->add('comment', 'textarea', [
                 'required' => false,
-                'label' => 'orob2b.rfpadmin.request.requestproduct.comment.label'
+                'label' => 'orob2b.rfpadmin.requestproduct.comment.label'
             ])
         ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);

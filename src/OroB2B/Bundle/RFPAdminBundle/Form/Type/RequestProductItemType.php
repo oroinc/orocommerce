@@ -40,11 +40,11 @@ class RequestProductItemType extends AbstractType
         $builder
             ->add('quantity', 'integer', [
                 'required' => true,
-                'label' => 'orob2b.rfpadmin.request.requestproduct.requestproductitem.quantity.label'
+                'label' => 'orob2b.rfpadmin.requestproductitem.quantity.label'
             ])
             ->add('price', PriceType::NAME, [
                 'required' => true,
-                'label' => 'orob2b.rfpadmin.request.requestproduct.requestproductitem.price.label'
+                'label' => 'orob2b.rfpadmin.requestproductitem.price.label'
             ])
         ;
 

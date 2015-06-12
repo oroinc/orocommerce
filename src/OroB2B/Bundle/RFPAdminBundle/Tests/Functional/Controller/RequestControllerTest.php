@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use Symfony\Component\DomCrawler\Form;
 
 /**
  * @outputBuffering enabled

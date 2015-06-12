@@ -61,7 +61,7 @@ class RequestExtension extends \Twig_Extension
         $unit   = $this->translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
 
         $str = $this->translator->trans(
-            'orob2b.rfpadmin.request.requestproduct.requestproductitem.item',
+            'orob2b.rfpadmin.requestproductitem.item',
             [
                 '{units}'   => $units,
                 '{price}'   => $price,
