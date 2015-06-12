@@ -16,6 +16,9 @@ class GenerateUrlCommandTest extends WebTestCase
             ['oro_default', json_encode(['qwe' => 'rty'])]
         );
         $result = trim($result);
-        $this->assertStringEndsWith('/admin.php/?qwe=rty', $result);
+        $this->assertStringEndsWith(
+            sprintf('/admin.php/%s/?qwe=rty', ltrim($this->getContainer()->getParameter('backend_prefix'), '/')),
+            $result
+        );
     }
 }
