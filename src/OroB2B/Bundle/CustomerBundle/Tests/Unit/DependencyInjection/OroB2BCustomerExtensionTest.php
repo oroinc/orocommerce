@@ -26,4 +26,14 @@ class OroB2BCustomerExtensionTest extends ExtensionTestCase
 
         $this->assertEquals('oro_b2b_customer', $extension->getAlias());
     }
+
+    /**
+     * Test Get Alias
+     */
+    public function testGetAlias()
+    {
+        $extension = new OroB2BCustomerExtension();
+
+        $this->assertEquals(OroB2BCustomerExtension::ALIAS, $extension->getAlias());
+    }
 }
