@@ -53,7 +53,7 @@ class AccountUserRoleType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class'  => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole',
+                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole',
             ]
         );
     }

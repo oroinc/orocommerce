@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class CustomerGroupType extends AbstractType
 {
@@ -43,6 +44,18 @@ class CustomerGroupType extends AbstractType
                     'multiple' => true
                 ]
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup',
+            ]
+        );
     }
 
     /**
