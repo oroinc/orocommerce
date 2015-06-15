@@ -49,6 +49,9 @@ orob2b.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
 
+        profile:
+            edit: Edit Profile
+
     accountuserrole:
         entity_label:                    'Account User Role'
         entity_plural_label:             'Account User Roles'

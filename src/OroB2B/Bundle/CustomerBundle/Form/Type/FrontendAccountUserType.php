@@ -32,6 +32,14 @@ class FrontendAccountUserType extends AbstractType
     {
         $builder
             ->add(
+                'namePrefix',
+                'text',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.customer.accountuser.name_prefix.label'
+                ]
+            )
+            ->add(
                 'firstName',
                 'text',
                 [
@@ -40,11 +48,35 @@ class FrontendAccountUserType extends AbstractType
                 ]
             )
             ->add(
+                'middleName',
+                'text',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.customer.accountuser.middle_name.label'
+                ]
+            )
+            ->add(
                 'lastName',
                 'text',
                 [
                     'required' => true,
                     'label' => 'orob2b.customer.accountuser.last_name.label'
+                ]
+            )
+            ->add(
+                'nameSuffix',
+                'text',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.customer.accountuser.name_suffix.label'
+                ]
+            )
+            ->add(
+                'birthday',
+                'oro_date',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.customer.accountuser.birthday.label'
                 ]
             )
             ->add(

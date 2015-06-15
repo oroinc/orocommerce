@@ -94,3 +94,5 @@ oro_titles:
     orob2b_customer_account_user_view:    '%%email%%'
     orob2b_customer_account_user_update:  '%%email%% - Edit'
     orob2b_customer_account_user_create:  oro.ui.create_entity
+
+    orob2b_customer_frontend_account_user_update: orob2b.customer.accountuser.profile.edit

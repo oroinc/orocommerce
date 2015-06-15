@@ -35,7 +35,7 @@ class AccountUserController extends Controller
     /**
      * @todo: Check ACL
      * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
-     * @Template
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend:register.html.twig")
      * @Acl(
      *      id="orob2b_customer_frontend_account_user_profile_view",
      *      type="entity",
@@ -57,13 +57,7 @@ class AccountUserController extends Controller
      *
      * @todo: Check ACL
      * @Route("/profile/update", name="orob2b_customer_frontend_account_user_update")
-     * @Template
-     * @Acl(
-     *      id="orob2b_customer_frontend_account_user_profile_update",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="EDIT"
-     * )
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend:update.html.twig")
      * @return array|RedirectResponse
      */
     public function updateAction()
