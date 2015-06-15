@@ -51,7 +51,25 @@ class ProductPriceRepositoryTest extends WebTestCase
             $expectedPrices[] = $this->getReference($priceReference);
         }
 
-        $this->assertEquals($expectedPrices, $this->repository->getPricesByProduct($product));
+        // prices must be sorted by price list, unit and currency
+        usort($expectedPrices, function (ProductPrice $a, ProductPrice $b) {
+            $priceListCompare = strcmp($a->getPriceList()->getId(), $b->getPriceList()->getId());
+            if ($priceListCompare !== 0) {
+                return $priceListCompare;
+            }
+
+            $unitCompare = strcmp($a->getUnit()->getCode(), $b->getUnit()->getCode());
+            if ($unitCompare !== 0) {
+                return $unitCompare;
+            }
+
+            return strcmp($a->getPrice()->getCurrency(), $b->getUnit()->getCode());
+        });
+
+        $this->assertEquals(
+            $this->getPriceIds($expectedPrices),
+            $this->getPriceIds($this->repository->getPricesByProduct($product))
+        );
     }
 
     /**
@@ -149,5 +167,47 @@ class ProductPriceRepositoryTest extends WebTestCase
             ['EUR' => 'EUR', 'UAH' => 'UAH', 'USD' => 'USD'],
             $this->repository->getAvailableCurrencies()
         );
+    }
+
+    public function testCountByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $this->assertCount(
+            $this->repository->countByPriceList($priceList),
+            $this->repository->findBy(['priceList' => $priceList->getId()])
+        );
+    }
+
+    public function testDeleteByPriceList()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+
+        $this->repository->deleteByPriceList($priceList);
+
+        $this->assertEmpty($this->repository->findBy(['priceList' => $priceList->getId()]));
+
+        /** @var PriceList $priceList2 */
+        $priceList2 = $this->getReference('price_list_2');
+        $this->assertNotEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+
+        $this->repository->deleteByPriceList($priceList2);
+        $this->assertEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+    }
+
+    /**
+     * @param ProductPrice[] $prices
+     * @return array
+     */
+    protected function getPriceIds(array $prices)
+    {
+        $priceIds = [];
+        foreach ($prices as $price) {
+            $priceIds[] = $price->getId();
+        }
+
+        return $priceIds;
     }
 }
