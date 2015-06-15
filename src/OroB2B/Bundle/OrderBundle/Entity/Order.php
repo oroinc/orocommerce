@@ -45,7 +45,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="identifier", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
