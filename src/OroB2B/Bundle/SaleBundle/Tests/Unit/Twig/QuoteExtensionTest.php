@@ -2,10 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\UIBundle\Twig;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
@@ -19,12 +18,12 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
     protected $extension;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Translator
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Twig\Environment
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
      */
     protected $twigEnvironment;
 
@@ -38,7 +37,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -56,7 +55,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             }))
         ;
 
-        $this->twigEnvironment = $this->getMockBuilder('Oro\Bundle\UIBundle\Twig\Environment')
+        $this->twigEnvironment = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
 

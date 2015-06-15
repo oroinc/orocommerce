@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -39,7 +40,13 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new QuoteProductItemType();
+        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->formType = new QuoteProductItemType($translator);
     }
 
     /**

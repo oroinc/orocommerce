@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -27,9 +28,9 @@ class QuoteProductTypeTest extends WebTestCase
     protected $formType;
 
     /**
-     * @var ContainerInterface
+     * @var TranslatorInterface
      */
-    protected $container;
+    protected $translator;
 
     /**
      * {@inheritdoc}
@@ -38,7 +39,7 @@ class QuoteProductTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductType();
+        $this->formType = new QuoteProductType($this->getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -63,7 +64,7 @@ class QuoteProductTypeTest extends WebTestCase
 
         $options = $form->get('product')->getConfig()->getOptions();
 
-        $this->assertEquals($expectedData, $options['empty_value']);
+        $this->assertEquals($expectedData['empty_value'], $options['empty_value']);
     }
 
     /**
@@ -77,7 +78,9 @@ class QuoteProductTypeTest extends WebTestCase
                     return null;
                 },
                 'expectedData'  => function () {
-                    return null;
+                    return [
+                        'empty_value' => null,
+                    ];
                 },
             ],
             'existsing item empty product' => [
@@ -91,7 +94,14 @@ class QuoteProductTypeTest extends WebTestCase
                 'expectedData'  => function () {
                     $quoteProduct = $this->getQuoteProduct(LoadQuoteData::QUOTE1);
 
-                    return $quoteProduct->getProductSku() . ' - removed';
+                    return [
+                        'empty_value' => $this->trans(
+                            'orob2b.sale.quoteproduct.product.removed',
+                            [
+                                '{title}' => $quoteProduct->getProductSku(),
+                            ]
+                        ),
+                    ];
                 },
             ],
         ];
@@ -112,5 +122,15 @@ class QuoteProductTypeTest extends WebTestCase
         $quoteProduct = $quote->getQuoteProducts()->first();
 
         return $quoteProduct;
+    }
+
+    /**
+     * @param string $id
+     * @param array $parameters
+     * @return string
+     */
+    protected function trans($id, array $parameters = array())
+    {
+        return $this->getContainer()->get('translator')->trans($id, $parameters);
     }
 }
