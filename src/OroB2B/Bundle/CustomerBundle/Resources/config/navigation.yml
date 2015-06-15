@@ -63,9 +63,9 @@ oro_menu_config:
             extras:
                 description: 'orob2b.customer.menu.shortcut_list_account_users.description'
 
-        orob2b_customer_account_user_profile_view:
-            label: 'orob2b.customer.menu.orob2b_customer_account_user_profile_view.label'
-            route: 'orob2b_customer_account_user_profile_view'
+        orob2b_customer_frontend_account_user_profile:
+            label: 'orob2b.customer.menu.orob2b_customer_frontend_account_user_profile.label'
+            route: 'orob2b_customer_frontend_account_user_profile'
             extras:
                 position: 10
 
@@ -80,7 +80,7 @@ oro_menu_config:
 
         account_usermenu:
             children:
-                orob2b_customer_account_user_profile_view: ~
+                orob2b_customer_frontend_account_user_profile: ~
 
         shortcuts:
             children:
@@ -105,4 +105,4 @@ oro_titles:
     orob2b_customer_account_user_update:  '%%username%% - Edit'
     orob2b_customer_account_user_create:  oro.ui.create_entity
 
-    orob2b_customer_account_user_profile_view: '%%username%%'
+    orob2b_customer_frontend_account_user_profile: '%%username%%'
