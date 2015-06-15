@@ -14,6 +14,7 @@ parameters:
     orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
 
     orob2b_customer.account_user_menu.builder.class: OroB2B\Bundle\CustomerBundle\Menu\AccountUserMenuBuilder
+    orob2b_customer.placeholder.filter.class:  OroB2B\Bundle\CustomerBundle\Placeholder\PlaceholderFilter
 
 services:
     orob2b_customer.customer_tree_handler:
@@ -97,7 +98,10 @@ services:
 
     orob2b_customer.account_user_menu:
         class: %orob2b_customer.account_user_menu.builder.class%
-        arguments:
-            - @security.context
         tags:
             - { name: oro_menu.builder, alias: account_usermenu }
+
+    orob2b_customer.placeholder.filter:
+        class: %orob2b_customer.placeholder.filter.class%
+        arguments:
+            - @oro_security.security_facade

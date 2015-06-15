@@ -65,7 +65,7 @@ orob2b.customer:
         account_user.disable: 'Disable'
 
     sections:
-        general: 'General'
+        general: 'General Information'
         customergroup:
             customers: 'Customers'
         roles:   'Frontend Capabilities'
@@ -94,9 +94,6 @@ orob2b.customer:
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
-
-    widgets:
-        account_user_information: 'Account User Information'
 
     message:
         password_mismatch: "The entered passwords don't match"

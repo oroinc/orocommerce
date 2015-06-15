@@ -4,25 +4,13 @@ namespace OroB2B\Bundle\CustomerBundle\Menu;
 
 use Knp\Menu\ItemInterface;
 
-use Symfony\Component\Security\Core\SecurityContextInterface;
-
 use Oro\Bundle\NavigationBundle\Menu\BuilderInterface;
 
 class AccountUserMenuBuilder implements BuilderInterface
 {
     /**
-     * @var SecurityContextInterface
+     * {@inheritDoc}
      */
-    private $securityContext;
-
-    /**
-     * @param SecurityContextInterface $securityContext
-     */
-    public function __construct(SecurityContextInterface $securityContext)
-    {
-        $this->securityContext = $securityContext;
-    }
-
     public function build(ItemInterface $menu, array $options = array(), $alias = null)
     {
         $menu->setExtra('type', 'dropdown');

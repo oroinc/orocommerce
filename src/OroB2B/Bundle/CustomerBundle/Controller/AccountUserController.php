@@ -104,17 +104,6 @@ class AccountUserController extends Controller
     }
 
     /**
-     * @Route("/profile/view", name="orob2b_customer_account_user_profile_view")
-     * @Template("OroB2BCustomerBundle:AccountUser:view.html.twig")
-     */
-    public function viewProfileAction()
-    {
-        return [
-            'entity' => $this->getUser()
-        ];
-    }
-
-    /**
      * @param AccountUser $accountUser
      * @return array|RedirectResponse
      */

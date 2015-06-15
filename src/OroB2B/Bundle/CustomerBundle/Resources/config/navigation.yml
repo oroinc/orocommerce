@@ -101,8 +101,8 @@ oro_titles:
     orob2b_customer_group_create: oro.ui.create_entity
 
     orob2b_customer_account_user_index:   ~
-    orob2b_customer_account_user_view:    '%%email%%'
-    orob2b_customer_account_user_update:  '%%email%% - Edit'
+    orob2b_customer_account_user_view:    '%%username%%'
+    orob2b_customer_account_user_update:  '%%username%% - Edit'
     orob2b_customer_account_user_create:  oro.ui.create_entity
 
     orob2b_customer_account_user_profile_view: '%%username%%'
