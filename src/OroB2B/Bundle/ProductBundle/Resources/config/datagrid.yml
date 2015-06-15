@@ -76,13 +76,8 @@ datagrid:
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
                 isVisible:
-                    type:      single_choice
+                    type:      boolean
                     data_name: product.isVisible
-                    options:
-                        field_options:
-                            choices:
-                                1: orob2b.product.visibility.visible.label
-                                0: orob2b.product.visibility.not_visible.label
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt

@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductVisibilityType;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
