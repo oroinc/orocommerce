@@ -1,0 +1,17 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.shopping_list.id.label'|trans, shopping_list.id) }}
+            {{ UI.renderProperty('orob2b.shopping_list.label.label'|trans, shopping_list.label) }}
+            {{ UI.renderProperty('orob2b.shopping_list.notes.label'|trans, shopping_list.notes) }}
+            {{ UI.renderProperty('oro.ui.created_at'|trans, shopping_list.createdAt|oro_format_datetime) }}
+            {{ UI.renderProperty('oro.ui.updated_at'|trans, shopping_list.updatedAt|oro_format_datetime) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(shopping_list) }}
+        </div>
+    </div>
+</div>

@@ -1,0 +1,4 @@
+orob2b_shopping_list:
+    resource:     "@OroB2BShoppingListBundle/Controller/ShoppingListController.php"
+    type:         annotation
+    prefix:       /shopping_list
