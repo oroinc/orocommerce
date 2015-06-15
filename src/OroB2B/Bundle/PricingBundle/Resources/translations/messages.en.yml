@@ -14,6 +14,29 @@ orob2b.pricing:
         customer_groups.label: Customer Groups
         customers.label: Customers
         websites.label: Websites
+        prices.label: Prices
+    quantity.label: Quantity
+    unit.label: Unit
+    price.label: Price
+    add_product_price: Add Product Price
+
+    productprice:
+        entity_label: Product Price
+        entity_plural_label: Product Prices
+        entity_description: Represents product price
+        id.label: ID
+        product.label: Product
+        product_sku.label: Product SKU
+        price_list.label: Proce List
+        currency.label: Currency
+        quantity.label: Quantity
+        value.label: Value
+        unit:
+            label: Unit
+            choose: Choose unit...
+        unit_code.label: Unit
+        price.label: Price
+        import: Import Product Prices
 
     menu:
         price_lists_tab.label: Price lists management
@@ -30,6 +53,20 @@ orob2b.pricing:
 
     controller:
         price_list.saved.message: Price List has been saved
+        product_price.saved.message: Product Price has been saved
 
     form:
         choose_price_list: Choose a Price List...
+
+    grid:
+        action:
+            view:
+                price_list: View Price List
+                product: View Product
+
+oro:
+    importexport:
+        import:
+            orob2b_pricing_product_price:
+                add_or_replace: Add and Replace
+                reset: Reset and Add

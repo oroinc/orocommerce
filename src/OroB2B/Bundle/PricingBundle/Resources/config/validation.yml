@@ -7,6 +7,8 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
         currencies:
             - NotBlank: ~
             - Valid: ~
+        prices:
+            - Valid: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
     properties:
@@ -15,3 +17,27 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
         currency:
             - NotBlank: ~
             - Currency: ~
+
+OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
+    constraints:
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields:  [ product, priceList, quantity, unit, currency ]
+            message: orob2b.pricing.validators.product_price.unique_entity.message
+    properties:
+        product:
+            - NotBlank: ~
+        productSku:
+            - NotBlank: ~
+        priceList:
+            - NotBlank: ~
+        quantity:
+            - NotBlank: ~
+            - Range:
+                min: 0
+        price:
+            - NotBlank: ~
+            - Valid: ~
+        unit:
+            - NotBlank: ~

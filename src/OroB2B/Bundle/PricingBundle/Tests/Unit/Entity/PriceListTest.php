@@ -7,6 +7,7 @@ use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListTest extends EntityTestCase
@@ -58,6 +59,31 @@ class PriceListTest extends EntityTestCase
         );
         $this->assertEquals($priceList, $priceListCurrency->getPriceList());
         $this->assertEquals('EUR', $priceListCurrency->getCurrency());
+    }
+
+    public function testPricesCollection()
+    {
+        $priceList = $this->createPriceList();
+
+        $this->assertInstanceOf(
+            'Doctrine\Common\Collections\ArrayCollection',
+            $priceList->getPrices()
+        );
+        $this->assertCount(0, $priceList->getPrices());
+
+        $price = $this->createProductPrice();
+
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\PricingBundle\Entity\PriceList',
+            $priceList->addPrice($price)
+        );
+        $this->assertEquals([$price], $priceList->getPrices()->toArray());
+
+        $priceList->addPrice($price);
+        $this->assertEquals([$price], $priceList->getPrices()->toArray());
+
+        $priceList->removePrice($price);
+        $this->assertCount(0, $priceList->getPrices());
     }
 
     /**
@@ -124,6 +150,14 @@ class PriceListTest extends EntityTestCase
     protected function createPriceList()
     {
         return new PriceList();
+    }
+
+    /**
+     * @return ProductPrice
+     */
+    protected function createProductPrice()
+    {
+        return new ProductPrice();
     }
 
     public function testPrePersist()

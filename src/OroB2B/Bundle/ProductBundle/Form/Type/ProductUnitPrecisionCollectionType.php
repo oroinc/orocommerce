@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 class ProductUnitPrecisionCollectionType extends AbstractType
 {
     const NAME = 'orob2b_product_unit_precision_collection';
@@ -14,7 +16,7 @@ class ProductUnitPrecisionCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_collection';
+        return CollectionType::NAME;
     }
 
     /**
@@ -22,10 +24,12 @@ class ProductUnitPrecisionCollectionType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults([
-            'type' => ProductUnitPrecisionType::NAME,
-            'show_form_when_empty' => false
-        ]);
+        $resolver->setDefaults(
+            [
+                'type' => ProductUnitPrecisionType::NAME,
+                'show_form_when_empty' => false
+            ]
+        );
     }
 
     /**

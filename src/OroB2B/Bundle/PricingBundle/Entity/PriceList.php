@@ -161,12 +161,25 @@ class PriceList
      */
     protected $default = false;
 
+    /**
+     * @var Collection|ProductPrice[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\PricingBundle\Entity\ProductPrice",
+     *      mappedBy="priceList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $prices;
+
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
         $this->customers = new ArrayCollection();
         $this->customerGroups = new ArrayCollection();
         $this->websites = new ArrayCollection();
+        $this->prices = new ArrayCollection();
     }
 
     /**
@@ -418,7 +431,42 @@ class PriceList
     {
         return $this->websites;
     }
-    
+
+    /**
+     * @param ProductPrice $price
+     * @return PriceList
+     */
+    public function addPrice(ProductPrice $price)
+    {
+        if (!$this->prices->contains($price)) {
+            $price->setPriceList($this);
+            $this->prices->add($price);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductPrice $price
+     * @return PriceList
+     */
+    public function removePrice(ProductPrice $price)
+    {
+        if ($this->prices->contains($price)) {
+            $this->prices->removeElement($price);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ProductPrice[]
+     */
+    public function getPrices()
+    {
+        return $this->prices;
+    }
+
     /**
      * @return \DateTime
      */

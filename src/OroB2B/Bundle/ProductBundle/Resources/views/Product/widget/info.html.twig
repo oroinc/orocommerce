@@ -1,19 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 
-{% set productUnitPrecisions %}
-    <ul class="without-markers">
-        {% for unitPrecision in product.unitPrecisions %}
-            <li>
-                {{ 'orob2b.product.productunitprecision.representation'|trans({
-                    '{{ label }}': ('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
-                    '{{ precision }}': unitPrecision.precision
-                })|raw }}
-            </li>
-        {% endfor %}
-    </ul>
-{% endset %}
-
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
@@ -30,8 +17,19 @@
                 'orob2b.product.image.label'|trans,
                 oro_image_view(product, product.image, null, 'image')
             ) }}
+
             {% if product.unitPrecisions.count %}
-                {{ UI.renderHtmlProperty('orob2b.product.unit_precisions.label'|trans, productUnitPrecisions) }}
+                {% set productUnitPrecisions = [] %}
+                {% for unitPrecision in product.unitPrecisions %}
+                    {% set unitPrecisionElement %}
+                        {{ 'orob2b.product.productunitprecision.representation'|trans({
+                            '{{ label }}': ('orob2b.product_unit.'~ unitPrecision.unit.code ~'.label.full')|trans,
+                            '{{ precision }}': unitPrecision.precision
+                        }) }}
+                    {% endset %}
+                    {% set productUnitPrecisions = productUnitPrecisions|merge([unitPrecisionElement]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.product.unit_precisions.label'|trans, UI.renderList(productUnitPrecisions)) }}
             {% endif %}
         </div>
         <div class="responsive-block">

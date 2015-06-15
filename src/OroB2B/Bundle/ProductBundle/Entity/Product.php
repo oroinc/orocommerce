@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -38,6 +39,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "form"={
+ *              "form_type"="orob2b_product_select",
+ *              "grid_name"="products-select-grid"
  *          }
  *      }
  * )
@@ -64,6 +69,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -137,7 +145,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     protected $organization;
 
     /**
-     * @var ArrayCollection|ProductUnitPrecision[]
+     * @var Collection|ProductUnitPrecision[]
      *
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      */
@@ -152,6 +160,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
 
     public function __construct()
     {
+        parent::__construct();
+
         $this->unitPrecisions = new ArrayCollection();
     }
 
@@ -315,7 +325,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * Get unitPrecisions
      *
-     * @return ArrayCollection
+     * @return Collection|ProductUnitPrecision[]
      */
     public function getUnitPrecisions()
     {

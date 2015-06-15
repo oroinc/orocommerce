@@ -17,6 +17,9 @@ class CurrencySelectionTypeStub extends AbstractType
         $resolver->setDefaults(
             [
                 'additional_currencies' => null,
+                'compact'               => false,
+                'currencies_list'       => null,
+                'full_currency_list'    => true
             ]
         );
     }

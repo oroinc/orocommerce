@@ -19,12 +19,15 @@ orob2b:
             not_visible.label: No
             as_defined_in_system_config.label: As Defined in System Configuration
 
+        form.choose: 'Choose Product...'
+
         productunit:
             entity_label: Product Unit
             entity_plural_label: Product Units
             entity_description: Represents product units information
             code.label: Code
             default_precision.label: Default Precision
+            form.choose: 'Choose Unit...'
 
         productunitprecision:
             entity_label: Product Unit Precision

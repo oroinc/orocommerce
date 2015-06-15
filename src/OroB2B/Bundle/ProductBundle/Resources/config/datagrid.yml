@@ -1,9 +1,8 @@
 datagrid:
-    products-grid:
+    products-select-grid:
         extended_entity_name: %orob2b_product.product.class%
         options:
             entityHint:        product
-            entity_pagination: true
         source:
             acl_resource: orob2b_product_view
             type:         orm
@@ -48,19 +47,6 @@ datagrid:
                 frontend_type: datetime
         properties:
             id: ~
-            view_link:
-                type:  url
-                route: orob2b_product_view
-                params:
-                    - id
-            update_link:
-                type: url
-                route: orob2b_product_update
-                params: [ id ]
-            delete_link:
-                type: url
-                route: orob2b_api_delete_product
-                params: [ id ]
         sorters:
             columns:
                 sku:
@@ -103,6 +89,25 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: product.updatedAt
+
+    products-grid:
+        extends: products-select-grid
+        options:
+            entity_pagination: true
+        properties:
+            view_link:
+                type:  url
+                route: orob2b_product_view
+                params:
+                    - id
+            update_link:
+                type: url
+                route: orob2b_product_update
+                params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_delete_product
+                params: [ id ]
         actions:
             view:
                 type:          navigate

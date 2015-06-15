@@ -5,10 +5,11 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_product_unit")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository")
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -25,6 +26,13 @@ class ProductUnit
      * @ORM\Id
      * @ORM\Column(type="string", length=255)
      * @ORM\GeneratedValue(strategy="NONE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true
+     *          }
+     *      }
+     * )
      */
     protected $code;
 

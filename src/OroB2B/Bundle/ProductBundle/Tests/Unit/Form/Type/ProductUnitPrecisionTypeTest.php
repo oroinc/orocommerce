@@ -2,14 +2,15 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
+use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -23,6 +24,11 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
+     * @var array
+     */
+    protected $units = ['item', 'kg'];
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -30,11 +36,6 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         $this->formType = new ProductUnitPrecisionType();
         parent::setUp();
     }
-
-    /**
-     * @var array
-     */
-    protected $units = ['item', 'kg'];
 
     /**
      * @return array
@@ -46,7 +47,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionType(),
-                    'entity' => $entityType,
+                    'entity' => $entityType
                 ],
                 [
                     'form' => [new IntegerExtension()]
@@ -73,15 +74,30 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
 
-        $unitConfig = $form->get('unit')->getConfig();
-        foreach ($expectedOptions as $key => $value) {
-            $this->assertTrue($unitConfig->hasOption($key));
-            $this->assertEquals($value, $unitConfig->getOption($key));
+        if ($defaultData->getUnit()) {
+            $unitDisabled = $form->get('unit_disabled');
+
+            $this->assertNotNull($unitDisabled);
+            $this->assertFormConfig($expectedOptions['unit_disabled'], $unitDisabled->getConfig());
         }
+
+        $this->assertFormConfig($expectedOptions['unit'], $form->get('unit')->getConfig());
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+    }
+
+    /**
+     * @param array $expectedConfig
+     * @param FormConfigInterface $actualConfig
+     */
+    protected function assertFormConfig(array $expectedConfig, FormConfigInterface $actualConfig)
+    {
+        foreach ($expectedConfig as $key => $value) {
+            $this->assertTrue($actualConfig->hasOption($key));
+            $this->assertEquals($value, $actualConfig->getOption($key));
+        }
     }
 
     /**
@@ -94,26 +110,34 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
                 'defaultData'   => (new ProductUnitPrecision())
                     ->setUnit((new ProductUnit())->setCode('kg'))
                     ->setPrecision(0),
-                '$expectedOptions' => [
-                    'disabled' => true
+                'expectedOptions' => [
+                    'unit' => [
+                        'attr' => [
+                            'class' => 'hidden-unit'
+                        ]
+                    ],
+                    'unit_disabled' => [
+                        'disabled' => true,
+                        'mapped'   => false
+                    ]
                 ],
                 'submittedData' => [],
-                'expectedData'  => (new ProductUnitPrecision())
-                    ->setUnit((new ProductUnit())->setCode('kg'))
-                    ->setPrecision(0)
+                'expectedData'  => new ProductUnitPrecision()
             ],
             'unit precision without value' => [
                 'defaultData'   => new ProductUnitPrecision(),
-                '$expectedOptions' => [
-                    'disabled' => false
+                'expectedOptions' => [
+                    'unit' => [],
+                    'unit_disabled' => []
                 ],
                 'submittedData' => [],
                 'expectedData'  => new ProductUnitPrecision()
             ],
             'unit precision with value' => [
                 'defaultData'   => new ProductUnitPrecision(),
-                '$expectedOptions' => [
-                    'disabled' => false
+                'expectedOptions' => [
+                    'unit' => [],
+                    'unit_disabled' => []
                 ],
                 'submittedData' => [
                     'unit' => 'kg',
