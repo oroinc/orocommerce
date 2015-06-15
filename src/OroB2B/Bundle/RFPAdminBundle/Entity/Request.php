@@ -112,7 +112,9 @@ class Request extends ExtendRequest
      */
     public function removeRequestProduct(RequestProduct $requestProduct)
     {
-        $this->requestProducts->removeElement($requestProduct);
+        if ($this->requestProducts->contains($requestProduct)) {
+            $this->requestProducts->removeElement($requestProduct);
+        }
     }
 
     /**

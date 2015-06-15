@@ -145,7 +145,7 @@ class RequestProduct
      * Set productSku
      *
      * @param string $productSku
-     * @return Product
+     * @return RequestProduct
      */
     public function setProductSku($productSku)
     {
@@ -166,10 +166,13 @@ class RequestProduct
 
     /**
      * @param string $comment
+     * @return RequestProduct
      */
     public function setComment($comment)
     {
         $this->comment = $comment;
+
+        return $this;
     }
 
     /**
@@ -204,7 +207,9 @@ class RequestProduct
      */
     public function removeRequestProductItem(RequestProductItem $requestProductItem)
     {
-        $this->requestProductItems->removeElement($requestProductItem);
+        if ($this->requestProductItems->contains($requestProductItem)) {
+            $this->requestProductItems->removeElement($requestProductItem);
+        }
 
         return $this;
     }
