@@ -87,8 +87,14 @@ services:
             - @doctrine
             - @security.encoder_factory
         calls:
-            - [setConfigManager, [@oro_config.manager]]
+            - [setContainer, [@service_container]]
             - [setEmailProcessor, [@orob2b_customer.mailer.processor]]
+
+    orob2b_user.security.provider:
+        class: %oro_user.security.provider.class%
+        public: false
+        arguments:
+            - @orob2b_account_user.manager
 
     orob2b_account_user.security.provider:
         class: %oro_user.security.provider.class%

@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
 use OroB2B\Bundle\CustomerBundle\Mailer\Processor;
 
-class AccountUserManager extends BaseUserManager
+class AccountUserManager extends BaseUserManager implements ContainerAwareInterface
 {
     /**
      * @var ConfigManager
@@ -20,11 +23,16 @@ class AccountUserManager extends BaseUserManager
     protected $emailProcessor;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * @param AccountUser $user
      */
     public function register(AccountUser $user)
     {
-        if ($this->configManager->get('confirmation_required')) {
+        if ($this->getConfigValue('confirmation_required')) {
             $this->sendConfirmationEmail($user);
         } else {
             $this->confirmRegistration($user);
@@ -53,7 +61,7 @@ class AccountUserManager extends BaseUserManager
      */
     public function sendConfirmationEmail(AccountUser $user)
     {
-        if ($this->configManager->get('confirmation_required')) {
+        if ($this->getConfigValue('confirmation_required')) {
             $user->setConfirmationToken($user->generateToken());
             $this->emailProcessor->sendConfirmationEmail($user, $user->getConfirmationToken());
         }
@@ -69,14 +77,16 @@ class AccountUserManager extends BaseUserManager
     }
 
     /**
-     * @param ConfigManager $configManager
-     * @return AccountUserManager
+     * @param string $name
+     * @return array|string
      */
-    public function setConfigManager(ConfigManager $configManager)
+    protected function getConfigValue($name)
     {
-        $this->configManager = $configManager;
+        if (!$this->configManager) {
+            $this->configManager = $this->container->get('oro_config.manager');
+        }
 
-        return $this;
+        return $this->configManager->get($name);
     }
 
     /**
@@ -96,5 +106,13 @@ class AccountUserManager extends BaseUserManager
     protected function generateToken()
     {
         return rtrim(strtr(base64_encode(hash('sha256', uniqid(mt_rand(), true), true)), '+/', '-_'), '=');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 }
