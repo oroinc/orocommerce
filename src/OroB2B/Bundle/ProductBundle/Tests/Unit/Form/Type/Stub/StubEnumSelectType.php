@@ -7,6 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class StubEnumSelectType extends AbstractType
 {
+    const NAME = 'oro_enum_select';
+
     /**
      * @param OptionsResolverInterface $resolver
      */
@@ -20,6 +22,6 @@ class StubEnumSelectType extends AbstractType
 
     public function getName()
     {
-        return 'oro_enum_select';
+        return self::NAME;
     }
 }

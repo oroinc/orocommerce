@@ -80,7 +80,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ],
                         CategoryTreeType::NAME
                     ),
-                    'oro_enum_select' => new StubEnumSelectType(),
+                    StubEnumSelectType::NAME => new StubEnumSelectType(),
                     ImageType::NAME => new StubImageType(),
                     ProductVisibilityType::NAME => new ProductVisibilityType($translator),
                     OroCollectionType::NAME => new OroCollectionType(),
