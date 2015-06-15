@@ -5,21 +5,16 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
 
 class AccountUserHandler
 {
-    /** @var FormInterface  */
+    /** @var FormInterface */
     protected $form;
 
     /** @var Request */
     protected $request;
-
-    /** @var ObjectManager */
-    protected $manager;
 
     /** @var AccountUserManager */
     protected $userManager;
@@ -27,19 +22,16 @@ class AccountUserHandler
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @param ObjectManager $manager
      * @param AccountUserManager $userManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
         AccountUserManager $userManager
     ) {
-        $this->form               = $form;
-        $this->request            = $request;
-        $this->manager            = $manager;
-        $this->userManager        = $userManager;
+        $this->form = $form;
+        $this->request = $request;
+        $this->userManager = $userManager;
     }
 
     /**
