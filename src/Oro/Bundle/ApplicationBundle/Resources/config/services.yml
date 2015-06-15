@@ -5,6 +5,7 @@ parameters:
     oro_application.config_manager.class: Oro\Bundle\ApplicationBundle\Config\ConfigManager
     oro_application.factory.class: Oro\Bundle\ApplicationBundle\Factory\ModelFactory
     oro_application.repository.class: Oro\Bundle\ApplicationBundle\Repository\ModelRepository
+    oro_application.listener.route_collection.class: Oro\Bundle\ApplicationBundle\EventListener\RouteCollectionListener
 
 services:
     kernel.listener.install.event:
@@ -40,3 +41,11 @@ services:
 
     oro_application.config_manager:
         class: %oro_application.config_manager.class%
+
+    oro_application.listener.route_collection:
+        class: %oro_application.listener.route_collection.class%
+        arguments:
+            - %backend_prefix%
+        tags:
+            - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
+        lazy: true
