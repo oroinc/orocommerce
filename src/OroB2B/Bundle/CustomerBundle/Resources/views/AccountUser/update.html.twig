@@ -95,11 +95,9 @@
     {% set hasRoles = form.roles is defined %}
     {% if hasRoles %}
         {% set userRoles %}
-        {% if hasRoles %}
             <div class="form-horizontal" id="roles-list">
                 {{ form_row(form.roles, {attr: { class: 'horizontal' } }) }}
             </div>
-        {% endif %}
         {% endset %}
 
         {% set title = 'orob2b.customer.accountuser.roles.label'|trans %}

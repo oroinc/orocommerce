@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -21,12 +20,10 @@ class AccountUserType extends AbstractType
 
     /**
      * @param SecurityFacade $securityFacade
-     * @param TranslatorInterface $translator
      */
-    public function __construct(SecurityFacade $securityFacade, TranslatorInterface $translator)
+    public function __construct(SecurityFacade $securityFacade)
     {
         $this->securityFacade = $securityFacade;
-        $this->translator = $translator;
     }
 
     /**
@@ -44,14 +41,11 @@ class AccountUserType extends AbstractType
             'required'        => false,
             'first_options'   => ['label' => 'orob2b.customer.accountuser.password.label'],
             'second_options'  => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
-            'invalid_message' => $this->translator->trans('orob2b.customer.message.password_mismatch')
+            'invalid_message' => "The entered passwords don't match"
         ];
 
         if ($data instanceof AccountUser && $data->getId()) {
-            $passwordOptions = array_merge(
-                $passwordOptions,
-                ['required' => false, 'validation_groups' => Constraint::DEFAULT_GROUP]
-            );
+            $passwordOptions = array_merge($passwordOptions, ['required' => false]);
         } else {
             $this->addNewUserFields($builder);
             $passwordOptions = array_merge($passwordOptions, ['required' => true, 'validation_groups' => ['create']]);
@@ -189,6 +183,8 @@ class AccountUserType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $resolver->setRequired(['data']);
+
         $resolver->setDefaults([
             'data_class'           => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
             'intention'            => 'account_user',

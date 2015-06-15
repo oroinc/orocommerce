@@ -23,11 +23,6 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /**
-     * @var \Symfony\Component\Translation\TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
     /** @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
     private $securityFacade;
 
@@ -42,12 +37,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new AccountUserType($this->securityFacade, $this->translator);
+        $this->formType = new AccountUserType($this->securityFacade);
     }
 
     /**
