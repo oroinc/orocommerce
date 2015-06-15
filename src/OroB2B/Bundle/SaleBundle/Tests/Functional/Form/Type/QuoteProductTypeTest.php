@@ -73,22 +73,22 @@ class QuoteProductTypeTest extends WebTestCase
     {
         return [
             'null item' => [
-                'inputData'     => function() {
+                'inputData'     => function () {
                     return null;
                 },
-                'expectedData'  => function() {
+                'expectedData'  => function () {
                     return null;
                 },
             ],
             'existsing item empty product' => [
-                'inputData'     => function() {
+                'inputData'     => function () {
                     $quoteProduct = $this->getQuoteProduct(LoadQuoteData::QUOTE1);
 
                     $quoteProduct->setProduct(null);
 
                     return $quoteProduct;
                 },
-                'expectedData'  => function() {
+                'expectedData'  => function () {
                     $quoteProduct = $this->getQuoteProduct(LoadQuoteData::QUOTE1);
 
                     return $quoteProduct->getProductSku() . ' - removed';

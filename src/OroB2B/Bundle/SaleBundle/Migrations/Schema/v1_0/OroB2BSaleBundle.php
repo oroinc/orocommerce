@@ -97,7 +97,7 @@ class OroB2BSaleBundle implements
         $table->setPrimaryKey(['id']);
         $table->addIndex(['user_owner_id'], 'IDX_4F66B6F69EB185F9', []);
         $table->addIndex(['organization_id'], 'IDX_4F66B6F632C8A3DE', []);
-}
+    }
 
     /**
      * Create orob2b_sale_quote_product table
