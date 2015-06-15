@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -48,7 +49,6 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          }
  *      }
  * )
- * @todo Add roles for user BB-599
  */
 class AccountUser extends AbstractUser implements FullNameInterface
 {
@@ -57,7 +57,18 @@ class AccountUser extends AbstractUser implements FullNameInterface
     const ROLE_ANONYMOUS = 'IS_AUTHENTICATED_ANONYMOUSLY';
 
     /**
-     * @todo remove BB-599
+     * @var AccountUserRole[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole")
+     * @ORM\JoinTable(
+     *      name="orob2b_acc_user_access_role",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
      */
     protected $roles;
 
