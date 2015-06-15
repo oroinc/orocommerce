@@ -100,6 +100,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser->setCustomer($this->getCustomer(1));
 
         $alteredExistingAccountUser = clone $existingAccountUser;
+        $alteredExistingAccountUser->setEnabled(false);
         $alteredExistingAccountUser->setCustomer($this->getCustomer(2));
 
         return [

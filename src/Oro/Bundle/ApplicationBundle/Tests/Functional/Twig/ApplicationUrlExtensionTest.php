@@ -20,6 +20,9 @@ class ApplicationUrlExtensionTest extends WebTestCase
         );
         $result = trim($result);
 
-        $this->assertStringEndsWith('/admin.php/?qwe=rty', $result);
+        $this->assertStringEndsWith(
+            sprintf('/admin.php/%s/?qwe=rty', ltrim($this->getContainer()->getParameter('backend_prefix'), '/')),
+            $result
+        );
     }
 }
