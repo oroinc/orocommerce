@@ -79,11 +79,15 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
+        $user = $this->getUser($manager);
+
         foreach ($this->items as $item) {
             /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])
+                ->setOwner($user)
+                ->setOrganization($user->getOrganization())
             ;
 
             foreach ($this->getQuoteProducts($item['products']) as $product) {

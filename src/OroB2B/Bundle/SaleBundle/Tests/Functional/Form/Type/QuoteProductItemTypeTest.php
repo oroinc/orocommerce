@@ -38,7 +38,6 @@ class QuoteProductItemTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->container    = self::getContainer();
         $this->formType     = new QuoteProductItemType();
 
         $this->loadFixtures([
@@ -62,7 +61,7 @@ class QuoteProductItemTypeTest extends WebTestCase
      */
     protected function preSetDataTest($choices, $inputData, $expectedData, $message = '')
     {
-        $form = $this->container->get('form.factory')->create($this->formType, null, []);
+        $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
 
         $event = new FormEvent($form, $inputData);
         $this->formType->preSetData($event);
