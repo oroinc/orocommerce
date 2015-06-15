@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
@@ -22,6 +23,13 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-list-alt"
+ *          },
+ *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "security"={
  *              "type"="ACL",
@@ -62,6 +70,14 @@ class Quote extends ExtendQuote
      * )
      */
     protected $owner;
+
+    /**
+     * @var OrganizationInterface
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     /**
      * @var \DateTime
@@ -300,5 +316,28 @@ class Quote extends ExtendQuote
     public function getQuoteProducts()
     {
         return $this->quoteProducts;
+    }
+
+    /**
+     * Set organization
+     *
+     * @param OrganizationInterface $organization
+     * @return Quote
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * Get organization
+     *
+     * @return OrganizationInterface
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 }

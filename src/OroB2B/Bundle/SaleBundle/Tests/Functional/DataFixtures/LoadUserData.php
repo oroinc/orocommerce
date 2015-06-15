@@ -58,8 +58,10 @@ class LoadUserData extends AbstractFixture
 
                 ->setEnabled(true)
 
+                ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
+                ->addOrganization($organization)
             ;
 
             $userManager->updateUser($user);

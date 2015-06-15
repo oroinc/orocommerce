@@ -72,6 +72,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
             $quote = new Quote();
             $quote
                 ->setOwner($user)
+                ->setOrganization($user->getOrganization())
                 ->setValidUntil($validUntil)
             ;
             $this->processQuoteProducts($quote, $manager);

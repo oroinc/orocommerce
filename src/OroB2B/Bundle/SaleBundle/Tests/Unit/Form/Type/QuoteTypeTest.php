@@ -23,6 +23,8 @@ class QuoteTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
+        parent::setUp();
+
         $this->type = new QuoteType();
     }
 
@@ -42,13 +44,19 @@ class QuoteTypeTest extends FormIntegrationTestCase
 
         $builder->expects($this->at(1))
             ->method('add')
-            ->with('owner', 'oro_user_select', ['required' => true, 'label' => 'orob2b.sale.quote.owner.label'])
+            ->with('owner', 'oro_user_select', [
+                'required'  => true,
+                'label'     => 'orob2b.sale.quote.owner.label',
+            ])
             ->will($this->returnSelf())
         ;
 
         $builder->expects($this->at(2))
             ->method('add')
-            ->with('validUntil', OroDateTimeType::NAME, ['required' => false, 'label' => 'orob2b.sale.quote.valid_until.label'])
+            ->with('validUntil', OroDateTimeType::NAME, [
+                'required'  => false,
+                'label'     => 'orob2b.sale.quote.valid_until.label',
+            ])
             ->will($this->returnSelf())
         ;
 

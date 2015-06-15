@@ -16,6 +16,16 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
     const QUOTE1    = 'sale-quote1';
     const QUOTE2    = 'sale-quote2';
 
+    const PRODUCT1  = 'product.1';
+    const PRODUCT2  = 'product.2';
+
+    const UNIT1     = 'product_unit.liter';
+    const UNIT2     = 'product_unit.bottle';
+    const UNIT3     = 'product_unit.box';
+
+    const CURRENCY1 = 'sale-USD';
+    const CURRENCY2 = 'sale-EUR';
+
     /**
      * @var array
      */
@@ -23,29 +33,28 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
         [
             'qid'       => self::QUOTE1,
             'products'  => [
-                LoadProductData::PRODUCT1 => [
+                self::PRODUCT1 => [
                     [
                         'quantity'  => 1,
-                        'unit'      => LoadProductData::UNIT1,
+                        'unit'      => self::UNIT1,
                         'price'     => 1,
-                        'currency'  => LoadProductData::CURRENCY1,
+                        'currency'  => self::CURRENCY1,
                     ],
                     [
                         'quantity'  => 2,
-                        'unit'      => LoadProductData::UNIT2,
+                        'unit'      => self::UNIT2,
                         'price'     => 2,
-                        'currency'  => LoadProductData::CURRENCY1,
+                        'currency'  => self::CURRENCY1,
                     ],
                 ],
-                LoadProductData::PRODUCT2 => [
+                self::PRODUCT2 => [
                     [
                         'quantity'  => 3,
-                        'unit'      => LoadProductData::UNIT3,
+                        'unit'      => self::UNIT3,
                         'price'     => 3,
-                        'currency'  => LoadProductData::CURRENCY1,
+                        'currency'  => self::CURRENCY1,
                     ]
                 ],
-                LoadProductData::PRODUCT3 => [],
             ],
         ],
         [
@@ -60,7 +69,8 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadProductData'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
         ];
     }
 
@@ -69,13 +79,15 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $em = $this->entityManager;
+        $user = $this->getUser($manager);
 
         foreach ($this->items as $item) {
             /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])
+                ->setOwner($user)
+                ->setOrganization($user->getOrganization())
             ;
 
             foreach ($this->getQuoteProducts($item['products']) as $product) {
@@ -85,11 +97,11 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
                 ;
             }
 
-            $em->persist($quote);
+            $manager->persist($quote);
 
             $this->setReference($item['qid'], $quote);
         }
-        $em->flush();
+        $manager->flush();
     }
 
     /**
@@ -114,8 +126,6 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
      */
     protected function getQuoteProduct($sku, $items)
     {
-        $em = $this->entityManager;
-
         $product = new QuoteProduct();
         $product
             ->setProduct($this->getReference($sku))
@@ -129,16 +139,16 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
             ;
 
-            $em->persist($productItem);
+            $this->entityManager->persist($productItem);
 
             $product
                 ->addQuoteProductItem($productItem)
             ;
         }
 
-        $em->persist($product);
+        $this->entityManager->persist($product);
 
-        $em->flush();
+        $this->entityManager->flush();
 
         return $product;
     }

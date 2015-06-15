@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
-class QuoteTest extends EntityTestCase
+class QuoteTest extends AbstractTest
 {
     public function testProperties()
     {
@@ -22,5 +21,29 @@ class QuoteTest extends EntityTestCase
         ];
 
         $this->assertPropertyAccessors(new Quote(), $properties);
+    }
+
+    public function testPrePersist()
+    {
+        $quote = new Quote();
+
+        $this->assertNull($quote->getCreatedAt());
+        $this->assertNull($quote->getUpdatedAt());
+
+        $quote->prePersist();
+
+        $this->assertInstanceOf('\DateTime', $quote->getCreatedAt());
+        $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
+    }
+
+    public function testPreUpdate()
+    {
+        $quote = new Quote();
+
+        $this->assertNull($quote->getUpdatedAt());
+
+        $quote->preUpdate();
+
+        $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
     }
 }

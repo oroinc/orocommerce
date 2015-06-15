@@ -31,11 +31,13 @@ class QuoteProductItemTypeTest extends WebTestCase
      */
     protected $container;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient();
 
-        $this->container    = self::getContainer();
         $this->formType     = new QuoteProductItemType();
 
         $this->loadFixtures([
@@ -52,20 +54,6 @@ class QuoteProductItemTypeTest extends WebTestCase
     }
 
     /**
-     * @param mixed $inputData
-     * @param mixed $expectedData
-     * @dataProvider preSubmitProvider
-     */
-    public function testSubmit($inputData, $expectedData)
-    {
-        $form = $this->container->get('form.factory')->create($this->formType, null, []);
-
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSubmit($event);
-        $this->assertEquals($expectedData, $event->getData());
-    }
-
-    /**
      * @param mixed $choices
      * @param mixed $inputData
      * @param mixed $expectedData
@@ -73,7 +61,7 @@ class QuoteProductItemTypeTest extends WebTestCase
      */
     protected function preSetDataTest($choices, $inputData, $expectedData, $message = '')
     {
-        $form = $this->container->get('form.factory')->create($this->formType, null, []);
+        $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
 
         $event = new FormEvent($form, $inputData);
         $this->formType->preSetData($event);
@@ -134,18 +122,5 @@ class QuoteProductItemTypeTest extends WebTestCase
         }
 
         return $units;
-    }
-
-    /**
-     * @return array
-     */
-    public function preSubmitProvider()
-    {
-        return [
-            'item1' => [
-                'inputData' => null,
-                'expectedData' => null,
-            ],
-        ];
     }
 }
