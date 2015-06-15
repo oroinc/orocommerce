@@ -472,16 +472,16 @@ datagrid:
                 editable: true
                 frontend_type: boolean
             firstName:
-                label: orob2b.customer.accountuser.firstName.label
+                label: orob2b.customer.accountuser.first_name.label
             lastName:
-                label: orob2b.customer.accountuser.lastName.label
+                label: orob2b.customer.accountuser.last_name.label
             email:
                 label: orob2b.customer.accountuser.email.label
         filters:
             columns:
                 hasRole:
                     type: boolean
-                    data_name: hasGroup
+                    data_name: hasRole
                 firstName:
                     type:      string
                     data_name: user.firstName
@@ -494,7 +494,7 @@ datagrid:
         sorters:
             columns:
                 hasRole:
-                    data_name: hasGroup
+                    data_name: hasRole
                 firstName:
                     data_name: user.firstName
                 lastName:
