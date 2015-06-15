@@ -113,8 +113,6 @@ class AccountUserController extends Controller
         $handler = new AccountUserHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category'),
-            $this->get('orob2b_customer.mailer.processor'),
             $this->get('orob2b_account_user.manager')
         );
 
@@ -127,11 +125,7 @@ class AccountUserController extends Controller
                     'parameters' => ['id' => $accountUser->getId()]
                 );
             },
-            function () {
-                return array(
-                    'route' => 'orob2b_customer_account_user_index'
-                );
-            },
+            'orob2b_customer_account_user_index',
             $this->get('translator')->trans('orob2b.customer.controller.accountuser.saved.message'),
             $handler
         );

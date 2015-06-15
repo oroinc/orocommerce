@@ -11,6 +11,7 @@ parameters:
     orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.datagrid.action_permission_provider.class: OroB2B\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider
     orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
+    orob2b_account_user.manager.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager
 
 services:
     orob2b_customer.customer_tree_handler:
@@ -80,11 +81,14 @@ services:
             - @oro_email.direct_mailer
 
     orob2b_account_user.manager:
-        class: %oro_user.manager.base.class%
+        class: %orob2b_account_user.manager.class%
         arguments:
             - %orob2b_customer.account_user.entity.class%
             - @doctrine
             - @security.encoder_factory
+        calls:
+            - [setConfigManager, [@oro_config.manager]]
+            - [setEmailProcessor, [@orob2b_customer.mailer.processor]]
 
     orob2b_account_user.security.provider:
         class: %oro_user.security.provider.class%

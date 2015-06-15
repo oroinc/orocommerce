@@ -12,12 +12,12 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType;
-use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
+use OroB2B\Bundle\CustomerBundle\Form\Handler\FrontendAccountUserHandler;
 
 class AccountUserController extends Controller
 {
     /**
-     * @Route("/view", name="orob2b_customer_frontend_account_user_profile")
+     * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
      * @Template
      * @Acl(
      *      id="orob2b_customer_account_user_view",
@@ -38,7 +38,7 @@ class AccountUserController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/create", name="orob2b_customer_frontend_account_user_register")
+     * @Route("/register", name="orob2b_customer_frontend_account_user_register")
      * @Template("OroB2BCustomerBundle:AccountUser:register.html.twig")
      * @Acl(
      *      id="orob2b_customer_account_user_create",
@@ -56,7 +56,7 @@ class AccountUserController extends Controller
     /**
      * Edit account user form
      *
-     * @Route("/update", name="orob2b_customer_frontend_account_user_update")
+     * @Route("/profile/update", name="orob2b_customer_frontend_account_user_update")
      * @Template
      * @Acl(
      *      id="orob2b_customer_account_user_update",
@@ -79,11 +79,9 @@ class AccountUserController extends Controller
     protected function update(AccountUser $accountUser)
     {
         $form = $this->createForm(AccountUserType::NAME, $accountUser);
-        $handler = new AccountUserHandler(
+        $handler = new FrontendAccountUserHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCustomerBundle:AccountUser'),
-            $this->get('orob2b_customer.mailer.processor'),
             $this->get('orob2b_account_user.manager')
         );
 
