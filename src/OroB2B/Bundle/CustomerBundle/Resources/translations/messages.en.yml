@@ -48,6 +48,7 @@ orob2b.customer:
         customer.label:              'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
+        has_role.label:              'Has role'
 
     accountuserrole:
         entity_label:         'Account User Role'

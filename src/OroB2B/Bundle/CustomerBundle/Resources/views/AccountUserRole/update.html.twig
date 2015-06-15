@@ -7,8 +7,6 @@
 
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.customer.accountuserrole.entity_label'|trans} }) %}
 
-{#{% set gridName = 'customer-group-customers-grid-update' %}#}
-
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
@@ -61,18 +59,18 @@
         }
     ] %}
 
-    {#{% set dataBlocks = dataBlocks|merge([{#}
-        {#'title' : 'orob2b.customer.sections.customergroup.customers'|trans,#}
-        {#'subblocks': [{#}
-            {#'title' : null,#}
-            {#'useSpan': false,#}
-            {#'data' : [#}
-                {#form_widget(form.appendCustomers, {'id': 'groupAppendCustomers'}),#}
-                {#form_widget(form.removeCustomers, {'id': 'groupRemoveCustomers'}),#}
-                {#dataGrid.renderGrid(gridName, {group: entity.id}, { cssClass: 'inner-grid' })#}
-            {#]#}
-        {#}]#}
-    {#}] ) %}#}
+    {% set dataBlocks = dataBlocks|merge([{
+        'title' : 'orob2b.customer.accountuser.entity_plural_label'|trans,
+        'subblocks': [{
+            'title' : null,
+            'useSpan': false,
+            'data' : [
+                form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
+                form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
+                dataGrid.renderGrid('customer-account-users-grid-update', {role: entity.id}, { cssClass: 'inner-grid' })
+            ]
+        }]
+    }] ) %}
 
     {% set data = {
         'formErrors': form_errors(form),

@@ -440,3 +440,73 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_customer_account_user_role_delete
 
+    customer-account-users-grid-update:
+        source:
+            type: orm
+            acl_resource: orob2b_customer_account_user_view
+            query:
+                select:
+                    - user.id
+                    - user.firstName
+                    - user.lastName
+                    - user.email
+                    - >
+                        (CASE WHEN (:role IS NOT NULL) THEN
+                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        ELSE
+                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        END) as hasRole
+                from:
+                    - { table: %orob2b_customer.account_user.entity.class%, alias: user }
+            bind_parameters:
+                - role
+        options:
+            entityHint: user
+        properties:
+            id: ~
+        columns:
+            hasRole:
+                label: orob2b.customer.accountuser.has_role.label
+                editable: true
+                frontend_type: boolean
+            firstName:
+                label: orob2b.customer.accountuser.firstName.label
+            lastName:
+                label: orob2b.customer.accountuser.lastName.label
+            email:
+                label: orob2b.customer.accountuser.email.label
+        filters:
+            columns:
+                hasRole:
+                    type: boolean
+                    data_name: hasGroup
+                firstName:
+                    type:      string
+                    data_name: user.firstName
+                lastName:
+                    type:      string
+                    data_name: user.lastName
+                email:
+                    type:      string
+                    data_name: user.email
+        sorters:
+            columns:
+                hasRole:
+                    data_name: hasGroup
+                firstName:
+                    data_name: user.firstName
+                lastName:
+                    data_name: user.lastName
+                email:
+                    data_name: user.email
+            default:
+                hasRole: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        options:
+            rowSelection:
+                dataField: id
+                columnName: hasRole
+                selectors:
+                    included: '#roleAppendUsers'
+                    excluded: '#roleRemoveUsers'
