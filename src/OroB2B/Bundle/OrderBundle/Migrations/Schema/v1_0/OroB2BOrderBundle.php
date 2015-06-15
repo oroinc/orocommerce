@@ -23,8 +23,10 @@ class OroB2BOrderBundle implements
 
     /** @var  NoteExtension */
     protected $noteExtension;
+
     /** @var  AttachmentExtension */
     protected $attachmentExtension;
+
     /** @var  ActivityExtension */
     protected $activityExtension;
 

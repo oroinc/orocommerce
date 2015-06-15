@@ -23,11 +23,11 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\Order',
-                    'intention' => 'order',
+                    'data_class' => 'Order',
                 ]
             );
 
+        $this->type->setDataClass('Order');
         $this->type->setDefaultOptions($resolver);
     }
 

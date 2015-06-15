@@ -44,7 +44,7 @@ class OrderControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_create'));
-        $result = $this->client->getResponse();
+        $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertOrderSave($crawler, $this->getCurrentUser());
@@ -61,18 +61,21 @@ class OrderControllerTest extends WebTestCase
     {
         $response = $this->client->requestGrid(
             'orders-grid',
-            ['orders-grid[_filter][owner][value]' => $this->getCurrentUser()->getFirstName()]
+            [
+                'orders-grid[_filter][owner][value]' => $this->getCurrentUser()->getFirstName()
+                    . ' ' . $this->getCurrentUser()->getLastName()
+            ]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
 
-        $id = $result['id'];
+        $id      = $result['id'];
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_order_update', ['id' => $result['id']])
         );
-        $result = $this->client->getResponse();
+        $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertOrderSave($crawler, $this->getCurrentUser());
@@ -82,6 +85,7 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @depends testUpdate
+     *
      * @param int $id
      */
     public function testView($id)
