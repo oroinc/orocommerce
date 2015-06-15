@@ -39,7 +39,13 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
-                    
+            status:
+                label: 'Status'
+                requested: 'Requested'
+                suggested_replacement: 'Suggested Replacement'
+                additional: 'Additional'
+                not_available: 'Not Available'
+
         controller:
             quote:
                 saved.message: 'Quote has been saved'
