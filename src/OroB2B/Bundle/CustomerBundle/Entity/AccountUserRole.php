@@ -4,38 +4,30 @@ namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_account_user_role")
  * @Config(
- *      routeName="orob2b_customer_account_user_role_index",
  *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-briefcase"
+ *          },
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
  *          },
  *          "dataaudit"={
  *              "auditable"=true
- *          },
- *          "note"={
- *              "immutable"=true
- *          },
- *          "activity"={
- *              "immutable"=true
- *          },
- *          "attachment"={
- *              "immutable"=true
  *          }
  *      }
  * )
  */
 class AccountUserRole extends AbstractRole
 {
-    const ROLE_PREFIX = 'ROLE_';
+    const PREFIX_ROLE = 'ROLE_FRONTEND_';
 
     /**
      * @var int
@@ -49,14 +41,14 @@ class AccountUserRole extends AbstractRole
     /**
      * @var string
      *
-     * @ORM\Column(type="string", unique=true, length=64, nullable=false)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=false)
      */
     protected $role;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -75,8 +67,6 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * Return the role id
-     *
      * @return int
      */
     public function getId()
@@ -85,9 +75,7 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * Return the role name field
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getRole()
     {
@@ -95,9 +83,7 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * Return the role label field
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getLabel()
     {
@@ -105,10 +91,8 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * Set the new label for role
-     *
-     * @param  string $label New label
-     * @return $this
+     * @param string $label
+     * @return AccountUserRole
      */
     public function setLabel($label)
     {
@@ -122,6 +106,6 @@ class AccountUserRole extends AbstractRole
      */
     public function getPrefix()
     {
-        return static::ROLE_PREFIX;
+        return static::PREFIX_ROLE;
     }
 }

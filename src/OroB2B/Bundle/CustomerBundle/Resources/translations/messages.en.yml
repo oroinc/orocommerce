@@ -48,16 +48,13 @@ orob2b.customer:
         customer.label:              'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
-        has_role.label:              'Has role'
 
     accountuserrole:
-        entity_label:         'Account User Role'
-        entity_plural_label:  'Account User Roles'
-        id.label:             'ID'
-        role.label:           'Role'
-        label.label:          'Label'
-
-
+        entity_label:                    'Account User Role'
+        entity_plural_label:             'Account User Roles'
+        id.label:                        'ID'
+        label.label:                     'Label'
+        role.label:                      'Role'
 
     action:
         account_user.enable:  'Enable'
@@ -75,13 +72,11 @@ orob2b.customer:
         customer_group_list.description: 'List of Customer Groups'
         shortcut_customer_list.description: 'List of Customers'
         shortcut_customer_group_list.description: 'List of Customer Groupss'
-
         account_users.description: 'List of account users'
         shortcut_new_account_user.label: 'Create new account user'
         shortcut_new_account_user.description: 'Create new account user instance'
         shortcut_list_account_users.label: 'Show account users'
         shortcut_list_account_users.description: 'View list of account users'
-
         account_user_roles.description: 'List of account user roles'
         shortcut_new_account_user_role.label: 'Create new account user role'
         shortcut_new_account_user_role.description: 'Create new account user role instance'

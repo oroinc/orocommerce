@@ -10,6 +10,7 @@ OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup:
 
 OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
     constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
     properties:
         firstName:
@@ -24,14 +25,33 @@ OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
             - NotBlank: ~
             - Email: ~
             - Length:
+                min: 6
                 max: 255
         plainPassword:
             - NotBlank: { groups: [create] }
+            - Length:
+                min: 2
+        username:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 255
+        enabled:
+            - NotNull: ~
+        roles:
+            - Count:
+                min: 1
+                minMessage: "You must select at least {{ limit }} role"
+                groups: [Roles]
+        birthday:
+            - Date: ~
+        organization:
+            - NotBlank: ~
 
-Oro\Bundle\UserBundle\Entity\Role:
+OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: role
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: label
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: role
     properties:
         role:
             - NotBlank:     ~
@@ -42,4 +62,4 @@ Oro\Bundle\UserBundle\Entity\Role:
             - NotBlank:     ~
             - Length:
                 min: 3
-                max: 58
+                max: 48
