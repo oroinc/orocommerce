@@ -64,7 +64,6 @@ class AccountUserController extends Controller
      *      class="OroB2BCustomerBundle:AccountUser",
      *      permission="EDIT"
      * )
-
      * @return array|RedirectResponse
      */
     public function updateAction()
