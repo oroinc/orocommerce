@@ -13,7 +13,8 @@ class LoadAccountUserRoles extends AbstractFixture
      * @var array
      */
     protected $defaultRoles = [
-        'Administrator'
+        'Administrator',
+        'Buyer'
     ];
 
     /**

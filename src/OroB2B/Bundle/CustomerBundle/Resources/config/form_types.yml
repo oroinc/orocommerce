@@ -17,6 +17,8 @@ services:
 
     orob2b_customer.form.type.customer_group:
         class: %orob2b_customer.form.type.customer_group.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.customer_group.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_group_type }
 
@@ -44,8 +46,8 @@ services:
 
     orob2b_customer.form.type.account_user_role:
         class: %orob2b_customer.form.type.account_user_role.class%
-        arguments:
-            - @translator
+        calls:
+            - [setDataClass, [%orob2b_customer.account_user_role.entity.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_account_user_role }
 

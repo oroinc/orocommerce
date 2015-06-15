@@ -8,7 +8,7 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
 {
     public function testRole()
     {
-        $name = 'test';
+        $name = 'test role#$%';
         $role = new AccountUserRole($name);
 
         $this->assertEmpty($role->getId());
@@ -21,8 +21,8 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(AccountUserRole::PREFIX_ROLE, $role->getPrefix());
 
         $role->setRole($name);
-        $this->assertEquals(AccountUserRole::PREFIX_ROLE . 'TEST', $role->getRole());
+        $this->assertStringStartsWith(AccountUserRole::PREFIX_ROLE . 'TEST_ROLE_', $role->getRole());
 
-        $this->assertEquals($name, (string) $role);
+        $this->assertEquals($name, (string)$role);
     }
 }

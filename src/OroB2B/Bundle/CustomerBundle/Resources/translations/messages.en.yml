@@ -86,16 +86,16 @@ orob2b.customer:
 
     controller:
         customer:
-            saved.message: 'Customer saved'
+            saved.message: 'Customer has been saved'
         customergroup:
-            saved.message: 'Customer group saved'
+            saved.message: 'Customer group has been saved'
         accountuser:
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
         accountuserrole:
-            saved.message:     'Account User Role saved'
+            saved.message:     'Account User Role has been saved'
 
     widgets:
         account_user_information: 'Account User Information'

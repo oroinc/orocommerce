@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
@@ -12,6 +14,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserRoleTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole';
+
     /**
      * @var AccountUserRoleType
      */
@@ -25,6 +29,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new AccountUserRoleType();
+        $this->formType->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -48,7 +53,8 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
                     $entityIdentifierType->getName() => $entityIdentifierType
                 ],
                 []
-            )
+            ),
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -73,10 +79,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('removeUsers'));
 
         $formConfig = $form->getConfig();
-        $this->assertEquals(
-            'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole',
-            $formConfig->getOption('data_class')
-        );
+        $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
@@ -98,7 +101,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         $defaultRole->setLabel($roleLabel);
 
         /** @var AccountUserRole $existingRoleBefore */
-        $existingRoleBefore = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole', 1);
+        $existingRoleBefore = $this->getEntity(self::DATA_CLASS, 1);
         $existingRoleBefore->setLabel($roleLabel);
 
         $existingRoleAfter = clone $existingRoleBefore;

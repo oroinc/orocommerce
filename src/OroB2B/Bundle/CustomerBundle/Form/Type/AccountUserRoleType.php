@@ -4,11 +4,29 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Length;
+
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserRoleType extends AbstractType
 {
     const NAME = 'orob2b_customer_account_user_role';
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
 
     /**
      * {@inheritdoc}
@@ -22,6 +40,7 @@ class AccountUserRoleType extends AbstractType
                 [
                     'label' => 'orob2b.customer.accountuserrole.role.label',
                     'required' => true,
+                    'constraints' => [new Length(['min' => 3, 'max' => 32])]
                 ]
             )
             ->add(
@@ -44,6 +63,17 @@ class AccountUserRoleType extends AbstractType
                     'multiple' => true
                 ]
             );
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var AccountUserRole|null $role */
+            $role = $event->getData();
+            if ($role) {
+                $label = $role->getLabel();
+                if ($label) {
+                    $role->setRole($label);
+                }
+            }
+        }, 10);
     }
 
     /**
@@ -51,11 +81,7 @@ class AccountUserRoleType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole',
-            ]
-        );
+        $resolver->setDefaults(['data_class' => $this->dataClass]);
     }
 
     /**

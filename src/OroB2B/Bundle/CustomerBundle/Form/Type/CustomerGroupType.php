@@ -11,6 +11,19 @@ class CustomerGroupType extends AbstractType
     const NAME = 'orob2b_customer_group_type';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -51,11 +64,7 @@ class CustomerGroupType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup',
-            ]
-        );
+        $resolver->setDefaults(['data_class' => $this->dataClass]);
     }
 
     /**

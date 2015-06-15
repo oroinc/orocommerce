@@ -12,6 +12,8 @@ use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup';
+
     /**
      * @var CustomerGroupType
      */
@@ -25,6 +27,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new CustomerGroupType();
+        $this->formType->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -73,7 +76,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('removeCustomers'));
 
         $formConfig = $form->getConfig();
-        $this->assertEquals('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', $formConfig->getOption('data_class'));
+        $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
@@ -95,7 +98,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         $defaultGroup->setName($groupName);
 
         /** @var CustomerGroup $existingGroupBefore */
-        $existingGroupBefore = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1);
+        $existingGroupBefore = $this->getEntity(self::DATA_CLASS, 1);
         $existingGroupBefore->setName($groupName);
 
         $existingGroupAfter = clone $existingGroupBefore;
