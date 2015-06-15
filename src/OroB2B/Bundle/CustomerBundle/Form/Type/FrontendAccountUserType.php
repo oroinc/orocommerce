@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraint;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
@@ -25,8 +26,7 @@ class FrontendAccountUserType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -57,24 +57,24 @@ class FrontendAccountUserType extends AbstractType
             );
 
         $passwordOptions = [
-            'type'            => 'password',
-            'first_options'   => ['label' => 'orob2b.customer.accountuser.password.label'],
-            'second_options'  => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
+            'type' => 'password',
+            'first_options' => ['label' => 'orob2b.customer.accountuser.password.label'],
+            'second_options' => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
             'invalid_message' => $this->translator->trans('orob2b.customer.message.password_mismatch')
         ];
 
+        /** @var AccountUser $data */
         $data = $builder->getData();
-        if ($data instanceof AccountUser && $data->getId()) {
-            $passwordOptions = array_merge($passwordOptions, ['required' => false, 'validation_groups' => false]);
+        if ($data->getId()) {
+            $passwordOptions = array_merge(
+                $passwordOptions,
+                ['required' => false, 'validation_groups' => [Constraint::DEFAULT_GROUP]]
+            );
         } else {
-            $passwordOptions = array_merge($passwordOptions, ['required' => true, 'validation_groups' => 'create']);
+            $passwordOptions = array_merge($passwordOptions, ['required' => true, 'validation_groups' => ['create']]);
         }
 
-        $builder->add(
-            'plainPassword',
-            'repeated',
-            $passwordOptions
-        );
+        $builder->add('plainPassword', 'repeated', $passwordOptions);
     }
 
     /**
@@ -82,11 +82,13 @@ class FrontendAccountUserType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults([
-            'data_class'           => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
-            'intention'            => 'account_user',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
+                'intention' => 'account_user',
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            ]
+        );
     }
 
     /**
