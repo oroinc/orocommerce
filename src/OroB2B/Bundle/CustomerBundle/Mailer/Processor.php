@@ -64,7 +64,7 @@ class Processor
     }
 
     /**
-     * @todo Implement confirmation email sending
+     * @todo Implement confirmation email sending BB-613
      * @param AccountUser $accountUser
      * @param $confirmationToken
      */
