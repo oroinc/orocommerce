@@ -53,7 +53,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function sendWelcomeEmail(AccountUser $user)
     {
-        $this->emailProcessor->sendWelcomeNotification($user, $user->getPlainPassword());
+        $this->getEmailProcessor()->sendWelcomeNotification($user, $user->getPlainPassword());
     }
 
     /**
@@ -63,7 +63,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     {
         if ($this->getConfigValue('confirmation_required')) {
             $user->setConfirmationToken($user->generateToken());
-            $this->emailProcessor->sendConfirmationEmail($user, $user->getConfirmationToken());
+            $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
         }
     }
 
@@ -90,14 +90,15 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     }
 
     /**
-     * @param Processor $emailProcessor
-     * @return AccountUserManager
+     * @return Processor
      */
-    public function setEmailProcessor(Processor $emailProcessor)
+    protected function getEmailProcessor()
     {
-        $this->emailProcessor = $emailProcessor;
+        if (!$this->emailProcessor) {
+            $this->emailProcessor = $this->container->get('orob2b_customer.mailer.processor');
+        }
 
-        return $this;
+        return $this->emailProcessor;
     }
 
     /**
