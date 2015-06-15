@@ -27,6 +27,9 @@ class ProductType extends AbstractType
                 [
                     'label'     => 'orob2b.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
+                    'configs' => [
+                        'allowClear' => false
+                    ]
                 ]
             )
             ->add(
