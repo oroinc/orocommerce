@@ -281,7 +281,7 @@ datagrid:
                     excluded: '#groupRemoveCustomers'
 
     customer-account-user-grid:
-        entity_name: %orob2b_customer.account_user.entity.class%
+        entity_name: %orob2b_customer.entity.account_user.class%
         options:
             entityHint:        account user
             entity_pagination: true
@@ -296,7 +296,7 @@ datagrid:
                     - accountUser.email
                     - accountUser.enabled
                 from:
-                    - { table: %orob2b_customer.account_user.entity.class%, alias: accountUser }
+                    - { table: %orob2b_customer.entity.account_user.class%, alias: accountUser }
         columns:
             firstName:
                 label: orob2b.customer.accountuser.first_name.label

@@ -1,13 +1,13 @@
 parameters:
     orob2b_customer.entity.customer.class: OroB2B\Bundle\CustomerBundle\Entity\Customer
     orob2b_customer.entity.customer_group.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup
+    orob2b_customer.entity.account_user.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
 
     orob2b_customer.customer_tree_handler.class: OroB2B\Bundle\CustomerBundle\JsTree\CustomerTreeHandler
     orob2b_customer.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_customer.form.autocomplete.parent_customer.search_handler.class: OroB2B\Bundle\CustomerBundle\Autocomplete\ParentCustomerSearchHandler
 
-    orob2b_customer.account_user.entity.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
     orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.datagrid.action_permission_provider.class: OroB2B\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider
     orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
@@ -66,7 +66,7 @@ services:
         class: %orob2b_customer.account_user.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %orob2b_customer.account_user.entity.class%
+            - %orob2b_customer.entity.account_user.class%
             - @doctrine.orm.entity_manager
 
     orob2b_customer.datagrid.action_permission_provider:
@@ -83,7 +83,7 @@ services:
     orob2b_account_user.manager:
         class: %orob2b_account_user.manager.class%
         arguments:
-            - %orob2b_customer.account_user.entity.class%
+            - %orob2b_customer.entity.account_user.class%
             - @doctrine
             - @security.encoder_factory
         calls:
