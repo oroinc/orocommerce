@@ -14,7 +14,8 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 
 use OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_0\OroB2BOrderBundle as OroB2BOrderBundle10;
 
-class OroB2BOrderBundleInstaller implements Installation,
+class OroB2BOrderBundleInstaller implements
+    Installation,
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface
