@@ -7,8 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
@@ -25,23 +24,24 @@ class AccountUserController extends Controller
      */
     public function registerAction()
     {
+        $isRegistrationAllowed = $this->get('oro_config.manager')->get('oro_b2b_customer.registration_allowed');
+        if (!$isRegistrationAllowed) {
+            throw new AccessDeniedException();
+        }
+
         $user = new AccountUser();
+        // TODO: Replace this with correct organization BB-632
         $orgs = $this->getDoctrine()->getRepository('OroOrganizationBundle:Organization')->findAll();
         $org = reset($orgs);
+        $user->addOrganization($org);
         $user->setOrganization($org);
+
         return $this->update($user);
     }
 
     /**
-     * @todo: Check ACL
      * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
      * @Template
-     * @Acl(
-     *      id="orob2b_customer_frontend_account_user_profile_view",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="VIEW"
-     * )
      *
      * @return array
      */
@@ -55,15 +55,9 @@ class AccountUserController extends Controller
     /**
      * Edit account user form
      *
-     * @todo: Check ACL
      * @Route("/profile/update", name="orob2b_customer_frontend_account_user_update")
      * @Template
-     * @Acl(
-     *      id="orob2b_customer_frontend_account_user_profile_update",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="EDIT"
-     * )
+     *
      * @return array|RedirectResponse
      */
     public function updateAction()
