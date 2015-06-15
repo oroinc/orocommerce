@@ -12,7 +12,7 @@ use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\UserBundle\Entity\BaseUserManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|\OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager
      */
     protected $userManager;
 
@@ -35,7 +35,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
 
         $this->entity = new AccountUser();
 
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\BaseUserManager')
+        $this->userManager = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -135,13 +135,6 @@ class AccountUserHandlerTest extends FormHandlerTestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
-
-        $this->manager->expects($this->once())
-            ->method('persist')
-            ->with($this->entity);
-
-        $this->manager->expects($this->once())
-            ->method('flush');
 
         $this->assertTrue($this->handler->process($this->entity));
     }

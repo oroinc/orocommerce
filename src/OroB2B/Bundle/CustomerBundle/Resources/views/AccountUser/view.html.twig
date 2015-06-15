@@ -54,6 +54,13 @@
     {% endif %}
 {% endblock navButtons %}
 
+{% block stats %}
+    <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'orob2b.customer.accountuser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'orob2b.customer.accountuser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
+{% endblock stats %}
+
 {% block content_data %}
     {% set accountUserInformationWidget %}
     {{ oro_widget_render({
@@ -78,7 +85,3 @@
 
     {{ parent() }}
 {% endblock content_data %}
-
-{% block stats %}
-    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
-{% endblock stats %}

@@ -6,6 +6,13 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.customer.accountuser.first_name.label'|trans, entity.firstName) }}
             {{ UI.renderProperty('orob2b.customer.accountuser.last_name.label'|trans, entity.lastName) }}
+            {% set birthday_string %}
+                {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
+                {% if entity.birthday is not empty %}
+                    ({{ entity.birthday|age_string({'default': 'N/A'}) }})
+                {% endif %}
+            {% endset %}
+            {{ UI.renderProperty('orob2b.customer.accountuser.birthday.label'|trans, birthday_string) }}
             {{ UI.renderProperty('orob2b.customer.accountuser.email.label'|trans, entity.email) }}
             {{ UI.renderProperty('orob2b.customer.accountuser.enabled.label'|trans, entity.enabled ? 'Yes' : 'No') }}
 
@@ -16,6 +23,14 @@
                     {% set customerView = entity.customer.name|escape %}
                 {% endif %}
                 {{ UI.renderHtmlProperty('orob2b.customer.accountuser.customer.label'|trans, customerView) }}
+            {% endif %}
+
+            {% if resource_granted('orob2b_customer_account_user_role_view') %}
+                {% set roles = [] %}
+                {% for entityRole in entity.roles %}
+                    {% set roles = roles|merge([entityRole.label]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.customer.accountuser.roles.label'|trans, roles|join('<br />')) }}
             {% endif %}
         </div>
     </div>

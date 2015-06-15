@@ -45,14 +45,25 @@
     {% endif %}
 {% endblock pageHeader %}
 
+{% block stats %}
+    <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'orob2b.customer.accountuser.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'orob2b.customer.accountuser.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
+{% endblock stats %}
+
 {% block content_data %}
     {% set id = 'account-user-edit' %}
 
     {% set formRows = [
         form_row(form.enabled),
+        form_row(form.namePrefix),
         form_row(form.firstName),
+        form_row(form.middleName),
         form_row(form.lastName),
+        form_row(form.nameSuffix),
         form_row(form.email),
+        form_row(form.birthday),
         form_widget(form.plainPassword, { 'attr': {'class': 'password'} }),
         form_row(form.customer),
     ] %}
@@ -80,6 +91,29 @@
             }]
         }]
     %}
+
+    {% set hasRoles = form.roles is defined %}
+    {% if hasRoles %}
+        {% set userRoles %}
+        {% if hasRoles %}
+            <div class="form-horizontal" id="roles-list">
+                {{ form_row(form.roles, {attr: { class: 'horizontal' } }) }}
+            </div>
+        {% endif %}
+        {% endset %}
+
+        {% set title = 'orob2b.customer.accountuser.roles.label'|trans %}
+
+        {% set dataBlocks = dataBlocks|merge( [{
+            'title': title,
+            'subblocks': [
+                {
+                    'title': '',
+                    'data': [userRoles]
+                }
+            ]
+        }] ) %}
+    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),
