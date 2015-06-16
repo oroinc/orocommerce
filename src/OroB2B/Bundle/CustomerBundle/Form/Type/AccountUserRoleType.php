@@ -4,11 +4,16 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Length;
 
-class CustomerGroupType extends AbstractType
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+
+class AccountUserRoleType extends AbstractType
 {
-    const NAME = 'orob2b_customer_group_type';
+    const NAME = 'orob2b_customer_account_user_role';
 
     /**
      * @var string
@@ -30,33 +35,46 @@ class CustomerGroupType extends AbstractType
     {
         $builder
             ->add(
-                'name',
+                'label',
                 'text',
                 [
-                    'label' => 'orob2b.customer.customergroup.name.label',
-                    'required' => true
+                    'label' => 'orob2b.customer.accountuserrole.role.label',
+                    'required' => true,
+                    'constraints' => [new Length(['min' => 3, 'max' => 32])]
                 ]
             )
             ->add(
-                'appendCustomers',
+                'appendUsers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
                 ]
             )
             ->add(
-                'removeCustomers',
+                'removeUsers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
                 ]
             );
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var AccountUserRole|null $role */
+            $role = $event->getData();
+            // set role if it's not defined yet
+            if ($role && !$role->getRole()) {
+                $label = $role->getLabel();
+                if ($label) {
+                    $role->setRole($label);
+                }
+            }
+        }, 10);
     }
 
     /**

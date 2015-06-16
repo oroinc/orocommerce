@@ -7,11 +7,11 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
-use OroB2B\Bundle\CustomerBundle\Form\Handler\CustomerGroupHandler;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserRoleHandler;
 
-class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
+class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Request
@@ -24,7 +24,7 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
     protected $form;
 
     /**
-     * @var CustomerGroupHandler
+     * @var AccountUserRoleHandler
      */
     protected $handler;
 
@@ -34,7 +34,7 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
-     * @var CustomerGroup
+     * @var AccountUserRole
      */
     protected $entity;
 
@@ -48,16 +48,16 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entity  = new CustomerGroup();
-        $this->handler = new CustomerGroupHandler($this->form, $this->request, $this->manager);
+        $this->entity  = new AccountUserRole();
+        $this->handler = new AccountUserRoleHandler($this->form, $this->request, $this->manager);
     }
 
     public function testProcessValidData()
     {
-        $appendedCustomer = new Customer();
+        $appendedUser = new AccountUser();
 
-        $removedCustomer = new Customer();
-        $removedCustomer->setGroup($this->entity);
+        $removedUser = new AccountUser();
+        $removedUser->addRole($this->entity);
 
         $this->form->expects($this->once())
             ->method('setData')
@@ -78,10 +78,10 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $appendForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([$appendedCustomer]));
+            ->will($this->returnValue([$appendedUser]));
         $this->form->expects($this->at(3))
             ->method('get')
-            ->with('appendCustomers')
+            ->with('appendUsers')
             ->will($this->returnValue($appendForm));
 
         $removeForm = $this->getMockBuilder('Symfony\Component\Form\Form')
@@ -89,31 +89,22 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $removeForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([$removedCustomer]));
+            ->will($this->returnValue([$removedUser]));
         $this->form->expects($this->at(4))
             ->method('get')
-            ->with('removeCustomers')
+            ->with('removeUsers')
             ->will($this->returnValue($removeForm));
 
-        $this->manager->expects($this->at(0))
-            ->method('persist')
-            ->with($appendedCustomer);
-
-        $this->manager->expects($this->at(1))
-            ->method('persist')
-            ->with($removedCustomer);
-
-        $this->manager->expects($this->at(2))
+        $this->manager->expects($this->once())
             ->method('persist')
             ->with($this->entity);
-
         $this->manager->expects($this->once())
             ->method('flush');
 
         $this->assertTrue($this->handler->process($this->entity));
 
-        $this->assertEquals($this->entity, $appendedCustomer->getGroup());
-        $this->assertNull($removedCustomer->getGroup());
+        $this->assertEquals([$this->entity], $appendedUser->getRoles());
+        $this->assertEmpty($removedUser->getRoles());
     }
 
     public function testBadMethod()

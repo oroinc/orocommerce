@@ -6,8 +6,8 @@ parameters:
     orob2b_customer.form.type.customer_group_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType
     orob2b_customer.form.type.customer_parent_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType
 
-    orob2b_customer.form.type.roles.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendRolesType
     orob2b_customer.form.type.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType
+    orob2b_customer.form.type.account_user_role.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType
     orob2b_customer.form.type.frontend.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType
 
 services:
@@ -18,6 +18,8 @@ services:
 
     orob2b_customer.form.type.customer_group:
         class: %orob2b_customer.form.type.customer_group.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.customer_group.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_group_type }
 
@@ -36,19 +38,19 @@ services:
         tags:
             - { name: form.type, alias: orob2b_customer_parent_select }
 
-    orob2b_customer.form.type.roles:
-        class: %orob2b_customer.form.type.roles.class%
-        arguments:
-            - %orob2b.frontend.roles%
-        tags:
-            - { name: form.type, alias: orob2b_frontend_roles }
-
     orob2b_customer.form.type.account_user:
         class: %orob2b_customer.form.type.account_user.class%
         arguments:
             - @translator
         tags:
             - { name: form.type, alias: orob2b_customer_account_user }
+
+    orob2b_customer.form.type.account_user_role:
+        class: %orob2b_customer.form.type.account_user_role.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_customer_account_user_role }
 
     orob2b_customer.form.type.frontend.account_user:
         class: %orob2b_customer.form.type.frontend.account_user.class%

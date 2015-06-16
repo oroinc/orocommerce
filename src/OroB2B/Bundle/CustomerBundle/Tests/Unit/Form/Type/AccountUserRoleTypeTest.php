@@ -2,20 +2,22 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
-class CustomerGroupTypeTest extends FormIntegrationTestCase
+class AccountUserRoleTypeTest extends FormIntegrationTestCase
 {
-    const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup';
+    const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole';
 
     /**
-     * @var CustomerGroupType
+     * @var AccountUserRoleType
      */
     protected $formType;
 
@@ -26,7 +28,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new CustomerGroupType();
+        $this->formType = new AccountUserRoleType();
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 
@@ -51,29 +53,30 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                     $entityIdentifierType->getName() => $entityIdentifierType
                 ],
                 []
-            )
+            ),
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
     /**
      * @param array $options
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
+     * @param AccountUserRole|null $defaultData
+     * @param AccountUserRole|null $viewData
+     * @param array $submittedData
+     * @param AccountUserRole|null $expectedData
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
         array $options,
         $defaultData,
         $viewData,
-        $submittedData,
+        array $submittedData,
         $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
-        $this->assertTrue($form->has('appendCustomers'));
-        $this->assertTrue($form->has('removeCustomers'));
+        $this->assertTrue($form->has('appendUsers'));
+        $this->assertTrue($form->has('removeUsers'));
 
         $formConfig = $form->getConfig();
         $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
@@ -83,7 +86,15 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+
+        $actualData = $form->getData();
+        $this->assertEquals($expectedData, $actualData);
+
+        if ($defaultData && $defaultData->getRole()) {
+            $this->assertEquals($expectedData->getRole(), $actualData->getRole());
+        } else {
+            $this->assertNotEmpty($actualData->getRole());
+        }
     }
 
     /**
@@ -91,18 +102,19 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $groupName = 'customer_group_name';
-        $alteredGroupName = 'altered_group_name';
+        $roleLabel = 'customer_role_label';
+        $alteredRoleLabel = 'altered_role_label';
 
-        $defaultGroup = new CustomerGroup();
-        $defaultGroup->setName($groupName);
+        $defaultRole = new AccountUserRole();
+        $defaultRole->setLabel($roleLabel);
 
-        /** @var CustomerGroup $existingGroupBefore */
-        $existingGroupBefore = $this->getEntity(self::DATA_CLASS, 1);
-        $existingGroupBefore->setName($groupName);
+        /** @var AccountUserRole $existingRoleBefore */
+        $existingRoleBefore = $this->getEntity(self::DATA_CLASS, 1);
+        $existingRoleBefore->setLabel($roleLabel);
+        $existingRoleBefore->setRole($roleLabel);
 
-        $existingGroupAfter = clone $existingGroupBefore;
-        $existingGroupAfter->setName($alteredGroupName);
+        $existingRoleAfter = clone $existingRoleBefore;
+        $existingRoleAfter->setLabel($alteredRoleLabel);
 
         return [
             'empty' => [
@@ -110,25 +122,25 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'defaultData' => null,
                 'viewData' => null,
                 'submittedData' => [
-                    'name' => $groupName,
+                    'label' => $roleLabel,
                 ],
-                'expectedData' => $defaultGroup
+                'expectedData' => $defaultRole
             ],
             'existing' => [
                 'options' => [],
-                'defaultData' => $existingGroupBefore,
-                'viewData' => $existingGroupBefore,
+                'defaultData' => $existingRoleBefore,
+                'viewData' => $existingRoleBefore,
                 'submittedData' => [
-                    'name' => $alteredGroupName,
+                    'label' => $alteredRoleLabel,
                 ],
-                'expectedData' => $existingGroupAfter
+                'expectedData' => $existingRoleAfter
             ]
         ];
     }
 
     public function testGetName()
     {
-        $this->assertEquals(CustomerGroupType::NAME, $this->formType->getName());
+        $this->assertEquals(AccountUserRoleType::NAME, $this->formType->getName());
     }
 
     /**
