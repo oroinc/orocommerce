@@ -28,17 +28,15 @@ class RequestProductType extends AbstractType
         $this->translator = $translator;
     }
 
-
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('product', null, [
-                'required' => true,
-                'label' => 'orob2b.product.entity_label'
+                'required'  => true,
+                'label'     => 'orob2b.product.entity_label',
             ])
             ->add(
                 'requestProductItems',
@@ -50,27 +48,27 @@ class RequestProductType extends AbstractType
                 ]
             )
             ->add('comment', 'textarea', [
-                'required' => false,
-                'label' => 'orob2b.rfpadmin.requestproduct.comment.label'
+                'required'  => false,
+                'label'     => 'orob2b.rfpadmin.requestproduct.comment.label',
             ])
         ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct',
-            'intention' => 'rfp_admin_request_product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct',
+            'intention'     => 'rfp_admin_request_product',
+            'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
@@ -82,7 +80,7 @@ class RequestProductType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
-        /** @var $requestProduct RequestProduct */
+        /* @var $requestProduct RequestProduct */
         $requestProduct = $event->getData();
         $form = $event->getForm();
         if ($requestProduct && null !== $requestProduct->getId()) {
@@ -90,15 +88,17 @@ class RequestProductType extends AbstractType
             if (!$product) {
                 $emptyValueTitle = $this->translator->trans(
                     'orob2b.rfpadmin.message.requestproductitem.unit.removed',
-                    ['{title}' => $requestProduct->getProductSku()]
+                    [
+                        '{title}' => $requestProduct->getProductSku(),
+                    ]
                 );
                 $form->add(
                     'product',
                     null,
                     [
-                        'required' => true,
-                        'label' => 'orob2b.product.entity_label',
-                        'empty_value'   => $emptyValueTitle
+                        'required'      => true,
+                        'label'         => 'orob2b.product.entity_label',
+                        'empty_value'   => $emptyValueTitle,
                     ]
                 );
             }

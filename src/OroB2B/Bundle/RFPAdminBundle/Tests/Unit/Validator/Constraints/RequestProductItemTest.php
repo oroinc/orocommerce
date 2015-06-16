@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,12 +17,15 @@ class RequestProductItemTest extends \PHPUnit_Framework_TestCase
     /** @var Constraints\RequestProductItem */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
     protected $context;
 
     /** @var Constraints\RequestProductItemValidator */
     protected $validator;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->context      = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');

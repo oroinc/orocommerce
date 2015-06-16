@@ -18,14 +18,14 @@ class RequestProductCollectionType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'type' => RequestProductType::NAME,
-            'show_form_when_empty' => false,
-            'prototype_name' => '__namerequestproduct__'
+            'type'  => RequestProductType::NAME,
+            'show_form_when_empty'  => false,
+            'prototype_name'        => '__namerequestproduct__',
         ]);
     }
 

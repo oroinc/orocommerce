@@ -3,14 +3,19 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
@@ -22,18 +27,25 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
+
+        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         $this->formType = new RequestProductItemType($translator);
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     protected function getExtensions()
     {
+        /* @var $configManager \PHPUnit_Framework_MockObject_MockBuilder|ConfigManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -43,6 +55,7 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
             ->with('oro_currency.allowed_currencies')
             ->will($this->returnValue(['USD', 'EUR']));
 
+        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockBuilder|LocaleSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
@@ -63,6 +76,7 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
+        /* @var $builder \PHPUnit_Framework_MockObject_MockBuilder|FormBuilder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock()
@@ -91,6 +105,7 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -106,7 +121,7 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_rfp_admin_request_product_item', $this->formType->getName());
+        $this->assertEquals(RequestProductItemType::NAME, $this->formType->getName());
     }
 
     /**

@@ -85,10 +85,11 @@ class Request extends ExtendRequest
 
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+        
         $this->requestProducts = new ArrayCollection();
     }
-    
-    
+
+
     /**
      * Add requestProducts
      *

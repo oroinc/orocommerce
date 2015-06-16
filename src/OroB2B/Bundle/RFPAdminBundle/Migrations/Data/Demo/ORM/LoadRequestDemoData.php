@@ -43,7 +43,6 @@ class LoadRequestDemoData extends AbstractFixture implements ContainerAwareInter
     {
         return [
             'OroB2B\Bundle\RFPAdminBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }

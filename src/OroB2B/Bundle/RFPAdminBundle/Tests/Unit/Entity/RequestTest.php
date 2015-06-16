@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Entity;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Entity\RequestStatusTestCase;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
+use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 
 class RequestTest extends RequestStatusTestCase
 {
@@ -28,5 +29,17 @@ class RequestTest extends RequestStatusTestCase
 
         $this->assertInstanceOf('DateTime', $request->getUpdatedAt());
         $this->assertLessThanOrEqual(new \DateTime(), $request->getUpdatedAt());
+    }
+
+    public function testAddRequestProduct()
+    {
+        $request        = new Request();
+        $requestProduct = new RequestProduct();
+
+        $this->assertNull($requestProduct->getRequest());
+
+        $request->addRequestProduct($requestProduct);
+
+        $this->assertEquals($request, $requestProduct->getRequest());
     }
 }

@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Twig;
 
-use Oro\Bundle\UIBundle\Twig;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 
 class RequestExtension extends \Twig_Extension
@@ -11,20 +11,20 @@ class RequestExtension extends \Twig_Extension
     const NAME = 'orob2b_rfpadmin_request';
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var Twig\Environment
+     * @var \Twig_Environment
      */
     protected $twigEnvironment;
 
     /**
-     * @param Translator $translator
-     * @param Twig\Environment $twigEnvironment
+     * @param TranslatorInterface $translator
+     * @param \Twig_Environment $twigEnvironment
      */
-    public function __construct(Translator $translator, Twig\Environment $twigEnvironment)
+    public function __construct(TranslatorInterface $translator, \Twig_Environment $twigEnvironment)
     {
         $this->translator       = $translator;
         $this->twigEnvironment  = $twigEnvironment;
