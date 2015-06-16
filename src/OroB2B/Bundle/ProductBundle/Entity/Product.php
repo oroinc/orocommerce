@@ -65,6 +65,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -141,7 +144,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductUnitPrecision[]
      *
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
-     * @ORM\OrderBy({"unit" = "ASC"})
      */
     protected $unitPrecisions;
 
