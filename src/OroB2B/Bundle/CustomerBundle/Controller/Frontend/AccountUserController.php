@@ -30,14 +30,21 @@ class AccountUserController extends Controller
             throw new AccessDeniedException();
         }
 
+        $user = new AccountUser();
+
         /** @var WebsiteManager $websiteManager */
         $websiteManager = $this->get('orob2b_website.manager');
         $website = $websiteManager->getCurrentWebsite();
         $websiteOrganization = $website->getOrganization();
 
-        $user = new AccountUser();
+        $defaultRole = $this->getDoctrine()
+            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
+            ->getRepository('OroB2BCustomerBundle:AccountUserRole')
+            ->findOneBy(['role' => $user->getDefaultRole()]);
+
         $user->addOrganization($websiteOrganization)
-            ->setOrganization($websiteOrganization);
+            ->setOrganization($websiteOrganization)
+            ->addRole($defaultRole);
 
         return $this->update($user);
     }
