@@ -10,7 +10,6 @@ orob2b.customer:
     users.label: 'Users'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
-    register.label: 'Register'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -51,6 +50,7 @@ orob2b.customer:
         organizations.label:         'Organizations'
 
         profile:
+            register: Register
             edit: Edit Profile
 
     accountuserrole:
