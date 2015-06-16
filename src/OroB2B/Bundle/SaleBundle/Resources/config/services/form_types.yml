@@ -8,11 +8,15 @@ services:
     # Quote form types
     orob2b_sale.form.type.quote_product:
         class: %orob2b_sale.form.type.quote_product.class%
+        arguments:
+            - @translator
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product }
 
     orob2b_sale.form.type.quote_product_item:
         class: %orob2b_sale.form.type.quote_product_item.class%
+        arguments:
+            - @translator
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_item }
 

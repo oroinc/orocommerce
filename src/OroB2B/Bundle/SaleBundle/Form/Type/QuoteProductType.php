@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -13,6 +14,19 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 class QuoteProductType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote_product';
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -73,7 +87,12 @@ class QuoteProductType extends AbstractType
                     [
                         'required'      => true,
                         'label'         => 'orob2b.product.entity_label',
-                        'empty_value'   => $quoteProduct->getProductSku() . ' - removed',
+                        'empty_value'   => $this->translator->trans(
+                            'orob2b.sale.quoteproduct.product.removed',
+                            [
+                                '{title}' => $quoteProduct->getProductSku(),
+                            ]
+                        ),
                     ]
                 );
             }

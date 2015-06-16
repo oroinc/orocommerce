@@ -5,16 +5,12 @@ namespace OroB2B\Bundle\ProductBundle\Controller\Api\Rest;
 use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Get;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-use Oro\Bundle\TranslationBundle\Translation\Translator;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @NamePrefix("orob2b_api_")

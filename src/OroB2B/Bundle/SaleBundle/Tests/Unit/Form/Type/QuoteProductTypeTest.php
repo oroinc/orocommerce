@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
@@ -14,7 +15,7 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
     /**
      * @var QuoteProductType
      */
-    protected $type;
+    protected $formType;
 
     /**
      * {@inheritdoc}
@@ -23,7 +24,13 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteProductType();
+        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->formType = new QuoteProductType($translator);
     }
 
     public function testBuildForm()
@@ -51,7 +58,7 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
             ->will($this->returnSelf())
         ;
 
-        $this->type->buildForm($builder, []);
+        $this->formType->buildForm($builder, []);
     }
 
     public function testSetDefaultOptions()
@@ -67,16 +74,6 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
             ])
         ;
 
-        $this->type->setDefaultOptions($resolver);
-    }
-
-    public function testPreSetData()
-    {
-        // TODO
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals('orob2b_sale_quote_product', $this->type->getName());
+        $this->formType->setDefaultOptions($resolver);
     }
 }

@@ -7,6 +7,7 @@ orob2b:
             id.label: 'Numeric ID'
             qid.label: 'ID'
             owner.label: 'Owner'
+            organization.label: 'Organization'
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             
@@ -25,6 +26,8 @@ orob2b:
             product_sku.label: 'Product SKU'
             quote.label: 'Quote'
             quote_product_items.label: 'Quote Product Lines'
+            
+            product.removed: '{title} - removed'
 
         quoteproductitem:
             item: '{units}, {price} per {unit}'
@@ -39,6 +42,8 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
+            
+            product_unit.removed: '{title} - removed'
                     
         controller:
             quote:

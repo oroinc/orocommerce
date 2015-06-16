@@ -42,7 +42,6 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
@@ -72,6 +71,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
             $quote = new Quote();
             $quote
                 ->setOwner($user)
+                ->setOrganization($user->getOrganization())
                 ->setValidUntil($validUntil)
             ;
             $this->processQuoteProducts($quote, $manager);

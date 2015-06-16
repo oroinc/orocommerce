@@ -10,11 +10,13 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class EntitySubscriberTest extends WebTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient();
@@ -28,18 +30,16 @@ class EntitySubscriberTest extends WebTestCase
         /* @var $em EntityManager */
         $em = $this->getContainer()->get('doctrine')->getManager();
 
-        $owner = $em->getRepository('OroUserBundle:User')->findOneByUsername(LoadUserData::USER1);
-
         $quote = new Quote();
         $quote
-            ->setOwner($owner)
+            ->setOwner($this->getReference(LoadUserData::USER1))
         ;
 
         $this->assertNull($quote->getQid());
 
         $em->persist($quote);
 
-        $this->assertEquals('', $quote->getQid());
+        $this->assertEquals(null, $quote->getQid());
 
         $em->flush();
 

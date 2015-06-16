@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
-class QuoteProductTest extends EntityTestCase
+class QuoteProductTest extends AbstractTest
 {
     public function testProperties()
     {
@@ -19,5 +18,29 @@ class QuoteProductTest extends EntityTestCase
         ];
 
         $this->assertPropertyAccessors(new QuoteProduct(), $properties);
+    }
+
+    public function testSetProduct()
+    {
+        $product = new QuoteProduct();
+
+        $this->assertNull($product->getProductSku());
+
+        $product->setProduct((new Product)->setSku('test-sku'));
+
+        $this->assertEquals('test-sku', $product->getProductSku());
+    }
+
+    public function testAddQuoteProductItem()
+    {
+        $quoteProduct       = new QuoteProduct();
+        $quoteProductItem   = new QuoteProductItem();
+
+        $this->assertNull($quoteProductItem->getQuoteProduct());
+
+        $quoteProduct->addQuoteProductItem($quoteProductItem);
+
+        $this->assertEquals($quoteProduct, $quoteProductItem->getQuoteProduct());
+
     }
 }
