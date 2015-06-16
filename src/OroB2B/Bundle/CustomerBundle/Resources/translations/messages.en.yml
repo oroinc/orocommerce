@@ -97,6 +97,7 @@ orob2b.customer:
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
+            profile_updated.message: 'Account User profile updated'
 
     widgets:
         account_user_information: 'Account User Information'
