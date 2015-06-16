@@ -145,7 +145,7 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer group saved', $html);
+        $this->assertContains('Customer group has been saved', $html);
         $this->assertViewPage($html, $name);
 
         foreach ($appendCustomers as $customer) {

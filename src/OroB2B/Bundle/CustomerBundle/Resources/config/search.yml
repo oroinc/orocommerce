@@ -42,7 +42,7 @@ OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
         name: orob2b_customer_account_user_view
         parameters:
             id: id
-    search_template: OroB2BCustomerBundle:Search:result.html.twig
+    search_template: OroB2BCustomerBundle:AccountUser:searchResult.html.twig
     fields:
         -
             name: email
@@ -56,3 +56,22 @@ OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
             name: lastName
             target_type: text
             target_fields: [lastName]
+
+OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole:
+    alias: orob2b_customer_account_user_role
+    label: orob2b.customer.accountuserrole.entity_plural_label
+    title_fields: [label]
+    route:
+        name: orob2b_customer_account_user_role_update
+        parameters:
+            id: id
+    search_template: OroB2BCustomerBundle:AccountUserRole:searchResult.html.twig
+    fields:
+        -
+            name: role
+            target_type: text
+            target_fields: [role]
+        -
+            name: label
+            target_type: text
+            target_fields: [label]
