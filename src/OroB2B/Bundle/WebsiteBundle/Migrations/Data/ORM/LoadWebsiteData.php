@@ -5,12 +5,14 @@ namespace OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
@@ -52,15 +54,19 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $url = parse_url($this->container->get('oro_config.manager')->get('oro_ui.application_url'));
 
+        /** @var Locale $locale */
+        $locale = $this->getReference('default_website_locale');
+
         $website = new Website();
         $website
             ->setName('Default')
             ->setOrganization($organization)
             ->setOwner($businessUnit)
             ->setUrl($url['host'])
-            ->addLocale($this->getReference('default_website_locale'));
+            ->addLocale($locale);
 
         $manager->persist($website);
+        /** @var EntityManager $manager */
         $manager->flush($website);
     }
 }

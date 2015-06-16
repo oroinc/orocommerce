@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,6 +35,7 @@ class LoadLocaleData extends AbstractFixture implements ContainerAwareInterface
         $locale->setCode($this->container->get('oro_locale.settings')->getLocale());
 
         $manager->persist($locale);
+        /** @var EntityManager $manager */
         $manager->flush($locale);
 
         $this->addReference('default_website_locale', $locale);

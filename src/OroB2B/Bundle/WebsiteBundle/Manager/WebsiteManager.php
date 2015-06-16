@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Manager;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
@@ -27,9 +28,10 @@ class WebsiteManager
      */
     public function getCurrentWebsite()
     {
-        $websites = $this->getEntityManager()->getRepository('OroB2BWebsiteBundle:Website')->findAll();
-
-        return reset($websites);
+        return $this->getEntityManager()->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(
+            [],
+            ['id' => Criteria::ASC]
+        );
     }
 
     /**

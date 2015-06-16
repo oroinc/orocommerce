@@ -38,8 +38,9 @@ class WebsiteManagerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $repository->expects($this->once())
-            ->method('findAll')
-            ->willReturn([new Website()]);
+            ->method('findOneBy')
+            ->with($this->isType('array'), $this->isType('array'))
+            ->willReturn(new Website());
 
         $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $objectManager->expects($this->once())
