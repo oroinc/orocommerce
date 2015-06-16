@@ -12,7 +12,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
-use OroB2B\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @ORM\Table(name="orob2b_shopping_list",indexes={@ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})})

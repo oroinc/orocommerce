@@ -21,7 +21,6 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\UserBundle\Tests\Functional\DataFixtures\LoadUserData',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
             ]
         );
