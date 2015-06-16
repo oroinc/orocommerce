@@ -60,17 +60,17 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
 
     /**
      * @param array $options
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
+     * @param AccountUserRole|null $defaultData
+     * @param AccountUserRole|null $viewData
+     * @param array $submittedData
+     * @param AccountUserRole|null $expectedData
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
         array $options,
         $defaultData,
         $viewData,
-        $submittedData,
+        array $submittedData,
         $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
@@ -86,7 +86,15 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+
+        $actualData = $form->getData();
+        $this->assertEquals($expectedData, $actualData);
+
+        if ($defaultData && $defaultData->getRole()) {
+            $this->assertEquals($expectedData->getRole(), $actualData->getRole());
+        } else {
+            $this->assertNotEmpty($actualData->getRole());
+        }
     }
 
     /**
@@ -103,6 +111,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         /** @var AccountUserRole $existingRoleBefore */
         $existingRoleBefore = $this->getEntity(self::DATA_CLASS, 1);
         $existingRoleBefore->setLabel($roleLabel);
+        $existingRoleBefore->setRole($roleLabel);
 
         $existingRoleAfter = clone $existingRoleBefore;
         $existingRoleAfter->setLabel($alteredRoleLabel);

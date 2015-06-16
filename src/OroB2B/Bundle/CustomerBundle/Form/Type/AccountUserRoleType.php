@@ -67,7 +67,8 @@ class AccountUserRoleType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var AccountUserRole|null $role */
             $role = $event->getData();
-            if ($role) {
+            // set role if it's not defined yet
+            if ($role && !$role->getRole()) {
                 $label = $role->getLabel();
                 if ($label) {
                     $role->setRole($label);
