@@ -66,34 +66,24 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
     {
         $entity = new AccountUser();
 
-        $existingEntity = new AccountUser();
-        $this->setPropertyValue($existingEntity, 'id', 42);
+        $expectedEntity = new AccountUser();
+        $expectedEntity->setFirstName('John');
+        $expectedEntity->setLastName('Doe');
+        $expectedEntity->setEmail('johndoe@example.com');
 
-        $existingEntity->setFirstName('John');
-        $existingEntity->setLastName('Doe');
-        $existingEntity->setEmail('johndoe@example.com');
-        $existingEntity->setPassword('123456');
-
-        $updatedEntity = clone $existingEntity;
-        $updatedEntity->setFirstName('John UP');
-        $updatedEntity->setLastName('Doe UP');
-        $updatedEntity->setEmail('johndoe_up@example.com');
+        $entity->setSalt($expectedEntity->getSalt());
 
         return [
             'new user' => [
                 'defaultData' => $entity,
-                'submittedData' => [],
-                'expectedData' => $entity
-            ],
-            'updated user' => [
-                'defaultData' => $existingEntity,
                 'submittedData' => [
-                    'firstName' => $updatedEntity->getFirstName(),
-                    'lastName' => $updatedEntity->getLastName(),
-                    'email' => $updatedEntity->getEmail()
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'plainPassword' => '123456'
                 ],
-                'expectedData' => $updatedEntity
-            ]
+                'expectedData' => $expectedEntity
+            ],
         ];
     }
 

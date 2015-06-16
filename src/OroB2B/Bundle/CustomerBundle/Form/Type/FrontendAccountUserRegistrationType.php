@@ -5,9 +5,6 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraint;
-
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
 class FrontendAccountUserRegistrationType extends AbstractType
 {
@@ -49,25 +46,18 @@ class FrontendAccountUserRegistrationType extends AbstractType
                 ]
             );
 
-        $passwordOptions = [
-            'type' => 'password',
-            'first_options' => ['label' => 'orob2b.customer.accountuser.password.label'],
-            'second_options' => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
-            'invalid_message' => 'orob2b.customer.message.password_mismatch'
-        ];
-
-        /** @var AccountUser $data */
-        $data = $builder->getData();
-        if ($data->getId()) {
-            $passwordOptions = array_merge(
-                $passwordOptions,
-                ['required' => false, 'validation_groups' => [Constraint::DEFAULT_GROUP]]
-            );
-        } else {
-            $passwordOptions = array_merge($passwordOptions, ['required' => true, 'validation_groups' => ['create']]);
-        }
-
-        $builder->add('plainPassword', 'repeated', $passwordOptions);
+        $builder->add(
+            'plainPassword',
+            'repeated',
+            [
+                'type' => 'password',
+                'first_options' => ['label' => 'orob2b.customer.accountuser.password.label'],
+                'second_options' => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
+                'invalid_message' => 'orob2b.customer.message.password_mismatch',
+                'required' => true,
+                'validation_groups' => ['create']
+            ]
+        );
     }
 
     /**
