@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Controller\Frontend;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,6 +13,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\CustomerBundle\Form\Handler\FrontendAccountUserHandler;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
 
 class AccountUserController extends Controller
 {
@@ -31,15 +31,22 @@ class AccountUserController extends Controller
             throw new AccessDeniedException();
         }
 
+        $user = new AccountUser();
+
         /** @var WebsiteManager $websiteManager */
         $websiteManager = $this->get('orob2b_website.manager');
         $website = $websiteManager->getCurrentWebsite();
         $websiteOrganization = $website->getOrganization();
 
-        $user = new AccountUser();
+        $defaultRole = $this->getDoctrine()
+            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
+            ->getRepository('OroB2BCustomerBundle:AccountUserRole')
+            ->findOneBy(['role' => $user->getDefaultRole()]);
+
         $user
             ->addOrganization($websiteOrganization)
-            ->setOrganization($websiteOrganization);
+            ->setOrganization($websiteOrganization)
+            ->addRole($defaultRole);
 
         return $this->update($user);
     }

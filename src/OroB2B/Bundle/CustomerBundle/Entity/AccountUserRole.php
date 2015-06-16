@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CustomerBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 /**
@@ -18,6 +19,9 @@ use Oro\Bundle\UserBundle\Entity\AbstractRole;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
@@ -38,24 +42,29 @@ class AccountUserRole extends AbstractRole
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true, nullable=false)
+     * @ORM\Column(type="string", length=64, unique=true, nullable=false)
      */
     protected $role;
 
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=64)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *      }
+     * )
      */
     protected $label;
 
     /**
-     * {@inheritDoc}
+     * Constructor is empty to override obligatory argument in parent
      */
-    public function __construct($role)
+    public function __construct()
     {
-        $this->setRole($role);
-        $this->setLabel($role);
     }
 
     /**

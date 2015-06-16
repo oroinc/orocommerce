@@ -63,6 +63,26 @@ oro_menu_config:
             extras:
                 description: 'orob2b.customer.menu.shortcut_list_account_users.description'
 
+        account_user_roles:
+            label: 'orob2b.customer.accountuserrole.entity_plural_label'
+            route: 'orob2b_customer_account_user_role_index'
+            extras:
+                position: 40
+                routes: ['/^orob2b_customer_account_user_role/']
+                description: 'orob2b.customer.menu.account_user_roles.description'
+
+        shortcut_new_account_user_role:
+            label: 'orob2b.customer.menu.shortcut_new_account_user_role.label'
+            route: 'orob2b_customer_account_user_role_create'
+            extras:
+                description: 'orob2b.customer.menu.shortcut_new_account_user_role.description'
+
+        shortcut_list_account_user_groups:
+            label: 'orob2b.customer.menu.shortcut_list_account_user_roles.label'
+            route: 'orob2b_customer_account_user_role_index'
+            extras:
+                description: 'orob2b.customer.menu.shortcut_list_account_user_roles.description'
+
         orob2b_customer_frontend_account_user_profile:
             label: 'orob2b.customer.menu.account_user_profile.label'
             route: 'orob2b_customer_frontend_account_user_profile'
@@ -77,6 +97,7 @@ oro_menu_config:
                         customer_list: ~
                         customer_group_list: ~
                         account_users: ~
+                        account_user_roles: ~
 
         account_usermenu:
             children:
@@ -88,6 +109,8 @@ oro_menu_config:
                 shortcut_customer_group_list: ~
                 shortcut_new_account_user: ~
                 shortcut_list_account_users: ~
+                shortcut_new_account_user_role: ~
+                shortcut_list_account_user_groups: ~
 
 oro_titles:
     orob2b_customer_index: ~
@@ -104,6 +127,10 @@ oro_titles:
     orob2b_customer_account_user_view:    '%%username%%'
     orob2b_customer_account_user_update:  '%%username%% - Edit'
     orob2b_customer_account_user_create:  oro.ui.create_entity
+
+    orob2b_customer_account_user_role_index:   ~
+    orob2b_customer_account_user_role_update:  '%%label%% - Edit'
+    orob2b_customer_account_user_role_create:  oro.ui.create_entity
 
     orob2b_customer_frontend_account_user_profile: '%%username%%'
     orob2b_customer_frontend_account_user_profile_update: orob2b.customer.accountuser.profile.edit

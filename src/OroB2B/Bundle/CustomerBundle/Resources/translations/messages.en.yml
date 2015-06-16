@@ -50,6 +50,7 @@ orob2b.customer:
         customer.label:              'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
+        has_role.label:              'Has role'
 
         profile:
             register: Register
@@ -64,10 +65,6 @@ orob2b.customer:
         id.label:                        'ID'
         label.label:                     'Label'
         role.label:                      'Role'
-
-    role:
-        entity_label:                'Frontend Capability'
-        entity_plural_label:         'Frontend Capabilities'
 
     action:
         account_user.enable:  'Enable'
@@ -91,6 +88,11 @@ orob2b.customer:
         shortcut_new_account_user.description: 'Create new account user instance'
         shortcut_list_account_users.label: 'Show account users'
         shortcut_list_account_users.description: 'View list of account users'
+        account_user_roles.description: 'List of account user roles'
+        shortcut_new_account_user_role.label: 'Create new account user role'
+        shortcut_new_account_user_role.description: 'Create new account user role instance'
+        shortcut_list_account_user_roles.label: 'Show account user roles'
+        shortcut_list_account_user_roles.description: 'View list of account user roles'
 
         account_user_profile.label: My Profile
         account_user_login.label: Login
@@ -98,9 +100,9 @@ orob2b.customer:
 
     controller:
         customer:
-            saved.message: 'Customer saved'
+            saved.message: 'Customer has been saved'
         customergroup:
-            saved.message: 'Customer group saved'
+            saved.message: 'Customer group has been saved'
         accountuser:
             registered.message: 'Registration successful'
             saved.message:     'Account User has been saved'
@@ -108,6 +110,8 @@ orob2b.customer:
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
             profile_updated.message: 'Account User profile updated'
+        accountuserrole:
+            saved.message:     'Account User Role has been saved'
 
     message:
         password_mismatch: "The entered passwords don't match"
