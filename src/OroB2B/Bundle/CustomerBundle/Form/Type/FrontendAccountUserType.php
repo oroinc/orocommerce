@@ -5,9 +5,8 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraint;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
 
 class FrontendAccountUserType extends AbstractType
 {
@@ -79,27 +78,17 @@ class FrontendAccountUserType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.customer.accountuser.email.label'
                 ]
+            )
+            ->add(
+                'changePassword',
+                ChangePasswordType::NAME,
+                [
+                    'current_password_label' => 'orob2b.customer.accountuser.current_password.label',
+                    'plain_password_invalid_message' => 'orob2b.customer.message.password_mismatch',
+                    'first_options_label' => 'orob2b.customer.accountuser.new_password.label',
+                    'second_options_label' => 'orob2b.customer.accountuser.password_confirmation.label'
+                ]
             );
-
-        $passwordOptions = [
-            'type' => 'password',
-            'first_options' => ['label' => 'orob2b.customer.accountuser.password.label'],
-            'second_options' => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
-            'invalid_message' => 'orob2b.customer.message.password_mismatch'
-        ];
-
-        /** @var AccountUser $data */
-        $data = $builder->getData();
-        if ($data->getId()) {
-            $passwordOptions = array_merge(
-                $passwordOptions,
-                ['required' => false, 'validation_groups' => [Constraint::DEFAULT_GROUP]]
-            );
-        } else {
-            $passwordOptions = array_merge($passwordOptions, ['required' => true, 'validation_groups' => ['create']]);
-        }
-
-        $builder->add('plainPassword', 'repeated', $passwordOptions);
     }
 
     /**

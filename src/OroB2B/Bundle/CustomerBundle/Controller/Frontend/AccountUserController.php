@@ -53,7 +53,7 @@ class AccountUserController extends Controller
     {
         return [
             'entity' => $this->getUser(),
-            'editRoute' => 'orob2b_customer_frontend_account_user_update'
+            'editRoute' => 'orob2b_customer_frontend_account_user_profile_update'
         ];
     }
 

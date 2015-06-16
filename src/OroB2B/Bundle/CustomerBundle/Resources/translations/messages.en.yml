@@ -29,6 +29,8 @@ orob2b.customer:
         username.label:              'Email'
         email.label:                 'Email Address'
         password.label:              'Password'
+        new_password.label:          'New Password'
+        current_password.label:      'Current Password'
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
         password_generate.label:     'Generate Password'
@@ -76,6 +78,7 @@ orob2b.customer:
         customergroup:
             customers: 'Customers'
         roles:   'Frontend Capabilities'
+        password: 'Password'
 
     menu:
         customer_tab.label: 'Customers'

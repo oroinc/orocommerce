@@ -7,12 +7,12 @@
     }
 }) %}
 
-{% set formAction = path('orob2b_customer_frontend_account_user_update')  %}
+{% set formAction = path('orob2b_customer_frontend_account_user_profile_update')  %}
 
 {% block navButtons %}
-    {{ UI.cancelButton(path('orob2b_customer_frontend_account_user_profile')) }}
+    {{ UI.cancelButton(path('orob2b_customer_frontend_account_user_profile_update')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_customer_frontend_account_user_update') %}
+    {% if entity.id or resource_granted('orob2b_customer_frontend_account_user_profile_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -34,26 +34,34 @@
 {% block content_data %}
     {% set id = 'account-user-profile-edit' %}
 
-    {% set formRows = [
-        form_row(form.namePrefix),
-        form_row(form.firstName),
-        form_row(form.middleName),
-        form_row(form.lastName),
-        form_row(form.nameSuffix),
-        form_row(form.email),
-        form_row(form.birthday),
-        form_widget(form.plainPassword, { 'attr': {'class': 'password'} }),
-    ] %}
-
-    {% set dataBlocks = [{
+    {% set dataBlocks = [
+        {
             'title': 'orob2b.customer.sections.general'|trans,
             'class': 'active',
-            'subblocks': [{
-                'title': '',
-                'data': formRows
-            }]
-        }]
-    %}
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.namePrefix),
+                        form_row(form.firstName),
+                        form_row(form.middleName),
+                        form_row(form.lastName),
+                        form_row(form.nameSuffix),
+                        form_row(form.email),
+                        form_row(form.birthday),
+                    ]
+                }
+            ]
+        },
+        {
+            'title': 'orob2b.customer.sections.password'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data': [form_widget(form.changePassword)]
+                }
+            ]
+        }
+    ] %}
 
     {% set data = {
         'formErrors': form_errors(form),
