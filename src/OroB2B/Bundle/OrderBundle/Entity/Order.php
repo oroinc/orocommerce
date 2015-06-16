@@ -243,15 +243,4 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
-
-    /**
-     * @param LifecycleEventArgs $event
-     *
-     * @ORM\PostPersist
-     */
-    public function postPersist(LifecycleEventArgs $event)
-    {
-        $entity = $event->getObject();
-        $this->setIdentifier($entity->getId());
-    }
 }
