@@ -71,7 +71,7 @@ class QuoteProductItemTypeTest extends WebTestCase
     {
         return [
             'choices is null' => [
-                'inputData'     => function() {
+                'inputData'     => function () {
                     return null;
                 },
                 'expectedData'  => function () {
