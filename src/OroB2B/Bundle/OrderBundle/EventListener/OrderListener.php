@@ -33,7 +33,7 @@ class OrderListener
             return;
         }
 
-        $id = $this->idGenerator->generateForEntity($entity);
+        $id = $this->idGenerator->generate($entity);
         $entity->setIdentifier($id);
     }
 }
