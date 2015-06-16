@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\CustomerBundle\Form\Handler\FrontendAccountUserHandler;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class AccountUserController extends Controller
 {
@@ -30,26 +31,29 @@ class AccountUserController extends Controller
             throw new AccessDeniedException();
         }
 
+        /** @var WebsiteManager $websiteManager */
+        $websiteManager = $this->get('orob2b_website.manager');
+        $website = $websiteManager->getCurrentWebsite();
+        $websiteOrganization = $website->getOrganization();
+
         $user = new AccountUser();
-        // TODO: Replace this with correct organization BB-632
-        $orgs = $this->getDoctrine()->getRepository('OroOrganizationBundle:Organization')->findAll();
-        $org = reset($orgs);
-        $user->addOrganization($org);
-        $user->setOrganization($org);
+        $user
+            ->addOrganization($websiteOrganization)
+            ->setOrganization($websiteOrganization);
 
         return $this->update($user);
     }
 
     /**
      * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
-     * @Template("OroB2BCustomerBundle:AccountUser/Frontend:register.html.twig")
-     *
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend:view.html.twig")
      * @return array
      */
     public function profileAction()
     {
         return [
-            'entity' => $this->getUser()
+            'entity' => $this->getUser(),
+            'editRoute' => 'orob2b_customer_frontend_account_user_update'
         ];
     }
 

@@ -47,7 +47,7 @@ class AccountUserController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_customer.account_user.entity.class')
+            'entity_class' => $this->container->getParameter('orob2b_customer.entity.account_user.class')
         ];
     }
 
@@ -120,12 +120,12 @@ class AccountUserController extends Controller
             $accountUser,
             $form,
             function (AccountUser $accountUser) {
-                return array(
+                return [
                     'route' => 'orob2b_customer_account_user_update',
                     'parameters' => ['id' => $accountUser->getId()]
-                );
+                ];
             },
-            'orob2b_customer_account_user_index',
+            ['route' => 'orob2b_customer_account_user_index'],
             $this->get('translator')->trans('orob2b.customer.controller.accountuser.saved.message'),
             $handler
         );
