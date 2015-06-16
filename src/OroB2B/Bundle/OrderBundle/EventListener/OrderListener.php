@@ -2,6 +2,7 @@
 namespace OroB2B\Bundle\OrderBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\EntityAwareGeneratorInterface;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
