@@ -45,7 +45,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
      * @ORM\Id
-     * @ORM\Column(name="identifier", type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -242,16 +242,5 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @param LifecycleEventArgs $event
-     *
-     * @ORM\PostPersist
-     */
-    public function postPersist(LifecycleEventArgs $event)
-    {
-        $entity = $event->getObject();
-        $this->setIdentifier($entity->getId());
     }
 }

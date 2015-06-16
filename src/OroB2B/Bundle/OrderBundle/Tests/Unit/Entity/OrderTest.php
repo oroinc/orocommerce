@@ -39,22 +39,4 @@ class OrderTest extends EntityTestCase
         $order->preUpdate();
         $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
     }
-
-    public function testPostPersist()
-    {
-        $orderMock = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\Order');
-        $orderMock->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue(125));
-        $lifecycleEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $lifecycleEventArgs->expects($this->once())
-            ->method('getObject')
-            ->will($this->returnValue($orderMock));
-
-        $order = new Order();
-        $order->postPersist($lifecycleEventArgs);
-        $this->assertEquals(125, $order->getIdentifier());
-    }
 }
