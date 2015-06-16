@@ -7,7 +7,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class AccountUserControllerTest extends WebTestCase
