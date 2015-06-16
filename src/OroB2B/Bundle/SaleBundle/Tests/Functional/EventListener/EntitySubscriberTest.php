@@ -39,7 +39,7 @@ class EntitySubscriberTest extends WebTestCase
 
         $em->persist($quote);
 
-        $this->assertEquals('', $quote->getQid());
+        $this->assertEquals(null, $quote->getQid());
 
         $em->flush();
 

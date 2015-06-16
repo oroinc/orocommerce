@@ -47,8 +47,8 @@ class QuoteProductTypeTest extends WebTestCase
     }
 
     /**
-     * @param \Closure $inputData
-     * @param \Closure $expectedData
+     * @param \Closure $inputDataCallback
+     * @param \Closure $expectedDataCallback
      *
      * @dataProvider preSetDataProvider
      */
@@ -104,8 +104,6 @@ class QuoteProductTypeTest extends WebTestCase
                 },
             ],
         ];
-
-        return $data;
     }
 
     /**

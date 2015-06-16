@@ -33,7 +33,7 @@ class QuoteProductItemTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType     = new QuoteProductItemType($this->getContainer()->get('translator'));
+        $this->formType = new QuoteProductItemType($this->getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -41,8 +41,8 @@ class QuoteProductItemTypeTest extends WebTestCase
     }
 
     /**
-     * @param \Closure $inputData
-     * @param \Closure $expectedData
+     * @param \Closure $inputDataCallback
+     * @param \Closure $expectedDataCallback
      *
      * @dataProvider preSetDataProvider
      */

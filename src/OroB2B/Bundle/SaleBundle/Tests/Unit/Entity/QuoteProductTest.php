@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
 class QuoteProductTest extends AbstractTest
 {
@@ -28,5 +29,18 @@ class QuoteProductTest extends AbstractTest
         $product->setProduct((new Product)->setSku('test-sku'));
 
         $this->assertEquals('test-sku', $product->getProductSku());
+    }
+
+    public function testAddQuoteProductItem()
+    {
+        $quoteProduct       = new QuoteProduct();
+        $quoteProductItem   = new QuoteProductItem();
+
+        $this->assertNull($quoteProductItem->getQuoteProduct());
+
+        $quoteProduct->addQuoteProductItem($quoteProductItem);
+
+        $this->assertEquals($quoteProduct, $quoteProductItem->getQuoteProduct());
+
     }
 }

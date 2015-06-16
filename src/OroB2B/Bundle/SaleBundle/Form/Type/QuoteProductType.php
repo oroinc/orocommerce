@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
