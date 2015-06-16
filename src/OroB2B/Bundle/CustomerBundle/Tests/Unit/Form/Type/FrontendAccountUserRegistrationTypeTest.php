@@ -3,21 +3,17 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-
-use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType;
+use OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
-class FrontendAccountUserTypeTest extends FormIntegrationTestCase
+class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var FrontendAccountUserType
+     * @var FrontendAccountUserRegistrationType
      */
     protected $formType;
 
@@ -33,16 +29,8 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new FrontendAccountUserType();
+        $this->formType = new FrontendAccountUserRegistrationType();
         $this->formType->setDataClass('OroB2B\Bundle\CustomerBundle\Entity\AccountUser');
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        unset($this->formType);
-        self::$customers = [];
     }
 
     /**
@@ -51,13 +39,6 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         return [
-            new PreloadedExtension(
-                [
-                    OroDateType::NAME => new OroDateType(),
-                    ChangePasswordTypeStub::NAME => new ChangePasswordTypeStub()
-                ],
-                []
-            ),
             new ValidatorExtension(Validation::createValidator())
         ];
     }
@@ -85,34 +66,24 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
     {
         $entity = new AccountUser();
 
-        $existingEntity = new AccountUser();
-        $this->setPropertyValue($existingEntity, 'id', 42);
+        $expectedEntity = new AccountUser();
+        $expectedEntity->setFirstName('John');
+        $expectedEntity->setLastName('Doe');
+        $expectedEntity->setEmail('johndoe@example.com');
 
-        $existingEntity->setFirstName('John');
-        $existingEntity->setLastName('Doe');
-        $existingEntity->setEmail('johndoe@example.com');
-        $existingEntity->setPassword('123456');
-
-        $updatedEntity = clone $existingEntity;
-        $updatedEntity->setFirstName('John UP');
-        $updatedEntity->setLastName('Doe UP');
-        $updatedEntity->setEmail('johndoe_up@example.com');
+        $entity->setSalt($expectedEntity->getSalt());
 
         return [
             'new user' => [
                 'defaultData' => $entity,
-                'submittedData' => [],
-                'expectedData' => $entity
-            ],
-            'updated user' => [
-                'defaultData' => $existingEntity,
                 'submittedData' => [
-                    'firstName' => $updatedEntity->getFirstName(),
-                    'lastName' => $updatedEntity->getLastName(),
-                    'email' => $updatedEntity->getEmail()
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'plainPassword' => '123456'
                 ],
-                'expectedData' => $updatedEntity
-            ]
+                'expectedData' => $expectedEntity
+            ],
         ];
     }
 
@@ -121,7 +92,7 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(FrontendAccountUserType::NAME, $this->formType->getName());
+        $this->assertEquals(FrontendAccountUserRegistrationType::NAME, $this->formType->getName());
     }
 
     /**

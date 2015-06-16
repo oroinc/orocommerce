@@ -10,7 +10,6 @@ orob2b.customer:
     users.label: 'Users'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
-    register.label: 'Register'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -30,6 +29,8 @@ orob2b.customer:
         username.label:              'Email'
         email.label:                 'Email Address'
         password.label:              'Password'
+        new_password.label:          'New Password'
+        current_password.label:      'Current Password'
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
         password_generate.label:     'Generate Password'
@@ -51,9 +52,12 @@ orob2b.customer:
         organizations.label:         'Organizations'
         has_role.label:              'Has role'
 
-        enabled.label:               'Active'
-        disabled.label:              'Inactive'
-        profile.label:               'Profile'
+        profile:
+            register: Register
+            edit: Edit Profile
+            label: 'Profile'
+            enabled.label: 'Active'
+            disabled.label: 'Inactive'
 
     accountuserrole:
         entity_label:                    'Account User Role'
@@ -71,6 +75,7 @@ orob2b.customer:
         customergroup:
             customers: 'Customers'
         roles:   'Frontend Capabilities'
+        password: 'Password'
 
     menu:
         customer_tab.label: 'Customers'
@@ -104,6 +109,7 @@ orob2b.customer:
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
+            profile_updated.message: 'Account User profile updated'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 

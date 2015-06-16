@@ -133,3 +133,4 @@ oro_titles:
     orob2b_customer_account_user_role_create:  oro.ui.create_entity
 
     orob2b_customer_frontend_account_user_profile: '%%username%%'
+    orob2b_customer_frontend_account_user_profile_update: orob2b.customer.accountuser.profile.edit

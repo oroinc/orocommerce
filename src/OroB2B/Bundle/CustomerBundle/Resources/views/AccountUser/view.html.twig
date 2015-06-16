@@ -17,9 +17,9 @@
     {% if entity.id != app.user.id %}
         <div class="pull-left">
             {% if entity.enabled %}
-                <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.customer.accountuser.enabled.label'|trans }}</div>
+                <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.customer.accountuser.profile.enabled.label'|trans }}</div>
             {% else %}
-                <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.customer.accountuser.disabled.label'|trans }}</div>
+                <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.customer.accountuser.profile.disabled.label'|trans }}</div>
             {% endif %}
         </div>
     {% endif %}
