@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
-use FOS\RestBundle\Controller\Annotations\Get;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 

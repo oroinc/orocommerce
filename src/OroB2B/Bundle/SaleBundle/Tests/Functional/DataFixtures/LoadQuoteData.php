@@ -13,8 +13,8 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
 class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
 {
-    const QUOTE1    = 'sale-quote1';
-    const QUOTE2    = 'sale-quote2';
+    const QUOTE1    = 'sale.quote.1';
+    const QUOTE2    = 'sale.quote.2';
 
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
@@ -23,8 +23,8 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
     const UNIT2     = 'product_unit.bottle';
     const UNIT3     = 'product_unit.box';
 
-    const CURRENCY1 = 'sale-USD';
-    const CURRENCY2 = 'sale-EUR';
+    const CURRENCY1 = 'sale.currency.USD';
+    const CURRENCY2 = 'sale.currency.EUR';
 
     /**
      * @var array
@@ -69,8 +69,7 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
 
@@ -90,66 +89,54 @@ class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
                 ->setOrganization($user->getOrganization())
             ;
 
-            foreach ($this->getQuoteProducts($item['products']) as $product) {
-                /* @var $product QuoteProduct */
-                $quote
-                    ->addQuoteProduct($product)
-                ;
+            foreach ($item['products'] as $sku => $items) {
+                $this->addQuoteProduct($manager, $quote, $sku, $items);
             }
 
             $manager->persist($quote);
 
             $this->setReference($item['qid'], $quote);
         }
+
         $manager->flush();
     }
 
     /**
-     * @param array $data
-     * @return array|QuoteProduct[]
-     */
-    protected function getQuoteProducts($data)
-    {
-        $products = [];
-
-        foreach ($data as $sku => $items) {
-            $products[] = $this->getQuoteProduct($sku, $items);
-        }
-
-        return $products;
-    }
-
-    /**
+     * @param ObjectManager $manager
+     * @param Quote $quote
      * @param string $sku
      * @param array $items
-     * @return QuoteProduct
      */
-    protected function getQuoteProduct($sku, $items)
+    protected function addQuoteProduct(ObjectManager $manager, Quote $quote, $sku, $items)
     {
         $product = new QuoteProduct();
-        $product
-            ->setProduct($this->getReference($sku))
-        ;
+
+        if ($this->hasReference($sku)) {
+            $product->setProduct($this->getReference($sku));
+        } else {
+            $product->setProductSku($sku);
+        }
 
         foreach ($items as $item) {
             $productItem = new QuoteProductItem();
             $productItem
                 ->setQuantity($item['quantity'])
-                ->setProductUnit($this->getReference($item['unit']))
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
             ;
 
-            $this->entityManager->persist($productItem);
+            if ($this->hasReference($item['unit'])) {
+                $productItem->setProductUnit($this->getReference($item['unit']));
+            } else {
+                $productItem->setProductUnitCode($item['unit']);
+            }
 
-            $product
-                ->addQuoteProductItem($productItem)
-            ;
+            $manager->persist($productItem);
+
+            $product->addQuoteProductItem($productItem);
         }
 
-        $this->entityManager->persist($product);
+        $manager->persist($product);
 
-        $this->entityManager->flush();
-
-        return $product;
+        $quote->addQuoteProduct($product);
     }
 }

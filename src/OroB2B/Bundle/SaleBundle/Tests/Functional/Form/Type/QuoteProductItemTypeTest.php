@@ -53,15 +53,15 @@ class QuoteProductItemTypeTest extends WebTestCase
 
         $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
 
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSetData($event);
+        $this->formType->preSetData(new FormEvent($form, $inputData));
 
         $this->assertTrue($form->has('productUnit'));
 
         $options = $form->get('productUnit')->getConfig()->getOptions();
 
-        $this->assertEquals($expectedData['choices'], $options['choices']);
-        $this->assertEquals($expectedData['empty_value'], $options['empty_value']);
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $options[$key], $key);
+        }
     }
 
     /**
@@ -70,7 +70,7 @@ class QuoteProductItemTypeTest extends WebTestCase
     public function preSetDataProvider()
     {
         return [
-            'new item' => [
+            'choices is null' => [
                 'inputData'     => function() {
                     return null;
                 },
@@ -81,15 +81,32 @@ class QuoteProductItemTypeTest extends WebTestCase
                     ];
                 },
             ],
-            'existsing item' => [
+            'choices is ProductUnit[]' => [
                 'inputData'     => function () {
                     return $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
                 },
                 'expectedData'  => function () {
                     $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
                     return [
-                        'choices' => $this->getUnits($quoteProductItem->getQuoteProduct()->getProduct()),
-                        'empty_value' => $this->trans(
+                        'choices'       => $this->getUnits($quoteProductItem->getQuoteProduct()->getProduct()),
+                        'empty_value'   => null,
+                    ];
+                },
+            ],
+            'choices is [] and unit is deleted' => [
+                'inputData'     => function () {
+                    /* @var $quoteProductItem QuoteProductItem */
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+
+                    $quoteProductItem->getQuoteProduct()->getProduct()->getUnitPrecisions()->clear();
+
+                    return $quoteProductItem;
+                },
+                'expectedData'  => function () {
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    return [
+                        'choices'       => [],
+                        'empty_value'   => $this->trans(
                             'orob2b.sale.quoteproduct.product.removed',
                             [
                                 '{title}' => $quoteProductItem->getProductUnitCode(),

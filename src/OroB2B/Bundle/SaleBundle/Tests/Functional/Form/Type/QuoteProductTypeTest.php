@@ -59,8 +59,7 @@ class QuoteProductTypeTest extends WebTestCase
 
         $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
 
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSetData($event);
+        $this->formType->preSetData(new FormEvent($form, $inputData));
 
         $options = $form->get('product')->getConfig()->getOptions();
 
@@ -116,10 +115,12 @@ class QuoteProductTypeTest extends WebTestCase
     protected function getQuoteProduct($qid)
     {
         /* @var $quote Quote */
-        $quote = $this->getReference(LoadQuoteData::QUOTE1);
+        $quote = $this->getReference($qid);
 
         /* @var $quoteProduct QuoteProduct */
         $quoteProduct = $quote->getQuoteProducts()->first();
+
+        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', $quoteProduct);
 
         return $quoteProduct;
     }
