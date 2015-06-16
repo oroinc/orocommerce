@@ -125,7 +125,12 @@ class AccountUserController extends Controller
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
-            ['route' => 'orob2b_customer_account_user_index'],
+            function (AccountUser $accountUser) {
+                return [
+                    'route' => 'orob2b_customer_account_user_view',
+                    'parameters' => ['id' => $accountUser->getId()]
+                ];
+            },
             $this->get('translator')->trans('orob2b.customer.controller.accountuser.saved.message'),
             $handler
         );

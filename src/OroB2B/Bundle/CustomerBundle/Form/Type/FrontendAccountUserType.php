@@ -18,14 +18,6 @@ class FrontendAccountUserType extends AbstractType
     protected $translator;
 
     /**
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -60,7 +52,7 @@ class FrontendAccountUserType extends AbstractType
             'type' => 'password',
             'first_options' => ['label' => 'orob2b.customer.accountuser.password.label'],
             'second_options' => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
-            'invalid_message' => $this->translator->trans('orob2b.customer.message.password_mismatch')
+            'invalid_message' => "The entered passwords don't match"
         ];
 
         /** @var AccountUser $data */
@@ -82,6 +74,8 @@ class FrontendAccountUserType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $resolver->setRequired(['data']);
+
         $resolver->setDefaults(
             [
                 'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
