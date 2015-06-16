@@ -14,13 +14,15 @@
 
 {% block breadcrumbs %}
     {{ parent() }}
-    <div class="pull-left">
-        {% if entity.enabled %}
-            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'Active'|trans }}</div>
-        {% else %}
-            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'Inactive'|trans }}</div>
-        {% endif %}
-    </div>
+    {% if entity.id != app.user.id %}
+        <div class="pull-left">
+            {% if entity.enabled %}
+                <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.customer.accountuser.enabled.label'|trans }}</div>
+            {% else %}
+                <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.customer.accountuser.disabled.label'|trans }}</div>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock breadcrumbs %}
 
 {% block stats %}
@@ -34,7 +36,7 @@
     {% if editRoute is defined %}
         {{ UI.editButton({
             'path': path(editRoute),
-            'entity_label': 'Profile'|trans
+            'entity_label': 'orob2b.customer.accountuser.profile.label'|trans
         }) }}
     {% else %}
         {% if resource_granted('EDIT', entity) %}

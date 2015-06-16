@@ -64,7 +64,7 @@ oro_menu_config:
                 description: 'orob2b.customer.menu.shortcut_list_account_users.description'
 
         orob2b_customer_frontend_account_user_profile:
-            label: 'orob2b.customer.menu.orob2b_customer_frontend_account_user_profile.label'
+            label: 'orob2b.customer.menu.account_user_profile.label'
             route: 'orob2b_customer_frontend_account_user_profile'
             extras:
                 position: 10

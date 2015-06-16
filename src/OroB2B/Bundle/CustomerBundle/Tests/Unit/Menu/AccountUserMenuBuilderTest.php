@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Menu;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use OroB2B\Bundle\CustomerBundle\Menu\AccountUserMenuBuilder;
 
 class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
@@ -11,9 +13,16 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $builder;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
     protected function setUp()
     {
-        $this->builder = new AccountUserMenuBuilder();
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->builder = new AccountUserMenuBuilder($this->translator);
     }
 
     protected function tearDown()
@@ -23,6 +32,11 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testBuild()
     {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('orob2b.customer.menu.account_user_logout.label')
+            ->willReturn('Logout');
+
         $child = $this->getMock('Knp\Menu\ItemInterface');
         $child->expects($this->once())
             ->method('setLabel')
@@ -33,6 +47,7 @@ class AccountUserMenuBuilderTest extends \PHPUnit_Framework_TestCase
             ->with('class', 'divider')
             ->willReturnSelf();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Knp\Menu\ItemInterface $menu */
         $menu = $this->getMock('Knp\Menu\ItemInterface');
         $menu->expects($this->at(0))
             ->method('setExtra')

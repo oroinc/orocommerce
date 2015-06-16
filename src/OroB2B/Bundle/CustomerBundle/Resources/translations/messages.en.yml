@@ -49,6 +49,10 @@ orob2b.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
 
+        enabled.label:               'Active'
+        disabled.label:              'Inactive'
+        profile.label:               'Profile'
+
     accountuserrole:
         entity_label:                    'Account User Role'
         entity_plural_label:             'Account User Roles'
@@ -82,7 +86,9 @@ orob2b.customer:
         shortcut_list_account_users.label: 'Show account users'
         shortcut_list_account_users.description: 'View list of account users'
 
-        orob2b_customer_frontend_account_user_profile.label: My Account User
+        account_user_profile.label: My Profile
+        account_user_login.label: Login
+        account_user_logout.label: Logout
 
     controller:
         customer:

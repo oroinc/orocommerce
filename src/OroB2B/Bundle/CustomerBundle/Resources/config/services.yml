@@ -98,6 +98,8 @@ services:
 
     orob2b_customer.account_user_menu:
         class: %orob2b_customer.account_user_menu.builder.class%
+        arguments:
+            - @translator
         tags:
             - { name: oro_menu.builder, alias: account_usermenu }
 
