@@ -59,16 +59,17 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->twigFilters['orob2b_format_product_unit_value'] = $this->getMockBuilder('\Twig_SimpleFilter')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
         $this->twigFilters['orob2b_format_product_unit_value']
             ->method('getCallable')
             ->will($this->returnValue(function ($value, ProductUnit $unit) {
                 $code = $this->translator->trans('orob2b.product_unit.' . $unit->getCode() . '.label.full');
                 return sprintf('%d %s', $value, $code);
             }))
+        ;
+            
+        $this->twigFilters['orob2b_format_product_unit_value'] = $this->getMockBuilder('\Twig_SimpleFilter')
+            ->disableOriginalConstructor()
+            ->getMock()
         ;
 
         $this->twigFilters['oro_format_price'] = $this->getMockBuilder('\Twig_SimpleFilter')

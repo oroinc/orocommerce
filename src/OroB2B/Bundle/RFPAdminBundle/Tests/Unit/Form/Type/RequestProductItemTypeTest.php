@@ -45,6 +45,11 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockBuilder|LocaleSettings */
+        $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         /* @var $configManager \PHPUnit_Framework_MockObject_MockBuilder|ConfigManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
@@ -54,11 +59,6 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
             ->method('get')
             ->with('oro_currency.allowed_currencies')
             ->will($this->returnValue(['USD', 'EUR']));
-
-        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockBuilder|LocaleSettings */
-        $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         return [
             new PreloadedExtension(
