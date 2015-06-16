@@ -31,24 +31,52 @@ class AccountUserController extends Controller
             throw new AccessDeniedException();
         }
 
-        $user = new AccountUser();
+        $accountUser = new AccountUser();
 
         /** @var WebsiteManager $websiteManager */
         $websiteManager = $this->get('orob2b_website.manager');
         $website = $websiteManager->getCurrentWebsite();
         $websiteOrganization = $website->getOrganization();
 
+        if (!$websiteOrganization) {
+            throw new \RuntimeException('Website organization is empty');
+        }
+
+        $defaultRole = $this->getDoctrine()
+            ->getRepository('OroB2BCustomerBundle:WebsiteAccountUserRole')
+            ->getDefaultForWebsite($website);
+
         $defaultRole = $this->getDoctrine()
             ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
             ->getRepository('OroB2BCustomerBundle:AccountUserRole')
-            ->findOneBy(['role' => $user->getDefaultRole()]);
+            ->findOneBy(['role' => $accountUser->getDefaultRole()]);
 
-        $user
+        if (!$defaultRole) {
+            throw new \RuntimeException(sprintf('Role "%s" was not found', $accountUser->getDefaultRole()));
+        }
+
+        $accountUser
             ->addOrganization($websiteOrganization)
             ->setOrganization($websiteOrganization)
             ->addRole($defaultRole);
 
-        return $this->update($user);
+        $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
+        $handler = new FrontendAccountUserHandler(
+            $form,
+            $this->getRequest(),
+            $this->get('orob2b_account_user.manager')
+        );
+
+        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
+            $accountUser,
+            $form,
+            ['route' => 'orob2b_customer_account_user_security_login'],
+            ['route' => 'orob2b_customer_account_user_security_login'],
+            $this->get('translator')->trans('orob2b.customer.controller.accountuser.registered.message'),
+            $handler
+        );
+
+        return $result;
     }
 
     /**
@@ -73,15 +101,8 @@ class AccountUserController extends Controller
      */
     public function updateAction()
     {
-        return $this->updateProfile($this->getUser());
-    }
+        $accountUser = $this->getUser();
 
-    /**
-     * @param AccountUser $accountUser
-     * @return array|RedirectResponse
-     */
-    protected function updateProfile(AccountUser $accountUser)
-    {
         $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
@@ -95,31 +116,6 @@ class AccountUserController extends Controller
             ['route' => 'orob2b_customer_frontend_account_user_profile_update'],
             ['route' => 'orob2b_customer_frontend_account_user_profile'],
             $this->get('translator')->trans('orob2b.customer.controller.accountuser.profile_updated.message'),
-            $handler
-        );
-
-        return $result;
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @return array|RedirectResponse
-     */
-    protected function update(AccountUser $accountUser)
-    {
-        $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler(
-            $form,
-            $this->getRequest(),
-            $this->get('orob2b_account_user.manager')
-        );
-
-        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
-            $accountUser,
-            $form,
-            ['route' => 'orob2b_customer_account_user_security_login'],
-            ['route' => 'orob2b_customer_account_user_security_login'],
-            $this->get('translator')->trans('orob2b.customer.controller.accountuser.registered.message'),
             $handler
         );
 
