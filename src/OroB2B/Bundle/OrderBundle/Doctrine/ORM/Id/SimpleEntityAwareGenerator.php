@@ -8,7 +8,7 @@ class SimpleEntityAwareGenerator implements EntityAwareGeneratorInterface
      *
      * @return string
      */
-    public function generateForEntity($entity)
+    public function generate($entity)
     {
         return $entity->getId();
     }
