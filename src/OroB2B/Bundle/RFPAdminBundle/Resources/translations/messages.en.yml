@@ -12,6 +12,7 @@ orob2b.rfpadmin:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
+        request_products.label: 'Request Products'
 
         sections:
             general: 'General'

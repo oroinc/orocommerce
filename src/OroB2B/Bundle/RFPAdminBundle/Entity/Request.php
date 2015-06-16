@@ -85,7 +85,7 @@ class Request extends ExtendRequest
 
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
-        
+
         $this->requestProducts = new ArrayCollection();
     }
 
@@ -110,12 +110,15 @@ class Request extends ExtendRequest
      * Remove requestProducts
      *
      * @param RequestProduct $requestProduct
+     * @return Request
      */
     public function removeRequestProduct(RequestProduct $requestProduct)
     {
         if ($this->requestProducts->contains($requestProduct)) {
             $this->requestProducts->removeElement($requestProduct);
         }
+
+        return $this;
     }
 
     /**
