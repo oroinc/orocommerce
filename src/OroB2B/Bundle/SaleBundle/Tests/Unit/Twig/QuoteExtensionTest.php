@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
+namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Twig;
 
 use Symfony\Component\Translation\TranslatorInterface;
 

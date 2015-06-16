@@ -196,7 +196,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
         }
 
-        /* @ar $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
+        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
         $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem');
         $item
             ->expects($this->any())
