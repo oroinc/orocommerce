@@ -10,7 +10,7 @@
 {% set formAction = path('orob2b_customer_frontend_account_user_profile_update')  %}
 
 {% block navButtons %}
-    {{ UI.cancelButton(path('orob2b_customer_frontend_account_user_profile_update')) }}
+    {{ UI.cancelButton(path('orob2b_customer_frontend_account_user_profile')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_customer_frontend_account_user_profile_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
