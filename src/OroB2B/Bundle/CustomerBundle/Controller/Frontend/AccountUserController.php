@@ -63,7 +63,7 @@ class AccountUserController extends Controller
             $this->get('orob2b_account_user.manager')
         );
 
-        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_customer_account_user_security_login'],
@@ -71,8 +71,6 @@ class AccountUserController extends Controller
             $this->get('translator')->trans('orob2b.customer.controller.accountuser.registered.message'),
             $handler
         );
-
-        return $result;
     }
 
     /**
@@ -106,7 +104,7 @@ class AccountUserController extends Controller
             $this->get('orob2b_account_user.manager')
         );
 
-        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_customer_frontend_account_user_profile_update'],
@@ -114,7 +112,5 @@ class AccountUserController extends Controller
             $this->get('translator')->trans('orob2b.customer.controller.accountuser.profile_updated.message'),
             $handler
         );
-
-        return $result;
     }
 }
