@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
 
-class AccountUserHandler
+class FrontendAccountUserHandler
 {
     /** @var FormInterface */
     protected $form;
@@ -47,14 +47,7 @@ class AccountUserHandler
 
             if ($this->form->isValid()) {
                 if (!$accountUser->getId()) {
-                    if ($this->form->get('passwordGenerate')->getData()) {
-                        $generatedPassword = $this->userManager->generatePassword(10);
-                        $accountUser->setPlainPassword($generatedPassword);
-                    }
-
-                    if ($this->form->get('sendEmail')->getData()) {
-                        $this->userManager->sendWelcomeEmail($accountUser);
-                    }
+                    $this->userManager->register($accountUser);
                 }
 
                 $this->userManager->updateUser($accountUser);

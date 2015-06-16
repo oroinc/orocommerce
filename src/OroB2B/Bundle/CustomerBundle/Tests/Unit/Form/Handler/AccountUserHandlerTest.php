@@ -12,11 +12,6 @@ use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\OroB2B\Bundle\CustomerBundle\Mailer\Processor
-     */
-    protected $processor;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\UserBundle\Entity\BaseUserManager
      */
     protected $userManager;
@@ -39,9 +34,6 @@ class AccountUserHandlerTest extends FormHandlerTestCase
         parent::setUp();
 
         $this->entity = new AccountUser();
-        $this->processor = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Mailer\Processor')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->userManager = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\BaseUserManager')
             ->disableOriginalConstructor()
@@ -58,8 +50,6 @@ class AccountUserHandlerTest extends FormHandlerTestCase
         $this->handler = new AccountUserHandler(
             $this->form,
             $this->request,
-            $this->manager,
-            $this->processor,
             $this->userManager
         );
     }

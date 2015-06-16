@@ -10,6 +10,7 @@ orob2b.customer:
     users.label: 'Users'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
+    register.label: 'Register'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -98,6 +99,7 @@ orob2b.customer:
         customergroup:
             saved.message: 'Customer group has been saved'
         accountuser:
+            registered.message: 'Registration successful'
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
