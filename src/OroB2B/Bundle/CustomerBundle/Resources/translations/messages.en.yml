@@ -49,6 +49,10 @@ orob2b.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
 
+        enabled.label:               'Active'
+        disabled.label:              'Inactive'
+        profile.label:               'Profile'
+
     accountuserrole:
         entity_label:                    'Account User Role'
         entity_plural_label:             'Account User Roles'
@@ -65,7 +69,7 @@ orob2b.customer:
         account_user.disable: 'Disable'
 
     sections:
-        general: 'General'
+        general: 'General Information'
         customergroup:
             customers: 'Customers'
         roles:   'Frontend Capabilities'
@@ -82,6 +86,10 @@ orob2b.customer:
         shortcut_list_account_users.label: 'Show account users'
         shortcut_list_account_users.description: 'View list of account users'
 
+        account_user_profile.label: My Profile
+        account_user_login.label: Login
+        account_user_logout.label: Logout
+
     controller:
         customer:
             saved.message: 'Customer saved'
@@ -92,9 +100,6 @@ orob2b.customer:
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
-
-    widgets:
-        account_user_information: 'Account User Information'
 
     message:
         password_mismatch: "The entered passwords don't match"

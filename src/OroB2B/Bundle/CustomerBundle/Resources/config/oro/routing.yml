@@ -13,6 +13,13 @@ orob2b_customer_account_user:
     type: annotation
     prefix: /account/user
 
+orob2b_customer_frontend_account_user:
+    resource: "@OroB2BCustomerBundle/Controller/Frontend/AccountUserController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
 orob2b_customer_user_security:
     resource: "@OroB2BCustomerBundle/Controller/SecurityController.php"
     type: annotation
