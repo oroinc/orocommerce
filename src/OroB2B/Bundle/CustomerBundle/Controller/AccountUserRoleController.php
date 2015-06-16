@@ -33,7 +33,7 @@ class AccountUserRoleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_customer.account_user_role.entity.class')
+            'entity_class' => $this->container->getParameter('orob2b_customer.entity.account_user_role.class')
         ];
     }
 
@@ -51,7 +51,7 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        $roleClass = $this->container->getParameter('orob2b_customer.account_user_role.entity.class');
+        $roleClass = $this->container->getParameter('orob2b_customer.entity.account_user_role.class');
 
         return $this->update(new $roleClass());
     }

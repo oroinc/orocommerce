@@ -47,7 +47,7 @@ services:
     orob2b_customer.form.type.account_user_role:
         class: %orob2b_customer.form.type.account_user_role.class%
         calls:
-            - [setDataClass, [%orob2b_customer.account_user_role.entity.class%]]
+            - [setDataClass, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_account_user_role }
 

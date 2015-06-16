@@ -83,6 +83,12 @@ oro_menu_config:
             extras:
                 description: 'orob2b.customer.menu.shortcut_list_account_user_roles.description'
 
+        orob2b_customer_frontend_account_user_profile:
+            label: 'orob2b.customer.menu.account_user_profile.label'
+            route: 'orob2b_customer_frontend_account_user_profile'
+            extras:
+                position: 10
+
     tree:
         application_menu:
             children:
@@ -92,6 +98,10 @@ oro_menu_config:
                         customer_group_list: ~
                         account_users: ~
                         account_user_roles: ~
+
+        account_usermenu:
+            children:
+                orob2b_customer_frontend_account_user_profile: ~
 
         shortcuts:
             children:
@@ -114,10 +124,12 @@ oro_titles:
     orob2b_customer_group_create: oro.ui.create_entity
 
     orob2b_customer_account_user_index:   ~
-    orob2b_customer_account_user_view:    '%%email%%'
-    orob2b_customer_account_user_update:  '%%email%% - Edit'
+    orob2b_customer_account_user_view:    '%%username%%'
+    orob2b_customer_account_user_update:  '%%username%% - Edit'
     orob2b_customer_account_user_create:  oro.ui.create_entity
 
     orob2b_customer_account_user_role_index:   ~
     orob2b_customer_account_user_role_update:  '%%label%% - Edit'
     orob2b_customer_account_user_role_create:  oro.ui.create_entity
+
+    orob2b_customer_frontend_account_user_profile: '%%username%%'
