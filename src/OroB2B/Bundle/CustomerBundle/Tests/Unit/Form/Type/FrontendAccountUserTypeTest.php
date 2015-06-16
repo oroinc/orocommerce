@@ -106,11 +106,11 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $existingAccountUser
+     * @param AccountUser $existingAccountUser
      * @param string $property
      * @param mixed $value
      */
-    protected function setPropertyValue($existingAccountUser, $property, $value)
+    protected function setPropertyValue(AccountUser $existingAccountUser, $property, $value)
     {
         $class = new \ReflectionClass($existingAccountUser);
         $prop = $class->getProperty($property);
