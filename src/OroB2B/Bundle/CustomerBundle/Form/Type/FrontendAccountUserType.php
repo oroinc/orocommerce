@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -14,8 +13,18 @@ class FrontendAccountUserType extends AbstractType
 {
     const NAME = 'orob2b_customer_frontend_account_user';
 
-    /** @var TranslatorInterface */
-    protected $translator;
+    /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
 
     /**
      * {@inheritdoc}
@@ -78,7 +87,7 @@ class FrontendAccountUserType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
+                'data_class' => $this->dataClass,
                 'intention' => 'account_user',
                 'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
             ]

@@ -65,7 +65,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @dataProvider supportedMethods
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
@@ -104,7 +104,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function testProcessValidData()
     {

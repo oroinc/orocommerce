@@ -11,6 +11,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+
 class ProductPriceCollectionType extends AbstractType
 {
     const NAME = 'orob2b_pricing_product_price_collection';
@@ -26,11 +28,32 @@ class ProductPriceCollectionType extends AbstractType
     protected $dataClass;
 
     /**
+     * @var string
+     */
+    protected $priceListClass;
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPriceListClass()
+    {
+        return $this->priceListClass;
+    }
+
+    /**
+     * @param string $priceListClass
+     */
+    public function setPriceListClass($priceListClass)
+    {
+        $this->priceListClass = $priceListClass;
     }
 
     /**
@@ -48,11 +71,12 @@ class ProductPriceCollectionType extends AbstractType
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $priceLists = $this->registry->getRepository('OroB2BPricingBundle:PriceList')->findAll();
+        /** @var PriceList[] $priceLists */
+        $priceLists = $this->registry->getRepository($this->priceListClass)->findAll();
 
         $currencies = [];
         foreach ($priceLists as $priceList) {

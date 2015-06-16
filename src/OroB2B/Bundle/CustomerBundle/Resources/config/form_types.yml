@@ -18,6 +18,8 @@ services:
 
     orob2b_customer.form.type.customer_group:
         class: %orob2b_customer.form.type.customer_group.class%
+        calls:
+            - [setCustomerClass, [%orob2b_customer.entity.customer.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_group_type }
 
@@ -47,10 +49,15 @@ services:
         class: %orob2b_customer.form.type.account_user.class%
         arguments:
             - @oro_security.security_facade
+        calls:
+            - [setDataClass, [%orob2b_customer.account_user.entity.class%]]
+            - [setRoleClass, [%orob2b_customer.account_user_role.entity.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_account_user }
 
     orob2b_customer.form.type.frontend.account_user:
         class: %orob2b_customer.form.type.frontend.account_user.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.account_user.entity.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_frontend_account_user }

@@ -13,7 +13,7 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function setUp()
     {

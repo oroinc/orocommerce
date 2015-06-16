@@ -10,6 +10,19 @@ class CustomerGroupType extends AbstractType
     const NAME = 'orob2b_customer_group_type';
 
     /**
+     * @var string
+     */
+    protected $customerClass;
+
+    /**
+     * @param string $customerClass
+     */
+    public function setCustomerClass($customerClass)
+    {
+        $this->customerClass = $customerClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -27,7 +40,7 @@ class CustomerGroupType extends AbstractType
                 'appendCustomers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => $this->customerClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
@@ -37,7 +50,7 @@ class CustomerGroupType extends AbstractType
                 'removeCustomers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => $this->customerClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true

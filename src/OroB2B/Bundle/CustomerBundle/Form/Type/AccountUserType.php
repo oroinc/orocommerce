@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -15,8 +14,15 @@ class AccountUserType extends AbstractType
 {
     const NAME = 'orob2b_customer_account_user';
 
-    /** @var TranslatorInterface */
-    protected $translator;
+    /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $roleClass;
 
     /**
      * @param SecurityFacade $securityFacade
@@ -24,6 +30,22 @@ class AccountUserType extends AbstractType
     public function __construct(SecurityFacade $securityFacade)
     {
         $this->securityFacade = $securityFacade;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $roleClass
+     */
+    public function setRoleClass($roleClass)
+    {
+        $this->roleClass = $roleClass;
     }
 
     /**
@@ -142,7 +164,7 @@ class AccountUserType extends AbstractType
                 [
                     'property_path' => 'roles',
                     'label' => 'orob2b.customer.accountuser.roles.label',
-                    'class' => 'OroB2BCustomerBundle:AccountUserRole',
+                    'class' => $this->roleClass,
                     'property' => 'label',
                     'multiple' => true,
                     'expanded' => true,
@@ -186,7 +208,7 @@ class AccountUserType extends AbstractType
         $resolver->setRequired(['data']);
 
         $resolver->setDefaults([
-            'data_class'           => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser',
+            'data_class'           => $this->dataClass,
             'intention'            => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

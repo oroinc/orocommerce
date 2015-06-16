@@ -15,6 +15,19 @@ class ProductUnitPrecisionType extends AbstractType
     const NAME = 'orob2b_product_unit_precision';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -48,12 +61,12 @@ class ProductUnitPrecisionType extends AbstractType
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision',
+            'data_class' => $this->dataClass,
             'compact' => false
         ]);
     }

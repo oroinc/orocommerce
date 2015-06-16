@@ -18,6 +18,9 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser';
+    const ROLE_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole';
+
     /**
      * @var AccountUserType
      */
@@ -42,6 +45,8 @@ class AccountUserTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         $this->formType = new AccountUserType($this->securityFacade);
+        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setRoleClass(self::ROLE_CLASS);
     }
 
     /**

@@ -11,6 +11,8 @@ use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
+    const CUSTOMER_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\Customer';
+
     /**
      * @var CustomerGroupType
      */
@@ -24,6 +26,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new CustomerGroupType();
+        $this->formType->setCustomerClass(self::CUSTOMER_CLASS);
     }
 
     /**

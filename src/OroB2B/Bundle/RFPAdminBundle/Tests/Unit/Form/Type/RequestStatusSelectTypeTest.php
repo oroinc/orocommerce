@@ -6,6 +6,8 @@ use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestStatusSelectType;
 
 class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const ENTITY_CLASS = 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus';
+
     /**
      * @var RequestStatusSelectType
      */
@@ -38,10 +40,11 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BRFPAdminBundle:RequestStatus')
+            ->with(self::ENTITY_CLASS)
             ->willReturn($repository);
 
         $this->formType = new RequestStatusSelectType($registry);
+        $this->formType->setEntityClass(self::ENTITY_CLASS);
     }
 
     /**
@@ -56,7 +59,7 @@ class RequestStatusSelectTypeTest extends \PHPUnit_Framework_TestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'class'   => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus',
+                'class'   => self::ENTITY_CLASS,
                 'choices' => $this->choices,
             ]);
 

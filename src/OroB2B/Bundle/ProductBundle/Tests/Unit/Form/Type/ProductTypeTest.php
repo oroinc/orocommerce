@@ -26,6 +26,8 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelecti
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+
     /**
      * @var ProductType
      */
@@ -46,6 +48,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         $this->type = new ProductType($this->roundingService);
+        $this->type->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
     }
@@ -63,7 +66,8 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $productUnitPrecision = new ProductUnitPrecisionType();
+        $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
         return [
             new PreloadedExtension(
@@ -77,7 +81,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         CategoryTreeType::NAME
                     ),
                     OroCollectionType::NAME => new OroCollectionType(),
-                    ProductUnitPrecisionType::NAME => new ProductUnitPrecisionType(),
+                    ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectionType::NAME => new StubProductUnitSelectionType(
                         [

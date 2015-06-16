@@ -15,6 +15,8 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const PRICE_LIST_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
+
     /**
      * @var ProductPriceCollectionType
      */
@@ -37,7 +39,8 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->formType = new ProductPriceCollectionType($this->registry);
-        $this->formType->setDataClass('\stdClass');
+        $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+        $this->formType->setPriceListClass(self::PRICE_LIST_CLASS);
     }
 
     /**
@@ -119,7 +122,7 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BPricingBundle:PriceList')
+            ->with(self::PRICE_LIST_CLASS)
             ->will($this->returnValue($repository));
 
         $this->formType->finishView($view, $form, []);
