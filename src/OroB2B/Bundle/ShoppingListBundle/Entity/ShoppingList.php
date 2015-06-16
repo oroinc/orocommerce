@@ -15,7 +15,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use OroB2B\Bundle\UserBundle\Entity\User;
 
 /**
- * @ORM\Table(name="orob2b_shopping_list",indexes={@ORM\Index(name="created_at_index", columns={"created_at"})})
+ * @ORM\Table(name="orob2b_shopping_list",indexes={@ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})})
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_shopping_list_index",
@@ -46,7 +46,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
 {
     /**
      * @ORM\Id
-     * @ORM\Column(type="integer")
+     * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
@@ -151,7 +151,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      *
      * @return self
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -171,7 +171,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      *
      * @return self
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
 
@@ -187,11 +187,11 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @param $owningUser
+     * @param User $owningUser
      *
      * @return self
      */
-    public function setOwner($owningUser)
+    public function setOwner(User $owningUser)
     {
         $this->owner = $owningUser;
 

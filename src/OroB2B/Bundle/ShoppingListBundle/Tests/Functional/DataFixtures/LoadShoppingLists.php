@@ -3,11 +3,12 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Doctrine\Common\Persistence\ObjectManager;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture implements ContainerAwareInterface
 {
