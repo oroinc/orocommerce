@@ -1,1 +1,4 @@
-"The entered passwords don't match": "The entered passwords don't match"
+orob2b:
+    customer:
+          message:
+              password_mismatch: 'The password fields must match.'

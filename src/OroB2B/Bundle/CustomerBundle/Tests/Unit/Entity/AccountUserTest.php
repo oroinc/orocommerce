@@ -153,4 +153,9 @@ class AccountUserTest extends AbstractUserTest
         $user->preUpdate($event);
         $this->assertNotEquals($updatedAt, $user->getUpdatedAt());
     }
+
+    public function testGetDefaultRole()
+    {
+        $this->assertEquals(AccountUser::ROLE_BUYER, $this->getUser()->getDefaultRole());
+    }
 }

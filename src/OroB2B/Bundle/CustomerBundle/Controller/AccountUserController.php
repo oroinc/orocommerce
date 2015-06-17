@@ -47,13 +47,13 @@ class AccountUserController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_customer.account_user.entity.class')
+            'entity_class' => $this->container->getParameter('orob2b_customer.entity.account_user.class')
         ];
     }
 
     /**
      * @Route("/info/{id}", name="orob2b_customer_account_user_info", requirements={"id"="\d+"})
-     * @Template("OroB2BCustomerBundle:AccountUser/widget:info.html.twig")
+     * @Template
      * @AclAncestor("orob2b_customer_account_user_view")
      *
      * @param AccountUser $accountUser

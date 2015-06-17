@@ -32,7 +32,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function register(AccountUser $user)
     {
-        if ($this->getConfigValue('confirmation_required')) {
+        if ($this->isConfirmationRequired()) {
             $this->sendConfirmationEmail($user);
         } else {
             $this->confirmRegistration($user);
@@ -59,12 +59,11 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     /**
      * @param AccountUser $user
      */
-    public function sendConfirmationEmail(AccountUser $user)
+    protected function sendConfirmationEmail(AccountUser $user)
     {
-        if ($this->getConfigValue('confirmation_required')) {
-            $user->setConfirmationToken($user->generateToken());
-            $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
-        }
+        $user->setEnabled(false);
+        $user->setConfirmationToken($user->generateToken());
+        $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
     }
 
     /**
@@ -115,5 +114,13 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isConfirmationRequired()
+    {
+        return (bool)$this->getConfigValue('oro_b2b_customer.confirmation_required');
     }
 }

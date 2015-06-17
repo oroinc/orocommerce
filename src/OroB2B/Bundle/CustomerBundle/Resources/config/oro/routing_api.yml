@@ -9,3 +9,7 @@ orob2b_customer_group_api:
 orob2b_customer_account_user_api:
     resource: "@OroB2BCustomerBundle/Controller/Api/Rest/AccountUserController.php"
     type:     rest
+
+orob2b_customer_account_user_role_api:
+    resource: "@OroB2BCustomerBundle/Controller/Api/Rest/AccountUserRoleController.php"
+    type:     rest

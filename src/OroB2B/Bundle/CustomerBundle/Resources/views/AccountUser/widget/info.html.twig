@@ -1,11 +1,13 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+{% import 'OroEmailBundle::macros.html.twig' as Email %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.customer.accountuser.first_name.label'|trans, entity.firstName) }}
             {{ UI.renderProperty('orob2b.customer.accountuser.last_name.label'|trans, entity.lastName) }}
+
             {% set birthday_string %}
                 {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
                 {% if entity.birthday is not empty %}
@@ -13,8 +15,7 @@
                 {% endif %}
             {% endset %}
             {{ UI.renderProperty('orob2b.customer.accountuser.birthday.label'|trans, birthday_string) }}
-            {{ UI.renderProperty('orob2b.customer.accountuser.email.label'|trans, entity.email) }}
-            {{ UI.renderProperty('orob2b.customer.accountuser.enabled.label'|trans, entity.enabled ? 'Yes' : 'No') }}
+            {{ UI.renderHtmlProperty('orob2b.customer.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
             {% if entity.customer %}
                 {% if resource_granted('VIEW', entity.customer) %}

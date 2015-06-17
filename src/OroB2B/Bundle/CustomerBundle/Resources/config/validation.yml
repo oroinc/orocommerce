@@ -53,7 +53,13 @@ OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: label
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: role
     properties:
+        role:
+            - NotBlank: ~
+            - Length:
+                min: 3
+                max: 64
         label:
             - NotBlank: ~
             - Length:
-                max: 30
+                min: 3
+                max: 64

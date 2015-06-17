@@ -281,7 +281,7 @@ datagrid:
                     excluded: '#groupRemoveCustomers'
 
     customer-account-user-grid:
-        entity_name: %orob2b_customer.account_user.entity.class%
+        entity_name: %orob2b_customer.entity.account_user.class%
         options:
             entityHint:        account user
             entity_pagination: true
@@ -296,7 +296,7 @@ datagrid:
                     - accountUser.email
                     - accountUser.enabled
                 from:
-                    - { table: %orob2b_customer.account_user.entity.class%, alias: accountUser }
+                    - { table: %orob2b_customer.entity.account_user.class%, alias: accountUser }
         columns:
             firstName:
                 label: orob2b.customer.accountuser.first_name.label
@@ -384,3 +384,129 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_customer_account_user_delete
         action_configuration: [@orob2b_customer.datagrid.action_permission_provider, "getUserPermissions"]
+
+    customer-account-user-roles-grid:
+        options:
+            entityHint: role
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_customer_account_user_role_view
+            type: orm
+            query:
+                select:
+                    - role.id
+                    - role.role
+                    - role.label
+                from:
+                    - { table: %orob2b_customer.entity.account_user_role.class%, alias: role }
+        properties:
+            id: ~
+            update_link:
+                type: url
+                route: orob2b_customer_account_user_role_update
+                params:
+                    - id
+            delete_link:
+                type: url
+                route: orob2b_api_customer_delete_accountuserrole
+                params:
+                    - id
+        columns:
+            label:
+                label: orob2b.customer.accountuserrole.role.label
+        sorters:
+            columns:
+                label:
+                    data_name: role.label
+            default:
+                label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                label:
+                    type: string
+                    data_name: role.label
+        actions:
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_customer_account_user_role_update
+                rowAction:     true
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_customer_account_user_role_delete
+
+    customer-account-users-grid-update:
+        source:
+            type: orm
+            acl_resource: orob2b_customer_account_user_view
+            query:
+                select:
+                    - user.id
+                    - user.firstName
+                    - user.lastName
+                    - user.email
+                    - >
+                        (CASE WHEN (:role IS NOT NULL) THEN
+                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        ELSE
+                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in)
+                            THEN true ELSE false END
+                        END) as hasRole
+                from:
+                    - { table: %orob2b_customer.entity.account_user.class%, alias: user }
+            bind_parameters:
+                - role
+        options:
+            entityHint: user
+        properties:
+            id: ~
+        columns:
+            hasRole:
+                label: orob2b.customer.accountuser.has_role.label
+                editable: true
+                frontend_type: boolean
+            firstName:
+                label: orob2b.customer.accountuser.first_name.label
+            lastName:
+                label: orob2b.customer.accountuser.last_name.label
+            email:
+                label: orob2b.customer.accountuser.email.label
+        filters:
+            columns:
+                hasRole:
+                    type: boolean
+                    data_name: hasRole
+                firstName:
+                    type:      string
+                    data_name: user.firstName
+                lastName:
+                    type:      string
+                    data_name: user.lastName
+                email:
+                    type:      string
+                    data_name: user.email
+        sorters:
+            columns:
+                hasRole:
+                    data_name: hasRole
+                firstName:
+                    data_name: user.firstName
+                lastName:
+                    data_name: user.lastName
+                email:
+                    data_name: user.email
+            default:
+                hasRole: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        options:
+            rowSelection:
+                dataField: id
+                columnName: hasRole
+                selectors:
+                    included: '#roleAppendUsers'
+                    excluded: '#roleRemoveUsers'

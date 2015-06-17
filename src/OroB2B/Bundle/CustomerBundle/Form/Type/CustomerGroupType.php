@@ -12,7 +12,20 @@ class CustomerGroupType extends AbstractType
     /**
      * @var string
      */
+    protected $dataClass;
+
+    /**
+     * @var string
+     */
     protected $customerClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
 
     /**
      * @param string $customerClass
@@ -56,6 +69,14 @@ class CustomerGroupType extends AbstractType
                     'multiple' => true
                 ]
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(['data_class' => $this->dataClass]);
     }
 
     /**
