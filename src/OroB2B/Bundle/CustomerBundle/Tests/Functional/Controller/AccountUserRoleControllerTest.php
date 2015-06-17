@@ -56,7 +56,6 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     /**
      * @depend testCreate
-     * @return integer
      */
     public function testUpdate()
     {
@@ -93,7 +92,20 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Account User Role has been saved', $crawler->html());
 
-        return $id;
+        $this->getObjectManager()->clear();
+
+        /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole $role */
+        $role = $this->getUserRoleRepository()->find($id);
+
+        $this->assertNotNull($role);
+        $this->assertEquals(self::UPDATED_TEST_ROLE, $role->getLabel());
+        $this->assertNotEmpty($role->getRole());
+
+        /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUser $user */
+        $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+
+        $this->assertNotNull($user);
+        $this->assertNotNull($user->getRole($role->getRole()));
     }
 
     /**
@@ -110,5 +122,13 @@ class AccountUserRoleControllerTest extends WebTestCase
     protected function getUserRepository()
     {
         return $this->getObjectManager()->getRepository('OroB2BCustomerBundle:AccountUser');
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    protected function getUserRoleRepository()
+    {
+        return $this->getObjectManager()->getRepository('OroB2BCustomerBundle:AccountUserRole');
     }
 }
