@@ -1,8 +1,3 @@
 parameters:
-    oro_application.config_manager.class: Oro\Bundle\ApplicationBundle\Config\ConfigManager
     oro_application.factory.class: Oro\Bundle\ApplicationBundle\Factory\ModelFactory
     oro_application.repository.class: Oro\Bundle\ApplicationBundle\Repository\ModelRepository
-
-services:
-    oro_application.config_manager:
-        class: %oro_application.config_manager.class%
