@@ -2,27 +2,22 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
-class LoadOrders extends AbstractFixture implements ContainerAwareInterface
+class LoadOrders extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
     /**
      * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function getDependencies()
     {
-        $this->container = $container;
+        return [
+            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
+        ];
     }
 
     /**

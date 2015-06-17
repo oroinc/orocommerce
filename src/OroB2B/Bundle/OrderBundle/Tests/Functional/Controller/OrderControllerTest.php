@@ -24,7 +24,6 @@ class OrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
                 'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
             ]
         );

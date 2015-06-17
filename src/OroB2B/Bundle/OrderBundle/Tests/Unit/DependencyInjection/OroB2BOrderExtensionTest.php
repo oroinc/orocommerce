@@ -17,7 +17,7 @@ class OroB2BOrderExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BOrderExtension());
 
         $expectedParameters = [
-            'orob2b_order.order.entity.class',
+            'orob2b_order.entity.order.class',
             'orob2b_order.order.manager.api.class'
 
         ];

@@ -63,7 +63,7 @@ class OrderController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_order.order.entity.class')
+            'entity_class' => $this->container->getParameter('orob2b_order.entity.order.class')
         ];
     }
 

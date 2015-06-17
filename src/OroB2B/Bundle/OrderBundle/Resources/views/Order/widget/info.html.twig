@@ -6,8 +6,6 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.order.id.label'|trans, order.id) }}
             {{ UI.renderProperty('orob2b.order.identifier.label'|trans, order.identifier) }}
-            {{ UI.renderProperty('oro.ui.created_at'|trans, order.createdAt|oro_format_datetime) }}
-            {{ UI.renderProperty('oro.ui.updated_at'|trans, order.updatedAt|oro_format_datetime) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(order) }}

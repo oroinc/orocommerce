@@ -7,4 +7,4 @@ services:
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
-            - [setDataClass, [%orob2b_order.order.entity.class%]]
+            - [setDataClass, [%orob2b_order.entity.order.class%]]

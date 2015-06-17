@@ -1,5 +1,9 @@
 OroB2B\Bundle\OrderBundle\Entity\Order:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
     properties:
+        identifier:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
         owner:
             - NotBlank: ~
         organization:
