@@ -13,7 +13,7 @@ class Processor extends BaseProcessor
     /**
      * @param AccountUser $accountUser
      * @param string $password
-     * @return bool
+     * @return int
      */
     public function sendWelcomeNotification(AccountUser $accountUser, $password)
     {
@@ -28,6 +28,7 @@ class Processor extends BaseProcessor
      * @todo Implement confirmation email sending BB-613
      * @param AccountUser $accountUser
      * @param $confirmationToken
+     * @return int
      */
     public function sendConfirmationEmail(AccountUser $accountUser, $confirmationToken)
     {
