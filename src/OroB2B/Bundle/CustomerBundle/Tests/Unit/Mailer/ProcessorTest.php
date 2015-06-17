@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Mailer;
 
+use Oro\Bundle\UserBundle\Tests\Unit\Mailer\AbstractProcessorTest;
+
 use OroB2B\Bundle\CustomerBundle\Mailer\Processor;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
-class ProcessorTest extends \PHPUnit_Framework_TestCase
+class ProcessorTest extends AbstractProcessorTest
 {
     const PASSWORD = '123456';
 
@@ -21,30 +23,37 @@ class ProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->user = new AccountUser();
+        parent::setUp();
 
-        $this->mailProcessor = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Mailer\Processor')
-            ->disableOriginalConstructor()
-            ->setMethods(['getEmailTemplateAndSendEmail'])
-            ->getMock();
+        $this->user = new AccountUser();
+        $this->user
+            ->setEmail('email_to@example.com')
+            ->setPlainPassword(self::PASSWORD);
+
+        $this->mailProcessor = new Processor(
+            $this->managerRegistry,
+            $this->configManager,
+            $this->renderer,
+            $this->emailHolderHelper,
+            $this->mailer
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->user, $this->mailProcessor);
+        parent::tearDown();
+
+        unset($this->user);
     }
 
     public function testSendWelcomeNotification()
     {
-        $this->mailProcessor->expects($this->once())
-            ->method('getEmailTemplateAndSendEmail')
-            ->with(
-                $this->user,
-                Processor::WELCOME_EMAIL_TEMPLATE_NAME,
-                ['entity' => $this->user, 'password' => self::PASSWORD]
-            )
-            ->willReturn(true);
+        $this->assertSendCalled(
+            Processor::WELCOME_EMAIL_TEMPLATE_NAME,
+            ['entity' => $this->user, 'password' => self::PASSWORD],
+            $this->buildMessage($this->user->getEmail())
+        );
 
-        $this->assertTrue($this->mailProcessor->sendWelcomeNotification($this->user, self::PASSWORD));
+        $this->mailProcessor->sendWelcomeNotification($this->user, self::PASSWORD);
     }
 }
