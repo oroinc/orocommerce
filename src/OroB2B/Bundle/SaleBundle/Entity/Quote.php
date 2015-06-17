@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
 /**
@@ -78,6 +79,14 @@ class Quote extends ExtendQuote
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+
+    /**
+     * @var Request
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPAdminBundle\Entity\Request")
+     * @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $request;
 
     /**
      * @var \DateTime
@@ -339,5 +348,28 @@ class Quote extends ExtendQuote
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * Set request
+     *
+     * @param Request $request
+     * @return Quote
+     */
+    public function setRequest(Request $request = null)
+    {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    /**
+     * Get request
+     *
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 }

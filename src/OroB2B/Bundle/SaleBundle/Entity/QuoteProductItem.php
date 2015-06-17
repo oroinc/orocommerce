@@ -95,21 +95,36 @@ class QuoteProductItem
     /**
      * @var float
      *
-     * @ORM\Column(name="requested_quantity", type="float")
+     * @ORM\Column(name="requested_quantity", type="float", nullable=true)
      */
     protected $requestedQuantity;
 
     /**
+     * @var ProductUnit
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
+     * @ORM\JoinColumn(name="requested_product_unit_id", referencedColumnName="code", onDelete="SET NULL")
+     */
+    protected $requestedProductUnit;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="requested_product_unit_code", type="string", length=255, nullable=true)
+     */
+    protected $requestedProductUnitCode;
+
+    /**
      * @var float
      *
-     * @ORM\Column(name="requested_value", type="money")
+     * @ORM\Column(name="requested_value", type="money", nullable=true)
      */
     protected $requestedValue;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="requested_currency", type="string")
+     * @ORM\Column(name="requested_currency", type="string", nullable=true)
      */
     protected $requestedCurrency;
 
@@ -132,12 +147,11 @@ class QuoteProductItem
      */
     protected $comment;
 
-
     /**
      * @var RequestProductItem
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem")
-     * @ORM\JoinColumn(name="request_product_item_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="request_product_item_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $requestProductItem;
 
@@ -147,19 +161,29 @@ class QuoteProductItem
     public function postLoad()
     {
         $this->price = Price::create($this->value, $this->currency);
-        $this->requestedPrice = Price::create($this->requestedValue, $this->requestedCurrency);
+        if (null !== $this->requestedValue && null !==  $this->requestedCurrency) {
+            $this->requestedPrice = Price::create($this->requestedValue, $this->requestedCurrency);
+        }
     }
 
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function preSave()
+    public function updatePrice()
     {
         $this->value = $this->price->getValue();
         $this->currency = $this->price->getCurrency();
-        $this->requestedValue = $this->requestedPrice->getValue();
-        $this->requestedCurrency = $this->requestedPrice->getCurrency();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateRequestedPrice()
+    {
+        $this->requestedValue = $this->requestedPrice ? $this->requestedPrice->getValue() : null;
+        $this->requestedCurrency = $this->requestedPrice ? $this->requestedPrice->getCurrency() : null;
     }
 
     /**
@@ -308,7 +332,7 @@ class QuoteProductItem
     {
         $this->price = $price;
 
-        $this->preSave();
+        $this->updatePrice();
 
         return $this;
     }
@@ -345,6 +369,55 @@ class QuoteProductItem
     }
 
     /**
+     * Set requestedProductUnit
+     *
+     * @param ProductUnit $requestedProductUnit
+     * @return QuoteProductItem
+     */
+    public function setRequestedProductUnit(ProductUnit $requestedProductUnit = null)
+    {
+        $this->requestedProductUnit = $requestedProductUnit;
+        if ($requestedProductUnit) {
+            $this->requestedProductUnitCode = $requestedProductUnit->getCode();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get requestedProductUnit
+     *
+     * @return ProductUnit
+     */
+    public function getRequestedProductUnit()
+    {
+        return $this->requestedProductUnit;
+    }
+
+    /**
+     * Set requestedProductUnitCode
+     *
+     * @param string $requestedProductUnitCode
+     * @return QuoteProductItem
+     */
+    public function setRequestedProductUnitCode($requestedProductUnitCode)
+    {
+        $this->requestedProductUnitCode = $requestedProductUnitCode;
+
+        return $this;
+    }
+
+    /**
+     * Get requestedProductUnitCode
+     *
+     * @return ProductUnit
+     */
+    public function getRequestedProductUnitCode()
+    {
+        return $this->requestedProductUnitCode;
+    }
+
+    /**
      * @param Price $requestedPrice
      * @return QuoteProductItem
      */
@@ -352,7 +425,7 @@ class QuoteProductItem
     {
         $this->requestedPrice = $requestedPrice;
 
-        $this->preSave();
+        $this->updateRequestedPrice();
 
         return $this;
     }
@@ -388,7 +461,7 @@ class QuoteProductItem
      * @param RequestProductItem $requestProductItem
      * @return QuoteProductItem
      */
-    public function setRequestProductItem(RequestProductItem $requestProductItem)
+    public function setRequestProductItem(RequestProductItem $requestProductItem = null)
     {
         $this->requestProductItem = $requestProductItem;
 
