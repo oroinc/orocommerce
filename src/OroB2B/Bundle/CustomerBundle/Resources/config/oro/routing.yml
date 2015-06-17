@@ -13,6 +13,11 @@ orob2b_customer_account_user:
     type: annotation
     prefix: /account/user
 
+orob2b_customer_account_user_role:
+    resource: "@OroB2BCustomerBundle/Controller/AccountUserRoleController.php"
+    type: annotation
+    prefix: /account/user/role
+
 orob2b_customer_frontend_account_user:
     resource: "@OroB2BCustomerBundle/Controller/Frontend/AccountUserController.php"
     type: annotation
@@ -23,7 +28,9 @@ orob2b_customer_frontend_account_user:
 orob2b_customer_user_security:
     resource: "@OroB2BCustomerBundle/Controller/SecurityController.php"
     type: annotation
-    prefix: /frontend/user
+    prefix: /account/user
+    options:
+        frontend: true
 
 orob2b_customer_bundle_api:
     resource:     "@OroB2BCustomerBundle/Resources/config/oro/routing_api.yml"

@@ -16,6 +16,32 @@ class CategoryType extends AbstractType
     const NAME = 'orob2b_catalog_category';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $productClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $productClass
+     */
+    public function setProductClass($productClass)
+    {
+        $this->productClass = $productClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -25,7 +51,7 @@ class CategoryType extends AbstractType
             ->add(
                 'parentCategory',
                 EntityIdentifierType::NAME,
-                ['class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category', 'multiple' => false]
+                ['class' => $this->dataClass, 'multiple' => false]
             )
             ->add(
                 'titles',
@@ -40,7 +66,7 @@ class CategoryType extends AbstractType
                 'appendProducts',
                 EntityIdentifierType::NAME,
                 [
-                    'class'    => 'OroB2BProductBundle:Product',
+                    'class'    => $this->productClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true,
@@ -50,7 +76,7 @@ class CategoryType extends AbstractType
                 'removeProducts',
                 EntityIdentifierType::NAME,
                 [
-                    'class'    => 'OroB2BProductBundle:Product',
+                    'class'    => $this->productClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true,
@@ -64,7 +90,7 @@ class CategoryType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category',
+            'data_class' => $this->dataClass,
             'intention' => 'category',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

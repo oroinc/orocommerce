@@ -16,6 +16,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RequestTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\Request';
+    const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus';
+
     /**
      * @var RequestType
      */
@@ -43,7 +46,7 @@ class RequestTypeTest extends FormIntegrationTestCase
 
         $manager->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BRFPBundle:RequestStatus')
+            ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($repository);
 
         /**
@@ -64,7 +67,7 @@ class RequestTypeTest extends FormIntegrationTestCase
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BRFPBundle:RequestStatus')
+            ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($manager);
 
         /**
@@ -92,6 +95,8 @@ class RequestTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
 
         $this->formType = new RequestType($configManager, $registry);
+        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setRequestStatusClass(self::REQUEST_STATUS_CLASS);
     }
 
     /**
@@ -108,7 +113,7 @@ class RequestTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\Request'
+                    'data_class' => self::DATA_CLASS
                 ]
             );
 

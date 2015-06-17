@@ -64,6 +64,15 @@ class Processor
     }
 
     /**
+     * @todo Implement confirmation email sending BB-613
+     * @param AccountUser $accountUser
+     * @param $confirmationToken
+     */
+    public function sendConfirmationEmail(AccountUser $accountUser, $confirmationToken)
+    {
+    }
+
+    /**
      * @param AccountUser $accountUser
      * @param array $templateData
      * @param string $type

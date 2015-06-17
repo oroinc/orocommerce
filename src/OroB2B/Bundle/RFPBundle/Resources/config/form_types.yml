@@ -1,4 +1,7 @@
 parameters:
+    orob2b_rfp.request.class: OroB2B\Bundle\RFPBundle\Entity\Request
+    orob2b_rfp.request_status.class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
+
     orob2b_rfp.form.type.request.class: OroB2B\Bundle\RFPBundle\Form\RequestType
 
 services:
@@ -7,5 +10,8 @@ services:
         arguments:
             - @oro_application.config_manager
             - @doctrine
+        calls:
+            - [setDataClass, [%orob2b_rfp.request.class%]]
+            - [setRequestStatusClass, [%orob2b_rfp.request_status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request_type }

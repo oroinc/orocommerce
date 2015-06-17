@@ -43,6 +43,10 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          "entity"={
  *              "icon"="icon-briefcase"
  *          },
+ *          "ownership"={
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
@@ -52,9 +56,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  */
 class AccountUser extends AbstractUser implements FullNameInterface
 {
-    const ROLE_DEFAULT = 'ROLE_USER';
-    const ROLE_ADMINISTRATOR = 'ROLE_ADMINISTRATOR';
-    const ROLE_ANONYMOUS = 'IS_AUTHENTICATED_ANONYMOUSLY';
+    const ROLE_BUYER = 'ROLE_FRONTEND_BUYER';
+    const ROLE_ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
 
     /**
      * @var AccountUserRole[]|Collection
@@ -398,5 +401,13 @@ class AccountUser extends AbstractUser implements FullNameInterface
         if (array_diff_key($event->getEntityChangeSet(), array_flip($excludedFields))) {
             $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefaultRole()
+    {
+        return static::ROLE_BUYER;
     }
 }

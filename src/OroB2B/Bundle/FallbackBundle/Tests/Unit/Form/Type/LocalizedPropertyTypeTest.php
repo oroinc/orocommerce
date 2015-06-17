@@ -32,12 +32,15 @@ class LocalizedPropertyTypeTest extends AbstractLocalizedType
      */
     protected function getExtensions()
     {
+        $localeCollection = new LocaleCollectionType($this->registry);
+        $localeCollection->setLocaleClass(self::LOCALE_CLASS);
+
         return [
             new PreloadedExtension(
                 [
                     FallbackPropertyType::NAME => new FallbackPropertyType(),
                     FallbackValueType::NAME => new FallbackValueType(),
-                    LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
+                    LocaleCollectionType::NAME => $localeCollection,
                     PercentTypeStub::NAME => new PercentTypeStub(),
                 ],
                 []

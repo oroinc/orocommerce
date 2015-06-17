@@ -1,5 +1,6 @@
 parameters:
     orob2b_website.website.class: OroB2B\Bundle\WebsiteBundle\Entity\Website
+    orob2b_website.locale.class: OroB2B\Bundle\WebsiteBundle\Entity\Locale
 
     orob2b_website.manager.class: OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager
 

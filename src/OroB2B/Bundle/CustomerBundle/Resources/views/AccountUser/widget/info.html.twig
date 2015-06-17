@@ -26,11 +26,13 @@
                 {{ UI.renderHtmlProperty('orob2b.customer.accountuser.customer.label'|trans, customerView) }}
             {% endif %}
 
-            {% set roles = [] %}
-            {% for entityRole in entity.roles %}
-                {% set roles = roles|merge([entityRole.label]) %}
-            {% endfor %}
-            {{ UI.renderHtmlProperty('orob2b.customer.accountuser.roles.label'|trans, roles|join('<br/>')) }}
+            {% if resource_granted('orob2b_customer_account_user_role_view') %}
+                {% set roles = [] %}
+                {% for entityRole in entity.roles %}
+                    {% set roles = roles|merge([entityRole.label]) %}
+                {% endfor %}
+                {{ UI.renderHtmlProperty('orob2b.customer.accountuser.roles.label'|trans, roles|join('<br />')) }}
+            {% endif %}
         </div>
     </div>
 </div>

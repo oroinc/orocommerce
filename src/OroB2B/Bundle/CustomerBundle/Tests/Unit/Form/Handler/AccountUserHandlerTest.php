@@ -12,12 +12,7 @@ use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserHandler;
 class AccountUserHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\OroB2B\Bundle\CustomerBundle\Mailer\Processor
-     */
-    protected $processor;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\UserBundle\Entity\BaseUserManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|\OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager
      */
     protected $userManager;
 
@@ -39,11 +34,8 @@ class AccountUserHandlerTest extends FormHandlerTestCase
         parent::setUp();
 
         $this->entity = new AccountUser();
-        $this->processor = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Mailer\Processor')
-            ->disableOriginalConstructor()
-            ->getMock();
 
-        $this->userManager = $this->getMockBuilder('Oro\Bundle\UserBundle\Entity\BaseUserManager')
+        $this->userManager = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -58,8 +50,6 @@ class AccountUserHandlerTest extends FormHandlerTestCase
         $this->handler = new AccountUserHandler(
             $this->form,
             $this->request,
-            $this->manager,
-            $this->processor,
             $this->userManager
         );
     }
@@ -75,7 +65,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      * @dataProvider supportedMethods
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
@@ -114,7 +104,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function testProcessValidData()
     {
@@ -145,13 +135,6 @@ class AccountUserHandlerTest extends FormHandlerTestCase
         $this->form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
-
-        $this->manager->expects($this->once())
-            ->method('persist')
-            ->with($this->entity);
-
-        $this->manager->expects($this->once())
-            ->method('flush');
 
         $this->assertTrue($this->handler->process($this->entity));
     }
