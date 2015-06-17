@@ -16,11 +16,24 @@ class CustomerGroupType extends AbstractType
     protected $dataClass;
 
     /**
+     * @var string
+     */
+    protected $customerClass;
+
+    /**
      * @param string $dataClass
      */
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $customerClass
+     */
+    public function setCustomerClass($customerClass)
+    {
+        $this->customerClass = $customerClass;
     }
 
     /**
@@ -41,7 +54,7 @@ class CustomerGroupType extends AbstractType
                 'appendCustomers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => $this->customerClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
@@ -51,7 +64,7 @@ class CustomerGroupType extends AbstractType
                 'removeCustomers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => $this->customerClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true

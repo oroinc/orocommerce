@@ -8,7 +8,7 @@ use OroB2B\Bundle\AttributeBundle\AttributeType\String;
 class LoadAttributeData extends AbstractLoadAttributeData
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected $attributes = [
         [

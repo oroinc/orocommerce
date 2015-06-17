@@ -2,17 +2,18 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup';
+    const CUSTOMER_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\Customer';
 
     /**
      * @var CustomerGroupType
@@ -28,6 +29,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
 
         $this->formType = new CustomerGroupType();
         $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setCustomerClass(self::CUSTOMER_CLASS);
     }
 
     /**

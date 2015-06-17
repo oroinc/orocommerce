@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
 
@@ -16,6 +17,14 @@ class FrontendAccountUserType extends AbstractType
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
 
     /**
      * {@inheritdoc}
@@ -99,7 +108,7 @@ class FrontendAccountUserType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'account_user'
+                'intention' => 'account_user',
             ]
         );
     }
@@ -110,16 +119,5 @@ class FrontendAccountUserType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param string $dataClass
-     * @return FrontendAccountUserType
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-
-        return $this;
     }
 }

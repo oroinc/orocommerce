@@ -12,6 +12,8 @@ services:
         class: %orob2b_rfp_admin.form.type.default_request_status.class%
         arguments:
             - @doctrine
+        calls:
+            - [setRequestStatusClass, [%orob2b_rfp_admin.request.status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_admin_default_request_status }
 
@@ -19,6 +21,8 @@ services:
         class: %orob2b_rfp_admin.form.type.request_status_with_deleted_select.class%
         arguments:
             - @doctrine
+        calls:
+            - [setEntityClass, [%orob2b_rfp_admin.request.status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_admin_request_status_with_deleted_select }
 
@@ -26,6 +30,8 @@ services:
         class: %orob2b_rfp_admin.form.type.request_status_select.class%
         arguments:
             - @doctrine
+        calls:
+            - [setEntityClass, [%orob2b_rfp_admin.request.status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_admin_request_status_select }
 
@@ -51,5 +57,7 @@ services:
         arguments:
             - @oro_config.user
             - @oro_locale.settings
+        calls:
+            - [setDataClass, [%orob2b_rfp_admin.request.status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_admin_request_status }
