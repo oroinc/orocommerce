@@ -27,6 +27,8 @@ orob2b:
             quote.label: 'Quote'
             quote_product_items.label: 'Quote Product Lines'
 
+            product.removed: '{title} - removed'
+
         quoteproductitem:
             item: '{units}, {price} per {unit}'
             entity_label: 'Quote Product Line'
@@ -40,12 +42,15 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
+
             status:
                 label: 'Status'
                 requested: 'Requested'
                 suggested_replacement: 'Suggested Replacement'
                 additional: 'Additional'
                 not_available: 'Not Available'
+
+            product_unit.removed: '{title} - removed'
 
         controller:
             quote:

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -27,9 +28,9 @@ class QuoteProductTypeTest extends WebTestCase
     protected $formType;
 
     /**
-     * @var ContainerInterface
+     * @var TranslatorInterface
      */
-    protected $container;
+    protected $translator;
 
     /**
      * {@inheritdoc}
@@ -38,7 +39,7 @@ class QuoteProductTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductType();
+        $this->formType = new QuoteProductType($this->getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -46,8 +47,8 @@ class QuoteProductTypeTest extends WebTestCase
     }
 
     /**
-     * @param \Closure $inputData
-     * @param \Closure $expectedData
+     * @param \Closure $inputDataCallback
+     * @param \Closure $expectedDataCallback
      *
      * @dataProvider preSetDataProvider
      */
@@ -58,12 +59,11 @@ class QuoteProductTypeTest extends WebTestCase
 
         $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
 
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSetData($event);
+        $this->formType->preSetData(new FormEvent($form, $inputData));
 
         $options = $form->get('product')->getConfig()->getOptions();
 
-        $this->assertEquals($expectedData, $options['empty_value']);
+        $this->assertEquals($expectedData['empty_value'], $options['empty_value']);
     }
 
     /**
@@ -77,7 +77,9 @@ class QuoteProductTypeTest extends WebTestCase
                     return null;
                 },
                 'expectedData'  => function () {
-                    return null;
+                    return [
+                        'empty_value' => null,
+                    ];
                 },
             ],
             'existsing item empty product' => [
@@ -91,12 +93,17 @@ class QuoteProductTypeTest extends WebTestCase
                 'expectedData'  => function () {
                     $quoteProduct = $this->getQuoteProduct(LoadQuoteData::QUOTE1);
 
-                    return $quoteProduct->getProductSku() . ' - removed';
+                    return [
+                        'empty_value' => $this->trans(
+                            'orob2b.sale.quoteproduct.product.removed',
+                            [
+                                '{title}' => $quoteProduct->getProductSku(),
+                            ]
+                        ),
+                    ];
                 },
             ],
         ];
-
-        return $data;
     }
 
     /**
@@ -106,11 +113,23 @@ class QuoteProductTypeTest extends WebTestCase
     protected function getQuoteProduct($qid)
     {
         /* @var $quote Quote */
-        $quote = $this->getReference(LoadQuoteData::QUOTE1);
+        $quote = $this->getReference($qid);
 
         /* @var $quoteProduct QuoteProduct */
         $quoteProduct = $quote->getQuoteProducts()->first();
 
+        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', $quoteProduct);
+
         return $quoteProduct;
+    }
+
+    /**
+     * @param string $id
+     * @param array $parameters
+     * @return string
+     */
+    protected function trans($id, array $parameters = array())
+    {
+        return $this->getContainer()->get('translator')->trans($id, $parameters);
     }
 }

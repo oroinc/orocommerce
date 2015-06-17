@@ -39,4 +39,33 @@
             </td>
         </tr>
     </table>
+
+    <table class="sale-quoteproductitem-widget">
+        <tr>
+            <td>
+                {{ form_widget(form.requestedQuantity) }}
+                {{ form_errors(form.requestedQuantity) }}
+            </td>
+            <td>
+                {{ form_widget(form.requestedProductUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}
+                {{ form_errors(form.requestedProductUnit) }}
+            </td>
+            <td>
+                {{ form_widget(form.requestedPrice.value) }}
+                {{ form_errors(form.requestedPrice.value) }}
+            </td>
+            <td>
+                {{ form_widget(form.requestedPrice.currency) }}
+                {{ form_errors(form.requestedPrice.currency) }}
+            </td>
+            <td>
+                {{ form_widget(form.status) }}
+                {{ form_errors(form.status) }}
+            </td>
+            <td>
+                {{ form_widget(form.comment) }}
+                {{ form_errors(form.comment) }}
+            </td>
+        </tr>
+    </table>
 {% endblock %}

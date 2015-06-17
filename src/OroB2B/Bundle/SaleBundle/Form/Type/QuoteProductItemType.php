@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -16,6 +17,19 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 class QuoteProductItemType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote_product_item';
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -67,7 +81,7 @@ class QuoteProductItemType extends AbstractType
         $form = $event->getForm();
         $choices = null;
 
-        $productUnitOptons = [
+        $productUnitOptions = [
             'compact'   => false,
             'required'  => true,
             'label'     => 'orob2b.product.productunit.entity_label',
@@ -84,16 +98,21 @@ class QuoteProductItemType extends AbstractType
             $productUnit = $quoteProductItem->getProductUnit();
             if (!$productUnit || ($product && !in_array($productUnit->getCode(), $choices))) {
                 // ProductUnit was removed
-                $productUnitOptons['empty_value'] = $quoteProductItem->getProductUnitCode() . ' - removed';
+                $productUnitOptions['empty_value']  = $this->translator->trans(
+                    'orob2b.sale.quoteproduct.product.removed',
+                    [
+                        '{title}' => $quoteProductItem->getProductUnitCode(),
+                    ]
+                );
             }
         }
 
-        $productUnitOptons['choices'] = $choices;
+        $productUnitOptions['choices'] = $choices;
 
         $form->add(
             'productUnit',
             ProductUnitSelectionType::NAME,
-            $productUnitOptons
+            $productUnitOptions
         );
     }
 

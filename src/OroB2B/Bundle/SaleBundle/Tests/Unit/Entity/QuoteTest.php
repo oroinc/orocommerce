@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteTest extends AbstractTest
 {
@@ -45,5 +46,17 @@ class QuoteTest extends AbstractTest
         $quote->preUpdate();
 
         $this->assertInstanceOf('\DateTime', $quote->getUpdatedAt());
+    }
+
+    public function testAddQuoteProduct()
+    {
+        $quote          = new Quote();
+        $quoteProduct   = new QuoteProduct();
+
+        $this->assertNull($quoteProduct->getQuote());
+
+        $quote->addQuoteProduct($quoteProduct);
+
+        $this->assertEquals($quote, $quoteProduct->getQuote());
     }
 }

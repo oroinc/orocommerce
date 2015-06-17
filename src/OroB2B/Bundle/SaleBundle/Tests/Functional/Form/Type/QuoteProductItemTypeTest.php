@@ -27,51 +27,41 @@ class QuoteProductItemTypeTest extends WebTestCase
     protected $formType;
 
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->initClient();
 
-        $this->formType     = new QuoteProductItemType();
+        $this->formType = new QuoteProductItemType($this->getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ]);
     }
 
-    public function testPreSetData()
-    {
-        foreach ($this->preSetDataProvider() as $name => $item) {
-            $message = sprintf('Error with data set "%s":', $name);
-            $this->preSetDataTest($item['choices'], $item['inputData'], $item['expectedData'], $message);
-        }
-    }
-
     /**
-     * @param mixed $choices
-     * @param mixed $inputData
-     * @param mixed $expectedData
-     * @param string $message
+     * @param \Closure $inputDataCallback
+     * @param \Closure $expectedDataCallback
+     *
+     * @dataProvider preSetDataProvider
      */
-    protected function preSetDataTest($choices, $inputData, $expectedData, $message = '')
+    public function testPreSetData($inputDataCallback, $expectedDataCallback)
     {
+        $inputData      = $inputDataCallback();
+        $expectedData   = $expectedDataCallback();
+
         $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
 
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSetData($event);
-        $this->assertEquals($expectedData, $event->getData(), $message);
+        $this->formType->preSetData(new FormEvent($form, $inputData));
 
         $this->assertTrue($form->has('productUnit'));
 
         $options = $form->get('productUnit')->getConfig()->getOptions();
 
-        $this->assertEquals($choices, $options['choices'], $message);
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $options[$key], $key);
+        }
     }
 
     /**
@@ -79,34 +69,75 @@ class QuoteProductItemTypeTest extends WebTestCase
      */
     public function preSetDataProvider()
     {
+        return [
+            'choices is null' => [
+                'inputData'     => function () {
+                    return null;
+                },
+                'expectedData'  => function () {
+                    return [
+                        'choices'       => null,
+                        'empty_value'   => null,
+                    ];
+                },
+            ],
+            'choices is ProductUnit[]' => [
+                'inputData'     => function () {
+                    return $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                },
+                'expectedData'  => function () {
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    return [
+                        'choices'       => $this->getUnits($quoteProductItem->getQuoteProduct()->getProduct()),
+                        'empty_value'   => null,
+                    ];
+                },
+            ],
+            'choices is [] and unit is deleted' => [
+                'inputData'     => function () {
+                    /* @var $quoteProductItem QuoteProductItem */
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+
+                    $quoteProductItem->getQuoteProduct()->getProduct()->getUnitPrecisions()->clear();
+
+                    return $quoteProductItem;
+                },
+                'expectedData'  => function () {
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    return [
+                        'choices'       => [],
+                        'empty_value'   => $this->trans(
+                            'orob2b.sale.quoteproduct.product.removed',
+                            [
+                                '{title}' => $quoteProductItem->getProductUnitCode(),
+                            ]
+                        ),
+                    ];
+                },
+            ],
+        ];
+    }
+
+    /**
+     * @param string $qid
+     * @return QuoteProductItem
+     */
+    protected function getQuoteProductItem($qid)
+    {
         /* @var $quote Quote */
-        $quote = $this->getReference(LoadQuoteData::QUOTE1);
+        $quote = $this->getReference($qid);
 
         /* @var $quoteProduct QuoteProduct */
         $quoteProduct = $quote->getQuoteProducts()->first();
 
         $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', $quoteProduct);
 
-        /* @var $item1 QuoteProductItem */
-        $item1 = $quoteProduct->getQuoteProductItems()->first();
+        /* @var $item0 QuoteProductItem */
+        $item0 = $quoteProduct->getQuoteProductItems()->first();
 
-        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem', $item1);
+        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem', $item0);
 
-        $choices = $this->getUnits($quoteProduct->getProduct());
-
-        return [
-            'new item' => [
-                'choices'       => null,
-                'inputData'     => [],
-                'expectedData'  => [],
-            ],
-            'existsing item1' => [
-                'choices'       => $choices,
-                'inputData'     => clone $item1,
-                'expectedData'  => clone $item1,
-            ],
-        ];
-
+        return $item0;
     }
 
     /**
@@ -122,5 +153,15 @@ class QuoteProductItemTypeTest extends WebTestCase
         }
 
         return $units;
+    }
+
+    /**
+     * @param string $id
+     * @param array $parameters
+     * @return string
+     */
+    protected function trans($id, array $parameters = array())
+    {
+        return $this->getContainer()->get('translator')->trans($id, $parameters);
     }
 }

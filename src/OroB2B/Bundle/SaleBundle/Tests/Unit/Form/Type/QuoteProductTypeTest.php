@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
@@ -23,7 +24,13 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new QuoteProductType();
+        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->formType = new QuoteProductType($translator);
     }
 
     public function testBuildForm()

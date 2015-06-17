@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -39,7 +40,13 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new QuoteProductItemType();
+        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->formType = new QuoteProductItemType($translator);
     }
 
     /**
@@ -189,7 +196,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
         }
 
-        /* @ar $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
+        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
         $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem');
         $item
             ->expects($this->any())
