@@ -264,7 +264,8 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertNotNull($user);
 
         /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole $role */
-        $role = reset($user->getRoles());
+        $roles = $user->getRoles();
+        $role = reset($roles);
         $this->assertNotNull($role);
 
         $result = $this->client->getResponse();
