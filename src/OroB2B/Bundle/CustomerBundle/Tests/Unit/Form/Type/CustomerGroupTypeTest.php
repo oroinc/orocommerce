@@ -8,6 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
