@@ -56,9 +56,6 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  */
 class AccountUser extends AbstractUser implements FullNameInterface
 {
-    const ROLE_BUYER = 'ROLE_FRONTEND_BUYER';
-    const ROLE_ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
-
     /**
      * @var AccountUserRole[]|Collection
      *
@@ -401,13 +398,5 @@ class AccountUser extends AbstractUser implements FullNameInterface
         if (array_diff_key($event->getEntityChangeSet(), array_flip($excludedFields))) {
             $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDefaultRole()
-    {
-        return static::ROLE_BUYER;
     }
 }

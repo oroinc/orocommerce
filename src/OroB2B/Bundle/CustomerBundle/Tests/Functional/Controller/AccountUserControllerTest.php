@@ -15,6 +15,8 @@ class AccountUserControllerTest extends WebTestCase
     const NAME_PREFIX = 'NamePrefix';
     const MIDDLE_NAME = 'MiddleName';
     const NAME_SUFFIX = 'NameSuffix';
+    const FIRST_NAME  = 'John';
+    const LAST_NAME   = 'Doe';
 
     const UPDATED_NAME_PREFIX = 'UNamePrefix';
     const UPDATED_FIRST_NAME = 'UFirstName';
@@ -40,6 +42,11 @@ class AccountUserControllerTest extends WebTestCase
 
     /**
      * @dataProvider createDataProvider
+     * @param string $email
+     * @param string $password
+     * @param bool $isPasswordGenerate
+     * @param bool $isSendEmail
+     * @param int $emailsCount
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
@@ -57,9 +64,9 @@ class AccountUserControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_customer_account_user[enabled]']               = true;
         $form['orob2b_customer_account_user[namePrefix]']            = self::NAME_PREFIX;
-        $form['orob2b_customer_account_user[firstName]']             = LoadAccountUserData::FIRST_NAME;
+        $form['orob2b_customer_account_user[firstName]']             = self::FIRST_NAME;
         $form['orob2b_customer_account_user[middleName]']            = self::MIDDLE_NAME;
-        $form['orob2b_customer_account_user[lastName]']              = LoadAccountUserData::LAST_NAME;
+        $form['orob2b_customer_account_user[lastName]']              = self::LAST_NAME;
         $form['orob2b_customer_account_user[nameSuffix]']            = self::NAME_SUFFIX;
         $form['orob2b_customer_account_user[email]']                 = $email;
         $form['orob2b_customer_account_user[birthday]']              = date('Y-m-d');
@@ -79,7 +86,7 @@ class AccountUserControllerTest extends WebTestCase
         if ($isSendEmail) {
             $this->assertMessage($email, array_shift($collectedMessages));
         }
-
+        $this->client->getResponse()->getContent();
         $crawler = $this->client->followRedirect();
         $result = $this->client->getResponse();
 
@@ -94,15 +101,15 @@ class AccountUserControllerTest extends WebTestCase
     {
         return [
             'simple create' => [
-                'email' => LoadAccountUserData::EMAIL,
-                'password' => LoadAccountUserData::PASSWORD,
+                'email' => 'first@example.com',
+                'password' => '123456',
                 'isPasswordGenerate' => false,
                 'isSendEmail' => false,
                 'emailsCount' => 0
             ],
             'create with email and without password generator' => [
                 'email' => 'second@example.com',
-                'password' => LoadAccountUserData::PASSWORD,
+                'password' => '123456',
                 'isPasswordGenerate' => false,
                 'isSendEmail' => true,
                 'emailsCount' => 1
