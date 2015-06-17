@@ -17,13 +17,14 @@ class LoadOrderDemoData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         /** @var User[] $users */
-        $users = $manager->getRepository('OroB2BUserAdminBundle:User')->findAll();
+        $users = $manager->getRepository('OroUserBundle:User')->findAll();
 
-        // create customers
-        foreach ($users as $index => $user) {
+        // create orders
+        foreach ($users as $user) {
             $order = new Order();
             $order->setOwner($user)
-                ->setOrganization($user->getOrganization());
+                ->setOrganization($user->getOrganization())
+                ->setIdentifier($user->getId());
             $manager->persist($order);
         }
 
