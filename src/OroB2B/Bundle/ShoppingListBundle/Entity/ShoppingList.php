@@ -15,7 +15,12 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
 
 /**
- * @ORM\Table(name="orob2b_shopping_list",indexes={@ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})})
+ * @ORM\Table(
+ *      name="orob2b_shopping_list",
+ *      indexes={
+ *          @ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})
+ *      }
+ * )
  * @ORM\Entity
  * @Config(
  *      routeName="orob2b_shopping_list_index",

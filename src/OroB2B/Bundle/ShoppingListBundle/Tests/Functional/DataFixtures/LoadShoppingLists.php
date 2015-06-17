@@ -33,7 +33,7 @@ class LoadShoppingLists extends AbstractFixture implements ContainerAwareInterfa
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->container->get('doctrine')->getRepository(User::class)->findOneBy([]);
+        $user = $this->container->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([]);
         $this->createShoppingList($manager, 'shopping_list', $user);
 
         $manager->flush();
