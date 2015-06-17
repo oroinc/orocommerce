@@ -61,7 +61,7 @@ class ShoppingListController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_shopping_list.shopping_list.class')
+            'entity_class' => $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
         ];
     }
 }

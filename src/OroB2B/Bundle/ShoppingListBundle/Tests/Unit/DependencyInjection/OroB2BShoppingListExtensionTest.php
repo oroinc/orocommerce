@@ -17,7 +17,7 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BShoppingListExtension());
 
         $expectedParameters = [
-            'orob2b_shopping_list.shopping_list.class',
+            'orob2b_shopping_list.entity.shopping_list.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
     }
