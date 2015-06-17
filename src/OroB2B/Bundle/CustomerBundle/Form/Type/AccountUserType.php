@@ -63,7 +63,7 @@ class AccountUserType extends AbstractType
             'required'        => false,
             'first_options'   => ['label' => 'orob2b.customer.accountuser.password.label'],
             'second_options'  => ['label' => 'orob2b.customer.accountuser.password_confirmation.label'],
-            'invalid_message' => "The entered passwords don't match"
+            'invalid_message' => 'orob2b.customer.message.password_mismatch',
         ];
 
         if ($data instanceof AccountUser && $data->getId()) {
