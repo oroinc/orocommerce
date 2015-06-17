@@ -10,7 +10,7 @@
 }
 
 .sale-quoteproduct-widget.control-group  {
-    max-width: 1200px;
+    max-width: 1260px;
 }
 
 .sale-quoteproduct-widget.control-group .controls {
@@ -77,4 +77,32 @@
 
 .sale-quoteproductitems-info {
     padding: 5px 0 0 10px;
+}
+
+.sale-quoteproductitem-collection .oro-item-collection > div {
+    border: 1px solid #e6e6e6 !important;
+    background: #f8f8f8 !important;
+    border-radius: 4px !important;
+    padding-top: 5px;
+    padding-left: 5px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.sale-quoteproductitem-collection .oro-item-collection > div table {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.sale-quoteproductitem-widget-last-line td {
+    width: 280px;
+}
+
+.sale-quoteproductitem-widget-last-line label {
+    width: auto !important;
+}
+
+.sale-quoteproductitem-widget-last-line input,
+.sale-quoteproductitem-widget-last-line select {
+    max-width: 180px !important;
 }

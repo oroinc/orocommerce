@@ -15,6 +15,13 @@
 
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
+        {% set formCreateQuoteAction = path('orob2b_rfp_admin_request_create_quote', { 'id': entity.id }) %}
+        <form id="{{ formCreateQuote.vars.id }}" name="{{ formCreateQuote.vars.name }}" action="{{ formCreateQuoteAction }}" method="post">
+            {{ form_widget(formCreateQuote) }}
+            <div class="pull-left btn-group icons-holder">
+                <button type="submit" class="btn back icons-holder-text edit-button main-group" title=""><i class="icon-edit hide-text">Edit</i>Create Quote</button>
+            </div>
+        </form>
         {{ UI.editButton({
             'path' : path('orob2b_rfp_admin_request_update', { 'id': entity.id }),
             'entity_label': 'orob2b.rfpadmin.request.entity_label'|trans

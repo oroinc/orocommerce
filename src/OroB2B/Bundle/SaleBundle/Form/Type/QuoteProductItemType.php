@@ -45,6 +45,28 @@ class QuoteProductItemType extends AbstractType
                 'required'  => true,
                 'label'     => 'orob2b.sale.quoteproductitem.price.label'
             ])
+            ->add('requestedQuantity', 'integer', [
+                'required'  => true,
+                'label'     => 'orob2b.sale.quoteproductitem.quantity.label'
+            ])
+            ->add('requestedPrice', PriceType::NAME, [
+                'required'  => true,
+                'label'     => 'Requested orob2b.sale.quoteproductitem.price.label'
+            ])
+            ->add(
+                'status',
+                'choice',
+                [
+                    'label' => 'orob2b.sale.quoteproductitem.status.label',
+                    'choices' => QuoteProductItem::getStatusesTitles(),
+                    'required' => true,
+                    'expanded' => false
+                ]
+            )
+            ->add('comment', 'text', [
+                'required'  => true,
+                'label'     => 'orob2b.sale.quoteproductitem.comment.label'
+            ])
         ;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
@@ -87,6 +109,12 @@ class QuoteProductItemType extends AbstractType
             'label'     => 'orob2b.product.productunit.entity_label',
         ];
 
+        $requestedProductUnitOptions = [
+            'compact'   => false,
+            'required'  => false,
+            'label'     => 'orob2b.product.productunit.entity_label',
+        ];
+
         if ($quoteProductItem && null !== $quoteProductItem->getId()) {
             $product = $quoteProductItem->getQuoteProduct()->getProduct();
             if ($product) {
@@ -105,14 +133,40 @@ class QuoteProductItemType extends AbstractType
                     ]
                 );
             }
+
+            $requestedProductUnit = $quoteProductItem->getRequestedProductUnit();
+            if (
+                $quoteProductItem->getRequestedProductUnitCode()
+                && ($product && !in_array($requestedProductUnit->getCode(), $choices))
+            ) {
+                // requested ProductUnit was removed
+                $requestedProductUnitOptions['empty_value']  = $this->translator->trans(
+                    'orob2b.sale.quoteproductitem.product_unit.removed',
+                    [
+                        '{title}' => $quoteProductItem->getRequestedProductUnitCode(),
+                    ]
+                );
+            } else {
+                // empty requested ProductUnit was removed
+                $requestedProductUnitOptions['empty_value']  = $this->translator->trans(
+                    'orob2b.sale.quoteproductitem.requested_product_unit.empty'
+                );
+            }
         }
 
         $productUnitOptions['choices'] = $choices;
+        $requestedProductUnitOptions['choices'] = $choices;
 
         $form->add(
             'productUnit',
             ProductUnitSelectionType::NAME,
             $productUnitOptions
+        );
+
+        $form->add(
+            'requestedProductUnit',
+            ProductUnitSelectionType::NAME,
+            $requestedProductUnitOptions
         );
     }
 

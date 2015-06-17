@@ -12,6 +12,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\RFPAdminBundle\Form\Handler\RequestCreateQuoteHandler;
+use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestCreateQuoteType;
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Form\Handler\RequestChangeStatusHandler;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestChangeStatusType;
@@ -35,7 +37,8 @@ class RequestController extends Controller
     public function viewAction(Request $request)
     {
         return [
-            'entity' => $request
+            'entity' => $request,
+            'formCreateQuote' => $this->createForm(new RequestCreateQuoteType(), $request)->createView()
         ];
     }
 
@@ -85,6 +88,25 @@ class RequestController extends Controller
     public function updateAction(Request $request)
     {
         return $this->update($request);
+    }
+
+    /**
+     * @Route("/create_quote/{id}", name="orob2b_rfp_admin_request_create_quote", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_rfp_admin_request_create_quote",
+     *      type="entity",
+     *      class="OroB2BRFPAdminBundle:Request",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     * @throws NotFoundHttpException
+     * @return array
+     */
+    public function createQuoteAction(Request $request)
+    {
+        return $this->createQuote($request);
     }
 
     /**
@@ -152,5 +174,28 @@ class RequestController extends Controller
             },
             $this->get('translator')->trans('orob2b.rfpadmin.controller.request.saved.message')
         );
+    }
+
+
+    /**
+     * @param Request $request
+     * @return array|RedirectResponse
+     */
+    protected function createQuote(Request $request)
+    {
+        $form = $this->createForm(new RequestCreateQuoteType(), $request);
+        $handler = new RequestCreateQuoteHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList'),
+            $this->getUser()
+        );
+        $quoteId = $handler->process($request);
+        if ($quoteId) {
+            return $this->redirect($this->generateUrl('orob2b_sale_quote_update', ['id' => $quoteId]));
+        } else {
+            // ToDo: process errors
+            return $this->redirect($this->generateUrl('orob2b_rfp_admin_request_view', ['id' => $request->getId()]));
+        }
     }
 }

@@ -21,6 +21,7 @@
 {% block orob2b_sale_quote_product_item_widget %}
     <table class="sale-quoteproductitem-widget">
         <tr>
+            <td>Quote Line Item:</td>
             <td>
                 {{ form_widget(form.quantity) }}
                 {{ form_errors(form.quantity) }}
@@ -42,6 +43,7 @@
 
     <table class="sale-quoteproductitem-widget">
         <tr>
+            <td>Requested:</td>
             <td>
                 {{ form_widget(form.requestedQuantity) }}
                 {{ form_errors(form.requestedQuantity) }}
@@ -58,12 +60,17 @@
                 {{ form_widget(form.requestedPrice.currency) }}
                 {{ form_errors(form.requestedPrice.currency) }}
             </td>
+        </tr>
+    </table>
+
+    <table class="sale-quoteproductitem-widget-last-line">
+        <tr>
             <td>
-                {{ form_widget(form.status) }}
+                {{ form_row(form.status) }}
                 {{ form_errors(form.status) }}
             </td>
             <td>
-                {{ form_widget(form.comment) }}
+                {{ form_row(form.comment) }}
                 {{ form_errors(form.comment) }}
             </td>
         </tr>

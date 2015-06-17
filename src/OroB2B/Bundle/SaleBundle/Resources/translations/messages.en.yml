@@ -42,6 +42,7 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
+            comment.label: 'Notes'
 
             status:
                 label: 'Status'
@@ -51,6 +52,7 @@ orob2b:
                 not_available: 'Not Available'
 
             product_unit.removed: '{title} - removed'
+            requested_product_unit.empty: 'Choose Unit...'
 
         controller:
             quote:
