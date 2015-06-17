@@ -10,6 +10,8 @@ use OroB2B\Bundle\PricingBundle\EventListener\DatagridListener;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const PRICE_LIST_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
+
     /**
      * @var DatagridListener
      */
@@ -25,7 +27,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'join' => [
                     'left' => [
                         [
-                            'join' => 'OroB2BPricingBundle:PriceList',
+                            'join' => self::PRICE_LIST_CLASS,
                             'alias' => 'priceList',
                             'conditionType' => 'WITH',
                         ]
@@ -53,7 +55,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'options' => [
                         'field_type' => 'entity',
                         'field_options' => [
-                            'class' => 'OroB2BPricingBundle:PriceList',
+                            'class' => self::PRICE_LIST_CLASS,
                             'property' => 'name',
                         ]
                     ]
@@ -65,6 +67,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->listener = new DatagridListener();
+        $this->listener->setPriceListClass(self::PRICE_LIST_CLASS);
     }
 
     protected function tearDown()

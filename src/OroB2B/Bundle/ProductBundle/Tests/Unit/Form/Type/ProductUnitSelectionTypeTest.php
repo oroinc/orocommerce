@@ -33,6 +33,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new ProductUnitSelectionType();
+        $this->formType->setEntityClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
 
         parent::setUp();
     }

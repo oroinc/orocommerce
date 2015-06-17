@@ -1,11 +1,11 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-{% set entityId = form.vars.value.id %}
-{% set parentCategoryId = form.vars.value.parentCategory ? form.vars.value.parentCategory.id : null %}
+{% set entityId = entity.id %}
+{% set parentCategoryId = entity.parentCategory ? entity.parentCategory.id : null %}
 
 {% if entityId %}
-    {% oro_title_set({params : {"%title%": form.vars.value.defaultTitle.string} }) %}
+    {% oro_title_set({params : {"%title%": entity.defaultTitle.string} }) %}
 {% endif %}
 
 {% set formAction = entityId ? path('orob2b_catalog_category_update', { 'id': entityId }) : path('orob2b_catalog_category_create', { 'id': parentCategoryId })  %}
@@ -21,7 +21,7 @@
                 'title': 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.catalog.subcategory.entity_label'|trans})
             }) }}
         {% endif %}
-        {% set canBeDeleted = resource_granted('DELETE', form.vars.value) and entityId != rootCategory.id %}
+        {% set canBeDeleted = resource_granted('DELETE', entity) and entityId != rootCategory.id %}
         {% if canBeDeleted %}
             {{ UI.deleteButton({
                 'dataUrl': path('orob2b_api_delete_category', {'id': entityId}),
@@ -48,10 +48,10 @@
 {% block pageHeader %}
     {% if entityId %}
         {% set breadcrumbs = {
-            'entity':      form.vars.value,
+            'entity':      entity,
             'indexPath':   path('orob2b_catalog_category_index'),
             'indexLabel': 'orob2b.catalog.category.entity_plural_label'|trans,
-            'entityTitle': form.vars.value.defaultTitle.string|default('N/A'|trans)
+            'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}

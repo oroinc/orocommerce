@@ -13,6 +13,11 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 
 class PriceListTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
+    const CUSTOMER_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\Customer';
+    const CUSTOMER_GROUP_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup';
+    const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+
     /**
      * @var PriceListType
      */
@@ -26,6 +31,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->type = new PriceListType();
+        $this->type->setDataClass(self::DATA_CLASS);
+        $this->type->setCustomerClass(self::CUSTOMER_CLASS);
+        $this->type->setCustomerGroupClass(self::CUSTOMER_GROUP_CLASS);
+        $this->type->setWebsiteClass(self::WEBSITE_CLASS);
     }
 
     /**
@@ -44,12 +53,12 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $currencySelectType = new CurrencySelectionTypeStub();
         $entityIdentifierType = new EntityIdentifierType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1),
-                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                3 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 3),
-                4 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 4),
-                5 => $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5),
-                6 => $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)
+                1 => $this->getEntity(self::CUSTOMER_CLASS, 1),
+                2 => $this->getEntity(self::CUSTOMER_CLASS, 2),
+                3 => $this->getEntity(self::CUSTOMER_GROUP_CLASS, 3),
+                4 => $this->getEntity(self::CUSTOMER_GROUP_CLASS, 4),
+                5 => $this->getEntity(self::WEBSITE_CLASS, 5),
+                6 => $this->getEntity(self::WEBSITE_CLASS, 6)
             ]
         );
 
@@ -181,16 +190,16 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     'name' => 'Test Price List 01',
                     'currencies' => ['USD', 'EUR'],
-                    'appendCustomers' => [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1)],
-                    'removeCustomers' => [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2)],
+                    'appendCustomers' => [$this->getEntity(self::CUSTOMER_CLASS, 1)],
+                    'removeCustomers' => [$this->getEntity(self::CUSTOMER_CLASS, 2)],
                     'appendCustomerGroups' => [
-                        $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 3)
+                        $this->getEntity(self::CUSTOMER_GROUP_CLASS, 3)
                     ],
                     'removeCustomerGroups' => [
-                        $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 4)
+                        $this->getEntity(self::CUSTOMER_GROUP_CLASS, 4)
                     ],
-                    'appendWebsites' => [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 5)],
-                    'removeWebsites' => [$this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 6)],
+                    'appendWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 5)],
+                    'removeWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 6)],
                 ]
             ]
         ];
