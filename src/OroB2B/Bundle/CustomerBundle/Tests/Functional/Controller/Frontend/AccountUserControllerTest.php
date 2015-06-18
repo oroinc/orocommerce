@@ -15,7 +15,10 @@ class AccountUserControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            array_merge(
+                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
+                ['HTTP_X-CSRF-Header' => 1]
+            )
         );
     }
 
@@ -35,22 +38,29 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $submittedData = [
-            'orob2b_customer_frontend_account_user' => [
-                '_token' => $form->get('orob2b_customer_frontend_account_user[_token]')->getValue(),
-                'middleName' => 'AccountUserUpdated'
-            ]
-        ];
 
         $this->client->followRedirects(true);
+        $this->client->request(
+            $form->getMethod(),
+            $form->getUri(),
+            [
+                'orob2b_customer_frontend_account_user' => [
+                    '_token' => $form->get('orob2b_customer_frontend_account_user[_token]')->getValue(),
+                    'firstName' => 'AccountUserUpdated',
+                    'lastName' => $form->get('orob2b_customer_frontend_account_user[lastName]')->getValue(),
+                    'email' => $form->get('orob2b_customer_frontend_account_user[email]')->getValue()
+                ]
+            ]
+        );
 
         $result = $this->client->getResponse();
-        $this->client->submit($form, $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains('Account User profile updated', $html);
-        $this->assertContains('AccountUserUpdated', $html);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_frontend_account_user_profile'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertContains('AccountUserUpdated', $crawler->filter('.layout-content')->html());
     }
 
     public function testEditProfilePasswordMismatch()
@@ -60,29 +70,24 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
-
-        $submittedData = [
-            'orob2b_customer_frontend_account_user' => [
-                '_token' => $form->get('orob2b_customer_frontend_account_user[_token]')->getValue(),
-                'changePassword' => [
-                    'currentPassword' => LoadAccountUserData::AUTH_PW,
-                    'plainPassword' => [
-                        'first' => '123456',
-                        'second' => '654321',
-                    ]
+        $form->offsetSet(
+            'orob2b_customer_frontend_account_user[changePassword]',
+            [
+                'currentPassword' => LoadAccountUserData::AUTH_PW,
+                'plainPassword' => [
+                    'first' => '123456',
+                    'second' => '654321',
                 ]
             ]
-        ];
+        );
 
         $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->client->submit($form, $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains('The password fields must match.', $html);
-        $this->assertNotContains('This value should be the user current password.', $html);
+        $this->assertContains('The password fields must match.', $crawler->filter('.validation-failed')->html());
     }
 
     public function testEditProfileWithoutCurrentPassword()
@@ -92,6 +97,21 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->offsetSet(
+            'orob2b_customer_frontend_account_user[changePassword]',
+            [
+                'currentPassword' => '123456',
+                'plainPassword' => [
+                    'first' => '123456',
+                    'second' => '123456',
+                ]
+            ]
+        );
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $submittedData = [
             'orob2b_customer_frontend_account_user' => [
@@ -112,8 +132,9 @@ class AccountUserControllerTest extends WebTestCase
         $this->client->submit($form, $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains('This value should be the user current password.', $html);
-        $this->assertNotContains('The password fields must match.', $html);
+        $this->assertContains(
+            'This value should be the user\'s current password.',
+            $crawler->filter('.validation-failed')->html()
+        );
     }
 }

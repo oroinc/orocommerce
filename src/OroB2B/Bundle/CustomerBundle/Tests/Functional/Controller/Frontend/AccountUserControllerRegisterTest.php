@@ -36,9 +36,9 @@ class AccountUserControllerRegisterTest extends WebTestCase
         ];
 
         $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form, $submittedData);
 
         $result = $this->client->getResponse();
-        $this->client->submit($form, $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertEmpty(
@@ -49,7 +49,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
                 ->findOneBy(['email' => 'create.user@example.com'])
         );
 
-        $this->assertContains('The password fields must match.', $result->getContent());
+        $this->assertContains('The password fields must match.', $crawler->filter('.validation-failed')->html());
     }
 
     public function testRegister()
@@ -73,9 +73,9 @@ class AccountUserControllerRegisterTest extends WebTestCase
         ];
 
         $this->client->followRedirects(true);
+        $this->client->submit($form, $submittedData);
 
         $result = $this->client->getResponse();
-        $this->client->submit($form, $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertNotEmpty(
