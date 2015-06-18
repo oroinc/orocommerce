@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -50,6 +49,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterface
 {
     /**
+     * @var int
+     *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -57,7 +58,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $id;
 
     /**
-     * @var string $label
+     * @var string
      *
      * @ORM\Column(name="label", type="string", length=255)
      * @ConfigField(
@@ -71,7 +72,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $label;
 
     /**
-     * @var string $label
+     * @var string
      *
      * @ORM\Column(name="notes", type="text")
      * @ConfigField(
@@ -85,9 +86,9 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $notes;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
-     * @ORM\Column(name="created_at", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
@@ -99,7 +100,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -154,7 +155,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @param \DateTime $createdAt
      *
-     * @return self
+     * @return $this
      */
     public function setCreatedAt(\DateTime $createdAt)
     {
@@ -174,7 +175,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @param \DateTime $updatedAt
      *
-     * @return self
+     * @return $this
      */
     public function setUpdatedAt(\DateTime $updatedAt)
     {
@@ -194,7 +195,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @param User $owningUser
      *
-     * @return self
+     * @return $this
      */
     public function setOwner(User $owningUser)
     {
@@ -204,9 +205,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @param OrganizationInterface $organization
-     *
-     * @return self
+     * {@inheritdoc}
      */
     public function setOrganization(OrganizationInterface $organization = null)
     {
@@ -216,11 +215,51 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @return OrganizationInterface
+     * {@inheritdoc}
      */
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotes()
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @param string $notes
+     *
+     * @return $this
+     */
+    public function setNotes($notes)
+    {
+        $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->label;
+    }
+
+    /**
+     * @param string $label
+     *
+     * @return $this
+     */
+    public function setLabel($label)
+    {
+        $this->label = $label;
+
+        return $this;
     }
 
     /**
@@ -242,45 +281,5 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @return string
-     */
-    public function getNotes()
-    {
-        return $this->notes;
-    }
-
-    /**
-     * @param string $notes
-     *
-     * @return self
-     */
-    public function setNotes($notes)
-    {
-        $this->notes = $notes;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     *
-     * @return self
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-
-        return $this;
     }
 }

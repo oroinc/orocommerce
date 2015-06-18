@@ -1,5 +1,5 @@
 orob2b:
-    shopping_list:
+    shoppinglist:
         entity_label: Shopping List
         entity_plural_label: Shopping Lists
         entity_description: Shows content of shopping lists of the account users.

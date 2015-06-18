@@ -22,13 +22,13 @@ datagrid:
                         - { join: shopping_list.owner, alias: shopping_list_owner }
         columns:
             id:
-                label:         orob2b.shopping_list.id.label
+                label:         orob2b.shoppinglist.id.label
             label:
-                label:         orob2b.shopping_list.label.label
+                label:         orob2b.shoppinglist.label.label
             notes:
-                label:         orob2b.shopping_list.notes.label
+                label:         orob2b.shoppinglist.notes.label
             owner:
-                label:         orob2b.shopping_list.owner.label
+                label:         orob2b.shoppinglist.owner.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

@@ -1,13 +1,13 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 
-{% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
+{% oro_title_set({params : {"%label%": entity.label }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_shopping_list_index'),
-        'indexLabel': 'orob2b.shopping_list.entity_plural_label'|trans,
-        'entityTitle': entity.identifier|default('N/A'|trans)
+        'indexLabel': 'orob2b.shoppinglist.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
@@ -18,7 +18,7 @@
     {% set shoppingListInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.shopping_list.widgets.shopping_list_information'|trans,
+            'title': 'orob2b.shoppinglist.widgets.shopping_list_information'|trans,
             'url': path('orob2b_shopping_list_info', {id: entity.id})
         }) }}
     {% endset %}
@@ -27,7 +27,7 @@
 
     {% set dataBlocks = [
         {
-            'title': 'orob2b.shopping_list.sections.general'|trans,
+            'title': 'orob2b.shoppinglist.sections.general'|trans,
             'class': 'active',
             'subblocks': generalSectionBlocks
         }

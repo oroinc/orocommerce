@@ -6,34 +6,19 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-use Oro\Bundle\UserBundle\Entity\User;
-
-class LoadShoppingLists extends AbstractFixture implements ContainerAwareInterface
+class LoadShoppingLists extends AbstractFixture
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->container->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([]);
+        $user = $this->getUser($manager);
         $this->createShoppingList($manager, 'shopping_list', $user);
 
         $manager->flush();
@@ -41,8 +26,9 @@ class LoadShoppingLists extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param ObjectManager $manager
-     * @param string        $name
-     *
+     * @param string $name
+     * @param User $user
+
      * @return ShoppingList
      */
     protected function createShoppingList(ObjectManager $manager, $name, User $user)
@@ -61,6 +47,7 @@ class LoadShoppingLists extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param EntityManager $manager
+     *
      * @return User
      * @throws \LogicException
      */

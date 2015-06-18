@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -10,11 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ShoppingListControllerTest extends WebTestCase
 {
-    /**
-     * @var NameFormatter
-     */
-    protected $formatter;
-
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -24,8 +18,6 @@ class ShoppingListControllerTest extends WebTestCase
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
             ]
         );
-
-        $this->formatter = $this->getContainer()->get('oro_locale.twig.name');
     }
 
     public function testIndex()

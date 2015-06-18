@@ -31,7 +31,7 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
-        $table->addColumn('notes', 'text', []);
+        $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);

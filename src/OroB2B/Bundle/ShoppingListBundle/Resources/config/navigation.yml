@@ -1,18 +1,18 @@
 oro_menu_config:
     items:
         shopping_list:
-            label:           'orob2b.shopping_list.entity_plural_label'
+            label:           'orob2b.shoppinglist.entity_plural_label'
             route:           'orob2b_shopping_list_index'
             extras:
                 position:    10
                 routes:      ['/^orob2b_shopping_list/']
-                description: 'orob2b.shopping_list.menu.shopping_list.description'
+                description: 'orob2b.shoppinglist.menu.shopping_list.description'
 
-        shopping_list:
-            label:           'orob2b.shopping_list.entity_plural_label'
+        shortcut_shopping_list:
+            label:           'orob2b.shoppinglist.entity_plural_label'
             route:           'orob2b_shopping_list_index'
             extras:
-                description: 'orob2b.shopping_list.menu.shortcut_shopping_list.description'
+                description: 'orob2b.shoppinglist.menu.shortcut_shopping_list.description'
 
     tree:
         application_menu:

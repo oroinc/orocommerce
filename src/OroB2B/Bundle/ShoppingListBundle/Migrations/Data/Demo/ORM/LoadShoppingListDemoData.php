@@ -24,8 +24,8 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        /** @var User[] $user */
-        $user = $manager->getRepository('OroUserBundle:User')->findOneByUsername('admin');
+        /** @var User $user */
+        $user = $manager->getRepository('OroUserBundle:User')->findOneBy(['username' => 'admin']);
 
         $this->createShoppingList($manager, $user, 'Shopping List 1');
         $this->createShoppingList($manager, $user, 'Shopping List 2');
@@ -36,7 +36,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     /**
      * @param ObjectManager $manager
      * @param User $user
-     * @param $label
+     * @param string $label
      *
      * @return ShoppingList
      */
@@ -49,7 +49,5 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $shoppingList->setLabel($label);
 
         $manager->persist($shoppingList);
-
-        return $shoppingList;
     }
 }
