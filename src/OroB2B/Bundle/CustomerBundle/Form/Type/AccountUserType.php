@@ -168,7 +168,7 @@ class AccountUserType extends AbstractType
                     'property' => 'label',
                     'multiple' => true,
                     'expanded' => true,
-                    'required' => false
+                    'required' => true
                 ]
             );
         }

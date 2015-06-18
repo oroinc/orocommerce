@@ -197,9 +197,4 @@ class AccountUserTest extends AbstractUserTest
         $this->assertFalse($user->isConfirmed());
         $this->assertFalse($user->isAccountNonLocked());
     }
-
-    public function testGetDefaultRole()
-    {
-        $this->assertEquals(AccountUser::ROLE_BUYER, $this->getUser()->getDefaultRole());
-    }
 }
