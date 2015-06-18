@@ -39,7 +39,7 @@ class QuoteProductType extends AbstractType
             ->add('product', ProductSelectType::NAME, [
                 'required'  => true,
                 'label'     => 'orob2b.product.entity_label',
-                'create_enabled'    => false,
+                'create_enabled' => false,
             ])
             ->add(
                 'quoteProductItems',

@@ -18,7 +18,7 @@
     
     <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
         data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component">
-        {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+        {{ form_label(form.product, '', { label_attr: label_attr|merge({ class: 'control-label' })}) }}
         <div class="sale-quoteproduct-product-select controls{% if errors|length > 0 %} validation-error{% endif %}">
             {{ form_widget(form.product) }}
             {{ form_errors(form.product) }}
