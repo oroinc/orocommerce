@@ -1,0 +1,46 @@
+oro_menu_config:
+    items:
+        sales_tab:
+            label:           'orob2b.order.menu.sales_tab.label'
+            uri:             '#'
+            extras:
+                icon:        icon-briefcase
+                position:    25
+
+        orders_list:
+            label:           'orob2b.order.entity_plural_label'
+            route:           'orob2b_order_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_order/']
+                description: 'orob2b.order.menu.orders_list.description'
+
+        shortcut_orders_list:
+            label:           'orob2b.order.entity_plural_label'
+            route:           'orob2b_order_index'
+            extras:
+                description: 'orob2b.order.menu.shortcut_orders_list.description'
+
+        shortcut_new_order:
+            label:           'orob2b.order.menu.shortcut_new_order.label'
+            route:           'orob2b_order_create'
+            extras:
+                description:    'orob2b.order.menu.shortcut_new_order.description'
+                isCustomAction: true
+
+    tree:
+        application_menu:
+            children:
+                sales_tab:
+                    children:
+                        orders_list: ~
+        shortcuts:
+            children:
+                shortcut_orders_list: ~
+                shortcut_new_order:   ~
+
+oro_titles:
+    orob2b_order_index: ~
+    orob2b_order_view:   '%%identifier%%'
+    orob2b_order_update: '%%identifier%% - Edit'
+    orob2b_order_create: 'Create Order'
