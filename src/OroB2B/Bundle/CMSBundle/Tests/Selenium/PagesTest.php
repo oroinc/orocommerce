@@ -221,7 +221,7 @@ class PagesTest extends Selenium2TestCase
     /**
      * {@inheritdoc}
      */
-    public function login($userName = null, $password = null)
+    public function login($userName = null, $password = null, $args = [])
     {
         return parent::login($userName, $password, ['url' => '/admin']);
     }
