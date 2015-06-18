@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
 
@@ -43,9 +45,10 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
 
         $builder->expects($this->at(0))
             ->method('add')
-            ->with('product', null, [
+            ->with('product', ProductSelectType::NAME, [
                 'required'  => true,
                 'label'     => 'orob2b.product.entity_label',
+                'create_enabled'    => false,
             ])
             ->will($this->returnSelf())
         ;

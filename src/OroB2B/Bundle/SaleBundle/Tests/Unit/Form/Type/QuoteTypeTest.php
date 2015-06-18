@@ -64,7 +64,6 @@ class QuoteTypeTest extends FormIntegrationTestCase
             ->method('add')
             ->with('quoteProducts', QuoteProductCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproduct.add_label',
-                'required'  => false,
             ])
             ->will($this->returnSelf())
         ;

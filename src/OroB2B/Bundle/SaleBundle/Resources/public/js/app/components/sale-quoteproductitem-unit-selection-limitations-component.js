@@ -17,10 +17,13 @@ define(function (require) {
          * @property {Object}
          */
         options: {
-            productSelect:  'select.sale-quoteproduct-product-select',
-            unitsSelect:    'select.sale-quoteproductitem-productunit-select',
+            productSelect:  '.sale-quoteproduct-product-select input[type="hidden"]',
+            unitsSelect:    '.sale-quoteproductitem-productunit-select',
             unitsRoute:     'orob2b_product_unit_product_units',
-            errorMessage:   'Sorry, unexpected error was occurred'
+            addItemButton:  '.add-list-item',
+            itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
+            errorMessage:   'Sorry, unexpected error was occurred',
+            units: {}
         },
         
         /**
@@ -37,7 +40,17 @@ define(function (require) {
          * @property {Object}
          */
         $productSelect : null,
-
+        
+        /**
+         * @property {Object}
+         */
+        $addItemButton : null,
+        
+        /**
+         * @property {Object}
+         */
+        $itemsContainer : null,
+        
         /** 
          * @property {LoadingMaskView|null}
          */
@@ -47,26 +60,50 @@ define(function (require) {
          * @inheritDoc
          */
         initialize: function (options) {
-            this.options = _.defaults(options || {}, this.options);
-
+            this.options    = _.defaults(options || {}, this.options);
+            this.units      = _.defaults(this.units, options.units);
+            
             this.$container = options._sourceElement;
             
             this.loadingMask = new LoadingMaskView({container: this.$container});
             
-            this.$productSelect = this.$container.find(this.options.productSelect);
-
+            this.$productSelect     = this.$container.find(this.options.productSelect);
+            this.$addItemButton     = this.$container.find(this.options.addItemButton);
+            this.$itemsContainer    = this.$container.find(this.options.itemsContainer);
+            
             this.$container
-                .on('change', this.options.productSelect, _.bind(this.onChanged, this))
-                .on('content:changed', _.bind(this.onChanged, this))
+                .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
+                .on('content:changed', _.bind(this.onContentChanged, this))
             ;
+            
+            this.checkAddButton();
         },
+        
+        checkAddButton: function() {
+            var productId = this.$productSelect.val();
+            
+            this.$addItemButton.attr('disabled', !productId);
+        },
+        
+        /**
+         * Handle change
+         *
+         * @param {jQuery.Event} e
+         */
+        onProductChanged: function (e) {
+            this.checkAddButton();
+            
+            if (this.$itemsContainer.children().length) {
+                this.onContentChanged(e);
+            }
+        },        
 
         /**
          * Handle change
          *
          * @param {jQuery.Event} e
          */
-        onChanged: function (e) {
+        onContentChanged: function (e) {
             var productId = this.$productSelect.val();
             var productUnits = this.units[productId];
             
@@ -111,8 +148,7 @@ define(function (require) {
                 $(select).empty();
                 $.each(units, function(key, value) {
                     $(select)
-                        .append($('<option></option>')
-                        .attr('value', key).text(value))
+                        .append($('<option/>').val(key).text(value))
                     ;
                 });
                 $(select).val(currentValue);
