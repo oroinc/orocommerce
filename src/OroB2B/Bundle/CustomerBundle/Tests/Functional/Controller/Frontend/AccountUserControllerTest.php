@@ -113,25 +113,6 @@ class AccountUserControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $submittedData = [
-            'orob2b_customer_frontend_account_user' => [
-                '_token' => $form->get('orob2b_customer_frontend_account_user[_token]')->getValue(),
-                'changePassword' => [
-                    'currentPassword' => '123456',
-                    'plainPassword' => [
-                        'first' => '123456',
-                        'second' => '123456',
-                    ]
-                ]
-            ]
-        ];
-
-        $this->client->followRedirects(true);
-
-        $result = $this->client->getResponse();
-        $this->client->submit($form, $submittedData);
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
         $this->assertContains(
             'This value should be the user\'s current password.',
             $crawler->filter('.validation-failed')->html()
