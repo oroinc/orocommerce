@@ -46,10 +46,6 @@ class AccountUserRoleVoter extends AbstractEntityVoter
         $isDefaultForWebsite = $repository->isDefaultForWebsite($this->object);
         $hasAssignedUsers = $repository->hasAssignedUsers($this->object);
 
-        if ($isDefaultForWebsite || $hasAssignedUsers) {
-            return self::ACCESS_DENIED;
-        }
-
-        return self::ACCESS_ABSTAIN;
+         return ($isDefaultForWebsite || $hasAssignedUsers) ? self::ACCESS_DENIED : self::ACCESS_ABSTAIN;
     }
 }

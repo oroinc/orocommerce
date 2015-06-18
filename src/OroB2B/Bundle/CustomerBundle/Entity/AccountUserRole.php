@@ -69,7 +69,7 @@ class AccountUserRole extends AbstractRole
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinTable(
-     *      name="orob2b_role_to_website",
+     *      name="orob2b_account_role_to_website",
      *      joinColumns={
      *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

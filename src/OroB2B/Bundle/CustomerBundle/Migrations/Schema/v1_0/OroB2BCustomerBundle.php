@@ -154,18 +154,17 @@ class OroB2BCustomerBundle implements Migration
     }
 
     /**
-     * Create orob2b_role_to_website table
+     * Create orob2b_account_role_to_website table
      *
      * @param Schema $schema
      */
     protected function createOroB2BAccountUserRoleToWebsiteTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_role_to_website');
+        $table = $schema->createTable('orob2b_account_role_to_website');
         $table->addColumn('account_user_role_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['account_user_role_id', 'website_id']);
         $table->addUniqueIndex(['website_id'], 'UNIQ_EC532EDD18F45C82');
-        $table->addIndex(['account_user_role_id'], 'IDX_EC532EDD17D62AE0', []);
     }
 
     /**
@@ -258,13 +257,13 @@ class OroB2BCustomerBundle implements Migration
     }
 
     /**
-     * Add orob2b_role_to_website foreign keys.
+     * Add orob2b_account_role_to_website foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroB2BAccountUserRoleToWebsiteForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_role_to_website');
+        $table = $schema->getTable('orob2b_account_role_to_website');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],

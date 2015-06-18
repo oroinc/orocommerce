@@ -16,9 +16,10 @@ class AccountUserRoleRepository extends EntityRepository
      */
     public function getDefaultAccountUserRoleByWebsite(Website $website)
     {
-        return $this->createQueryBuilder('accountUserRole')
+        $qb = $this->createQueryBuilder('accountUserRole');
+        return $qb
             ->innerJoin('accountUserRole.websites', 'website')
-            ->andWhere('website = :website')
+            ->andWhere($qb->expr()->eq('website', ':website'))
             ->setParameter('website', $website)
             ->getQuery()
             ->getOneOrNullResult();
@@ -32,10 +33,11 @@ class AccountUserRoleRepository extends EntityRepository
      */
     public function isDefaultForWebsite(AccountUserRole $role)
     {
-        $findResult = $this->createQueryBuilder('accountUserRole')
+        $qb = $this->createQueryBuilder('accountUserRole');
+        $findResult = $qb
             ->innerJoin('accountUserRole.websites', 'website')
             ->select('accountUserRole.id')
-            ->where('accountUserRole = :accountUserRole')
+            ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
             ->setParameter('accountUserRole', $role)
             ->setMaxResults(1)
             ->getQuery()
@@ -52,11 +54,12 @@ class AccountUserRoleRepository extends EntityRepository
      */
     public function hasAssignedUsers(AccountUserRole $role)
     {
-        $findResult = $this->_em->createQueryBuilder()
-            ->select('accountUser')
+        $qb = $this->_em->createQueryBuilder();
+        $findResult = $qb
+            ->select('accountUser.id')
             ->from('OroB2BCustomerBundle:AccountUser', 'accountUser')
             ->join('accountUser.roles', 'accountUserRole')
-            ->where('accountUserRole = :accountUserRole')
+            ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
             ->setParameter('accountUserRole', $role)
             ->setMaxResults(1)
             ->getQuery()

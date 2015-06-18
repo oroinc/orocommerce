@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -32,7 +33,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
     public function testGetDefaultAccountUserRoleByWebsite()
     {
         /** @var AccountUserRole $role */
-        $expectedRole = $this->getReference('Role with website');
+        $expectedRole = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_WEBSITE);
 
         /** @var Website $website */
         $website = $expectedRole->getWebsites()->first();
@@ -44,30 +45,30 @@ class AccountUserRoleRepositoryTest extends WebTestCase
     public function testIsDefaultForWebsite()
     {
         /** @var AccountUserRole $role */
-        $role = $this->getReference('Role with website');
+        $role = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_WEBSITE);
 
         $isDefaultForWebsite = $this->repository->isDefaultForWebsite($role);
-        $this->assertEquals(true, $isDefaultForWebsite);
+        $this->assertTrue($isDefaultForWebsite);
     }
 
     public function testHasAssignedUsers()
     {
         /** @var AccountUserRole $role */
-        $role = $this->getReference('Role with account user');
+        $role = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER);
 
         $hasAssignedUsers = $this->repository->hasAssignedUsers($role);
-        $this->assertEquals(true, $hasAssignedUsers);
+        $this->assertTrue($hasAssignedUsers);
     }
 
     public function testRoleWithoutUserAndWebsite()
     {
         /** @var AccountUserRole $role */
-        $role = $this->getReference('Role without user and website');
+        $role = $this->getReference(LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE);
 
         $hasAssignedUsers = $this->repository->hasAssignedUsers($role);
-        $this->assertEquals(false, $hasAssignedUsers);
+        $this->assertFalse($hasAssignedUsers);
 
         $isDefaultForWebsite = $this->repository->isDefaultForWebsite($role);
-        $this->assertEquals(false, $isDefaultForWebsite);
+        $this->assertFalse($isDefaultForWebsite);
     }
 }

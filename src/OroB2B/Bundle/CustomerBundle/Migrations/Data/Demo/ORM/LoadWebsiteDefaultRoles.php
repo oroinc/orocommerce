@@ -28,31 +28,14 @@ class LoadWebsiteDefaultRoles extends AbstractFixture implements DependentFixtur
      */
     public function load(ObjectManager $manager)
     {
-        $role = $this->findRole($manager);
-        $this->setWebsiteDefaultRoles($manager, $role);
-
-        $manager->persist($role);
+        $this->setWebsiteDefaultRoles($manager);
         $manager->flush();
     }
 
     /**
      * @param ObjectManager $manager
-     * @return mixed
      */
-    protected function findRole(ObjectManager $manager)
-    {
-        return $manager->getRepository('OroB2BCustomerBundle:AccountUserRole')
-            ->createQueryBuilder('r')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param AccountUserRole $role
-     */
-    protected function setWebsiteDefaultRoles(ObjectManager $manager, AccountUserRole $role)
+    protected function setWebsiteDefaultRoles(ObjectManager $manager)
     {
         $websites = $manager->getRepository('OroB2BWebsiteBundle:Website')->findAll();
         $defaultWebsite = $manager->getRepository('OroB2BWebsiteBundle:Website')
@@ -61,8 +44,12 @@ class LoadWebsiteDefaultRoles extends AbstractFixture implements DependentFixtur
         // Remove default site. Default role for it already exist
         unset($websites[array_search($defaultWebsite, $websites)]);
 
+        $allRoles = $manager->getRepository('OroB2BCustomerBundle:AccountUserRole')->findAll();
         foreach ($websites as $website) {
+            $role = $allRoles[mt_rand(0, count($allRoles) - 1)];
             $role->addWebsite($website);
+
+            $manager->persist($role);
         }
     }
 }

@@ -86,7 +86,7 @@ class AccountUserControllerTest extends WebTestCase
         if ($isSendEmail) {
             $this->assertMessage($email, array_shift($collectedMessages));
         }
-        $this->client->getResponse()->getContent();
+
         $crawler = $this->client->followRedirect();
         $result = $this->client->getResponse();
 
