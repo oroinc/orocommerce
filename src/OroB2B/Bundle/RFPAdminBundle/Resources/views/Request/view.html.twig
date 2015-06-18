@@ -19,7 +19,9 @@
         <form id="{{ formCreateQuote.vars.id }}" name="{{ formCreateQuote.vars.name }}" action="{{ formCreateQuoteAction }}" method="post">
             {{ form_widget(formCreateQuote) }}
             <div class="pull-left btn-group icons-holder">
-                <button type="submit" class="btn back icons-holder-text edit-button main-group" title=""><i class="icon-edit hide-text">Edit</i>Create Quote</button>
+                <button type="submit" class="btn back icons-holder-text edit-button main-group" title="{{ 'orob2b.rfpadmin.btn.create_quote'|trans }}">
+                    <i class="icon-edit hide-text">Edit</i>{{ 'orob2b.rfpadmin.btn.create_quote'|trans }}
+                </button>
             </div>
         </form>
         {{ UI.editButton({

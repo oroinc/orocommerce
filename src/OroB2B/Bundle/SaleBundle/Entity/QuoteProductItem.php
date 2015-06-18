@@ -54,7 +54,7 @@ class QuoteProductItem
     /**
      * @var float
      *
-     * @ORM\Column(name="quantity", type="float")
+     * @ORM\Column(name="quantity", type="float", nullable=true)
      */
     protected $quantity;
 
@@ -69,21 +69,21 @@ class QuoteProductItem
     /**
      * @var string
      *
-     * @ORM\Column(name="product_unit_code", type="string", length=255)
+     * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=true)
      */
     protected $productUnitCode;
 
     /**
      * @var float
      *
-     * @ORM\Column(name="value", type="money")
+     * @ORM\Column(name="value", type="money", nullable=true)
      */
     protected $value;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string")
+     * @ORM\Column(name="currency", type="string", nullable=true)
      */
     protected $currency;
 
@@ -160,7 +160,9 @@ class QuoteProductItem
      */
     public function postLoad()
     {
-        $this->price = Price::create($this->value, $this->currency);
+        if (null !== $this->value && null !==  $this->currency) {
+            $this->price = Price::create($this->value, $this->currency);
+        }
         if (null !== $this->requestedValue && null !==  $this->requestedCurrency) {
             $this->requestedPrice = Price::create($this->requestedValue, $this->requestedCurrency);
         }
@@ -172,8 +174,8 @@ class QuoteProductItem
      */
     public function updatePrice()
     {
-        $this->value = $this->price->getValue();
-        $this->currency = $this->price->getCurrency();
+        $this->value = $this->price ? $this->price->getValue() : null;
+        $this->currency = $this->price ? $this->price->getCurrency() : null;
     }
 
     /**
@@ -359,13 +361,13 @@ class QuoteProductItem
     }
 
     /**
-     * Get quantity
+     * Get requestedQuantity
      *
      * @return float
      */
     public function getRequestedQuantity()
     {
-        return $this->quantity;
+        return $this->requestedQuantity;
     }
 
     /**

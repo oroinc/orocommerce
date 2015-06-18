@@ -52,6 +52,8 @@ orob2b:
                 not_available: 'Not Available'
 
             product_unit.removed: '{title} - removed'
+            product_unit.empty: 'Choose Unit...'
+            requested_product_unit.removed: '{title} - removed'
             requested_product_unit.empty: 'Choose Unit...'
 
         controller:

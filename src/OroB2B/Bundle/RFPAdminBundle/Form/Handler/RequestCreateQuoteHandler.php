@@ -76,7 +76,8 @@ class RequestCreateQuoteHandler
      * @param en\Request $entity
      * @return int
      */
-    protected function onSuccess(en\Request $entity) {
+    protected function onSuccess(en\Request $entity)
+    {
         $quote = new Quote();
         $quote
             ->setRequest($entity)
@@ -92,6 +93,7 @@ class RequestCreateQuoteHandler
                     ->setRequestedQuantity($requestProductItem->getQuantity())
                     ->setRequestedPrice($requestProductItem->getPrice())
                     ->setRequestedProductUnit($requestProductItem->getProductUnit())
+                    ->setRequestProductItem($requestProductItem)
                 ;
                 $quoteProduct->addQuoteProductItem($quoteProductItem);
             }

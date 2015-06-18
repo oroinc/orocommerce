@@ -83,6 +83,7 @@ orob2b.rfpadmin:
         delete: 'Delete'
         restore: 'Restore'
         change_status: 'Change Status'
+        create_quote: 'Create Quote'
 
     widget:
         change_status_title: 'Change Request For Proposal Status'
