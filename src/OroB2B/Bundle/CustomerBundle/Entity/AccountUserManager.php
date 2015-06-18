@@ -44,16 +44,20 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function confirmRegistration(AccountUser $user)
     {
-        $user->setEnabled(true);
-        $this->sendWelcomeEmail($user);
+        $user->setConfirmed(true);
+        $this->sendWelcomeEmail($user, false);
     }
 
     /**
      * @param AccountUser $user
+     * @param bool $sendPassword
      */
-    public function sendWelcomeEmail(AccountUser $user)
+    public function sendWelcomeEmail(AccountUser $user, $sendPassword = true)
     {
-        $this->getEmailProcessor()->sendWelcomeNotification($user, $user->getPlainPassword());
+        $this->getEmailProcessor()->sendWelcomeNotification(
+            $user,
+            $sendPassword ? $user->getPlainPassword() : null
+        );
     }
 
     /**
@@ -61,7 +65,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     protected function sendConfirmationEmail(AccountUser $user)
     {
-        $user->setEnabled(false);
+        $user->setConfirmed(false);
         $user->setConfirmationToken($user->generateToken());
         $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
     }

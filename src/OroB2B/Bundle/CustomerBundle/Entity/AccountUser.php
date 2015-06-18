@@ -88,6 +88,13 @@ class AccountUser extends AbstractUser implements FullNameInterface
     protected $customer;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $confirmed = true;
+
+    /**
      * @var string
      *
      * @ORM\Column(type="string", length=255, unique=true)
@@ -161,6 +168,40 @@ class AccountUser extends AbstractUser implements FullNameInterface
     protected $updatedAt;
 
     /**
+     * {@inheritdoc}
+     */
+    public function serialize()
+    {
+        return serialize(
+            [
+                $this->password,
+                $this->salt,
+                $this->username,
+                $this->enabled,
+                $this->confirmed,
+                $this->confirmationToken,
+                $this->id
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->password,
+            $this->salt,
+            $this->username,
+            $this->enabled,
+            $this->confirmed,
+            $this->confirmationToken,
+            $this->id
+            ) = unserialize($serialized);
+    }
+
+    /**
      * @return Customer
      */
     public function getCustomer()
@@ -188,6 +229,34 @@ class AccountUser extends AbstractUser implements FullNameInterface
             $this->customer = new Customer();
             $this->customer->setName(sprintf('%s %s', $this->firstName, $this->lastName));
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isAccountNonLocked()
+    {
+        return $this->isEnabled() && $this->isConfirmed();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isConfirmed()
+    {
+        return $this->confirmed;
+    }
+
+    /**
+     * @param bool $confirmed
+     *
+     * @return AbstractUser
+     */
+    public function setConfirmed($confirmed)
+    {
+        $this->confirmed = (bool)$confirmed;
+
+        return $this;
     }
 
     /**

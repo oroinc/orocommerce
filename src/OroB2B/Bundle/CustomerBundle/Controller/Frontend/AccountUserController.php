@@ -63,7 +63,7 @@ class AccountUserController extends Controller
             $this->get('orob2b_account_user.manager')
         );
 
-        $message = $this->get('oro_config.global')->get('oro_b2b_customer.confirmation_required')
+        $message = $this->get('oro_config.manager')->get('oro_b2b_customer.confirmation_required')
             ? 'orob2b.customer.controller.accountuser.required_confirmation.message'
             : 'orob2b.customer.controller.accountuser.registered.message';
 
@@ -100,21 +100,23 @@ class AccountUserController extends Controller
                 ]
             );
 
-        if ($accountUser && !$accountUser->isEnabled()) {
-            $this->get('orob2b_account_user.manager')->confirmRegistration($accountUser);
+        $messageType = 'error';
+        $message = 'orob2b.customer.controller.accountuser.confirmation_error.message';
 
-            $manager->flush();
+        if ($accountUser) {
+            $messageType = 'success';
+            $message = 'orob2b.customer.controller.accountuser.already_confirmed.message';
 
-            $this->get('session')->getFlashBag()->add(
-                'success',
-                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmed.message')
-            );
-        } elseif (!$accountUser) {
-            $this->get('session')->getFlashBag()->add(
-                'error',
-                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmation_error.message')
-            );
+            if (!$accountUser->isConfirmed()) {
+                $userManager = $this->get('orob2b_account_user.manager');
+                $userManager->confirmRegistration($accountUser);
+                $userManager->updateUser($accountUser);
+
+                $message = 'orob2b.customer.controller.accountuser.confirmed.message';
+            }
         }
+
+        $this->get('session')->getFlashBag()->add($messageType, $message);
 
         return $this->redirect($this->generateUrl('orob2b_customer_account_user_security_login'));
     }

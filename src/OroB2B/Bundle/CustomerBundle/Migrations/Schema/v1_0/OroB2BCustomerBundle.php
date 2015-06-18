@@ -53,6 +53,7 @@ class OroB2BCustomerBundle implements Migration
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('birthday', 'date', ['notnull' => false]);
         $table->addColumn('enabled', 'boolean', []);
+        $table->addColumn('confirmed', 'boolean', []);
         $table->addColumn('salt', 'string', ['length' => 255]);
         $table->addColumn('password', 'string', ['length' => 255]);
         $table->addColumn('confirmation_token', 'string', ['notnull' => false, 'length' => 255]);

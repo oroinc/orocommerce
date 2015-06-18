@@ -83,16 +83,46 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
         $password = 'test';
 
         $user = new AccountUser();
-        $user->setEnabled(false);
+        $user->setConfirmed(false);
         $user->setPlainPassword($password);
 
         $this->emailProcessor->expects($this->once())
             ->method('sendWelcomeNotification')
-            ->with($user, $password);
+            ->with($user, false);
 
         $this->userManager->confirmRegistration($user);
 
-        $this->assertTrue($user->isEnabled());
+        $this->assertTrue($user->isConfirmed());
+    }
+
+    /**
+     * @dataProvider welcomeEmailDataProvider
+     *
+     * @param bool $sendPassword
+     */
+    public function testSendWelcomeEmail($sendPassword)
+    {
+        $password = 'test';
+
+        $user = new AccountUser();
+        $user->setPlainPassword($password);
+
+        $this->emailProcessor->expects($this->once())
+            ->method('sendWelcomeNotification')
+            ->with($user, $sendPassword ? $password : null);
+
+        $this->userManager->sendWelcomeEmail($user, $sendPassword);
+    }
+
+    /**
+     * @return array
+     */
+    public function welcomeEmailDataProvider()
+    {
+        return [
+            ['sendPassword' => true],
+            ['sendPassword' => false]
+        ];
     }
 
     public function testGeneratePassword()
@@ -131,20 +161,20 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
         $password = 'test';
 
         $user = new AccountUser();
-        $user->setEnabled(false);
+        $user->setConfirmed(false);
         $user->setPlainPassword($password);
 
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_b2b_customer.confirmation_required')
-            ->will($this->returnValue(false));
+            ->willReturn(false);
 
         $this->emailProcessor->expects($this->once())
             ->method('sendWelcomeNotification')
-            ->with($user, $password);
+            ->with($user, null);
 
         $this->userManager->register($user);
 
-        $this->assertTrue($user->isEnabled());
+        $this->assertTrue($user->isConfirmed());
     }
 }

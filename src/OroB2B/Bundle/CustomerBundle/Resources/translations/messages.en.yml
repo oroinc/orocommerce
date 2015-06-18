@@ -107,6 +107,7 @@ orob2b.customer:
             registered.message: 'Registration successful'
             required_confirmation.message: 'Registration successful. Please check your email to activate your account'
             confirmed.message: 'Confirmation successful, please login'
+            already_confirmed.message: 'Account already confirmed, please login'
             confirmation_error.message: 'Incorrect confirmation token'
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
