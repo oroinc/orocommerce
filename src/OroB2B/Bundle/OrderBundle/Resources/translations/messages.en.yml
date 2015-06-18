@@ -1,0 +1,26 @@
+orob2b:
+    order:
+        entity_label: Order
+        entity_plural_label: Orders
+        entity_description: Represents order information
+        id.label: Numeric ID
+        identifier.label: ID
+        owner.label: Owner
+        organization.label: Organization
+
+        menu:
+            sales_tab.label: Sales
+            orders_list.description: List of existing orders
+            shortcut_new_order.label: Create new order
+            shortcut_new_order.description: Create new order item
+            shortcut_orders_list.description: Show list of existing orders
+
+        widgets:
+            order_information: Order Information
+
+        controller:
+            order.saved.message: Order has been saved
+
+        sections:
+            general: General
+            additional: Additional
