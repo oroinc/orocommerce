@@ -91,6 +91,10 @@ class FrontendAccountUserHandlerTest extends FormHandlerTestCase
             ->method('updateUser')
             ->with($this->entity);
 
+        $this->userManager->expects($this->once())
+            ->method('reloadUser')
+            ->with($this->entity);
+
         $this->assertTrue($this->handler->process($this->entity));
     }
 
@@ -118,6 +122,10 @@ class FrontendAccountUserHandlerTest extends FormHandlerTestCase
 
         $this->userManager->expects($this->once())
             ->method('updateUser')
+            ->with($this->entity);
+
+        $this->userManager->expects($this->once())
+            ->method('reloadUser')
             ->with($this->entity);
 
         $this->assertTrue($this->handler->process($this->entity));

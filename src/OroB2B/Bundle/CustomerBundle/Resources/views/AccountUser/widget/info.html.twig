@@ -5,8 +5,17 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
+            {% if  entity.namePrefix is defined %}
+                {{ UI.renderProperty('orob2b.customer.accountuser.name_prefix.label'|trans, entity.namePrefix) }}
+            {% endif %}
             {{ UI.renderProperty('orob2b.customer.accountuser.first_name.label'|trans, entity.firstName) }}
+            {% if  entity.middleName is defined %}
+                {{ UI.renderProperty('orob2b.customer.accountuser.middle_name.label'|trans, entity.middleName) }}
+            {% endif %}
             {{ UI.renderProperty('orob2b.customer.accountuser.last_name.label'|trans, entity.lastName) }}
+            {% if  entity.nameSuffix is defined %}
+                {{ UI.renderProperty('orob2b.customer.accountuser.name_suffix.label'|trans, entity.nameSuffix) }}
+            {% endif %}
 
             {% set birthday_string %}
                 {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}

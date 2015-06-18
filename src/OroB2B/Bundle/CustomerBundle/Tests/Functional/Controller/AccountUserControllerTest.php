@@ -2,18 +2,27 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
+use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class AccountUserControllerTest extends WebTestCase
 {
+    const NAME_PREFIX = 'NamePrefix';
+    const MIDDLE_NAME = 'MiddleName';
+    const NAME_SUFFIX = 'NameSuffix';
+
+    const UPDATED_NAME_PREFIX = 'UNamePrefix';
     const UPDATED_FIRST_NAME = 'UFirstName';
+    const UPDATED_MIDDLE_NAME = 'UMiddleName';
     const UPDATED_LAST_NAME = 'UpdLastName';
+    const UPDATED_NAME_SUFFIX = 'UNameSuffix';
     const UPDATED_EMAIL = 'updated@example.com';
 
     /**
@@ -22,28 +31,57 @@ class AccountUserControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+            ]
+        );
     }
 
     /**
      * @dataProvider createDataProvider
+     * @param string $email
+     * @param string $password
+     * @param bool $isPasswordGenerate
+     * @param bool $isSendEmail
+     * @param int $emailsCount
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_account_user_create'));
 
+        /** @var \OroB2B\Bundle\CustomerBundle\Entity\Customer $customer */
+        $customer = $this->getCustomerRepository()->findOneBy([]);
+
+        /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole $role */
+        $role = $this->getUserRoleRepository()->findOneBy([]);
+
+        $this->assertNotNull($customer);
+        $this->assertNotNull($role);
+
         $form = $crawler->selectButton('Save and Close')->form();
+        $form['orob2b_customer_account_user[enabled]']               = true;
+        $form['orob2b_customer_account_user[namePrefix]']            = self::NAME_PREFIX;
         $form['orob2b_customer_account_user[firstName]']             = LoadAccountUserData::FIRST_NAME;
+        $form['orob2b_customer_account_user[middleName]']            = self::MIDDLE_NAME;
         $form['orob2b_customer_account_user[lastName]']              = LoadAccountUserData::LAST_NAME;
+        $form['orob2b_customer_account_user[nameSuffix]']            = self::NAME_SUFFIX;
         $form['orob2b_customer_account_user[email]']                 = $email;
+        $form['orob2b_customer_account_user[birthday]']              = date('Y-m-d');
         $form['orob2b_customer_account_user[plainPassword][first]']  = $password;
         $form['orob2b_customer_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_customer_account_user[enabled]']               = true;
+        $form['orob2b_customer_account_user[customer]']              = $customer->getId();
         $form['orob2b_customer_account_user[passwordGenerate]']      = $isPasswordGenerate;
         $form['orob2b_customer_account_user[sendEmail]']             = $isSendEmail;
+        $form['orob2b_customer_account_user[roles]']                 = [$role->getId()];
 
         $this->client->submit($form);
 
-        $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
+        /** @var MessageDataCollector $collector */
+        $collector = $this->client->getProfile()->getCollector('swiftmailer');
+        $collectedMessages = $collector->getMessages();
 
         $this->assertCount($emailsCount, $collectedMessages);
 
@@ -128,6 +166,22 @@ class AccountUserControllerTest extends WebTestCase
     }
 
     /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    protected function getUserRoleRepository()
+    {
+        return $this->getObjectManager()->getRepository('OroB2BCustomerBundle:AccountUserRole');
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectRepository
+     */
+    protected function getCustomerRepository()
+    {
+        return $this->getObjectManager()->getRepository('OroB2BCustomerBundle:Customer');
+    }
+
+    /**
      * @depends testCreate
      */
     public function testIndex()
@@ -164,9 +218,13 @@ class AccountUserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_account_user_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_customer_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
-        $form['orob2b_customer_account_user[lastName]']  = self::UPDATED_LAST_NAME;
-        $form['orob2b_customer_account_user[email]']     = self::UPDATED_EMAIL;
+        $form['orob2b_customer_account_user[enabled]']    = false;
+        $form['orob2b_customer_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
+        $form['orob2b_customer_account_user[firstName]']  = self::UPDATED_FIRST_NAME;
+        $form['orob2b_customer_account_user[middleName]'] = self::UPDATED_MIDDLE_NAME;
+        $form['orob2b_customer_account_user[lastName]']   = self::UPDATED_LAST_NAME;
+        $form['orob2b_customer_account_user[nameSuffix]'] = self::UPDATED_NAME_SUFFIX;
+        $form['orob2b_customer_account_user[email]']      = self::UPDATED_EMAIL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -210,11 +268,22 @@ class AccountUserControllerTest extends WebTestCase
             ['_widgetContainer' => 'dialog']
         );
 
+        /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUser $user */
+        $user = $this->getUserRepository()->find($id);
+        $this->assertNotNull($user);
+
+        /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole $role */
+        $roles = $user->getRoles();
+        $role = reset($roles);
+        $this->assertNotNull($role);
+
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(self::UPDATED_FIRST_NAME, $result->getContent());
         $this->assertContains(self::UPDATED_LAST_NAME, $result->getContent());
         $this->assertContains(self::UPDATED_EMAIL, $result->getContent());
+        $this->assertContains($user->getCustomer()->getName(), $result->getContent());
+        $this->assertContains($role->getLabel(), $result->getContent());
     }
 }

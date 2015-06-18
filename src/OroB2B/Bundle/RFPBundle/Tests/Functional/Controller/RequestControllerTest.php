@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
+use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
+
 use OroB2B\Bundle\FrontendBundle\Test\WebTestCase;
 
 /**
@@ -41,7 +43,7 @@ class RequestControllerTest extends WebTestCase
         // Test if form was successfully submitted
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
 
-        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form(array(
+        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form([
             'orob2b_rfp_request_type[firstName]' => self::REQUEST_FIRST_NAME,
             'orob2b_rfp_request_type[lastName]'  => self::REQUEST_LAST_NAME,
             'orob2b_rfp_request_type[email]'     => self::REQUEST_EMAIL,
@@ -49,13 +51,14 @@ class RequestControllerTest extends WebTestCase
             'orob2b_rfp_request_type[company]'   => self::REQUEST_COMPANY,
             'orob2b_rfp_request_type[role]'      => self::REQUEST_ROLE,
             'orob2b_rfp_request_type[body]'      => self::REQUEST_BODY,
-        ));
+        ]);
 
         $this->client->submit($form);
 
         // Collect messages for future needs
-        /** @var array $collectedMessages */
-        $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
+        /** @var MessageDataCollector $collector */
+        $collector = $this->client->getProfile()->getCollector('swiftmailer');
+        $collectedMessages = $collector->getMessages();
 
         $crawler = $this->client->followRedirect();
 
@@ -121,7 +124,7 @@ class RequestControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
 
-        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form(array(
+        $form = $crawler->selectButton(self::REQUEST_SUBMIT_BTN)->form([
             'orob2b_rfp_request_type[firstName]' => self::REQUEST_FIRST_NAME,
             'orob2b_rfp_request_type[lastName]'  => self::REQUEST_LAST_NAME,
             'orob2b_rfp_request_type[email]'     => self::REQUEST_INVALID_EMAIL,
@@ -129,7 +132,7 @@ class RequestControllerTest extends WebTestCase
             'orob2b_rfp_request_type[company]'   => self::REQUEST_COMPANY,
             'orob2b_rfp_request_type[role]'      => self::REQUEST_ROLE,
             'orob2b_rfp_request_type[body]'      => self::REQUEST_BODY,
-        ));
+        ]);
 
         $this->client->submit($form);
 
