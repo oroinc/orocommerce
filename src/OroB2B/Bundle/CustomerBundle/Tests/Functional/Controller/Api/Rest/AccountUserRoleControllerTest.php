@@ -28,7 +28,8 @@ class AccountUserRoleControllerTest extends WebTestCase
     public function testDelete()
     {
         /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole $userRole */
-        $userRole = $this->getUserRoleRepository()->findOneBy(['label' => LoadAccountUserRoleData::LABEL]);
+        $userRole = $this->getUserRoleRepository()
+            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE]);
 
         $this->assertNotNull($userRole);
 
