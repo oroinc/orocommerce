@@ -47,9 +47,12 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
         /** @var AccountUser $entity */
         $entity = $userManager->createUser();
 
-        $role = $manager
+        $website = $this->container->get('orob2b_website.manager')->getCurrentWebsite();
+        $role = $this->container
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
             ->getRepository('OroB2BCustomerBundle:AccountUserRole')
-            ->findOneBy(['role' => $entity->getDefaultRole()]);
+            ->getDefaultAccountUserRoleByWebsite($website);
 
         $entity
             ->setFirstName('AccountUser')
