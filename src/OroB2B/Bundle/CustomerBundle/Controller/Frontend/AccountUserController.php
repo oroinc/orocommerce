@@ -113,4 +113,24 @@ class AccountUserController extends Controller
             $handler
         );
     }
+
+    /**
+     * @Route("/confirm/request", name="orob2b_customer_frontend_account_user_profile_confirm_request")
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend:confirm.html.twig")
+     * @return array
+     */
+    public function passwordRequestAction()
+    {
+        $form = $this->createForm();
+    }
+
+    /**
+     * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend:view.html.twig")
+     * @return array
+     */
+    public function cjangePasswordAction($token)
+    {
+
+    }
 }
