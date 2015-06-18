@@ -41,6 +41,8 @@ class LoadAccountUserData extends AbstractFixture
                 ->setEnabled($user['enabled'])
                 ->setPassword($user['password']);
 
+            $this->setReference($entity->getEmail(), $entity);
+
             $manager->persist($entity);
         }
 

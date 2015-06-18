@@ -18,6 +18,10 @@ parameters:
     orob2b_customer.account_user_menu.builder.class: OroB2B\Bundle\CustomerBundle\Menu\AccountUserMenuBuilder
     orob2b_customer.placeholder.filter.class:  OroB2B\Bundle\CustomerBundle\Placeholder\PlaceholderFilter
 
+    orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
+
+    orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
+
 services:
     orob2b_customer.customer_tree_handler:
         class: %orob2b_customer.customer_tree_handler.class%
@@ -124,3 +128,17 @@ services:
         class: %orob2b_customer.placeholder.filter.class%
         arguments:
             - @oro_security.security_facade
+
+    orob2b_customer.event_listener.datagrid:
+        class: %orob2b_customer.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.websites-grid, method: onBuildBeforeWebsites }
+
+    orob2b_customer.acl.voter.account_user_role:
+        class: %orob2b_customer.acl.voter.account_user_role.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
+        tags:
+            - { name: security.voter, priority: 10 }

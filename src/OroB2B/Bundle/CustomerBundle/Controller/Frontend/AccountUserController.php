@@ -48,7 +48,7 @@ class AccountUserController extends Controller
         $defaultRole = $this->getDoctrine()
             ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
             ->getRepository('OroB2BCustomerBundle:AccountUserRole')
-            ->findOneBy(['role' => $accountUser->getDefaultRole()]);
+            ->getDefaultAccountUserRoleByWebsite($website);
 
         if (!$defaultRole) {
             throw new \RuntimeException(sprintf('Role "%s" was not found', $accountUser->getDefaultRole()));
