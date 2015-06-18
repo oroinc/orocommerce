@@ -89,9 +89,9 @@ class RequestCreateQuoteHandler
                 $quoteProductItem = new QuoteProductItem();
                 $quoteProductItem
                     ->setStatus(QuoteProductItem::STATUS_REQUESTED)
-                    ->setQuantity($requestProductItem->getQuantity())
-                    ->setPrice($requestProductItem->getPrice())
-                    ->setProductUnit($requestProductItem->getProductUnit())
+                    ->setRequestedQuantity($requestProductItem->getQuantity())
+                    ->setRequestedPrice($requestProductItem->getPrice())
+                    ->setRequestedProductUnit($requestProductItem->getProductUnit())
                 ;
                 $quoteProduct->addQuoteProductItem($quoteProductItem);
             }
