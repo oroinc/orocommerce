@@ -32,6 +32,13 @@ orob2b_customer_user_security:
     options:
         frontend: true
 
+orob2b_customer_user_password_reset:
+    resource: "@OroB2BCustomerBundle/Controller/Frontend/ResetController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
 orob2b_customer_bundle_api:
     resource:     "@OroB2BCustomerBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/

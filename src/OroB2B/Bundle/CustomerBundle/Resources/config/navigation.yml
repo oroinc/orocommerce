@@ -134,3 +134,10 @@ oro_titles:
 
     orob2b_customer_frontend_account_user_profile: '%%username%%'
     orob2b_customer_frontend_account_user_profile_update: orob2b.customer.accountuser.profile.edit
+
+    orob2b_customer_account_user_security_login: orob2b.customer.accountuser.profile.login
+    orob2b_customer_frontend_account_user_register: orob2b.customer.accountuser.profile.registration.title
+    orob2b_customer_account_user_reset_request: orob2b.customer.accountuser.profile.forgot_password
+    orob2b_customer_account_user_reset_check_email: orob2b.customer.accountuser.profile.check_email.title
+    orob2b_customer_account_user_password_reset: orob2b.customer.accountuser.profile.reset_password.title
+

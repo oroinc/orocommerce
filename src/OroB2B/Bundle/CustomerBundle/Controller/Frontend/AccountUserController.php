@@ -56,19 +56,22 @@ class AccountUserController extends Controller
             ->setOrganization($websiteOrganization)
             ->addRole($defaultRole);
 
+        $userManager = $this->get('orob2b_account_user.manager');
         $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler(
-            $form,
-            $this->getRequest(),
-            $this->get('orob2b_account_user.manager')
-        );
+        $handler = new FrontendAccountUserHandler($form, $this->getRequest(), $userManager);
+
+        if ($userManager->isConfirmationRequired()) {
+            $registrationMessage = 'orob2b.customer.controller.accountuser.registered_with_confirmation.message';
+        } else {
+            $registrationMessage = 'orob2b.customer.controller.accountuser.registered.message';
+        }
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_customer_account_user_security_login'],
             ['route' => 'orob2b_customer_account_user_security_login'],
-            $this->get('translator')->trans('orob2b.customer.controller.accountuser.registered.message'),
+            $this->get('translator')->trans($registrationMessage),
             $handler
         );
     }

@@ -67,6 +67,14 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     }
 
     /**
+     * @param AccountUser $user
+     */
+    public function sendResetPasswordEmail(AccountUser $user)
+    {
+        $this->getEmailProcessor()->sendResetPasswordEmail($user);
+    }
+
+    /**
      * @param int $maxLength
      * @return string
      */
@@ -119,7 +127,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     /**
      * @return bool
      */
-    protected function isConfirmationRequired()
+    public function isConfirmationRequired()
     {
         return (bool)$this->getConfigValue('oro_b2b_customer.confirmation_required');
     }

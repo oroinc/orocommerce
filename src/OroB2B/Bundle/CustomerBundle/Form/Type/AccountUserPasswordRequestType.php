@@ -7,9 +7,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class AccountUserEmailConfirmationType extends AbstractType
+class AccountUserPasswordRequestType extends AbstractType
 {
-    const NAME = 'orob2b_customer_account_user_email_confirmation';
+    const NAME = 'orob2b_customer_account_user_password_request';
 
     /**
      * {@inheritdoc}

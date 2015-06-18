@@ -53,11 +53,26 @@ orob2b.customer:
         has_role.label:              'Has role'
 
         profile:
+            registration.title: Registration
             register: Register
+            forgot_password: Forgot Your Password
+            reset_password:
+                title: Reset Password
+                label: Reset
+            remember_me: Remember Me on This Computer
+            login: Login
+            return_to_login: Return to Login
+            password_reseted.message: Password was successfully set
+            request_password.label: Request
+            email_not_exists: Email address "%email%" is not known
+            check_email:
+                title: Check Email
+                message: An email has been sent to %email%. It contains a link you must click to reset your password.
             edit: Edit Profile
             label: 'Profile'
             enabled.label: 'Active'
             disabled.label: 'Inactive'
+            password.reset.ttl_already_requested.message: The password for this user has already been requested within the last 24 hours
 
     accountuserrole:
         entity_label:                    'Account User Role'
@@ -105,6 +120,7 @@ orob2b.customer:
             saved.message: 'Customer group has been saved'
         accountuser:
             registered.message: 'Registration successful'
+            registered_with_confirmation.message: 'Please check your email to complete registration'
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'

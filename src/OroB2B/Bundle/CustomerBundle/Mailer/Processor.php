@@ -8,7 +8,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
 class Processor extends BaseProcessor
 {
-    const WELCOME_EMAIL_TEMPLATE_NAME = 'welcome_email';
+    const WELCOME_EMAIL_TEMPLATE_NAME = 'account_user_welcome_email';
+    const RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'account_user_reset_password';
 
     /**
      * @param AccountUser $accountUser
@@ -32,5 +33,18 @@ class Processor extends BaseProcessor
      */
     public function sendConfirmationEmail(AccountUser $accountUser, $confirmationToken)
     {
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return int
+     */
+    public function sendResetPasswordEmail(AccountUser $accountUser)
+    {
+        return $this->getEmailTemplateAndSendEmail(
+            $accountUser,
+            static::RESET_PASSWORD_EMAIL_TEMPLATE_NAME,
+            ['entity' => $accountUser]
+        );
     }
 }

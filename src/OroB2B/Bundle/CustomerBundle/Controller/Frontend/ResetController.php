@@ -7,13 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-
-use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
-use OroB2B\Bundle\CustomerBundle\Mailer\Processor;
+use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType;
+use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordRequestHandler;
+use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler;
 
 class ResetController extends Controller
 {
@@ -21,60 +21,23 @@ class ResetController extends Controller
 
     /**
      * @Route("/reset-request", name="orob2b_customer_account_user_reset_request")
-     * @Method({"GET"})
-     * @Template
+     * @Method({"GET", "POST"})
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend/Password:request.html.twig")
      */
     public function requestAction()
     {
-        return [];
-    }
+        /** @var AccountUserPasswordRequestHandler $handler */
+        $handler = $this->get('orob2b_customer.account_user.password_request.handler');
+        $form = $this->createForm(AccountUserPasswordRequestType::NAME);
 
-    /**
-     * Request reset user password
-     *
-     * @Route("/send-email", name="orob2b_customer_account_user_reset_send_email")
-     * @Method({"POST"})
-     */
-    public function sendEmailAction()
-    {
-        $userManager = $this->getUserManager();
-        $email = $this->getRequest()->request->get('email');
-        /** @var AccountUser $user */
-        $user = $userManager->findUserByUsernameOrEmail($email);
-
-        if (null === $user) {
-            return $this->render(
-                'OroB2BCustomerBundle:AccountUser/Frontend/Password:request.html.twig',
-                ['invalid_email' => $email]
-            );
+        if ($user = $handler->process($form, $this->getRequest())) {
+            $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
+            return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_check_email'));
         }
 
-        $ttl = $this->container->getParameter('orob2b_customer.account_user.reset.ttl');
-        if ($user->isPasswordRequestNonExpired($ttl)) {
-            $this->get('session')->getFlashBag()->add(
-                'warn',
-                'orob2b.customer.accountuser.password.reset.ttl_already_requested.message'
-            );
-
-            return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_request'));
-        }
-
-        if (null === $user->getConfirmationToken()) {
-            $user->setConfirmationToken($user->generateToken());
-        }
-
-        $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
-        try {
-            $this->getEmailProcessor()->sendResetPasswordEmail($user);
-        } catch (\Exception $e) {
-            $this->get('session')->getFlashBag()->add('warn', 'oro.email.handler.unable_to_send_email');
-
-            return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_request'));
-        }
-        $user->setPasswordRequestedAt(new \DateTime('now', new \DateTimeZone('UTC')));
-        $userManager->updateUser($user);
-
-        return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_check_email'));
+        return [
+            'form' => $form->createView()
+        ];
     }
 
     /**
@@ -82,13 +45,12 @@ class ResetController extends Controller
      *
      * @Route("/check-email", name="orob2b_customer_account_user_reset_check_email")
      * @Method({"GET"})
-     * @Template
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend/Password:checkEmail.html.twig")
      */
     public function checkEmailAction()
     {
         $session = $this->get('session');
         $email = $session->get(static::SESSION_EMAIL);
-
         $session->remove(static::SESSION_EMAIL);
 
         if (empty($email)) {
@@ -104,9 +66,11 @@ class ResetController extends Controller
     /**
      * Reset user password
      *
-     * @Route("/reset/{token}", name="orob2b_customer_account_user_reset_reset", requirements={"token"="\w+"})
+     * @Route("/reset/{token}", name="orob2b_customer_account_user_password_reset", requirements={"token"="\w+"})
      * @Method({"GET", "POST"})
-     * @Template
+     * @Template("OroB2BCustomerBundle:AccountUser/Frontend/Password:reset.html.twig")
+     * @param string $token
+     * @return array|RedirectResponse
      */
     public function resetAction($token)
     {
@@ -120,66 +84,37 @@ class ResetController extends Controller
             );
         }
 
-        $ttl = $this->container->getParameter('orob2b_customer.account_user.reset.ttl');
+        $ttl = $this->container->getParameter('oro_user.reset.ttl');
         if (!$user->isPasswordRequestNonExpired($ttl)) {
             $session->getFlashBag()->add(
                 'warn',
-                'orob2b.customer.accountuser.password.reset.ttl_already_requested.message'
+                'orob2b.customer.accountuser.profile.password.reset.ttl_already_requested.message'
             );
 
             return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_request'));
         }
 
-        if ($this->get('oro_user.form.handler.reset')->process($user)) {
+        /** @var AccountUserPasswordResetHandler $handler */
+        $handler = $this->get('orob2b_customer.account_user.password_reset.handler');
+        $form = $this->createForm('orob2b_customer_account_user_password_reset', $user);
+
+        if ($handler->process($form, $this->getRequest())) {
             // force user logout
             $session->invalidate();
             $this->get('security.context')->setToken(null);
 
             $session->getFlashBag()->add(
                 'success',
-                'orob2b.customer.accountuser.password.reseted.message'
+                'orob2b.customer.accountuser.profile.password_reseted.message'
             );
 
-            return $this->redirect($this->generateUrl('oro_user_security_login'));
+            return $this->redirect($this->generateUrl('orob2b_customer_account_user_security_login'));
         }
 
         return [
             'token' => $token,
-            'form' => $this->get('oro_user.form.reset')->createView()
+            'form' => $form->createView()
         ];
-    }
-
-    /**
-     * Sets user password
-     *
-     * @AclAncestor("password_management")
-     * @Method({"GET", "POST"})
-     * @Route("/set-password/{id}", name="orob2b_customer_account_user_reset_set_password", requirements={"id"="\d+"})
-     * @Template("OroUserBundle:Reset:update.html.twig")
-     */
-    public function setPasswordAction(AccountUser $entity)
-    {
-        $entityRoutingHelper = $this->getEntityRoutingHelper();
-
-        $formAction = $entityRoutingHelper->generateUrlByRequest(
-            'oro_user_reset_set_password',
-            $this->getRequest(),
-            ['id' => $entity->getId()]
-        );
-
-        $responseData = [
-            'entity' => $entity,
-            'saved' => false
-        ];
-
-        if ($this->get('oro_user.form.handler.set_password')->process($entity)) {
-            $responseData['entity'] = $entity;
-            $responseData['saved'] = true;
-        }
-        $responseData['form'] = $this->get('oro_user.form.type.set_password.form')->createView();
-        $responseData['formAction'] = $formAction;
-
-        return $responseData;
     }
 
     /**
@@ -202,26 +137,10 @@ class ResetController extends Controller
     }
 
     /**
-     * @return EntityRoutingHelper
-     */
-    protected function getEntityRoutingHelper()
-    {
-        return $this->get('oro_entity.routing_helper');
-    }
-
-    /**
      * @return AccountUserManager
      */
     protected function getUserManager()
     {
         return $this->get('orob2b_account_user.manager');
-    }
-
-    /**
-     * @return Processor
-     */
-    protected function getEmailProcessor()
-    {
-        return $this->get('orob2b_customer.mailer.processor');
     }
 }

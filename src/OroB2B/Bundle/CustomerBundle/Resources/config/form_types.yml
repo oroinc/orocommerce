@@ -8,8 +8,11 @@ parameters:
 
     orob2b_customer.form.type.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType
     orob2b_customer.form.type.account_user_role.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType
+
     orob2b_customer.form.type.frontend.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType
     orob2b_customer.form.type.frontend.account_user.register.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType
+    orob2b_customer.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType
+    orob2b_customer.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType
 
 services:
     orob2b_customer.form.type.customer:
@@ -70,3 +73,15 @@ services:
             - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_frontend_account_user_register }
+
+    orob2b_customer.form.type.frontend.account_user.password_request:
+        class: %orob2b_customer.form.type.frontend.account_user.password_request.class%
+        tags:
+            - { name: form.type, alias: orob2b_customer_account_user_password_request }
+
+    orob2b_customer.form.type.frontend.account_user.password_reset:
+        class: %orob2b_customer.form.type.frontend.account_user.password_reset.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_customer_account_user_password_reset }
