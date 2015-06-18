@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
 {
-    public function testEmptyRole()
+    public function testRole()
     {
         $name = 'test role#$%';
-        $role = new AccountUserRole();
+        $role = new AccountUserRole($name);
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
@@ -24,6 +25,33 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
         $this->assertStringStartsWith(AccountUserRole::PREFIX_ROLE . 'TEST_ROLE_', $role->getRole());
 
         $this->assertEquals($name, (string)$role);
+    }
+
+    /**
+     * Test relations between AccountUserRole and Websites
+     */
+    public function testWebsiteRelations()
+    {
+        $accountUserRole = new AccountUserRole();
+        $website = new Website();
+
+        $this->assertInstanceOf(
+            'Doctrine\Common\Collections\ArrayCollection',
+            $accountUserRole->getWebsites()
+        );
+        $this->assertCount(0, $accountUserRole->getWebsites());
+
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole',
+            $accountUserRole->addWebsite($website)
+        );
+        $this->assertCount(1, $accountUserRole->getWebsites());
+
+        $accountUserRole->addWebsite($website);
+        $this->assertCount(1, $accountUserRole->getWebsites());
+
+        $accountUserRole->removeWebsite($website);
+        $this->assertCount(0, $accountUserRole->getWebsites());
     }
 
     public function testNotEmptyRole()

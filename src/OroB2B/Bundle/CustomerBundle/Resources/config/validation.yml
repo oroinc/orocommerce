@@ -42,7 +42,6 @@ OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
             - Count:
                 min: 1
                 minMessage: "You must select at least {{ limit }} role"
-                groups: [Roles]
         birthday:
             - Date: ~
         organization:

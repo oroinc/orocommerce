@@ -2,14 +2,18 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository")
  * @ORM\Table(name="orob2b_account_user_role")
  * @Config(
  *      defaultValues={
@@ -61,6 +65,22 @@ class AccountUserRole extends AbstractRole
     protected $label;
 
     /**
+     * @var Website[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinTable(
+     *      name="orob2b_account_role_to_website",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $websites;
+
+    /**
      * @param string|null $role
      */
     public function __construct($role = null)
@@ -68,6 +88,8 @@ class AccountUserRole extends AbstractRole
         if ($role) {
             $this->role = $role;
         }
+
+        $this->websites = new ArrayCollection();
     }
 
     /**
@@ -111,5 +133,39 @@ class AccountUserRole extends AbstractRole
     public function getPrefix()
     {
         return static::PREFIX_ROLE;
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function addWebsite(Website $website)
+    {
+        if (!$this->websites->contains($website)) {
+            $this->websites->add($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Website $website
+     * @return $this
+     */
+    public function removeWebsite(Website $website)
+    {
+        if ($this->websites->contains($website)) {
+            $this->websites->removeElement($website);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Website[]
+     */
+    public function getWebsites()
+    {
+        return $this->websites;
     }
 }
