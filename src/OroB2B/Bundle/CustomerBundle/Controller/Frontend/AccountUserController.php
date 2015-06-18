@@ -51,7 +51,7 @@ class AccountUserController extends Controller
             ->getDefaultAccountUserRoleByWebsite($website);
 
         if (!$defaultRole) {
-            throw new \RuntimeException(sprintf('Role "%s" was not found', $accountUser->getDefaultRole()));
+            throw new \RuntimeException(sprintf('Role "%s" was not found', AccountUser::ROLE_DEFAULT));
         }
 
         $accountUser
