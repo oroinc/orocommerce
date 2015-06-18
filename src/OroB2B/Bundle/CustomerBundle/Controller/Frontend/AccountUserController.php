@@ -24,12 +24,6 @@ class AccountUserController extends Controller
      *
      * @Route("/register", name="orob2b_customer_frontend_account_user_register")
      * @Template("OroB2BCustomerBundle:AccountUser/Frontend:register.html.twig")
-     * @Acl(
-     *      id="orob2b_customer_frontend_account_user_register",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="VIEW"
-     * )
      *
      * @return array|RedirectResponse
      */
