@@ -28,15 +28,6 @@ class LoadWebsiteDefaultRoles extends AbstractFixture implements DependentFixtur
      */
     public function load(ObjectManager $manager)
     {
-        $this->setWebsiteDefaultRoles($manager);
-        $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function setWebsiteDefaultRoles(ObjectManager $manager)
-    {
         $websites = $manager->getRepository('OroB2BWebsiteBundle:Website')->findAll();
         $defaultWebsite = $manager->getRepository('OroB2BWebsiteBundle:Website')
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
@@ -51,5 +42,7 @@ class LoadWebsiteDefaultRoles extends AbstractFixture implements DependentFixtur
 
             $manager->persist($role);
         }
+
+        $manager->flush();
     }
 }

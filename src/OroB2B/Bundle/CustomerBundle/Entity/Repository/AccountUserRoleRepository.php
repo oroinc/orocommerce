@@ -35,8 +35,8 @@ class AccountUserRoleRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('accountUserRole');
         $findResult = $qb
-            ->innerJoin('accountUserRole.websites', 'website')
             ->select('accountUserRole.id')
+            ->innerJoin('accountUserRole.websites', 'website')
             ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
             ->setParameter('accountUserRole', $role)
             ->setMaxResults(1)
@@ -54,11 +54,11 @@ class AccountUserRoleRepository extends EntityRepository
      */
     public function hasAssignedUsers(AccountUserRole $role)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
-            ->select('accountUser.id')
+            ->select('IDENTITY(accountUser)')
             ->from('OroB2BCustomerBundle:AccountUser', 'accountUser')
-            ->join('accountUser.roles', 'accountUserRole')
+            ->innerJoin('accountUser.roles', 'accountUserRole')
             ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
             ->setParameter('accountUserRole', $role)
             ->setMaxResults(1)
