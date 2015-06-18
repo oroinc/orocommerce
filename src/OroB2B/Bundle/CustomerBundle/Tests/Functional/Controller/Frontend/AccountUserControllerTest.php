@@ -13,7 +13,7 @@ class AccountUserControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->markTestSkipped('BB-589');
+        $this->markTestSkipped('Acl for AccountUser');
 
         $this->initClient(
             [],
