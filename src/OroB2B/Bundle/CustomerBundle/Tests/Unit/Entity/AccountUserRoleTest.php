@@ -6,10 +6,10 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
 {
-    public function testRole()
+    public function testEmptyRole()
     {
         $name = 'test role#$%';
-        $role = new AccountUserRole($name);
+        $role = new AccountUserRole();
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
@@ -24,5 +24,12 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
         $this->assertStringStartsWith(AccountUserRole::PREFIX_ROLE . 'TEST_ROLE_', $role->getRole());
 
         $this->assertEquals($name, (string)$role);
+    }
+
+    public function testNotEmptyRole()
+    {
+        $name = 'another test role';
+        $role = new AccountUserRole($name);
+        $this->assertEquals($name, $role->getRole());
     }
 }

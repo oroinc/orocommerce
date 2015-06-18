@@ -61,10 +61,13 @@ class AccountUserRole extends AbstractRole
     protected $label;
 
     /**
-     * Constructor is empty to override obligatory argument in parent
+     * @param string|null $role
      */
-    public function __construct()
+    public function __construct($role = null)
     {
+        if ($role) {
+            $this->role = $role;
+        }
     }
 
     /**

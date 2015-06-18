@@ -1,0 +1,5 @@
+_frontend:
+    resource:     "@OroB2BFrontendBundle/Controller/FrontendController.php"
+    type:         annotation
+    options:
+        frontend: true
