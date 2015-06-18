@@ -38,7 +38,7 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->offsetSet('orob2b_customer_frontend_account_user[firstName]', 'AccountUserUpdated' );
+        $form->offsetSet('orob2b_customer_frontend_account_user[firstName]', 'AccountUserUpdated');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
