@@ -44,13 +44,13 @@ class FrontendAccountUserHandler
     {
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
-
             if ($this->form->isValid()) {
                 if (!$accountUser->getId()) {
                     $this->userManager->register($accountUser);
                 }
 
                 $this->userManager->updateUser($accountUser);
+                $this->userManager->reloadUser($accountUser);
 
                 return true;
             }
