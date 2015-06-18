@@ -87,9 +87,10 @@ services:
     orob2b_customer.mailer.processor:
         class: %orob2b_customer.mailer.processor.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @doctrine
             - @oro_config.global
             - @oro_email.email_renderer
+            - @oro_email.email_holder_helper
             - @oro_email.direct_mailer
 
     orob2b_account_user.manager:
