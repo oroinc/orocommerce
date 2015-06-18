@@ -185,44 +185,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @return User
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param User $owningUser
-     *
-     * @return $this
-     */
-    public function setOwner(User $owningUser)
-    {
-        $this->owner = $owningUser;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOrganization(OrganizationInterface $organization = null)
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
      * @return string
      */
     public function getNotes()
@@ -258,6 +220,44 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     public function setLabel($label)
     {
         $this->label = $label;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @return User
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User $owningUser
+     *
+     * @return $this
+     */
+    public function setOwner(User $owningUser)
+    {
+        $this->owner = $owningUser;
 
         return $this;
     }
