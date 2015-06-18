@@ -56,7 +56,7 @@ class AccountUserRoleRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
-            ->select('IDENTITY(accountUser)')
+            ->select('accountUser.id')
             ->from('OroB2BCustomerBundle:AccountUser', 'accountUser')
             ->innerJoin('accountUser.roles', 'accountUserRole')
             ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
