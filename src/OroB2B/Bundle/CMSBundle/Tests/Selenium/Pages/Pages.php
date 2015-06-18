@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
  */
 class Pages extends AbstractPage
 {
-    const URL = 'cms/page/';
+    const URL = 'admin/cms/page/';
 
     /** @var string */
     protected $page = '//a[contains(., "%s")]/i';
