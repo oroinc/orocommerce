@@ -65,6 +65,7 @@ orob2b.customer:
         id.label:                        'ID'
         label.label:                     'Label'
         role.label:                      'Role'
+        websites.label:                  'Websites'
 
     action:
         account_user.enable:  'Enable'
