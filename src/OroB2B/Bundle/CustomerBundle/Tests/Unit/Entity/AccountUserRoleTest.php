@@ -10,7 +10,7 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     public function testRole()
     {
         $name = 'test role#$%';
-        $role = new AccountUserRole($name);
+        $role = new AccountUserRole();
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
