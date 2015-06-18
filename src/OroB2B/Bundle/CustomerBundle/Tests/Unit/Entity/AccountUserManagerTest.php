@@ -111,7 +111,12 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
             ->method('sendWelcomeNotification')
             ->with($user, $sendPassword ? $password : null);
 
-        $this->userManager->sendWelcomeEmail($user, $sendPassword);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_b2b_customer.send_password_in_welcome_email')
+            ->willReturn($sendPassword);
+
+        $this->userManager->sendWelcomeEmail($user);
     }
 
     /**
@@ -164,14 +169,18 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
         $user->setConfirmed(false);
         $user->setPlainPassword($password);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects($this->exactly(2))
             ->method('get')
-            ->with('oro_b2b_customer.confirmation_required')
-            ->willReturn(false);
+            ->willReturnMap(
+                [
+                    ['oro_b2b_customer.confirmation_required', false, false, false],
+                    ['oro_b2b_customer.send_password_in_welcome_email', false, false, true]
+                ]
+            );
 
         $this->emailProcessor->expects($this->once())
             ->method('sendWelcomeNotification')
-            ->with($user, null);
+            ->with($user, $password);
 
         $this->userManager->register($user);
 

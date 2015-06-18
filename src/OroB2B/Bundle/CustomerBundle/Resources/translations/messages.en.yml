@@ -127,3 +127,4 @@ orob2b.customer:
         fields:
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
+            send_password_in_welcome_email.label: 'Send plain text password in welcome emails'
