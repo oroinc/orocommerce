@@ -12,6 +12,11 @@ security:
             provider:                       b2b_frontend_user
             anonymous:                      true
 
+        frontend_confirm:
+            pattern:                        ^/account/user/confirm/*
+            provider:                       b2b_frontend_user
+            anonymous:                      true
+
         # TODO: Add firewall rule for frontend user password reset BB-612
 
         frontend:

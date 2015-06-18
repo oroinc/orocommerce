@@ -63,14 +63,60 @@ class AccountUserController extends Controller
             $this->get('orob2b_account_user.manager')
         );
 
+        $message = $this->get('oro_config.global')->get('oro_b2b_customer.confirmation_required')
+            ? 'orob2b.customer.controller.accountuser.required_confirmation.message'
+            : 'orob2b.customer.controller.accountuser.registered.message';
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_customer_account_user_security_login'],
             ['route' => 'orob2b_customer_account_user_security_login'],
-            $this->get('translator')->trans('orob2b.customer.controller.accountuser.registered.message'),
+            $this->get('translator')->trans($message),
             $handler
         );
+    }
+
+    /**
+     * @Route(
+     *      "/confirm/{username}/{token}",
+     *      name="orob2b_customer_frontend_account_user_confirmation",
+     *      requirements={"username"="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", "token"=".+"}
+     * )
+     * @param string $username
+     * @param string $token
+     * @return RedirectResponse
+     */
+    public function confirmAction($username, $token)
+    {
+        $manager = $this->getDoctrine()->getManagerForClass('OroB2BCustomerBundle:AccountUser');
+
+        $accountUser = $manager
+            ->getRepository('OroB2BCustomerBundle:AccountUser')
+            ->findOneBy(
+                [
+                    'username' => $username,
+                    'confirmationToken' => $token
+                ]
+            );
+
+        if ($accountUser && !$accountUser->isEnabled()) {
+            $this->get('orob2b_account_user.manager')->confirmRegistration($accountUser);
+
+            $manager->flush();
+
+            $this->get('session')->getFlashBag()->add(
+                'success',
+                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmed.message')
+            );
+        } elseif (!$accountUser) {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmation_error.message')
+            );
+        }
+
+        return $this->redirect($this->generateUrl('orob2b_customer_account_user_security_login'));
     }
 
     /**

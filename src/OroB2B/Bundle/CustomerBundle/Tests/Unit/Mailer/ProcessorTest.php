@@ -28,7 +28,8 @@ class ProcessorTest extends AbstractProcessorTest
         $this->user = new AccountUser();
         $this->user
             ->setEmail('email_to@example.com')
-            ->setPlainPassword(self::PASSWORD);
+            ->setPlainPassword(self::PASSWORD)
+            ->setConfirmationToken($this->user->generateToken());
 
         $this->mailProcessor = new Processor(
             $this->managerRegistry,
@@ -55,5 +56,16 @@ class ProcessorTest extends AbstractProcessorTest
         );
 
         $this->mailProcessor->sendWelcomeNotification($this->user, self::PASSWORD);
+    }
+
+    public function testSendConfirmationEmail()
+    {
+        $this->assertSendCalled(
+            Processor::CONFIRMATION_EMAIL_TEMPLATE_NAME,
+            ['entity' => $this->user, 'token' => $this->user->getConfirmationToken()],
+            $this->buildMessage($this->user->getEmail())
+        );
+
+        $this->mailProcessor->sendConfirmationEmail($this->user, $this->user->getConfirmationToken());
     }
 }
