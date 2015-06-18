@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
+use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
@@ -40,6 +42,11 @@ class AccountUserControllerTest extends WebTestCase
 
     /**
      * @dataProvider createDataProvider
+     * @param string $email
+     * @param string $password
+     * @param bool $isPasswordGenerate
+     * @param bool $isSendEmail
+     * @param int $emailsCount
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
@@ -72,7 +79,9 @@ class AccountUserControllerTest extends WebTestCase
 
         $this->client->submit($form);
 
-        $collectedMessages = $this->client->getProfile()->getCollector('swiftmailer')->getMessages();
+        /** @var MessageDataCollector $collector */
+        $collector = $this->client->getProfile()->getCollector('swiftmailer');
+        $collectedMessages = $collector->getMessages();
 
         $this->assertCount($emailsCount, $collectedMessages);
 
