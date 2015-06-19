@@ -56,4 +56,15 @@ class ProcessorTest extends AbstractProcessorTest
 
         $this->mailProcessor->sendWelcomeNotification($this->user, self::PASSWORD);
     }
+
+    public function testSendResetPasswordEmail()
+    {
+        $this->assertSendCalled(
+            Processor::RESET_PASSWORD_EMAIL_TEMPLATE_NAME,
+            ['entity' => $this->user],
+            $this->buildMessage($this->user->getEmail())
+        );
+
+        $this->mailProcessor->sendResetPasswordEmail($this->user);
+    }
 }
