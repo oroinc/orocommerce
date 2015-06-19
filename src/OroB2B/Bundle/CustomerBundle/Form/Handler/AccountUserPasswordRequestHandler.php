@@ -56,13 +56,6 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
             $this->addFormError($form, 'orob2b.customer.accountuser.profile.email_not_exists', ['%email%' => $email]);
 
             return false;
-        } elseif ($user->isPasswordRequestNonExpired($this->ttl)) {
-            $this->addFormError(
-                $form,
-                'orob2b.customer.accountuser.profile.password.reset.ttl_already_requested.message'
-            );
-
-            return false;
         }
 
         return true;
