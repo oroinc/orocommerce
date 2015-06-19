@@ -52,9 +52,11 @@ orob2b.customer:
         organizations.label:         'Organizations'
         has_role.label:              'Has role'
 
+        registration: 'Account User Registration'
+
         profile:
-            register: Register
-            edit: Edit Profile
+            register: 'Register'
+            edit: 'Edit Profile'
             label: 'Profile'
             enabled.label: 'Active'
             disabled.label: 'Inactive'

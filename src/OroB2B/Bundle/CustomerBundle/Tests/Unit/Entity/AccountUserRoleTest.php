@@ -10,7 +10,7 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     public function testRole()
     {
         $name = 'test role#$%';
-        $role = new AccountUserRole($name);
+        $role = new AccountUserRole();
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
@@ -52,5 +52,12 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
 
         $accountUserRole->removeWebsite($website);
         $this->assertCount(0, $accountUserRole->getWebsites());
+    }
+
+    public function testNotEmptyRole()
+    {
+        $name = 'another test role';
+        $role = new AccountUserRole($name);
+        $this->assertEquals($name, $role->getRole());
     }
 }

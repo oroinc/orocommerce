@@ -81,10 +81,14 @@ class AccountUserRole extends AbstractRole
     protected $websites;
 
     /**
-     * Constructor without arguments to override obligatory argument in parent
+     * @param string|null $role
      */
-    public function __construct()
+    public function __construct($role = null)
     {
+        if ($role) {
+            $this->role = $role;
+        }
+
         $this->websites = new ArrayCollection();
     }
 

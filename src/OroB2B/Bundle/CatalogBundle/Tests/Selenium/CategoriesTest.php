@@ -163,4 +163,12 @@ class CategoriesTest extends Selenium2TestCase
             ->assertCategoryNotExist(self::$firstCategory)
             ->assertCategoryNotExist(self::$secondCategory);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function login($userName = null, $password = null, $args = [])
+    {
+        return parent::login($userName, $password, ['url' => '/admin']);
+    }
 }

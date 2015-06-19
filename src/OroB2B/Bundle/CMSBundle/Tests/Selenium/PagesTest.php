@@ -217,4 +217,12 @@ class PagesTest extends Selenium2TestCase
             ->assertPageNotExist(self::$firstPage)
             ->assertPageNotExist(self::$secondPage);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function login($userName = null, $password = null, $args = [])
+    {
+        return parent::login($userName, $password, ['url' => '/admin']);
+    }
 }
