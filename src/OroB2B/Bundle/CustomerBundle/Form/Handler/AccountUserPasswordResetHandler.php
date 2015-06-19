@@ -24,7 +24,7 @@ class AccountUserPasswordResetHandler extends AbstractAccountUserPasswordHandler
 
                 $user->setConfirmationToken(null)
                     ->setPasswordRequestedAt(null)
-                    /*->setConfirmed(true)*/; //TODO Uncomment after BB-613
+                    ->setConfirmed(true);
 
                 $this->userManager->updateUser($user);
 

@@ -38,13 +38,10 @@ class AccountUserPasswordResetHandlerTest extends AbstractAccountUserPasswordHan
             ->with(null)
             ->will($this->returnSelf());
 
-        // TODO Uncomment after BB-613
-        /*
         $user->expects($this->once())
             ->method('setConfirmed')
             ->with(true)
             ->will($this->returnSelf());
-        */
 
         $this->userManager->expects($this->once())
             ->method('updateUser')
