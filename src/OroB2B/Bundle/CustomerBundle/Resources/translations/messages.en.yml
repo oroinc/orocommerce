@@ -62,7 +62,7 @@ orob2b.customer:
             remember_me: Remember Me on This Computer
             login: Login
             return_to_login: Return to Login
-            password_reseted.message: Password was successfully set
+            password_reset.message: Password was successfully set
             request_password.label: Request
             email_not_exists: Email address "%email%" is not known
             check_email:
@@ -126,6 +126,7 @@ orob2b.customer:
             disabled.message:  'Account User has been disabled'
             not_found.message: 'Account User not found'
             profile_updated.message: 'Account User profile updated'
+            token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 

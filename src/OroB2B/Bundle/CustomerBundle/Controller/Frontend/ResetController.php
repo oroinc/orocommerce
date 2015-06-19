@@ -77,9 +77,12 @@ class ResetController extends Controller
         $username = $this->getRequest()->get('username');
         /** @var AccountUser $user */
         $user = $this->getUserManager()->findUserByUsernameOrEmail($username);
-        if (null === $user || $user->getConfirmationToken() !== $token) {
+        if (!$token || null === $user || $user->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
-                sprintf('The user with "confirmation token" does not exist for value "%s"', $token)
+                $this->get('translator')->trans(
+                    'orob2b.customer.controller.accountuser.token_not_found.message',
+                    ['%token%' => $token]
+                )
             );
         }
 
@@ -105,7 +108,7 @@ class ResetController extends Controller
 
             $session->getFlashBag()->add(
                 'success',
-                'orob2b.customer.accountuser.profile.password_reseted.message'
+                'orob2b.customer.accountuser.profile.password_reset.message'
             );
 
             return $this->redirect($this->generateUrl('orob2b_customer_account_user_security_login'));
