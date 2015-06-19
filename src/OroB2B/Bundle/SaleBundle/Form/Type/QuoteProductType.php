@@ -9,6 +9,8 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
@@ -34,9 +36,10 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', null, [
+            ->add('product', ProductSelectType::NAME, [
                 'required'  => true,
                 'label'     => 'orob2b.product.entity_label',
+                'create_enabled' => false,
             ])
             ->add(
                 'quoteProductItems',
