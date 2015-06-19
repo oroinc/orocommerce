@@ -86,7 +86,7 @@ class AccountUserRole extends AbstractRole
     public function __construct($role = null)
     {
         if ($role) {
-            $this->role = $role;
+            $this->setRole($role, false);
         }
 
         $this->websites = new ArrayCollection();
