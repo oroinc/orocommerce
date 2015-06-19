@@ -8,7 +8,7 @@ security:
 
     firewalls:
         frontend_login:
-            pattern:                        ^/account/user/(login|reset-request|send-email|check-email|register|reset)$
+            pattern:                        ^/account/user/(login|reset-request|send-email|check-email|register|confirm-email|reset)$
             provider:                       b2b_frontend_user
             anonymous:                      true
 

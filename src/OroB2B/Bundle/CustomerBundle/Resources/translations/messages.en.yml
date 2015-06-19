@@ -121,6 +121,9 @@ orob2b.customer:
         accountuser:
             registered.message: 'Registration successful'
             registered_with_confirmation.message: 'Please check your email to complete registration'
+            confirmed.message: 'Confirmation successful'
+            already_confirmed.message: 'Account already confirmed'
+            confirmation_error.message: 'Account not fount or incorrect confirmation token'
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
@@ -140,3 +143,4 @@ orob2b.customer:
         fields:
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
+            send_password_in_welcome_email.label: 'Send plain text password in welcome emails'

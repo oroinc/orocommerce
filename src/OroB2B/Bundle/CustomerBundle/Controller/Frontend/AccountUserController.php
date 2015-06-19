@@ -80,6 +80,41 @@ class AccountUserController extends Controller
     }
 
     /**
+     * @Route("/confirm-email", name="orob2b_customer_frontend_account_user_confirmation")
+     * @return RedirectResponse
+     */
+    public function confirmEmailAction()
+    {
+        $request = $this->getRequest();
+        $userManager = $this->get('orob2b_account_user.manager');
+
+        /** @var AccountUser $accountUser */
+        $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
+        $token = $request->get('token');
+
+        if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
+            throw $this->createNotFoundException(
+                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmation_error.message')
+            );
+        }
+
+        if (!$accountUser->isConfirmed()) {
+            $userManager->confirmRegistration($accountUser);
+            $userManager->updateUser($accountUser);
+
+            $messageType = 'success';
+            $message = 'orob2b.customer.controller.accountuser.confirmed.message';
+        } else {
+            $messageType = 'warn';
+            $message = 'orob2b.customer.controller.accountuser.already_confirmed.message';
+        }
+
+        $this->get('session')->getFlashBag()->add($messageType, $message);
+
+        return $this->redirect($this->generateUrl('orob2b_customer_account_user_security_login'));
+    }
+
+    /**
      * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
      * @Template("OroB2BCustomerBundle:AccountUser/Frontend:view.html.twig")
      * @Acl(
