@@ -58,6 +58,6 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'another test role';
         $role = new AccountUserRole($name);
-        $this->assertEquals($name, $role->getRole());
+        $this->assertEquals(AccountUserRole::PREFIX_ROLE . 'ANOTHER_TEST_ROLE', $role->getRole());
     }
 }
