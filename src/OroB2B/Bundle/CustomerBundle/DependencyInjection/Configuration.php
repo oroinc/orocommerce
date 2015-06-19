@@ -21,7 +21,8 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
-                'confirmation_required' => ['type' => 'boolean', 'value' => true]
+                'confirmation_required' => ['type' => 'boolean', 'value' => true],
+                'send_password_in_welcome_email' => ['type' => 'boolean', 'value' => false]
             ]
         );
 

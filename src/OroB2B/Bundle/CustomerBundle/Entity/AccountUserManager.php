@@ -44,7 +44,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function confirmRegistration(AccountUser $user)
     {
-        $user->setEnabled(true);
+        $user->setConfirmed(true);
         $this->sendWelcomeEmail($user);
     }
 
@@ -53,7 +53,10 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function sendWelcomeEmail(AccountUser $user)
     {
-        $this->getEmailProcessor()->sendWelcomeNotification($user, $user->getPlainPassword());
+        $this->getEmailProcessor()->sendWelcomeNotification(
+            $user,
+            $this->isSendPasswordInWelcomeEmail() ? $user->getPlainPassword() : null
+        );
     }
 
     /**
@@ -61,9 +64,9 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     protected function sendConfirmationEmail(AccountUser $user)
     {
-        $user->setEnabled(false);
+        $user->setConfirmed(false);
         $user->setConfirmationToken($user->generateToken());
-        $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
+        $this->getEmailProcessor()->sendConfirmationEmail($user);
     }
 
     /**
@@ -119,8 +122,16 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     /**
      * @return bool
      */
-    protected function isConfirmationRequired()
+    public function isConfirmationRequired()
     {
         return (bool)$this->getConfigValue('oro_b2b_customer.confirmation_required');
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSendPasswordInWelcomeEmail()
+    {
+        return (bool)$this->getConfigValue('oro_b2b_customer.send_password_in_welcome_email');
     }
 }
