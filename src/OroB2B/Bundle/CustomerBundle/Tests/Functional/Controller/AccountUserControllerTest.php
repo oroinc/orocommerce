@@ -17,6 +17,7 @@ class AccountUserControllerTest extends WebTestCase
     const NAME_PREFIX = 'NamePrefix';
     const MIDDLE_NAME = 'MiddleName';
     const NAME_SUFFIX = 'NameSuffix';
+    const EMAIL       = 'first@example.com';
     const FIRST_NAME  = 'John';
     const LAST_NAME   = 'Doe';
 
@@ -105,7 +106,7 @@ class AccountUserControllerTest extends WebTestCase
     {
         return [
             'simple create' => [
-                'email' => 'first@example.com',
+                'email' => self::EMAIL,
                 'password' => '123456',
                 'isPasswordGenerate' => false,
                 'isSendEmail' => false,
@@ -192,9 +193,9 @@ class AccountUserControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadAccountUserData::FIRST_NAME, $result->getContent());
-        $this->assertContains(LoadAccountUserData::LAST_NAME, $result->getContent());
-        $this->assertContains(LoadAccountUserData::EMAIL, $result->getContent());
+        $this->assertContains(self::FIRST_NAME, $result->getContent());
+        $this->assertContains(self::LAST_NAME, $result->getContent());
+        $this->assertContains(self::EMAIL, $result->getContent());
     }
 
     /**
@@ -206,9 +207,9 @@ class AccountUserControllerTest extends WebTestCase
         $response = $this->client->requestGrid(
             'customer-account-user-grid',
             [
-                'customer-account-user-grid[_filter][firstName][value]' => LoadAccountUserData::FIRST_NAME,
-                'customer-account-user-grid[_filter][LastName][value]' => LoadAccountUserData::LAST_NAME,
-                'customer-account-user-grid[_filter][email][value]' => LoadAccountUserData::EMAIL
+                'customer-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
+                'customer-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
+                'customer-account-user-grid[_filter][email][value]' => self::EMAIL
             ]
         );
 
