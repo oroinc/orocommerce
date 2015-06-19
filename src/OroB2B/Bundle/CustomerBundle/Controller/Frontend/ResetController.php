@@ -20,7 +20,7 @@ class ResetController extends Controller
     const SESSION_EMAIL = 'orob2b_account_user_reset_email';
 
     /**
-     * @Route("/reset-request", name="orob2b_customer_account_user_reset_request")
+     * @Route("/reset-request", name="orob2b_customer_frontend_account_user_reset_request")
      * @Method({"GET", "POST"})
      * @Template("OroB2BCustomerBundle:AccountUser/Frontend/Password:request.html.twig")
      */
@@ -32,7 +32,7 @@ class ResetController extends Controller
 
         if ($user = $handler->process($form, $this->getRequest())) {
             $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
-            return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_check_email'));
+            return $this->redirect($this->generateUrl('orob2b_customer_frontend_account_user_reset_check_email'));
         }
 
         return [
@@ -43,7 +43,7 @@ class ResetController extends Controller
     /**
      * Tell the user to check his email
      *
-     * @Route("/check-email", name="orob2b_customer_account_user_reset_check_email")
+     * @Route("/check-email", name="orob2b_customer_frontend_account_user_reset_check_email")
      * @Method({"GET"})
      * @Template("OroB2BCustomerBundle:AccountUser/Frontend/Password:checkEmail.html.twig")
      */
@@ -55,7 +55,7 @@ class ResetController extends Controller
 
         if (empty($email)) {
             // the user does not come from the sendEmail action
-            return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_request'));
+            return $this->redirect($this->generateUrl('orob2b_customer_frontend_account_user_reset_request'));
         }
 
         return [
@@ -66,24 +66,24 @@ class ResetController extends Controller
     /**
      * Reset user password
      *
-     * @Route("/reset/{token}", name="orob2b_customer_account_user_password_reset", requirements={"token"="\w+"})
+     * @Route("/reset", name="orob2b_customer_frontend_account_user_password_reset")
      * @Method({"GET", "POST"})
      * @Template("OroB2BCustomerBundle:AccountUser/Frontend/Password:reset.html.twig")
-     * @param string $token
      * @return array|RedirectResponse
      */
-    public function resetAction($token)
+    public function resetAction()
     {
+        $token = $this->getRequest()->get('token');
+        $username = $this->getRequest()->get('username');
         /** @var AccountUser $user */
-        $user = $this->getUserManager()->findUserByConfirmationToken($token);
-        $session = $this->get('session');
-
-        if (null === $user) {
+        $user = $this->getUserManager()->findUserByUsernameOrEmail($username);
+        if (null === $user || $user->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
                 sprintf('The user with "confirmation token" does not exist for value "%s"', $token)
             );
         }
 
+        $session = $this->get('session');
         $ttl = $this->container->getParameter('oro_user.reset.ttl');
         if (!$user->isPasswordRequestNonExpired($ttl)) {
             $session->getFlashBag()->add(
@@ -91,7 +91,7 @@ class ResetController extends Controller
                 'orob2b.customer.accountuser.profile.password.reset.ttl_already_requested.message'
             );
 
-            return $this->redirect($this->generateUrl('orob2b_customer_account_user_reset_request'));
+            return $this->redirect($this->generateUrl('orob2b_customer_frontend_account_user_reset_request'));
         }
 
         /** @var AccountUserPasswordResetHandler $handler */
@@ -112,7 +112,8 @@ class ResetController extends Controller
         }
 
         return [
-            'token' => $token,
+            'token' => $user->getConfirmationToken(),
+            'username' => $user->getUsername(),
             'form' => $form->createView()
         ];
     }

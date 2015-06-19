@@ -147,4 +147,38 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($user->isEnabled());
     }
+
+    public function testSendResetPasswordEmail()
+    {
+        $user = new AccountUser();
+        $this->emailProcessor->expects($this->once())
+            ->method('sendResetPasswordEmail')
+            ->with($user);
+        $this->userManager->sendResetPasswordEmail($user);
+    }
+
+    /**
+     * @dataProvider requiredDataProvider
+     * @param bool $required
+     */
+    public function testIsConfirmationRequired($required)
+    {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_b2b_customer.confirmation_required')
+            ->will($this->returnValue($required));
+
+        $this->assertEquals($required, $this->userManager->isConfirmationRequired());
+    }
+
+    /**
+     * @return array
+     */
+    public function requiredDataProvider()
+    {
+        return [
+            [true],
+            [false]
+        ];
+    }
 }

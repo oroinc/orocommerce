@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="container">
-        <form action="{{ path('orob2b_customer_account_user_password_reset', { token: token }) }}" {{ form_enctype(form) }} method="post" class="form-signin"
+        <form action="{{ path('orob2b_customer_frontend_account_user_password_reset', { token: token, username: username }) }}" {{ form_enctype(form) }} method="post" class="form-signin"
               id="{{ form.vars.id }}" name="{{ form.vars.name }}" {{ form_enctype(form) }}>
             <div class="title-box">
                 {% if oro_theme_logo() %}

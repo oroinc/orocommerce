@@ -50,7 +50,7 @@ class AccountUserPasswordRequestHandler extends AbstractAccountUserPasswordHandl
      * @param AccountUser|null $user
      * @return bool
      */
-    public function validateUser(FormInterface $form, $email, AccountUser $user = null)
+    protected function validateUser(FormInterface $form, $email, AccountUser $user = null)
     {
         if (!$user) {
             $this->addFormError($form, 'orob2b.customer.accountuser.profile.email_not_exists', ['%email%' => $email]);
