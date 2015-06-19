@@ -20,11 +20,6 @@ abstract class AbstractAccountUserPasswordHandlerTestCase extends \PHPUnit_Frame
     protected $translator;
 
     /**
-     * @var int
-     */
-    protected $ttl = 42;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
     protected $form;
