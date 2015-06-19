@@ -7,7 +7,10 @@
           method="{{ form.vars.method }}" {{ form_enctype(form) }}>
         {{ form_widget(form) }}
 
-        <button type="submit" class="btn btn-primary">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</button>
+        <div>
+            <button type="submit" class="btn btn-primary">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</button>
+            <a href="{{ path('orob2b_customer_account_user_security_login') }}" class="btn">{{ 'Cancel'|trans }}</a>
+        </div>
     </form>
 
     {{ oro_form_js_validation(form) }}

@@ -80,6 +80,6 @@ class AccountUserPasswordRequestTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_customer_account_user_password_request', $this->formType->getName());
+        $this->assertEquals(AccountUserPasswordRequestType::NAME, $this->formType->getName());
     }
 }
