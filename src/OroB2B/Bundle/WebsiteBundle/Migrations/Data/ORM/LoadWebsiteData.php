@@ -17,6 +17,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    const DEFAULT_WEBSITE_NAME = 'Default';
+
     /**
      * @var ContainerInterface
      */
@@ -59,7 +61,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $website = new Website();
         $website
-            ->setName('Default')
+            ->setName(self::DEFAULT_WEBSITE_NAME)
             ->setOrganization($organization)
             ->setOwner($businessUnit)
             ->setUrl($url['host'])

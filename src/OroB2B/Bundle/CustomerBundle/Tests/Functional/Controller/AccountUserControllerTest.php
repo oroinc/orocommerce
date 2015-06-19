@@ -17,6 +17,9 @@ class AccountUserControllerTest extends WebTestCase
     const NAME_PREFIX = 'NamePrefix';
     const MIDDLE_NAME = 'MiddleName';
     const NAME_SUFFIX = 'NameSuffix';
+    const EMAIL       = 'first@example.com';
+    const FIRST_NAME  = 'John';
+    const LAST_NAME   = 'Doe';
 
     const UPDATED_NAME_PREFIX = 'UNamePrefix';
     const UPDATED_FIRST_NAME = 'UFirstName';
@@ -64,9 +67,9 @@ class AccountUserControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_customer_account_user[enabled]']               = true;
         $form['orob2b_customer_account_user[namePrefix]']            = self::NAME_PREFIX;
-        $form['orob2b_customer_account_user[firstName]']             = LoadAccountUserData::FIRST_NAME;
+        $form['orob2b_customer_account_user[firstName]']             = self::FIRST_NAME;
         $form['orob2b_customer_account_user[middleName]']            = self::MIDDLE_NAME;
-        $form['orob2b_customer_account_user[lastName]']              = LoadAccountUserData::LAST_NAME;
+        $form['orob2b_customer_account_user[lastName]']              = self::LAST_NAME;
         $form['orob2b_customer_account_user[nameSuffix]']            = self::NAME_SUFFIX;
         $form['orob2b_customer_account_user[email]']                 = $email;
         $form['orob2b_customer_account_user[birthday]']              = date('Y-m-d');
@@ -103,15 +106,15 @@ class AccountUserControllerTest extends WebTestCase
     {
         return [
             'simple create' => [
-                'email' => LoadAccountUserData::EMAIL,
-                'password' => LoadAccountUserData::PASSWORD,
+                'email' => self::EMAIL,
+                'password' => '123456',
                 'isPasswordGenerate' => false,
                 'isSendEmail' => false,
                 'emailsCount' => 0
             ],
             'create with email and without password generator' => [
                 'email' => 'second@example.com',
-                'password' => LoadAccountUserData::PASSWORD,
+                'password' => '123456',
                 'isPasswordGenerate' => false,
                 'isSendEmail' => true,
                 'emailsCount' => 1
@@ -190,9 +193,9 @@ class AccountUserControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadAccountUserData::FIRST_NAME, $result->getContent());
-        $this->assertContains(LoadAccountUserData::LAST_NAME, $result->getContent());
-        $this->assertContains(LoadAccountUserData::EMAIL, $result->getContent());
+        $this->assertContains(self::FIRST_NAME, $result->getContent());
+        $this->assertContains(self::LAST_NAME, $result->getContent());
+        $this->assertContains(self::EMAIL, $result->getContent());
     }
 
     /**
@@ -204,9 +207,9 @@ class AccountUserControllerTest extends WebTestCase
         $response = $this->client->requestGrid(
             'customer-account-user-grid',
             [
-                'customer-account-user-grid[_filter][firstName][value]' => LoadAccountUserData::FIRST_NAME,
-                'customer-account-user-grid[_filter][LastName][value]' => LoadAccountUserData::LAST_NAME,
-                'customer-account-user-grid[_filter][email][value]' => LoadAccountUserData::EMAIL
+                'customer-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
+                'customer-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
+                'customer-account-user-grid[_filter][email][value]' => self::EMAIL
             ]
         );
 
