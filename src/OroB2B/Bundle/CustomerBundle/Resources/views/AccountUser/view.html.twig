@@ -38,6 +38,20 @@
         }) }}
     {% else %}
         {% if resource_granted('EDIT', entity) %}
+            {% if entity.confirmed == false %}
+                {% set idConfirmButton = entity.id ~ '-confirm-account-user-btn' %}
+                {{ UI.button({
+                    'aCss':  'no-hash',
+                    'iCss':  'icon-ok',
+                    'id':    idConfirmButton,
+                    'label': 'orob2b.customer.action.account_user.confirm'|trans,
+                    'path':  path('orob2b_api_customer_confirm_account_user', {'id': entity.id}),
+                    'title': 'orob2b.customer.action.account_user.confirm'|trans
+                }) }}
+                <span data-page-component-module="orob2bcustomer/js/app/components/account-user-management-component"
+                      data-page-component-options="{{ {id: idConfirmButton}|json_encode }}"></span>
+                {{ UI.buttonSeparator() }}
+            {% endif %}
             {{ UI.editButton({
                 'path' : path('orob2b_customer_account_user_update', { 'id': entity.id }),
                 'entity_label': 'orob2b.customer.accountuser.entity_label'|trans
@@ -63,7 +77,7 @@
                     'title': 'orob2b.customer.action.account_user.enable'|trans
                 }) }}
             {% endif %}
-            <span data-page-component-module="orob2bcustomer/js/app/components/user-enable-disable-component"
+            <span data-page-component-module="orob2bcustomer/js/app/components/account-user-management-component"
                   data-page-component-options="{{ {id: idButton}|json_encode }}"></span>
         {% endif %}
     {% endif %}

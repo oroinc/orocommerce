@@ -86,6 +86,51 @@ class AccountUserController extends RestController implements ClassResourceInter
     }
 
     /**
+     * @ApiDoc(
+     *      description="Confirm account user",
+     *      resource=true
+     * )
+     * @Rest\Get(
+     *      "/account/user/{id}/confirm",
+     *      defaults={"version"="latest", "_format"="json"}
+     * )
+     * @Acl(
+     *      id="orob2b_customer_account_user_confirm",
+     *      type="entity",
+     *      class="OroB2BCustomerBundle:AccountUser",
+     *      permission="EDIT"
+     * )
+     *
+     * @param int $id
+     * @return Response
+     */
+    public function confirmAction($id)
+    {
+        $userManager = $this->get('orob2b_account_user.manager');
+        $user = $userManager->findUserBy(['id' => $id]);
+
+        if (null === $user) {
+            return $this->handleView(
+                $this->view(['successful' => false], Codes::HTTP_NOT_FOUND)
+            );
+        }
+
+        $userManager->confirmRegistration($user);
+        $userManager->updateUser($user);
+
+        return $this->handleView(
+            $this->view(
+                [
+                    'successful' => true,
+                    'message' => $this->get('translator')
+                        ->trans('orob2b.customer.controller.accountuser.confirmed.message')
+                ],
+                Codes::HTTP_OK
+            )
+        );
+    }
+
+    /**
      * @param integer $id
      * @param boolean $enabled
      * @param string $successMessage

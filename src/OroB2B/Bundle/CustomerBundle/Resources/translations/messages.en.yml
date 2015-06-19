@@ -87,6 +87,7 @@ orob2b.customer:
     action:
         account_user.enable:  'Enable'
         account_user.disable: 'Disable'
+        account_user.confirm: 'Confirm'
 
     sections:
         general: 'General Information'
@@ -130,6 +131,7 @@ orob2b.customer:
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
+            confirmed.message:  'Account User has been confirmed'
             not_found.message: 'Account User not found'
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
