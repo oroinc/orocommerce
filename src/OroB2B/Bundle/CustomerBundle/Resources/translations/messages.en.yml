@@ -33,11 +33,12 @@ orob2b.customer:
         current_password.label:      'Current Password'
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
+        confirmed.label:             'Confirmed'
         password_generate.label:     'Generate Password'
         send_email.label:            'Send Welcome Email'
         confirmation_token.label:    'Confirmation Token'
         birthday.label:              'Birthday'
-        last_login.label:            'Last login'
+        last_login.label:            'Last Login'
         roles.label:                 'Roles'
         salt.label:                  'Salt'
         created_at.label:            'Created At'
@@ -50,19 +51,19 @@ orob2b.customer:
         customer.label:              'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
-        has_role.label:              'Has role'
+        has_role.label:              'Has Role'
 
         profile:
             registration.title: Registration
             register: Register
             forgot_password: Forgot Your Password
             reset_password:
-                title: Reset Password
-                label: Reset
+                title: Create New Password
+                label: Create
             remember_me: Remember Me on This Computer
             login: Login
             return_to_login: Return to Login
-            password_reset.message: Password was successfully set
+            password_reset.message: Password was created successfully.
             request_password.label: Request
             email_not_exists: Email address "%email%" is not known
             check_email:
@@ -72,6 +73,8 @@ orob2b.customer:
             label: 'Profile'
             enabled.label: 'Active'
             disabled.label: 'Inactive'
+            confirmed.label: 'Confirmed'
+            unconfirmed.label: 'Unconfirmed'
             password.reset.ttl_already_requested.message: The password for this user has already been requested within the last 24 hours
 
     accountuserrole:
