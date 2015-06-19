@@ -33,7 +33,6 @@
             {{ messagesContent }}
             {%- set usernameLabel = 'orob2b.customer.accountuser.email.label'|trans %}
             {%- set passwordLabel = 'orob2b.customer.accountuser.password.label'|trans %}
-            {%- set organizationLabel = 'oro.organization.entity_label'|trans %}
             {%- set showLabels = (usernameLabel|length <= 9) and (passwordLabel|trans <= 9) %}
             <div class="input-prepend">
                 {% if showLabels %}
