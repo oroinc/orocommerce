@@ -91,7 +91,7 @@ class ResetController extends Controller
         if (!$user->isPasswordRequestNonExpired($ttl)) {
             $session->getFlashBag()->add(
                 'warn',
-                'orob2b.customer.accountuser.profile.password.reset.ttl_already_requested.message'
+                'orob2b.customer.accountuser.profile.password.reset.ttl_expired.message'
             );
 
             return $this->redirect($this->generateUrl('orob2b_customer_frontend_account_user_reset_request'));

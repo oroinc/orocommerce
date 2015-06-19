@@ -15,7 +15,7 @@ class AccountUserPasswordResetHandlerTest extends AbstractAccountUserPasswordHan
     {
         parent::setUp();
 
-        $this->handler = new AccountUserPasswordResetHandler($this->userManager, $this->translator, $this->ttl);
+        $this->handler = new AccountUserPasswordResetHandler($this->userManager, $this->translator);
     }
 
     public function testProcess()

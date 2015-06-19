@@ -15,7 +15,7 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
     {
         parent::setUp();
 
-        $this->handler = new AccountUserPasswordRequestHandler($this->userManager, $this->translator, $this->ttl);
+        $this->handler = new AccountUserPasswordRequestHandler($this->userManager, $this->translator);
     }
 
     public function testProcessInvalidUser()
@@ -36,32 +36,6 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $this->assertFalse($this->handler->process($this->form, $this->request));
     }
 
-    public function testProcessUserExpiredTtl()
-    {
-        $email = 'test@test.com';
-        $user = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUser')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $user->expects($this->once())
-            ->method('isPasswordRequestNonExpired')
-            ->with($this->ttl)
-            ->will($this->returnValue(true));
-
-        $this->assertValidFormCall($email);
-
-        $this->userManager->expects($this->once())
-            ->method('findUserByUsernameOrEmail')
-            ->with($email)
-            ->will($this->returnValue($user));
-
-        $this->assertFormErrorAdded(
-            $this->form,
-            'orob2b.customer.accountuser.profile.password.reset.ttl_already_requested.message'
-        );
-
-        $this->assertFalse($this->handler->process($this->form, $this->request));
-    }
-
     public function testProcessEmailSendFail()
     {
         $email = 'test@test.com';
@@ -70,10 +44,6 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $user = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
-        $user->expects($this->once())
-            ->method('isPasswordRequestNonExpired')
-            ->with($this->ttl)
-            ->will($this->returnValue(false));
         $user->expects($this->once())
             ->method('getConfirmationToken')
             ->will($this->returnValue($token));
@@ -110,10 +80,6 @@ class AccountUserPasswordRequestHandlerTest extends AbstractAccountUserPasswordH
         $user = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
-        $user->expects($this->once())
-            ->method('isPasswordRequestNonExpired')
-            ->with($this->ttl)
-            ->will($this->returnValue(false));
 
         $user->expects($this->once())
             ->method('getConfirmationToken')

@@ -72,7 +72,7 @@ orob2b.customer:
             label: 'Profile'
             enabled.label: 'Active'
             disabled.label: 'Inactive'
-            password.reset.ttl_already_requested.message: The password for this user has already been requested within the last 24 hours
+            password.reset.ttl_expired.message: The create password link has expired.
 
     accountuserrole:
         entity_label:                    'Account User Role'

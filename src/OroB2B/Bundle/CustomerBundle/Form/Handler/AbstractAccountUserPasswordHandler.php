@@ -23,20 +23,13 @@ abstract class AbstractAccountUserPasswordHandler
     protected $translator;
 
     /**
-     * @var int
-     */
-    protected $ttl;
-
-    /**
      * @param AccountUserManager $userManager
      * @param TranslatorInterface $translator
-     * @param int $ttl
      */
-    public function __construct(AccountUserManager $userManager, TranslatorInterface $translator, $ttl)
+    public function __construct(AccountUserManager $userManager, TranslatorInterface $translator)
     {
         $this->userManager = $userManager;
         $this->translator = $translator;
-        $this->ttl = $ttl;
     }
 
     /**
