@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CustomerBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -101,6 +102,33 @@ class AccountUserController extends Controller
     public function updateAction(AccountUser $accountUser)
     {
         return $this->update($accountUser);
+    }
+
+    /**
+     * Send confirmation email
+     *
+     * @Route(
+     *      "/confirmation/send/{id}",
+     *      name="orob2b_customer_account_user_send_confirmation",
+     *      requirements={"id"="\d+"}
+     * )
+     * @AclAncestor("orob2b_customer_account_user_update")
+     * @param AccountUser $accountUser
+     * @return JsonResponse
+     */
+    public function sendConfirmationAction(AccountUser $accountUser)
+    {
+        $userManager = $this->get('orob2b_account_user.manager');
+
+        $result = ['success' => true];
+        try {
+            $userManager->sendConfirmationEmail($accountUser);
+        } catch (\Exception $e) {
+            $result['success'] = false;
+            $result['message'] = $e->getMessage();
+        }
+
+        return new JsonResponse($result);
     }
 
     /**
