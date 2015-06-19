@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -37,6 +38,11 @@ class PriceListProductPriceType extends AbstractType
     protected $roundingService;
 
     /**
+     * @var string
+     */
+    protected $productClass;
+
+        /**
      * @param ManagerRegistry $registry
      * @param RoundingService $roundingService
      */
@@ -44,6 +50,14 @@ class PriceListProductPriceType extends AbstractType
     {
         $this->registry = $registry;
         $this->roundingService = $roundingService;
+    }
+
+    /**
+     * @param string $productClass
+     */
+    public function setProductClass($productClass)
+    {
+        $this->productClass = $productClass;
     }
 
     /**
@@ -114,8 +128,9 @@ class PriceListProductPriceType extends AbstractType
             return;
         }
 
+        /** @var Product $product */
         $product = $this->registry
-            ->getRepository('OroB2BProductBundle:Product')
+            ->getRepository($this->productClass)
             ->find($data['product']);
 
         if ($product) {

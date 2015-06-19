@@ -13,5 +13,7 @@ services:
 
     oro_currency.form.type.price:
         class: %oro_currency.form.type.price.class%
+        calls:
+            - [setDataClass, [%oro_currency.price.model%]]
         tags:
             - { name: form.type, alias: oro_currency_price }

@@ -20,6 +20,8 @@ use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\CMSBundle\Entity\Page';
+
     /**
      * @var PageType
      */
@@ -41,6 +43,7 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
 
         $this->type = new PageType();
+        $this->type->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -111,7 +114,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'parentPage',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2B\Bundle\CMSBundle\Entity\Page',
+                    'class' => self::DATA_CLASS,
                     'multiple' => false
                 ]
             )
@@ -154,7 +157,7 @@ class PageTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'OroB2B\Bundle\CMSBundle\Entity\Page',
+                    'data_class' => self::DATA_CLASS,
                     'intention' => 'page',
                     'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]

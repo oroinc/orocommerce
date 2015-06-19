@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% oro_title_set({params : {"%code%": form.vars.value.code|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%code%": entity.code|default('N/A'|trans)} }) %}
 
 {% set formAction = entity.id ? path('orob2b_attribute_update', { 'id': entity.id }) : path('orob2b_attribute_init') %}
 
@@ -28,7 +28,7 @@
 {% block pageHeader %}
     {% if entity.id %}
         {% set breadcrumbs = {
-            'entity':      form.vars.value,
+            'entity':      entity,
             'indexPath':   path('orob2b_attribute_index'),
             'indexLabel': 'orob2b.attribute.entity_plural_label'|trans,
             'entityTitle': entity.code|default('N/A'|trans)

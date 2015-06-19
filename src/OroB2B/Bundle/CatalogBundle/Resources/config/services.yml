@@ -8,11 +8,16 @@ parameters:
 services:
     orob2b_catalog.form.type.category:
         class: %orob2b_catalog.form.type.category.class%
+        calls:
+            - [setDataClass, [%orob2b_catalog.category.class%]]
+            - [setProductClass, [%orob2b_product.product.class%]]
         tags:
             - { name: form.type, alias: orob2b_catalog_category }
 
     orob2b_catalog.form.type.category_tree:
         class: %orob2b_catalog.form.type.category_tree.class%
+        calls:
+            - [setEntityClass, [%orob2b_catalog.category.class%]]
         tags:
             - { name: form.type, alias: orob2b_catalog_category_tree }
 

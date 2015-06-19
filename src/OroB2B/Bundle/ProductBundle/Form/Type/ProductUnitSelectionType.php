@@ -12,12 +12,25 @@ class ProductUnitSelectionType extends AbstractType
     const NAME = 'orob2b_product_unit_selection';
 
     /**
+     * @var string
+     */
+    protected $entityClass;
+
+    /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'class' => 'OroB2BProductBundle:ProductUnit',
+            'class' => $this->entityClass,
             'property' => 'code',
             'compact' => false
         ]);

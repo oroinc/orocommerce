@@ -10,6 +10,8 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\SelectAttributeTypeType;
 
 class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const ENTITY_CLASS = 'OroB2B\Bundle\AttributeBundle\Entity\AttributeOption';
+
     /**
      * @var SelectAttributeTypeType
      */
@@ -18,6 +20,7 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->formType = new SelectAttributeTypeType();
+        $this->formType->setEntityClass(self::ENTITY_CLASS);
     }
 
     public function testSetDefaultOptions()
@@ -28,7 +31,7 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
             ->with(['attribute']);
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with(['class' => 'OroB2BAttributeBundle:AttributeOption', 'property' => 'value']);
+            ->with(['class' => self::ENTITY_CLASS, 'property' => 'value']);
         $resolver->expects($this->once())
             ->method('setNormalizers')
             ->with($this->isType('array'))

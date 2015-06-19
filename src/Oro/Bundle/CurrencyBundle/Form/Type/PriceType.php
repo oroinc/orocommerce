@@ -13,6 +13,19 @@ class PriceType extends AbstractType
     const NAME = 'oro_currency_price';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -43,7 +56,7 @@ class PriceType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'Oro\Bundle\CurrencyBundle\Model\Price',
+            'data_class' => $this->dataClass,
             'additional_currencies' => null,
             'cascade_validation' => true,
             'currencies_list' => null,

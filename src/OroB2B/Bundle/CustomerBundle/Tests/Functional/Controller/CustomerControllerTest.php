@@ -125,7 +125,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer saved', $html);
+        $this->assertContains('Customer has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group);
     }
 

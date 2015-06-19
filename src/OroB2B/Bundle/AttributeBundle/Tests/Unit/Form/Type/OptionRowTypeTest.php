@@ -41,13 +41,16 @@ class OptionRowTypeTest extends AbstractLocalizedType
      */
     protected function getExtensions()
     {
+        $localeCollection = new LocaleCollectionType($this->registry);
+        $localeCollection->setLocaleClass(self::LOCALE_CLASS);
+
         return [
             new PreloadedExtension(
                 [
                     'text' => new TextType(),
                     'integer' => new IntegerType(),
                     FallbackValueType::NAME => new FallbackValueType(),
-                    LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
+                    LocaleCollectionType::NAME => $localeCollection,
                     FallbackPropertyType::NAME => new FallbackPropertyType(),
                     HiddenFallbackValueType::NAME => new HiddenFallbackValueType()
                 ],

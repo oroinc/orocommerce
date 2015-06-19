@@ -1,3 +1,5 @@
 config:
     paths:
         'orob2bcustomer/js/app/components/customer-tree-component': 'bundles/orob2bcustomer/js/app/components/customer-tree-component.js'
+        'orob2bcustomer/js/app/components/user-enable-disable-component': 'bundles/orob2bcustomer/js/app/components/user-enable-disable-component.js'
+        'orob2bcustomer/js/app/components/password-generate': 'bundles/orob2bcustomer/js/app/components/password-generate.js'
