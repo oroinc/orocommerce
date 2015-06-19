@@ -21,6 +21,11 @@
             {% else %}
                 <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.customer.accountuser.profile.disabled.label'|trans }}</div>
             {% endif %}
+            {% if entity.confirmed %}
+                <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.customer.accountuser.profile.confirmed.label'|trans }}</div>
+            {% else %}
+                <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.customer.accountuser.profile.unconfirmed.label'|trans }}</div>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock breadcrumbs %}
