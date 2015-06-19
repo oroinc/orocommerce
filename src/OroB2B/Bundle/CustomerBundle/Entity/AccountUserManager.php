@@ -45,6 +45,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     public function confirmRegistration(AccountUser $user)
     {
         $user->setEnabled(true);
+        $user->setConfirmationToken(null);
         $this->sendWelcomeEmail($user);
     }
 

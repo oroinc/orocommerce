@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType;
 
 class AccountUserPasswordResetTypeTest extends FormIntegrationTestCase
