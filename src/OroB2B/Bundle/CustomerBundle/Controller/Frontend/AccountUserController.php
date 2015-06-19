@@ -59,64 +59,54 @@ class AccountUserController extends Controller
             ->setOrganization($websiteOrganization)
             ->addRole($defaultRole);
 
+        $userManager = $this->get('orob2b_account_user.manager');
         $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler(
-            $form,
-            $this->getRequest(),
-            $this->get('orob2b_account_user.manager')
-        );
+        $handler = new FrontendAccountUserHandler($form, $this->getRequest(), $userManager);
 
-        $message = $this->get('oro_config.manager')->get('oro_b2b_customer.confirmation_required')
-            ? 'orob2b.customer.controller.accountuser.required_confirmation.message'
-            : 'orob2b.customer.controller.accountuser.registered.message';
+        if ($userManager->isConfirmationRequired()) {
+            $registrationMessage = 'orob2b.customer.controller.accountuser.registered_with_confirmation.message';
+        } else {
+            $registrationMessage = 'orob2b.customer.controller.accountuser.registered.message';
+        }
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_customer_account_user_security_login'],
             ['route' => 'orob2b_customer_account_user_security_login'],
-            $this->get('translator')->trans($message),
+            $this->get('translator')->trans($registrationMessage),
             $handler
         );
     }
 
     /**
-     * @Route(
-     *      "/confirm/{username}/{token}",
-     *      name="orob2b_customer_frontend_account_user_confirmation",
-     *      requirements={"username"="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}", "token"=".+"}
-     * )
-     * @param string $username
-     * @param string $token
+     * @Route("/confirm-email", name="orob2b_customer_frontend_account_user_confirmation")
      * @return RedirectResponse
      */
-    public function confirmAction($username, $token)
+    public function confirmEmailAction()
     {
-        $manager = $this->getDoctrine()->getManagerForClass('OroB2BCustomerBundle:AccountUser');
+        $request = $this->getRequest();
+        $userManager = $this->get('orob2b_account_user.manager');
 
-        $accountUser = $manager
-            ->getRepository('OroB2BCustomerBundle:AccountUser')
-            ->findOneBy(
-                [
-                    'username' => $username,
-                    'confirmationToken' => $token
-                ]
+        /** @var AccountUser $accountUser */
+        $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
+        $token = $request->get('token');
+
+        if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
+            throw $this->createNotFoundException(
+                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmation_error.message')
             );
+        }
 
-        $messageType = 'error';
-        $message = 'orob2b.customer.controller.accountuser.confirmation_error.message';
+        if (!$accountUser->isConfirmed()) {
+            $userManager->confirmRegistration($accountUser);
+            $userManager->updateUser($accountUser);
 
-        if ($accountUser) {
             $messageType = 'success';
+            $message = 'orob2b.customer.controller.accountuser.confirmed.message';
+        } else {
+            $messageType = 'warn';
             $message = 'orob2b.customer.controller.accountuser.already_confirmed.message';
-
-            if (!$accountUser->isConfirmed()) {
-                $userManager = $this->get('orob2b_account_user.manager');
-                $userManager->confirmRegistration($accountUser);
-                $userManager->updateUser($accountUser);
-
-                $message = 'orob2b.customer.controller.accountuser.confirmed.message';
-            }
         }
 
         $this->get('session')->getFlashBag()->add($messageType, $message);

@@ -66,7 +66,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     {
         $user->setConfirmed(false);
         $user->setConfirmationToken($user->generateToken());
-        $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
+        $this->getEmailProcessor()->sendConfirmationEmail($user);
     }
 
     /**
@@ -122,7 +122,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     /**
      * @return bool
      */
-    protected function isConfirmationRequired()
+    public function isConfirmationRequired()
     {
         return (bool)$this->getConfigValue('oro_b2b_customer.confirmation_required');
     }

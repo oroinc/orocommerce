@@ -1,4 +1,4 @@
-@name = welcome_email
+@name = account_user_welcome_email
 @entityName = OroB2B\Bundle\CustomerBundle\Entity\AccountUser
 @subject = Welcome: {{ entity.username }}
 @isSystem = 1
@@ -9,5 +9,5 @@
     {% if password is not empty%}
         <p>Your password is <b>{{ password }}</b></p>
     {% endif %}
-    <p>Please follow this link to login: <a href="{{ oro_config_value('oro_ui.application_url')|trim('/') }}{{ path('orob2b_customer_account_user_security_login') }}">Profile Login</a></p>
+    <p>Please follow this link to login: <a href="{{ oro_config_value('oro_ui.application_url') ~ path('orob2b_customer_account_user_security_login') }}">Profile Login</a></p>
 </div>

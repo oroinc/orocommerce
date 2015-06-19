@@ -153,7 +153,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->emailProcessor->expects($this->once())
             ->method('sendConfirmationEmail')
-            ->with($user, $this->isType('string'));
+            ->with($user);
 
         $this->userManager->register($user);
 
