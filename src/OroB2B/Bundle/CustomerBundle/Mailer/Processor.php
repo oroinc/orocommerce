@@ -10,6 +10,7 @@ class Processor extends BaseProcessor
 {
     const WELCOME_EMAIL_TEMPLATE_NAME = 'account_user_welcome_email';
     const CONFIRMATION_EMAIL_TEMPLATE_NAME = 'account_user_confirmation_email';
+    const RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'account_user_reset_password';
 
     /**
      * @param AccountUser $accountUser
@@ -35,6 +36,19 @@ class Processor extends BaseProcessor
             $accountUser,
             static::CONFIRMATION_EMAIL_TEMPLATE_NAME,
             ['entity' => $accountUser, 'token' => $accountUser->getConfirmationToken()]
+        );
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return int
+     */
+    public function sendResetPasswordEmail(AccountUser $accountUser)
+    {
+        return $this->getEmailTemplateAndSendEmail(
+            $accountUser,
+            static::RESET_PASSWORD_EMAIL_TEMPLATE_NAME,
+            ['entity' => $accountUser]
         );
     }
 }

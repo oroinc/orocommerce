@@ -14,7 +14,7 @@
             </h1>
             <span class="divider-vertical"></span>
             {% endif %}
-            <h2 class="title">{{ 'Login'|trans }}</h2>
+            <h2 class="title">{{ 'orob2b.customer.accountuser.profile.login'|trans }}</h2>
         </div>
         <fieldset>
             <script type="text/javascript">
@@ -31,28 +31,32 @@
                 </div>
             {% endif %}
             {{ messagesContent }}
-            {%- set usernameLabel = 'Username'|trans %}
-            {%- set passwordLabel = 'Password'|trans %}
-            {%- set organizationLabel = 'Organization'|trans %}
+            {%- set usernameLabel = 'orob2b.customer.accountuser.email.label'|trans %}
+            {%- set passwordLabel = 'orob2b.customer.accountuser.password.label'|trans %}
             {%- set showLabels = (usernameLabel|length <= 9) and (passwordLabel|trans <= 9) %}
             <div class="input-prepend">
                 {% if showLabels %}
                 <span class="add-on">{{ usernameLabel }}</span>
                 {% endif %}
-                <input type="text" id="prependedInput" class="span2" name="_username" value="{{ last_username }}" required="required" placeholder="{{ 'Username or Email'|trans }}" autofocus/>
+                <input type="text" id="prependedInput" class="span2" name="_username" value="{{ last_username }}" required="required" placeholder="{{ usernameLabel }}" autofocus/>
             </div>
             <div class="input-prepend">
                 {% if showLabels %}
                 <span class="add-on">{{ passwordLabel }}</span>
                 {% endif %}
-                <input type="password" id="prependedInput2" class="span2" name="_password" required="required" placeholder="{{ 'Password'|trans }}" autocomplete="off" />
+                <input type="password" id="prependedInput2" class="span2" name="_password" required="required" placeholder="{{ passwordLabel }}" autocomplete="off" />
             </div>
             <label class="checkbox oro-remember-me">
-                <input type="checkbox" id="remember_me" name="_remember_me" value="on" /> {{ 'Remember me on this computer'|trans }}
+                <input type="checkbox" id="remember_me" name="_remember_me" value="on" /> {{ 'orob2b.customer.accountuser.profile.remember_me'|trans }}
             </label>
             <div class="control-group form-row">
-                <a href="{{ path('oro_user_reset_request') }}">{{ 'Forgot your password?'|trans }}</a>
-                <button type="submit" class="btn btn-large  btn-primary pull-right" id="_submit" name="_submit">{{ 'Log in'|trans }}</button>
+                <div class="pull-left">
+                    <a href="{{ path('orob2b_customer_frontend_account_user_reset_request') }}">{{ 'orob2b.customer.accountuser.profile.forgot_password'|trans }}?</a><br/>
+                    <a href="{{ path('orob2b_customer_frontend_account_user_register') }}">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</a>
+                </div>
+                <div class="pull-right">
+                    <button type="submit" class="btn btn-large  btn-primary" id="_submit" name="_submit">{{ 'orob2b.customer.accountuser.profile.login'|trans }}</button>
+                </div>
             </div>
             {% placeholder oro_user_login_form %}
         </fieldset>

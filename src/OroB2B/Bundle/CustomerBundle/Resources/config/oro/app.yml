@@ -8,11 +8,9 @@ security:
 
     firewalls:
         frontend_login:
-            pattern:                        ^/account/user/(login|reset-request|send-email|check-email|register|confirm-email)$
+            pattern:                        ^/account/user/(login|reset-request|send-email|check-email|register|confirm-email|reset)$
             provider:                       b2b_frontend_user
             anonymous:                      true
-
-        # TODO: Add firewall rule for frontend user password reset BB-612
 
         frontend:
             pattern:                        ^/

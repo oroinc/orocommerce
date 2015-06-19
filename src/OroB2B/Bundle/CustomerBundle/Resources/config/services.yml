@@ -18,6 +18,10 @@ parameters:
     orob2b_customer.account_user_menu.builder.class: OroB2B\Bundle\CustomerBundle\Menu\AccountUserMenuBuilder
     orob2b_customer.placeholder.filter.class:  OroB2B\Bundle\CustomerBundle\Placeholder\PlaceholderFilter
 
+    orob2b_customer.account_user.password.handler.abstract.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AbstractAccountUserPasswordHandler
+    orob2b_customer.account_user.password_request.handler.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordRequestHandler
+    orob2b_customer.account_user.password_reset.handler.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler
+
     orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
@@ -129,6 +133,22 @@ services:
         class: %orob2b_customer.placeholder.filter.class%
         arguments:
             - @oro_security.security_facade
+
+    orob2b_customer.account_user.password.handler.abstract:
+        class: %orob2b_customer.account_user.password.handler.abstract.class%
+        abstract: true
+        arguments:
+            - @orob2b_account_user.manager
+            - @translator
+            - %oro_user.reset.ttl%
+
+    orob2b_customer.account_user.password_request.handler:
+        class: %orob2b_customer.account_user.password_request.handler.class%
+        parent: orob2b_customer.account_user.password.handler.abstract
+
+    orob2b_customer.account_user.password_reset.handler:
+        class: %orob2b_customer.account_user.password_reset.handler.class%
+        parent: orob2b_customer.account_user.password.handler.abstract
 
     orob2b_customer.event_listener.datagrid:
         class: %orob2b_customer.event_listener.datagrid.class%
