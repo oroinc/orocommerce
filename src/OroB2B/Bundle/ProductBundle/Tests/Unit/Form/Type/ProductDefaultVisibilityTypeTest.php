@@ -4,12 +4,14 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductVisibilityType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductDefaultVisibilityType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType;
 
-class ProductVisibilityTypeTest extends FormIntegrationTestCase
+class ProductDefaultVisibilityTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ProductVisibilityType
+     * @var ProductUnitRoundingTypeType
      */
     protected $formType;
 
@@ -20,22 +22,22 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new ProductVisibilityType();
+        $this->formType = new ProductDefaultVisibilityType();
     }
 
     /**
      * @dataProvider submitProvider
      *
-     * @param bool|null $expectedValue
+     * @param string $expectedData
      */
-    public function testSubmit($expectedValue)
+    public function testSubmit($expectedData)
     {
         $form = $this->factory->create($this->formType);
 
         $this->assertNull($form->getData());
-        $form->submit($expectedValue);
+        $form->submit($expectedData);
         $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedValue, $form->getData());
+        $this->assertEquals($expectedData, $form->getData());
     }
 
     /**
@@ -44,14 +46,11 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
     public function submitProvider()
     {
         return [
-            'true' => [
-                'expectedValue' => true,
+            'visible' => [
+                'expectedData' => Product::VISIBILITY_VISIBLE,
             ],
-            'false' => [
-                'expectedValue' => false,
-            ],
-            'empty' => [
-                'expectedValue' => null,
+            'not_visible' => [
+                'expectedData' => Product::VISIBILITY_NOT_VISIBLE,
             ]
         ];
     }
@@ -69,6 +68,6 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(ProductVisibilityType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductDefaultVisibilityType::NAME, $this->formType->getName());
     }
 }

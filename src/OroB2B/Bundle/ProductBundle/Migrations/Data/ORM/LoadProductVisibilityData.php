@@ -15,7 +15,7 @@ class LoadProductVisibilityData extends AbstractFixture
     protected $data = [
         'As Defined in System Configuration' => Product::VISIBILITY_BY_CONFIG,
         'Yes'                                => Product::VISIBILITY_VISIBLE,
-        'No'                                 => Product::VISITBILITY_NO,
+        'No'                                 => Product::VISIBILITY_NOT_VISIBLE,
     ];
 
     /** @var string */

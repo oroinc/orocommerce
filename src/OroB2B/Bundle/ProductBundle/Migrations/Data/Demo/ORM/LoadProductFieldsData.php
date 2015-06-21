@@ -37,7 +37,7 @@ class LoadProductFieldsDemoData extends AbstractFixture implements
     protected static $visibilityOptions = [
         Product::VISIBILITY_BY_CONFIG,
         Product::VISIBILITY_VISIBLE,
-        Product::VISITBILITY_NO,
+        Product::VISIBILITY_NOT_VISIBLE,
     ];
 
     /**
