@@ -21,7 +21,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductVisibilityType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
@@ -30,6 +29,8 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProduct;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+
     /**
      * @var ProductType
      */
@@ -50,6 +51,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         $this->type = new ProductType($this->roundingService);
+        $this->type->setDataClass(self::DATA_CLASS);
 
         parent::setUp();
     }
@@ -67,7 +69,8 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $productUnitPrecision = new ProductUnitPrecisionType();
+        $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
         return [
             new PreloadedExtension(
@@ -82,9 +85,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ),
                     StubEnumSelectType::NAME => new StubEnumSelectType(),
                     ImageType::NAME => new StubImageType(),
-                    ProductVisibilityType::NAME => new ProductVisibilityType($translator),
                     OroCollectionType::NAME => new OroCollectionType(),
-                    ProductUnitPrecisionType::NAME => new ProductUnitPrecisionType(),
+                    ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
                     ProductUnitSelectionType::NAME => new StubProductUnitSelectionType(
                         [
@@ -205,8 +207,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         return $expectedProduct
             ->setSku('test sku')
-            ->setCategory($category)
-            ->setVisible(true);
+            ->setCategory($category);
     }
 
     public function testBuildForm()

@@ -12,6 +12,11 @@ parameters:
 services:
     orob2b_pricing.form.type.price_list:
         class: %orob2b_pricing.form.type.price_list.class%
+        calls:
+            - [setDataClass, [%orob2b_pricing.entity.price_list.class%]]
+            - [setCustomerClass, [%orob2b_customer.entity.customer.class%]]
+            - [setCustomerGroupClass, [%orob2b_customer.entity.customer_group.class%]]
+            - [setWebsiteClass, [%orob2b_website.website.class%]]
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
 
@@ -26,6 +31,7 @@ services:
             - @doctrine
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_collection }
 
@@ -45,6 +51,7 @@ services:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setProductClass, [%orob2b_product.product.class%]]
 
     orob2b_pricing.form.extension.customer_type:
         class: %orob2b_pricing.form.extension.customer_type.class%

@@ -1,6 +1,7 @@
-Multiple Applications Approach Documentation
-=============================================
+OroApplicationBundle
+====================
 
-- [Getting Started](./Resources/doc/getting-started.md)
-- [How to add new application](./Resources/doc/add-new-application.md)
-- [Upgrade to multiple application approach](./Resources/doc/upgrade-to-multiple-application.md)
+Bundle used to provide functionality necessary to run multiple Symfony applications
+on the same codebase.
+
+It will be removed entirely.

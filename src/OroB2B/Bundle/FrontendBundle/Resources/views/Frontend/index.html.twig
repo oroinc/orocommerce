@@ -1,4 +1,9 @@
-{% extends "FOSUserBundle::layout.html.twig" %}
-{% block fos_user_content %}
-    Oro Frontend!
-{% endblock fos_user_content %}
+{% extends 'OroUserBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <a href="{{ path('orob2b_customer_account_user_security_login') }}">
+            {{ 'orob2b.customer.menu.account_user_login.label'|trans }}
+        </a>
+    </div>
+{% endblock content %}

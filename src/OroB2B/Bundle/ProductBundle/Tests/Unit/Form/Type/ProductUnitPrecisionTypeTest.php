@@ -18,6 +18,8 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision';
+
     /**
      * @var ProductUnitPrecisionType
      */
@@ -34,6 +36,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new ProductUnitPrecisionType();
+        $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
     }
 
