@@ -28,7 +28,7 @@ class ProductType extends AbstractType
                     'label'     => 'orob2b.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
                     'configs' => [
-                        'allowClear' => false
+                        'allowClear' => false,
                     ]
                 ]
             )
@@ -40,7 +40,17 @@ class ProductType extends AbstractType
                     'required' => false
                 ]
             )
-            ->add('isVisible', ProductVisibilityType::NAME, ['label' => 'orob2b.product.is_visible.label'])
+            ->add(
+                'visibility',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.product.visibility.label',
+                    'enum_code' => 'prod_visibility',
+                    'configs' => [
+                        'allowClear' => false,
+                    ]
+                ]
+            )
             ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,

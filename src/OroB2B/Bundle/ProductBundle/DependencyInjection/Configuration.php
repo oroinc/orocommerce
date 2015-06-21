@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\DependencyInjection;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -24,6 +25,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'unit_rounding_type' => ['value' => RoundingService::HALF_UP],
+                'default_visibility' => ['value' => Product::VISIBILITY_VISIBLE],
             ]
         );
 

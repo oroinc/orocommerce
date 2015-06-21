@@ -9,24 +9,24 @@ use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class LoadProductInventoryStatusData extends AbstractFixture
+class LoadProductVisibilityData extends AbstractFixture
 {
     /** @var array */
     protected $data = [
-        'In Stock'     => Product::INVENTORY_STATUS_IN_STOCK,
-        'Out of Stock' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
-        'Discontinued' => Product::INVENTORY_STATUS_DISCONTINUED,
+        'As Defined in System Configuration' => Product::VISIBILITY_BY_CONFIG,
+        'Yes'                                => Product::VISIBILITY_VISIBLE,
+        'No'                                 => Product::VISITBILITY_NO,
     ];
 
     /** @var string */
-    protected $defaultValue = 'In Stock';
+    protected $defaultValue = 'As Defined in System Configuration';
 
     /**
      * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
-        $className = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        $className = ExtendHelper::buildEnumValueClassName('prod_visibility');
 
         /** @var EnumValueRepository $enumRepo */
         $enumRepo = $manager->getRepository($className);

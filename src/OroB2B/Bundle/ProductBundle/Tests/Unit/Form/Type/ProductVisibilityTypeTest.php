@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVisibilityType;
 
@@ -15,25 +14,19 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->formType = new ProductVisibilityType($this->translator);
+        $this->formType = new ProductVisibilityType();
     }
 
     /**
      * @dataProvider submitProvider
      *
-     * @param string $expectedValue
+     * @param bool|null $expectedValue
      */
     public function testSubmit($expectedValue)
     {

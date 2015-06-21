@@ -155,7 +155,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'category' => 2,
                     'unitPrecisions' => [],
                     'inventoryStatus' => 'in_stock',
-                    'isVisible' => 1,
+                    'visible' => 1,
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false,
@@ -172,7 +172,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ]
                     ],
                     'inventoryStatus' => 'in_stock',
-                    'isVisible' => 1,
+                    'visible' => 1,
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false,
@@ -206,7 +206,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         return $expectedProduct
             ->setSku('test sku')
             ->setCategory($category)
-            ->setIsVisible(true);
+            ->setVisible(true);
     }
 
     public function testBuildForm()

@@ -26,8 +26,10 @@ class OroB2BProductBundle implements
 
     /** @var ExtendExtension */
     protected $extendExtension;
+
     /** @var NoteExtension */
     protected $noteExtension;
+
     /** @var AttachmentExtension */
     protected $attachmentExtension;
 
@@ -71,14 +73,18 @@ class OroB2BProductBundle implements
      */
     protected function updateProductTable(Schema $schema)
     {
-        $table = $schema->getTable(self::TABLE_NAME);
-        $table->addColumn('is_visible', 'boolean', ['notnull' => false]);
-
         $this->extendExtension->addEnumField(
             $schema,
             self::TABLE_NAME,
             'inventory_status',
             'prod_inventory_status'
+        );
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            self::TABLE_NAME,
+            'visibility',
+            'prod_visibility'
         );
     }
 

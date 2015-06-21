@@ -54,6 +54,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
+    const VISIBILITY_BY_CONFIG = 'by_config';
+    const VISIBILITY_VISIBLE = 'visible';
+    const VISIBILITY_NOT_VISIBLE = 'not_visible';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -150,13 +154,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $unitPrecisions;
-
-    /**
-     * @var bool|null
-     *
-     * @ORM\Column(name="is_visible", type="boolean", nullable=true)
-     */
-    protected $isVisible;
 
     public function __construct()
     {
@@ -366,25 +363,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         }
 
         return $result;
-    }
-
-    /**
-     * @return bool|null
-     */
-    public function getIsVisible()
-    {
-        return $this->isVisible;
-    }
-
-    /**
-     * @param bool|null $isVisible
-     * @return $this
-     */
-    public function setIsVisible($isVisible)
-    {
-        $this->isVisible = $isVisible;
-
-        return $this;
     }
 
     /**

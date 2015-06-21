@@ -10,6 +10,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 /**
  * @method AbstractEnumValue getInventoryStatus()
  * @method Product setInventoryStatus(AbstractEnumValue $enumId)
+ * @method AbstractEnumValue getVisibility()
+ * @method Product setVisibility(AbstractEnumValue $enumId)
  * @method File getImage()
  * @method Product setImage(File $image)
  */
