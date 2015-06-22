@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductDefaultVisibilityType extends AbstractType
 {

@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductInventoryStatusData extends AbstractFixture

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class StubProduct extends Product

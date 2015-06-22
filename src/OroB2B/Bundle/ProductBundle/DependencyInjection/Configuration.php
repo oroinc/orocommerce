@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\DependencyInjection;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 
 class Configuration implements ConfigurationInterface

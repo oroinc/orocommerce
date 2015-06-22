@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Visibility;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityChecker
