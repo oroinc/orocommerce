@@ -7,13 +7,9 @@ security:
         OroB2B\Bundle\CustomerBundle\Entity\AccountUser: sha512
 
     firewalls:
-        frontend_login:
-            pattern:                        ^/account/user/(login|reset-request|send-email|check-email|register|confirm-email|reset)$
-            provider:                       b2b_frontend_user
-            anonymous:                      true
-
-        frontend:
-            pattern:                        ^/
+        frontend_secure:
+            # secure everything started with /account/ except basic user operations
+            pattern:                        ^/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
             provider:                       b2b_frontend_user
             organization-form-login:
                 csrf_provider:              form.csrf_provider
@@ -27,3 +23,8 @@ security:
                 lifetime:                   1209600   # stay logged for two weeks
                 httponly:                   true
             anonymous:                      false
+
+        frontend:
+            pattern:                        ^/
+            provider:                       b2b_frontend_user
+            anonymous:                      true

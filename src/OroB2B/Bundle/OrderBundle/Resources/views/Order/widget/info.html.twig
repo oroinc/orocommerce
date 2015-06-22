@@ -1,0 +1,14 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.order.id.label'|trans, order.id) }}
+            {{ UI.renderProperty('orob2b.order.identifier.label'|trans, order.identifier) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(order) }}
+        </div>
+    </div>
+</div>

@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\ApplicationBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\Request;

@@ -2,6 +2,7 @@
 
 namespace Oro\Component\Testing\Fixtures;
 
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -47,12 +48,11 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
         /** @var AccountUser $entity */
         $entity = $userManager->createUser();
 
-        $website = $this->container->get('orob2b_website.manager')->getCurrentWebsite();
         $role = $this->container
             ->get('doctrine')
             ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
             ->getRepository('OroB2BCustomerBundle:AccountUserRole')
-            ->getDefaultAccountUserRoleByWebsite($website);
+            ->findOneBy([], ['id' => Criteria::ASC]);
 
         $entity
             ->setFirstName('AccountUser')

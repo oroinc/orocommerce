@@ -1,0 +1,10 @@
+parameters:
+    orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
+
+services:
+    orob2b_order.form.type.order:
+        class: %orob2b_order.form.type.order.class%
+        tags:
+            - { name: form.type, alias: orob2b_order_type }
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
