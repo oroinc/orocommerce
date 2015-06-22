@@ -77,7 +77,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
     public function testConfirm()
     {
         /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+        $user = $this->getReference(LoadAccountUserData::EMAIL);
         $this->assertNotNull($user);
 
         $id = $user->getId();
