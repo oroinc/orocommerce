@@ -1,2 +1,2 @@
-bundles_frontend:
-    - { name: OroB2B\Bundle\FrontendBundle\OroB2BFrontendBundle, priority: 10  }
+bundles:
+    - { name: OroB2B\Bundle\FrontendBundle\OroB2BFrontendBundle }

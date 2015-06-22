@@ -1,2 +1,11 @@
 parameters:
-    test.client.class: OroB2B\Bundle\FrontendBundle\Test\Client
+    orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
+
+services:
+    orob2b_frontend.listener.route_collection:
+        class: %orob2b_frontend.listener.route_collection.class%
+        arguments:
+            - %backend_prefix%
+        tags:
+            - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
+        lazy: true

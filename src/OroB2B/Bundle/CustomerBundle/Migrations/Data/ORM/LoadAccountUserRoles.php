@@ -11,15 +11,15 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureInterface
 {
-    const ADMINISTRATOR = 'Administrator';
-    const BUYER = 'Buyer';
+    const ADMINISTRATOR = 'ADMINISTRATOR';
+    const BUYER = 'BUYER';
 
     /**
      * @var array
      */
     protected $defaultRoles = [
-        self::ADMINISTRATOR,
-        self::BUYER
+        self::ADMINISTRATOR => 'Administrator',
+        self::BUYER => 'Buyer',
     ];
 
     /**
@@ -35,13 +35,13 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->defaultRoles as $roleLabel) {
-            $role = new AccountUserRole();
-            $role->setLabel($roleLabel)
-                ->setRole($roleLabel);
+        foreach ($this->defaultRoles as $name => $label) {
+            $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $name);
+            $role->setLabel($label);
+            $manager->persist($role);
 
             // By default Buyer role is default role for websites
-            if ($roleLabel === self::BUYER) {
+            if ($name === self::BUYER) {
                 $this->setWebsiteDefaultRoles($manager, $role);
             }
 

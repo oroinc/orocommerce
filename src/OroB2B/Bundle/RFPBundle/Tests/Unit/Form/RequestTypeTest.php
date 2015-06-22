@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form;
 
-use Oro\Bundle\ApplicationBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
@@ -70,10 +70,10 @@ class RequestTypeTest extends FormIntegrationTestCase
             ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($manager);
 
-        /**
-         * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager
-         */
-        $configManager = $this->getMock('Oro\Bundle\ApplicationBundle\Config\ConfigManager', ['get']);
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $configManager->expects($this->any())
             ->method('get')
