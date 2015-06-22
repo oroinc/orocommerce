@@ -18,7 +18,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
     const EMAIL = 'john.doe@example.com';
     const PASSWORD = '123456';
 
+    /** @var  bool */
     protected $isConfirmationRequired;
+
+    /** @var  bool */
     protected $sendPassword;
 
     protected function setUp()
@@ -31,6 +34,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     protected function tearDown()
     {
+        parent::tearDown();
+
         $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set('oro_b2b_customer.confirmation_required', $this->isConfirmationRequired);
         $configManager->set('oro_b2b_customer.send_password_in_welcome_email', $this->sendPassword);
@@ -79,11 +84,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $configManager = $this->getContainer()->get('oro_config.manager');
         $configManager->set('oro_b2b_customer.confirmation_required', false);
 
-        if ($withPassword) {
-            $configManager->set('oro_b2b_customer.send_password_in_welcome_email', true);
-        } else {
-            $configManager->set('oro_b2b_customer.send_password_in_welcome_email', false);
-        }
+        $configManager->set('oro_b2b_customer.send_password_in_welcome_email', $withPassword);
 
         $configManager->flush();
 
@@ -106,6 +107,12 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->assertContains($email, $message->getSubject());
         $this->assertContains($email, $message->getBody());
+
+        $this->assertContains(
+            trim($configManager->get('oro_ui.application_url'), '/')
+            . $this->getUrl('orob2b_customer_account_user_security_login'),
+            $message->getBody()
+        );
 
         if ($withPassword) {
             $this->assertContains(self::PASSWORD, $message->getBody());
@@ -165,13 +172,27 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertEquals(self::EMAIL, key($message->getTo()));
 
         $this->assertContains('Confirmation of account registration', $message->getSubject());
-        $this->assertContains('Please follow this link to confirm your email address', $message->getBody());
+
+        $user = $this->getAccountUser(['email' => self::EMAIL]);
+
+        $confirmMessage = 'Please follow this link to confirm your email address: <a href="'
+            . trim($configManager->get('oro_ui.application_url'), '/')
+            . htmlspecialchars($this->getUrl(
+                'orob2b_customer_frontend_account_user_confirmation',
+                [
+                    'username' => $user->getUsername(),
+                    'token' => $user->getConfirmationToken()
+                ]
+            ))
+            . '">Confirm</a>';
+        $this->assertContains($confirmMessage, $message->getBody());
+
         $user = $this->getAccountUser(['email' => self::EMAIL]);
         $this->assertNotEmpty($user);
         $this->assertTrue($user->isEnabled());
         $this->assertFalse($user->isConfirmed());
 
-        $crawler = $this->client->followRedirect(true);
+        $crawler = $this->client->followRedirect();
         $this->assertEquals('Login', $crawler->filter('h2.title')->html());
         $this->assertContains(
             'Please check your email to complete registration',
@@ -385,6 +406,19 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertContains('Reset Account User Password', $message->getSubject());
         $this->assertContains('To reset your password - please visit', $message->getBody());
         $this->assertContains(self::EMAIL, $message->getBody());
+
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $user = $this->getAccountUser(['email' => self::EMAIL]);
+        $resetUrl = trim($configManager->get('oro_ui.application_url'), '/')
+            . htmlspecialchars($this->getUrl(
+                'orob2b_customer_frontend_account_user_password_reset',
+                [
+                    'token' => $user->getConfirmationToken(),
+                    'username' => $user->getUsername()
+                ]
+            ));
+
+        $this->assertContains($resetUrl, $message->getBody());
 
         $crawler = $this->client->followRedirect(true);
 
