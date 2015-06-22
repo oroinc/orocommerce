@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 use Symfony\Component\DomCrawler\Crawler;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -14,9 +15,11 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
  */
 class AccountUserControllerRegisterTest extends WebTestCase
 {
-
     const EMAIL = 'john.doe@example.com';
     const PASSWORD = '123456';
+
+    /** @var ConfigManager */
+    protected $configManager;
 
     /** @var  bool */
     protected $isConfirmationRequired;
@@ -27,9 +30,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $this->isConfirmationRequired = $configManager->get('oro_b2b_customer.confirmation_required');
-        $this->sendPassword = $configManager->get('oro_b2b_customer.send_password_in_welcome_email');
+
+        $this->configManager = $this->getContainer()->get('oro_config.manager');
+        $this->isConfirmationRequired = $this->configManager->get('oro_b2b_customer.confirmation_required');
+        $this->sendPassword = $this->configManager->get('oro_b2b_customer.send_password_in_welcome_email');
     }
 
     protected function tearDown()
@@ -55,7 +59,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
                 '_token' => $form->get('orob2b_customer_frontend_account_user_register[_token]')->getValue(),
                 'firstName' => 'Jim',
                 'lastName' => 'Brown',
-                'email' => 'jim.brown@example.com',
+                'email' => self::EMAIL,
                 'plainPassword' => [
                     'first' => 'plainPassword',
                     'second' => 'plainPassword2'
@@ -65,28 +69,24 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form, $submittedData);
-
         $result = $this->client->getResponse();
+
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertEmpty($this->getAccountUser(['email' => 'jim.brown@example.com', 'enabled' => true]));
-
+        $this->assertEmpty($this->getAccountUser(['email' => self::EMAIL]));
         $this->assertContains('The password fields must match.', $crawler->filter('.validation-failed')->html());
     }
 
     /**
      * @dataProvider registerWithoutConfirmationDataProvider
+     *
      * @param string $email
      * @param bool $withPassword
      */
     public function testRegisterWithoutConfirmation($email, $withPassword)
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_b2b_customer.confirmation_required', false);
-
-        $configManager->set('oro_b2b_customer.send_password_in_welcome_email', $withPassword);
-
-        $configManager->flush();
+        $this->configManager->set('oro_b2b_customer.confirmation_required', false);
+        $this->configManager->set('oro_b2b_customer.send_password_in_welcome_email', $withPassword);
+        $this->configManager->flush();
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_frontend_account_user_register'));
         $result = $this->client->getResponse();
@@ -102,14 +102,11 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $message = reset($messages);
 
         $this->assertInstanceOf('Swift_Message', $message);
-
         $this->assertEquals($email, key($message->getTo()));
-
         $this->assertContains($email, $message->getSubject());
         $this->assertContains($email, $message->getBody());
-
         $this->assertContains(
-            trim($configManager->get('oro_ui.application_url'), '/')
+            trim($this->configManager->get('oro_ui.application_url'), '/')
             . $this->getUrl('orob2b_customer_account_user_security_login'),
             $message->getBody()
         );
@@ -128,7 +125,6 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertNotEmpty($user);
         $this->assertTrue($user->isEnabled());
         $this->assertTrue($user->isConfirmed());
-
         $this->assertContains('Registration successful', $crawler->filter('.alert-success')->html());
     }
 
@@ -151,8 +147,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
     public function testRegisterWithConfirmation()
     {
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_b2b_customer.confirmation_required', true);
+        $this->configManager->set('oro_b2b_customer.confirmation_required', true);
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_customer_frontend_account_user_register'));
         $result = $this->client->getResponse();
@@ -168,15 +163,13 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $message = reset($messages);
 
         $this->assertInstanceOf('Swift_Message', $message);
-
         $this->assertEquals(self::EMAIL, key($message->getTo()));
-
         $this->assertContains('Confirmation of account registration', $message->getSubject());
 
         $user = $this->getAccountUser(['email' => self::EMAIL]);
 
         $confirmMessage = 'Please follow this link to confirm your email address: <a href="'
-            . trim($configManager->get('oro_ui.application_url'), '/')
+            . trim($this->configManager->get('oro_ui.application_url'), '/')
             . htmlspecialchars($this->getUrl(
                 'orob2b_customer_frontend_account_user_confirmation',
                 [
@@ -248,10 +241,9 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form, $submittedData);
-
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('This value is already used.', $crawler->filter('.validation-failed')->html());
     }
 
@@ -305,8 +297,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form, $submittedData);
-
         $result = $this->client->getResponse();
+
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Login', $crawler->filter('h2.title')->html());
         $this->assertContains('Password was created successfully.', $crawler->filter('.alert-success')->html());
@@ -389,7 +381,6 @@ class AccountUserControllerRegisterTest extends WebTestCase
         ];
 
         $this->client->followRedirects(false);
-
         $this->client->submit($form, $submittedData);
 
         /** @var MessageDataCollector $collector */
@@ -400,16 +391,13 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $message = reset($messages);
 
         $this->assertInstanceOf('Swift_Message', $message);
-
         $this->assertEquals(self::EMAIL, key($message->getTo()));
-
         $this->assertContains('Reset Account User Password', $message->getSubject());
         $this->assertContains('To reset your password - please visit', $message->getBody());
         $this->assertContains(self::EMAIL, $message->getBody());
 
-        $configManager = $this->getContainer()->get('oro_config.manager');
         $user = $this->getAccountUser(['email' => self::EMAIL]);
-        $resetUrl = trim($configManager->get('oro_ui.application_url'), '/')
+        $resetUrl = trim($this->configManager->get('oro_ui.application_url'), '/')
             . htmlspecialchars($this->getUrl(
                 'orob2b_customer_frontend_account_user_password_reset',
                 [
@@ -420,7 +408,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->assertContains($resetUrl, $message->getBody());
 
-        $crawler = $this->client->followRedirect(true);
+        $crawler = $this->client->followRedirect();
 
         $this->assertEquals('Check Email', $crawler->filter('h2.title')->html());
     }
