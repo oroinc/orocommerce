@@ -33,11 +33,12 @@ orob2b.customer:
         current_password.label:      'Current Password'
         password_confirmation.label: 'Confirm Password'
         enabled.label:               'Enabled'
+        confirmed.label:             'Confirmed'
         password_generate.label:     'Generate Password'
         send_email.label:            'Send Welcome Email'
         confirmation_token.label:    'Confirmation Token'
         birthday.label:              'Birthday'
-        last_login.label:            'Last login'
+        last_login.label:            'Last Login'
         roles.label:                 'Roles'
         salt.label:                  'Salt'
         created_at.label:            'Created At'
@@ -50,16 +51,31 @@ orob2b.customer:
         customer.label:              'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
-        has_role.label:              'Has role'
-
-        registration: 'Account User Registration'
+        has_role.label:              'Has Role'
 
         profile:
+            registration.title: 'Account User Registration'
             register: 'Register'
+            forgot_password: 'Forgot Your Password'
+            reset_password:
+                title: 'Create New Password'
+                label: 'Create'
+            remember_me: 'Remember Me on This Computer'
+            login: 'Login'
+            return_to_login: 'Return to Login'
+            password_reset.message: 'Password was created successfully.'
+            request_password.label: 'Request'
+            email_not_exists: 'Email address "%email%" is not known'
+            check_email:
+                title: 'Check Email'
+                message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'
             edit: 'Edit Profile'
             label: 'Profile'
             enabled.label: 'Active'
             disabled.label: 'Inactive'
+            password.reset.ttl_expired.message: The create password link has expired.
+            confirmed.label: 'Confirmed'
+            unconfirmed.label: 'Unconfirmed'
 
     accountuserrole:
         entity_label:                    'Account User Role'
@@ -70,8 +86,11 @@ orob2b.customer:
         websites.label:                  'Websites'
 
     action:
-        account_user.enable:  'Enable'
-        account_user.disable: 'Disable'
+        account_user:
+            enable:  'Enable'
+            disable: 'Disable'
+            confirm: 'Confirm'
+            send_confirmation: 'Resend Confirmation Email'
 
     sections:
         general: 'General Information'
@@ -108,11 +127,18 @@ orob2b.customer:
             saved.message: 'Customer group has been saved'
         accountuser:
             registered.message: 'Registration successful'
+            registered_with_confirmation.message: 'Please check your email to complete registration'
+            confirmed.message: 'Confirmation successful'
+            already_confirmed.message: 'Account already confirmed'
+            confirmation_error.message: 'Account not fount or incorrect confirmation token'
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
+            confirmed.message:  'Account User has been confirmed'
             not_found.message: 'Account User not found'
             profile_updated.message: 'Account User profile updated'
+            token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
+            confirmation_sent.message: 'Confirmation email has been sent'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 
@@ -126,3 +152,4 @@ orob2b.customer:
         fields:
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
+            send_password_in_welcome_email.label: 'Send plain text password in welcome emails'

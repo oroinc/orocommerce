@@ -1,2 +1,3 @@
 orob2b.customer.system_configuration.fields.registration_allowed.tooltip: 'Allow account users registration'
 orob2b.customer.system_configuration.fields.confirmation_required.tooltip: 'Send confirmation email'
+orob2b.customer.system_configuration.fields.send_password_in_welcome_email.tooltip: 'Allow to send plain text password in welcome emails, if it known'
