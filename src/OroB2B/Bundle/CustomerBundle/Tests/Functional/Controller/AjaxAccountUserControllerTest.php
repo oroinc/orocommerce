@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
+use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
@@ -38,10 +40,24 @@ class AjaxAccountUserControllerTest extends WebTestCase
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
 
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_customer_account_user_confirm', ['id' => $id])
+        $this->client->request('GET', $this->getUrl('orob2b_customer_account_user_confirm', ['id' => $id]));
+
+        /** @var MessageDataCollector $collector */
+        $collector = $this->client->getProfile()->getCollector('swiftmailer');
+        $collectedMessages = $collector->getMessages();
+
+        $this->assertCount(1, $collectedMessages);
+
+        $message = array_shift($collectedMessages);
+
+        $this->assertInstanceOf('\Swift_Message', $message);
+        $this->assertEquals($user->getEmail(), key($message->getTo()));
+        $this->assertEquals(
+            $this->getContainer()->get('oro_config.manager')->get('oro_notification.email_notification_sender_email'),
+            key($message->getFrom())
         );
+        $this->assertContains($user->getEmail(), $message->getSubject());
+        $this->assertContains($user->getEmail(), $message->getBody());
 
         $result = $this->client->getResponse();
 
