@@ -20,8 +20,7 @@ class AccountUserControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
             ]
         );
     }
@@ -61,32 +60,6 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertTrue($user->isEnabled());
 
         return $id;
-    }
-
-    /**
-     * @depends testEnableAndDisable
-     * @param int $id
-     */
-    public function testConfirm($id)
-    {
-        /** @var \OroB2B\Bundle\CustomerBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->find($id);
-        $this->assertNotNull($user);
-
-        $user->setConfirmed(false);
-        $this->getObjectManager()->flush();
-        $this->getObjectManager()->clear();
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_api_customer_confirm_account_user', ['id' => $id])
-        );
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 200);
-
-        $user = $this->getUserRepository()->find($id);
-
-        $this->assertNotNull($user);
-        $this->assertTrue($user->isConfirmed());
     }
 
     /**
