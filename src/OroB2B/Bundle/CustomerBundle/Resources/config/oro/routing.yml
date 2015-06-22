@@ -3,6 +3,11 @@ orob2b_customer:
     type:         annotation
     prefix:       /customer
 
+orob2b_customer_address:
+    resource:     "@OroB2BCustomerBundle/Controller/CustomerAddressController.php"
+    type:         annotation
+    prefix:       /customer/address
+
 orob2b_customer_group:
     resource:     "@OroB2BCustomerBundle/Controller/CustomerGroupController.php"
     type:         annotation

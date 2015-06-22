@@ -31,6 +31,19 @@ class CustomerType extends AbstractType
                     'label' => 'orob2b.customer.parent.label',
                     'required' => false
                 ]
+            )
+            ->add(
+                'addresses',
+                'oro_address_collection',
+                [
+                    'label'    => false,
+                    'type'     => CustomerTypedAddressType::NAME,
+                    'required' => true,
+                    'options'  => [
+                        'data_class'  => 'OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress',
+                        'single_form' => false
+                    ]
+                ]
             );
     }
 

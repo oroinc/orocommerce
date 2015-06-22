@@ -25,6 +25,8 @@ parameters:
     orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
+    orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_customer.customer_address.entity.class: OroB2b\Bundle\CustomerBundle\Entity\CustomerAddress
 
 services:
     orob2b_customer.customer_tree_handler:
@@ -162,3 +164,9 @@ services:
             - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
+
+    orob2b_customer.customer_address.manager.api:
+        class: %orob2b_customer.customer_address.manager.api.class%
+        arguments:
+            - %orob2b_customer.customer_address.entity.class%
+            - @doctrine.orm.entity_manager

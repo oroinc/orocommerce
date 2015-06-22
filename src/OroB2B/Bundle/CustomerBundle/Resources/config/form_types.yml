@@ -14,6 +14,9 @@ parameters:
     orob2b_customer.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_customer.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType
 
+    orob2b_customer.form.type.typed_address.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType
+    orob2b_customer.form.type.typed_address_with_default.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressWithDefaultType
+
 services:
     orob2b_customer.form.type.customer:
         class: %orob2b_customer.form.type.customer.class%
@@ -85,3 +88,15 @@ services:
             - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_account_user_password_reset }
+
+    orob2b_customer.form.type.typed_address:
+        class: %orob2b_customer.form.type.typed_address.class%
+        tags:
+             - { name: form.type, alias: orob2b_customer_typed_address}
+
+    orob2b_customer.form.type.typed_address_with_default:
+        class: %orob2b_customer.form.type.typed_address_with_default.class%
+        calls:
+             - [setRegistry, [@doctrine]]
+        tags:
+             - { name: form.type, alias: orob2b_customer_typed_address_with_default}
