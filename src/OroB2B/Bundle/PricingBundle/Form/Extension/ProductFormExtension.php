@@ -83,19 +83,25 @@ class ProductFormExtension extends AbstractTypeExtension
     {
         $data = $event->getData();
 
-        if (!isset($data['unitPrecisions'], $data['prices'])) {
-            return;
-        }
-
         $unitPrecisions = [];
-        foreach ($data['unitPrecisions'] as $unitPrecision) {
-            $unitPrecisions[$unitPrecision['unit']] = $unitPrecision['precision'];
+        if (isset($data['unitPrecisions'])) {
+            foreach ($data['unitPrecisions'] as $unitPrecision) {
+                $unitPrecisions[$unitPrecision['unit']] = $unitPrecision['precision'];
+            }
         }
 
-        foreach ($data['prices'] as &$price) {
-            if (array_key_exists($price['unit'], $unitPrecisions)) {
-                $price['quantity'] = $this->roundingService
-                    ->round($price['quantity'], $unitPrecisions[$price['unit']]);
+        if (isset($data['prices'])) {
+            foreach ($data['prices'] as $key => &$price) {
+                if (empty($price['unit']) || empty($price['quantity'])) {
+                    unset($data['prices'][$key]);
+
+                    continue;
+                }
+
+                if (array_key_exists($price['unit'], $unitPrecisions)) {
+                    $price['quantity'] = $this->roundingService
+                        ->round($price['quantity'], $unitPrecisions[$price['unit']]);
+                }
             }
         }
 
@@ -122,7 +128,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         // persist existing prices
         /** @var ProductPrice[] $prices */
-        $prices = $form->get('prices')->getData();
+        $prices = (array)$form->get('prices')->getData();
         $persistedPriceIds = [];
         foreach ($prices as $price) {
             $priceId = $price->getId();
@@ -138,7 +144,7 @@ class ProductFormExtension extends AbstractTypeExtension
         if ($product->getId()) {
             $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
             foreach ($existingPrices as $price) {
-                if (!in_array($price->getId(), $persistedPriceIds)) {
+                if (!in_array($price->getId(), $persistedPriceIds, true)) {
                     $entityManager->remove($price);
                 }
             }

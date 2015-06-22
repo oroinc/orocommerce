@@ -54,22 +54,22 @@ orob2b.customer:
         has_role.label:              'Has Role'
 
         profile:
-            registration.title: Registration
-            register: Register
-            forgot_password: Forgot Your Password
+            registration.title: 'Account User Registration'
+            register: 'Register'
+            forgot_password: 'Forgot Your Password'
             reset_password:
-                title: Create New Password
-                label: Create
-            remember_me: Remember Me on This Computer
-            login: Login
-            return_to_login: Return to Login
-            password_reset.message: Password was created successfully.
-            request_password.label: Request
-            email_not_exists: Email address "%email%" is not known
+                title: 'Create New Password'
+                label: 'Create'
+            remember_me: 'Remember Me on This Computer'
+            login: 'Login'
+            return_to_login: 'Return to Login'
+            password_reset.message: 'Password was created successfully.'
+            request_password.label: 'Request'
+            email_not_exists: 'Email address "%email%" is not known'
             check_email:
-                title: Check Email
-                message: An email has been sent to %email%. It contains a link you must click to reset your password.
-            edit: Edit Profile
+                title: 'Check Email'
+                message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'
+            edit: 'Edit Profile'
             label: 'Profile'
             enabled.label: 'Active'
             disabled.label: 'Inactive'
@@ -83,6 +83,7 @@ orob2b.customer:
         id.label:                        'ID'
         label.label:                     'Label'
         role.label:                      'Role'
+        websites.label:                  'Websites'
 
     action:
         account_user.enable:  'Enable'
