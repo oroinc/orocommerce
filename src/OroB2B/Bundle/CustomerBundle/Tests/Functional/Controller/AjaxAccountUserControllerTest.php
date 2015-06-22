@@ -105,6 +105,12 @@ class AjaxAccountUserControllerTest extends WebTestCase
         $this->assertContains($user->getEmail(), $message->getSubject());
         $this->assertContains($user->getEmail(), $message->getBody());
 
+        $configManager = $this->getContainer()->get('oro_config.manager');
+        $loginUrl = trim($configManager->get('oro_ui.application_url'), '/')
+            . $this->getUrl('orob2b_customer_account_user_security_login');
+
+        $this->assertContains($loginUrl, $message->getBody());
+
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);
