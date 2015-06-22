@@ -8,7 +8,7 @@ services:
     orob2b_rfp.form.type.request:
         class: %orob2b_rfp.form.type.request.class%
         arguments:
-            - @oro_application.config_manager
+            - @oro_config.manager
             - @doctrine
         calls:
             - [setDataClass, [%orob2b_rfp.request.class%]]
