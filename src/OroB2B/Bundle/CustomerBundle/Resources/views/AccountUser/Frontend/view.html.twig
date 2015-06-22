@@ -12,19 +12,6 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% block breadcrumbs %}
-    {{ parent() }}
-    {% if entity.id != app.user.id %}
-        <div class="pull-left">
-            {% if entity.enabled %}
-                <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ 'orob2b.customer.accountuser.enabled.label'|trans }}</div>
-            {% else %}
-                <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ 'orob2b.customer.accountuser.disabled.label'|trans }}</div>
-            {% endif %}
-        </div>
-    {% endif %}
-{% endblock breadcrumbs %}
-
 {% block stats %}
     <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
     <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
@@ -37,46 +24,6 @@
         {{ UI.editButton({
             'path': path(editRoute),
             'entity_label': 'orob2b.customer.accountuser.profile.label'|trans
-        }) }}
-    {% else %}
-        {% if resource_granted('EDIT', entity) %}
-            {{ UI.editButton({
-                'path' : path('orob2b_customer_account_user_update', { 'id': entity.id }),
-                'entity_label': 'orob2b.customer.accountuser.entity_label'|trans
-            }) }}
-            {% if entity.enabled %}
-                {% set idButton = entity.id ~ '-disable-account-user-btn' %}
-                {{ UI.button({
-                    'aCss':  'no-hash',
-                    'iCss':  'icon-remove',
-                    'id':    idButton,
-                    'label': 'orob2b.customer.action.account_user.disable'|trans,
-                    'path':  path('orob2b_api_customer_disable_account_user', {'id': entity.id}),
-                    'title': 'orob2b.customer.action.account_user.disable'|trans
-                }) }}
-            {% else %}
-                {% set idButton = entity.id ~ '-enable-account-user-btn' %}
-                {{ UI.button({
-                    'aCss':  'no-hash',
-                    'iCss':  'icon-ok',
-                    'id':    idButton,
-                    'label': 'orob2b.customer.action.account_user.enable'|trans,
-                    'path':  path('orob2b_api_customer_enable_account_user', {'id': entity.id}),
-                    'title': 'orob2b.customer.action.account_user.enable'|trans
-                }) }}
-            {% endif %}
-            <span data-page-component-module="orob2bcustomer/js/app/components/account-user-management-component"
-                  data-page-component-options="{{ {id: idButton}|json_encode }}"></span>
-        {% endif %}
-    {% endif %}
-    {% if resource_granted('DELETE', entity) and entity.id != app.user.id %}
-        {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_customer_delete_account_user', {'id': entity.id}),
-            'dataRedirect': path('orob2b_customer_account_user_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-account-user',
-            'entity_label': 'orob2b.customer.accountuser.entity_label'|trans
         }) }}
     {% endif %}
 {% endblock navButtons %}

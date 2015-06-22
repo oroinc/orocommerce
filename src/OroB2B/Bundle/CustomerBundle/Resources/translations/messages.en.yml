@@ -86,9 +86,11 @@ orob2b.customer:
         websites.label:                  'Websites'
 
     action:
-        account_user.enable:  'Enable'
-        account_user.disable: 'Disable'
-        account_user.confirm: 'Confirm'
+        account_user:
+            enable:  'Enable'
+            disable: 'Disable'
+            confirm: 'Confirm'
+            send_confirmation: 'Resend Confirmation Email'
 
     sections:
         general: 'General Information'
@@ -136,6 +138,7 @@ orob2b.customer:
             not_found.message: 'Account User not found'
             profile_updated.message: 'Account User profile updated'
             token_not_found.message: 'The user with "confirmation token" does not exist for value "%token%"'
+            confirmation_sent.message: 'Confirmation email has been sent'
         accountuserrole:
             saved.message:     'Account User Role has been saved'
 

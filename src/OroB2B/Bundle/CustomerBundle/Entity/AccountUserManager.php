@@ -63,7 +63,7 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     /**
      * @param AccountUser $user
      */
-    protected function sendConfirmationEmail(AccountUser $user)
+    public function sendConfirmationEmail(AccountUser $user)
     {
         $user->setConfirmed(false)
             ->setConfirmationToken($user->generateToken());
