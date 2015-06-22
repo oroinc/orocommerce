@@ -327,11 +327,11 @@ datagrid:
                 params: [ id ]
             enable_link:
                 type:   url
-                route:  orob2b_api_customer_enable_account_user
+                route:  orob2b_customer_account_user_enable
                 params: [ id ]
             disable_link:
                 type:   url
-                route:  orob2b_api_customer_disable_account_user
+                route:  orob2b_customer_account_user_disable
                 params: [ id ]
         sorters:
             columns:
