@@ -1,2 +1,0 @@
-bundles_frontend:
-    - { name: OroB2B\Bundle\EmailBundle\OroB2BEmailBundle, priority: 10  }

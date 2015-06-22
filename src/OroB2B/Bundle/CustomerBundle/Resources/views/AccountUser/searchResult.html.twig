@@ -1,0 +1,13 @@
+{% extends 'OroSearchBundle:Search:searchResultItem.html.twig' %}
+
+{% set showImage = false %}
+
+{% set recordUrl = indexer_item.recordUrl %}
+{% set title = entity ? entity.email : indexer_item.recordTitle %}
+
+{% set entityType = 'orob2b.customer.accountuser.entity_plural_label'|trans %}
+
+{% set entityInfo = [
+    {'title': 'orob2b.customer.accountuser.first_name.label'|trans, 'value': entity.firstName},
+    {'title': 'orob2b.customer.accountuser.last_name.label'|trans, 'value': entity.lastName},
+] %}

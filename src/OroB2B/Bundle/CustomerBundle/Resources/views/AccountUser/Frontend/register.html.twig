@@ -1,0 +1,15 @@
+{% extends 'OroUserBundle::layout.html.twig' %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ 'orob2b.customer.accountuser.registration'|trans }}</h1>
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ path('orob2b_customer_frontend_account_user_register') }}"
+          method="{{ form.vars.method }}" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        <button type="submit" class="btn btn-primary">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</button>
+    </form>
+
+    {{ oro_form_js_validation(form) }}
+</div>
+{% endblock content %}

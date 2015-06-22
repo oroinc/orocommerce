@@ -29,11 +29,24 @@ class LocaleCollectionType extends AbstractType
     protected $locales;
 
     /**
+     * @var string
+     */
+    protected $localeClass;
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @param string $localeClass
+     */
+    public function setLocaleClass($localeClass)
+    {
+        $this->localeClass = $localeClass;
     }
 
     /**
@@ -107,7 +120,7 @@ class LocaleCollectionType extends AbstractType
     {
         if (null === $this->locales) {
             /** @var EntityRepository $entityRepository */
-            $entityRepository = $this->registry->getRepository('OroB2BWebsiteBundle:Locale');
+            $entityRepository = $this->registry->getRepository($this->localeClass);
 
             $this->locales = $entityRepository->createQueryBuilder('locale')
                 ->leftJoin('locale.parentLocale', 'parentLocale')

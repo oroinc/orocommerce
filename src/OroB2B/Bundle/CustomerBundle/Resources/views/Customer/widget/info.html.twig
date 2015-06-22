@@ -37,7 +37,7 @@
                 {% for user in entity.users %}
                     {% set username = user.firstName ~ ' ' ~ user.lastName %}
                     {% if resource_granted('VIEW', user) %}
-                        {% set userView = UI.renderUrl(path('orob2b_user_admin_user_view', {'id': user.id}), username) %}
+                        {% set userView = UI.renderUrl(path('orob2b_customer_account_user_view', {'id': user.id}), username) %}
                     {% else %}
                         {% set userView = username|escape %}
                     {% endif %}

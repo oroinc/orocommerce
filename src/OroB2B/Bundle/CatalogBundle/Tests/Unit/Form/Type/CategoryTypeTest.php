@@ -11,6 +11,9 @@ use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 class CategoryTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+
     /**
      * @var CategoryType
      */
@@ -19,6 +22,8 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->type = new CategoryType();
+        $this->type->setDataClass(self::DATA_CLASS);
+        $this->type->setProductClass(self::PRODUCT_CLASS);
     }
 
     public function testBuildForm()
@@ -32,7 +37,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'parentCategory',
                 EntityIdentifierType::NAME,
-                ['class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category', 'multiple' => false]
+                ['class' => self::DATA_CLASS, 'multiple' => false]
             )
             ->will($this->returnSelf());
 
@@ -55,7 +60,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                 'appendProducts',
                 EntityIdentifierType::NAME,
                 [
-                    'class'    => 'OroB2BProductBundle:Product',
+                    'class'    => self::PRODUCT_CLASS,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true,
@@ -69,7 +74,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                 'removeProducts',
                 EntityIdentifierType::NAME,
                 [
-                    'class'    => 'OroB2BProductBundle:Product',
+                    'class'    => self::PRODUCT_CLASS,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true,
@@ -87,7 +92,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'data_class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category',
+                    'data_class' => self::DATA_CLASS,
                     'intention' => 'category',
                     'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]

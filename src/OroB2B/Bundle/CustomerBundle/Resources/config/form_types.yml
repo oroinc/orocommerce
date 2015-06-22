@@ -6,6 +6,11 @@ parameters:
     orob2b_customer.form.type.customer_group_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType
     orob2b_customer.form.type.customer_parent_select.class: OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType
 
+    orob2b_customer.form.type.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType
+    orob2b_customer.form.type.account_user_role.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType
+    orob2b_customer.form.type.frontend.account_user.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType
+    orob2b_customer.form.type.frontend.account_user.register.class: OroB2B\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType
+
 services:
     orob2b_customer.form.type.customer:
         class: %orob2b_customer.form.type.customer.class%
@@ -14,6 +19,9 @@ services:
 
     orob2b_customer.form.type.customer_group:
         class: %orob2b_customer.form.type.customer_group.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.customer_group.class%]]
+            - [setCustomerClass, [%orob2b_customer.entity.customer.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_group_type }
 
@@ -31,3 +39,34 @@ services:
         class: %orob2b_customer.form.type.customer_parent_select.class%
         tags:
             - { name: form.type, alias: orob2b_customer_parent_select }
+
+    orob2b_customer.form.type.account_user:
+        class: %orob2b_customer.form.type.account_user.class%
+        arguments:
+            - @oro_security.security_facade
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
+            - [setRoleClass, [%orob2b_customer.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_customer_account_user }
+
+    orob2b_customer.form.type.account_user_role:
+        class: %orob2b_customer.form.type.account_user_role.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_customer_account_user_role }
+
+    orob2b_customer.form.type.frontend.account_user:
+        class: %orob2b_customer.form.type.frontend.account_user.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_customer_frontend_account_user }
+
+    orob2b_customer.form.type.frontend.account_user.register:
+        class: %orob2b_customer.form.type.frontend.account_user.register.class%
+        calls:
+            - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_customer_frontend_account_user_register }

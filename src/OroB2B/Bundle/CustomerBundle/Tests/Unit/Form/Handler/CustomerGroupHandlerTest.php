@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;

@@ -8,8 +8,6 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\UserAdminBundle\Entity\User;
-
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CustomerBundle\Entity\Repository\CustomerRepository")
  * @ORM\Table(
@@ -81,7 +79,7 @@ class Customer
 
     /**
      * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\UserAdminBundle\Entity\User",
+     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser",
      *      mappedBy="customer",
      *      cascade={"persist"}
      * )
@@ -228,28 +226,28 @@ class Customer
     }
 
     /**
-     * @param User $user
+     * @param AccountUser $user
      * @return Customer
      */
-    public function addUser(User $user)
+    public function addUser(AccountUser $accountUser)
     {
-        if (!$this->hasUser($user)) {
-            $user->setCustomer($this);
-            $this->users->add($user);
+        if (!$this->hasUser($accountUser)) {
+            $accountUser->setCustomer($this);
+            $this->users->add($accountUser);
         }
 
         return $this;
     }
 
     /**
-     * @param User $user
+     * @param AccountUser $accountUser
      * @return Customer
      */
-    public function removeUser(User $user)
+    public function removeUser(AccountUser $accountUser)
     {
-        if ($this->hasUser($user)) {
-            $user->setCustomer(null);
-            $this->users->removeElement($user);
+        if ($this->hasUser($accountUser)) {
+            $accountUser->setCustomer(null);
+            $this->users->removeElement($accountUser);
         }
 
         return $this;
@@ -258,7 +256,7 @@ class Customer
     /**
      * Get children
      *
-     * @return Collection|User[]
+     * @return Collection|AccountUser[]
      */
     public function getUsers()
     {
@@ -266,11 +264,11 @@ class Customer
     }
 
     /**
-     * @param User $user
+     * @param AccountUser $accountUser
      * @return bool
      */
-    protected function hasUser(User $user)
+    protected function hasUser(AccountUser $accountUser)
     {
-        return $this->users->contains($user);
+        return $this->users->contains($accountUser);
     }
 }

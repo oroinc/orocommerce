@@ -1,6 +1,0 @@
-bundles_frontend:
-    - { name: FOS\UserBundle\FOSUserBundle, priority: 10 }
-    - { name: JMS\AopBundle\JMSAopBundle, priority: 10 }
-    - { name: JMS\SecurityExtraBundle\JMSSecurityExtraBundle, priority: 10 }
-    - { name: JMS\DiExtraBundle\JMSDiExtraBundle, kernel: true, priority: 10 }
-    - { name: OroB2B\Bundle\UserBundle\OroB2BUserBundle, priority: 20 }

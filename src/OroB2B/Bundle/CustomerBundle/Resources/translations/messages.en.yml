@@ -19,10 +19,66 @@ orob2b.customer:
         customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
 
+    accountuser:
+        entity_label:                'Account User'
+        entity_plural_label:         'Account Users'
+        id.label:                    'ID'
+        first_name.label:            'First Name'
+        middle_name.label:           'Middle Name'
+        last_name.label:             'Last Name'
+        username.label:              'Email'
+        email.label:                 'Email Address'
+        password.label:              'Password'
+        new_password.label:          'New Password'
+        current_password.label:      'Current Password'
+        password_confirmation.label: 'Confirm Password'
+        enabled.label:               'Enabled'
+        password_generate.label:     'Generate Password'
+        send_email.label:            'Send Welcome Email'
+        confirmation_token.label:    'Confirmation Token'
+        birthday.label:              'Birthday'
+        last_login.label:            'Last login'
+        roles.label:                 'Roles'
+        salt.label:                  'Salt'
+        created_at.label:            'Created At'
+        updated_at.label:            'Updated At'
+        login_count.label:           'Login Count'
+        name_prefix.label:           'Name Prefix'
+        name_suffix.label:           'Name Suffix'
+        password_changed_at.label:   'Password Changed At'
+        password_requested_at.label: 'Password Requested At'
+        customer.label:              'Customer'
+        organization.label:          'Organization'
+        organizations.label:         'Organizations'
+        has_role.label:              'Has role'
+
+        registration: 'Account User Registration'
+
+        profile:
+            register: 'Register'
+            edit: 'Edit Profile'
+            label: 'Profile'
+            enabled.label: 'Active'
+            disabled.label: 'Inactive'
+
+    accountuserrole:
+        entity_label:                    'Account User Role'
+        entity_plural_label:             'Account User Roles'
+        id.label:                        'ID'
+        label.label:                     'Label'
+        role.label:                      'Role'
+        websites.label:                  'Websites'
+
+    action:
+        account_user.enable:  'Enable'
+        account_user.disable: 'Disable'
+
     sections:
-        general: 'General'
+        general: 'General Information'
         customergroup:
             customers: 'Customers'
+        roles:   'Frontend Capabilities'
+        password: 'Password'
 
     menu:
         customer_tab.label: 'Customers'
@@ -30,9 +86,43 @@ orob2b.customer:
         customer_group_list.description: 'List of Customer Groups'
         shortcut_customer_list.description: 'List of Customers'
         shortcut_customer_group_list.description: 'List of Customer Groupss'
+        account_users.description: 'List of account users'
+        shortcut_new_account_user.label: 'Create new account user'
+        shortcut_new_account_user.description: 'Create new account user instance'
+        shortcut_list_account_users.label: 'Show account users'
+        shortcut_list_account_users.description: 'View list of account users'
+        account_user_roles.description: 'List of account user roles'
+        shortcut_new_account_user_role.label: 'Create new account user role'
+        shortcut_new_account_user_role.description: 'Create new account user role instance'
+        shortcut_list_account_user_roles.label: 'Show account user roles'
+        shortcut_list_account_user_roles.description: 'View list of account user roles'
+
+        account_user_profile.label: My Profile
+        account_user_login.label: Login
+        account_user_logout.label: Logout
 
     controller:
         customer:
-            saved.message: 'Customer saved'
+            saved.message: 'Customer has been saved'
         customergroup:
-            saved.message: 'Customer group saved'
+            saved.message: 'Customer group has been saved'
+        accountuser:
+            registered.message: 'Registration successful'
+            saved.message:     'Account User has been saved'
+            enabled.message:   'Account User has been enabled'
+            disabled.message:  'Account User has been disabled'
+            not_found.message: 'Account User not found'
+            profile_updated.message: 'Account User profile updated'
+        accountuserrole:
+            saved.message:     'Account User Role has been saved'
+
+    message:
+        password_mismatch: "The entered passwords don't match"
+
+    system_configuration:
+        groups:
+            account.title: 'Account'
+            account_users.title: 'Account Users'
+        fields:
+            registration_allowed.label: 'Registration Allowed'
+            confirmation_required.label: 'Confirmation Required'
