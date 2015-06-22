@@ -11,7 +11,7 @@ define(function (require) {
 
     AccountUserManagementComponent = BaseComponent.extend({
         initialize: function (options) {
-            $('#' + options.id).on('click', function(e) {
+            options._sourceElement.find('a').on('click', function(e) {
                 e.preventDefault();
                 var el = $(this);
                 $.ajax({

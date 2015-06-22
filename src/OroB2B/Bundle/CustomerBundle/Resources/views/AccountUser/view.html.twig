@@ -39,17 +39,15 @@
     {% else %}
         {% if resource_granted('EDIT', entity) %}
             {% if entity.confirmed == false %}
-                {% set idConfirmButton = entity.id ~ '-confirm-account-user-btn' %}
-                {{ UI.button({
-                    'aCss':  'no-hash',
-                    'iCss':  'icon-ok',
-                    'id':    idConfirmButton,
-                    'label': 'orob2b.customer.action.account_user.confirm'|trans,
-                    'path':  path('orob2b_api_customer_confirm_account_user', {'id': entity.id}),
-                    'title': 'orob2b.customer.action.account_user.confirm'|trans
-                }) }}
-                <span data-page-component-module="orob2bcustomer/js/app/components/account-user-management-component"
-                      data-page-component-options="{{ {id: idConfirmButton}|json_encode }}"></span>
+                <div class="btn-group" data-page-component-module="orob2bcustomer/js/app/components/account-user-management-component">
+                    {{ UI.button({
+                        'aCss':  'no-hash',
+                        'iCss':  'icon-ok',
+                        'label': 'orob2b.customer.action.account_user.confirm'|trans,
+                        'path':  path('orob2b_customer_account_user_confirm', {'id': entity.id}),
+                        'title': 'orob2b.customer.action.account_user.confirm'|trans
+                    }) }}
+                </div>
                 {{ UI.buttonSeparator() }}
             {% endif %}
             {{ UI.editButton({
