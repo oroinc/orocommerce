@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
@@ -108,21 +109,26 @@ class CategoryTest extends EntityTestCase
         $firstProduct = new Product();
         $secondProduct = new Product();
 
-        $category->addProduct($firstProduct)
-            ->addProduct($secondProduct);
+        $firstProductCategory = new ProductCategory();
+        $firstProductCategory->setProduct($firstProduct)
+            ->setCategory($category);
+        $secondProductCategory = new ProductCategory();
+        $secondProductCategory->setProduct($secondProduct)
+            ->setCategory($category);
+
+        $category->addProduct($firstProductCategory)
+            ->addProduct($secondProductCategory);
 
         $this->assertEquals(
-            [$firstProduct, $secondProduct],
+            [$firstProductCategory, $secondProductCategory],
             array_values($category->getProducts()->toArray())
         );
 
-        $category->removeProduct($firstProduct)
-            ->removeProduct($firstProduct);
-
-        $this->assertEquals(null, $firstProduct->getCategory());
+        $category->removeProduct($firstProductCategory)
+            ->removeProduct($firstProductCategory);
 
         $this->assertEquals(
-            [$secondProduct],
+            [$secondProductCategory],
             array_values($category->getProducts()->toArray())
         );
     }

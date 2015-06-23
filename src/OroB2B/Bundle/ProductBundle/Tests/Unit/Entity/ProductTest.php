@@ -6,7 +6,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -22,7 +21,6 @@ class ProductTest extends EntityTestCase
             ['sku', 'sku-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],
-            ['category', new Category()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
         ];

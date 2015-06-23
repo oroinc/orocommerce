@@ -10,8 +10,6 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 
 use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -72,14 +70,6 @@ class ProductTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    CategoryTreeType::NAME => new StubEntityType(
-                        [
-                            1 => $this->createCategory('Test Category First'),
-                            2 => $this->createCategory('Test Category Second'),
-                            3 => $this->createCategory('Test Category Third')
-                        ],
-                        CategoryTreeType::NAME
-                    ),
                     OroCollectionType::NAME => new OroCollectionType(),
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
@@ -129,10 +119,6 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         /** @var Product $data */
         $data = $form->getData();
-        $expectedData
-            ->getCategory()
-            ->setCreatedAt($data->getCategory()->getCreatedAt())
-            ->setUpdatedAt($data->getCategory()->getUpdatedAt());
 
         $this->assertEquals($expectedData, $data);
     }
@@ -149,7 +135,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'category' => 2,
                     'unitPrecisions' => [],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
@@ -159,7 +144,6 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
-                    'category' => 2,
                     'unitPrecisions' => [
                         [
                             'unit' => 'kg',
@@ -181,8 +165,6 @@ class ProductTypeTest extends FormIntegrationTestCase
     {
         $expectedProduct = new Product();
 
-        $category = $this->createCategory('Test Category Second');
-
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
 
@@ -196,9 +178,7 @@ class ProductTypeTest extends FormIntegrationTestCase
             $expectedProduct->addUnitPrecision($productUnitPrecision);
         }
 
-        return $expectedProduct
-            ->setSku('test sku')
-            ->setCategory($category);
+        return $expectedProduct->setSku('test sku');
     }
 
     public function testBuildForm()
@@ -206,26 +186,11 @@ class ProductTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->type);
 
         $this->assertTrue($form->has('sku'));
-        $this->assertTrue($form->has('category'));
         $this->assertTrue($form->has('unitPrecisions'));
     }
 
     public function testGetName()
     {
         $this->assertEquals('orob2b_product', $this->type->getName());
-    }
-
-    /**
-     * @param string $title
-     * @return Category
-     */
-    protected function createCategory($title)
-    {
-        $localizedTitle = new LocalizedFallbackValue();
-        $localizedTitle->setString($title);
-
-        $category = new Category();
-
-        return $category->addTitle($localizedTitle);
     }
 }

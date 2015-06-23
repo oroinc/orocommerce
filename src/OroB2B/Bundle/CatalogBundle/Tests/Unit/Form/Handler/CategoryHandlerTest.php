@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
 use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -44,6 +45,8 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('submit')
             ->with($this->request);
 
+        $this->mockProductCategory();
+
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
     }
 
@@ -65,9 +68,10 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
         $this->assertAppendRemoveProducts();
 
-        $this->manager->expects($this->once())
-            ->method('persist')
-            ->with($this->entity);
+        $this->mockProductCategory();
+
+        $this->manager->expects($this->any())
+            ->method('persist');
 
         $this->manager->expects($this->once())
             ->method('flush');
@@ -102,5 +106,21 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('get')
             ->with('removeProducts')
             ->will($this->returnValue($removeProducts));
+    }
+
+    protected function mockProductCategory()
+    {
+        $productCategory = new ProductCategory();
+        $productCategoryRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\ProductCategoryRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $productCategoryRepository->expects($this->any())
+            ->method('findOneByProduct')
+            ->will($this->returnValue($productCategory));
+        $this->manager->expects($this->any())
+            ->method('getRepository')
+            ->with('OroB2BCatalogBundle:ProductCategory')
+            ->will($this->returnValue($productCategoryRepository));
     }
 }
