@@ -103,7 +103,7 @@ class OroB2BProductBundle implements
     {
         $this->attachmentExtension->addImageRelation(
             $schema,
-            self::TABLE_NAME,
+            self::PRODUCT_TABLE_NAME,
             'image',
             [],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
@@ -111,7 +111,7 @@ class OroB2BProductBundle implements
 
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
-            self::TABLE_NAME,
+            self::PRODUCT_TABLE_NAME,
             [],
             self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
         );

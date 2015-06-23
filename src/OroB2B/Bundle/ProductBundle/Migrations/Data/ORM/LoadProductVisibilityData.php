@@ -2,43 +2,38 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Fixture\AbstractEnumFixture;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class LoadProductVisibilityData extends AbstractFixture
+class LoadProductVisibilityData extends AbstractEnumFixture
 {
-    /** @var array */
-    protected $data = [
-        'As Defined in System Configuration' => Product::VISIBILITY_BY_CONFIG,
-        'Yes'                                => Product::VISIBILITY_VISIBLE,
-        'No'                                 => Product::VISIBILITY_NOT_VISIBLE,
-    ];
-
-    /** @var string */
-    protected $defaultValue = 'As Defined in System Configuration';
+    /**
+     * {@inheritdoc}
+     */
+    protected function getData()
+    {
+        return [
+            Product::VISIBILITY_BY_CONFIG   => 'As Defined in System Configuration',
+            Product::VISIBILITY_VISIBLE     => 'Yes',
+            Product::VISIBILITY_NOT_VISIBLE => 'No'
+        ];
+    }
 
     /**
-     * @param ObjectManager $manager
+     * {@inheritdoc}
      */
-    public function load(ObjectManager $manager)
+    protected function getClassName()
     {
-        $className = ExtendHelper::buildEnumValueClassName('prod_visibility');
+        return ExtendHelper::buildEnumValueClassName('prod_visibility');
+    }
 
-        /** @var EnumValueRepository $enumRepo */
-        $enumRepo = $manager->getRepository($className);
-
-        $priority = 1;
-        foreach ($this->data as $name => $id) {
-            $isDefault = $name === $this->defaultValue;
-            $enumOption = $enumRepo->createEnumValue($name, $priority++, $isDefault, $id);
-            $manager->persist($enumOption);
-        }
-
-        $manager->flush();
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDefaultValue()
+    {
+        return Product::VISIBILITY_BY_CONFIG;
     }
 }
