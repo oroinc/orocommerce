@@ -17,7 +17,7 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -62,6 +62,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
+        $organization = $user->getOrganization();
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             // set date in future
             $validUntil = new \DateTime('now');
@@ -71,11 +72,10 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
             $quote = new Quote();
             $quote
                 ->setOwner($user)
-                ->setOrganization($user->getOrganization())
+                ->setOrganization($organization)
                 ->setValidUntil($validUntil)
             ;
             $this->processQuoteProducts($quote, $manager);
-
             $manager->persist($quote);
         }
 
@@ -155,21 +155,26 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
             $product = $products[rand(0, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
             $quoteProduct = new QuoteProduct();
-            $quoteProduct->setProduct($product);
-            for ($j = 0; $j < rand(0, 3); $j++) {
+            $quoteProduct
+                ->setProduct($product)
+                ->setType(QuoteProduct::TYPE_OFFER)
+            ;
+            for ($j = 0; $j < rand(1, 3); $j++) {
                 if (!count($unitPrecisions)) {
                     continue;
                 }
                 $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];
-                $quoteProductItem = new QuoteProductItem();
-                $quoteProductItem
+                $quoteProductOffer = new QuoteProductOffer();
+                $quoteProductOffer
                     ->setPrice(Price::create(rand(1, 100), $currency))
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit)
+                    ->setPriceType(QuoteProductOffer::PRICE_BUNDLED)
+                    ->setAllowIncrements(true)
                 ;
-                $quoteProduct->addQuoteProductItem($quoteProductItem);
+                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
             }
             $quote->addQuoteProduct($quoteProduct);
         }

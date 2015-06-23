@@ -11,9 +11,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\RFPAdminBundle\Entity as en;
-
 
 class RequestCreateQuoteHandler
 {
@@ -85,17 +84,19 @@ class RequestCreateQuoteHandler
         ;
         foreach ($entity->getRequestProducts() as $requestProduct) {
             $quoteProduct = new QuoteProduct();
-            $quoteProduct->setProduct($requestProduct->getProduct());
+            $quoteProduct
+                ->setProduct($requestProduct->getProduct())
+                ->setType(QuoteProduct::TYPE_REQUESTED)
+            ;
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
-                $quoteProductItem = new QuoteProductItem();
-                $quoteProductItem
-                    ->setStatus(QuoteProductItem::STATUS_REQUESTED)
-                    ->setRequestedQuantity($requestProductItem->getQuantity())
-                    ->setRequestedPrice($requestProductItem->getPrice())
-                    ->setRequestedProductUnit($requestProductItem->getProductUnit())
+                $quoteProductRequest = new QuoteProductRequest();
+                $quoteProductRequest
+                    ->setQuantity($requestProductItem->getQuantity())
+                    ->setPrice($requestProductItem->getPrice())
+                    ->setProductUnit($requestProductItem->getProductUnit())
                     ->setRequestProductItem($requestProductItem)
                 ;
-                $quoteProduct->addQuoteProductItem($quoteProductItem);
+                $quoteProduct->addQuoteProductRequest($quoteProductRequest);
             }
             $quote->addQuoteProduct($quoteProduct);
         }

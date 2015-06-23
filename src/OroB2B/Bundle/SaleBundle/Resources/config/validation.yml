@@ -11,11 +11,11 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
         product:
             - NotBlank:
                 message: 'orob2b.sale.quoteproduct.product.blank'
-        quoteProductItems:
+        quoteProductOffers:
             - Valid:
                 traverse: true
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
     constraints:
         - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem: ~
     properties:

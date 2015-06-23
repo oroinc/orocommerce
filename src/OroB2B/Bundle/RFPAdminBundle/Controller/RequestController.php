@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\RFPAdminBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -191,10 +192,21 @@ class RequestController extends Controller
             $this->getUser()
         );
         $quoteId = $handler->process($request);
+        /** @var $flashBag FlashBag */
+        $flashBag = $this->getRequest()->getSession()->getFlashBag();
         if ($quoteId) {
+            $flashBag->add(
+                'success',
+                $this->get('translator')->trans('orob2b.rfpadmin.message.request.create_quote.success')
+            );
+
             return $this->redirect($this->generateUrl('orob2b_sale_quote_update', ['id' => $quoteId]));
         } else {
-            // ToDo: process errors
+            $flashBag->add(
+                'error',
+                $this->get('translator')->trans('orob2b.rfpadmin.message.request.create_quote.error')
+            );
+
             return $this->redirect($this->generateUrl('orob2b_rfp_admin_request_view', ['id' => $request->getId()]));
         }
     }

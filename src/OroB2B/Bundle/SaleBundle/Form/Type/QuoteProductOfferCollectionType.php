@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class QuoteProductItemCollectionType extends AbstractType
+class QuoteProductOfferCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_item_collection';
+    const NAME = 'orob2b_sale_quote_product_offer_collection';
 
     /**
      * {@inheritdoc}
@@ -23,9 +23,9 @@ class QuoteProductItemCollectionType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'type'                  => QuoteProductItemType::NAME,
+            'type'                  => QuoteProductOfferType::NAME,
             'show_form_when_empty'  => false,
-            'prototype_name'        => '__namequoteproductitem__'
+            'prototype_name'        => '__namequoteproductoffer__'
         ]);
     }
 

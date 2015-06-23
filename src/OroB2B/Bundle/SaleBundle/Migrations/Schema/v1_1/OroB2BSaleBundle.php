@@ -16,15 +16,17 @@ class OroB2BSaleBundle implements Migration
     {
         /** Tables changes **/
         $this->changeOrob2BSaleQuoteTable($schema);
+        $this->changeOrob2BSaleQuoteProductTable($schema);
         $this->changeOrob2BSaleQuoteProductItemTable($schema);
+        $this->createOrob2BSaleQuoteProdRequestTable($schema);
 
         /** Foreign keys changes **/
         $this->addOrob2BSaleQuoteForeignKeys($schema);
-        $this->addOrob2BSaleQuoteProductItemForeignKeys($schema);
+        $this->addOrob2BSaleQuoteProdRequestForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_sale_quote table
+     * Change orob2b_sale_quote table
      *
      * @param Schema $schema
      */
@@ -36,6 +38,19 @@ class OroB2BSaleBundle implements Migration
     }
 
     /**
+     * Change orob2b_sale_quote_product table
+     *
+     * @param Schema $schema
+     */
+    protected function changeOrob2BSaleQuoteProductTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_sale_quote_product');
+        $table->addColumn('type', 'smallint', ['notnull' => false]);
+        $table->addColumn('comment', 'text', ['notnull' => false]);
+        $table->addColumn('comment_customer', 'text', ['notnull' => false]);
+    }
+
+    /**
      * Create orob2b_sale_quote_product_item table
      *
      * @param Schema $schema
@@ -43,20 +58,29 @@ class OroB2BSaleBundle implements Migration
     protected function changeOrob2BSaleQuoteProductItemTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_product_item');
+        $table->addColumn('price_type', 'smallint', []);
+        $table->addColumn('allow_increments', 'boolean', []);
+        $table->setPrimaryKey(['id']);
+        $schema->renameTable('orob2b_sale_quote_product_item', 'orob2b_sale_quote_prod_offer');
+    }
+
+    /**
+     * Create orob2b_sale_quote_prod_request table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BSaleQuoteProdRequestTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_sale_quote_prod_request');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('request_product_item_id', 'integer', ['notnull' => false]);
-        $table->addColumn('requested_product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('requested_quantity', 'float', []);
-        $table->addColumn('requested_product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn(
-            'requested_value',
-            'money',
-            ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
-        );
-        $table->addColumn('requested_currency', 'string', ['length' => 255]);
-        $table->addColumn('status', 'smallint', ['notnull' => false]);
-        $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addIndex(['requested_product_unit_id'], 'IDX_3ED01F0A830A1BC3', []);
-        $table->addIndex(['request_product_item_id'], 'IDX_3ED01F0AF0EE02B6', []);
+        $table->addColumn('quote_product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('quantity', 'float', []);
+        $table->addColumn('product_unit_code', 'string', ['length' => 255]);
+        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
+        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -76,13 +100,19 @@ class OroB2BSaleBundle implements Migration
     }
 
     /**
-     * Add orob2b_sale_quote_product_item foreign keys.
+     * Add orob2b_sale_quote_prod_request foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteProductItemForeignKeys(Schema $schema)
+    protected function addOrob2BSaleQuoteProdRequestForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_sale_quote_product_item');
+        $table = $schema->getTable('orob2b_sale_quote_prod_request');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product_unit'),
+            ['product_unit_id'],
+            ['code'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_rfp_request_prod_item'),
             ['request_product_item_id'],
@@ -90,10 +120,10 @@ class OroB2BSaleBundle implements Migration
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product_unit'),
-            ['requested_product_unit_id'],
-            ['code'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+            $schema->getTable('orob2b_sale_quote_product'),
+            ['quote_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

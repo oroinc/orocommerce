@@ -42,12 +42,31 @@ class QuoteProductType extends AbstractType
                 'create_enabled' => false,
             ])
             ->add(
-                'quoteProductItems',
-                QuoteProductItemCollectionType::NAME,
+                'quoteProductRequests',
+                QuoteProductRequestCollectionType::NAME
+            )
+            ->add(
+                'quoteProductOffers',
+                QuoteProductOfferCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.sale.quoteproductitem.add_label',
+                    'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
                 ]
             )
+            ->add(
+                'type',
+                'choice',
+                [
+                    'label' => 'orob2b.sale.quoteproduct.type.label',
+                    'choices' => QuoteProduct::getTypeTitles(),
+                    'required' => true,
+                    'expanded' => false
+                ]
+            )
+            ->add('comment', 'text', [
+                'required'  => true,
+                'label'     => 'orob2b.sale.quoteproduct.comment.label'
+            ])
+
         ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }

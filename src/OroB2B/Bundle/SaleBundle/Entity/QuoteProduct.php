@@ -27,6 +27,10 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  */
 class QuoteProduct
 {
+    const TYPE_REQUESTED = 10;
+    const TYPE_OFFER = 20;
+    const TYPE_NOT_AVAILABLE = 30;
+
     /**
      * @var int
      *
@@ -60,11 +64,39 @@ class QuoteProduct
     protected $productSku;
 
     /**
-     * @var Collection|QuoteProductItem[]
+     * @var int
      *
-     * @ORM\OneToMany(targetEntity="QuoteProductItem", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\Column(name="type", type="smallint", nullable=true)
      */
-    protected $quoteProductItems;
+    protected $type;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="comment", type="text", nullable=true)
+     */
+    protected $comment;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="comment_customer", type="text", nullable=true)
+     */
+    protected $commentCustomer;
+
+    /**
+     * @var Collection|QuoteProductOffer[]
+     *
+     * @ORM\OneToMany(targetEntity="QuoteProductOffer", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $quoteProductOffers;
+
+    /**
+     * @var Collection|QuoteProductRequest[]
+     *
+     * @ORM\OneToMany(targetEntity="QuoteProductRequest", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $quoteProductRequests;
 
 
     /**
@@ -72,7 +104,40 @@ class QuoteProduct
      */
     public function __construct()
     {
-        $this->quoteProductItems = new ArrayCollection();
+        $this->quoteProductOffers = new ArrayCollection();
+        $this->quoteProductRequests = new ArrayCollection();
+    }
+
+    /**
+     * Get Type Titles array
+     *
+     * @return array
+     */
+    public static function getTypeTitles()
+    {
+        static $typeTitles = null;
+        if (null === $typeTitles) {
+            $typeTitles = [
+                static::TYPE_REQUESTED => 'orob2b.sale.quoteproduct.type.requested',
+                static::TYPE_OFFER => 'orob2b.sale.quoteproduct.type.offer',
+                static::TYPE_NOT_AVAILABLE => 'orob2b.sale.quoteproduct.type.not_available',
+            ];
+        }
+
+        return $typeTitles;
+    }
+
+    /**
+     * Get Type Title
+     *
+     * @return string
+     */
+    public function getTypeTitle()
+    {
+        $status = $this->getType();
+        $titles = static::getTypeTitles();
+
+        return isset($titles[$status]) ? $titles[$status] : '';
     }
 
     /**
@@ -158,43 +223,141 @@ class QuoteProduct
     }
 
     /**
-     * Add quoteProductItem
-     *
-     * @param QuoteProductItem $quoteProductItem
+     * @param int $type
      * @return QuoteProduct
      */
-    public function addQuoteProductItem(QuoteProductItem $quoteProductItem)
+    public function setType($type)
     {
-        if (!$this->quoteProductItems->contains($quoteProductItem)) {
-            $this->quoteProductItems[] = $quoteProductItem;
-            $quoteProductItem->setQuoteProduct($this);
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $comment
+     * @return QuoteProduct
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @param string $commentCustomer
+     * @return QuoteProduct
+     */
+    public function setCommentCustomer($commentCustomer)
+    {
+        $this->commentCustomer = $commentCustomer;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommentCustomer()
+    {
+        return $this->commentCustomer;
+    }
+
+    /**
+     * Add quoteProductOffer
+     *
+     * @param QuoteProductOffer $quoteProductOffer
+     * @return QuoteProduct
+     */
+    public function addQuoteProductOffer(QuoteProductOffer $quoteProductOffer)
+    {
+        if (!$this->quoteProductOffers->contains($quoteProductOffer)) {
+            $this->quoteProductOffers[] = $quoteProductOffer;
+            $quoteProductOffer->setQuoteProduct($this);
         }
 
         return $this;
     }
 
     /**
-     * Remove quoteProductItem
+     * Remove quoteProductOffer
      *
-     * @param QuoteProductItem $quoteProductItem
+     * @param QuoteProductOffer $quoteProductOffer
      * @return QuoteProduct
      */
-    public function removeQuoteProductItem(QuoteProductItem $quoteProductItem)
+    public function removeQuoteProductOffer(QuoteProductOffer $quoteProductOffer)
     {
-        if ($this->quoteProductItems->contains($quoteProductItem)) {
-            $this->quoteProductItems->removeElement($quoteProductItem);
+        if ($this->quoteProductOffers->contains($quoteProductOffer)) {
+            $this->quoteProductOffers->removeElement($quoteProductOffer);
         }
 
         return $this;
     }
 
     /**
-     * Get quoteProductItems
+     * Get quoteProductOffers
      *
-     * @return Collection|QuoteProductItem[]
+     * @return Collection|QuoteProductOffer[]
      */
-    public function getQuoteProductItems()
+    public function getQuoteProductOffers()
     {
-        return $this->quoteProductItems;
+        return $this->quoteProductOffers;
+    }
+
+    /**
+     * Add quoteProductRequest
+     *
+     * @param QuoteProductRequest $quoteProductRequest
+     * @return QuoteProduct
+     */
+    public function addQuoteProductRequest(QuoteProductRequest $quoteProductRequest)
+    {
+        if (!$this->quoteProductRequests->contains($quoteProductRequest)) {
+            $this->quoteProductRequests[] = $quoteProductRequest;
+            $quoteProductRequest->setQuoteProduct($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove quoteProductRequest
+     *
+     * @param QuoteProductRequest $quoteProductRequest
+     * @return QuoteProduct
+     */
+    public function removeQuoteProductRequest(QuoteProductRequest $quoteProductRequest)
+    {
+        if ($this->quoteProductRequests->contains($quoteProductRequest)) {
+            $this->quoteProductRequests->removeElement($quoteProductRequest);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get quoteProductRequests
+     *
+     * @return Collection|QuoteProductRequest[]
+     */
+    public function getQuoteProductRequests()
+    {
+        return $this->quoteProductRequests;
     }
 }

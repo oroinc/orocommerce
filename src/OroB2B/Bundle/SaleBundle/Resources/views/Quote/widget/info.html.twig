@@ -23,9 +23,15 @@
                                 {% endif %}
                             </td>
                             <td class="sale-quoteproductitems-info" style="">
-                                {% for quoteProductItem in quoteProduct.quoteProductItems %}
+                                {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
                                     <div class="sale-quoteproductitem-info">
-                                        {{ quoteProductItem|orob2b_format_sale_quote_product_item }}
+                                        {{ quoteProductRequest|orob2b_format_sale_quote_product_item }}
+                                    </div>
+                                {% endfor %}
+
+                                {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
+                                    <div class="sale-quoteproductitem-info">
+                                        {{ quoteProductOffer|orob2b_format_sale_quote_product_item }}
                                     </div>
                                 {% endfor %}
                             </td>
