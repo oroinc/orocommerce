@@ -29,11 +29,24 @@ class WebsiteCollectionType extends AbstractType
     protected $websites;
 
     /**
+     * @var string
+     */
+    protected $websiteClass;
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @param string $websiteClass
+     */
+    public function setWebsiteClass($websiteClass)
+    {
+        $this->websiteClass = $websiteClass;
     }
 
     /**
@@ -93,7 +106,7 @@ class WebsiteCollectionType extends AbstractType
     {
         if (null === $this->websites) {
             /** @var EntityRepository $entityRepository */
-            $entityRepository = $this->registry->getRepository('OroB2BWebsiteBundle:Website');
+            $entityRepository = $this->registry->getRepository($this->websiteClass);
 
             $this->websites = $entityRepository->createQueryBuilder('website')
                 ->addOrderBy('website.id', 'ASC')

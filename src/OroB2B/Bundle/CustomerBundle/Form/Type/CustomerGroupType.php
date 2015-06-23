@@ -4,10 +4,37 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class CustomerGroupType extends AbstractType
 {
     const NAME = 'orob2b_customer_group_type';
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $customerClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $customerClass
+     */
+    public function setCustomerClass($customerClass)
+    {
+        $this->customerClass = $customerClass;
+    }
 
     /**
      * {@inheritdoc}
@@ -27,7 +54,7 @@ class CustomerGroupType extends AbstractType
                 'appendCustomers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => $this->customerClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
@@ -37,12 +64,20 @@ class CustomerGroupType extends AbstractType
                 'removeCustomers',
                 'oro_entity_identifier',
                 [
-                    'class'    => 'OroB2B\Bundle\CustomerBundle\Entity\Customer',
+                    'class'    => $this->customerClass,
                     'required' => false,
                     'mapped'   => false,
                     'multiple' => true
                 ]
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(['data_class' => $this->dataClass]);
     }
 
     /**

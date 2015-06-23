@@ -20,6 +20,19 @@ class PageType extends AbstractType
     const NAME = 'orob2b_cms_page';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -30,7 +43,7 @@ class PageType extends AbstractType
                 'parentPage',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2B\Bundle\CMSBundle\Entity\Page',
+                    'class' => $this->dataClass,
                     'multiple' => false
                 ]
             )
@@ -86,7 +99,7 @@ class PageType extends AbstractType
             /** @var Page $page */
             $page = $event->getData();
 
-            if ($slugData['mode'] == 'new') {
+            if ($slugData['mode'] === 'new') {
                 if (isset($slugData['redirect']) && $slugData['redirect']) {
                     // Leave the old slug for page. And add a new slug as current for page
                     $slug = new Slug();
@@ -106,7 +119,7 @@ class PageType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\CMSBundle\Entity\Page',
+            'data_class' => $this->dataClass,
             'intention' => 'page',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

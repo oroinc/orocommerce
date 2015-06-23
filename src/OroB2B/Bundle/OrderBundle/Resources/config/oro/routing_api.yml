@@ -1,0 +1,3 @@
+orob2b_order_api:
+    resource: "@OroB2BOrderBundle/Controller/Api/Rest/OrderController.php"
+    type:     rest

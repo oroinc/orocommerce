@@ -10,5 +10,7 @@ services:
 
     orob2b_cms.form.type.page:
         class: %orob2b_cms.form.type.page.class%
+        calls:
+            - [setDataClass, [%orob2b_cms.page.class%]]
         tags:
             - { name: form.type, alias: orob2b_cms_page }

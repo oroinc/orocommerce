@@ -176,50 +176,44 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ],
             'no prices' => [
                 'sourceData' => [
-                    'unitPrecisions' => [
-                        ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3]
-                    ]
+                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]]
                 ],
                 'expectedData' => [
-                    'unitPrecisions' => [
-                        ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3]
-                    ]
+                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]]
                 ]
             ],
             'no unit precisions' => [
                 'sourceData' => [
-                    'prices' => [
-                        ['quantity' => 12.345, 'unit' => 'kg']
-                    ]
+                    'prices' => [['quantity' => 12.345, 'unit' => 'kg']]
                 ],
                 'expectedData' => [
-                    'prices' => [
-                        ['quantity' => 12.345, 'unit' => 'kg']
-                    ]
+                    'prices' => [['quantity' => 12.345, 'unit' => 'kg']]
+                ]
+            ],
+            'price not valid unit' => [
+                'sourceData' => [
+                    'prices' => [['quantity' => 1, 'unit' => '']]
+                ],
+                'expectedData' => [
+                    'prices' => []
+                ]
+            ],
+            'price not valid quantity' => [
+                'sourceData' => [
+                    'prices' => [['quantity' => null, 'unit' => 'kg']]
+                ],
+                'expectedData' => [
+                    'prices' => []
                 ]
             ],
             'valid rounding data' => [
                 'sourceData' => [
-                    'unitPrecisions' => [
-                        ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3]
-                    ],
-                    'prices' => [
-                        ['quantity' => 12.3, 'unit' => 'item'],
-                        ['quantity' => 12.3456, 'unit' => 'kg']
-                    ]
+                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]],
+                    'prices' => [['quantity' => 12.3, 'unit' => 'item'], ['quantity' => 12.3456, 'unit' => 'kg']]
                 ],
                 'expectedData' => [
-                    'unitPrecisions' => [
-                        ['unit' => 'item', 'precision' => 0],
-                        ['unit' => 'kg', 'precision' => 3]
-                    ],
-                    'prices' => [
-                        ['quantity' => 12, 'unit' => 'item'],
-                        ['quantity' => 12.346, 'unit' => 'kg']
-                    ]
+                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]],
+                    'prices' => [['quantity' => 12, 'unit' => 'item'], ['quantity' => 12.346, 'unit' => 'kg']]
                 ]
             ]
         ];

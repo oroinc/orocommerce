@@ -42,6 +42,9 @@ class OptionsCollectionTypeTest extends AbstractLocalizedType
      */
     protected function getExtensions()
     {
+        $localeCollection = new LocaleCollectionType($this->registry);
+        $localeCollection->setLocaleClass(self::LOCALE_CLASS);
+
         return [
             new PreloadedExtension(
                 [
@@ -49,7 +52,7 @@ class OptionsCollectionTypeTest extends AbstractLocalizedType
                     'integer' => new IntegerType(),
                     'oro_collection' => new CollectionType(),
                     OptionRowType::NAME => new OptionRowType(),
-                    LocaleCollectionType::NAME => new LocaleCollectionType($this->registry),
+                    LocaleCollectionType::NAME => $localeCollection,
                     FallbackValueType::NAME => new FallbackValueType(),
                     FallbackPropertyType::NAME => new FallbackPropertyType(),
                 ],

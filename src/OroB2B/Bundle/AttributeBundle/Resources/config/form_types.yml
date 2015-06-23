@@ -49,11 +49,15 @@ services:
 
     orob2b_attribute.form.type.create:
         class: %orob2b_attribute.form.type.create.class%
+        calls:
+            - [setDataClass, [%orob2b_attribute.attribute.entity.class%]]
         tags:
             - { name: form.type, alias: orob2b_attribute_create }
 
     orob2b_attribute.form.select_type.create:
         class: %orob2b_attribute.form.type.select_type.class%
+        calls:
+            - [setEntityClass, [%orob2b_attribute.attribute_option.entity.class%]]
         tags:
             - { name: form.type, alias: orob2b_attribute_select_type }
 

@@ -8,23 +8,21 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPAdminBundle\Entity\Repository\RequestStatusRepository;
 
 class RequestStatusSelectType extends AbstractType
 {
     const NAME = 'orob2b_rfp_admin_request_status_select';
 
     /**
-     * {@inheritdoc}
-     */
-    protected function getChoices()
-    {
-        return $this->registry->getRepository('OroB2BRFPAdminBundle:RequestStatus')->getNotDeletedStatuses();
-    }
-
-    /**
      * @var ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var string
+     */
+    protected $entityClass;
 
     /**
      * @param ManagerRegistry $registry
@@ -35,14 +33,33 @@ class RequestStatusSelectType extends AbstractType
     }
 
     /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getChoices()
+    {
+        /** @var RequestStatusRepository $repository */
+        $repository = $this->registry->getRepository($this->entityClass);
+
+        return $repository->getNotDeletedStatuses();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
             [
-                'class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus',
-                'choices'  => $this->getChoices()
+                'class'   => $this->entityClass,
+                'choices' => $this->getChoices()
             ]
         );
     }

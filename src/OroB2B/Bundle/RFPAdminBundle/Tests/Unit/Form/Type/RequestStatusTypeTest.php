@@ -30,6 +30,7 @@ class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->type = new RequestStatusType($configManager, $localeSettings);
+        $this->type->setDataClass('OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus');
     }
 
     /**

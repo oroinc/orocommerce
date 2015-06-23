@@ -8,9 +8,13 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup';
+    const CUSTOMER_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\Customer';
+
     /**
      * @var CustomerGroupType
      */
@@ -24,6 +28,8 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new CustomerGroupType();
+        $this->formType->setDataClass(self::DATA_CLASS);
+        $this->formType->setCustomerClass(self::CUSTOMER_CLASS);
     }
 
     /**
@@ -61,10 +67,10 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(
         array $options,
-        array $defaultData,
-        array $viewData,
-        array $submittedData,
-        array $expectedData
+        $defaultData,
+        $viewData,
+        $submittedData,
+        $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
@@ -72,7 +78,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('removeCustomers'));
 
         $formConfig = $form->getConfig();
-        $this->assertNull($formConfig->getOption('data_class'));
+        $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
 
         $this->assertEquals($defaultData, $form->getData());
         $this->assertEquals($viewData, $form->getViewData());
@@ -87,36 +93,44 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
+        $groupName = 'customer_group_name';
+        $alteredGroupName = 'altered_group_name';
+
+        $defaultGroup = new CustomerGroup();
+        $defaultGroup->setName($groupName);
+
+        /** @var CustomerGroup $existingGroupBefore */
+        $existingGroupBefore = $this->getEntity(self::DATA_CLASS, 1);
+        $existingGroupBefore->setName($groupName);
+
+        $existingGroupAfter = clone $existingGroupBefore;
+        $existingGroupAfter->setName($alteredGroupName);
+
         return [
-            'default' => [
+            'empty' => [
                 'options' => [],
-                'defaultData' => [],
-                'viewData' => [],
+                'defaultData' => null,
+                'viewData' => null,
                 'submittedData' => [
-                    'name' => 'customer_group_name',
+                    'name' => $groupName,
                 ],
-                'expectedData' => [
-                    'name' => 'customer_group_name',
-                ]
+                'expectedData' => $defaultGroup
             ],
-            'with list' => [
+            'existing' => [
                 'options' => [],
-                'defaultData' => [],
-                'viewData' => [],
+                'defaultData' => $existingGroupBefore,
+                'viewData' => $existingGroupBefore,
                 'submittedData' => [
-                    'name' => 'customer_group_name',
+                    'name' => $alteredGroupName,
                 ],
-                'expectedData' => [
-                    'name' => 'customer_group_name',
-                ]
+                'expectedData' => $existingGroupAfter
             ]
         ];
     }
 
     public function testGetName()
     {
-        $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals('orob2b_customer_group_type', $this->formType->getName());
+        $this->assertEquals(CustomerGroupType::NAME, $this->formType->getName());
     }
 
     /**
