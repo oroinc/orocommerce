@@ -27,7 +27,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
      *
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null) {
+    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData = null)
+    {
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
@@ -55,29 +56,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         return $price;
     }
-
-//    /**
-//     * @return CurrencySelectionType
-//     */
-//    protected function prepareCurrencySelectionType()
-//    {
-//        /* @var $configManager \PHPUnit_Framework_MockObject_MockBuilder|ConfigManager */
-//        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-//            ->disableOriginalConstructor()
-//            ->getMock();
-//
-//        $configManager->expects($this->any())
-//            ->method('get')
-//            ->with('oro_currency.allowed_currencies')
-//            ->will($this->returnValue(['USD', 'EUR', 'XX']));
-//
-//        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockBuilder|LocaleSettings */
-//        $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-//            ->disableOriginalConstructor()
-//            ->getMock();
-//
-//        return new CurrencySelectionType($configManager, $localeSettings);
-//    }
 
     /**
      * @return EntityType

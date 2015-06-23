@@ -41,9 +41,9 @@ class QuoteProductItemType extends AbstractType
     {
         $builder
             ->add('quantity', 'integer', [
-                'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
-                'constraints' => [
+                'required'      => true,
+                'label'         => 'orob2b.sale.quoteproductitem.quantity.label',
+                'constraints'   => [
                     new NotBlank(),
                     new Constraints\Decimal(),
                     new Constraints\GreaterThanZero(),
@@ -67,7 +67,7 @@ class QuoteProductItemType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
             'intention'     => 'sale_quote_product_item',
-            'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 
