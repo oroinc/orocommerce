@@ -6,6 +6,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 
@@ -13,7 +14,6 @@ use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -23,6 +23,9 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -69,6 +72,8 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision = new ProductUnitPrecisionType();
         $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
+        $stubEnumSelectType = new StubEnumSelectType();
+
         return [
             new PreloadedExtension(
                 [
@@ -80,6 +85,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ],
                         CategoryTreeType::NAME
                     ),
+                    $stubEnumSelectType->getName() => $stubEnumSelectType,
+                    ImageType::NAME => new StubImageType(),
                     OroCollectionType::NAME => new OroCollectionType(),
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
@@ -142,7 +149,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $defaultProduct = new Product();
+        $defaultProduct = new StubProduct();
 
         return [
             'product without unitPrecisions' => [
@@ -151,6 +158,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'sku' => 'test sku',
                     'category' => 2,
                     'unitPrecisions' => [],
+                    'inventoryStatus' => 'in_stock',
+                    'visible' => 1
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
@@ -166,6 +175,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                             'precision' => 3
                         ]
                     ],
+                    'inventoryStatus' => 'in_stock',
+                    'visible' => 1
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
@@ -179,7 +190,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function createExpectedProductEntity($withProductUnitPrecision = false)
     {
-        $expectedProduct = new Product();
+        $expectedProduct = new StubProduct();
 
         $category = $this->createCategory('Test Category Second');
 
