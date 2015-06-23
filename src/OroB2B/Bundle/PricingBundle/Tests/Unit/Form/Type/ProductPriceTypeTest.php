@@ -57,7 +57,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function tearDown()
     {
@@ -81,13 +81,16 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ProductUnitSelectionType::NAME
         );
 
+        $priceType = new PriceType();
+        $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
+
         return [
             new PreloadedExtension(
                 [
                     $entityType->getName() => $entityType,
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                     ProductUnitSelectionType::NAME => $productUnitSelection,
-                    PriceType::NAME => new PriceType(),
+                    PriceType::NAME => $priceType,
                     CurrencySelectionType::NAME => new CurrencySelectionTypeStub()
                 ],
                 []

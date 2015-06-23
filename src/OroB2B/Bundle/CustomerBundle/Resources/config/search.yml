@@ -33,3 +33,45 @@ OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup:
             name:                   name
             target_type:            text
             target_fields:          [name]
+
+OroB2B\Bundle\CustomerBundle\Entity\AccountUser:
+    alias: orob2b_customer_account_user
+    label: orob2b.customer.accountuser.entity_plural_label
+    title_fields: [email]
+    route:
+        name: orob2b_customer_account_user_view
+        parameters:
+            id: id
+    search_template: OroB2BCustomerBundle:AccountUser:searchResult.html.twig
+    fields:
+        -
+            name: email
+            target_type: text
+            target_fields: [email]
+        -
+            name: firstName
+            target_type: text
+            target_fields: [firstName]
+        -
+            name: lastName
+            target_type: text
+            target_fields: [lastName]
+
+OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole:
+    alias: orob2b_customer_account_user_role
+    label: orob2b.customer.accountuserrole.entity_plural_label
+    title_fields: [label]
+    route:
+        name: orob2b_customer_account_user_role_update
+        parameters:
+            id: id
+    search_template: OroB2BCustomerBundle:AccountUserRole:searchResult.html.twig
+    fields:
+        -
+            name: role
+            target_type: text
+            target_fields: [role]
+        -
+            name: label
+            target_type: text
+            target_fields: [label]

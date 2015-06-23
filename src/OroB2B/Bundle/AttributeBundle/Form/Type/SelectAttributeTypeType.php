@@ -15,6 +15,19 @@ class SelectAttributeTypeType extends AbstractType
     const NAME = 'orob2b_attribute_select_type';
 
     /**
+     * @var string
+     */
+    protected $entityClass;
+
+    /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
@@ -40,7 +53,7 @@ class SelectAttributeTypeType extends AbstractType
         ]);
 
         $resolver->setDefaults([
-            'class' => 'OroB2BAttributeBundle:AttributeOption',
+            'class' => $this->entityClass,
             'property' => 'value',
         ]);
 

@@ -16,12 +16,17 @@ class RequestStatusType extends AbstractType
     /**
      * @var ConfigManager
      */
-    private $userConfig;
+    protected $userConfig;
 
     /**
      * @var LocaleSettings
      */
-    private $localeSettings;
+    protected $localeSettings;
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
 
     /**
      * @param ConfigManager $userConfig
@@ -31,6 +36,14 @@ class RequestStatusType extends AbstractType
     {
         $this->userConfig     = $userConfig;
         $this->localeSettings = $localeSettings;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
     }
 
     /**
@@ -78,7 +91,7 @@ class RequestStatusType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class'           => 'OroB2B\\Bundle\\RFPAdminBundle\\Entity\\RequestStatus',
+                'data_class'           => $this->dataClass,
                 'intention'            => 'request_status',
                 'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
                 'cascade_validation'   => true

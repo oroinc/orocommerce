@@ -1,5 +1,6 @@
 parameters:
     orob2b_attribute.attribute.entity.class:            OroB2B\Bundle\AttributeBundle\Entity\Attribute
+    orob2b_attribute.attribute_option.entity.class:     OroB2B\Bundle\AttributeBundle\Entity\AttributeOption
     orob2b_attribute.attribute.manager.api.class:       Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_attribute.attribute_type.registry.class:     OroB2B\Bundle\AttributeBundle\AttributeType\AttributeTypeRegistry
     orob2b_attribute.attribute_type.integer.class:      OroB2B\Bundle\AttributeBundle\AttributeType\Integer
