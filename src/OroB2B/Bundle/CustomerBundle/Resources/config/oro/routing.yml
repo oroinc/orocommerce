@@ -13,6 +13,11 @@ orob2b_customer_account_user:
     type: annotation
     prefix: /account/user
 
+orob2b_customer_account_user_ajax:
+    resource: "@OroB2BCustomerBundle/Controller/AjaxAccountUserController.php"
+    type: annotation
+    prefix: /account/user
+
 orob2b_customer_account_user_role:
     resource: "@OroB2BCustomerBundle/Controller/AccountUserRoleController.php"
     type: annotation
@@ -27,6 +32,13 @@ orob2b_customer_frontend_account_user:
 
 orob2b_customer_user_security:
     resource: "@OroB2BCustomerBundle/Controller/SecurityController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+orob2b_customer_user_password_reset:
+    resource: "@OroB2BCustomerBundle/Controller/Frontend/ResetController.php"
     type: annotation
     prefix: /account/user
     options:

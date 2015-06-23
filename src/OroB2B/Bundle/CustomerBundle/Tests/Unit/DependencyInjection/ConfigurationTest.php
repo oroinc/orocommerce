@@ -51,6 +51,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         'confirmation_required' => [
                             'value' => true,
                             'scope' => 'app'
+                        ],
+                        'send_password_in_welcome_email' => [
+                            'value' => false,
+                            'scope' => 'app'
                         ]
                     ]
                 ]

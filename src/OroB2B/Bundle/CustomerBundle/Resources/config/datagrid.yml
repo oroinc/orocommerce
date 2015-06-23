@@ -295,6 +295,7 @@ datagrid:
                     - accountUser.lastName
                     - accountUser.email
                     - accountUser.enabled
+                    - accountUser.confirmed
                 from:
                     - { table: %orob2b_customer.entity.account_user.class%, alias: accountUser }
         columns:
@@ -306,6 +307,9 @@ datagrid:
                 label: orob2b.customer.accountuser.email.label
             enabled:
                 label: orob2b.customer.accountuser.enabled.label
+                frontend_type: boolean
+            confirmed:
+                label: orob2b.customer.accountuser.confirmed.label
                 frontend_type: boolean
         properties:
             id: ~
@@ -323,11 +327,11 @@ datagrid:
                 params: [ id ]
             enable_link:
                 type:   url
-                route:  orob2b_api_customer_enable_account_user
+                route:  orob2b_customer_account_user_enable
                 params: [ id ]
             disable_link:
                 type:   url
-                route:  orob2b_api_customer_disable_account_user
+                route:  orob2b_customer_account_user_disable
                 params: [ id ]
         sorters:
             columns:
@@ -339,6 +343,8 @@ datagrid:
                     data_name: accountUser.email
                 enabled:
                     data_name: accountUser.enabled
+                confirmed:
+                    data_name: accountUser.confirmed
         filters:
             columns:
                 firstName:
@@ -353,6 +359,9 @@ datagrid:
                 enabled:
                     type:      boolean
                     data_name: accountUser.enabled
+                confirmed:
+                    type:      boolean
+                    data_name: accountUser.confirmed
         actions:
             enable:
                 type:         ajax

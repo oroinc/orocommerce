@@ -44,7 +44,8 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function confirmRegistration(AccountUser $user)
     {
-        $user->setEnabled(true);
+        $user->setConfirmed(true)
+            ->setConfirmationToken(null);
         $this->sendWelcomeEmail($user);
     }
 
@@ -53,17 +54,28 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
      */
     public function sendWelcomeEmail(AccountUser $user)
     {
-        $this->getEmailProcessor()->sendWelcomeNotification($user, $user->getPlainPassword());
+        $this->getEmailProcessor()->sendWelcomeNotification(
+            $user,
+            $this->isSendPasswordInWelcomeEmail() ? $user->getPlainPassword() : null
+        );
     }
 
     /**
      * @param AccountUser $user
      */
-    protected function sendConfirmationEmail(AccountUser $user)
+    public function sendConfirmationEmail(AccountUser $user)
     {
-        $user->setEnabled(false);
-        $user->setConfirmationToken($user->generateToken());
-        $this->getEmailProcessor()->sendConfirmationEmail($user, $user->getConfirmationToken());
+        $user->setConfirmed(false)
+            ->setConfirmationToken($user->generateToken());
+        $this->getEmailProcessor()->sendConfirmationEmail($user);
+    }
+
+    /**
+     * @param AccountUser $user
+     */
+    public function sendResetPasswordEmail(AccountUser $user)
+    {
+        $this->getEmailProcessor()->sendResetPasswordEmail($user);
     }
 
     /**
@@ -119,8 +131,16 @@ class AccountUserManager extends BaseUserManager implements ContainerAwareInterf
     /**
      * @return bool
      */
-    protected function isConfirmationRequired()
+    public function isConfirmationRequired()
     {
         return (bool)$this->getConfigValue('oro_b2b_customer.confirmation_required');
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isSendPasswordInWelcomeEmail()
+    {
+        return (bool)$this->getConfigValue('oro_b2b_customer.send_password_in_welcome_email');
     }
 }
