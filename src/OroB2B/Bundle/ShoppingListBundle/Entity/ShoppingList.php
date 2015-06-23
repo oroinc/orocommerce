@@ -74,7 +74,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @var string
      *
-     * @ORM\Column(name="notes", type="text")
+     * @ORM\Column(name="notes", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -88,7 +88,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="created_at", type="datetime", nullable=true)
+     * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
