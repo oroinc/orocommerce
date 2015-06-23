@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -16,7 +17,7 @@ class CategoryHandler
      * @var FormInterface
      */
     protected $form;
-    
+
     /** @var Request */
     protected $request;
 
@@ -25,7 +26,7 @@ class CategoryHandler
 
     /**
      * @param FormInterface $form
-     * @param Request $request
+     * @param Request       $request
      * @param ObjectManager $manager
      */
     public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
@@ -37,6 +38,7 @@ class CategoryHandler
 
     /**
      * @param Category $category
+     *
      * @return bool True on successful processing, false otherwise
      */
     public function process(Category $category)
@@ -59,7 +61,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category $category
+     * @param Category  $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
      */
@@ -73,26 +75,45 @@ class CategoryHandler
     }
 
     /**
-     * @param Category $category
+     * @param Category  $category
      * @param Product[] $products
      */
     protected function appendProducts(Category $category, array $products)
     {
         /** @var $product Product */
         foreach ($products as $product) {
-            $category->addProduct($product);
+            $productCategory = $this->getProductCategory($product);
+            if (!($productCategory instanceof ProductCategory)) {
+                $productCategory = new ProductCategory();
+            }
+
+            $productCategory->setCategory($category)
+                ->setProduct($product);
+            $this->manager->persist($productCategory);
+
+            $category->addProduct($productCategory);
         }
     }
 
     /**
-     * @param Category $category
+     * @param Category  $category
      * @param Product[] $products
      */
     protected function removeProducts(Category $category, array $products)
     {
         /** @var $product Product */
         foreach ($products as $product) {
-            $category->removeProduct($product);
+            $category->removeProduct($this->getProductCategory($product));
         }
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return ProductCategory
+     */
+    protected function getProductCategory(Product $product)
+    {
+        return $this->manager->getRepository('OroB2BCatalogBundle:ProductCategory')->findOneByProduct($product);
     }
 }

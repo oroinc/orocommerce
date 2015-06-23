@@ -1,0 +1,23 @@
+parameters:
+    orob2b_catalog.form.type.category.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType
+    orob2b_catalog.form.type.category_tree.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType
+
+    orob2b_catalog.form.extension.product_type.class: OroB2B\Bundle\CatalogBundle\Form\Extension\ProductFormExtension
+
+services:
+    orob2b_catalog.form.type.category:
+        class: %orob2b_catalog.form.type.category.class%
+        tags:
+            - { name: form.type, alias: orob2b_catalog_category }
+
+    orob2b_catalog.form.type.category_tree:
+        class: %orob2b_catalog.form.type.category_tree.class%
+        tags:
+            - { name: form.type, alias: orob2b_catalog_category_tree }
+
+    orob2b_catalog.form.extension.product_type:
+        class: %orob2b_catalog.form.extension.product_type.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type_extension, alias: orob2b_product }

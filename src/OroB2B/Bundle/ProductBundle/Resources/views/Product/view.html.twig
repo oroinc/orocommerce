@@ -39,24 +39,11 @@
         }) }}
     {% endset %}
 
-    {% set catalogInfo %}
-        {%- if entity.category and resource_granted('EDIT', entity.category) -%}
-            {% set category = UI.renderUrl(path('orob2b_catalog_category_update', {'id': entity.category.id}), entity.category.defaultTitle) %}
-        {%- else -%}
-            {% set category = entity.category ? entity.category.defaultTitle : '' %}
-        {%- endif -%}
-        {{ UI.renderHtmlProperty('orob2b.product.category.label'|trans, category) }}
-    {% endset %}
-
     {% set dataBlocks = [
         {
             'title': 'orob2b.product.sections.general'|trans,
             'class': 'active',
             'subblocks': [{'data' : [productInformationWidget]}]
-        },
-        {
-            'title': 'orob2b.product.sections.catalog'|trans,
-            'subblocks': [{'data' : [catalogInfo]}]
         }
     ] %}
 

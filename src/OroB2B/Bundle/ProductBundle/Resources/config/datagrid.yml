@@ -12,18 +12,11 @@ datagrid:
                     - product.sku
                     - product.createdAt
                     - product.updatedAt
-                    - categoryTitle.string as category
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
-                join:
-                    left:
-                        - { join: product.category, alias: productCategory }
-                        - { join: productCategory.titles, alias: categoryTitle, conditionType: WITH, condition: 'categoryTitle.locale IS NULL' }
         columns:
             sku:
                 label:         orob2b.product.sku.label
-            category:
-                label:         orob2b.product.category.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -36,8 +29,6 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
-                category:
-                    data_name: categoryTitle.string
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -49,9 +40,6 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
-                category:
-                    type:      string
-                    data_name: categoryTitle.string
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -97,78 +85,3 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_product_delete
-
-    category-products-grid:
-        extended_entity_name: %orob2b_product.product.class%
-        options:
-            entityHint:        product
-            entity_pagination: true
-        source:
-            acl_resource: orob2b_product_update
-            type:         orm
-            query:
-                select:
-                    - product.id
-                    - product.sku
-                    - product.createdAt
-                    - product.updatedAt
-                    - >
-                       (CASE WHEN (:category_id IS NOT NULL) THEN
-                              CASE WHEN (:category_id = IDENTITY(product.category)
-                                     OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
-                              THEN true ELSE false END
-                         ELSE
-                              CASE WHEN product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
-                              THEN true ELSE false END
-                         END) as inCategory
-                from:
-                    - { table: %orob2b_product.product.class%, alias: product }
-            bind_parameters:
-                - category_id
-        columns:
-            inCategory:
-                label:         orob2b.product.in_category.label
-                editable:      true
-                frontend_type: boolean
-            sku:
-                label:         orob2b.product.sku.label
-            createdAt:
-                label:         oro.ui.created_at
-                frontend_type: datetime
-            updatedAt:
-                label:         oro.ui.updated_at
-                frontend_type: datetime
-        properties:
-            id: ~
-        sorters:
-            multiple_sorting: true
-            columns:
-                inCategory:
-                    data_name: inCategory
-                sku:
-                    data_name: product.sku
-                createdAt:
-                    data_name: product.createdAt
-                updatedAt:
-                    data_name: product.updatedAt
-            default:
-                inCategory: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-        filters:
-            columns:
-                sku:
-                    type:      string
-                    data_name: product.sku
-                createdAt:
-                    type:      datetime
-                    data_name: product.createdAt
-                updatedAt:
-                    type:      datetime
-                    data_name: product.updatedAt
-        options:
-            rowSelection:
-                dataField: id
-                columnName: inCategory
-                selectors:
-                    included: '#categoryAppendProducts'
-                    excluded: '#categoryRemoveProducts'

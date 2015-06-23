@@ -70,15 +70,6 @@
         }] ) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.product.sections.catalog'|trans,
-        'subblocks': [{
-            'data': [
-                form_row(form.category)
-            ]
-        }]
-    }] ) %}
-
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

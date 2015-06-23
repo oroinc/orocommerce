@@ -5,10 +5,8 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        category.label: Category
         owner.label: Owner
         organization.label: Organization
-        in_category.label: In category
         unit_precisions.label: Unit Precisions
         form.choose: 'Choose Product...'
 
@@ -45,7 +43,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            catalog: Master Catalog
 
         widgets:
             product_information: Product Information
