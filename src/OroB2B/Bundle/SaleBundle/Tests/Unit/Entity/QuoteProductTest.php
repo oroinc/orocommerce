@@ -15,6 +15,7 @@ class QuoteProductTest extends AbstractTest
             ['id', 123],
             ['quote', new Quote()],
             ['product', new Product()],
+            ['productSku', 'sku'],
         ];
 
         $this->assertPropertyAccessors(new QuoteProduct(), $properties);
@@ -41,6 +42,10 @@ class QuoteProductTest extends AbstractTest
         $quoteProduct->addQuoteProductItem($quoteProductItem);
 
         $this->assertEquals($quoteProduct, $quoteProductItem->getQuoteProduct());
+    }
 
+    public function testQuoteProductItems()
+    {
+        $this->assertCollection(new QuoteProduct(), new QuoteProductItem());
     }
 }

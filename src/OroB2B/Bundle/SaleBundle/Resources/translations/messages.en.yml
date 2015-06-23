@@ -1,5 +1,7 @@
 orob2b:
     sale:
+        menu:
+            label: 'Sales'
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
@@ -13,6 +15,7 @@ orob2b:
             
             sections:
                 general: 'General'
+                quote_products: 'Line Items'
             
             widgets:
                 quote_information: 'Quote Information'

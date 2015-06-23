@@ -3,11 +3,12 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
-class LoadUserData extends AbstractFixture
+class LoadUserData extends AbstractFixture implements FixtureInterface
 {
     const USER1 = 'sale-user1';
     const USER2 = 'sale-user2';
@@ -38,7 +39,7 @@ class LoadUserData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         /* @var $userManager UserManager */
-        $userManager = $this->container->get('oro_user.manager');
+        $userManager    = $this->container->get('oro_user.manager');
 
         $defaultUser    = $this->getUser($manager);
 
@@ -53,8 +54,8 @@ class LoadUserData extends AbstractFixture
                 ->setEmail($item['email'])
                 ->setUsername($item['username'])
                 ->setPlainPassword($item['password'])
-                ->setFirstname($item['firstname'])
-                ->setLastname($item['lastname'])
+                ->setFirstName($item['firstname'])
+                ->setLastName($item['lastname'])
 
                 ->setEnabled(true)
 

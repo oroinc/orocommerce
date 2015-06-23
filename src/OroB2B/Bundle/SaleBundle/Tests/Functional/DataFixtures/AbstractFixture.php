@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture as DoctrineAbstractFixture;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,17 +19,11 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
     protected $container;
 
     /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
-    /**
      * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->container        = $container;
-        $this->entityManager    = $this->container->get('doctrine')->getManager();
+        $this->container = $container;
     }
 
     /**
@@ -43,11 +37,11 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @return User
      * @throws \LogicException
      */
-    protected function getUser(EntityManager $manager)
+    protected function getUser(ObjectManager $manager)
     {
         /* @var $user User */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([

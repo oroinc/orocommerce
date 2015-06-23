@@ -151,6 +151,9 @@ define(function (require) {
                         .append($('<option/>').val(key).text(value))
                     ;
                 });
+                if (!currentValue && $(select).has('option:first-child')) {
+                    currentValue = $(select).find('option:first-child').val();
+                }
                 $(select).val(currentValue);
                 $(select).uniform('update');
             });

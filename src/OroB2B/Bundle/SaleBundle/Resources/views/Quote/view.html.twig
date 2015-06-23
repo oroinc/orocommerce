@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 
-{% oro_title_set({params : {"%id%": entity.qid }}) %}
+{% oro_title_set({params : {'%id%': entity.qid }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -39,13 +39,43 @@
             'url': path('orob2b_sale_quote_info', {id: entity.id})
         }) }}
     {% endset %}
-    {% set generalSectionBlocks = [{'data' : [quoteInformationWidget]}]%}
-
+    {% set quoteProducts %}
+        <div class="sale-quoteproducts-info control-group">
+            <table>
+                {% for quoteProduct in entity.quoteProducts %}
+                    <tr>
+                        <td class="sale-quoteproduct-product">
+                            <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
+                        </td>
+                        <td class="sale-quoteproduct-info">
+                            {% if quoteProduct.product %}
+                                <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
+                            {% else %}
+                                {{ quoteProduct.productSku|raw }}
+                            {% endif %}
+                        </td>
+                        <td class="sale-quoteproductitems-info" style="">
+                            {% for quoteProductItem in quoteProduct.quoteProductItems %}
+                                <div class="sale-quoteproductitem-info">
+                                    {{ quoteProductItem|orob2b_format_sale_quote_product_item }}
+                                </div>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endset %}
     {% set dataBlocks = [
         {
             'title': 'orob2b.sale.quote.sections.general'|trans,
             'class': 'active',
-            'subblocks': generalSectionBlocks
+            'subblocks': [{'data' : [quoteInformationWidget]}]
+        },
+        {
+            'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [quoteProducts]}]
         }
     ] %}
 

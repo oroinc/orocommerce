@@ -1,13 +1,15 @@
 parameters:
-    orob2b_sale.doctrine.subscriber.entity.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
+    orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.entity.quote.class: OroB2B\Bundle\SaleBundle\Entity\Quote
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     #Validators
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItemValidator
+    #Twig extensions
+    orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
 
 services:
-    orob2b_sale.doctrine.subscriber.entity:
-        class: %orob2b_sale.doctrine.subscriber.entity.class%
+    orob2b_sale.event_listener.entity_subscriber:
+        class: %orob2b_sale.event_listener.entity_subscriber.class%
         tags:
             - { name: doctrine.event_subscriber }
 
@@ -22,3 +24,12 @@ services:
         class: %orob2b_sale.validator.quote_product_unit.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_sale.validator.quote_product_unit }
+
+    orob2b_sale.twig.quote:
+        class: %orob2b_sale.twig.quote.class%
+        arguments:
+            - @translator
+            - @oro_locale.formatter.number
+            - @orob2b_product.formatter.product_unit_value
+        tags:
+            - { name: twig.extension }

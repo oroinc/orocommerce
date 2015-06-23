@@ -8,10 +8,12 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Validator\Constraints\Count;
 
 class QuoteProductType extends AbstractType
 {
@@ -37,15 +39,23 @@ class QuoteProductType extends AbstractType
     {
         $builder
             ->add('product', ProductSelectType::NAME, [
-                'required'  => true,
-                'label'     => 'orob2b.product.entity_label',
-                'create_enabled' => false,
+                'required'          => true,
+                'label'             => 'orob2b.product.entity_label',
+                'create_enabled'    => false,
+                'constraints'       => [
+                    new NotBlank(),
+                ],
             ])
             ->add(
                 'quoteProductItems',
                 QuoteProductItemCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.sale.quoteproductitem.add_label',
+                    'add_label'     => 'orob2b.sale.quoteproductitem.add_label',
+                    'constraints'   => [
+                        new Count([
+                            'minMessage' => 'orob2b.sale.quoteproduct.quote_product_items.blank',
+                        ]),
+                    ],
                 ]
             )
         ;

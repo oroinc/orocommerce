@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -16,6 +17,7 @@ class QuoteTest extends AbstractTest
             ['id', '123'],
             ['qid', 'QID-123456'],
             ['owner', new User()],
+            ['organization', new Organization()],
             ['validUntil', $now, false],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
@@ -58,5 +60,10 @@ class QuoteTest extends AbstractTest
         $quote->addQuoteProduct($quoteProduct);
 
         $this->assertEquals($quote, $quoteProduct->getQuote());
+    }
+
+    public function testQuoteProducts()
+    {
+        $this->assertCollection(new Quote(), new QuoteProduct());
     }
 }

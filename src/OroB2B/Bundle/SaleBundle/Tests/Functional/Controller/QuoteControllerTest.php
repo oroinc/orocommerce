@@ -6,7 +6,6 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
 
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -15,10 +14,24 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class QuoteControllerTest extends WebTestCase
 {
+    /**
+     * @var string
+     */
     public static $qid;
+
+    /**
+     * @var string
+     */
     public static $qidUpdated;
 
+    /**
+     * @var string
+     */
     public static $validUntil           = '2015-05-15T15:15:15+0000';
+
+    /**
+     * @var string
+     */
     public static $validUntilUpdated    = '2016-06-16T16:16:16+0000';
 
     /**
@@ -58,7 +71,7 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Quote has been saved", $crawler->html());
+        $this->assertContains('Quote has been saved', $crawler->html());
     }
 
     /**
@@ -73,7 +86,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("quotes-grid", $crawler->html());
+        $this->assertContains('quotes-grid', $crawler->html());
 
         $response = $this->client->requestGrid(
             'quotes-grid',
@@ -115,7 +128,7 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Quote has been saved", $crawler->html());
+        $this->assertContains('Quote has been saved', $crawler->html());
 
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
         $response = $this->client->requestGrid(

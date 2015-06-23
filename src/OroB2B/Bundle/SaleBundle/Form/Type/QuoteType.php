@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
@@ -22,6 +23,9 @@ class QuoteType extends AbstractType
             ->add('owner', 'oro_user_select', [
                 'label'     => 'orob2b.sale.quote.owner.label',
                 'required'  => true,
+                'constraints' => [
+                    new NotBlank(),
+                ],
             ])
             ->add('validUntil', OroDateTimeType::NAME, [
                 'label'     => 'orob2b.sale.quote.valid_until.label',

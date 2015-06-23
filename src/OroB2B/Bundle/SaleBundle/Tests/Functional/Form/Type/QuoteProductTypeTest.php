@@ -1,19 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
@@ -23,7 +18,7 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 class QuoteProductTypeTest extends WebTestCase
 {
     /**
-     * @var QuoteProductItemType
+     * @var QuoteProductType
      */
     protected $formType;
 
@@ -128,7 +123,7 @@ class QuoteProductTypeTest extends WebTestCase
      * @param array $parameters
      * @return string
      */
-    protected function trans($id, array $parameters = array())
+    protected function trans($id, array $parameters = [])
     {
         return $this->getContainer()->get('translator')->trans($id, $parameters);
     }
