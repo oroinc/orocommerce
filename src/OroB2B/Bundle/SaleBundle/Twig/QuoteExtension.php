@@ -37,8 +37,8 @@ class QuoteExtension extends \Twig_Extension
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
-        ProductUnitValueFormatter $productUnitValueFormatter)
-    {
+        ProductUnitValueFormatter $productUnitValueFormatter
+    ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;
         $this->productUnitValueFormatter    = $productUnitValueFormatter;
@@ -64,13 +64,19 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductItem(QuoteProductItem $item)
     {
-        $units  = $item->getProductUnit()
+        $units = $item->getProductUnit()
             ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())
             : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
         ;
 
-        $price  = $this->numberFormatter->formatCurrency($item->getPrice()->getValue(), $item->getPrice()->getCurrency());
-        $unit   = $this->translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
+        $price = $this->numberFormatter->formatCurrency(
+            $item->getPrice()->getValue(),
+            $item->getPrice()->getCurrency()
+        );
+        $unit = $this->translator->trans(
+            sprintf('orob2b.product_unit.%s.label.full',
+            $item->getProductUnitCode())
+        );
 
         $str = $this->translator->trans(
             'orob2b.sale.quoteproductitem.item',

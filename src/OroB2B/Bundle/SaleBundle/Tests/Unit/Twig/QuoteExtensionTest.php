@@ -81,7 +81,11 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
                 return sprintf('%d %s', $quantity, $code);
             }));
 
-        $this->extension = new QuoteExtension($this->translator, $this->numberFormatter, $this->productUnitValueFormatter);
+        $this->extension = new QuoteExtension(
+            $this->translator,
+            $this->numberFormatter,
+            $this->productUnitValueFormatter
+        );
     }
 
     public function testGetFilters()

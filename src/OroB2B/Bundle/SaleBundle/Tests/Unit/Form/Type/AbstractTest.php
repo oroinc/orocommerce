@@ -144,7 +144,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         if (null !== $unitCode) {
-            $quoteProductItem->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code'));
+            $quoteProductItem->setProductUnit(
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
+            );
         }
 
         if (null !== $price) {
