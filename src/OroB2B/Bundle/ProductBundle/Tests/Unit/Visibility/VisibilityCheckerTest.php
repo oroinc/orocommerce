@@ -24,20 +24,25 @@ class VisibilityCheckerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager', ['get'])
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->service = new VisibilityChecker($this->configManager);
     }
 
-    public function testChecksVisibilityFromConfig()
+    /**
+     * @dataProvider visibilityDataProvider
+     * @param string $visibility
+     * @param bool $expected
+     */
+    public function testChecksVisibilityFromConfig($visibility, $expected)
     {
         $this->configManager
             ->expects($this->once())
             ->method('get')
             ->with('orob2b_product.default_visibility')
-            ->willReturn(Product::VISIBILITY_VISIBLE);
+            ->willReturn($visibility);
 
         $product = $this->getProductMock();
         $product
@@ -45,18 +50,34 @@ class VisibilityCheckerTest extends \PHPUnit_Framework_TestCase
             ->method('getVisibility')
             ->willReturn(Product::VISIBILITY_BY_CONFIG);
 
-        $this->assertTrue($this->service->isVisible($product));
+        $this->assertEquals($expected, $this->service->isVisible($product));
     }
 
-    public function testChecksVisibilityFromEntity()
+    /**
+     * @dataProvider visibilityDataProvider
+     * @param string $visibility
+     * @param bool $expected
+     */
+    public function testChecksVisibilityFromEntity($visibility, $expected)
     {
         $product = $this->getProductMock();
         $product
             ->expects($this->any())
             ->method('getVisibility')
-            ->willReturn(Product::VISIBILITY_NOT_VISIBLE);
+            ->willReturn($visibility);
 
-        $this->assertFalse($this->service->isVisible($product));
+        $this->assertEquals($expected, $this->service->isVisible($product));
+    }
+
+    /**
+     * @return array
+     */
+    public function visibilityDataProvider()
+    {
+        return [
+            [Product::VISIBILITY_VISIBLE, true],
+            [Product::VISIBILITY_NOT_VISIBLE, false]
+        ];
     }
 
     /**
