@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
-use OroB2B\Bundle\UserAdminBundle\Entity\User;
 
 class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -16,7 +16,7 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\UserAdminBundle\Migrations\Data\Demo\ORM\LoadB2BUserDemoData'];
+        return ['OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'];
     }
 
     /**
@@ -24,8 +24,8 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        /** @var User[] $users */
-        $users = $manager->getRepository('OroB2BUserAdminBundle:User')->findAll();
+        /** @var AccountUser[] $accountUsers */
+        $accountUsers = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findAll();
 
         $rootCustomer = null;
         $firstLevelCustomer = null;
@@ -40,8 +40,8 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
         $manager->persist($secondLevelGroup);
 
         // create customers
-        foreach ($users as $index => $user) {
-            $customer = $user->getCustomer();
+        foreach ($accountUsers as $index => $accountUser) {
+            $customer = $accountUser->getCustomer();
             switch ($index % 3) {
                 case 0:
                     $customer->setGroup($rootGroup);

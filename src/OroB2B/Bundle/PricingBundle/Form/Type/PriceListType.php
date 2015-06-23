@@ -16,6 +16,58 @@ class PriceListType extends AbstractType
     const NAME = 'orob2b_pricing_price_list';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $customerClass;
+
+    /**
+     * @var string
+     */
+    protected $customerGroupClass;
+
+    /**
+     * @var string
+     */
+    protected $websiteClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $customerClass
+     */
+    public function setCustomerClass($customerClass)
+    {
+        $this->customerClass = $customerClass;
+    }
+
+    /**
+     * @param string $customerGroupClass
+     */
+    public function setCustomerGroupClass($customerGroupClass)
+    {
+        $this->customerGroupClass = $customerGroupClass;
+    }
+
+    /**
+     * @param string $websiteClass
+     */
+    public function setWebsiteClass($websiteClass)
+    {
+        $this->websiteClass = $websiteClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -40,7 +92,7 @@ class PriceListType extends AbstractType
                 'appendCustomers',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2BCustomerBundle:Customer',
+                    'class' => $this->customerClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
@@ -50,7 +102,7 @@ class PriceListType extends AbstractType
                 'removeCustomers',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2BCustomerBundle:Customer',
+                    'class' => $this->customerClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
@@ -60,7 +112,7 @@ class PriceListType extends AbstractType
                 'appendCustomerGroups',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2BCustomerBundle:CustomerGroup',
+                    'class' => $this->customerGroupClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
@@ -70,7 +122,7 @@ class PriceListType extends AbstractType
                 'removeCustomerGroups',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2BCustomerBundle:CustomerGroup',
+                    'class' => $this->customerGroupClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
@@ -80,7 +132,7 @@ class PriceListType extends AbstractType
                 'appendWebsites',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2BWebsiteBundle:Website',
+                    'class' => $this->websiteClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
@@ -90,7 +142,7 @@ class PriceListType extends AbstractType
                 'removeWebsites',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => 'OroB2BWebsiteBundle:Website',
+                    'class' => $this->websiteClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
@@ -105,7 +157,7 @@ class PriceListType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList'
+            'data_class' => $this->dataClass
         ]);
     }
 

@@ -8,6 +8,8 @@ use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 
 class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const ENTITY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+
     /**
      * @var CategoryTreeType
      */
@@ -16,6 +18,7 @@ class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->type = new CategoryTreeType();
+        $this->type->setEntityClass(self::ENTITY_CLASS);
     }
 
     public function testSetDefaultOptions()
@@ -25,7 +28,7 @@ class CategoryTreeTypeTest extends \PHPUnit_Framework_TestCase
             ->method('setDefaults')
             ->with(
                 [
-                    'class'    => 'OroB2BCatalogBundle:Category',
+                    'class'    => self::ENTITY_CLASS,
                     'multiple' => false,
                 ]
             );

@@ -11,6 +11,19 @@ class CreateAttributeType extends AbstractType
     const NAME = 'orob2b_attribute_create';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -27,7 +40,7 @@ class CreateAttributeType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\AttributeBundle\Entity\Attribute',
+            'data_class' => $this->dataClass,
             'validation_groups' => ['Create']
         ]);
     }
