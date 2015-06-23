@@ -66,7 +66,7 @@ class QuoteProductTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $productSelectType->getName()           => $productSelectType,
-                    $currencySelectionType->getName()        => $currencySelectionType,
+                    $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
                 []
