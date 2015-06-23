@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
+namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 

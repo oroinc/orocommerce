@@ -20,7 +20,7 @@ class OroB2BProductBundle implements
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
-    const TABLE_NAME = 'orob2b_product';
+    const PRODUCT_TABLE_NAME = 'orob2b_product';
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
 
@@ -75,14 +75,14 @@ class OroB2BProductBundle implements
     {
         $this->extendExtension->addEnumField(
             $schema,
-            self::TABLE_NAME,
+            self::PRODUCT_TABLE_NAME,
             'inventory_status',
             'prod_inventory_status'
         );
 
         $this->extendExtension->addEnumField(
             $schema,
-            self::TABLE_NAME,
+            self::PRODUCT_TABLE_NAME,
             'visibility',
             'prod_visibility'
         );
@@ -93,7 +93,7 @@ class OroB2BProductBundle implements
      */
     protected function addNoteAssociations(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::TABLE_NAME);
+        $this->noteExtension->addNoteAssociation($schema, self::PRODUCT_TABLE_NAME);
     }
 
     /**

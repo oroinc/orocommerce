@@ -2,8 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Migrations\Data\ORM;
 
-use Oro\Bundle\EntityExtendBundle\Fixture\AbstractEnumFixture;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -24,9 +23,9 @@ class LoadProductInventoryStatusData extends AbstractEnumFixture
     /**
      * {@inheritdoc}
      */
-    protected function getClassName()
+    protected function getEnumCode()
     {
-        return ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        return 'prod_inventory_status';
     }
 
     /**
