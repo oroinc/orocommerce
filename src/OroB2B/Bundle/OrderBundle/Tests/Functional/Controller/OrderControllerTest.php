@@ -28,7 +28,7 @@ class OrderControllerTest extends WebTestCase
             ]
         );
 
-        $this->formatter = $this->getContainer()->get('oro_locale.twig.name');
+        $this->formatter = $this->getContainer()->get('oro_locale.formatter.name');
     }
 
     public function testIndex()

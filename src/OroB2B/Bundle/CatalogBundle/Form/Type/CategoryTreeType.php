@@ -12,12 +12,25 @@ class CategoryTreeType extends AbstractType
     const NAME = 'orob2b_catalog_category_tree';
 
     /**
+     * @var string
+     */
+    protected $entityClass;
+
+    /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
+        $this->entityClass = $entityClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'class'    => 'OroB2BCatalogBundle:Category',
+            'class'    => $this->entityClass,
             'multiple' => false,
         ]);
     }

@@ -104,6 +104,8 @@ services:
 
     orob2b_pricing.event_listener.datagrid:
         class: %orob2b_pricing.event_listener.datagrid.class%
+        calls:
+            - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }

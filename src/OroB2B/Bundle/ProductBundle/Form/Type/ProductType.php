@@ -11,6 +11,19 @@ class ProductType extends AbstractType
     const NAME = 'orob2b_product';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -35,7 +48,7 @@ class ProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'data_class' => $this->dataClass,
             'intention' => 'product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

@@ -58,12 +58,13 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $this->formType = new PriceListProductPriceType($this->getRegistry(), $this->roundingService);
         $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
+        $this->formType->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
 
         parent::setUp();
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function tearDown()
     {
@@ -104,13 +105,16 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $productSelect = new ProductSelectTypeStub();
 
+        $priceType = new PriceType();
+        $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
+
         return [
             new PreloadedExtension(
                 [
                     $entityType->getName() => $entityType,
                     ProductSelectType::NAME => $productSelect,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
-                    PriceType::NAME => new PriceType(),
+                    PriceType::NAME => $priceType,
                     CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings)
                 ],
                 []
