@@ -17,7 +17,7 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
 
 OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
     constraints:
-        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem: ~
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOffer: ~
     properties:
         quantity:
             - NotBlank: ~

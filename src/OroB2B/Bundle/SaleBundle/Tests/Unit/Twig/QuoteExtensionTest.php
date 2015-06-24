@@ -8,7 +8,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -113,7 +113,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatProductItem($expected, $quantity, $unitCode, Price $price, ProductUnit $unit = null)
     {
-        $item = new QuoteProductItem();
+        $item = new QuoteProductOffer();
         $item
             ->setQuantity($quantity)
             ->setProductUnit($unit)

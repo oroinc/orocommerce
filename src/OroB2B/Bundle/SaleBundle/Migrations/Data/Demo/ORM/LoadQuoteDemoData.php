@@ -8,7 +8,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -51,24 +50,14 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     public function load(ObjectManager $manager)
     {
-        /** @var EntityManager $manager */
+        /** @var ObjectManager $manager */
         $user = $this->getUser($manager);
-
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroB2BSaleBundle/Migrations/Data/Demo/ORM/data/quotes.csv');
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'r');
-        $headers = fgetcsv($handler, 1000, ',');
         $organization = $user->getOrganization();
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+        for ($i=0; $i < 100; $i++) {
             // set date in future
             $validUntil = new \DateTime('now');
             $addDays = sprintf('+%s days', rand(10, 100));
             $validUntil->modify($addDays);
-            $row = array_combine($headers, array_values($data));
             $quote = new Quote();
             $quote
                 ->setOwner($user)
@@ -79,17 +68,15 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
             $manager->persist($quote);
         }
 
-        fclose($handler);
-
         $manager->flush();
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @return User
      * @throws \LogicException
      */
-    protected function getUser(EntityManager $manager)
+    protected function getUser(ObjectManager $manager)
     {
         /* @var $user User */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
@@ -104,18 +91,13 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @return Collection|Product[]
      * @throws \LogicException
      */
-    protected function getProducts(EntityManager $manager)
+    protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')
-            ->createQueryBuilder('p')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
 
         if (empty($products)) {
             throw new \LogicException('There are no products in system');
@@ -145,9 +127,9 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param Quote $quote
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      */
-    protected function processQuoteProducts(Quote $quote, EntityManager $manager)
+    protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
     {
         $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();

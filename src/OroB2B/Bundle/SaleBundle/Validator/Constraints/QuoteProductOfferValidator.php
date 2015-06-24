@@ -10,28 +10,28 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 use OroB2B\Bundle\SaleBundle\Entity;
 
-class QuoteProductItemValidator extends ConstraintValidator
+class QuoteProductOfferValidator extends ConstraintValidator
 {
     /**
      * {@inheritdoc}
      *
-     * @param Entity\QuoteProductItem $quoteProductItem
-     * @param Constraints\QuoteProductItem $constraint
+     * @param Entity\QuoteProductOffer $quoteProductOffer
+     * @param Constraints\QuoteProductOffer $constraint
      * @throws UnexpectedTypeException
      */
-    public function validate($quoteProductItem, Constraint $constraint)
+    public function validate($quoteProductOffer, Constraint $constraint)
     {
-        if (!$quoteProductItem instanceof Entity\QuoteProductItem) {
+        if (!$quoteProductOffer instanceof Entity\QuoteProductOffer) {
             throw new UnexpectedTypeException(
-                $quoteProductItem,
-                'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem'
+                $quoteProductOffer,
+                'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer'
             );
         }
         /* @var $product Product */
-        $product = $quoteProductItem->getQuoteProduct()->getProduct();
+        $product = $quoteProductOffer->getQuoteProduct()->getProduct();
         $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
-        if (!in_array($quoteProductItem->getProductUnit()->getCode(), $allowedUnits)) {
-            /* @var $constraint Constraints\QuoteProductItem */
+        if (!in_array($quoteProductOffer->getProductUnit()->getCode(), $allowedUnits)) {
+            /* @var $constraint Constraints\QuoteProductOffer */
             $this->context->addViolationAt('productUnit', $constraint->message);
         }
     }

@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 
 class QuoteProductTypeTest extends FormIntegrationTestCase
 {
@@ -53,9 +53,9 @@ class QuoteProductTypeTest extends FormIntegrationTestCase
             ->will($this->returnSelf())
         ;
 
-        $builder->expects($this->at(1))
+        $builder->expects($this->at(2))
             ->method('add')
-            ->with('quoteProductItems', QuoteProductItemCollectionType::NAME, [
+            ->with('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproductitem.add_label',
             ])
             ->will($this->returnSelf())

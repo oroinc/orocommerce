@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -12,17 +11,17 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
  */
-class QuoteProductItemTypeTest extends WebTestCase
+class QuoteProductOfferTypeTest extends WebTestCase
 {
     /**
-     * @var QuoteProductItemType
+     * @var QuoteProductOfferType
      */
     protected $formType;
 
@@ -33,7 +32,7 @@ class QuoteProductItemTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductItemType($this->getContainer()->get('translator'));
+        $this->formType = new QuoteProductOfferType($this->getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -83,33 +82,33 @@ class QuoteProductItemTypeTest extends WebTestCase
             ],
             'choices is ProductUnit[]' => [
                 'inputData'     => function () {
-                    return $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    return $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
                 },
                 'expectedData'  => function () {
-                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    $quoteProductOffer = $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
                     return [
-                        'choices'       => $this->getUnits($quoteProductItem->getQuoteProduct()->getProduct()),
+                        'choices'       => $this->getUnits($quoteProductOffer->getQuoteProduct()->getProduct()),
                         'empty_value'   => null,
                     ];
                 },
             ],
             'choices is [] and unit is deleted' => [
                 'inputData'     => function () {
-                    /* @var $quoteProductItem QuoteProductItem */
-                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    /* @var $quoteProductOffer QuoteProductOffer */
+                    $quoteProductOffer = $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
 
-                    $quoteProductItem->getQuoteProduct()->getProduct()->getUnitPrecisions()->clear();
+                    $quoteProductOffer->getQuoteProduct()->getProduct()->getUnitPrecisions()->clear();
 
-                    return $quoteProductItem;
+                    return $quoteProductOffer;
                 },
                 'expectedData'  => function () {
-                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
+                    $quoteProductOffer = $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
                     return [
                         'choices'       => [],
                         'empty_value'   => $this->trans(
                             'orob2b.sale.quoteproduct.product.removed',
                             [
-                                '{title}' => $quoteProductItem->getProductUnitCode(),
+                                '{title}' => $quoteProductOffer->getProductUnitCode(),
                             ]
                         ),
                     ];
@@ -120,9 +119,9 @@ class QuoteProductItemTypeTest extends WebTestCase
 
     /**
      * @param string $qid
-     * @return QuoteProductItem
+     * @return QuoteProductOffer
      */
-    protected function getQuoteProductItem($qid)
+    protected function getQuoteProductOffer($qid)
     {
         /* @var $quote Quote */
         $quote = $this->getReference($qid);
@@ -132,10 +131,10 @@ class QuoteProductItemTypeTest extends WebTestCase
 
         $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', $quoteProduct);
 
-        /* @var $item0 QuoteProductItem */
-        $item0 = $quoteProduct->getQuoteProductItems()->first();
+        /* @var $item0 QuoteProductOffer */
+        $item0 = $quoteProduct->getQuoteProductOffers()->first();
 
-        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem', $item0);
+        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer', $item0);
 
         return $item0;
     }

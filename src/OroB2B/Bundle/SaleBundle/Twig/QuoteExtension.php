@@ -4,19 +4,19 @@ namespace OroB2B\Bundle\SaleBundle\Twig;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_sale_quote';
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var Twig\Environment
+     * @var \Twig_Environment
      */
     protected $twigEnvironment;
 
@@ -45,10 +45,10 @@ class QuoteExtension extends \Twig_Extension
     }
 
     /**
-     * @param QuoteProductItem $item
+     * @param QuoteProductOffer $item
      * @return string
      */
-    public function formatProductItem(QuoteProductItem $item)
+    public function formatProductItem(QuoteProductOffer $item)
     {
         $unitFormatter  = $this->twigEnvironment->getFilter('orob2b_format_product_unit_value')->getCallable();
         $priceFormatter = $this->twigEnvironment->getFilter('oro_format_price')->getCallable();

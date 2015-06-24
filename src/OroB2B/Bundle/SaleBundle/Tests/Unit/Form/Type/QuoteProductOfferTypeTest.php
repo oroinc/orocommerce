@@ -23,13 +23,13 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 
-class QuoteProductItemTypeTest extends FormIntegrationTestCase
+class QuoteProductOfferTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var QuoteProductItemType
+     * @var QuoteProductOfferType
      */
     protected $formType;
 
@@ -46,7 +46,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             ->getMock()
         ;
 
-        $this->formType = new QuoteProductItemType($translator);
+        $this->formType = new QuoteProductOfferType($translator);
     }
 
     /**
@@ -119,8 +119,8 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
-                'intention'     => 'sale_quote_product_item',
+                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
+                'intention'     => 'sale_quote_product_offer',
                 'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ])
         ;
@@ -130,7 +130,7 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_sale_quote_product_item', $this->formType->getName());
+        $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
     }
 
     /**
@@ -196,8 +196,8 @@ class QuoteProductItemTypeTest extends FormIntegrationTestCase
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
         }
 
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
-        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem');
+        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer */
+        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
         $item
             ->expects($this->any())
             ->method('getId')

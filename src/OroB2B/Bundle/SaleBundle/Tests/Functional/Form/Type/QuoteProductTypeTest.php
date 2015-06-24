@@ -4,17 +4,13 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
@@ -23,7 +19,7 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 class QuoteProductTypeTest extends WebTestCase
 {
     /**
-     * @var QuoteProductItemType
+     * @var QuoteProductOfferType
      */
     protected $formType;
 
