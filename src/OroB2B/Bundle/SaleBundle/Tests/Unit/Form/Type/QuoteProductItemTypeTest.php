@@ -21,6 +21,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
 class QuoteProductItemTypeTest extends AbstractTest
 {
     /**
