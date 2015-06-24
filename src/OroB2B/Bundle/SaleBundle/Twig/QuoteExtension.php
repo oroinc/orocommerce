@@ -15,7 +15,7 @@ class QuoteExtension extends \Twig_Extension
     const NAME = 'orob2b_sale_quote';
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -74,8 +74,7 @@ class QuoteExtension extends \Twig_Extension
             $item->getPrice()->getCurrency()
         );
         $unit = $this->translator->trans(
-            sprintf('orob2b.product_unit.%s.label.full',
-            $item->getProductUnitCode())
+            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
         );
 
         $str = $this->translator->trans(

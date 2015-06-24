@@ -10,6 +10,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -54,7 +55,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        /** @var EntityManager $manager */
+        /* @var $manager EntityManager */
         $user = $this->getUser($manager);
 
         for ($i = 0; $i < 20; $i++) {
@@ -78,11 +79,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param ObjectManager $manager
+     * @param EntityManager $manager
      * @return User
      * @throws \LogicException
      */
-    protected function getUser(ObjectManager $manager)
+    protected function getUser(EntityManager $manager)
     {
         /* @var $user User */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
@@ -97,11 +98,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param ObjectManager $manager
+     * @param EntityManager $manager
      * @return Collection|Product[]
      * @throws \LogicException
      */
-    protected function getProducts(ObjectManager $manager)
+    protected function getProducts(EntityManager $manager)
     {
         $products = $manager->getRepository('OroB2BProductBundle:Product')
             ->createQueryBuilder('p')
@@ -138,9 +139,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param Quote $quote
-     * @param ObjectManager $manager
+     * @param EntityManager $manager
      */
-    protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
+    protected function processQuoteProducts(Quote $quote, EntityManager $manager)
     {
         $products   = $this->getProducts($manager);
         $currencies = $this->getCurrencies();

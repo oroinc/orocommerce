@@ -46,6 +46,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->translator
+            ->expects($this->any())
             ->method('trans')
             ->will($this->returnCallback(function ($id, $params) {
                 $ids = [
@@ -69,7 +70,9 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
                 return sprintf('%01.2f %s', $value, $currency);
             }));
 
-        $this->productUnitValueFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+        $this->productUnitValueFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 

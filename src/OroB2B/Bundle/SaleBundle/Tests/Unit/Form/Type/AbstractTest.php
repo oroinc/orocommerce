@@ -3,14 +3,12 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
@@ -19,6 +17,11 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
+    /**
+     * @var FormTypeInterface
+     */
+    protected $formType;
+
     /**
      * @param bool $isValid
      * @param array $submittedData

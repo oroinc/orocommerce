@@ -43,9 +43,4 @@ class QuoteProductTest extends AbstractTest
 
         $this->assertEquals($quoteProduct, $quoteProductItem->getQuoteProduct());
     }
-
-    public function testQuoteProductItems()
-    {
-        $this->assertCollection(new QuoteProduct(), new QuoteProductItem());
-    }
 }

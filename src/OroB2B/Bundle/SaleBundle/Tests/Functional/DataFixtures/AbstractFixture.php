@@ -45,7 +45,7 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
     {
         /* @var $user User */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
-            'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL,
+                'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL,
         ]);
 
         if (!$user) {

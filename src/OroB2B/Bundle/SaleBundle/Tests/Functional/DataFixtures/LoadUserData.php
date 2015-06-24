@@ -52,19 +52,16 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             $user
                 ->setEmail($item['email'])
-                ->setUsername($item['username'])
-                ->setPlainPassword($item['password'])
-                ->setFirstName($item['firstname'])
+                ->setFirstname($item['firstname'])
                 ->setLastName($item['lastname'])
-
-                ->setEnabled(true)
-
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
+                ->setUsername($item['username'])
+                ->setPlainPassword($item['password'])
+                ->setEnabled(true)
             ;
-
             $userManager->updateUser($user);
 
             $this->setReference($user->getUsername(), $user);

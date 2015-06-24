@@ -137,7 +137,7 @@ class QuoteControllerTest extends WebTestCase
         );
 
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertEquals(1, sizeof($result['data']));
+        $this->assertCount(1, $result['data']);
 
         $row = reset($result['data']);
 
