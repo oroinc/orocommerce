@@ -251,8 +251,8 @@
                         userid="${db.user}"
                         password="${db.pass}"
                         autocommit="true">
-                        DROP DATABASE IF EXISTS ${db.name};
-                        CREATE DATABASE ${db.name} WITH lc_collate = 'C' template = template0;
+                        DROP DATABASE IF EXISTS "${db.name}";
+                        CREATE DATABASE "${db.name}" WITH lc_collate = 'C' template = template0;
                     </sql>
                 </then>
             </elseif>
@@ -332,19 +332,19 @@
         <attribute name="websocket-frontend-port" default="8080"/>
         <attribute name="websocket-backend-host" default="'*'"/>
         <attribute name="websocket-backend-port" default="8080"/>
+        <attribute name="backend-prefix" default="/admin"/>
         <attribute name="session-handler" default="null"/>
         <attribute name="locale" default="en"/>
         <attribute name="secret" default="ThisTokenIsNotSoSecretChangeIt"/>
         <attribute name="installed" default="~"/>
-        <attribute name="application-host" default="http://localhost.com/"/>
         <sequential>
             <if>
                 <equals arg1="@{env}" arg2="prod"/>
                 <then>
-                    <var name="appconfig.filename" value="${appdir}/common/parameters.yml"/>
+                    <var name="appconfig.filename" value="${appdir}/config/parameters.yml"/>
                 </then>
                 <else>
-                    <var name="appconfig.filename" value="${appdir}/common/parameters_@{env}.yml"/>
+                    <var name="appconfig.filename" value="${appdir}/config/parameters_@{env}.yml"/>
                 </else>
             </if>
             <delete file="${appconfig.filename}" quiet="true"/>
@@ -367,14 +367,11 @@
             <echo file="${appconfig.filename}" append="true">    websocket_frontend_port: @{websocket-frontend-port}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    websocket_backend_host: @{websocket-backend-host}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    websocket_backend_port: @{websocket-backend-port}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    backend_prefix: @{backend-prefix}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    session_handler: @{session-handler}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    locale: @{locale}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    secret: @{secret}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    installed: @{installed}${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.admin: @{application-host}admin.php${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.frontend: @{application-host}${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.install: @{application-host}install.php${line.separator}</echo>
-            <echo file="${appconfig.filename}" append="true">    application_host.tracking: @{application-host}tracking.php${line.separator}</echo>
         </sequential>
     </macrodef>
 
@@ -556,7 +553,7 @@
 
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
-            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${srcdir}"/>
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --exclude=ProductBundle/Migrations/Schema --verbose ${srcdir}"/>
         </exec>
     </target>
 

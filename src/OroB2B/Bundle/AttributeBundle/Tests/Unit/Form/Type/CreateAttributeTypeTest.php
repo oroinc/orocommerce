@@ -7,6 +7,8 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\CreateAttributeType;
 
 class CreateAttributeTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\AttributeBundle\Entity\Attribute';
+
     /**
      * @var CreateAttributeType
      */
@@ -15,6 +17,7 @@ class CreateAttributeTypeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->formType = new CreateAttributeType();
+        $this->formType->setDataClass(self::DATA_CLASS);
     }
 
     public function testBuildForm()
@@ -51,7 +54,7 @@ class CreateAttributeTypeTest extends \PHPUnit_Framework_TestCase
     public function testSetDefaultOptions()
     {
         $expectedDefaults = [
-            'data_class' => 'OroB2B\Bundle\AttributeBundle\Entity\Attribute',
+            'data_class' => self::DATA_CLASS,
             'validation_groups' => ['Create']
         ];
 

@@ -13,6 +13,19 @@ class ProductType extends AbstractType
     const NAME = 'orob2b_product';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -21,6 +34,36 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add('category', CategoryTreeType::NAME, ['required' => false, 'label' => 'orob2b.product.category.label'])
+            ->add(
+                'inventoryStatus',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.product.inventory_status.label',
+                    'enum_code' => 'prod_inventory_status',
+                    'configs' => [
+                        'allowClear' => false,
+                    ]
+                ]
+            )
+            ->add(
+                'image',
+                'oro_image',
+                [
+                    'label'    => 'orob2b.product.image.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'visibility',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.product.visibility.label',
+                    'enum_code' => 'prod_visibility',
+                    'configs' => [
+                        'allowClear' => false,
+                    ]
+                ]
+            )
             ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
@@ -38,7 +81,7 @@ class ProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+            'data_class' => $this->dataClass,
             'intention' => 'product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

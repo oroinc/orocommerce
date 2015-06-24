@@ -7,6 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use OroB2B\Bundle\RFPAdminBundle\Entity\Repository\RequestStatusRepository;
+
 class DefaulRequestStatusType extends AbstractType
 {
     const NAME = 'orob2b_rfp_admin_default_request_status';
@@ -17,6 +19,11 @@ class DefaulRequestStatusType extends AbstractType
     protected $registry;
 
     /**
+     * @var string
+     */
+    protected $requestStatusClass;
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -25,11 +32,21 @@ class DefaulRequestStatusType extends AbstractType
     }
 
     /**
+     * @param string $requestStatusClass
+     */
+    public function setRequestStatusClass($requestStatusClass)
+    {
+        $this->requestStatusClass = $requestStatusClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $choicesRaw = $this->registry->getRepository('OroB2BRFPAdminBundle:RequestStatus')->getNotDeletedStatuses();
+        /** @var RequestStatusRepository $repository */
+        $repository = $this->registry->getRepository($this->requestStatusClass);
+        $choicesRaw = $repository->getNotDeletedStatuses();
 
         $choices = [];
 

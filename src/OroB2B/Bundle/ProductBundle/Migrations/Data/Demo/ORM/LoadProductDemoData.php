@@ -10,6 +10,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -65,6 +67,14 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        /** @var AbstractEnumValue[] $inventoryStatuses */
+        $inventoryStatuses = $manager->getRepository($inventoryStatusClassName)->findAll();
+
+        $visibilityClassName = ExtendHelper::buildEnumValueClassName('prod_visibility');
+        /** @var AbstractEnumValue[] $visibilities */
+        $visibilities = $manager->getRepository($visibilityClassName)->findAll();
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -74,7 +84,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setSku($row['productCode'])
-                ->setCategory($category);
+                ->setCategory($category)
+                ->setInventoryStatus($inventoryStatuses[array_rand($inventoryStatuses)])
+                ->setVisibility($visibilities[array_rand($visibilities)]);
 
             $manager->persist($product);
         }

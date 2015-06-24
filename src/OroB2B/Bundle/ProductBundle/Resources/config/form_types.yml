@@ -1,5 +1,6 @@
 parameters:
     orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
+    orob2b_product.form.type.product_default_visibility_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductDefaultVisibilityType
     orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
@@ -10,6 +11,8 @@ services:
     # Product form types
     orob2b_product.form.type.product:
         class: %orob2b_product.form.type.product.class%
+        calls:
+            - [setDataClass, [%orob2b_product.product.class%]]
         tags:
             - { name: form.type, alias: orob2b_product }
 
@@ -24,11 +27,15 @@ services:
         class: %orob2b_product.form.type.product_unit_selection.class%
         arguments:
             - @doctrine.orm.entity_manager
+        calls:
+            - [setEntityClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: form.type, alias: orob2b_product_unit_selection }
 
     orob2b_product.form.type.product_unit_precision:
         class: %orob2b_product.form.type.product_unit_precision.class%
+        calls:
+            - [setDataClass, [%orob2b_product.product_unit_precision.class%]]
         tags:
             - { name: form.type, alias: orob2b_product_unit_precision }
 
@@ -41,3 +48,8 @@ services:
         class: %orob2b_product.form.type.product_select.class%
         tags:
             - { name: form.type, alias: orob2b_product_select }
+
+    orob2b_product.form.type.default_visibility:
+        class: %orob2b_product.form.type.product_default_visibility_type.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_default_visibility }

@@ -6,10 +6,19 @@ orob2b:
         id.label: Id
         sku.label: SKU
         category.label: Category
+        inventory_status.label: Inventory Status
+        visibility.label: Visible to Customers
         owner.label: Owner
         organization.label: Organization
         in_category.label: In category
         unit_precisions.label: Unit Precisions
+        image.label: Image
+
+        visibility:
+            visible.label: Yes
+            not_visible.label: No
+            as_defined_in_system_config.label: As Defined in System Configuration
+
         form.choose: 'Choose Product...'
 
         productunit:
@@ -46,6 +55,7 @@ orob2b:
             general: General
             additional: Additional
             catalog: Master Catalog
+            visibility: Visibility
 
         widgets:
             product_information: Product Information
@@ -57,8 +67,10 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_settings.title: 'Product Unit Settings'
+                default_visibility.title: Default Visibility
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
+                visibility.label: Visible to Customers
 
     product_unit.kg:
         label:

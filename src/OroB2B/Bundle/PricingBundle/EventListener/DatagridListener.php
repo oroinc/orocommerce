@@ -10,6 +10,19 @@ class DatagridListener
     const PRICE_COLUMN = 'price_list_name';
 
     /**
+     * @var string
+     */
+    protected $priceListClass;
+
+    /**
+     * @param string $priceListClass
+     */
+    public function setPriceListClass($priceListClass)
+    {
+        $this->priceListClass = $priceListClass;
+    }
+
+    /**
      * @param BuildBefore $event
      */
     public function onBuildBeforeCustomers(BuildBefore $event)
@@ -37,7 +50,7 @@ class DatagridListener
 
         // left join
         $leftJoin = [
-            'join' => 'OroB2BPricingBundle:PriceList',
+            'join' => $this->priceListClass,
             'alias' => 'priceList',
             'conditionType' => 'WITH',
             'condition' => $joinCondition
@@ -59,7 +72,7 @@ class DatagridListener
             'options' => [
                 'field_type' => 'entity',
                 'field_options' => [
-                    'class' => 'OroB2BPricingBundle:PriceList',
+                    'class' => $this->priceListClass,
                     'property' => 'name',
                 ]
             ]
