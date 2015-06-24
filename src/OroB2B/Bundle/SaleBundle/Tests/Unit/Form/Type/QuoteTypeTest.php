@@ -117,7 +117,7 @@ class QuoteTypeTest extends AbstractTest
      * @param QuoteProduct[] $items
      * @return Quote
      */
-    protected function getQuote($ownerId, $items = [])
+    protected function getQuote($ownerId, array $items = [])
     {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));

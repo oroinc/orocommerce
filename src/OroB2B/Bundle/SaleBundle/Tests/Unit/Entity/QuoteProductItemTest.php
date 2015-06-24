@@ -21,7 +21,7 @@ class QuoteProductItemTest extends AbstractTest
             ['price', new Price()],
         ];
 
-        $this->assertPropertyAccessors(new QuoteProductItem(), $properties);
+        static::assertPropertyAccessors(new QuoteProductItem(), $properties);
     }
 
     public function testPostLoad()

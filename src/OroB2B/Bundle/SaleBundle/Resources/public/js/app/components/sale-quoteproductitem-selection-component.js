@@ -104,6 +104,7 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onContentChanged: function (e) {
+            this.$container.find('select').uniform();
             var productId = this.$productSelect.val();
             var productUnits = this.units[productId];
             

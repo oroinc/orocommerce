@@ -48,7 +48,7 @@ class QuoteControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
@@ -70,7 +70,7 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Quote has been saved', $crawler->html());
     }
 
@@ -85,7 +85,7 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('quotes-grid', $crawler->html());
 
         $response = $this->client->requestGrid(
@@ -93,7 +93,7 @@ class QuoteControllerTest extends WebTestCase
             ['quotes-grid[_filter][qid][value]' => self::$qid]
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = static::getJsonResponseContent($response, 200);
         $this->assertCount(1, $result['data']);
 
         $row = reset($result['data']);
@@ -127,7 +127,7 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Quote has been saved', $crawler->html());
 
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
@@ -136,7 +136,7 @@ class QuoteControllerTest extends WebTestCase
             ['quotes-grid[_filter][id][value]' => $id]
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = static::getJsonResponseContent($response, 200);
         $this->assertCount(1, $result['data']);
 
         $row = reset($result['data']);
@@ -158,7 +158,7 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $id;
     }
@@ -172,12 +172,12 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('DELETE', $this->getUrl('orob2b_api_sale_delete_quote', ['id' => $id]));
 
         $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        static::assertEmptyResponseStatusCodeEquals($result, 204);
 
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+        static::assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
     /**

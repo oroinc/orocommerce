@@ -34,7 +34,7 @@ class QuoteProductTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductType($this->getContainer()->get('translator'));
+        $this->formType = new QuoteProductType(static::getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -52,7 +52,7 @@ class QuoteProductTypeTest extends WebTestCase
         $inputData      = $inputDataCallback();
         $expectedData   = $expectedDataCallback();
 
-        $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
+        $form = static::getContainer()->get('form.factory')->create($this->formType, null, []);
 
         $this->formType->preSetData(new FormEvent($form, $inputData));
 
@@ -125,6 +125,6 @@ class QuoteProductTypeTest extends WebTestCase
      */
     protected function trans($id, array $parameters = [])
     {
-        return $this->getContainer()->get('translator')->trans($id, $parameters);
+        return static::getContainer()->get('translator')->trans($id, $parameters);
     }
 }
