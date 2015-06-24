@@ -553,9 +553,9 @@
 
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
-            <arg value="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
-            <arg value="--exclude=ProductBundle/Migrations/Schema"/>
-            <arg value="${srcdir}"/>
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
+            <arg line="--exclude=ProductBundle/Migrations/Schema"/>
+            <arg line="${srcdir}"/>
         </exec>
     </target>
 
