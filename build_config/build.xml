@@ -251,8 +251,8 @@
                         userid="${db.user}"
                         password="${db.pass}"
                         autocommit="true">
-                        DROP DATABASE IF EXISTS ${db.name};
-                        CREATE DATABASE ${db.name} WITH lc_collate = 'C' template = template0;
+                        DROP DATABASE IF EXISTS "${db.name}";
+                        CREATE DATABASE "${db.name}" WITH lc_collate = 'C' template = template0;
                     </sql>
                 </then>
             </elseif>
@@ -553,7 +553,9 @@
 
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
-            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose ${srcdir}"/>
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
+            <arg line="--exclude=ProductBundle/Migrations/Schema"/>
+            <arg line="${srcdir}"/>
         </exec>
     </target>
 

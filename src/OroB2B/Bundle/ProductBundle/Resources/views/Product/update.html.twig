@@ -42,18 +42,34 @@
 {% block content_data %}
     {% set id = 'product-edit' %}
 
-    {% set dataBlocks = [{
-            'title': 'orob2b.product.sections.general'|trans,
-            'class': 'active',
-            'subblocks': [{
-                'title': '',
-                'data': [
-                    form_row(form.sku),
-                    form_row(form.unitPrecisions),
-                ]
-            }]
+    {% set generalBlock = {
+        'title': 'orob2b.product.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'title': '',
+            'data': [
+                form_row(form.sku),
+                form_row(form.inventoryStatus),
+                form_row(form.image),
+                form_row(form.unitPrecisions),
+            ]
         }]
-    %}
+    } %}
+
+    {% set visibilityBlock = {
+        'title': 'orob2b.product.sections.visibility'|trans,
+        'subblocks': [{
+            'title': '',
+            'data': [
+                form_row(form.visibility)
+            ]
+        }]
+    } %}
+
+    {% set dataBlocks = [
+        generalBlock,
+        visibilityBlock
+    ] %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}

@@ -12,8 +12,16 @@ datagrid:
                     - product.sku
                     - product.createdAt
                     - product.updatedAt
+                    - productInventoryStatus.id as inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
+                    - productVisibility.id as visibilityId
+                    - productVisibility.name as visibilityName
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: product.visibility, alias: productVisibility}
         columns:
             sku:
                 label:         orob2b.product.sku.label
@@ -29,6 +37,10 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
+                inventoryStatus:
+                    data_name: inventoryStatusName
+                visibility:
+                    data_name: visibilityName
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -40,6 +52,14 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
+                inventoryStatus:
+                    type:      enum
+                    data_name: inventoryStatusId
+                    enum_code: prod_inventory_status
+                visibility:
+                    type:      enum
+                    data_name: visibilityId
+                    enum_code: prod_visibility
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt

@@ -38,13 +38,20 @@
             'url': path('orob2b_product_info', {id: entity.id})
         }) }}
     {% endset %}
+    {% set productVisibility %}
+        {{ UI.renderHtmlProperty('orob2b.product.visibility.label'|trans, entity.visibility) }}
+    {% endset %}
 
     {% set dataBlocks = [
         {
             'title': 'orob2b.product.sections.general'|trans,
             'class': 'active',
             'subblocks': [{'data' : [productInformationWidget]}]
-        }
+        },
+        {
+            'title': 'orob2b.product.sections.visibility'|trans,
+            'subblocks': [{'data' : [productVisibility]}]
+        },
     ] %}
 
     {% set id = 'product-view' %}

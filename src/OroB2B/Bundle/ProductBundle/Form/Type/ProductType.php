@@ -32,6 +32,36 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add(
+                'inventoryStatus',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.product.inventory_status.label',
+                    'enum_code' => 'prod_inventory_status',
+                    'configs' => [
+                        'allowClear' => false,
+                    ]
+                ]
+            )
+            ->add(
+                'image',
+                'oro_image',
+                [
+                    'label'    => 'orob2b.product.image.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'visibility',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.product.visibility.label',
+                    'enum_code' => 'prod_visibility',
+                    'configs' => [
+                        'allowClear' => false,
+                    ]
+                ]
+            )
+            ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [

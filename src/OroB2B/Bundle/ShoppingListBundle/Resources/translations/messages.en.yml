@@ -1,0 +1,22 @@
+orob2b:
+    shoppinglist:
+        entity_label: Shopping List
+        entity_plural_label: Shopping Lists
+        entity_description: Shows content of shopping lists of the account users.
+        id.label: ID
+        label.label: Label
+        notes.label: Notes
+        owner.label: Owner
+        organization.label: Organization
+
+        menu:
+            sales_tab.label: Sales
+            shopping_list.description: Shopping Lists
+            shortcut_shopping_list.description: Shows content of shopping lists of the account users
+
+        widgets:
+            shopping_list_information: Shopping Lists Information
+
+        sections:
+            general: General
+            additional: Additional

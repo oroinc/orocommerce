@@ -6,6 +6,8 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+
 /**
  * @outputBuffering enabled
  * @dbIsolation
@@ -14,6 +16,12 @@ class ProductControllerTest extends WebTestCase
 {
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
+
+    const INVENTORY_STATUS = 'In Stock';
+    const UPDATED_INVENTORY_STATUS = 'Out of Stock';
+
+    const VISIBILITY = 'Yes';
+    const UPDATED_VISIBILITY = 'No';
 
     const FIRST_UNIT_CODE = 'item';
     const FIRST_UNIT_FULL_NAME = 'item';
@@ -44,13 +52,21 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
         $form['orob2b_product_form[owner]'] = $this->getBusinessUnitId();
+        
+        $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Product has been saved', $crawler->html());
+
+        $html = $crawler->html();
+        $this->assertContains("Product has been saved", $html);
+        $this->assertContains(self::TEST_SKU, $html);
+        $this->assertContains(self::INVENTORY_STATUS, $html);
+        $this->assertContains(self::VISIBILITY, $html);
     }
 
     /**
@@ -80,6 +96,8 @@ class ProductControllerTest extends WebTestCase
                 '_token' => $form['orob2b_product_form[_token]']->getValue(),
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
+                'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
@@ -134,10 +152,11 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $crawler->html());
-        $product = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:Product')
-            ->findOneBy(['sku' => self::UPDATED_SKU]);
+
+        $html = $crawler->html();
+        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(self::UPDATED_VISIBILITY, $html);
 
         $productUnitPrecision = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
