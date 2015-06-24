@@ -1,6 +1,17 @@
 {% block orob2b_sale_quote_product_collection_row %}
     <div class="sale-quoteproduct-collection">
-        {{ form_widget(form) }}
+        <table class="sale-quoteproduct-collection-table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Type</th>
+                    <th>Offers</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ form_widget(form) }}
+            </tbody>
+        </table>
     </div>
 {% endblock %}
 
@@ -15,28 +26,45 @@
             {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
         {% endfor %}
     {% endif %}
-    
-    <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
-        data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component">
-        {{ form_label(form.product, '', { label_attr: label_attr|merge({ class: 'control-label' })}) }}
-        <div class="sale-quoteproduct-product-select controls{% if errors|length > 0 %} validation-error{% endif %}">
-            {{ form_widget(form.product) }}
-            {{ form_errors(form.product) }}
-        </div>
-        <div class="sale-quoteproductitem-collection">
-            {{ form_widget(form.quoteProductRequests) }}
-            {{ form_widget(form.quoteProductOffers) }}
-        </div>
-    </div>
+    <tr>
+        <td>
+            <div class="sale-quoteproduct-product-select">
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+            </div>
+        </td>
+        <td>
+            {{ form_widget(form.type) }}
+            {{ form_errors(form.type) }}
+        </td>
+        <td>
+            <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
+                        data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component" class="sale-quoteproductitem-collection">
+                {{ form_widget(form.quoteProductRequests) }}
+                {{ form_widget(form.quoteProductOffers) }}
+                <div>
+                    <a class="btn add-list-item2" href="javascript: void(0);">Add Notes</a>
+                </div>
+            </div>
+        </td>
+    </tr>
 {% endblock %}
 
 {% block orob2b_sale_quote_product_offer_widget %}
     <table class="sale-quoteproductitem-widget">
         <tr>
-            <td>Quote Line Item:</td>
             <td>
                 {{ form_widget(form.quantity) }}
                 {{ form_errors(form.quantity) }}
+            </td>
+            <td>
+                {{ form_widget(form.allowIncrements) }}
+                {{ form_label(form.allowIncrements) }}
+                {{ form_errors(form.allowIncrements) }}
+            </td>
+            <td>
+                {{ form_widget(form.priceType) }}
+                {{ form_errors(form.priceType) }}
             </td>
             <td>
                 {{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}
@@ -49,17 +77,6 @@
             <td>
                 {{ form_widget(form.price.currency) }}
                 {{ form_errors(form.price.currency) }}
-            </td>
-        </tr>
-    </table>
-
-    <table class="sale-quoteproductitem-widget-last-line">
-        <tr>
-            <td>
-                <a class="btn add-list-item2" href="javascript: void(0);">Suggest a Replacement</a>
-            </td>
-            <td>
-                <a class="btn add-list-item2" href="javascript: void(0);">Not Available</a>
             </td>
         </tr>
     </table>

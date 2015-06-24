@@ -1,3 +1,13 @@
+.sale-quoteproduct-collection-table {
+    margin-left: 90px;
+}
+
+.sale-quoteproduct-collection-table > tbody > tr > td,
+.sale-quoteproduct-collection-table th {
+    border: 1px solid #000000;
+    padding: 10px;
+}
+
 .sale-quoteproduct-collection .btn.add-list-item {
     margin-left: 90px;
 }
@@ -29,7 +39,7 @@
 .sale-quoteproduct-widget .btn.removeRow {
     position: absolute;
     width: 28px;
-    right: 4px;
+    right: -5px;
     left: auto;
 }
 
@@ -109,4 +119,8 @@
 .sale-quoteproductitem-widget-last-line input,
 .sale-quoteproductitem-widget-last-line select {
     max-width: 180px !important;
+}
+
+.sale-quoteproductitem-widget .validate-group {
+    min-width: 140px;
 }

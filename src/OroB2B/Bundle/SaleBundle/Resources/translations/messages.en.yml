@@ -20,14 +20,18 @@ orob2b:
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
-            add_label: 'Add Line Item'
+            add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
             product_sku.label: 'Product SKU'
             quote.label: 'Quote'
             quote_product_items.label: 'Quote Product Lines'
-
             product.removed: '{title} - removed'
+            type:
+                label: 'Type'
+                requested: 'Requested'
+                offer: 'Offer'
+                not_available: 'Not Available'
 
         quoteproductoffer:
             item: '{units}, {price} per {unit}'
@@ -42,14 +46,11 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
-            comment.label: 'Notes'
-
-            status:
-                label: 'Status'
-                requested: 'Requested'
-                suggested_replacement: 'Suggested Replacement'
-                additional: 'Additional'
-                not_available: 'Not Available'
+            allowincrements.label: 'or more'
+            pricetype:
+                label: 'Price Type'
+                bundled: 'bundled offer'
+                unit: 'at unit price of'
 
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'

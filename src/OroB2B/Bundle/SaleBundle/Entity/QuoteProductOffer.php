@@ -53,6 +53,36 @@ class QuoteProductOffer extends BaseQuoteProductItem
      */
     protected $allowIncrements;
 
+    /**
+     * Get priceType Titles array
+     *
+     * @return array
+     */
+    public static function getPriceTypeTitles()
+    {
+        static $priceTypeTitles = null;
+        if (null === $priceTypeTitles) {
+            $priceTypeTitles = [
+                static::PRICE_BUNDLED => 'orob2b.sale.quoteproductoffer.pricetype.bundled',
+                static::PRICE_UNIT => 'orob2b.sale.quoteproductoffer.pricetype.unit',
+            ];
+        }
+
+        return $priceTypeTitles;
+    }
+
+    /**
+     * Get Type Title
+     *
+     * @return string
+     */
+    public function getPriceTypeTitle()
+    {
+        $priceType = $this->getPriceType();
+        $titles = static::getPriceTypeTitles();
+
+        return isset($titles[$priceType]) ? $titles[$priceType] : '';
+    }
 
     /**
      * @param int $priceType

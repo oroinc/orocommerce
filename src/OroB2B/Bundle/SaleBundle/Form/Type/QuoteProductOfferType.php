@@ -44,7 +44,17 @@ class QuoteProductOfferType extends AbstractType
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductoffer.price.label'
+                'label'     => 'orob2b.sale.quoteproductoffer.pricetype.label'
+            ])
+            ->add('priceType', 'choice', [
+                    'label' => 'orob2b.sale.quoteproductoffer.pricetype.label',
+                    'choices' => QuoteProductOffer::getPriceTypeTitles(),
+                    'required' => true,
+                    'expanded' => true
+            ])
+            ->add('allowIncrements', 'checkbox', [
+                'required'  => true,
+                'label'     => 'orob2b.sale.quoteproductoffer.allowincrements.label'
             ])
         ;
 
