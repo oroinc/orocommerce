@@ -43,7 +43,7 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     }
 
     /**
-     * @param ContainerInterface $container
+     * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
