@@ -8,9 +8,22 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    /** @var ContainerInterface */
+    protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -24,19 +37,36 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        /** @var User $user */
-        $user = $manager->getRepository('OroUserBundle:User')->findOneBy(['username' => 'admin']);
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
-        $this->createShoppingList($manager, $user, 'Shopping List 1');
-        $this->createShoppingList($manager, $user, 'Shopping List 2');
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+        $user = null;
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+
+            /** @var User $user */
+            if (!$user instanceof User || $user->getUsername() !== $row['username']) {
+                $user = $manager->getRepository('OroUserBundle:User')->findOneBy(['username' => $row['username']]);
+            }
+
+            $this->createShoppingList($manager, $user, $row['label']);
+        }
+
+        fclose($handler);
 
         $manager->flush();
     }
 
     /**
      * @param ObjectManager $manager
-     * @param User $user
-     * @param string $label
+     * @param User          $user
+     * @param string        $label
      *
      * @return ShoppingList
      */

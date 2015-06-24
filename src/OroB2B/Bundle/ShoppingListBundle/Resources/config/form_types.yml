@@ -1,0 +1,14 @@
+parameters:
+    orob2b_shopping_list.form.type.line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType
+
+services:
+    orob2b_shopping_list.form.type.line_item:
+        class: %orob2b_shopping_list.form.type.line_item.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.service.rounding
+        calls:
+            - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
+            - [setProductClass, [%orob2b_product.product.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_shopping_list_line_item }

@@ -20,3 +20,9 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        lineitem:
+            add_line_item: Add Line Item
+            entity_label: Line Item
+            entity_plural_label: Line Items
+            notes_label: Notes
