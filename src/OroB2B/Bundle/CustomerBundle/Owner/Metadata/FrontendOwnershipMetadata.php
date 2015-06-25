@@ -37,12 +37,26 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
     }
 
     /**
-     * Frontend entities are not owned by organization
-     *
      * {@inheritdoc}
      */
     public function isGlobalLevelOwned()
     {
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGlobalOwnerColumnName()
+    {
+        throw new \BadMethodCallException('Frontend entities are not owned by organization');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getGlobalOwnerFieldName()
+    {
+        throw new \BadMethodCallException('Frontend entities are not owned by organization');
     }
 }
