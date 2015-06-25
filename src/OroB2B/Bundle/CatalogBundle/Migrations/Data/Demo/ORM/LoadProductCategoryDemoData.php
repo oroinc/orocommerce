@@ -12,7 +12,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
 
 class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -70,13 +69,8 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
 
             $product  = $this->getProductBySku($manager, $row['productCode']);
             $category = $this->getCategoryByDefaultTitle($manager, $row['productLine']);
-
-            $productCategory = new ProductCategory();
-            $productCategory
-                ->setProduct($product)
-                ->setCategory($category);
-
-            $manager->persist($productCategory);
+            $category->addProduct($product);
+            $manager->persist($category);
         }
 
         fclose($handler);

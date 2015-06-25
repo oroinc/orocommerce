@@ -112,13 +112,17 @@ class Category
     protected $updatedAt;
 
     /**
-     * @var Collection|ProductCategory[]
+     * @var Collection|Product[]
      *
-     * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\CatalogBundle\Entity\ProductCategory",
-     *      mappedBy="category",
-     *      cascade={"ALL"},
-     *      orphanRemoval=true
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinTable(
+     *      name="orob2b_category_to_product",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
      * )
      */
     protected $products;
@@ -293,7 +297,7 @@ class Category
     }
 
     /**
-     * @return Collection|ProductCategory[]
+     * @return Collection|Product[]
      */
     public function getProducts()
     {
@@ -301,29 +305,28 @@ class Category
     }
 
     /**
-     * @param ProductCategory $productCategory
+     * @param Product $product
      *
      * @return $this
      */
-    public function addProduct(ProductCategory $productCategory)
+    public function addProduct(Product $product)
     {
-        if (!$this->products->contains($productCategory)) {
-            $this->products->add($productCategory);
-            $productCategory->setCategory($this);
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
         }
 
         return $this;
     }
 
     /**
-     * @param ProductCategory $productCategory
+     * @param Product $product
      *
      * @return $this
      */
-    public function removeProduct(ProductCategory $productCategory)
+    public function removeProduct(Product $product)
     {
-        if ($this->products->contains($productCategory)) {
-            $this->products->removeElement($productCategory);
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
         }
 
         return $this;

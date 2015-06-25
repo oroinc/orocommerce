@@ -14,7 +14,7 @@ class DatagridListener
      */
     public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
-        $this->addCategoryRelation($event->getConfig());
+        //$this->addCategoryRelation($event->getConfig());
     }
 
     /**

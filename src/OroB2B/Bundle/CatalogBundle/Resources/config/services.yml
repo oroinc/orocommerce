@@ -1,6 +1,5 @@
 parameters:
     orob2b_catalog.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
-    orob2b_catalog.entity.product_category.class: OroB2B\Bundle\CatalogBundle\Entity\ProductCategory
     orob2b_catalog.category_tree_handler.class: OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler
     orob2b_catalog.category.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 

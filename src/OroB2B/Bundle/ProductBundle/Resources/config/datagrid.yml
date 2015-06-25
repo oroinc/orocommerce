@@ -37,10 +37,6 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
-                inventoryStatus:
-                    data_name: inventoryStatusName
-                visibility:
-                    data_name: visibilityName
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:

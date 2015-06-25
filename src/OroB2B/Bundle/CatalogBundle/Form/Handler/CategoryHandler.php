@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -82,16 +81,7 @@ class CategoryHandler
     {
         /** @var $product Product */
         foreach ($products as $product) {
-            $productCategory = $this->getProductCategory($product);
-            if (!($productCategory instanceof ProductCategory)) {
-                $productCategory = new ProductCategory();
-            }
-
-            $productCategory->setCategory($category)
-                ->setProduct($product);
-            $this->manager->persist($productCategory);
-
-            $category->addProduct($productCategory);
+            $category->addProduct($product);
         }
     }
 
@@ -103,17 +93,7 @@ class CategoryHandler
     {
         /** @var $product Product */
         foreach ($products as $product) {
-            $category->removeProduct($this->getProductCategory($product));
+            $category->removeProduct($product);
         }
-    }
-
-    /**
-     * @param Product $product
-     *
-     * @return ProductCategory
-     */
-    protected function getProductCategory(Product $product)
-    {
-        return $this->manager->getRepository('OroB2BCatalogBundle:ProductCategory')->findOneByProduct($product);
     }
 }

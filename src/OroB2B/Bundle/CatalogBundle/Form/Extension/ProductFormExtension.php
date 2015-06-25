@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Extension;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -14,8 +15,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\ProductCategoryRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -51,8 +50,8 @@ class ProductFormExtension extends AbstractTypeExtension
                 CategoryTreeType::NAME,
                 [
                     'required' => false,
-                    'mapped'   => false,
-                    'label'    => 'orob2b.catalog.category.entity_label'
+                    'mapped' => false,
+                    'label' => 'orob2b.catalog.category.entity_label'
                 ]
             );
 
@@ -71,10 +70,10 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $productCategory = $this->getProductCategoryRepository()->findOneByProduct($product);
+        $category = $this->getCategoryRepository()->findOneByProduct($product);
 
-        if ($productCategory instanceof ProductCategory) {
-            $event->getForm()->get('category')->setData($productCategory->getCategory());
+        if ($category instanceof Category) {
+            $event->getForm()->get('category')->setData($category);
         }
     }
 
@@ -94,50 +93,30 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $category        = $form->get('category')->getData();
-        $productCategory = $this->getProductCategoryRepository()->findOneByProduct($product);
+        /** @var Category $category */
+        $category = $form->get('category')->getData();
+        /** @var Category $productCategory */
+        $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
 
-        if (!($category instanceof Category)) {
-            $this->removeProductCategory($productCategory);
+        if (
+            !($category instanceof Category)
+            && $productCategory instanceof Category
+        ) {
+            $productCategory->getProducts()->remove($product);
+            $this->entityManager->persist($productCategory);
 
             return;
         }
 
-        $this->persistProductCategory($productCategory, $category, $product);
+        $category->getProducts()->add($product);
+        $this->entityManager->persist($category);
     }
 
     /**
-     * @param ProductCategory|null $productCategory
-     * @param Category             $category
-     * @param Product              $product
+     * @return CategoryRepository
      */
-    protected function persistProductCategory($productCategory, Category $category, Product $product)
+    protected function getCategoryRepository()
     {
-        if (!($productCategory instanceof ProductCategory)) {
-            $productCategory = new ProductCategory();
-        }
-
-        $productCategory->setCategory($category)
-            ->setProduct($product);
-
-        $this->entityManager->persist($productCategory);
-    }
-
-    /**
-     * @param ProductCategory|null $productCategory
-     */
-    protected function removeProductCategory($productCategory)
-    {
-        if ($productCategory instanceof ProductCategory) {
-            $this->entityManager->remove($productCategory);
-        }
-    }
-
-    /**
-     * @return ProductCategoryRepository
-     */
-    protected function getProductCategoryRepository()
-    {
-        return $this->entityManager->getRepository('OroB2BCatalogBundle:ProductCategory');
+        return $this->entityManager->getRepository('OroB2BCatalogBundle:Category');
     }
 }
