@@ -8,9 +8,11 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
+use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AclPriviledgeTypeStub;
 
 class AccountUserRoleTypeTest extends FormIntegrationTestCase
 {
@@ -20,6 +22,14 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
      * @var AccountUserRoleType
      */
     protected $formType;
+
+    /**
+     * @var array
+     */
+    protected $privilegeConfig = [
+        'entity' => ['entity' => 'config'],
+        'action' => ['action' => 'config'],
+    ];
 
     /**
      * {@inheritdoc}
@@ -50,7 +60,9 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $entityIdentifierType->getName() => $entityIdentifierType
+                    $entityIdentifierType->getName() => $entityIdentifierType,
+                    'oro_acl_collection' => new PrivilegeCollectionType(),
+                    AclPriviledgeTypeStub::NAME => new AclPriviledgeTypeStub(),
                 ],
                 []
             ),
@@ -64,6 +76,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
      * @param AccountUserRole|null $viewData
      * @param array $submittedData
      * @param AccountUserRole|null $expectedData
+     * @param array $expectedFieldData
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
@@ -71,7 +84,8 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         $defaultData,
         $viewData,
         array $submittedData,
-        $expectedData
+        $expectedData,
+        array $expectedFieldData = []
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
@@ -94,6 +108,12 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
             $this->assertEquals($expectedData->getRole(), $actualData->getRole());
         } else {
             $this->assertNotEmpty($actualData->getRole());
+        }
+
+        foreach ($expectedFieldData as $field => $data) {
+            $this->assertTrue($form->has($field));
+            $fieldForm = $form->get($field);
+            $this->assertEquals($data, $fieldForm->getData());
         }
     }
 
@@ -118,22 +138,32 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
 
         return [
             'empty' => [
-                'options' => [],
+                'options' => ['privilege_config' => $this->privilegeConfig],
                 'defaultData' => null,
                 'viewData' => null,
                 'submittedData' => [
                     'label' => $roleLabel,
                 ],
-                'expectedData' => $defaultRole
+                'expectedData' => $defaultRole,
+                'expectedFieldData' => [
+                    'entity' => [],
+                    'action' => [],
+                ],
             ],
             'existing' => [
-                'options' => [],
+                'options' => ['privilege_config' => $this->privilegeConfig],
                 'defaultData' => $existingRoleBefore,
                 'viewData' => $existingRoleBefore,
                 'submittedData' => [
                     'label' => $alteredRoleLabel,
+                    'entity' => ['first'],
+                    'action' => ['second'],
                 ],
-                'expectedData' => $existingRoleAfter
+                'expectedData' => $existingRoleAfter,
+                'expectedFieldData' => [
+                    'entity' => ['first'],
+                    'action' => ['second'],
+                ],
             ]
         ];
     }
