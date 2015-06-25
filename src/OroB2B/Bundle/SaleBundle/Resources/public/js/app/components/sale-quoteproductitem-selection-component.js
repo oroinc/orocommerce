@@ -80,9 +80,7 @@ define(function (require) {
         },
         
         checkAddButton: function() {
-            var productId = this.$productSelect.val();
-            
-            this.$addItemButton.attr('disabled', !productId);
+            this.$productSelect.val() ? this.$addItemButton.show() : this.$addItemButton.hide();
         },
         
         /**
