@@ -135,4 +135,12 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
             $organizationColumnName
         );
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getMaxAccessLevel($accessLevel, $object = null)
+    {
+        return $accessLevel;
+    }
 }

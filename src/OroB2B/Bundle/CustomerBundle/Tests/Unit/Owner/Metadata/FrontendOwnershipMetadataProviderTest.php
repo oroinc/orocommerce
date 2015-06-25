@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -288,5 +289,13 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
         ];
+    }
+
+    public function testGetMaxAccessLevel()
+    {
+        $accessLevel = AccessLevel::BASIC_LEVEL;
+        $object = 'SomeClass';
+
+        $this->assertEquals($accessLevel, $this->provider->getMaxAccessLevel($accessLevel, $object));
     }
 }
