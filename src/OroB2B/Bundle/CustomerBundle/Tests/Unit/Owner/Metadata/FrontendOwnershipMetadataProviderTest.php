@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Owner\Metadata;
 
 use Doctrine\Common\Cache\CacheProvider;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
@@ -47,6 +49,11 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
+     */
+    protected $container;
+
     protected function setUp()
     {
         $this->configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
@@ -60,63 +67,81 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->entityClassResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\EntityClassResolver')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->entityClassResolver->expects($this->any())
+            ->method('getEntityClass')
+            ->willReturnMap(
+                [
+                    ['OroB2BCustomerBundle:Customer', self::LOCAL_LEVEL],
+                    ['OroB2BCustomerBundle:AccountUser', self::BASIC_LEVEL],
+                    [self::LOCAL_LEVEL, self::LOCAL_LEVEL],
+                    [self::BASIC_LEVEL, self::BASIC_LEVEL],
+                ]
+            );
 
         $this->cache = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
             ->setMethods(['fetch', 'save'])
             ->getMockForAbstractClass();
 
+        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container->expects($this->any())
+            ->method('get')
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [
+                            'oro_entity_config.provider.ownership',
+                            ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                            $this->configProvider,
+                        ],
+                        [
+                            'oro_security.owner.ownership_metadata_provider.cache',
+                            ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                            $this->cache,
+                        ],
+                        [
+                            'oro_entity.orm.entity_class_resolver',
+                            ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                            $this->entityClassResolver,
+                        ],
+                        [
+                            'oro_security.security_facade',
+                            ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                            $this->securityFacade,
+                        ],
+                    ]
+                )
+            );
+
         $this->provider = new FrontendOwnershipMetadataProvider(
             [
                 'local_level' => self::LOCAL_LEVEL,
                 'basic_level' => self::BASIC_LEVEL,
-            ],
-            $this->configProvider,
-            $this->securityFacade,
-            null,
-            $this->cache
+            ]
         );
+        $this->provider->setContainer($this->container);
     }
 
     protected function tearDown()
     {
-        unset($this->securityFacade, $this->configProvider, $this->cache, $this->provider, $this->entityClassResolver);
+        unset(
+            $this->configProvider,
+            $this->entityClassResolver,
+            $this->cache,
+            $this->provider,
+            $this->container,
+            $this->securityFacade
+        );
     }
 
     public function testSetAccessLevelClasses()
     {
-        $this->entityClassResolver->expects($this->exactly(2))
-            ->method('getEntityClass')
-            ->willReturnMap(
-                [
-                    ['OroB2BCustomerBundle:Customer', self::LOCAL_LEVEL],
-                    ['OroB2BCustomerBundle:AccountUser', self::BASIC_LEVEL]
-                ]
-            );
-
         $provider = new FrontendOwnershipMetadataProvider(
             [
                 'local_level' => 'OroB2BCustomerBundle:Customer',
                 'basic_level' => 'OroB2BCustomerBundle:AccountUser',
-            ],
-            $this->configProvider,
-            $this->securityFacade,
-            $this->entityClassResolver
+            ]
         );
-
-        $this->assertEquals(self::LOCAL_LEVEL, $provider->getLocalLevelClass());
-        $this->assertEquals(self::BASIC_LEVEL, $provider->getBasicLevelClass());
-    }
-
-    public function testSetAccessLevelClassesWithoutEntityClassResolver()
-    {
-        $provider = new FrontendOwnershipMetadataProvider(
-            [
-                'local_level' => self::LOCAL_LEVEL,
-                'basic_level' => self::BASIC_LEVEL,
-            ],
-            $this->configProvider,
-            $this->securityFacade
-        );
+        $provider->setContainer($this->container);
 
         $this->assertEquals(self::LOCAL_LEVEL, $provider->getLocalLevelClass());
         $this->assertEquals(self::BASIC_LEVEL, $provider->getBasicLevelClass());
@@ -248,44 +273,35 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider owningEntityNamesDataProvider
      *
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Array parameter $owningEntityNames must contains `local_level` and `basic_level` keys
+     *
      * @param array $owningEntityNames
      */
     public function testSetAccessLevelClassesException(array $owningEntityNames)
     {
-        if (count($owningEntityNames) !== 2) {
-            $this->setExpectedException(
-                '\InvalidArgumentException',
-                'Array parameter $owningEntityNames must contains `local_level` and `basic_level` keys'
-            );
-        }
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider',
-            new FrontendOwnershipMetadataProvider($owningEntityNames, $this->configProvider, $this->securityFacade)
-        );
+        $provider = new FrontendOwnershipMetadataProvider($owningEntityNames);
+        $provider->setContainer($this->container);
     }
 
+    /**
+     * @return array
+     */
     public function owningEntityNamesDataProvider()
     {
         return [
             [
-                'owningEntityNames' => []
+                'owningEntityNames' => [],
             ],
             [
                 'owningEntityNames' => [
                     'local_level' => 'AcmeBundle\Entity\Customer',
-                ]
+                ],
             ],
             [
                 'owningEntityNames' => [
                     'basic_level' => 'AcmeBundle\Entity\User',
-                ]
-            ],
-            [
-                'owningEntityNames' => [
-                    'local_level' => 'AcmeBundle\Entity\Customer',
-                    'basic_level' => 'AcmeBundle\Entity\User',
-                ]
+                ],
             ],
         ];
     }
