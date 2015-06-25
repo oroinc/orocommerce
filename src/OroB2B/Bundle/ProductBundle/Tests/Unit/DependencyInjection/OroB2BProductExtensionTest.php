@@ -22,7 +22,8 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
             'orob2b_product.form.type.product.class',
             'orob2b_product.form.type.product_unit_rounding_type.class',
             'orob2b_product.product.manager.api.class',
-            'orob2b_product.service.rounding.class'
+            'orob2b_product.service.rounding.class',
+            'orob2b_product.form.type.product_default_visibility_type.class',
 
         ];
         $this->assertParametersLoaded($expectedParameters);
@@ -32,7 +33,8 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
             'orob2b_product.form.type.product',
             'orob2b_product.form.type.product_unit_rounding_type',
             'orob2b_product.product.manager.api',
-            'orob2b_product.service.rounding'
+            'orob2b_product.service.rounding',
+            'orob2b_product.form.type.default_visibility'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

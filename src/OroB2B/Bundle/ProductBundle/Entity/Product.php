@@ -50,6 +50,14 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface
 {
+    const INVENTORY_STATUS_IN_STOCK = 'in_stock';
+    const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
+    const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
+
+    const VISIBILITY_BY_CONFIG = 'by_config';
+    const VISIBILITY_VISIBLE = 'visible';
+    const VISIBILITY_NOT_VISIBLE = 'not_visible';
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")

@@ -1,0 +1,2 @@
+parameters:
+    orob2b_shopping_list.entity.shopping_list.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
