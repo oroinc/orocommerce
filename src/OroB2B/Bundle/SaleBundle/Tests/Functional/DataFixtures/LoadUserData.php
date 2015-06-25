@@ -52,7 +52,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             $user
                 ->setEmail($item['email'])
-                ->setFirstname($item['firstname'])
+                ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)

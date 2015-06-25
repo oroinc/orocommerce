@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 abstract class AbstractTest extends EntityTestCase

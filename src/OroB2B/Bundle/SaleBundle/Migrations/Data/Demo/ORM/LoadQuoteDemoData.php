@@ -10,7 +10,6 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -46,7 +45,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData'
         ];
     }
 
@@ -55,7 +54,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        /* @var $manager EntityManager */
         $user = $this->getUser($manager);
 
         for ($i = 0; $i < 20; $i++) {
@@ -79,11 +77,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @return User
      * @throws \LogicException
      */
-    protected function getUser(EntityManager $manager)
+    protected function getUser(ObjectManager $manager)
     {
         /* @var $user User */
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
@@ -98,20 +96,15 @@ class LoadQuoteDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      * @return Collection|Product[]
      * @throws \LogicException
      */
-    protected function getProducts(EntityManager $manager)
+    protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')
-            ->createQueryBuilder('p')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
 
-        if (empty($products)) {
+        if (!count($products)) {
             throw new \LogicException('There are no products in system');
         }
 
@@ -139,9 +132,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param Quote $quote
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      */
-    protected function processQuoteProducts(Quote $quote, EntityManager $manager)
+    protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
     {
         $products   = $this->getProducts($manager);
         $currencies = $this->getCurrencies();

@@ -28,7 +28,7 @@ class EntitySubscriberTest extends WebTestCase
     public function testPersistQuote()
     {
         /* @var $em EntityManager */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BSaleBundle:Quote');
+        $em = static::getContainer()->get('doctrine')->getManagerForClass('OroB2BSaleBundle:Quote');
 
         $quote = new Quote();
         $quote

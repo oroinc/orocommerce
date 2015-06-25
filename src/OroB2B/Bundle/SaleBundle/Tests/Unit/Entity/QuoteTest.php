@@ -23,7 +23,7 @@ class QuoteTest extends AbstractTest
             ['updatedAt', $now, false],
         ];
 
-        $this->assertPropertyAccessors(new Quote(), $properties);
+        static::assertPropertyAccessors(new Quote(), $properties);
     }
 
     public function testPrePersist()
