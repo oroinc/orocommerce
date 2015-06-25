@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -50,11 +53,20 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ParentCustomerSelectType::NAME
         );
 
+
+        $internalRatingEnumSelect = new EnumSelectType(
+            [
+                new StubEnumValue('1 of 5', '1 of 5'),
+                new StubEnumValue('2 of 5', '2 of 5')
+            ]
+        );
+
         return [
             new PreloadedExtension(
                 [
                     CustomerGroupSelectType::NAME => $customerGroupSelectType,
                     ParentCustomerSelectType::NAME => $parentCustomerSelectType,
+                    EnumSelectType::NAME => $internalRatingEnumSelect
                 ],
                 []
             )
@@ -100,11 +112,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 1,
                     'parent' => 2,
+                    'internal_rating' => '2 of 5'
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
+                    'internal_rating' => new StubEnumValue('2 of 5', '2 of 5')
                 ]
             ],
             'empty parent' => [
@@ -115,11 +129,13 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 1,
                     'parent' => null,
+                    'internal_rating' => '2 of 5'
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
+                    'internal_rating' => new StubEnumValue('2 of 5', '2 of 5')
                 ]
             ],
             'empty group' => [
@@ -130,11 +146,30 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => 2,
+                    'internal_rating' => '2 of 5'
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
+                    'internal_rating' => new StubEnumValue('2 of 5', '2 of 5')
+                ]
+            ],
+            'empty internal_rating' => [
+                'options' => [],
+                'defaultData' => [],
+                'viewData' => [],
+                'submittedData' => [
+                    'name' => 'customer_name',
+                    'group' => 1,
+                    'parent' => 2,
+                    'internal_rating' => null
+                ],
+                'expectedData' => [
+                    'name' => 'customer_name',
+                    'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
+                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
+                    'internal_rating' => null
                 ]
             ],
         ];
@@ -161,5 +196,11 @@ class CustomerTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    protected function getEnumEntity($enumCode, $id)
+    {
+        $extendedClass = ExtendHelper::buildEnumValueClassName($enumCode);
+        return $this->getEntity($extendedClass, $id);
     }
 }

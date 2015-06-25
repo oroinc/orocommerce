@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CustomerBundle\Entity\Repository\CustomerRepository")
@@ -36,7 +37,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  * )
  * @Config()
  */
-class Customer
+class Customer extends ExtendCustomer
 {
     /**
      * @var integer

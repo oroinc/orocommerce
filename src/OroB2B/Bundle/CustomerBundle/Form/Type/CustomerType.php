@@ -31,7 +31,20 @@ class CustomerType extends AbstractType
                     'label' => 'orob2b.customer.parent.label',
                     'required' => false
                 ]
-            );
+            )
+            ->add(
+                'internal_rating',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.customer.internal_rating.label',
+                    'enum_code' => 'cust_internal_rating',
+                    'configs' => [
+                        'allowClear' => false,
+                    ],
+                    'required' => false
+                ]
+            )
+        ;
     }
 
     /**
