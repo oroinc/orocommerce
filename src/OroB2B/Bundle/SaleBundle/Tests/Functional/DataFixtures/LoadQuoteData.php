@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -11,7 +12,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
-class LoadQuoteData extends AbstractFixture implements DependentFixtureInterface
+class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
     const QUOTE1    = 'sale.quote.1';
     const QUOTE2    = 'sale.quote.2';

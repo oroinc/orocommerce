@@ -70,14 +70,14 @@ class QuoteProductItem
     /**
      * @var float
      *
-     * @ORM\Column(name="value", type="money")
+     * @ORM\Column(name="value", type="money", nullable=true)
      */
     protected $value;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string")
+     * @ORM\Column(name="currency", type="string", nullable=true)
      */
     protected $currency;
 
@@ -91,7 +91,9 @@ class QuoteProductItem
      */
     public function postLoad()
     {
-        $this->price = Price::create($this->value, $this->currency);
+        if ($this->value && $this->currency) {
+            $this->price = Price::create($this->value, $this->currency);
+        }
     }
 
     /**
@@ -100,8 +102,10 @@ class QuoteProductItem
      */
     public function preSave()
     {
-        $this->value    = $this->price->getValue();
-        $this->currency = $this->price->getCurrency();
+        if ($this->price) {
+            $this->value    = $this->price->getValue();
+            $this->currency = $this->price->getCurrency();
+        }
     }
 
     /**
@@ -213,7 +217,7 @@ class QuoteProductItem
      * @param Price $price
      * @return QuoteProductItem
      */
-    public function setPrice(Price $price)
+    public function setPrice(Price $price = null)
     {
         $this->price = $price;
 

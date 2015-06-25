@@ -10,6 +10,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 abstract class AbstractLocalizedType extends FormIntegrationTestCase
 {
+    const LOCALE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Locale';
+
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -53,7 +55,7 @@ abstract class AbstractLocalizedType extends FormIntegrationTestCase
 
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BWebsiteBundle:Locale')
+            ->with(self::LOCALE_CLASS)
             ->will($this->returnValue($repository));
     }
 

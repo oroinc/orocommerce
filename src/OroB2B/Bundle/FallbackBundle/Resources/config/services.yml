@@ -22,6 +22,8 @@ services:
         class: %orob2b_fallback.form.type.locale_collection.class%
         arguments:
             - @doctrine
+        calls:
+            - [setLocaleClass, [%orob2b_website.locale.class%]]
         tags:
             - { name: form.type, alias: orob2b_fallback_locale_collection }
 
@@ -34,6 +36,8 @@ services:
         class: %orob2b_fallback.form.type.website_collection.class%
         arguments:
             - @doctrine
+        calls:
+            - [setWebsiteClass, [%orob2b_website.website.class%]]
         tags:
             - { name: form.type, alias: orob2b_fallback_website_collection }
 

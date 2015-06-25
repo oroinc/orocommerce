@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Pages\AbstractPage;
  */
 class Categories extends AbstractPage
 {
-    const URL = 'catalog/category/';
+    const URL = 'admin/catalog/category/';
 
     /** @var string */
     protected $category = '//a[contains(., "%s")]/i';

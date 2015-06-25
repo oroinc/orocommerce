@@ -30,7 +30,7 @@ class QuoteProductItemValidator extends ConstraintValidator
         /* @var $product Product */
         $product = $quoteProductItem->getQuoteProduct()->getProduct();
         $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
-        if (!in_array($quoteProductItem->getProductUnit()->getCode(), $allowedUnits)) {
+        if (!in_array($quoteProductItem->getProductUnit()->getCode(), $allowedUnits, true)) {
             /* @var $constraint Constraints\QuoteProductItem */
             $this->context->addViolationAt('productUnit', $constraint->message);
         }

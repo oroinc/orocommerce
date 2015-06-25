@@ -15,12 +15,13 @@ class QuoteProductItemTest extends AbstractTest
         $properties = [
             ['id', 123],
             ['quoteProduct', new QuoteProduct()],
-            ['productUnit', new ProductUnit()],
             ['quantity', 11],
+            ['productUnit', new ProductUnit()],
+            ['productUnitCode', 'unit-code'],
             ['price', new Price()],
         ];
 
-        $this->assertPropertyAccessors(new QuoteProductItem(), $properties);
+        static::assertPropertyAccessors(new QuoteProductItem(), $properties);
     }
 
     public function testPostLoad()

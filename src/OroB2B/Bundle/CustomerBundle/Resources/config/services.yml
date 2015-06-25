@@ -1,11 +1,30 @@
 parameters:
     orob2b_customer.entity.customer.class: OroB2B\Bundle\CustomerBundle\Entity\Customer
     orob2b_customer.entity.customer_group.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup
+    orob2b_customer.entity.account_user.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
+    orob2b_customer.entity.account_user_role.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole
 
     orob2b_customer.customer_tree_handler.class: OroB2B\Bundle\CustomerBundle\JsTree\CustomerTreeHandler
     orob2b_customer.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_customer.form.autocomplete.parent_customer.search_handler.class: OroB2B\Bundle\CustomerBundle\Autocomplete\ParentCustomerSearchHandler
+
+    orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_customer.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_customer.datagrid.action_permission_provider.class: OroB2B\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider
+    orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
+    orob2b_account_user.manager.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager
+
+    orob2b_customer.account_user_menu.builder.class: OroB2B\Bundle\CustomerBundle\Menu\AccountUserMenuBuilder
+    orob2b_customer.placeholder.filter.class:  OroB2B\Bundle\CustomerBundle\Placeholder\PlaceholderFilter
+
+    orob2b_customer.account_user.password.handler.abstract.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AbstractAccountUserPasswordHandler
+    orob2b_customer.account_user.password_request.handler.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordRequestHandler
+    orob2b_customer.account_user.password_reset.handler.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler
+
+    orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
+
+    orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
 
 services:
     orob2b_customer.customer_tree_handler:
@@ -55,3 +74,91 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_parent, acl_resource: orob2b_customer_view }
         lazy: true
+
+    orob2b_customer.account_user.manager.api:
+        class: %orob2b_customer.account_user.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_customer.entity.account_user.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_customer.account_user_role.manager.api:
+        class: %orob2b_customer.account_user.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_customer.entity.account_user_role.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_customer.datagrid.action_permission_provider:
+        class: %orob2b_customer.datagrid.action_permission_provider.class%
+
+    orob2b_customer.mailer.processor:
+        class: %orob2b_customer.mailer.processor.class%
+        arguments:
+            - @doctrine
+            - @oro_config.global
+            - @oro_email.email_renderer
+            - @oro_email.email_holder_helper
+            - @oro_email.direct_mailer
+
+    orob2b_account_user.manager:
+        class: %orob2b_account_user.manager.class%
+        arguments:
+            - %orob2b_customer.entity.account_user.class%
+            - @doctrine
+            - @security.encoder_factory
+        calls:
+            - [setContainer, [@service_container]]
+
+    orob2b_user.security.provider:
+        class: %oro_user.security.provider.class%
+        public: false
+        arguments:
+            - @orob2b_account_user.manager
+
+    orob2b_account_user.security.provider:
+        class: %oro_user.security.provider.class%
+        public: false
+        arguments:
+            - @orob2b_account_user.manager
+
+    orob2b_customer.account_user_menu:
+        class: %orob2b_customer.account_user_menu.builder.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: oro_menu.builder, alias: account_usermenu }
+
+    orob2b_customer.placeholder.filter:
+        class: %orob2b_customer.placeholder.filter.class%
+        arguments:
+            - @oro_security.security_facade
+
+    orob2b_customer.account_user.password.handler.abstract:
+        class: %orob2b_customer.account_user.password.handler.abstract.class%
+        abstract: true
+        arguments:
+            - @orob2b_account_user.manager
+            - @translator
+
+    orob2b_customer.account_user.password_request.handler:
+        class: %orob2b_customer.account_user.password_request.handler.class%
+        parent: orob2b_customer.account_user.password.handler.abstract
+
+    orob2b_customer.account_user.password_reset.handler:
+        class: %orob2b_customer.account_user.password_reset.handler.class%
+        parent: orob2b_customer.account_user.password.handler.abstract
+
+    orob2b_customer.event_listener.datagrid:
+        class: %orob2b_customer.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.websites-grid, method: onBuildBeforeWebsites }
+
+    orob2b_customer.acl.voter.account_user_role:
+        class: %orob2b_customer.acl.voter.account_user_role.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
+        tags:
+            - { name: security.voter, priority: 10 }

@@ -10,6 +10,7 @@ abstract class AbstractTest extends EntityTestCase
      * @param object $object
      * @param string $property
      * @param mixed $value
+     * @return AbstractTest
      */
     protected function setProperty($object, $property, $value)
     {

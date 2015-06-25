@@ -39,11 +39,11 @@ class QuoteProductItemType extends AbstractType
         $builder
             ->add('quantity', 'integer', [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.quantity.label'
+                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.price.label'
+                'label'     => 'orob2b.sale.quoteproductitem.price.label',
             ])
         ;
 
@@ -59,7 +59,7 @@ class QuoteProductItemType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
             'intention'     => 'sale_quote_product_item',
-            'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 
@@ -79,10 +79,9 @@ class QuoteProductItemType extends AbstractType
         /* @var $quoteProductItem QuoteProductItem */
         $quoteProductItem = $event->getData();
         $form = $event->getForm();
-        $choices = null;
+        $choices = [];
 
         $productUnitOptions = [
-            'compact'   => false,
             'required'  => true,
             'label'     => 'orob2b.product.productunit.entity_label',
         ];
@@ -90,13 +89,12 @@ class QuoteProductItemType extends AbstractType
         if ($quoteProductItem && null !== $quoteProductItem->getId()) {
             $product = $quoteProductItem->getQuoteProduct()->getProduct();
             if ($product) {
-                $choices = [];
                 foreach ($product->getUnitPrecisions() as $unitPrecision) {
                     $choices[] = $unitPrecision->getUnit();
                 }
             }
             $productUnit = $quoteProductItem->getProductUnit();
-            if (!$productUnit || ($product && !in_array($productUnit->getCode(), $choices))) {
+            if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
                 // ProductUnit was removed
                 $productUnitOptions['empty_value']  = $this->translator->trans(
                     'orob2b.sale.quoteproduct.product.removed',
@@ -125,8 +123,7 @@ class QuoteProductItemType extends AbstractType
             'productUnit',
             ProductUnitSelectionType::NAME,
             [
-                'compact'   => false,
-                'label'     => 'orob2b.product.productunit.entity_label',
+                'label' => 'orob2b.product.productunit.entity_label',
             ]
         );
     }

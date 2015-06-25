@@ -6,6 +6,8 @@ use OroB2B\Bundle\RFPAdminBundle\Form\Type\DefaulRequestStatusType;
 
 class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
 {
+    const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus';
+
     /**
      * @var DefaulRequestStatusType
      */
@@ -22,8 +24,8 @@ class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->choices = [
-            $this->getMock('OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus'),
-            $this->getMock('OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus'),
+            $this->getMock(self::REQUEST_STATUS_CLASS),
+            $this->getMock(self::REQUEST_STATUS_CLASS),
         ];
 
         $repository = $this->getMockBuilder('OroB2B\Bundle\RFPAdminBundle\Entity\Repository\RequestStatusRepository')
@@ -40,10 +42,11 @@ class DefaultRequestStatusTypeTest extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BRFPAdminBundle:RequestStatus')
+            ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($repository);
 
         $this->formType = new DefaulRequestStatusType($registry);
+        $this->formType->setRequestStatusClass(self::REQUEST_STATUS_CLASS);
     }
 
     /**

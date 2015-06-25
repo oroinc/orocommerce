@@ -6,14 +6,25 @@
 
 {% block orob2b_sale_quote_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
-    <div {{ block('widget_container_attributes') }} data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component">
-        {{ form_label(form.product, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
-        <div class="controls{% if errors|length > 0 %} validation-error{% endif %}">
-            {{ form_widget(form.product, {'attr': {'class': 'sale-quoteproduct-product-select'}}) }}
+    
+    {% set units = [] %}
+    {% set product = form.vars.value.product|default(null) %}
+    {% if product %}
+        {% for code in product.availableUnitCodes %}
+            {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
+        {% endfor %}
+    {% endif %}
+    
+    <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
+        data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component">
+        {{ form_label(form.product, '', { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+        <div class="sale-quoteproduct-product-select controls{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_widget(form.product) }}
             {{ form_errors(form.product) }}
         </div>
         <div class="sale-quoteproductitem-collection">
             {{ form_widget(form.quoteProductItems) }}
+            {{ form_errors(form.quoteProductItems) }}
         </div>
     </div>
 {% endblock %}
@@ -30,12 +41,7 @@
                 {{ form_errors(form.productUnit) }}
             </td>
             <td>
-                {{ form_widget(form.price.value) }}
-                {{ form_errors(form.price.value) }}
-            </td>
-            <td>
-                {{ form_widget(form.price.currency) }}
-                {{ form_errors(form.price.currency) }}
+                {{ form_widget(form.price) }}
             </td>
         </tr>
     </table>

@@ -159,7 +159,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function __toString()
     {
-        return $this->sku;
+        return (string)$this->sku;
     }
 
     /**

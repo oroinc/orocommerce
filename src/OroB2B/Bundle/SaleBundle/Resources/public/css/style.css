@@ -9,8 +9,8 @@
     left: 460px;
 }
 
-.sale-quoteproduct-widget.control-group  {
-    max-width: 1200px;
+.sale-quoteproduct-widget.control-group {
+    max-width: none;
 }
 
 .sale-quoteproduct-widget.control-group .controls {
@@ -49,7 +49,7 @@
 
 .sale-quoteproductitem-widget td {
     vertical-align: top;
-    width: 140px;
+    width: 150px;
 }
 
 .sale-quoteproductitem-widget td span.validation-failed {
@@ -58,16 +58,22 @@
 
 .sale-quoteproductitem-widget input[type="number"],
 .sale-quoteproductitem-widget input[type="text"] {
-    width: 120px !important;
+    width: 130px !important;
 }
 
 .sale-quoteproductitem-widget select {
-    width: 120px !important;
+    width: 130px !important;
+    height: 20px;
+    margin: 0;
 }
 
 .sale-quoteproduct-product {
     padding: 0;
     vertical-align: top;
+}
+
+.sale-quoteproduct-product-select button {
+    float: none;
 }
 
 .sale-quoteproduct-info {

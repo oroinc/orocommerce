@@ -17,6 +17,8 @@ use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\CheckboxTypeStub;
 
 class WebsitePropertyTypeTest extends FormIntegrationTestCase
 {
+    const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
+
     /**
      * @var WebsitePropertyType
      */
@@ -41,12 +43,15 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        $websiteCollection = new WebsiteCollectionType($this->registry);
+        $websiteCollection->setWebsiteClass(self::WEBSITE_CLASS);
+
         return [
             new PreloadedExtension(
                 [
                     FallbackPropertyType::NAME => new FallbackPropertyType(),
                     FallbackValueType::NAME => new FallbackValueType(),
-                    WebsiteCollectionType::NAME => new WebsiteCollectionType($this->registry),
+                    WebsiteCollectionType::NAME => $websiteCollection,
                     CheckboxTypeStub::NAME => new CheckboxTypeStub(),
                 ],
                 []
@@ -171,7 +176,7 @@ class WebsitePropertyTypeTest extends FormIntegrationTestCase
 
         $this->registry->expects($this->once())
             ->method('getRepository')
-            ->with('OroB2BWebsiteBundle:Website')
+            ->with(self::WEBSITE_CLASS)
             ->will($this->returnValue($repository));
     }
 

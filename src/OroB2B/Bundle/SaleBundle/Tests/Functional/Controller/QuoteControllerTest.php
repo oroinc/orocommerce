@@ -6,19 +6,35 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Entity\Repository\UserRepository;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
  */
 class QuoteControllerTest extends WebTestCase
 {
+    /**
+     * @var string
+     */
     public static $qid;
+
+    /**
+     * @var string
+     */
     public static $qidUpdated;
 
+    /**
+     * @var string
+     */
     public static $validUntil           = '2015-05-15T15:15:15+0000';
+
+    /**
+     * @var string
+     */
     public static $validUntilUpdated    = '2016-06-16T16:16:16+0000';
 
     /**
@@ -35,7 +51,7 @@ class QuoteControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
@@ -57,8 +73,8 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Quote has been saved", $crawler->html());
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Quote has been saved', $crawler->html());
     }
 
     /**
@@ -72,15 +88,15 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("quotes-grid", $crawler->html());
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('quotes-grid', $crawler->html());
 
         $response = $this->client->requestGrid(
             'quotes-grid',
             ['quotes-grid[_filter][qid][value]' => self::$qid]
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
+        $result = static::getJsonResponseContent($response, 200);
         $this->assertCount(1, $result['data']);
 
         $row = reset($result['data']);
@@ -114,8 +130,8 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Quote has been saved", $crawler->html());
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Quote has been saved', $crawler->html());
 
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_index'));
         $response = $this->client->requestGrid(
@@ -123,8 +139,8 @@ class QuoteControllerTest extends WebTestCase
             ['quotes-grid[_filter][id][value]' => $id]
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertEquals(1, sizeof($result['data']));
+        $result = static::getJsonResponseContent($response, 200);
+        $this->assertCount(1, $result['data']);
 
         $row = reset($result['data']);
 
@@ -145,7 +161,7 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $id;
     }
@@ -159,12 +175,81 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('DELETE', $this->getUrl('orob2b_api_sale_delete_quote', ['id' => $id]));
 
         $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        static::assertEmptyResponseStatusCodeEquals($result, 204);
 
         $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+        static::assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    /**
+     * @dataProvider submitProvider
+     */
+    public function testSubmit($submittedData, $expectedData)
+    {
+        $this->prepareProviderData($submittedData);
+
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $owner      = $this->getUser(LoadUserData::USER1);
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save and Close')->form();
+        foreach ($submittedData as $field => $value) {
+            $form[QuoteType::NAME . $field] = $value;
+        }
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $filtered = $crawler->filter($expectedData['filter']);
+
+        $this->assertEquals(1, $filtered->count());
+        $this->assertContains($expectedData['contains'], $filtered->html());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitProvider()
+    {
+        return [
+            'invalid owner' => [
+                'submittedData' => [
+                    '[owner]' => 333,
+                ],
+                'expectedData'  => [
+                    'contains' => 'This value is not valid',
+                    'filter' => '.validation-failed',
+                ],
+            ],
+            'valid owner' => [
+                'submittedData' => [
+                    '[owner]' => function () {
+                        return $this->getUser(LoadUserData::USER1)->getId();
+                    },
+                ],
+                'expectedData'  => [
+                    'contains'  => 'Quote has been saved',
+                    'filter'    => 'body',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array &$data
+     */
+    protected function prepareProviderData(array &$data)
+    {
+        foreach ($data as $key => $value) {
+            if ($value instanceof \Closure) {
+                $data[$key] = $value();
+            }
+        }
     }
 
     /**

@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\ApplicationBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -30,6 +30,16 @@ class RequestType extends AbstractType
     protected $registry;
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $requestStatusClass;
+
+    /**
      * @param ConfigManager $configManager
      * @param ManagerRegistry $registry
      */
@@ -37,6 +47,22 @@ class RequestType extends AbstractType
     {
         $this->configManager = $configManager;
         $this->registry = $registry;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $requestStatusClass
+     */
+    public function setRequestStatusClass($requestStatusClass)
+    {
+        $this->requestStatusClass = $requestStatusClass;
     }
 
     /**
@@ -87,8 +113,8 @@ class RequestType extends AbstractType
     protected function getDefaultRequestStatus()
     {
         return $this->registry
-            ->getManagerForClass('OroB2BRFPBundle:RequestStatus')
-            ->getRepository('OroB2BRFPBundle:RequestStatus')
+            ->getManagerForClass($this->requestStatusClass)
+            ->getRepository($this->requestStatusClass)
             ->findOneBy([
                 'name' => $this->configManager->get('oro_b2b_rfp_admin.default_request_status')
             ]);
@@ -100,7 +126,7 @@ class RequestType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\Request'
+            'data_class' => $this->dataClass
         ]);
     }
 

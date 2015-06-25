@@ -106,8 +106,6 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['user_owner_id'], 'IDX_4F66B6F69EB185F9', []);
-        $table->addIndex(['organization_id'], 'IDX_4F66B6F632C8A3DE', []);
     }
 
     /**
@@ -145,8 +143,6 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('product_sku', 'string', ['length' => 255]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['quote_id'], 'IDX_D9ADA158DB805178', []);
-        $table->addIndex(['product_id'], 'IDX_D9ADA1584584665A', []);
     }
 
     /**
@@ -162,11 +158,14 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_unit_code', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float', []);
-        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
-        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn('value', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['quote_product_id'], 'IDX_3ED01F0AF5D31CE1', []);
-        $table->addIndex(['product_unit_id'], 'IDX_3ED01F0A29646BBD', []);
     }
 
     /**
@@ -227,7 +226,7 @@ class OroB2BSaleBundleInstaller implements
     /**
      * Enable Attachment for Quote entity
      *
-     * @param Schema        $schema
+     * @param Schema $schema
      * @param AttachmentExtension $attachmentExtension
      */
     protected function addAttachmentAssociations(Schema $schema, AttachmentExtension $attachmentExtension)
@@ -254,7 +253,7 @@ class OroB2BSaleBundleInstaller implements
     /**
      * Enable Events for Quote entity
      *
-     * @param Schema        $schema
+     * @param Schema $schema
      * @param ActivityExtension $activityExtension
      */
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)

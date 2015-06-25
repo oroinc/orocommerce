@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
 
@@ -13,7 +15,7 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
     /**
      * @var QuoteProductItemCollectionType
      */
-    protected $type;
+    protected $formType;
 
     /**
      * {@inheritdoc}
@@ -22,7 +24,7 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteProductItemCollectionType();
+        $this->formType = new QuoteProductItemCollectionType();
     }
 
     public function testSetDefaultOptions()
@@ -33,21 +35,22 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with([
                 'type'  => QuoteProductItemType::NAME,
-                'show_form_when_empty' => false,
-                'prototype_name'       => '__namequoteproductitem__',
+                'show_form_when_empty'  => false,
+                'error_bubbling'        => false,
+                'prototype_name'        => '__namequoteproductitem__',
             ])
         ;
 
-        $this->type->setDefaultOptions($resolver);
+        $this->formType->setDefaultOptions($resolver);
     }
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->type->getParent());
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
     }
 
     public function testGetName()
     {
-        $this->assertEquals(QuoteProductItemCollectionType::NAME, $this->type->getName());
+        $this->assertEquals(QuoteProductItemCollectionType::NAME, $this->formType->getName());
     }
 }

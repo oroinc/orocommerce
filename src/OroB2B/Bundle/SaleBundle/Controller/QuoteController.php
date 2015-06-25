@@ -110,7 +110,7 @@ class QuoteController extends Controller
         $handler = $this->get('oro_form.model.update_handler');
         return $handler->handleUpdate(
             $quote,
-            $this->createForm(new QuoteType(), $quote),
+            $this->createForm(QuoteType::NAME, $quote),
             function (Quote $quote) {
                 return [
                     'route'         => 'orob2b_sale_quote_update',
