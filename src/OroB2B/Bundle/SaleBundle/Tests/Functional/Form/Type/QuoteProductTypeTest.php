@@ -77,7 +77,7 @@ class QuoteProductTypeTest extends WebTestCase
                     ];
                 },
             ],
-            'existsing item empty product' => [
+            'existing item empty product' => [
                 'inputData'     => function () {
                     $quoteProduct = $this->getQuoteProduct(LoadQuoteData::QUOTE1);
 
