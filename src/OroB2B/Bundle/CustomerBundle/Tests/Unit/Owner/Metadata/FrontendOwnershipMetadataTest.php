@@ -20,9 +20,10 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException($exception, $message);
         }
 
-        $metadata = new FrontendOwnershipMetadata();
         list ($frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName) = $ownerType;
-        $metadata->setFrontendOwner($frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName);
+        $metadata = new FrontendOwnershipMetadata(
+            $frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName
+        );
 
         $this->assertEquals($expectedOwnerType, $metadata->getOwnerType());
         $this->assertEquals($frontendOwnerFieldName, $metadata->getOwnerFieldName());
@@ -48,7 +49,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
-                    'Unknown frontend owner type: UNKNOWN.',
+                    'Unknown owner type: UNKNOWN.',
                 ],
             ],
             [
@@ -56,7 +57,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
-                    'Unknown frontend owner type: UNKNOWN.',
+                    'Unknown owner type: UNKNOWN.',
                 ],
             ],
             [
@@ -68,7 +69,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
-                    'The frontend owner field name must not be empty.',
+                    'The owner field name must not be empty.',
                 ],
             ],
             [
@@ -76,7 +77,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
-                    'The frontend owner column name must not be empty.',
+                    'The owner column name must not be empty.',
                 ],
             ],
         ];
@@ -87,10 +88,10 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata = new FrontendOwnershipMetadata();
         $this->assertFalse($metadata->isBasicLevelOwned());
 
-        $metadata->setFrontendOwner('USER', 'account_user', 'account_user_id');
+        $metadata = new FrontendOwnershipMetadata('USER', 'account_user', 'account_user_id');
         $this->assertTrue($metadata->isBasicLevelOwned());
 
-        $metadata->setFrontendOwner('CUSTOMER', 'customer', 'customer_id');
+        $metadata = new FrontendOwnershipMetadata('CUSTOMER', 'customer', 'customer_id');
         $this->assertFalse($metadata->isBasicLevelOwned());
     }
 
@@ -100,19 +101,18 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($metadata->isLocalLevelOwned());
         $this->assertFalse($metadata->isLocalLevelOwned(true));
 
-        $metadata->setFrontendOwner('CUSTOMER', 'customer', 'customer_id');
+        $metadata = new FrontendOwnershipMetadata('CUSTOMER', 'customer', 'customer_id');
         $this->assertTrue($metadata->isLocalLevelOwned());
         $this->assertTrue($metadata->isLocalLevelOwned(true));
 
-        $metadata->setFrontendOwner('USER', 'account_user', 'account_user_id');
+        $metadata = new FrontendOwnershipMetadata('USER', 'account_user', 'account_user_id');
         $this->assertFalse($metadata->isLocalLevelOwned());
         $this->assertFalse($metadata->isLocalLevelOwned(true));
     }
 
     public function testSerialization()
     {
-        $metadata = new FrontendOwnershipMetadata();
-        $metadata->setFrontendOwner('USER', 'account_user', 'account_user_id');
+        $metadata = new FrontendOwnershipMetadata('USER', 'account_user', 'account_user_id');
         $data = serialize($metadata);
 
         $metadata = new FrontendOwnershipMetadata();
@@ -126,5 +126,31 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($metadata->isLocalLevelOwned());
         $this->assertEquals('account_user', $metadata->getOwnerFieldName());
         $this->assertEquals('account_user_id', $metadata->getOwnerColumnName());
+    }
+
+    public function testIsGlobalLevelOwned()
+    {
+        $metadata = new FrontendOwnershipMetadata();
+        $this->assertFalse($metadata->isGlobalLevelOwned());
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessage Frontend entities are not owned by organization
+     */
+    public function testGetGlobalOwnerColumnName()
+    {
+        $metadata = new FrontendOwnershipMetadata();
+        $this->assertFalse($metadata->getGlobalOwnerColumnName());
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessage Frontend entities are not owned by organization
+     */
+    public function testGetGlobalOwnerFieldName()
+    {
+        $metadata = new FrontendOwnershipMetadata();
+        $this->assertFalse($metadata->getGlobalOwnerFieldName());
     }
 }
