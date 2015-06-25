@@ -6,13 +6,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
@@ -41,13 +38,8 @@ class QuoteProductItemType extends AbstractType
     {
         $builder
             ->add('quantity', 'integer', [
-                'required'      => true,
-                'label'         => 'orob2b.sale.quoteproductitem.quantity.label',
-                'constraints'   => [
-                    new NotBlank(),
-                    new Constraints\Decimal(),
-                    new Constraints\GreaterThanZero(),
-                ],
+                'required'  => true,
+                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => true,
@@ -131,10 +123,7 @@ class QuoteProductItemType extends AbstractType
             'productUnit',
             ProductUnitSelectionType::NAME,
             [
-                'label'         => 'orob2b.product.productunit.entity_label',
-                'constraints'   => [
-                    new NotBlank(),
-                ],
+                'label' => 'orob2b.product.productunit.entity_label',
             ]
         );
     }

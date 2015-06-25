@@ -139,18 +139,6 @@ class QuoteTypeTest extends AbstractTest
         $quote              = $this->getQuote(1, [$quoteProduct]);
 
         return [
-            'empty form' => [
-                'isValid'       => false,
-                'submittedData' => [],
-                'expectedData'  => new Quote(),
-            ],
-            'invalid owner' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'owner' => 333,
-                ],
-                'expectedData'  => new Quote(),
-            ],
             'valid data' => [
                 'isValid'       => true,
                 'submittedData' => [

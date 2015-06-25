@@ -100,25 +100,6 @@ class QuoteProductTypeTest extends AbstractTest
         $quoteProduct       = $this->getQuoteProduct(2, [$quoteProductItem]);
 
         return [
-            'empty form' => [
-                'isValid'       => false,
-                'submittedData' => [],
-                'expectedData'  => new QuoteProduct(),
-            ],
-            'invalid product' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'product' => 333,
-                ],
-                'expectedData'  => new QuoteProduct(),
-            ],
-            'empty items' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'product' => 2,
-                ],
-                'expectedData'  => $this->getQuoteProduct(2),
-            ],
             'valid data' => [
                 'isValid'       => true,
                 'submittedData' => [

@@ -7,7 +7,10 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -178,6 +181,75 @@ class QuoteControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    /**
+     * @dataProvider submitProvider
+     */
+    public function testSubmit($submittedData, $expectedData)
+    {
+        $this->prepareProviderData($submittedData);
+
+        $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
+        $owner      = $this->getUser(LoadUserData::USER1);
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save and Close')->form();
+        foreach ($submittedData as $field => $value) {
+            $form[QuoteType::NAME . $field] = $value;
+        }
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $filtered = $crawler->filter($expectedData['filter']);
+
+        $this->assertEquals(1, $filtered->count());
+        $this->assertContains($expectedData['contains'], $filtered->html());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitProvider()
+    {
+        return [
+            'invalid owner' => [
+                'submittedData' => [
+                    '[owner]' => 333,
+                ],
+                'expectedData'  => [
+                    'contains' => 'This value is not valid',
+                    'filter' => '.validation-failed',
+                ],
+            ],
+            'valid owner' => [
+                'submittedData' => [
+                    '[owner]' => function () {
+                        return $this->getUser(LoadUserData::USER1)->getId();
+                    },
+                ],
+                'expectedData'  => [
+                    'contains'  => 'Quote has been saved',
+                    'filter'    => 'body',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param array &$data
+     */
+    protected function prepareProviderData(array &$data)
+    {
+        foreach ($data as $key => $value) {
+            if ($value instanceof \Closure) {
+                $data[$key] = $value();
+            }
+        }
     }
 
     /**

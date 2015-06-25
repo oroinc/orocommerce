@@ -141,58 +141,6 @@ class QuoteProductItemTypeTest extends AbstractTest
     public function submitProvider()
     {
         return [
-            'empty form' => [
-                'isValid'       => false,
-                'submittedData' => [],
-                'expectedData'  => new QuoteProductItem(),
-            ],
-            'empty quantity' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'productUnit'   => 'kg',
-                    'price'         => [
-                        'value'     => 20,
-                        'currency'  => 'USD',
-                    ],
-                ],
-                'expectedData'  => $this->getQuoteProductItem(null, 'kg', Price::create(20.0, 'USD')),
-            ],
-            'quantity < 0' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'quantity'      => -10,
-                    'productUnit'   => 'kg',
-                    'price'         => [
-                        'value'     => 20,
-                        'currency'  => 'USD',
-                    ],
-                ],
-                'expectedData'  => $this->getQuoteProductItem(-10, 'kg', Price::create(20.0, 'USD')),
-            ],
-            'quantity == 0' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'quantity'      => 0,
-                    'productUnit'   => 'kg',
-                    'price'         => [
-                        'value'     => 20,
-                        'currency'  => 'USD',
-                    ],
-                ],
-                'expectedData'  => $this->getQuoteProductItem(0, 'kg', Price::create(20.0, 'USD')),
-            ],
-            'quantity !decimal' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'quantity'      => 'asd',
-                    'productUnit'   => 'kg',
-                    'price'         => [
-                        'value'     => 20,
-                        'currency'  => 'USD',
-                    ],
-                ],
-                'expectedData'  => $this->getQuoteProductItem(null, 'kg', Price::create(20.0, 'USD')),
-            ],
             'empty price' => [
                 'isValid'       => true,
                 'submittedData' => [
@@ -200,29 +148,6 @@ class QuoteProductItemTypeTest extends AbstractTest
                     'productUnit'   => 'kg',
                 ],
                 'expectedData'  => $this->getQuoteProductItem(10, 'kg'),
-            ],
-            'empty unit' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'quantity'      => 10,
-                    'price'         => [
-                        'value'     => 20,
-                        'currency'  => 'USD',
-                    ],
-                ],
-                'expectedData'  => $this->getQuoteProductItem(10, null, Price::create(20.0, 'USD')),
-            ],
-            'invalid unit' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'quantity'      => 10,
-                    'productUnit'   => 'zzz',
-                    'price'         => [
-                        'value'     => 20,
-                        'currency'  => 'USD',
-                    ],
-                ],
-                'expectedData'  => $this->getQuoteProductItem(10, null, Price::create(20.0, 'USD')),
             ],
             'valid data' => [
                 'isValid'       => true,
