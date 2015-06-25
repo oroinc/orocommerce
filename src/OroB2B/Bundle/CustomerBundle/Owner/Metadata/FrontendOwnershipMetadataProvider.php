@@ -58,9 +58,9 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     /**
      * {@inheritDoc}
      */
-    protected function createNoOwnershipMetadata()
+    protected function getNoOwnershipMetadata()
     {
-        $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
+        return new FrontendOwnershipMetadata();
     }
 
     /**
