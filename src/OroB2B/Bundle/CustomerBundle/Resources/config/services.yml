@@ -168,11 +168,7 @@ services:
     orob2b_customer.owner.decision_maker:
         public: false
         class: %orob2b_customer.owner.decision_maker.class%
-        arguments:
-            - @oro_security.ownership_tree_provider
-            - @oro_security.acl.object_id_accessor
-            - @oro_security.owner.entity_owner_accessor
-            - @oro_security.owner.ownership_metadata_provider
+        parent: oro_security.owner.decision_maker.abstract
         calls:
             - [ setSecurityFacade, [ @oro_security.security_facade ] ]
         tags:

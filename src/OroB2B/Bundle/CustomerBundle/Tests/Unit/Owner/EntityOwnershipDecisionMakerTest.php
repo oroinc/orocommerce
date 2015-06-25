@@ -83,16 +83,16 @@ class EntityOwnershipDecisionMakerTest extends \PHPUnit_Framework_TestCase
         return [
             'without security facade' => [
                 'securityFacade' => null,
-                'expectedResult' => false,
+                'expectedResult' => false
             ],
             'security facade with incorrect user class' => [
                 'securityFacade' => $securityFacadeWithoutAccountUser,
-                'expectedResult' => false,
+                'expectedResult' => false
             ],
             'security facade with user class' => [
                 'securityFacade' => $securityFacadeWithAccountUser,
-                'expectedResult' => true,
-            ],
+                'expectedResult' => true
+            ]
         ];
     }
 }
