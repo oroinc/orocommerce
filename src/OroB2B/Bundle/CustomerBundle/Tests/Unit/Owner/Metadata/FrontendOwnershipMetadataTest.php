@@ -22,7 +22,9 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
 
         list ($frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName) = $ownerType;
         $metadata = new FrontendOwnershipMetadata(
-            $frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName
+            $frontendOwnerType,
+            $frontendOwnerFieldName,
+            $frontendOwnerColumnName
         );
 
         $this->assertEquals($expectedOwnerType, $metadata->getOwnerType());
