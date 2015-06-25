@@ -119,8 +119,7 @@ class CustomerControllerTest extends WebTestCase
         Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating
-    )
-    {
+    ) {
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_customer_type[name]' => $name,
@@ -154,8 +153,7 @@ class CustomerControllerTest extends WebTestCase
         Customer $parent,
         CustomerGroup $group,
         AbstractEnumValue $internalRating
-    )
-    {
+    ) {
         $this->assertContains($name, $html);
         $this->assertContains($parent->getName(), $html);
         $this->assertContains($group->getName(), $html);

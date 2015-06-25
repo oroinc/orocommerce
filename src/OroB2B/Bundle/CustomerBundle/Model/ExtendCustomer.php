@@ -11,7 +11,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
  * @method AbstractEnumValue getVisibility()
  * @method Customer setVisibility(AbstractEnumValue $enumId)
  */
-class ExtendCustomer {
+class ExtendCustomer
+{
 
     /**
      * Constructor

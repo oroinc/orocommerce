@@ -13,13 +13,13 @@ class LoadCustomerInternalRatingData extends AbstractEnumFixture
      */
     protected function getData()
     {
-       return [
+        return [
             '1 of 5' => '1 of 5',
             '2 of 5' => '2 of 5',
             '3 of 5' => '3 of 5',
             '4 of 5' => '4 of 5',
             '5 of 5' => '5 of 5',
-       ];
+        ];
     }
 
     /**
@@ -31,6 +31,4 @@ class LoadCustomerInternalRatingData extends AbstractEnumFixture
     {
         return 'cust_internal_rating';
     }
-
-
 }

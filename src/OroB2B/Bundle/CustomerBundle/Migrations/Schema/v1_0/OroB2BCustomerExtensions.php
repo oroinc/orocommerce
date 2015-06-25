@@ -9,7 +9,6 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-
 class OroB2BCustomerExtensions implements Migration, ExtendExtensionAwareInterface
 {
     const TABLE_NAME = 'orob2b_customer';
@@ -49,6 +48,4 @@ class OroB2BCustomerExtensions implements Migration, ExtendExtensionAwareInterfa
             'cust_internal_rating'
         );
     }
-
-
 }
