@@ -119,7 +119,6 @@ class OroB2BRFPAdminBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['status_id'], 'IDX_512524246BF700BD', []);
     }
 
     /**
@@ -136,8 +135,6 @@ class OroB2BRFPAdminBundleInstaller implements
         $table->addColumn('product_sku', 'string', ['length' => 255]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['request_id'], 'IDX_B3DEE60D427EB8A5', []);
-        $table->addIndex(['product_id'], 'IDX_B3DEE60D4584665A', []);
     }
 
     /**
@@ -156,8 +153,6 @@ class OroB2BRFPAdminBundleInstaller implements
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['request_product_id'], 'IDX_1456A11D7DA1E0', []);
-        $table->addIndex(['product_unit_id'], 'IDX_1456A1129646BBD', []);
     }
 
     /**
