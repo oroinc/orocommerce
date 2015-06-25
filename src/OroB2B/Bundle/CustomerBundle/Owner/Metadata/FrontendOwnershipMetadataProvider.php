@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CustomerBundle\Owner\Metadata;
 
 use Doctrine\Common\Cache\CacheProvider;
 
+use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
@@ -40,11 +41,25 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
         ConfigProvider $configProvider,
         CacheProvider $cache = null
     ) {
+        parent::__construct($owningEntityNames, $configProvider, null, $cache);
+
+        $this->securityFacade = $securityFacade;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function setAccessLevelClasses(array $owningEntityNames, EntityClassResolver $entityClassResolver = null)
+    {
         $this->localLevelClass = $owningEntityNames['local_level'];
         $this->basicLevelClass = $owningEntityNames['basic_level'];
-        $this->securityFacade = $securityFacade;
-        $this->configProvider = $configProvider;
-        $this->cache = $cache;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function createNoOwnershipMetadata()
+    {
         $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
     }
 
