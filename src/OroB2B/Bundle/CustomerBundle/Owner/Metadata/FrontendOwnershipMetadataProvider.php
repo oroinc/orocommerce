@@ -31,17 +31,19 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 
     /**
      * @param array $owningEntityNames
-     * @param SecurityFacade $securityFacade
      * @param ConfigProvider $configProvider
+     * @param SecurityFacade $securityFacade
+     * @param EntityClassResolver|null $entityClassResolver
      * @param CacheProvider|null $cache
      */
     public function __construct(
         array $owningEntityNames,
-        SecurityFacade $securityFacade,
         ConfigProvider $configProvider,
+        SecurityFacade $securityFacade,
+        EntityClassResolver $entityClassResolver = null,
         CacheProvider $cache = null
     ) {
-        parent::__construct($owningEntityNames, $configProvider, null, $cache);
+        parent::__construct($owningEntityNames, $configProvider, $entityClassResolver, $cache);
 
         $this->securityFacade = $securityFacade;
     }
@@ -51,8 +53,19 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     protected function setAccessLevelClasses(array $owningEntityNames, EntityClassResolver $entityClassResolver = null)
     {
-        $this->localLevelClass = $owningEntityNames['local_level'];
-        $this->basicLevelClass = $owningEntityNames['basic_level'];
+        if (!isset($owningEntityNames['local_level'], $owningEntityNames['basic_level'])) {
+            throw new \InvalidArgumentException(
+                'Array parameter $owningEntityNames must contains `local_level` and `basic_level` keys'
+            );
+        }
+
+        if ($entityClassResolver === null) {
+            $this->localLevelClass = $owningEntityNames['local_level'];
+            $this->basicLevelClass = $owningEntityNames['basic_level'];
+        } else {
+            $this->localLevelClass = $entityClassResolver->getEntityClass($owningEntityNames['local_level']);
+            $this->basicLevelClass = $entityClassResolver->getEntityClass($owningEntityNames['basic_level']);
+        }
     }
 
     /**
