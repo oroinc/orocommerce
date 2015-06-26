@@ -11,9 +11,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\ReminderBundle\OroReminderBundle;
-use OroB2B\Bundle\CustomerBundle\Migrations\Schema\v1_0\OroB2BCustomerBundle as OroB2BCustomerBundle10;
-use OroB2B\Bundle\CustomerBundle\Migrations\Schema\v1_0\OroB2BCustomerExtensions as OroB2BCustomerExtensions10;
 
 class OroB2BCustomerBundleInstaller implements
     Installation,
