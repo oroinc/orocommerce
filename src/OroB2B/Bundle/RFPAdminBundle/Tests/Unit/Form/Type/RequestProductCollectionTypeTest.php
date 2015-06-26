@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductCollectionType;
 
@@ -43,7 +45,7 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->formType->getParent());
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
     }
 
     public function testGetName()

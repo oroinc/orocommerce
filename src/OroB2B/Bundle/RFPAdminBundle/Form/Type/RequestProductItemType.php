@@ -57,8 +57,8 @@ class RequestProductItemType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem',
-            'intention' => 'rfp_admin_request_product_item',
+            'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem',
+            'intention'     => 'rfp_admin_request_product_item',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
@@ -118,7 +118,7 @@ class RequestProductItemType extends AbstractType
     public function preSubmit(FormEvent $event)
     {
         $event->getForm()->add('productUnit', ProductUnitSelectionType::NAME, [
-                'label' => 'orob2b.product.productunit.entity_label',
+            'label' => 'orob2b.product.productunit.entity_label',
         ]);
     }
 }

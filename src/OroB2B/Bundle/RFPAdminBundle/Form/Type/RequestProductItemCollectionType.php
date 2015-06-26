@@ -26,8 +26,8 @@ class RequestProductItemCollectionType extends AbstractType
     {
         $resolver->setDefaults([
             'type' => RequestProductItemType::NAME,
-            'show_form_when_empty' => false,
-            'prototype_name' => '__namerequestproductitem__',
+            'show_form_when_empty'  => false,
+            'prototype_name'        => '__namerequestproductitem__',
         ]);
     }
 

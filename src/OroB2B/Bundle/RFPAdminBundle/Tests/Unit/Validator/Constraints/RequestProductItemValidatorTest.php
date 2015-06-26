@@ -12,15 +12,21 @@ use OroB2B\Bundle\RFPAdminBundle\Validator\Constraints;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 
-class RequestProductItemTest extends \PHPUnit_Framework_TestCase
+class RequestProductItemValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Constraints\RequestProductItem */
+    /**
+     * @var Constraints\RequestProductItem
+     */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     */
     protected $context;
 
-    /** @var Constraints\RequestProductItemValidator */
+    /**
+     * @var Constraints\RequestProductItemValidator
+     */
     protected $validator;
 
     /**

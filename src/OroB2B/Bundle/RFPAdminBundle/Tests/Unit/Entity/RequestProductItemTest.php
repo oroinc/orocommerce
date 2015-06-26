@@ -15,12 +15,13 @@ class RequestProductItemTest extends AbstractTest
         $properties = [
             ['id', 123],
             ['requestProduct', new RequestProduct()],
-            ['productUnit', new ProductUnit()],
             ['quantity', 11],
+            ['productUnit', new ProductUnit()],
+            ['productUnitCode', 'unit-code'],
             ['price', new Price()],
         ];
 
-        $this->assertPropertyAccessors(new RequestProductItem(), $properties);
+        static::assertPropertyAccessors(new RequestProductItem(), $properties);
     }
 
     public function testSetProductUnit()

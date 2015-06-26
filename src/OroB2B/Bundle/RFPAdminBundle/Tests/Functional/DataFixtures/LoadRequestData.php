@@ -17,6 +17,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const LAST_NAME     = 'Brzeczyszczykiewicz';
     const EMAIL         = 'test_request@example.com';
 
+    const REQUEST1    = 'rfpadmin.request.1';
+
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
 
@@ -32,7 +34,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      * @var array
      */
     protected $requests = [
-        [
+        self::REQUEST1 => [
             'first_name'    => self::FIRST_NAME,
             'last_name'     => self::LAST_NAME,
             'email'         => self::EMAIL,
@@ -93,7 +95,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             return;
         }
 
-        foreach ($this->requests as $rawRequest) {
+        foreach ($this->requests as $key => $rawRequest) {
             $request = new Request();
             $request
                 ->setFirstName($rawRequest['first_name'])
@@ -112,6 +114,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $request->addRequestProduct($product);
             }
             $manager->persist($request);
+
+            $this->setReference($key, $request);
         }
 
         $manager->flush();

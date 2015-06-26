@@ -3,11 +3,9 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestType;
-use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductCollectionType;
 
 class RequestTypeTest extends FormIntegrationTestCase
 {
@@ -22,27 +20,6 @@ class RequestTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = new RequestType();
-    }
-
-    public function testBuildForm()
-    {
-        /* @var $builder \PHPUnit_Framework_MockObject_MockBuilder|FormBuilder */
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with('requestProducts', RequestProductCollectionType::NAME, [
-                'label'     => 'orob2b.rfpadmin.requestproduct.entity_plural_label',
-                'add_label' => 'orob2b.rfpadmin.requestproduct.add_label',
-                'required'  => false,
-            ])
-            ->will($this->returnSelf())
-        ;
-
-        $this->formType->buildForm($builder, []);
     }
 
     public function testSetDefaultOptions()

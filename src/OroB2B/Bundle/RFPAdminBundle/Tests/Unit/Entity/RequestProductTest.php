@@ -15,9 +15,11 @@ class RequestProductTest extends AbstractTest
             ['id', 123],
             ['request', new Request()],
             ['product', new Product()],
+            ['productSku', 'rfp-sku'],
+            ['comment', 'comment'],
         ];
 
-        $this->assertPropertyAccessors(new RequestProduct(), $properties);
+        static::assertPropertyAccessors(new RequestProduct(), $properties);
     }
 
     public function testSetProduct()

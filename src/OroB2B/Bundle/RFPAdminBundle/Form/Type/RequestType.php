@@ -17,9 +17,9 @@ class RequestType extends AbstractType
     {
         $builder
             ->add('requestProducts', RequestProductCollectionType::NAME, [
-                    'label' => 'orob2b.rfpadmin.requestproduct.entity_plural_label',
-                    'add_label' => 'orob2b.rfpadmin.requestproduct.add_label',
-                    'required' => false,
+                'label'     => 'orob2b.rfpadmin.requestproduct.entity_plural_label',
+                'add_label' => 'orob2b.rfpadmin.requestproduct.add_label',
+                'required'  => false,
             ])
         ;
     }
@@ -30,8 +30,8 @@ class RequestType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\Request',
-            'intention' => 'rfp_admin_request',
+            'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\Request',
+            'intention'     => 'rfp_admin_request',
             'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
