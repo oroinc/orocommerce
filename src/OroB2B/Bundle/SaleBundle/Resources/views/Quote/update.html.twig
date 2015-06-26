@@ -1,0 +1,81 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
+
+{% oro_title_set({params : {'%entityName%' : 'orob2b.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
+
+{% set formAction = entity.id ? path('orob2b_sale_quote_update', { 'id': entity.id }) : path('orob2b_sale_quote_create')  %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_sale_quote_index'),
+            'indexLabel': 'orob2b.sale.quote.entity_plural_label'|trans,
+            'entityTitle': entity.qid|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.sale.quote.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_sale_delete_quote', {'id': entity.id}),
+            'dataRedirect': path('orob2b_sale_quote_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.sale.quote.entity_label'|trans,
+        }) }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
+    {{ UI.cancelButton(path('orob2b_sale_quote_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_sale_quote_create') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set id = 'quote-edit' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.sale.quote.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.owner),
+                    form_row(form.validUntil),
+                ]
+            }]
+        },
+        {
+            'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.quoteProducts)
+                ]
+            }]
+        }
+    ]
+    %}
+
+    {% set additionalData = [] %}
+    {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
+        {% set additionalData = additionalData|merge([form_row(child)]) %}
+    {% endfor %}
+    
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}
