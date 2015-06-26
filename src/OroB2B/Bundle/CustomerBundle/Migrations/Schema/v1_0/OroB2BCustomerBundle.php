@@ -4,14 +4,39 @@ namespace OroB2B\Bundle\CustomerBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroB2BCustomerBundle implements Migration
+class OroB2BCustomerBundle implements Migration, ExtendExtensionAwareInterface
 {
+
+    const ORO_B2B_CUSTOMER_TABLE_NAME = 'orob2b_customer';
+    const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
+    const ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'orob2b_acc_user_access_role';
+    const ORO_B2B_CUSTOMER_GROUP_TABLE_NAME = 'orob2b_customer_group';
+    const ORO_B2B_ACCOUNT_USER_ORG_TABLE_NAME = 'orob2b_account_user_org';
+    const ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME = 'orob2b_account_user_role';
+    const ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'orob2b_account_role_to_website';
+    const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
+    const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
+
+    /** @var  ExtendExtension */
+    protected $extendExtension;
+
+    /**
+     * Sets the ExtendExtension
+     *
+     * @param ExtendExtension $extendExtension
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
     /**
      * {@inheritdoc}
      */
@@ -41,7 +66,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BAccountUserTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user');
+        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
@@ -79,7 +104,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BCustomerTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_customer');
+        $table = $schema->createTable(static::ORO_B2B_CUSTOMER_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
@@ -89,6 +114,13 @@ class OroB2BCustomerBundle implements Migration
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_name_idx', []);
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            static::ORO_B2B_CUSTOMER_TABLE_NAME,
+            'internal_rating',
+            'cust_internal_rating'
+        );
     }
 
     /**
@@ -98,7 +130,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BAccountUserAccessAccountUserRoleTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_acc_user_access_role');
+        $table = $schema->createTable(static::ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME);
 
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('account_user_role_id', 'integer', []);
@@ -114,7 +146,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BCustomerGroupTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_customer_group');
+        $table = $schema->createTable(static::ORO_B2B_CUSTOMER_GROUP_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
@@ -131,7 +163,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BAccountUserOrganizationTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user_org');
+        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ORG_TABLE_NAME);
 
         $table->addColumn('account_user_id', 'integer', []);
         $table->addColumn('organization_id', 'integer', []);
@@ -146,7 +178,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BAccountUserRoleTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_user_role');
+        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('role', 'string', ['length' => 64]);
         $table->addColumn('label', 'string', ['length' => 64]);
@@ -161,7 +193,7 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function createOroB2BAccountUserRoleToWebsiteTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_account_role_to_website');
+        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME);
         $table->addColumn('account_user_role_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['account_user_role_id', 'website_id']);
@@ -175,15 +207,15 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function addOroB2BAccountUserForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_account_user');
+        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
+            $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer'),
+            $schema->getTable(static::ORO_B2B_CUSTOMER_TABLE_NAME),
             ['customer_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -197,15 +229,15 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function addOroB2BAccountUserAccessAccountUserRoleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_acc_user_access_role');
+        $table = $schema->getTable(static::ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user_role'),
+            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME),
             ['account_user_role_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -220,9 +252,9 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function addOroB2BCustomerForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_customer');
+        $table = $schema->getTable(static::ORO_B2B_CUSTOMER_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer_group'),
+            $schema->getTable(static::ORO_B2B_CUSTOMER_GROUP_TABLE_NAME),
             ['group_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -242,15 +274,15 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function addOroB2BAccountUserOrganizationForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_account_user_org');
+        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ORG_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
+            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
             ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
+            $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
             ['organization_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
@@ -264,15 +296,15 @@ class OroB2BCustomerBundle implements Migration
      */
     protected function addOroB2BAccountUserRoleToWebsiteForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_account_role_to_website');
+        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_website'),
+            $schema->getTable(static::ORO_B2B_WEBSITE_TABLE_NAME),
             ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user_role'),
+            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME),
             ['account_user_role_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
