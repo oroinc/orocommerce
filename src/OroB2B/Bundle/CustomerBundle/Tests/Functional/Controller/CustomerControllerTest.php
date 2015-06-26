@@ -95,27 +95,6 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
         $this->assertContains(self::UPDATED_NAME . ' - Customers - Customers', $html);
-        /** @var Customer $newParent */
-        $newParent = $this->getReference('customer.level_1.1');
-        /** @var CustomerGroup $newGroup */
-        $newGroup = $this->getReference('customer_group.group2');
-        $this->assertViewPage($html, self::UPDATED_NAME, $newParent, $newGroup);
-    }
-
-    /**
-     * @depends testUpdate
-     * @param int $id
-     */
-    public function testViewWithAttachmentAndNote($id)
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_customer_view', ['id' => $id])
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
         $this->assertContains('Add attachment', $html);
         $this->assertContains('Add note', $html);
         /** @var Customer $newParent */
