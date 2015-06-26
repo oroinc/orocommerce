@@ -12,17 +12,26 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
-class QuoteProductItemTest extends \PHPUnit_Framework_TestCase
+class QuoteProductItemValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Constraints\QuoteProductItem */
+    /**
+     * @var Constraints\QuoteProductItem
+     */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     */
     protected $context;
 
-    /** @var Constraints\QuoteProductItemValidator */
+    /**
+     * @var Constraints\QuoteProductItemValidator
+     */
     protected $validator;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->context      = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');

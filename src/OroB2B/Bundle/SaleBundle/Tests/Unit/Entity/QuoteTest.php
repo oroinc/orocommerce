@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -16,12 +17,13 @@ class QuoteTest extends AbstractTest
             ['id', '123'],
             ['qid', 'QID-123456'],
             ['owner', new User()],
+            ['organization', new Organization()],
             ['validUntil', $now, false],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
         ];
 
-        $this->assertPropertyAccessors(new Quote(), $properties);
+        static::assertPropertyAccessors(new Quote(), $properties);
     }
 
     public function testPrePersist()

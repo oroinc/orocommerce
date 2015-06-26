@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Test\Functional\EventListener;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\EventListener;
 
 use Doctrine\ORM\EntityManager;
 
@@ -28,7 +28,7 @@ class EntitySubscriberTest extends WebTestCase
     public function testPersistQuote()
     {
         /* @var $em EntityManager */
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em = static::getContainer()->get('doctrine')->getManagerForClass('OroB2BSaleBundle:Quote');
 
         $quote = new Quote();
         $quote

@@ -2,23 +2,39 @@ OroB2B\Bundle\SaleBundle\Entity\Quote:
     properties:
         owner:
             - NotBlank: ~
+        qid:
+            - NotBlank:
+                groups: [ Import ]
+        organization:
+            - NotBlank:
+                groups: [ Import ]
+        validUntil:
+            - NotBlank:
+                groups: [ Import ]
         quoteProducts:
-            - Valid:
-                traverse: true
+            - Valid: ~
 
 OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
     properties:
+        quote:
+            - NotBlank: ~
         product:
             - NotBlank:
                 message: 'orob2b.sale.quoteproduct.product.blank'
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
         quoteProductItems:
-            - Valid:
-                traverse: true
+            - OroB2B\Bundle\SaleBundle\Validator\Constraints\Count:
+                minMessage: 'orob2b.sale.quoteproduct.quote_product_items.blank'
+            - Valid: ~
 
 OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
     constraints:
         - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem: ~
     properties:
+        quoteProduct:
+            - NotBlank: ~
         quantity:
             - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
@@ -26,6 +42,8 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
         productUnit:
             - NotBlank:
                 message: 'orob2b.sale.quoteproductitem.product_unit.blank'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
         price:
-            - NotBlank: ~
             - Valid: ~

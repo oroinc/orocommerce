@@ -1,13 +1,13 @@
 oro_menu_config:
     items:
         sale_tab:
-            label: Sales
+            label: 'orob2b.sale.menu.label'
             uri:   'javascript: void(0);'
             extras:
                 position: 60
 
         sale_quote_list:
-            label: Quotes
+            label: 'orob2b.sale.quote.entity_plural_label'
             route: orob2b_sale_quote_index
             extras:
                 position: 61

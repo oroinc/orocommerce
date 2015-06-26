@@ -1,9 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -33,10 +32,10 @@ class QuoteProductItemTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductItemType($this->getContainer()->get('translator'));
+        $this->formType = new QuoteProductItemType(static::getContainer()->get('translator'));
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ]);
     }
 
@@ -51,7 +50,7 @@ class QuoteProductItemTypeTest extends WebTestCase
         $inputData      = $inputDataCallback();
         $expectedData   = $expectedDataCallback();
 
-        $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
+        $form = static::getContainer()->get('form.factory')->create($this->formType, null, []);
 
         $this->formType->preSetData(new FormEvent($form, $inputData));
 
@@ -70,13 +69,13 @@ class QuoteProductItemTypeTest extends WebTestCase
     public function preSetDataProvider()
     {
         return [
-            'choices is null' => [
+            'choices is []' => [
                 'inputData'     => function () {
                     return null;
                 },
                 'expectedData'  => function () {
                     return [
-                        'choices'       => null,
+                        'choices'       => [],
                         'empty_value'   => null,
                     ];
                 },
@@ -160,8 +159,8 @@ class QuoteProductItemTypeTest extends WebTestCase
      * @param array $parameters
      * @return string
      */
-    protected function trans($id, array $parameters = array())
+    protected function trans($id, array $parameters = [])
     {
-        return $this->getContainer()->get('translator')->trans($id, $parameters);
+        return static::getContainer()->get('translator')->trans($id, $parameters);
     }
 }
