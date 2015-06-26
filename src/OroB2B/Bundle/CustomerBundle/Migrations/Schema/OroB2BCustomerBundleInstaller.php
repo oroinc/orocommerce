@@ -9,6 +9,10 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * Class OroB2BCustomerBundleInstaller
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BCustomerBundleInstaller implements Installation, ExtendExtensionAwareInterface
 {
     const ORO_B2B_CUSTOMER_TABLE_NAME = 'orob2b_customer';
