@@ -99,6 +99,8 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
         $this->assertContains(self::UPDATED_NAME . ' - Customers - Customers', $html);
+        $this->assertContains('Add attachment', $html);
+        $this->assertContains('Add note', $html);
         /** @var Customer $newParent */
         $newParent = $this->getReference('customer.level_1.1');
         /** @var CustomerGroup $newGroup */

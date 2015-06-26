@@ -4,17 +4,24 @@ namespace OroB2B\Bundle\CustomerBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroB2BCustomerBundle implements Migration, ExtendExtensionAwareInterface
+class OroB2BCustomerBundle implements
+    Migration,
+    AttachmentExtensionAwareInterface,
+    NoteExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
-
     const ORO_B2B_CUSTOMER_TABLE_NAME = 'orob2b_customer';
     const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
     const ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'orob2b_acc_user_access_role';
@@ -25,8 +32,34 @@ class OroB2BCustomerBundle implements Migration, ExtendExtensionAwareInterface
     const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
 
+    /** @var NoteExtension */
+    protected $noteExtension;
+
+    /** @var  AttachmentExtension */
+    protected $attachmentExtension;
+
     /** @var  ExtendExtension */
     protected $extendExtension;
+    
+    /**
+     * Sets the AttachmentExtension
+     *
+     * @param AttachmentExtension $attachmentExtension
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * Sets the NoteExtension
+     *
+     * @param NoteExtension $noteExtension
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
 
     /**
      * Sets the ExtendExtension
@@ -37,6 +70,7 @@ class OroB2BCustomerBundle implements Migration, ExtendExtensionAwareInterface
     {
         $this->extendExtension = $extendExtension;
     }
+    
     /**
      * {@inheritdoc}
      */
@@ -115,6 +149,23 @@ class OroB2BCustomerBundle implements Migration, ExtendExtensionAwareInterface
 
         $table->addIndex(['name'], 'orob2b_customer_name_idx', []);
 
+        $this->attachmentExtension->addAttachmentAssociation(
+            $schema,
+            static::ORO_B2B_CUSTOMER_TABLE_NAME,
+            [
+                'image/*',
+                'application/pdf',
+                'application/zip',
+                'application/x-gzip',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ]
+        );
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_CUSTOMER_TABLE_NAME);
         $this->extendExtension->addEnumField(
             $schema,
             static::ORO_B2B_CUSTOMER_TABLE_NAME,
