@@ -1,0 +1,32 @@
+{% set website = orob2b_website_get_current_website() %}
+{% set organization_name = website.organization.name %}
+
+{% if isDesktopVersion() %}
+    {% if organization_name|length %}
+        {% set logo = oro_theme_logo() %}
+        <h1 class="logo logo-{{ logo ? 'image' : 'text' }}">
+            <a href="{{ path('_frontend') }}" title="{{ organization_name }}">
+                {% if logo %}
+                    <img src="{{ asset(logo) }}" alt="{{- organization_name -}}">
+                {% else %}
+                    {{- organization_name -}}
+                {% endif %}
+            </a>
+        </h1>
+    {% else %}
+        <span class="logo-placeholder"></span>
+    {% endif %}
+{% else %}
+    {# Mobile view #}
+    <h1 class="logo">
+        <span>
+            <a href="{{ path('_frontend') }}" title="{{ organization_name|striptags|trim }}">
+                {% if oro_theme_logo() %}
+                    <img src="{{ asset(oro_theme_logo()) }}" alt="{{ organization_name|striptags|trim }}">
+                {% else %}
+                    {{- organization_name -}}
+                {% endif %}
+            </a>
+        </span>
+    </h1>
+{% endif %}
