@@ -6,6 +6,8 @@ oro_system_configuration:
             page_reload: true
         product_unit_settings:
             title: orob2b.product.system_configuration.groups.product_unit_settings.title
+        default_visibility:
+            title: orob2b.product.system_configuration.groups.default_visibility.title
 
     fields:
         orob2b_product.unit_rounding_type:
@@ -15,6 +17,15 @@ oro_system_configuration:
             options:
                 label: orob2b.product.system_configuration.fields.unit_rounding_type.label
                 tooltip: orob2b.product.form.tooltip.unit_rounding_type
+                required: true
+                constraints:
+                    - NotBlank: ~
+        orob2b_product.default_visibility:
+            data_type: string
+            type: orob2b_product_default_visibility
+            priority: 10
+            options:
+                label: orob2b.product.system_configuration.fields.visibility.label
                 required: true
                 constraints:
                     - NotBlank: ~
@@ -28,6 +39,10 @@ oro_system_configuration:
                             product:
                                 priority: 220
                                 children:
+                                    default_visibility:
+                                        priority: 100
+                                        children:
+                                            - orob2b_product.default_visibility
                                     product_unit_settings:
                                         priority: 100
                                         children:
