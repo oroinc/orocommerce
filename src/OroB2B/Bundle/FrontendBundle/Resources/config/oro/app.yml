@@ -1,0 +1,4 @@
+twig:
+    globals:
+        commerce:
+            layout: OroB2BFrontendBundle::base.html.twig

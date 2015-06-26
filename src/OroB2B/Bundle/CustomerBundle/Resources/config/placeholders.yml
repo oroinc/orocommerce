@@ -1,10 +1,15 @@
 placeholders:
     user_menu:
         items:
+            account_user_login:
+                order: 50
             account_menu_user:
                 order: 50
 
 items:
+    account_user_login:
+        template: OroB2BCustomerBundle:Menu:menuLogin.html.twig
+        applicable: @orob2b_customer.placeholder.filter->isLoginRequired()
     account_menu_user:
         template: OroB2BCustomerBundle:Menu:menuProfile.html.twig
         applicable: @orob2b_customer.placeholder.filter->isUserApplicable()
