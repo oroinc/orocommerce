@@ -7,10 +7,8 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
@@ -184,14 +182,16 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
+     * @param array $submittedData
+     * @param array $expectedData
+     *
      * @dataProvider submitProvider
      */
-    public function testSubmit($submittedData, $expectedData)
+    public function testSubmit(array $submittedData, array $expectedData)
     {
         $this->prepareProviderData($submittedData);
 
         $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
-        $owner      = $this->getUser(LoadUserData::USER1);
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
