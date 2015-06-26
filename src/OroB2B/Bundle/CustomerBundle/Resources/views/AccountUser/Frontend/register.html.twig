@@ -1,5 +1,21 @@
 {% extends commerce.layout %}
 
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            {{ 'orob2b.customer.entity_plural_label'|trans }}
+            <span class="divider">/</span>
+        </li>
+        <li>
+            {{ 'orob2b.customer.accountuser.entity_plural_label'|trans }}
+            <span class="divider">/</span>
+        </li>
+        <li>
+            {{ 'orob2b.customer.accountuser.profile.registration.title'|trans }}
+        </li>
+    </ul>
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ path('orob2b_customer_frontend_account_user_register') }}"

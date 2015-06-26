@@ -1,5 +1,21 @@
 {% extends commerce.layout %}
 
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            {{ 'orob2b.customer.entity_plural_label'|trans }}
+            <span class="divider">/</span>
+        </li>
+        <li>
+            {{ 'orob2b.customer.accountuser.entity_plural_label'|trans }}
+            <span class="divider">/</span>
+        </li>
+        <li>
+            {{ 'orob2b.customer.accountuser.profile.forgot_password'|trans }}
+        </li>
+    </ul>
+{% endblock %}
+
 {% block content %}
     <form action="{{ path('orob2b_customer_frontend_account_user_reset_request') }}" class="form-signin" method="post"
           id="{{ form.vars.id }}" name="{{ form.vars.name }}" {{ form_enctype(form) }}>
