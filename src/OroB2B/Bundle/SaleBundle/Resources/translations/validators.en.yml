@@ -1,0 +1,11 @@
+orob2b:
+    sale:
+        quoteproduct:
+            product:
+                blank: 'Please choose existing Product.'
+            quote_product_items:
+                blank: 'Please add one or more offers.'
+
+        quoteproductitem:
+            product_unit:
+                blank: 'Please choose existing Unit.'
