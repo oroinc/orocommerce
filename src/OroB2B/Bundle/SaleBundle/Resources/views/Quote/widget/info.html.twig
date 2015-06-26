@@ -1,0 +1,15 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.sale.quote.id.label'|trans, entity.id) }}
+            {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
+            {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A') }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(entity) }}
+        </div>
+    </div>
+</div>

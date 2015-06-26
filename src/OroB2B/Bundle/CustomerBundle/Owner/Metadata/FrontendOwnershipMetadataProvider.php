@@ -21,6 +21,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     protected $basicLevelClass;
 
     /**
+     * @var FrontendOwnershipMetadataProvider
+     */
+    private $noOwnershipMetadata;
+
+    /**
      * {@inheritDoc}
      */
     protected function setAccessLevelClasses(array $owningEntityNames, EntityClassResolver $entityClassResolver = null)
@@ -40,7 +45,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     protected function getNoOwnershipMetadata()
     {
-        return new FrontendOwnershipMetadata();
+        if (!$this->noOwnershipMetadata) {
+            $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
+        }
+
+        return $this->noOwnershipMetadata;
     }
 
     /**
@@ -56,7 +65,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function getGlobalLevelClass()
     {
-        throw new \BadMethodCallException('Method getGlobalLevelClass() unsupported.');
+        return false;
     }
 
     /**

@@ -1,0 +1,86 @@
+.sale-quoteproduct-collection .btn.add-list-item {
+    margin-left: 90px;
+}
+
+.sale-quoteproduct-collection .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    top: 0;
+    left: 460px;
+}
+
+.sale-quoteproduct-widget.control-group {
+    max-width: none;
+}
+
+.sale-quoteproduct-widget.control-group .controls {
+    float: left;
+    margin-left: 10px;
+}
+
+.sale-quoteproduct-widget .btn.add-list-item {
+    margin: 2px 0 2px 1px;
+}
+
+.sale-quoteproduct-widget .selector {
+    margin-left: 0;
+}
+
+.sale-quoteproduct-widget .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    right: 4px;
+    left: auto;
+}
+
+.sale-quoteproductitem-collection {
+    float: left;
+    margin-left: 50px;
+}
+
+.sale-quoteproductitem-collection > div > div > div {
+    padding-right: 14px;
+    
+}
+
+.sale-quoteproductitem-widget {
+    margin-right: 15px;
+}
+
+.sale-quoteproductitem-widget td {
+    vertical-align: top;
+    width: 150px;
+}
+
+.sale-quoteproductitem-widget td span.validation-failed {
+    padding-top: 2px;
+}
+
+.sale-quoteproductitem-widget input[type="number"],
+.sale-quoteproductitem-widget input[type="text"] {
+    width: 130px !important;
+}
+
+.sale-quoteproductitem-widget select {
+    width: 130px !important;
+    height: 20px;
+    margin: 0;
+}
+
+.sale-quoteproduct-product {
+    padding: 0;
+    vertical-align: top;
+}
+
+.sale-quoteproduct-product-select button {
+    float: none;
+}
+
+.sale-quoteproduct-info {
+    padding: 5px 0 0 10px; 
+    vertical-align: top;
+}
+
+.sale-quoteproductitems-info {
+    padding: 5px 0 0 10px;
+}
