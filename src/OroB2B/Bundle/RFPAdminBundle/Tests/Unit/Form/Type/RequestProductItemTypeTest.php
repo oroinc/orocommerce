@@ -79,6 +79,11 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    public function testGetName()
+    {
+        $this->assertEquals(RequestProductItemType::NAME, $this->formType->getName());
+    }
+
     public function testSetDefaultOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
@@ -93,11 +98,6 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
         ;
 
         $this->formType->setDefaultOptions($resolver);
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(RequestProductItemType::NAME, $this->formType->getName());
     }
 
     /**

@@ -50,8 +50,8 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('trans')
             ->will($this->returnCallback(function ($id, $params) {
                 $ids = [
-                    'orob2b.product_unit.kg.label.full'         => 'kilogram',
                     'orob2b.product_unit.item.label.full'       => 'item',
+                    'orob2b.product_unit.kg.label.full'         => 'kilogram',
                     'orob2b.rfpadmin.requestproductitem.item'   => '{units}, {price} per {unit}',
                 ];
 

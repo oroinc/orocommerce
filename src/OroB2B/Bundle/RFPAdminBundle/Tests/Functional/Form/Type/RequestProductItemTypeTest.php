@@ -47,8 +47,8 @@ class RequestProductItemTypeTest extends WebTestCase
      */
     public function testPreSetData($inputDataCallback, $expectedDataCallback)
     {
-        $inputData      = $inputDataCallback();
         $expectedData   = $expectedDataCallback();
+        $inputData      = $inputDataCallback();
 
         $form = static::getContainer()->get('form.factory')->create($this->formType, null, []);
 
