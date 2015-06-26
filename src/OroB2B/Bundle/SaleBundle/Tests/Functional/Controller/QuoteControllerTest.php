@@ -203,7 +203,7 @@ class QuoteControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         $filtered = $crawler->filter($expectedData['filter']);
 
