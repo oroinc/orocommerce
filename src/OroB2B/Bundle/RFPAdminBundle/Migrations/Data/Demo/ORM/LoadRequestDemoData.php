@@ -94,14 +94,9 @@ class LoadRequestDemoData extends AbstractFixture implements ContainerAwareInter
      */
     protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')
-            ->createQueryBuilder('p')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
 
-        if (empty($products)) {
+        if (0 === count($products)) {
             throw new \LogicException('There are no products in system');
         }
 
