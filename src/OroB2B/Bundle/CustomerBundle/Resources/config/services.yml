@@ -169,7 +169,5 @@ services:
         public: false
         class: %orob2b_customer.owner.decision_maker.class%
         parent: oro_security.owner.decision_maker.abstract
-        calls:
-            - [ setSecurityFacade, [ @oro_security.security_facade ] ]
         tags:
            - { name: oro_security.owner.ownership_decision_maker }
