@@ -2,26 +2,25 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Form\FormFactory;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserRoleHandler;
 
 class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Request
+     * @var \PHPUnit_Framework_MockObject_MockObject|FormFactory
      */
-    protected $request;
+    protected $formFactory;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|AclPrivilegeRepository
      */
-    protected $form;
+    protected $privilegeRepository;
 
     /**
      * @var AccountUserRoleHandler
@@ -29,100 +28,75 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
     protected $handler;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var array
      */
-    protected $manager;
+    protected $privilegeConfig = [
+        'entity' => ['types' => ['entity_type']],
+        'action' => ['types' => ['action_type']],
+    ];
 
     /**
-     * @var AccountUserRole
+     * @var array
      */
-    protected $entity;
+    protected $permissionNames = [
+        'entity_type' => ['entity_name'],
+        'action_type' => ['action_name'],
+    ];
 
     protected function setUp()
     {
-        $this->manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->request = new Request();
-        $this->form = $this->getMockBuilder('Symfony\Component\Form\Form')
+        $this->formFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entity  = new AccountUserRole();
-        $this->handler = new AccountUserRoleHandler($this->form, $this->request, $this->manager);
+        $this->privilegeRepository =
+            $this->getMockBuilder('Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+        $this->handler = new AccountUserRoleHandler($this->formFactory, $this->privilegeConfig);
+        $this->handler->setAclPrivilegeRepository($this->privilegeRepository);
     }
 
-    public function testProcessValidData()
+    public function testCreateForm()
     {
-        $appendedUser = new AccountUser();
+        $role = new AccountUserRole('TEST');
 
-        $removedUser = new AccountUser();
-        $removedUser->addRole($this->entity);
+        $expectedConfig = $this->privilegeConfig;
+        foreach ($expectedConfig as $key => $value) {
+            $expectedConfig[$key]['permissions'] = $this->getPermissionNames($value['types']);
+        }
 
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->entity);
+        $this->privilegeRepository->expects($this->any())
+            ->method('getPermissionNames')
+            ->with($this->isType('array'))
+            ->willReturnCallback([$this, 'getPermissionNames']);
 
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->request);
+        $expectedForm = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $this->request->setMethod('POST');
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(AccountUserRoleType::NAME, $role, ['privilege_config' => $expectedConfig])
+            ->willReturn($expectedForm);
 
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
-
-        $appendForm = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $appendForm->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([$appendedUser]));
-        $this->form->expects($this->at(3))
-            ->method('get')
-            ->with('appendUsers')
-            ->will($this->returnValue($appendForm));
-
-        $removeForm = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $removeForm->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([$removedUser]));
-        $this->form->expects($this->at(4))
-            ->method('get')
-            ->with('removeUsers')
-            ->will($this->returnValue($removeForm));
-
-        $this->manager->expects($this->once())
-            ->method('persist')
-            ->with($this->entity);
-        $this->manager->expects($this->once())
-            ->method('flush');
-
-        $this->assertTrue($this->handler->process($this->entity));
-
-        $this->assertEquals([$this->entity], $appendedUser->getRoles());
-        $this->assertEmpty($removedUser->getRoles());
+        $actualForm = $this->handler->createForm($role);
+        $this->assertEquals($expectedForm, $actualForm);
+        $this->assertAttributeEquals($expectedForm, 'form', $this->handler);
     }
 
-    public function testBadMethod()
+    /**
+     * @param array $types
+     * @return array
+     */
+    public function getPermissionNames(array $types)
     {
-        $this->request->setMethod('GET');
-        $this->assertFalse($this->handler->process($this->entity));
-    }
+        $names = [];
+        foreach ($types as $type) {
+            if (isset($this->permissionNames[$type])) {
+                $names = array_merge($names, $this->permissionNames[$type]);
+            }
+        }
 
-    public function testProcessInvalid()
-    {
-        $this->request->setMethod('POST');
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($this->entity);
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(false));
-
-        $this->assertFalse($this->handler->process($this->entity));
+        return $names;
     }
 }
