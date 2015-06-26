@@ -12,6 +12,10 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
+/**
+ * Class OroB2BCustomerBundleInstaller
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BCustomerBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
