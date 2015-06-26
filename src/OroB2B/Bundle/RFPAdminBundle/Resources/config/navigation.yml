@@ -53,9 +53,9 @@ oro_menu_config:
 
 oro_titles:
     orob2b_rfp_admin_request_index:         ~
-    orob2b_rfp_admin_request_update: '%%title%% - Edit'
+    orob2b_rfp_admin_request_update: '%%title%% - oro.ui.edit'
     orob2b_rfp_admin_request_status_index:  ~
     orob2b_rfp_admin_request_view:          '%%title%%'
     orob2b_rfp_admin_request_status_create: oro.ui.create_entity
     orob2b_rfp_admin_request_status_view:   '%%title%%'
-    orob2b_rfp_admin_request_status_update: '%%title%% - Edit'
+    orob2b_rfp_admin_request_status_update: '%%title%% - oro.ui.edit'

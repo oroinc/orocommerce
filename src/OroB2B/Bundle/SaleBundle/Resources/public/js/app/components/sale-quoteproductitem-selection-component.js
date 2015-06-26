@@ -80,9 +80,7 @@ define(function (require) {
         },
         
         checkAddButton: function() {
-            var productId = this.$productSelect.val();
-            
-            this.$addItemButton.attr('disabled', !productId);
+            this.$productSelect.val() ? this.$addItemButton.show() : this.$addItemButton.hide();
         },
         
         /**
@@ -104,6 +102,7 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onContentChanged: function (e) {
+            this.$container.find('select').uniform();
             var productId = this.$productSelect.val();
             var productUnits = this.units[productId];
             
@@ -151,6 +150,9 @@ define(function (require) {
                         .append($('<option/>').val(key).text(value))
                     ;
                 });
+                if (!currentValue && $(select).has('option:first-child')) {
+                    currentValue = $(select).find('option:first-child').val();
+                }
                 $(select).val(currentValue);
                 $(select).uniform('update');
             });

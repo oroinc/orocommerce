@@ -6,7 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures\LoadRequestData;
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @outputBuffering enabled
@@ -134,7 +133,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Request For Proposal Status was successfully changed", $result->getContent());
+        $this->assertContains('Request For Proposal Status was successfully changed', $result->getContent());
 
         $manager->refresh($entity);
 

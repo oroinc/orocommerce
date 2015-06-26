@@ -4,7 +4,11 @@ namespace OroB2B\Bundle\SaleBundle\Twig;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
 class QuoteExtension extends \Twig_Extension
 {
@@ -16,18 +20,28 @@ class QuoteExtension extends \Twig_Extension
     protected $translator;
 
     /**
-     * @var \Twig_Environment
+     * @var ProductUnitValueFormatter
      */
-    protected $twigEnvironment;
+    protected $productUnitValueFormatter;
+
+    /**
+     * @var NumberFormatter
+     */
+    protected $numberFormatter;
 
     /**
      * @param TranslatorInterface $translator
-     * @param \Twig_Environment $twigEnvironment
+     * @param NumberFormatter $numberFormatter
+     * @param ProductUnitValueFormatter $productUnitValueFormatter
      */
-    public function __construct(TranslatorInterface $translator, \Twig_Environment $twigEnvironment)
-    {
-        $this->translator       = $translator;
-        $this->twigEnvironment  = $twigEnvironment;
+    public function __construct(
+        TranslatorInterface $translator,
+        NumberFormatter $numberFormatter,
+        ProductUnitValueFormatter $productUnitValueFormatter
+    ) {
+        $this->translator                   = $translator;
+        $this->numberFormatter              = $numberFormatter;
+        $this->productUnitValueFormatter    = $productUnitValueFormatter;
     }
 
     /**
@@ -45,20 +59,23 @@ class QuoteExtension extends \Twig_Extension
     }
 
     /**
-     * @param QuoteProductOffer $item
+     * @param QuoteProductItem $item
      * @return string
      */
-    public function formatProductItem(QuoteProductOffer $item)
+    public function formatProductItem(QuoteProductItem $item)
     {
-        $unitFormatter  = $this->twigEnvironment->getFilter('orob2b_format_product_unit_value')->getCallable();
-        $priceFormatter = $this->twigEnvironment->getFilter('oro_format_price')->getCallable();
-
-        $units  = $item->getProductUnit()
-            ? $unitFormatter($item->getQuantity(), $item->getProductUnit())
+        $units = $item->getProductUnit()
+            ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())
             : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
         ;
-        $price  = $priceFormatter($item->getPrice());
-        $unit   = $this->translator->trans(sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode()));
+
+        $price = $this->numberFormatter->formatCurrency(
+            $item->getPrice()->getValue(),
+            $item->getPrice()->getCurrency()
+        );
+        $unit = $this->translator->trans(
+            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
+        );
 
         $str = $this->translator->trans(
             'orob2b.sale.quoteproductitem.item',

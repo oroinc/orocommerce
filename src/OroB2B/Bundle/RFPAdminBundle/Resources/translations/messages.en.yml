@@ -12,6 +12,7 @@ orob2b.rfpadmin:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
+        request_products.label: 'Request Products'
 
         sections:
             general: 'General'
@@ -31,7 +32,7 @@ orob2b.rfpadmin:
         item: '{units}, {price} per {unit}'
         entity_label: 'Request Product Line'
         entity_plural_label: 'Request Product Lines'
-        add_label: 'Add Offer'
+        add_label: 'Add Request Item'
         id.label: 'ID'
         quantity.label: 'Quantity'
         product_unit.label: 'Product Unit'

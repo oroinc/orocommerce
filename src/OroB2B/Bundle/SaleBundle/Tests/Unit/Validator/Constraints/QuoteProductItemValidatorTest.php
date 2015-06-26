@@ -10,24 +10,33 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
-class QuoteProductOfferTest extends \PHPUnit_Framework_TestCase
+class QuoteProductItemValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var Constraints\QuoteProductOffer */
+    /**
+     * @var Constraints\QuoteProductItem
+     */
     protected $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     */
     protected $context;
 
-    /** @var Constraints\QuoteProductOfferValidator */
+    /**
+     * @var Constraints\QuoteProductItemValidator
+     */
     protected $validator;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->context      = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $this->constraint   = new Constraints\QuoteProductOffer();
-        $this->validator    = new Constraints\QuoteProductOfferValidator();
+        $this->constraint   = new Constraints\QuoteProductItem();
+        $this->validator    = new Constraints\QuoteProductItemValidator();
         $this->validator->initialize($this->context);
     }
 
@@ -44,7 +53,7 @@ class QuoteProductOfferTest extends \PHPUnit_Framework_TestCase
     /**
      * @expectedException \Symfony\Component\Validator\Exception\UnexpectedTypeException
      */
-    public function testNotQuoteProductOffer()
+    public function testNotQuoteProductItem()
     {
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
@@ -83,17 +92,17 @@ class QuoteProductOfferTest extends \PHPUnit_Framework_TestCase
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit3')))
         ;
 
-        $item1 = (new QuoteProductOffer())
+        $item1 = (new QuoteProductItem())
             ->setQuoteProduct(new QuoteProduct())
             ->setProductUnit((new ProductUnit())->setCode('unit1'))
         ;
 
-        $item2 = (new QuoteProductOffer())
+        $item2 = (new QuoteProductItem())
             ->setQuoteProduct((new QuoteProduct())->setProduct($product))
             ->setProductUnit((new ProductUnit())->setCode('unit1'))
         ;
 
-        $item3 = (new QuoteProductOffer())
+        $item3 = (new QuoteProductItem())
             ->setQuoteProduct((new QuoteProduct())->setProduct($product))
             ->setProductUnit((new ProductUnit())->setCode('unit5'))
         ;

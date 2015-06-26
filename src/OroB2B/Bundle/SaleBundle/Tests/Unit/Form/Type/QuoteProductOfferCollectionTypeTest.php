@@ -5,15 +5,17 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
+
+class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var QuoteProductOfferCollectionType
+     * @var QuoteProductItemCollectionType
      */
-    protected $type;
+    protected $formType;
 
     /**
      * {@inheritdoc}
@@ -22,7 +24,7 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteProductOfferCollectionType();
+        $this->formType = new QuoteProductItemCollectionType();
     }
 
     public function testSetDefaultOptions()
@@ -32,22 +34,23 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type'  => QuoteProductOfferType::NAME,
-                'show_form_when_empty' => false,
-                'prototype_name'       => '__namequoteproductitem__',
+                'type'  => QuoteProductItemType::NAME,
+                'show_form_when_empty'  => false,
+                'error_bubbling'        => false,
+                'prototype_name'        => '__namequoteproductitem__',
             ])
         ;
 
-        $this->type->setDefaultOptions($resolver);
+        $this->formType->setDefaultOptions($resolver);
     }
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->type->getParent());
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
     }
 
     public function testGetName()
     {
-        $this->assertEquals(QuoteProductOfferCollectionType::NAME, $this->type->getName());
+        $this->assertEquals(QuoteProductItemCollectionType::NAME, $this->formType->getName());
     }
 }

@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\RFPAdminBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 class RequestProductItemCollectionType extends AbstractType
 {
     const NAME = 'orob2b_rfp_admin_request_product_item_collection';
@@ -14,18 +16,18 @@ class RequestProductItemCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_collection';
+        return CollectionType::NAME;
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
             'type' => RequestProductItemType::NAME,
-            'show_form_when_empty' => false,
-            'prototype_name'       => '__namerequestproductitem__'
+            'show_form_when_empty'  => false,
+            'prototype_name'        => '__namerequestproductitem__',
         ]);
     }
 

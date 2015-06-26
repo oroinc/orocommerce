@@ -14,7 +14,7 @@ class QuoteProductOfferCollectionType extends AbstractType
      */
     public function getParent()
     {
-        return 'oro_collection';
+        return CollectionType::NAME;
     }
 
     /**

@@ -6,26 +6,27 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
-class QuoteProductOfferTest extends AbstractTest
+class QuoteProductItemTest extends AbstractTest
 {
     public function testProperties()
     {
         $properties = [
             ['id', 123],
             ['quoteProduct', new QuoteProduct()],
-            ['productUnit', new ProductUnit()],
             ['quantity', 11],
+            ['productUnit', new ProductUnit()],
+            ['productUnitCode', 'unit-code'],
             ['price', new Price()],
         ];
 
-        $this->assertPropertyAccessors(new QuoteProductOffer(), $properties);
+        static::assertPropertyAccessors(new QuoteProductItem(), $properties);
     }
 
     public function testPostLoad()
     {
-        $item = new QuoteProductOffer();
+        $item = new QuoteProductItem();
 
         $this->assertNull($item->getPrice());
 
@@ -36,12 +37,12 @@ class QuoteProductOfferTest extends AbstractTest
         $this->assertEquals(Price::create(10, 'USD'), $item->getPrice());
     }
 
-    public function testUpdatePrice()
+    public function testPreSave()
     {
-        $item = new QuoteProductOffer();
+        $item = new QuoteProductItem();
         $item->setPrice(Price::create(11, 'EUR'));
 
-        $item->updatePrice();
+        $item->preSave();
 
         $this->assertEquals(11, $this->getProperty($item, 'value'));
         $this->assertEquals('EUR', $this->getProperty($item, 'currency'));
@@ -51,7 +52,7 @@ class QuoteProductOfferTest extends AbstractTest
     {
         $price = Price::create(22, 'EUR');
 
-        $item = new QuoteProductOffer();
+        $item = new QuoteProductItem();
         $item->setPrice($price);
 
         $this->assertEquals($price, $item->getPrice());
@@ -62,7 +63,7 @@ class QuoteProductOfferTest extends AbstractTest
 
     public function testSetProductUnit()
     {
-        $item = new QuoteProductOffer();
+        $item = new QuoteProductItem();
 
         $this->assertNull($item->getProductUnitCode());
 

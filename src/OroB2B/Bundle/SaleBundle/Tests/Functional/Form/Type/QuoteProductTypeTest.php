@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -10,7 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
@@ -19,7 +18,7 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 class QuoteProductTypeTest extends WebTestCase
 {
     /**
-     * @var QuoteProductOfferType
+     * @var QuoteProductType
      */
     protected $formType;
 
@@ -35,7 +34,7 @@ class QuoteProductTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductType($this->getContainer()->get('translator'));
+        $this->formType = new QuoteProductType(static::getContainer()->get('translator'));
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
@@ -53,7 +52,7 @@ class QuoteProductTypeTest extends WebTestCase
         $inputData      = $inputDataCallback();
         $expectedData   = $expectedDataCallback();
 
-        $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
+        $form = static::getContainer()->get('form.factory')->create($this->formType, null, []);
 
         $this->formType->preSetData(new FormEvent($form, $inputData));
 
@@ -78,7 +77,7 @@ class QuoteProductTypeTest extends WebTestCase
                     ];
                 },
             ],
-            'existsing item empty product' => [
+            'existing item empty product' => [
                 'inputData'     => function () {
                     $quoteProduct = $this->getQuoteProduct(LoadQuoteData::QUOTE1);
 
@@ -124,8 +123,8 @@ class QuoteProductTypeTest extends WebTestCase
      * @param array $parameters
      * @return string
      */
-    protected function trans($id, array $parameters = array())
+    protected function trans($id, array $parameters = [])
     {
-        return $this->getContainer()->get('translator')->trans($id, $parameters);
+        return static::getContainer()->get('translator')->trans($id, $parameters);
     }
 }

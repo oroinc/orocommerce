@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 
@@ -13,7 +15,7 @@ class QuoteProductCollectionTypeTest extends FormIntegrationTestCase
     /**
      * @var QuoteProductCollectionType
      */
-    protected $type;
+    protected $formType;
 
     /**
      * {@inheritdoc}
@@ -22,7 +24,7 @@ class QuoteProductCollectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteProductCollectionType();
+        $this->formType = new QuoteProductCollectionType();
     }
 
     public function testSetDefaultOptions()
@@ -32,22 +34,23 @@ class QuoteProductCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type'  => QuoteProductType::NAME,
-                'show_form_when_empty' => false,
-                'prototype_name'       => '__namequoteproduct__',
+                    'type'  => QuoteProductType::NAME,
+                    'show_form_when_empty'  => false,
+                    'error_bubbling'        => false,
+                    'prototype_name'        => '__namequoteproduct__',
             ])
         ;
 
-        $this->type->setDefaultOptions($resolver);
+        $this->formType->setDefaultOptions($resolver);
     }
 
     public function testGetParent()
     {
-        $this->assertEquals('oro_collection', $this->type->getParent());
+        $this->assertEquals(CollectionType::NAME, $this->formType->getParent());
     }
 
     public function testGetName()
     {
-        $this->assertEquals(QuoteProductCollectionType::NAME, $this->type->getName());
+        $this->assertEquals(QuoteProductCollectionType::NAME, $this->formType->getName());
     }
 }

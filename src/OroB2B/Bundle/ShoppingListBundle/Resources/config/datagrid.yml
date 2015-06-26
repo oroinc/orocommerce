@@ -1,0 +1,82 @@
+datagrid:
+    shopping-list-grid:
+        extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
+        options:
+            entityHint:        shopping_list
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_shopping_list_view
+            type:         orm
+            query:
+                select:
+                    - shopping_list.id
+                    - shopping_list.label
+                    - shopping_list.notes
+                    - shopping_list.createdAt
+                    - shopping_list.updatedAt
+                    - CONCAT(shopping_list_owner.firstName, ' ', shopping_list_owner.lastName) as owner
+                from:
+                    - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
+                join:
+                    left:
+                        - { join: shopping_list.owner, alias: shopping_list_owner }
+        columns:
+            id:
+                label:         orob2b.shoppinglist.id.label
+            label:
+                label:         orob2b.shoppinglist.label.label
+            notes:
+                label:         orob2b.shoppinglist.notes.label
+            owner:
+                label:         orob2b.shoppinglist.owner.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_shopping_list_view
+                params: [ id ]
+        sorters:
+            columns:
+                id:
+                    data_name: shopping_list.id
+                label:
+                    data_name: shopping_list.label
+                owner:
+                    data_name: owner
+                createdAt:
+                    data_name: shopping_list.createdAt
+                updatedAt:
+                    data_name: shopping_list.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                id:
+                    type:      string
+                    data_name: shopping_list.id
+                label:
+                    type:      string
+                    data_name: shopping_list.label
+                owner:
+                    type:      string
+                    data_name: owner
+                createdAt:
+                    type:      datetime
+                    data_name: shopping_list.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: shopping_list.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_shopping_list_view
+                rowAction:     true

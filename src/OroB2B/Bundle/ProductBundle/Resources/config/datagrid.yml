@@ -13,17 +13,33 @@ datagrid:
                     - product.createdAt
                     - product.updatedAt
                     - categoryTitle.string as category
+                    - productInventoryStatus.id as inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
+                    - productVisibility.id as visibilityId
+                    - productVisibility.name as visibilityName
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.category, alias: productCategory }
                         - { join: productCategory.titles, alias: categoryTitle, conditionType: WITH, condition: 'categoryTitle.locale IS NULL' }
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: product.visibility, alias: productVisibility}
         columns:
             sku:
                 label:         orob2b.product.sku.label
             category:
                 label:         orob2b.product.category.label
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+            visibility:
+                label:         orob2b.product.visibility.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/visibility.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -38,6 +54,10 @@ datagrid:
                     data_name: product.sku
                 category:
                     data_name: categoryTitle.string
+                inventoryStatus:
+                    data_name: inventoryStatusName
+                visibility:
+                    data_name: visibilityName
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -52,6 +72,14 @@ datagrid:
                 category:
                     type:      string
                     data_name: categoryTitle.string
+                inventoryStatus:
+                    type:      enum
+                    data_name: inventoryStatusId
+                    enum_code: prod_inventory_status
+                visibility:
+                    type:      enum
+                    data_name: visibilityId
+                    enum_code: prod_visibility
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt

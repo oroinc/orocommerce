@@ -5,7 +5,10 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Twig;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -23,14 +26,14 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitValueFormatter
      */
-    protected $twigEnvironment;
+    protected $productUnitValueFormatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject[]|\Twig_SimpleFilter[]
+     * @var \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
      */
-    protected $twigFilters;
+    protected $numberFormatter;
 
     /**
      * {@inheritdoc}
@@ -43,6 +46,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->translator
+            ->expects($this->any())
             ->method('trans')
             ->will($this->returnCallback(function ($id, $params) {
                 $ids = [
@@ -55,41 +59,36 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             }))
         ;
 
-        $this->twigEnvironment = $this->getMockBuilder('\Twig_Environment')
+        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->twigFilters['orob2b_format_product_unit_value'] = $this->getMockBuilder('\Twig_SimpleFilter')
+        $this->numberFormatter
+            ->expects($this->any())
+            ->method('formatCurrency')
+            ->will($this->returnCallback(function ($value, $currency) {
+                return sprintf('%01.2f %s', $value, $currency);
+            }));
+
+        $this->productUnitValueFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
+        )
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $this->twigFilters['orob2b_format_product_unit_value']
-            ->method('getCallable')
-            ->will($this->returnValue(function ($value, ProductUnit $unit) {
-                $code = $this->translator->trans('orob2b.product_unit.' . $unit->getCode() . '.label.full');
-                return sprintf('%d %s', $value, $code);
-            }))
-        ;
+            ->getMock();
 
-        $this->twigFilters['oro_format_price'] = $this->getMockBuilder('\Twig_SimpleFilter')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-        $this->twigFilters['oro_format_price']
-            ->method('getCallable')
-            ->will($this->returnValue(function (Price $price, array $options = []) {
-                return sprintf('%01.2f %s', $price->getValue(), $price->getCurrency());
-            }))
-        ;
+        $this->productUnitValueFormatter
+            ->expects($this->any())
+            ->method('format')
+            ->will($this->returnCallback(function ($quantity, ProductUnit $productUnit) {
+                $code = $this->translator->trans('orob2b.product_unit.' . $productUnit->getCode() . '.label.full');
+                return sprintf('%d %s', $quantity, $code);
+            }));
 
-        $this->twigEnvironment
-            ->method('getFilter')
-            ->will($this->returnCallback(function ($name) {
-                return $this->twigFilters[$name];
-            }))
-        ;
-
-        $this->extension = new QuoteExtension($this->translator, $this->twigEnvironment);
+        $this->extension = new QuoteExtension(
+            $this->translator,
+            $this->numberFormatter,
+            $this->productUnitValueFormatter
+        );
     }
 
     public function testGetFilters()

@@ -13,51 +13,62 @@ use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
-    const FIRST_NAME = 'Grzegorz';
-    const LAST_NAME = 'Brzeczyszczykiewicz';
-    const EMAIL = 'test_request@example.com';
+    const FIRST_NAME    = 'Grzegorz';
+    const LAST_NAME     = 'Brzeczyszczykiewicz';
+    const EMAIL         = 'test_request@example.com';
+
+    const REQUEST1    = 'rfpadmin.request.1';
+
+    const PRODUCT1  = 'product.1';
+    const PRODUCT2  = 'product.2';
+
+    const UNIT1     = 'product_unit.liter';
+    const UNIT2     = 'product_unit.bottle';
+    const UNIT3     = 'product_unit.box';
+
+    const CURRENCY1 = 'sale.currency.USD';
+    const CURRENCY2 = 'sale.currency.EUR';
+
 
     /**
      * @var array
      */
     protected $requests = [
-        [
-            'first_name' => self::FIRST_NAME,
-            'last_name' => self::LAST_NAME,
-            'email' => self::EMAIL,
-            'phone' => '2-(999)507-4625',
-            'company' => 'Google',
-            'role' => 'CEO',
-            'body' => 'Hey, you!',
-            'products'  => [
-                LoadProductData::PRODUCT1 => [
+        self::REQUEST1 => [
+            'first_name'    => self::FIRST_NAME,
+            'last_name'     => self::LAST_NAME,
+            'email'         => self::EMAIL,
+            'phone'         => '2-(999)507-4625',
+            'company'       => 'Google',
+            'role'          => 'CEO',
+            'body'          => 'Hey, you!',
+            'products'      => [
+                self::PRODUCT1 => [
                     [
                         'quantity'  => 1,
-                        'unit'      => LoadProductData::UNIT1,
+                        'unit'      => self::UNIT1,
                         'price'     => 1,
-                        'currency'  => LoadProductData::CURRENCY1,
+                        'currency'  => self::CURRENCY1,
                     ],
                     [
                         'quantity'  => 2,
-                        'unit'      => LoadProductData::UNIT2,
+                        'unit'      => self::UNIT2,
                         'price'     => 2,
-                        'currency'  => LoadProductData::CURRENCY1,
+                        'currency'  => self::CURRENCY1,
                     ],
                 ],
-                LoadProductData::PRODUCT2 => [
+                self::PRODUCT2 => [
                     [
                         'quantity'  => 3,
-                        'unit'      => LoadProductData::UNIT3,
+                        'unit'      => self::UNIT3,
                         'price'     => 3,
-                        'currency'  => LoadProductData::CURRENCY1,
+                        'currency'  => self::CURRENCY1,
                     ]
                 ],
-                LoadProductData::PRODUCT3 => []
             ],
             'comments'  => [
-                LoadProductData::PRODUCT1 => 'Product1 Comment',
-                LoadProductData::PRODUCT2 => 'Product2 Comment',
-                LoadProductData::PRODUCT3 => 'Product3 Comment',
+                self::PRODUCT1  => 'Product1 Comment',
+                self::PRODUCT2  => 'Product2 Comment',
             ]
         ]
     ];
@@ -68,8 +79,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
-            'OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures\LoadProductData'
         ];
     }
 
@@ -84,7 +95,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             return;
         }
 
-        foreach ($this->requests as $rawRequest) {
+        foreach ($this->requests as $key => $rawRequest) {
             $request = new Request();
             $request
                 ->setFirstName($rawRequest['first_name'])
@@ -103,6 +114,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $request->addRequestProduct($product);
             }
             $manager->persist($request);
+
+            $this->setReference($key, $request);
         }
 
         $manager->flush();

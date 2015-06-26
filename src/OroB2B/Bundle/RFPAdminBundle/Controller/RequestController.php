@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -156,11 +157,11 @@ class RequestController extends Controller
      */
     protected function update(Request $request)
     {
-        $form = $this->createForm(new RequestType(), $request);
-
-        return  $this->get('oro_form.model.update_handler')->handleUpdate(
+        /* @var $handler UpdateHandler */
+        $handler = $this->get('oro_form.model.update_handler');
+        return $handler->handleUpdate(
             $request,
-            $form,
+            $this->createForm(RequestType::NAME, $request),
             function (Request $request) {
                 return [
                     'route' => 'orob2b_rfp_admin_request_update',

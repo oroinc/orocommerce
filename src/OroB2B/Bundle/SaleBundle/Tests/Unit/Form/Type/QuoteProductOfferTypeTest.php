@@ -2,34 +2,32 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Validation;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Validation;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 
-class QuoteProductOfferTypeTest extends FormIntegrationTestCase
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
+class QuoteProductItemTypeTest extends AbstractTest
 {
     /**
-     * @var QuoteProductOfferType
+     * @var QuoteProductItemType
      */
     protected $formType;
 
@@ -46,7 +44,7 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
             ->getMock()
         ;
 
-        $this->formType = new QuoteProductOfferType($translator);
+        $this->formType = new QuoteProductItemType($translator);
     }
 
     /**
@@ -54,62 +52,21 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /* @var $configManager \PHPUnit_Framework_MockObject_MockBuilder|ConfigManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_currency.allowed_currencies')
-            ->will($this->returnValue(['USD', 'EUR']));
-
-        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockBuilder|LocaleSettings */
-        $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $priceType                  = $this->preparePriceType();
+        $currencySelectionType      = new CurrencySelectionTypeStub();
+        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
-                    PriceType::NAME                 => new PriceType(),
-                    CurrencySelectionType::NAME     => new CurrencySelectionType($configManager, $localeSettings),
-                    ProductUnitSelectionType::NAME  => new ProductUnitSelectionType(),
-                    'entity'                        => new EntityType([]),
+                    $priceType->getName()                   => $priceType,
+                    $currencySelectionType->getName()       => $currencySelectionType,
+                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
                 []
             ),
             new ValidatorExtension(Validation::createValidator())
         ];
-    }
-
-    public function testBuildForm()
-    {
-        /* @var $builder \PHPUnit_Framework_MockObject_MockBuilder|FormBuilder */
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with('quantity', 'integer', [
-                'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
-            ])
-            ->will($this->returnSelf())
-        ;
-
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with('price', PriceType::NAME, [
-                'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.price.label',
-            ])
-            ->will($this->returnSelf())
-        ;
-
-        $this->formType->buildForm($builder, []);
     }
 
     public function testSetDefaultOptions()
@@ -119,8 +76,8 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
-                'intention'     => 'sale_quote_product_offer',
+                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
+                'intention'     => 'sale_quote_product_item',
                 'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ])
         ;
@@ -130,7 +87,7 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
+        $this->assertEquals('orob2b_sale_quote_product_item', $this->formType->getName());
     }
 
     /**
@@ -156,7 +113,6 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
         $options = $config->getOptions();
 
         $this->assertEquals($choices, $options['choices']);
-        $this->assertEquals(false, $options['compact']);
         $this->assertEquals(false, $options['disabled']);
         $this->assertEquals(true, $options['required']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
@@ -175,9 +131,37 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
         $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
         $options = $config->getOptions();
 
-        $this->assertEquals(false, $options['compact']);
         $this->assertEquals(false, $options['disabled']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
+    }
+
+    /**
+     * @return array
+     */
+    public function submitProvider()
+    {
+        return [
+            'empty price' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                ],
+                'expectedData'  => $this->getQuoteProductItem(10, 'kg'),
+            ],
+            'valid data' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                    'price'         => [
+                        'value'     => 20,
+                        'currency'  => 'USD',
+                    ],
+                ],
+                'expectedData'  => $this->getQuoteProductItem(10, 'kg', Price::create(20, 'USD')),
+            ],
+        ];
     }
 
     /**
@@ -196,8 +180,8 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
         }
 
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer */
-        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
+        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem');
         $item
             ->expects($this->any())
             ->method('getId')
@@ -213,7 +197,7 @@ class QuoteProductOfferTypeTest extends FormIntegrationTestCase
             'set data new item' => [
                 'inputData'     => null,
                 'expectedData'  => null,
-                'choices'       => null,
+                'choices'       => [],
             ],
             'set data existed item' => [
                 'inputData'     => $item,

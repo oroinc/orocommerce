@@ -19,9 +19,8 @@
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
     
     {% set units = [] %}
-    {% if form.vars.value %}
-        {% set product = form.vars.value.product %}
-
+    {% set product = form.vars.value.product|default(null) %}
+    {% if product %}
         {% for code in product.availableUnitCodes %}
             {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
         {% endfor %}
@@ -71,12 +70,7 @@
                 {{ form_errors(form.productUnit) }}
             </td>
             <td>
-                {{ form_widget(form.price.value) }}
-                {{ form_errors(form.price.value) }}
-            </td>
-            <td>
-                {{ form_widget(form.price.currency) }}
-                {{ form_errors(form.price.currency) }}
+                {{ form_widget(form.price) }}
             </td>
         </tr>
     </table>

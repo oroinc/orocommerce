@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
-{% oro_title_set({params : {"%entityName%" : 'orob2b.sale.quote.entity_label'|trans, "%id%": entity.qid} }) %}
+{% oro_title_set({params : {'%entityName%' : 'orob2b.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
 
 {% set formAction = entity.id ? path('orob2b_sale_quote_update', { 'id': entity.id }) : path('orob2b_sale_quote_create')  %}
 
@@ -43,17 +43,28 @@
 {% block content_data %}
     {% set id = 'quote-edit' %}
 
-    {% set dataBlocks = [{
+    {% set dataBlocks = [
+        {
             'title': 'orob2b.sale.quote.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
                 'data': [
+                    form_row(form.owner),
                     form_row(form.validUntil),
+                ]
+            }]
+        },
+        {
+            'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
                     form_row(form.quoteProducts)
                 ]
             }]
-        }]
+        }
+    ]
     %}
 
     {% set additionalData = [] %}

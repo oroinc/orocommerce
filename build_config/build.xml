@@ -210,8 +210,6 @@
                 <echo>Creating ${db.name} database in ${db.type}...</echo>
                 <path id="classpath.mysqldriver">
                     <fileset dir="/usr/share/java/">
-                        <include name="postgresql-9.3-1101.jdbc41.jar"/>
-                        <!-- RedHat/CentOS/Fedora -->
                         <include name="mysql-connector-java.jar"/>
                         <include name="mysql-connector-java-*.jar"/>
                     </fileset>
@@ -231,7 +229,7 @@
                 <equals arg1="${db.type}" arg2="pgsql"/>
                 <then>
                     <echo>Installing ${db.type}...</echo>
-                    <path id="classpath.mysqldriver">
+                    <path id="classpath.pgsqldriver">
                         <fileset dir="/usr/share/java/">
                             <include name="postgresql-9.3-1101.jdbc41.jar"/>
                             <!-- RedHat/CentOS/Fedora -->
@@ -251,8 +249,8 @@
                         userid="${db.user}"
                         password="${db.pass}"
                         autocommit="true">
-                        DROP DATABASE IF EXISTS ${db.name};
-                        CREATE DATABASE ${db.name} WITH lc_collate = 'C' template = template0;
+                        DROP DATABASE IF EXISTS "${db.name}";
+                        CREATE DATABASE "${db.name}" WITH lc_collate = 'C' template = template0;
                     </sql>
                 </then>
             </elseif>
@@ -553,7 +551,11 @@
 
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
-            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose --exclude=SaleBundle/Migrations/Schema ${srcdir}"/>
+            <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
+            <arg line="--exclude=SaleBundle/Migrations/Schema"/>
+            <arg line="--exclude=ProductBundle/Migrations/Schema"/>
+            <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
+            <arg line="${srcdir}"/>
         </exec>
     </target>
 

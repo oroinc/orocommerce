@@ -3,7 +3,7 @@
 define(function (require) {
     'use strict';
 
-    var RequestProductItemUnitSelectionLimitationsComponent,
+    var RequestProductItemsComponent,
         BaseComponent = require('oroui/js/app/components/base/component'),
         LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
         $ = require('jquery'),
@@ -12,15 +12,18 @@ define(function (require) {
         routing = require('routing'),
         messenger = require('oroui/js/messenger');
 
-    RequestProductItemUnitSelectionLimitationsComponent = BaseComponent.extend({
+    RequestProductItemsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            productSelect:  'select.rfpadmin-requestproduct-product-select',
-            unitsSelect:    'select.rfpadmin-requestproductitem-productunit-select',
+            productSelect:  '.rfpadmin-requestproduct-product-select input[type="hidden"]',
+            unitsSelect:    '.rfpadmin-requestproductitem-productunit-select',
             unitsRoute:     'orob2b_product_unit_product_units',
-            errorMessage:   'Sorry, unexpected error was occurred'
+            addItemButton:  '.add-list-item',
+            itemsContainer: '.rfpadmin-requestproductitem-collection .oro-item-collection',
+            errorMessage:   'Sorry, unexpected error was occurred',
+            units: {}
         },
         
         /**
@@ -37,7 +40,17 @@ define(function (require) {
          * @property {Object}
          */
         $productSelect : null,
-
+        
+        /**
+         * @property {Object}
+         */
+        $addItemButton : null,
+        
+        /**
+         * @property {Object}
+         */
+        $itemsContainer : null,
+        
         /** 
          * @property {LoadingMaskView|null}
          */
@@ -47,26 +60,49 @@ define(function (require) {
          * @inheritDoc
          */
         initialize: function (options) {
-            this.options = _.defaults(options || {}, this.options);
-
+            this.options    = _.defaults(options || {}, this.options);
+            this.units      = _.defaults(this.units, options.units);
+            
             this.$container = options._sourceElement;
             
             this.loadingMask = new LoadingMaskView({container: this.$container});
             
-            this.$productSelect = this.$container.find(this.options.productSelect);
-
+            this.$productSelect     = this.$container.find(this.options.productSelect);
+            this.$addItemButton     = this.$container.find(this.options.addItemButton);
+            this.$itemsContainer    = this.$container.find(this.options.itemsContainer);
+            
             this.$container
-                .on('change', this.options.productSelect, _.bind(this.onChanged, this))
-                .on('content:changed', _.bind(this.onChanged, this))
+                .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
+                .on('content:changed', _.bind(this.onContentChanged, this))
             ;
+            
+            this.checkAddButton();
         },
+        
+        checkAddButton: function() {
+            this.$productSelect.val() ? this.$addItemButton.show() : this.$addItemButton.hide();
+        },
+        
+        /**
+         * Handle change
+         *
+         * @param {jQuery.Event} e
+         */
+        onProductChanged: function (e) {
+            this.checkAddButton();
+            
+            if (this.$itemsContainer.children().length) {
+                this.onContentChanged(e);
+            }
+        },        
 
         /**
          * Handle change
          *
          * @param {jQuery.Event} e
          */
-        onChanged: function (e) {
+        onContentChanged: function (e) {
+            this.$container.find('select').uniform();
             var productId = this.$productSelect.val();
             var productUnits = this.units[productId];
             
@@ -111,10 +147,12 @@ define(function (require) {
                 $(select).empty();
                 $.each(units, function(key, value) {
                     $(select)
-                        .append($('<option></option>')
-                        .attr('value', key).text(value))
+                        .append($('<option/>').val(key).text(value))
                     ;
                 });
+                if (!currentValue && $(select).has('option:first-child')) {
+                    currentValue = $(select).find('option:first-child').val();
+                }
                 $(select).val(currentValue);
                 $(select).uniform('update');
             });
@@ -127,9 +165,9 @@ define(function (require) {
 
             this.$container.off();
 
-            RequestProductItemUnitSelectionLimitationsComponent.__super__.dispose.call(this);
+            RequestProductItemsComponent.__super__.dispose.call(this);
         }
     });
 
-    return RequestProductItemUnitSelectionLimitationsComponent;
+    return RequestProductItemsComponent;
 });

@@ -12,9 +12,11 @@ use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem as RequestProductItem
 class RequestProductItemValidator extends ConstraintValidator
 {
     /**
+     * {@inheritdoc}
+     *
      * @param RequestProductItemEntity $requestProductItem
      * @param RequestProductItem $constraint
-     * {@inheritdoc}
+     * @throws UnexpectedTypeException
      */
     public function validate($requestProductItem, Constraint $constraint)
     {
@@ -27,7 +29,7 @@ class RequestProductItemValidator extends ConstraintValidator
         /** @var $product Product */
         $product = $requestProductItem->getRequestProduct()->getProduct();
         $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
-        if (!in_array($requestProductItem->getProductUnit()->getCode(), $allowedUnits)) {
+        if (!in_array($requestProductItem->getProductUnit()->getCode(), $allowedUnits, true)) {
             $this->context->addViolationAt('productUnit', $constraint->message);
         }
     }

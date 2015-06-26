@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\Collection;
@@ -19,7 +20,10 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
-class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadQuoteDemoData extends AbstractFixture implements
+    FixtureInterface,
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
     /**
      * @var ContainerInterface
@@ -41,7 +45,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData'
         ];
     }
 
@@ -50,7 +54,6 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     public function load(ObjectManager $manager)
     {
-        /** @var ObjectManager $manager */
         $user = $this->getUser($manager);
         $organization = $user->getOrganization();
         for ($i=0; $i < 100; $i++) {
@@ -99,7 +102,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
     {
         $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
 
-        if (empty($products)) {
+        if (!count($products)) {
             throw new \LogicException('There are no products in system');
         }
 
@@ -131,10 +134,10 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
     {
-        $products = $this->getProducts($manager);
+        $products   = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
         for ($i = 0; $i < rand(1, 3); $i++) {
-            $product = $products[rand(0, count($products) - 1)];
+            $product = $products[rand(1, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
             $quoteProduct = new QuoteProduct();
             $quoteProduct

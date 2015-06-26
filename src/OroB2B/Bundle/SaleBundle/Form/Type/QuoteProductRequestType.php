@@ -6,18 +6,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
 
-class QuoteProductRequestType extends AbstractType
+class QuoteProductItemType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_request';
+    const NAME = 'orob2b_sale_quote_product_item';
 
     /**
      * @var TranslatorInterface
@@ -40,11 +39,11 @@ class QuoteProductRequestType extends AbstractType
         $builder
             ->add('quantity', 'integer', [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductrequest.quantity.label'
+                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductrequest.price.label'
+                'label'     => 'orob2b.sale.quoteproductitem.price.label',
             ])
         ;
 
@@ -58,9 +57,9 @@ class QuoteProductRequestType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest',
-            'intention'     => 'sale_quote_product_request',
-            'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
+            'intention'     => 'sale_quote_product_item',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 
@@ -77,22 +76,42 @@ class QuoteProductRequestType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
-        /* @var $quoteProductRequest QuoteProductRequest */
-        $quoteProductRequest = $event->getData();
+        /* @var $quoteProductItem QuoteProductItem */
+        $quoteProductItem = $event->getData();
         $form = $event->getForm();
-        $choices = null;
+        $choices = [];
 
-        if ($quoteProductRequest && null !== $quoteProductRequest->getId()) {
-            $product = $quoteProductRequest->getQuoteProduct()->getProduct();
+        $productUnitOptions = [
+            'required'  => true,
+            'label'     => 'orob2b.product.productunit.entity_label',
+        ];
+
+        if ($quoteProductItem && null !== $quoteProductItem->getId()) {
+            $product = $quoteProductItem->getQuoteProduct()->getProduct();
             if ($product) {
-                $choices = [];
                 foreach ($product->getUnitPrecisions() as $unitPrecision) {
                     $choices[] = $unitPrecision->getUnit();
                 }
             }
+            $productUnit = $quoteProductItem->getProductUnit();
+            if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
+                // ProductUnit was removed
+                $productUnitOptions['empty_value']  = $this->translator->trans(
+                    'orob2b.sale.quoteproduct.product.removed',
+                    [
+                        '{title}' => $quoteProductItem->getProductUnitCode(),
+                    ]
+                );
+            }
         }
 
-        $this->processProductUnitField($form, $quoteProductRequest, $choices);
+        $productUnitOptions['choices'] = $choices;
+
+        $form->add(
+            'productUnit',
+            ProductUnitSelectionType::NAME,
+            $productUnitOptions
+        );
     }
 
     /**
@@ -104,51 +123,8 @@ class QuoteProductRequestType extends AbstractType
             'productUnit',
             ProductUnitSelectionType::NAME,
             [
-                'compact'   => false,
-                'label'     => 'orob2b.product.productunit.entity_label',
+                'label' => 'orob2b.product.productunit.entity_label',
             ]
-        );
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param QuoteProductRequest|null $quoteProductRequest
-     * @param array|null $choices
-     */
-    protected function processProductUnitField(FormInterface $form, $quoteProductRequest, $choices)
-    {
-        $productUnitOptions = [
-            'compact'   => false,
-            'required'  => true,
-            'label'     => 'orob2b.product.productunit.entity_label',
-            'choices'  => $choices,
-        ];
-        if ($quoteProductRequest && null !== $quoteProductRequest->getId()) {
-            $product = $quoteProductRequest->getQuoteProduct()->getProduct();
-
-            $productUnit = $quoteProductRequest->getProductUnit();
-            if ($quoteProductRequest->getProductUnitCode()
-                && ($product && !in_array($productUnit->getCode(), $choices, true))
-            ) {
-                // productUnit was removed
-                $productUnitOptions['empty_value']  = $this->translator->trans(
-                    'orob2b.sale.quoteproduct.product.removed',
-                    [
-                        '{title}' => $quoteProductRequest->getProductUnitCode(),
-                    ]
-                );
-            } else {
-                // empty productUnit
-                $productUnitOptions['empty_value']  = $this->translator->trans(
-                    'orob2b.sale.quoteproductrequest.product_unit.empty'
-                );
-            }
-        }
-
-        $form->add(
-            'productUnit',
-            ProductUnitSelectionType::NAME,
-            $productUnitOptions
         );
     }
 }

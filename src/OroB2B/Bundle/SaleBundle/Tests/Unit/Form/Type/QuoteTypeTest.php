@@ -2,21 +2,36 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Form\FormBuilder;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Validation;
 
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
 
-class QuoteTypeTest extends FormIntegrationTestCase
+class QuoteTypeTest extends AbstractTest
 {
     /**
      * @var QuoteType
      */
-    protected $type;
+    protected $formType;
 
     /**
      * {@inheritdoc}
@@ -25,50 +40,54 @@ class QuoteTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteType();
+        $this->formType = new QuoteType();
     }
 
-    public function testBuildForm()
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
     {
-        /* @var $builder \PHPUnit_Framework_MockObject_MockBuilder|FormBuilder */
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
+        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
+        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with('qid', 'hidden')
-            ->will($this->returnSelf())
-        ;
+        $userSelectType = new EntityType(
+            [
+                1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
+                2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
+            ],
+            'oro_user_select'
+        );
 
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with('owner', 'oro_user_select', [
-                'required'  => true,
-                'label'     => 'orob2b.sale.quote.owner.label',
-            ])
-            ->will($this->returnSelf())
-        ;
+        $priceType                  = $this->preparePriceType();
+        $entityType                 = $this->prepareProductEntityType();
+        $productSelectType          = new ProductSelectTypeStub();
+        $currencySelectionType      = new CurrencySelectionTypeStub();
+        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
-        $builder->expects($this->at(2))
-            ->method('add')
-            ->with('validUntil', OroDateTimeType::NAME, [
-                'required'  => false,
-                'label'     => 'orob2b.sale.quote.valid_until.label',
-            ])
-            ->will($this->returnSelf())
-        ;
-
-        $builder->expects($this->at(3))
-            ->method('add')
-            ->with('quoteProducts', QuoteProductCollectionType::NAME, [
-                'add_label' => 'orob2b.sale.quoteproduct.add_label',
-            ])
-            ->will($this->returnSelf())
-        ;
-
-        $this->type->buildForm($builder, []);
+        return [
+            new PreloadedExtension(
+                [
+                    OroDateTimeType::NAME                   => new OroDateTimeType(),
+                    QuoteProductType::NAME                  => new QuoteProductType($translator),
+                    CollectionType::NAME                    => new CollectionType(),
+                    QuoteProductItemType::NAME              => new QuoteProductItemType($translator),
+                    QuoteProductCollectionType::NAME        => new QuoteProductCollectionType(),
+                    QuoteProductItemCollectionType::NAME    => new QuoteProductItemCollectionType(),
+                    $priceType->getName()                   => $priceType,
+                    $entityType->getName()                  => $entityType,
+                    $userSelectType->getName()              => $userSelectType,
+                    $productSelectType->getName()           => $productSelectType,
+                    $currencySelectionType->getName()       => $currencySelectionType,
+                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                ],
+                []
+            ),
+            new ValidatorExtension(Validation::createValidator())
+        ];
     }
 
     public function testSetDefaultOptions()
@@ -85,11 +104,63 @@ class QuoteTypeTest extends FormIntegrationTestCase
                 ]
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->formType->setDefaultOptions($resolver);
     }
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_sale_quote', $this->type->getName());
+        $this->assertEquals(QuoteType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @param int $ownerId
+     * @param QuoteProduct[] $items
+     * @return Quote
+     */
+    protected function getQuote($ownerId, array $items = [])
+    {
+        $quote = new Quote();
+        $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
+
+        foreach ($items as $item) {
+            $quote->addQuoteProduct($item);
+        }
+
+        return $quote;
+    }
+
+    /**
+     * @return array
+     */
+    public function submitProvider()
+    {
+        $quoteProductItem   = $this->getQuoteProductItem(10, 'kg', Price::create(20, 'USD'));
+        $quoteProduct       = $this->getQuoteProduct(2, [$quoteProductItem]);
+        $quote              = $this->getQuote(1, [$quoteProduct]);
+
+        return [
+            'valid data' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'owner' => 1,
+                    'quoteProducts' => [
+                        [
+                            'product' => 2,
+                            'quoteProductItems' => [
+                                [
+                                    'quantity'      => 10,
+                                    'productUnit'   => 'kg',
+                                    'price'         => [
+                                        'value'     => 20,
+                                        'currency'  => 'USD',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedData'  => $quote,
+            ],
+        ];
     }
 }

@@ -6,7 +6,14 @@ use Symfony\Component\Validator\Constraint;
 
 class RequestProductItem extends Constraint
 {
+    /**
+     * @var string
+     */
     public $message = 'orob2b.rfpadmin.requestproductitem.unit.blank';
+
+    /**
+     * @var string
+     */
     public $service = 'orob2b_rfp_admin.validator.request_product_item';
 
     /**
@@ -17,6 +24,9 @@ class RequestProductItem extends Constraint
         return $this->service;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getTargets()
     {
         return [self::CLASS_CONSTRAINT];

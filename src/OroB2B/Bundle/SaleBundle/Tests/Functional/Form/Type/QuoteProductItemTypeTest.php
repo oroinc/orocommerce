@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functionsl\Form\Type;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
 
@@ -11,17 +11,17 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
  */
-class QuoteProductOfferTypeTest extends WebTestCase
+class QuoteProductItemTypeTest extends WebTestCase
 {
     /**
-     * @var QuoteProductOfferType
+     * @var QuoteProductItemType
      */
     protected $formType;
 
@@ -32,10 +32,10 @@ class QuoteProductOfferTypeTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->formType = new QuoteProductOfferType($this->getContainer()->get('translator'));
+        $this->formType = new QuoteProductItemType(static::getContainer()->get('translator'));
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ]);
     }
 
@@ -50,7 +50,7 @@ class QuoteProductOfferTypeTest extends WebTestCase
         $inputData      = $inputDataCallback();
         $expectedData   = $expectedDataCallback();
 
-        $form = $this->getContainer()->get('form.factory')->create($this->formType, null, []);
+        $form = static::getContainer()->get('form.factory')->create($this->formType, null, []);
 
         $this->formType->preSetData(new FormEvent($form, $inputData));
 
@@ -69,46 +69,46 @@ class QuoteProductOfferTypeTest extends WebTestCase
     public function preSetDataProvider()
     {
         return [
-            'choices is null' => [
+            'choices is []' => [
                 'inputData'     => function () {
                     return null;
                 },
                 'expectedData'  => function () {
                     return [
-                        'choices'       => null,
+                        'choices'       => [],
                         'empty_value'   => null,
                     ];
                 },
             ],
             'choices is ProductUnit[]' => [
                 'inputData'     => function () {
-                    return $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
+                    return $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
                 },
                 'expectedData'  => function () {
-                    $quoteProductOffer = $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
                     return [
-                        'choices'       => $this->getUnits($quoteProductOffer->getQuoteProduct()->getProduct()),
+                        'choices'       => $this->getUnits($quoteProductItem->getQuoteProduct()->getProduct()),
                         'empty_value'   => null,
                     ];
                 },
             ],
             'choices is [] and unit is deleted' => [
                 'inputData'     => function () {
-                    /* @var $quoteProductOffer QuoteProductOffer */
-                    $quoteProductOffer = $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
+                    /* @var $quoteProductItem QuoteProductItem */
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
 
-                    $quoteProductOffer->getQuoteProduct()->getProduct()->getUnitPrecisions()->clear();
+                    $quoteProductItem->getQuoteProduct()->getProduct()->getUnitPrecisions()->clear();
 
-                    return $quoteProductOffer;
+                    return $quoteProductItem;
                 },
                 'expectedData'  => function () {
-                    $quoteProductOffer = $this->getQuoteProductOffer(LoadQuoteData::QUOTE1);
+                    $quoteProductItem = $this->getQuoteProductItem(LoadQuoteData::QUOTE1);
                     return [
                         'choices'       => [],
                         'empty_value'   => $this->trans(
                             'orob2b.sale.quoteproduct.product.removed',
                             [
-                                '{title}' => $quoteProductOffer->getProductUnitCode(),
+                                '{title}' => $quoteProductItem->getProductUnitCode(),
                             ]
                         ),
                     ];
@@ -119,9 +119,9 @@ class QuoteProductOfferTypeTest extends WebTestCase
 
     /**
      * @param string $qid
-     * @return QuoteProductOffer
+     * @return QuoteProductItem
      */
-    protected function getQuoteProductOffer($qid)
+    protected function getQuoteProductItem($qid)
     {
         /* @var $quote Quote */
         $quote = $this->getReference($qid);
@@ -131,10 +131,10 @@ class QuoteProductOfferTypeTest extends WebTestCase
 
         $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct', $quoteProduct);
 
-        /* @var $item0 QuoteProductOffer */
-        $item0 = $quoteProduct->getQuoteProductOffers()->first();
+        /* @var $item0 QuoteProductItem */
+        $item0 = $quoteProduct->getQuoteProductItems()->first();
 
-        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer', $item0);
+        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem', $item0);
 
         return $item0;
     }
@@ -159,8 +159,8 @@ class QuoteProductOfferTypeTest extends WebTestCase
      * @param array $parameters
      * @return string
      */
-    protected function trans($id, array $parameters = array())
+    protected function trans($id, array $parameters = [])
     {
-        return $this->getContainer()->get('translator')->trans($id, $parameters);
+        return static::getContainer()->get('translator')->trans($id, $parameters);
     }
 }
