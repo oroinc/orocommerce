@@ -65,7 +65,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function getGlobalLevelClass()
     {
-        throw new \BadMethodCallException('Method getGlobalLevelClass() unsupported.');
+        return false;
     }
 
     /**

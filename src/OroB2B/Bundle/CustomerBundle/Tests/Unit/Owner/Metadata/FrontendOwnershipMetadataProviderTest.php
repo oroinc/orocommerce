@@ -215,10 +215,6 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->provider->getSystemLevelClass());
     }
 
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Method getGlobalLevelClass() unsupported.
-     */
     public function testGetGlobalLevelClass()
     {
         $this->assertFalse($this->provider->getGlobalLevelClass());
