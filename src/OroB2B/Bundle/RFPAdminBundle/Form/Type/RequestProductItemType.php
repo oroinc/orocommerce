@@ -94,7 +94,7 @@ class RequestProductItemType extends AbstractType
                 }
             }
             $productUnit = $requestProductItem->getProductUnit();
-            if (!$productUnit || ($product && !in_array($productUnit->getCode(), $choices, true))) {
+            if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
                 // ProductUnit was removed
                 $productUnitOptions['empty_value'] =  $this->translator->trans(
                     'orob2b.rfpadmin.message.requestproductitem.unit.removed',

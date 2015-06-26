@@ -21,13 +21,13 @@
     left: 460px;
 }
 
-.rfpadmin-requestproduct-widget.control-group  {
-    max-width: 1200px;
+.rfpadmin-requestproduct-widget.control-group {
+    max-width: none;
 }
 
-.rfpadmin-requestproduct-widget .controls.validation-error {
-    float: left; 
-    margin-left: 10px;    
+.rfpadmin-requestproduct-widget.control-group .controls {
+    float: left;
+    margin-left: 10px;
 }
 
 .rfpadmin-requestproduct-widget .btn.add-list-item {
@@ -60,20 +60,40 @@
 
 .rfpadmin-requestproductitem-widget td {
     vertical-align: top;
-    width: 140px;
+    width: 150px;
 }
 
 .rfpadmin-requestproductitem-widget td span.validation-failed {
     padding-top: 2px;
 }
 
-.rfpadmin-requestproductitem-widget input[type="text"],
-.rfpadmin-requestproductitem-widget input[type="number"] {
-    width: 120px !important;
+.rfpadmin-requestproductitem-widget input[type="number"],
+.rfpadmin-requestproductitem-widget input[type="text"] {
+    width: 130px !important;
 }
 
 .rfpadmin-requestproductitem-widget select {
-    width: 120px !important;
+    width: 130px !important;
+    height: 20px;
+    margin: 0;
+}
+
+.rfpadmin-requestproduct-product {
+    padding: 0;
+    vertical-align: top;
+}
+
+.rfpadmin-requestproduct-product-select button {
+    float: none;
+}
+
+.rfpadmin-requestproduct-info {
+    padding: 5px 0 0 10px; 
+    vertical-align: top;
+}
+
+.rfpadmin-requestproductitems-info {
+    padding: 5px 0 0 10px;
 }
 
 .rfpadmin-requestproduct-info {
