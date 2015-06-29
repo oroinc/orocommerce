@@ -14,9 +14,6 @@ orob2b.rfpadmin:
         body.label: 'Request body'
         request_products.label: 'Request Products'
 
-        sections:
-            general: 'General'
-
     requestproduct:
         entity_label: 'Request Product'
         entity_plural_label: 'Request Products'
@@ -60,6 +57,7 @@ orob2b.rfpadmin:
     sections:
         general:    'General'
         body:       'Request'
+        request_products: 'Line Items'
         label_translation: 'Labels'
 
     system_configuration:

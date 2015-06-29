@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -11,7 +12,7 @@ use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 
-class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
+class LoadRequestData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
     const FIRST_NAME    = 'Grzegorz';
     const LAST_NAME     = 'Brzeczyszczykiewicz';

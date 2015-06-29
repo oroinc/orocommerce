@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Migrations\Data\Demo\ORM;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -16,7 +17,10 @@ use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 
-class LoadRequestDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadRequestDemoData extends AbstractFixture implements
+    FixtureInterface,
+    ContainerAwareInterface,
+    DependentFixtureInterface
 {
     /**
      * @var ContainerInterface
@@ -77,6 +81,7 @@ class LoadRequestDemoData extends AbstractFixture implements ContainerAwareInter
 
             $status = $statuses[rand(0, count($statuses) - 1)];
             $request->setStatus($status);
+
             $this->processRequestProducts($request, $manager);
 
             $manager->persist($request);

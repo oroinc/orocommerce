@@ -48,6 +48,7 @@
 .rfpadmin-requestproductitem-collection {
     float: left;
     margin-left: 50px;
+    width: 630px;
 }
 
 .rfpadmin-requestproductitem-collection > div > div > div {
@@ -88,30 +89,32 @@
 }
 
 .rfpadmin-requestproduct-info {
-    padding: 5px 0 0 10px; 
+    padding: 5px 0 0 10px;
     vertical-align: top;
+}
+
+.rfpadmin-requestproduct-comment .control-group label.control-label {
+    width: auto;
+    float: right;
+    padding-top: 2px;
 }
 
 .rfpadmin-requestproductitems-info {
     padding: 5px 0 0 10px;
 }
 
-.rfpadmin-requestproduct-info {
-    float: left;
-}
-
-.rfpadmin-requestproductitems-info {
-    display: inline-block; 
-    margin-left: 5px;
-}
-
 .rfpadmin-requestproductitem-info {
     margin-bottom: 5px;
+}
+
+.rfpadmin-requestproduct-comment-control {
+    padding-right: 16px;
 }
 
 .rfpadmin-requestproduct-comment-control textarea {
     clear: both;
     display: block;
+    width: 100%;
 }
 
 .rfpadmin-requestproduct-comment-control label {
