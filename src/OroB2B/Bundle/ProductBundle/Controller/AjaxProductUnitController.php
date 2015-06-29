@@ -6,12 +6,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class AjaxProductUnitController extends Controller
 {
@@ -24,14 +24,14 @@ class AjaxProductUnitController extends Controller
      */
     public function getProductUnitsAction(Product $product)
     {
-        $units = $this->getRepository()->getProductUnits($product);
+        $units  = $this->getRepository()->getProductUnits($product);
         $result = [];
-        $translator = $this->getTranslator();
+
+        /* @var $formatter ProductUnitLabelFormatter */
+        $formatter = $this->container->get('orob2b_product.formatter.product_unit_label');
 
         foreach ($units as $unit) {
-            $result[$unit->getCode()] = $translator->trans(
-                sprintf('orob2b.product_unit.%s.label.full', $unit->getCode())
-            );
+            $result[$unit->getCode()] = $formatter->format($unit->getCode());
         }
 
         return new JsonResponse(['units' => $result]);
@@ -42,16 +42,9 @@ class AjaxProductUnitController extends Controller
      */
     protected function getRepository()
     {
-        return $this->get('doctrine')->getRepository(
-            $this->container->getParameter('orob2b_product.product_unit.class')
-        );
+        $class = $this->container->getParameter('orob2b_product.product_unit.class');
+
+        return $this->getDoctrine()->getManagerForClass($class)->getRepository($class);
     }
 
-    /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        return $this->get('translator');
-    }
 }
