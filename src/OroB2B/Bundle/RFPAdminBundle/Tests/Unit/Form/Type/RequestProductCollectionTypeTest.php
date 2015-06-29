@@ -36,6 +36,7 @@ class RequestProductCollectionTypeTest extends FormIntegrationTestCase
             ->with([
                 'type'  => RequestProductType::NAME,
                 'show_form_when_empty'  => false,
+                'error_bubbling'        => false,
                 'prototype_name'        => '__namerequestproduct__',
             ])
         ;
