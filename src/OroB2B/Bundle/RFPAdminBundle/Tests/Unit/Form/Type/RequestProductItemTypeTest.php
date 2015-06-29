@@ -100,6 +100,24 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
         $this->formType->setDefaultOptions($resolver);
     }
 
+    public function testPreSubmit()
+    {
+        $form = $this->factory->create($this->formType, null, []);
+
+        $this->formType->preSubmit(new FormEvent($form, null));
+
+        $this->assertTrue($form->has('productUnit'));
+
+        $config = $form->get('productUnit')->getConfig();
+
+        $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
+        $options = $config->getOptions();
+
+        $this->assertEquals(false, $options['compact']);
+        $this->assertEquals(false, $options['disabled']);
+        $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
+    }
+
     /**
      * @param mixed $inputData
      * @param mixed $expectedData
@@ -125,24 +143,6 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
         $this->assertEquals($choices, $options['choices']);
         $this->assertEquals(false, $options['disabled']);
         $this->assertEquals(true, $options['required']);
-        $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
-    }
-
-    public function testPreSubmit()
-    {
-        $form = $this->factory->create($this->formType, null, []);
-
-        $this->formType->preSubmit(new FormEvent($form, null));
-
-        $this->assertTrue($form->has('productUnit'));
-
-        $config = $form->get('productUnit')->getConfig();
-
-        $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
-        $options = $config->getOptions();
-
-        $this->assertEquals(false, $options['compact']);
-        $this->assertEquals(false, $options['disabled']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
     }
 
