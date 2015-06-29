@@ -18,16 +18,16 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 
 /**
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
-class QuoteProductItemTypeTest extends AbstractTest
+class QuoteProductOfferTypeTest extends AbstractTest
 {
     /**
-     * @var QuoteProductItemType
+     * @var QuoteProductOfferType
      */
     protected $formType;
 
@@ -44,7 +44,7 @@ class QuoteProductItemTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->formType = new QuoteProductItemType($translator);
+        $this->formType = new QuoteProductOfferType($translator);
     }
 
     /**
@@ -76,7 +76,7 @@ class QuoteProductItemTypeTest extends AbstractTest
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
+                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
                 'intention'     => 'sale_quote_product_item',
                 'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ])
@@ -147,7 +147,7 @@ class QuoteProductItemTypeTest extends AbstractTest
                     'quantity'      => 10,
                     'productUnit'   => 'kg',
                 ],
-                'expectedData'  => $this->getQuoteProductItem(10, 'kg'),
+                'expectedData'  => $this->getQuoteProductOffer(10, 'kg'),
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -159,7 +159,7 @@ class QuoteProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductItem(10, 'kg', Price::create(20, 'USD')),
+                'expectedData'  => $this->getQuoteProductOffer(10, 'kg', Price::create(20, 'USD')),
             ],
         ];
     }
@@ -180,8 +180,8 @@ class QuoteProductItemTypeTest extends AbstractTest
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
         }
 
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductItem */
-        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem');
+        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer */
+        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
         $item
             ->expects($this->any())
             ->method('getId')

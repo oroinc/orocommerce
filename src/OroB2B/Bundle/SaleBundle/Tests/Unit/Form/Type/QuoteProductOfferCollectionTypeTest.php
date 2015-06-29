@@ -7,13 +7,13 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 
-class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
+class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var QuoteProductItemCollectionType
+     * @var QuoteProductOfferCollectionType
      */
     protected $formType;
 
@@ -24,7 +24,7 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new QuoteProductItemCollectionType();
+        $this->formType = new QuoteProductOfferCollectionType();
     }
 
     public function testSetDefaultOptions()
@@ -34,7 +34,7 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type'  => QuoteProductItemType::NAME,
+                'type'  => QuoteProductOfferType::NAME,
                 'show_form_when_empty'  => false,
                 'error_bubbling'        => false,
                 'prototype_name'        => '__namequoteproductitem__',
@@ -51,6 +51,6 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(QuoteProductItemCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(QuoteProductOfferCollectionType::NAME, $this->formType->getName());
     }
 }

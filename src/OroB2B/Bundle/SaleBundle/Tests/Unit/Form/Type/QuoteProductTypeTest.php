@@ -15,8 +15,8 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 
 class QuoteProductTypeTest extends AbstractTest
 {
@@ -60,8 +60,8 @@ class QuoteProductTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     CollectionType::NAME                    => new CollectionType(),
-                    QuoteProductItemType::NAME              => new QuoteProductItemType($this->translator),
-                    QuoteProductItemCollectionType::NAME    => new QuoteProductItemCollectionType(),
+                    QuoteProductOfferType::NAME              => new QuoteProductOfferType($this->translator),
+                    QuoteProductOfferCollectionType::NAME    => new QuoteProductOfferCollectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $productSelectType->getName()           => $productSelectType,
@@ -95,15 +95,15 @@ class QuoteProductTypeTest extends AbstractTest
      */
     public function submitProvider()
     {
-        $quoteProductItem   = $this->getQuoteProductItem(10, 'kg', Price::create(20, 'USD'));
-        $quoteProduct       = $this->getQuoteProduct(2, [$quoteProductItem]);
+        $quoteProductOffer   = $this->getQuoteProductOffer(10, 'kg', Price::create(20, 'USD'));
+        $quoteProduct       = $this->getQuoteProduct(2, [$quoteProductOffer]);
 
         return [
             'valid data' => [
                 'isValid'       => true,
                 'submittedData' => [
                     'product' => 2,
-                    'quoteProductItems' => [
+                    'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
                             'productUnit'   => 'kg',

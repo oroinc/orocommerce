@@ -6,9 +6,9 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
-class QuoteProductItemTest extends AbstractTest
+class QuoteProductOfferTest extends AbstractTest
 {
     public function testProperties()
     {
@@ -21,12 +21,12 @@ class QuoteProductItemTest extends AbstractTest
             ['price', new Price()],
         ];
 
-        static::assertPropertyAccessors(new QuoteProductItem(), $properties);
+        static::assertPropertyAccessors(new QuoteProductOffer(), $properties);
     }
 
     public function testPostLoad()
     {
-        $item = new QuoteProductItem();
+        $item = new QuoteProductOffer();
 
         $this->assertNull($item->getPrice());
 
@@ -39,7 +39,7 @@ class QuoteProductItemTest extends AbstractTest
 
     public function testPreSave()
     {
-        $item = new QuoteProductItem();
+        $item = new QuoteProductOffer();
         $item->setPrice(Price::create(11, 'EUR'));
 
         $item->preSave();
@@ -52,7 +52,7 @@ class QuoteProductItemTest extends AbstractTest
     {
         $price = Price::create(22, 'EUR');
 
-        $item = new QuoteProductItem();
+        $item = new QuoteProductOffer();
         $item->setPrice($price);
 
         $this->assertEquals($price, $item->getPrice());
@@ -63,7 +63,7 @@ class QuoteProductItemTest extends AbstractTest
 
     public function testSetProductUnit()
     {
-        $item = new QuoteProductItem();
+        $item = new QuoteProductOffer();
 
         $this->assertNull($item->getProductUnitCode());
 

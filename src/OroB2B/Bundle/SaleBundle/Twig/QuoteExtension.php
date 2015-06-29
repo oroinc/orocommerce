@@ -8,7 +8,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteExtension extends \Twig_Extension
 {
@@ -52,17 +52,17 @@ class QuoteExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFilter(
                 'orob2b_format_sale_quote_product_item',
-                [$this, 'formatProductItem'],
+                [$this, 'formatProductOffer'],
                 ['is_safe' => ['html']]
             ),
         ];
     }
 
     /**
-     * @param QuoteProductItem $item
+     * @param QuoteProductOffer $item
      * @return string
      */
-    public function formatProductItem(QuoteProductItem $item)
+    public function formatProductOffer(QuoteProductOffer $item)
     {
         $units = $item->getProductUnit()
             ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())

@@ -22,9 +22,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -74,9 +74,9 @@ class QuoteTypeTest extends AbstractTest
                     OroDateTimeType::NAME                   => new OroDateTimeType(),
                     QuoteProductType::NAME                  => new QuoteProductType($translator),
                     CollectionType::NAME                    => new CollectionType(),
-                    QuoteProductItemType::NAME              => new QuoteProductItemType($translator),
+                    QuoteProductOfferType::NAME              => new QuoteProductOfferType($translator),
                     QuoteProductCollectionType::NAME        => new QuoteProductCollectionType(),
-                    QuoteProductItemCollectionType::NAME    => new QuoteProductItemCollectionType(),
+                    QuoteProductOfferCollectionType::NAME    => new QuoteProductOfferCollectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $userSelectType->getName()              => $userSelectType,
@@ -134,8 +134,8 @@ class QuoteTypeTest extends AbstractTest
      */
     public function submitProvider()
     {
-        $quoteProductItem   = $this->getQuoteProductItem(10, 'kg', Price::create(20, 'USD'));
-        $quoteProduct       = $this->getQuoteProduct(2, [$quoteProductItem]);
+        $quoteProductOffer   = $this->getQuoteProductOffer(10, 'kg', Price::create(20, 'USD'));
+        $quoteProduct       = $this->getQuoteProduct(2, [$quoteProductOffer]);
         $quote              = $this->getQuote(1, [$quoteProduct]);
 
         return [
@@ -146,7 +146,7 @@ class QuoteTypeTest extends AbstractTest
                     'quoteProducts' => [
                         [
                             'product' => 2,
-                            'quoteProductItems' => [
+                            'quoteProductOffers' => [
                                 [
                                     'quantity'      => 10,
                                     'productUnit'   => 'kg',

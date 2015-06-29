@@ -38,7 +38,7 @@
         </td>
         <td>
             <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
-                        data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-unit-selection-limitations-component" class="sale-quoteproductitem-collection">
+                        data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component" class="sale-quoteproductitem-collection">
                 {{ form_widget(form.quoteProductRequests) }}
                 {{ form_widget(form.quoteProductOffers) }}
                 <div>

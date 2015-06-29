@@ -24,14 +24,14 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
         productSku:
             - NotBlank:
                 groups: [ Import ]
-        quoteProductItems:
+        quoteProductOffers:
             - OroB2B\Bundle\SaleBundle\Validator\Constraints\Count:
                 minMessage: 'orob2b.sale.quoteproduct.quote_product_items.blank'
             - Valid: ~
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
     constraints:
-        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem: ~
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOffer: ~
     properties:
         quoteProduct:
             - NotBlank: ~

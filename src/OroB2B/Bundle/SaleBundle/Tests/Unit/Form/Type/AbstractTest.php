@@ -13,7 +13,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -117,7 +117,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int $productId
-     * @param QuoteProductItem[] $items
+     * @param QuoteProductOffer[] $items
      * @return QuoteProduct
      */
     protected function getQuoteProduct($productId, array $items = [])
@@ -126,7 +126,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $quoteProduct->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId));
 
         foreach ($items as $item) {
-            $quoteProduct->addQuoteProductItem($item);
+            $quoteProduct->addQuoteProductOffer($item);
         }
 
         return $quoteProduct;
@@ -136,26 +136,26 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param float $quantity
      * @param string $unitCode
      * @param Price $price
-     * @return QuoteProductItem
+     * @return QuoteProductOffer
      */
-    protected function getQuoteProductItem($quantity = null, $unitCode = null, Price $price = null)
+    protected function getQuoteProductOffer($quantity = null, $unitCode = null, Price $price = null)
     {
-        $quoteProductItem = new QuoteProductItem();
+        $quoteProductOffer = new QuoteProductOffer();
 
         if (null !== $quantity) {
-            $quoteProductItem->setQuantity($quantity);
+            $quoteProductOffer->setQuantity($quantity);
         }
 
         if (null !== $unitCode) {
-            $quoteProductItem->setProductUnit(
+            $quoteProductOffer->setProductUnit(
                 $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
             );
         }
 
         if (null !== $price) {
-            $quoteProductItem->setPrice($price);
+            $quoteProductOffer->setPrice($price);
         }
 
-        return $quoteProductItem;
+        return $quoteProductOffer;
     }
 }
