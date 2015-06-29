@@ -71,6 +71,43 @@
         </div>
     {% endset %}
 
+    {% set requestProducts %}
+        <div class="rfpadmin-requestproducts-info control-group">
+            <table>
+                {% for requestProduct in entity.requestProducts %}
+                    <tr>
+                        <td class="rfpadmin-requestproduct-product">
+                            <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
+                        </td>
+                        <td class="rfpadmin-requestproduct-info">
+                            {% if requestProduct.product %}
+                                <a href="{{ path('orob2b_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product|raw }}</a>
+                            {% else %}
+                                {{ requestProduct.productSku|raw }}
+                            {% endif %}
+                        </td>
+                        <td class="rfpadmin-requestproductitems-info">
+                            {% for requestProductItem in requestProduct.requestProductItems %}
+                                <div class="rfpadmin-requestproducttitem-info">
+                                    {{ requestProductItem|orob2b_format_rfpadmin_request_product_item }}
+                                </div>
+                            {% endfor %}
+                      </td>
+                    </tr>
+                    <tr class="rfpadmin-requestproduct-comment">
+                        <td>&nbsp;</td>
+                        <td class="rfpadmin-requestproduct-info control-group">
+                            <label class="control-label">{{ 'orob2b.rfpadmin.requestproduct.comment.label'|trans }}</label>
+                        </td>
+                        <td class="rfpadmin-requestproductitems-info">
+                            <label>{{ requestProduct.comment|nl2br }}</label>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.rfpadmin.sections.general'|trans,
@@ -78,8 +115,11 @@
             'subblocks': [{'data' : [requestInfo]}]
         },
         {
+            'title': 'orob2b.rfpadmin.sections.request_products'|trans,
+            'subblocks': [{'data' : [requestProducts]}]
+        },
+        {
             'title': 'orob2b.rfpadmin.sections.body'|trans,
-            'class': 'active',
             'subblocks': [{'data' : [requestContent]}]
         }
     ] %}

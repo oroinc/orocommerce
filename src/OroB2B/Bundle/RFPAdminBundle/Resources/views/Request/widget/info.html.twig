@@ -5,29 +5,6 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {% include 'OroB2BRFPAdminBundle:Request:block/infoRequest.html.twig' %}
-            <div class="rfpadmin-requestproducts-info">
-                {% for requestProduct in entity.requestProducts %}
-                    {% set itemData %}
-                        <div class="rfpadmin-requestproduct-info">
-                            {% if requestProduct.product %}
-                                <a href="{{ path('orob2b_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product|raw }}</a>
-                            {% else %}
-                                {{ requestProduct.productSku|raw }}
-                            {% endif %}
-                        </div>
-                        <div class="rfpadmin-requestproductitems-info">
-                            {% for requestProductItem in requestProduct.requestProductItems %}
-                                <div class="rfpadmin-requestproductitem-info">
-                                    {{ requestProductItem|orob2b_format_rfpadmin_request_product_item }}
-                                </div>
-                            {% endfor %}
-                            {{ UI.renderProperty('orob2b.rfpadmin.requestproduct.comment.label'|trans, requestProduct.comment) }}
-                        </div>
-                    {% endset %}
-                    {{ UI.renderHtmlProperty('orob2b.product.entity_label'|trans, itemData ) }}
-                {% endfor %}
-            </div>
-
         </div>
     </div>
 </div>

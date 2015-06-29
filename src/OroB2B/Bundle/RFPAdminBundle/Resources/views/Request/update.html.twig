@@ -28,24 +28,34 @@
 
     {% set id = 'request-edit' %}
 
-    {% set dataBlocks = [{
-            'title': 'orob2b.rfpadmin.request.sections.general'|trans,
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.rfpadmin.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
                 'data': [
                     include('OroB2BRFPAdminBundle:Request:block/infoRequest.html.twig'),
+                ]
+            }]
+        },
+        {
+            'title': 'orob2b.rfpadmin.sections.request_products'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
                     form_row(form.requestProducts)
                 ]
             }]
-        }]
+        }
+    ]
     %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
-    
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks

@@ -50,25 +50,14 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('trans')
             ->will($this->returnCallback(function ($id, $params) {
                 $ids = [
-                    'orob2b.product_unit.item.label.full'       => 'item',
-                    'orob2b.product_unit.kg.label.full'         => 'kilogram',
                     'orob2b.rfpadmin.requestproductitem.item'   => '{units}, {price} per {unit}',
+                    'orob2b.product_unit.kg.label.full'         => 'kilogram',
+                    'orob2b.product_unit.item.label.full'       => 'item',
                 ];
 
                 return str_replace(array_keys($params), array_values($params), $ids[$id]);
             }))
         ;
-
-        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->numberFormatter
-            ->expects($this->any())
-            ->method('formatCurrency')
-            ->will($this->returnCallback(function ($value, $currency) {
-                return sprintf('%01.2f %s', $value, $currency);
-            }));
 
         $this->productUnitValueFormatter = $this->getMockBuilder(
             'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
@@ -82,6 +71,17 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnCallback(function ($quantity, ProductUnit $productUnit) {
                 $code = $this->translator->trans('orob2b.product_unit.' . $productUnit->getCode() . '.label.full');
                 return sprintf('%d %s', $quantity, $code);
+            }));
+
+        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->numberFormatter
+            ->expects($this->any())
+            ->method('formatCurrency')
+            ->will($this->returnCallback(function ($value, $currency) {
+                return sprintf('%01.2f %s', $value, $currency);
             }));
 
         $this->extension = new RequestExtension(
