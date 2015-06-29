@@ -17,8 +17,15 @@ class RequestTest extends RequestStatusTestCase
         ];
 
         static::assertPropertyAccessors(new Request(), $properties);
+
+        static::assertPropertyCollections(new Request(), [
+            ['requestProducts', new RequestProduct()],
+        ]);
     }
 
+    /**
+     * @depends testAccessors
+     */
     public function testConstruct()
     {
         $request = new Request();
@@ -32,6 +39,9 @@ class RequestTest extends RequestStatusTestCase
         $this->assertLessThanOrEqual($now, $request->getUpdatedAt());
     }
 
+    /**
+     * @depends testAccessors
+     */
     public function testAddRequestProduct()
     {
         $request        = new Request();

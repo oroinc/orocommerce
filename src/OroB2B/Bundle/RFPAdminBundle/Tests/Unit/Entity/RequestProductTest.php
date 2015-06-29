@@ -20,8 +20,15 @@ class RequestProductTest extends AbstractTest
         ];
 
         static::assertPropertyAccessors(new RequestProduct(), $properties);
+
+        static::assertPropertyCollections(new RequestProduct(), [
+            ['requestProductItems', new RequestProductItem()],
+        ]);
     }
 
+    /**
+     * @depends testProperties
+     */
     public function testSetProduct()
     {
         $product        = (new Product())->setSku('rfp-sku');
@@ -34,6 +41,9 @@ class RequestProductTest extends AbstractTest
         $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
     }
 
+    /**
+     * @depends testProperties
+     */
     public function testAddRequestProductItem()
     {
         $requestProduct     = new RequestProduct();

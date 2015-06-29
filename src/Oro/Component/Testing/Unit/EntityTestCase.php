@@ -2,7 +2,8 @@
 
 namespace Oro\Component\Testing\Unit;
 
-use Oro\Component\Testing\Unit\Constraint\IsTimestampable;
+use Oro\Component\Testing\Unit\PropertyAccess\CollectionAccessor;
+
 use Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsDefaultValue;
 use Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsSetValue;
 
@@ -20,10 +21,10 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Returns a \Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsDefaultValue matcher object.
+     * Returns a PropertyGetterReturnsDefaultValue matcher object.
      *
      * @param string $propertyName
-     * @return \Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsDefaultValue
+     * @return PropertyGetterReturnsDefaultValue
      */
     public static function propertyGetterReturnsDefaultValue($propertyName)
     {
@@ -44,11 +45,11 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Returns a \Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsSetValue matcher object.
+     * Returns a PropertyGetterReturnsSetValue matcher object.
      *
      * @param string $propertyName
      * @param mixed $testValue
-     * @return \Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsSetValue
+     * @return PropertyGetterReturnsSetValue
      */
     public static function propertyGetterReturnsSetValue($propertyName, $testValue)
     {
@@ -92,5 +93,105 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
             }
             self::assertPropertyGetterReturnsSetValue($testInstance, $propertyName, $testValue);
         }
+    }
+
+    /**
+     * @param object $instance
+     * @param array $properties
+     */
+    public static function assertPropertyCollections($instance, array $properties)
+    {
+        foreach ($properties as $property) {
+            $testInstance = clone $instance;
+
+            list($propertyName, $testItem) = $property;
+
+            self::assertPropertyCollection($testInstance, $propertyName, $testItem);
+        }
+    }
+
+    /**
+     * @param object $instance
+     * @param string $propertyName
+     * @param mixed $testItem
+     */
+    public static function assertPropertyCollection($instance, $propertyName, $testItem)
+    {
+        $propertyAccess = new CollectionAccessor($instance, $propertyName);
+
+        // Check default value
+        self::assertInstanceOf(
+            'Doctrine\Common\Collections\Collection',
+            $propertyAccess->getItems(),
+            $propertyName . ': Default value must be instance of Collection'
+        );
+
+        // Check default size
+        self::assertCount(
+            0,
+            $propertyAccess->getItems(),
+            $propertyName . ': Default collection size must be 0'
+        );
+
+        // Add first item
+        self::assertSame(
+            $instance,
+            $propertyAccess->addItem($testItem),
+            sprintf('%s : %s() - must return $this', $propertyName, $propertyAccess->getAddItemMethod())
+        );
+
+        // Check added item
+        self::assertCount(
+            1,
+            $propertyAccess->getItems(),
+            $propertyName . ': After add item - collection size must be 1'
+        );
+
+        self::assertInstanceOf(
+            'Doctrine\Common\Collections\Collection',
+            $propertyAccess->getItems(),
+            $propertyName . ': After addition of a first item - property value must be instance of Collection'
+        );
+
+        self::assertEquals(
+            [$testItem],
+            $propertyAccess->getItems()->toArray(),
+            $propertyName . ': After addition of a first item - collections must be equals'
+        );
+
+        // Add already added item
+        $propertyAccess->addItem($testItem);
+        self::assertCount(
+            1,
+            $propertyAccess->getItems(),
+            $propertyName . ': After addition already added item - collection size must be same and equal 1'
+        );
+
+        // Remove item
+        self::assertEquals(
+            $instance,
+            $propertyAccess->removeItem($testItem),
+            sprintf('%s : %s() - must return $this', $propertyName, $propertyAccess->getRemoveItemMethod())
+        );
+
+        self::assertCount(
+            0,
+            $propertyAccess->getItems(),
+            $propertyName . ': After removal of a single item - collection size must be 0'
+        );
+
+        // Remove already removed item
+        $propertyAccess->removeItem($testItem);
+        self::assertCount(
+            0,
+            $propertyAccess->getItems(),
+            $propertyName . ': After removal already removed item - collection size must be same and equal 0'
+        );
+
+        self::assertNotContains(
+            $testItem,
+            $propertyAccess->getItems()->toArray(),
+            $propertyName . ': After removal of a single item - collection must not contains test item'
+        );
     }
 }
