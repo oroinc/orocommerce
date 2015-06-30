@@ -39,11 +39,11 @@ class QuoteProductRequestType extends AbstractType
         $builder
             ->add('quantity', 'integer', [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
+                'label'     => 'orob2b.sale.quoteproductoffer.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.price.label',
+                'label'     => 'orob2b.sale.quoteproductoffer.price.label',
             ])
         ;
 

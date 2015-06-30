@@ -64,6 +64,21 @@ class QuoteProduct
     protected $productSku;
 
     /**
+     * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinColumn(name="product_replacement_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $productReplacement;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="product_replacement_sku", type="string", length=255, nullable=true)
+     */
+    protected $productReplacementSku;
+
+    /**
      * @var int
      *
      * @ORM\Column(name="type", type="smallint", nullable=true)
@@ -220,6 +235,55 @@ class QuoteProduct
     public function getProductSku()
     {
         return $this->productSku;
+    }
+
+    /**
+     * Set productReplacement
+     *
+     * @param Product $productReplacement
+     * @return QuoteProduct
+     */
+    public function setProductReplacement(Product $productReplacement = null)
+    {
+        $this->productReplacement = $productReplacement;
+        if ($productReplacement) {
+            $this->productReplacementSku = $productReplacement->getSku();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get productReplacement
+     *
+     * @return Product
+     */
+    public function getProductReplacement()
+    {
+        return $this->productReplacement;
+    }
+
+    /**
+     * Set productReplacementSku
+     *
+     * @param string $productReplacementSku
+     * @return QuoteProduct
+     */
+    public function setProductReplacementSku($productReplacementSku)
+    {
+        $this->productReplacementSku = $productReplacementSku;
+
+        return $this;
+    }
+
+    /**
+     * Get productReplacementSku
+     *
+     * @return string
+     */
+    public function getProductReplacementSku()
+    {
+        return $this->productReplacementSku;
     }
 
     /**

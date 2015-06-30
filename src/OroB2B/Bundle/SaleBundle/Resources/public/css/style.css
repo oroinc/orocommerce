@@ -153,7 +153,7 @@
 }
 
 .sale-quoteproductitem-widget input [type="checkbox"] {
-    margin-top: 0;
+    margin-top: 0 !important;
 }
 
 .sale-quoteproductitem-collection .btn.add-list-item {

@@ -38,8 +38,8 @@ orob2b:
 
         quoteproductoffer:
             item: '{units}, {price} per {unit}'
-            entity_label: 'Quote Product Line'
-            entity_plural_label: 'Quote Product Lines'
+            entity_label: 'Quote Product Offer'
+            entity_plural_label: 'Quote Product Offers'
             add_label: 'Add Offer'
             id.label: 'ID'
             quantity.label: 'Quantity'
@@ -57,8 +57,22 @@ orob2b:
 
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
-            requested_product_unit.removed: '{title} - removed'
-            requested_product_unit.empty: 'Choose Unit...'
+
+        quoteproductrequest:
+            item: '{units}, {price} per {unit}'
+            entity_label: 'Quote Product Request'
+            entity_plural_label: 'Quote Product Requests'
+            add_label: 'Add Request'
+            id.label: 'ID'
+            quantity.label: 'Requested Qty'
+            product_unit.label: 'Product Unit'
+            product_unit_code.label: 'Product Unit Code'
+            price.label: 'Price'
+            value.label: 'Price Value'
+            currency.label: 'Price Currency'
+            quote_product.label: 'Quote Product'
+            product_unit.removed: '{title} - removed'
+            product_unit.empty: 'Choose Unit...'
 
         controller:
             quote:

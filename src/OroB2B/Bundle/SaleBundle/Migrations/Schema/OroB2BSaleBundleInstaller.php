@@ -161,8 +161,10 @@ class OroB2BSaleBundleInstaller implements
         $table = $schema->createTable('orob2b_sale_quote_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_replacement_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_sku', 'string', ['length' => 255]);
+        $table->addColumn('product_replacement_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('type', 'smallint', ['notnull' => false]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
         $table->addColumn('comment_customer', 'text', ['notnull' => false]);
@@ -258,6 +260,12 @@ class OroB2BSaleBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_product'),
             ['product_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_replacement_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

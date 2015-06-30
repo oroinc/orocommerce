@@ -45,6 +45,8 @@ class OroB2BSaleBundle implements Migration
     protected function changeOrob2BSaleQuoteProductTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote_product');
+        $table->addColumn('product_replacement_id', 'integer', ['notnull' => false]);
+        $table->addColumn('product_replacement_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('type', 'smallint', ['notnull' => false]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
         $table->addColumn('comment_customer', 'text', ['notnull' => false]);
@@ -81,6 +83,22 @@ class OroB2BSaleBundle implements Migration
         $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
         $table->addColumn('currency', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Add orob2b_sale_quote_product foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BSaleQuoteProductForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_sale_quote_product');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_replacement_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
     }
 
     /**
