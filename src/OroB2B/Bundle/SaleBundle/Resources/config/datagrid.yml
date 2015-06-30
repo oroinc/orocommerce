@@ -1,0 +1,112 @@
+datagrid:
+    quotes-grid:
+        extended_entity_name: %orob2b_sale.entity.quote.class%
+        options:
+            entityHint:        quote
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_sale_quote_view
+            type:         orm
+            query:
+                select:
+                    - quote.id
+                    - quote.qid
+                    - quoteOwner.username as ownerName
+                    - quote.createdAt
+                    - quote.updatedAt
+                    - quote.validUntil
+                from:
+                    - { table: %orob2b_sale.entity.quote.class%, alias: quote }
+                join:
+                    left:
+                        - { join: quote.owner, alias: quoteOwner }
+        columns:
+            id:
+                label:         orob2b.sale.quote.id.label
+            qid:
+                label:         orob2b.sale.quote.qid.label
+            ownerName:
+                label:         orob2b.sale.quote.owner.label
+            validUntil:
+                label:         orob2b.sale.quote.valid_until.label
+                frontend_type: datetime
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_sale_quote_view
+                params: [ id ]
+            update_link:
+                type: url
+                route: orob2b_sale_quote_update
+                params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_sale_delete_quote
+                params: [ id ]
+        sorters:
+            columns:
+                id:
+                    data_name: quote.id
+                qid:
+                    data_name: quote.qid
+                ownerName:
+                    data_name: ownerName
+                createdAt:
+                    data_name: quote.createdAt
+                updatedAt:
+                    data_name: quote.updatedAt
+                validUntil:
+                    data_name: quote.validUntil
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                id:
+                    type:      number
+                    data_name: quote.id
+                qid:
+                    type:      string
+                    data_name: quote.qid
+                ownerName:
+                    type:      entity
+                    data_name: quote.owner
+                    options:
+                        field_options:
+                            class:      %oro_user.entity.class%
+                            multiple:   true
+                validUntil:
+                    type:      datetime
+                    data_name: quote.validUntil
+                createdAt:
+                    type:      datetime
+                    data_name: quote.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: quote.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_sale_quote_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_sale_quote_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_sale_quote_delete
