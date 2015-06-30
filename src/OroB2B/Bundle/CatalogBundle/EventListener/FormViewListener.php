@@ -50,10 +50,13 @@ class FormViewListener
         $productId = $this->request->get('id');
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        $category = $this->doctrineHelper
+            ->getEntityRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
 
         $template = $event->getEnvironment()->render(
             'OroB2BCatalogBundle:Product:category_view.html.twig',
-            ['entity' => $product]
+            ['entity' => $category]
         );
         $this->addCategoryBlock($event->getScrollData(), $template);
     }
