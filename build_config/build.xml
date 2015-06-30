@@ -188,7 +188,7 @@
             depends="clean,prepare-reportdir,run-code-standards"/>
 
     <target name="functional-tests" description="Run functional tests."
-            depends="clean,prepare,install,install-admin-fixture,run-functional-tests"/>
+            depends="clean,prepare,install,install-admin-fixture,install-account-user-fixture,run-functional-tests"/>
 
     <target name="selenium-tests" description="Run Selenium tests."
             depends="clean,prepare,install,install-admin-fixture,install-test-fixtures,run-selenium-tests"/>
@@ -290,6 +290,22 @@
                     <arg line="--no-interaction"/>
                     <arg line="--env=@{iterate}"/>
                     <arg line="--fixtures src/Oro/src/Oro/Bundle/TestFrameworkBundle/Fixtures"/>
+                </exec>
+            </sequential>
+        </for>
+    </target>
+
+    <target name="install-account-user-fixture">
+        <for list="${run.env}" param="iterate">
+            <sequential>
+                <exec dir="${basedir}" executable="php" failonerror="true">
+                    <arg line="app/console"/>
+                    <arg line="doctrine:fixture:load"/>
+                    <arg line="--no-debug"/>
+                    <arg line="--append"/>
+                    <arg line="--no-interaction"/>
+                    <arg line="--env=@{iterate}"/>
+                    <arg line="--fixtures src/OroB2B/src/Oro/Component/Testing/Fixtures"/>
                 </exec>
             </sequential>
         </for>
