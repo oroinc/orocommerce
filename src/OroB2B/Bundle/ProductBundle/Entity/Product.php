@@ -147,6 +147,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->sku;
+    }
+
+    /**
      * @return int
      */
     public function getId()

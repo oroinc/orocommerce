@@ -28,6 +28,17 @@ class ProductTest extends EntityTestCase
         $this->assertPropertyAccessors(new Product(), $properties);
     }
 
+    public function testToString()
+    {
+        $product = new Product();
+
+        $this->assertSame('', $product->__toString());
+
+        $product->setSku(123);
+
+        $this->assertSame('123', $product->__toString());
+    }
+
     public function testPrePersist()
     {
         $product = new Product();
