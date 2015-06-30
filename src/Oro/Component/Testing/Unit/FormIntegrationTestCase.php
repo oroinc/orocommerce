@@ -92,7 +92,7 @@ class FormIntegrationTestCase extends BaseTestCase
 
         $path = false;
 
-        if (false !== $pos = strrpos($rclass->getFileName(), 'Bundle')) {
+        if (false !== ($pos = strrpos($rclass->getFileName(), 'Bundle'))) {
             $path = substr($rclass->getFileName(), 0, $pos) . 'Bundle';
         }
 
