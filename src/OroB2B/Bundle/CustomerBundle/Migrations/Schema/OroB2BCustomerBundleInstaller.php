@@ -10,9 +10,10 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * Class OroB2BCustomerBundleInstaller
@@ -183,7 +184,7 @@ class OroB2BCustomerBundleInstaller implements
             $schema,
             static::ORO_B2B_CUSTOMER_TABLE_NAME,
             'internal_rating',
-            'cust_internal_rating'
+            Customer::INTERNAL_RATING_CODE
         );
     }
 

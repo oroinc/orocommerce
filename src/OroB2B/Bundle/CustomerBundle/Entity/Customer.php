@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
 
 /**
@@ -39,6 +40,8 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
  */
 class Customer extends ExtendCustomer
 {
+    const INTERNAL_RATING_CODE = 'cust_internal_rating';
+
     /**
      * @var integer
      *

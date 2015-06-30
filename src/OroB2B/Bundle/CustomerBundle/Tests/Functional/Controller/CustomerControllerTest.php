@@ -3,8 +3,10 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
+
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 

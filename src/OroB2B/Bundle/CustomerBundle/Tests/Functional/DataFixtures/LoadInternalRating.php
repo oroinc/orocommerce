@@ -3,9 +3,12 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 class LoadInternalRating extends AbstractEnumFixture
 {
@@ -30,7 +33,7 @@ class LoadInternalRating extends AbstractEnumFixture
      */
     protected function getEnumCode()
     {
-        return 'cust_internal_rating';
+        return Customer::INTERNAL_RATING_CODE;
     }
 
     /**
@@ -39,8 +42,9 @@ class LoadInternalRating extends AbstractEnumFixture
     public function load(ObjectManager $manager)
     {
         parent::load($manager);
+
         $className = ExtendHelper::buildEnumValueClassName($this->getEnumCode());
-        /** @var EnumValueRepository $enumRepo */
+        /** @var AbstractEnumValue[] $enumData */
         $enumData = $manager->getRepository($className)->findAll();
         
         foreach ($enumData as $enumItem) {

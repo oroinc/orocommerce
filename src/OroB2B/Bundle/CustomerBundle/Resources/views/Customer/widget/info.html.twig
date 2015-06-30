@@ -57,7 +57,7 @@
             {% endif %}
 
             {% if entity.getInternalRating and is_granted('VIEW', entity.getInternalRating)%}
-                {{ UI.renderHtmlProperty('orob2b.customer.internal_rating.label'|trans, entity.getInternalRating.name) }}
+                {{ UI.renderProperty('orob2b.customer.internal_rating.label'|trans, entity.getInternalRating.name) }}
             {% endif %}
         </div>
     </div>

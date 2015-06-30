@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+
 class CustomerType extends AbstractType
 {
     const NAME = 'orob2b_customer_type';
@@ -37,7 +39,7 @@ class CustomerType extends AbstractType
                 'oro_enum_select',
                 [
                     'label'     => 'orob2b.customer.internal_rating.label',
-                    'enum_code' => 'cust_internal_rating',
+                    'enum_code' => Customer::INTERNAL_RATING_CODE,
                     'configs' => [
                         'allowClear' => false,
                     ],

@@ -10,6 +10,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
  * @method Customer setInventoryStatus(AbstractEnumValue $enumId)
  * @method AbstractEnumValue getVisibility()
  * @method Customer setVisibility(AbstractEnumValue $enumId)
+ * @method AbstractEnumValue getInternalRating()
+ * @method Customer setInternalRating(AbstractEnumValue $enumId)
  */
 class ExtendCustomer
 {

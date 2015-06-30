@@ -13,6 +13,8 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
@@ -170,7 +172,7 @@ class OroB2BCustomerBundle implements
             $schema,
             static::ORO_B2B_CUSTOMER_TABLE_NAME,
             'internal_rating',
-            'cust_internal_rating'
+            Customer::INTERNAL_RATING_CODE
         );
     }
 
