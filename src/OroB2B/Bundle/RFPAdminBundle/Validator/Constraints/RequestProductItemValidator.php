@@ -6,7 +6,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem as RequestProductItemEntity;
 
 class RequestProductItemValidator extends ConstraintValidator
@@ -26,10 +25,11 @@ class RequestProductItemValidator extends ConstraintValidator
                 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem'
             );
         }
-        /** @var $product Product */
+
         $product = $requestProductItem->getRequestProduct()->getProduct();
         $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
-        if (!in_array($requestProductItem->getProductUnit()->getCode(), $allowedUnits, true)) {
+        $code = $requestProductItem->getProductUnit() ? $requestProductItem->getProductUnit()->getCode() : null;
+        if (!in_array($code, $allowedUnits, true)) {
             $this->context->addViolationAt('productUnit', $constraint->message);
         }
     }
