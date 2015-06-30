@@ -2,13 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Owner\Metadata;
 
-use Doctrine\Common\Cache\CacheProvider;
-
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
@@ -25,28 +21,9 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     protected $basicLevelClass;
 
     /**
-     * @var SecurityFacade
+     * @var FrontendOwnershipMetadataProvider
      */
-    protected $securityFacade;
-
-    /**
-     * @param array $owningEntityNames
-     * @param ConfigProvider $configProvider
-     * @param SecurityFacade $securityFacade
-     * @param EntityClassResolver|null $entityClassResolver
-     * @param CacheProvider|null $cache
-     */
-    public function __construct(
-        array $owningEntityNames,
-        ConfigProvider $configProvider,
-        SecurityFacade $securityFacade,
-        EntityClassResolver $entityClassResolver = null,
-        CacheProvider $cache = null
-    ) {
-        parent::__construct($owningEntityNames, $configProvider, $entityClassResolver, $cache);
-
-        $this->securityFacade = $securityFacade;
-    }
+    private $noOwnershipMetadata;
 
     /**
      * {@inheritDoc}
@@ -59,13 +36,8 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
             );
         }
 
-        if ($entityClassResolver === null) {
-            $this->localLevelClass = $owningEntityNames['local_level'];
-            $this->basicLevelClass = $owningEntityNames['basic_level'];
-        } else {
-            $this->localLevelClass = $entityClassResolver->getEntityClass($owningEntityNames['local_level']);
-            $this->basicLevelClass = $entityClassResolver->getEntityClass($owningEntityNames['basic_level']);
-        }
+        $this->localLevelClass = $this->getEntityClassResolver()->getEntityClass($owningEntityNames['local_level']);
+        $this->basicLevelClass = $this->getEntityClassResolver()->getEntityClass($owningEntityNames['basic_level']);
     }
 
     /**
@@ -73,7 +45,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     protected function getNoOwnershipMetadata()
     {
-        return new FrontendOwnershipMetadata();
+        if (!$this->noOwnershipMetadata) {
+            $this->noOwnershipMetadata = new FrontendOwnershipMetadata();
+        }
+
+        return $this->noOwnershipMetadata;
     }
 
     /**
@@ -89,7 +65,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function getGlobalLevelClass()
     {
-        throw new \BadMethodCallException('Method getGlobalLevelClass() unsupported.');
+        return false;
     }
 
     /**
@@ -113,7 +89,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function supports()
     {
-        return $this->securityFacade && $this->securityFacade->getLoggedUser() instanceof AccountUser;
+        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof AccountUser;
     }
 
     /**
