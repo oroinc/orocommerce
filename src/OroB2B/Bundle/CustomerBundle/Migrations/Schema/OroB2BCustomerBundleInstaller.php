@@ -35,17 +35,13 @@ class OroB2BCustomerBundleInstaller implements
     const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
     
-    /** @var  ExtendExtension */
+    /** @var ExtendExtension */
     protected $extendExtension;
 
-    /**
-     * @var NoteExtension
-     */
+    /** @var NoteExtension */
     protected $noteExtension;
 
-    /**
-     * @var AttachmentExtension
-     */
+    /** @var AttachmentExtension */
     protected $attachmentExtension;
 
     /**

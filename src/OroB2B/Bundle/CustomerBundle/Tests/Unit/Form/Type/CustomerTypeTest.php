@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType;
@@ -198,6 +198,11 @@ class CustomerTypeTest extends FormIntegrationTestCase
         return $entity;
     }
 
+    /**
+     * @param string $enumCode
+     * @param int $id
+     * @return object
+     */
     protected function getEnumEntity($enumCode, $id)
     {
         $extendedClass = ExtendHelper::buildEnumValueClassName($enumCode);

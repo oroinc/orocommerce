@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 
@@ -16,7 +17,10 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'];
+        return [
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerInternalRatingDemoData'
+        ];
     }
 
     /**
@@ -26,6 +30,8 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
     {
         /** @var AccountUser[] $accountUsers */
         $accountUsers = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findAll();
+        $internalRatings =
+            $manager->getRepository(ExtendHelper::buildEnumValueClassName('cust_internal_rating'))->findAll();
 
         $rootCustomer = null;
         $firstLevelCustomer = null;
@@ -57,6 +63,7 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
                         ->setParent($firstLevelCustomer);
                     break;
             }
+            $customer->setInternalRating($internalRatings[array_rand($internalRatings)]);
         }
 
         $manager->flush();
