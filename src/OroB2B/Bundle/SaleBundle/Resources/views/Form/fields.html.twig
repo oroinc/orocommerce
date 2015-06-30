@@ -1,23 +1,21 @@
 {% block orob2b_sale_quote_product_collection_row %}
     <div class="sale-quoteproduct-collection">
-        <table class="sale-quoteproduct-collection-table">
+        <table class="sale-quoteproduct-collection sale-quoteproduct-collection-table">
             <thead>
                 <tr>
-                    <th>Product</th>
-                    <th>Type</th>
-                    <th>Offers</th>
+                    <th class="sale-quoteproduct-table-column-1">Product</th>
+                    <th class="sale-quoteproduct-table-column-2">Type</th>
+                    <th class="sale-quoteproduct-table-column-3">Offers</th>
                 </tr>
             </thead>
-            <tbody>
-                {{ form_widget(form) }}
-            </tbody>
         </table>
+        {{ form_widget(form) }}
     </div>
 {% endblock %}
 
 {% block orob2b_sale_quote_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
-    
+
     {% set units = [] %}
     {% set product = form.vars.value.product|default(null) %}
     {% if product %}
@@ -25,18 +23,19 @@
             {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
         {% endfor %}
     {% endif %}
+    <table class="sale-quoteproduct-collection-table">
     <tr>
-        <td>
+        <td class="sale-quoteproduct-table-column-1">
             <div class="sale-quoteproduct-product-select">
                 {{ form_widget(form.product) }}
                 {{ form_errors(form.product) }}
             </div>
         </td>
-        <td>
+        <td class="sale-quoteproduct-table-column-2">
             {{ form_widget(form.type) }}
             {{ form_errors(form.type) }}
         </td>
-        <td>
+        <td class="sale-quoteproduct-table-column-3">
             <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
                         data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component" class="sale-quoteproductitem-collection">
                 {{ form_widget(form.quoteProductRequests) }}
@@ -47,6 +46,7 @@
             </div>
         </td>
     </tr>
+    </table>
 {% endblock %}
 
 {% block orob2b_sale_quote_product_offer_widget %}

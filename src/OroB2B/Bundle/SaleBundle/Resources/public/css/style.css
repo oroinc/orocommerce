@@ -4,7 +4,7 @@
 
 .sale-quoteproduct-collection-table > tbody > tr > td,
 .sale-quoteproduct-collection-table th {
-    border: 1px solid #000000;
+    border: 1px solid #e5e5e5;
     padding: 10px;
 }
 
@@ -15,8 +15,8 @@
 .sale-quoteproduct-collection .btn.removeRow {
     position: absolute;
     width: 28px;
-    top: 0;
-    left: 460px;
+    top: 14px;
+    left: 388px;
 }
 
 .sale-quoteproduct-widget.control-group {
@@ -125,4 +125,20 @@
 
 .sale-quoteproductitem-widget .validate-group {
     min-width: 140px;
+}
+
+.sale-quoteproduct-table-column-1 {
+    width: 325px;
+}
+
+.sale-quoteproduct-table-column-2 {
+    width: 270px;
+}
+
+.sale-quoteproduct-table-column-3 {
+    width: 870px;
+}
+
+.sale-quoteproduct-collection .oro-item-collection>div {
+    margin-top: -1px !important;
 }
