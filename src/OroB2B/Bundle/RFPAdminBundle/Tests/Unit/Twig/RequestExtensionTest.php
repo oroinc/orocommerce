@@ -97,8 +97,15 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider formatProductItemProvider
      */
-    public function testFormatProductItem($quantity, $unitCode, $formattedUnits, Price $price, $formattedPrice, $formattedUnit, ProductUnit $unit = null)
-    {
+    public function testFormatProductItem(
+        $quantity,
+        $unitCode,
+        $formattedUnits,
+        Price $price,
+        $formattedPrice,
+        $formattedUnit,
+        ProductUnit $unit = null
+    ) {
         $item = new RequestProductItem();
         $item
             ->setQuantity($quantity)

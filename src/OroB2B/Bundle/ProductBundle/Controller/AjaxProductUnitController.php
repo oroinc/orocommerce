@@ -46,5 +46,4 @@ class AjaxProductUnitController extends Controller
 
         return $this->getDoctrine()->getManagerForClass($class)->getRepository($class);
     }
-
 }
