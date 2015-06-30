@@ -32,30 +32,17 @@ class ProductUnitLabelExtension extends \Twig_Extension
                 [$this, 'format'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFilter(
-                'orob2b_format_short_product_unit_label',
-                [$this, 'formatShort'],
-                ['is_safe' => ['html']]
-            )
         ];
     }
 
     /**
      * @param string $unitCode
+     * @param bool $isShort
      * @return string
      */
-    public function format($unitCode)
+    public function format($unitCode, $isShort = false)
     {
-        return $this->formatter->format($unitCode);
-    }
-
-    /**
-     * @param string $unitCode
-     * @return string
-     */
-    public function formatShort($unitCode)
-    {
-        return $this->formatter->formatShort($unitCode);
+        return $this->formatter->format($unitCode, $isShort);
     }
 
     /**

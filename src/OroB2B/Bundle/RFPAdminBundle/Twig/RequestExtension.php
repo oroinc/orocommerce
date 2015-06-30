@@ -39,6 +39,7 @@ class RequestExtension extends \Twig_Extension
      * @param TranslatorInterface $translator
      * @param NumberFormatter $numberFormatter
      * @param ProductUnitValueFormatter $productUnitValueFormatter
+     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
      */
     public function __construct(
         TranslatorInterface $translator,

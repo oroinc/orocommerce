@@ -24,7 +24,7 @@ class AjaxProductUnitController extends Controller
      */
     public function getProductUnitsAction(Product $product)
     {
-        $units  = $this->getRepository()->getProductUnits($product);
+        $units = $this->getRepository()->getProductUnits($product);
         $result = [];
 
         /* @var $formatter ProductUnitLabelFormatter */

@@ -23,32 +23,44 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->formatter = new ProductUnitLabelFormatter($this->translator);
+        $this->formatter    = new ProductUnitLabelFormatter($this->translator);
     }
 
     /**
-     * Test Format
+     * @param string $unitCode
+     * @param bool $isShort
+     * @param string $expected
+     *
+     * @dataProvider formatProvider
      */
-    public function testFormat()
+    public function testFormat($unitCode, $isShort, $expected)
     {
         $this->translator->expects($this->once())
             ->method('trans')
-            ->with('orob2b.product_unit.kg.label.full');
+            ->with($expected)
+        ;
 
-        $this->formatter->format('kg');
+        $this->formatter->format($unitCode, $isShort);
     }
 
     /**
-     * Test FormatShort
+     * @return array
      */
-    public function testFormatShort()
+    public function formatProvider()
     {
-        $this->translator->expects($this->once())
-            ->method('trans')
-            ->with('orob2b.product_unit.item.label.short');
-
-        $this->formatter->formatShort('item');
+        return [
+            'format' => [
+                'unitCode'  => 'kg',
+                'isShort'   => false,
+                'expected'  => 'orob2b.product_unit.kg.label.full',
+            ],
+            'format short' => [
+                'unitCode'  => 'item',
+                'isShort'   => true,
+                'expected'  => 'orob2b.product_unit.item.label.short',
+            ],
+        ];
     }
 }

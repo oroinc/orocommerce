@@ -34,39 +34,40 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var \Twig_SimpleFilter[] $filters */
         $filters = $this->extension->getFilters();
 
-        $this->assertCount(2, $filters);
+        $this->assertCount(1, $filters);
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
         $this->assertEquals('orob2b_format_product_unit_label', $filters[0]->getName());
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
-        $this->assertEquals('orob2b_format_short_product_unit_label', $filters[1]->getName());
     }
 
-    public function testFormat()
+    /**
+     * @dataProvider formatProvider
+     */
+    public function testFormat($unitCode, $isShort, $expected)
     {
-        $unitCode       = 'kg';
-        $expectedResult = 'kilogram';
-
         $this->formatter->expects($this->once())
             ->method('format')
-            ->with($unitCode)
-            ->willReturn($expectedResult);
+            ->with($unitCode, $isShort)
+            ->willReturn($expected)
+        ;
 
-        $this->assertEquals($expectedResult, $this->extension->format($unitCode));
+        $this->assertEquals($expected, $this->extension->format($unitCode, $isShort));
     }
 
-    public function testFormatShort()
+    public function formatProvider()
     {
-        $unitCode       = 'kg';
-        $expectedResult = 'kg';
-
-        $this->formatter->expects($this->once())
-            ->method('formatShort')
-            ->with($unitCode)
-            ->willReturn($expectedResult);
-
-        $this->assertEquals($expectedResult, $this->extension->formatShort($unitCode));
+        return [
+            'format' => [
+                'unitCode'  => 'kg',
+                'isShort'   => false,
+                'expected'  => 'kilogram',
+            ],
+            'format shosrt' => [
+                'unitCode'  => 'kg',
+                'isShort'   => true,
+                'expected'  => 'kg',
+            ],
+        ];
     }
 
     public function testGetName()

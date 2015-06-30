@@ -21,28 +21,10 @@ class ProductUnitLabelFormatter
 
     /**
      * @param string $unitCode
-     * @return string
-     */
-    public function format($unitCode)
-    {
-        return $this->formatData($unitCode);
-    }
-
-    /**
-     * @param string $unitCode
-     * @return string
-     */
-    public function formatShort($unitCode)
-    {
-        return $this->formatData($unitCode, true);
-    }
-
-    /**
-     * @param string $unitCode
      * @param bool $isShort
      * @return string
      */
-    protected function formatData($unitCode, $isShort = false)
+    public function format($unitCode, $isShort = false)
     {
         $translationKey = sprintf('orob2b.product_unit.%s.label.' . ($isShort ? 'short' : 'full'), $unitCode);
 
