@@ -55,6 +55,10 @@
                 {% endset %}
                 {{ UI.renderHtmlProperty('orob2b.customer.children.label'|trans, customerTree) }}
             {% endif %}
+
+            {% if entity.getInternalRating and is_granted('VIEW', entity.getInternalRating)%}
+                {{ UI.renderProperty('orob2b.customer.internal_rating.label'|trans, entity.getInternalRating.name) }}
+            {% endif %}
         </div>
     </div>
 </div>

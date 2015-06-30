@@ -4,13 +4,16 @@ namespace OroB2B\Bundle\CustomerBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * Class OroB2BCustomerBundleInstaller
@@ -19,7 +22,8 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 class OroB2BCustomerBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+    AttachmentExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
 
     const ORO_B2B_CUSTOMER_TABLE_NAME = 'orob2b_customer';
@@ -31,15 +35,14 @@ class OroB2BCustomerBundleInstaller implements
     const ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'orob2b_account_role_to_website';
     const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
+    
+    /** @var ExtendExtension */
+    protected $extendExtension;
 
-    /**
-     * @var NoteExtension
-     */
+    /** @var NoteExtension */
     protected $noteExtension;
 
-    /**
-     * @var AttachmentExtension
-     */
+    /** @var AttachmentExtension */
     protected $attachmentExtension;
 
     /**
@@ -69,6 +72,16 @@ class OroB2BCustomerBundleInstaller implements
     public function getMigrationVersion()
     {
         return 'v1_0';
+    }
+
+    /**
+     * Sets the ExtendExtension
+     *
+     * @param ExtendExtension $extendExtension
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
     }
 
     /**
@@ -167,6 +180,12 @@ class OroB2BCustomerBundleInstaller implements
         );
 
         $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_CUSTOMER_TABLE_NAME);
+        $this->extendExtension->addEnumField(
+            $schema,
+            static::ORO_B2B_CUSTOMER_TABLE_NAME,
+            'internal_rating',
+            Customer::INTERNAL_RATING_CODE
+        );
     }
 
     /**
