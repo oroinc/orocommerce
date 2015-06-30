@@ -6,6 +6,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
@@ -25,6 +26,11 @@ class RequestExtension extends \Twig_Extension
     protected $productUnitValueFormatter;
 
     /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $productUnitLabelFormatter;
+
+    /**
      * @var NumberFormatter
      */
     protected $numberFormatter;
@@ -33,15 +39,18 @@ class RequestExtension extends \Twig_Extension
      * @param TranslatorInterface $translator
      * @param NumberFormatter $numberFormatter
      * @param ProductUnitValueFormatter $productUnitValueFormatter
+     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
      */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
-        ProductUnitValueFormatter $productUnitValueFormatter
+        ProductUnitValueFormatter $productUnitValueFormatter,
+        ProductUnitLabelFormatter $productUnitLabelFormatter
     ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;
         $this->productUnitValueFormatter    = $productUnitValueFormatter;
+        $this->productUnitLabelFormatter    = $productUnitLabelFormatter;
     }
 
     /**
@@ -73,9 +82,8 @@ class RequestExtension extends \Twig_Extension
             $item->getPrice()->getValue(),
             $item->getPrice()->getCurrency()
         );
-        $unit = $this->translator->trans(
-            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
-        );
+
+        $unit = $this->productUnitLabelFormatter->format($item->getProductUnitCode());
 
         $str = $this->translator->trans(
             'orob2b.rfpadmin.requestproductitem.item',
