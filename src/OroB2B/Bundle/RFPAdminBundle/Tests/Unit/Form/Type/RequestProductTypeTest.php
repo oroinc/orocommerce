@@ -18,7 +18,7 @@ use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemCollectionType;
 
-class RequestProductTypeTest extends AbstractTest // FormIntegrationTestCase
+class RequestProductTypeTest extends AbstractTest
 {
     /**
      * @var RequestProductType

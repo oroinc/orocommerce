@@ -26,9 +26,10 @@ class RequestProductItemValidator extends ConstraintValidator
             );
         }
 
-        $product = $requestProductItem->getRequestProduct()->getProduct();
-        $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
-        $code = $requestProductItem->getProductUnit() ? $requestProductItem->getProductUnit()->getCode() : null;
+        $product        = $requestProductItem->getRequestProduct()->getProduct();
+        $allowedUnits   = $product ? $product->getAvailableUnitCodes() : [];
+        $code           = $requestProductItem->getProductUnit() ? $requestProductItem->getProductUnit()->getCode() : null;
+        
         if (!in_array($code, $allowedUnits, true)) {
             $this->context->addViolationAt('productUnit', $constraint->message);
         }
