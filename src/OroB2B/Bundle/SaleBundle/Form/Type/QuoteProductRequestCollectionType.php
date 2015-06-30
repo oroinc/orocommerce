@@ -27,7 +27,7 @@ class QuoteProductRequestCollectionType extends AbstractType
             'show_form_when_empty'  => false,
             'prototype_name'        => '__namequoteproductrequest__',
             'allow_add'             => false,
-            'allow_remove'          => false,
+            'allow_delete'          => false,
         ]);
     }
 

@@ -23,7 +23,8 @@
             {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
         {% endfor %}
     {% endif %}
-    <table class="sale-quoteproduct-collection-table">
+    <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
+                            data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component">
     <tr>
         <td class="sale-quoteproduct-table-column-1">
             <div class="sale-quoteproduct-product-select">
@@ -36,8 +37,7 @@
             {{ form_errors(form.type) }}
         </td>
         <td class="sale-quoteproduct-table-column-3">
-            <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
-                        data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component" class="sale-quoteproductitem-collection">
+            <div class="sale-quoteproductitem-collection">
                 {{ form_widget(form.quoteProductRequests) }}
                 {{ form_widget(form.quoteProductOffers) }}
                 <div>
