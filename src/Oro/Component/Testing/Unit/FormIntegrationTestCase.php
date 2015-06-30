@@ -27,7 +27,8 @@ class FormIntegrationTestCase extends BaseTestCase
     /**
      * @return Validator
      */
-    protected function getValidator() {
+    protected function getValidator()
+    {
         /* @var $loader \PHPUnit_Framework_MockObject_MockObject|LoaderInterface */
         $loader = $this->getMock('Symfony\Component\Validator\Mapping\Loader\LoaderInterface');
         $loader
@@ -51,7 +52,7 @@ class FormIntegrationTestCase extends BaseTestCase
      */
     protected function loadMetadata(ClassMetadata $meta)
     {
-        if (FALSE !== ($configFile = $this->getConfigPath($meta->name))) {
+        if (false !== ($configFile = $this->getConfigPath($meta->name))) {
             $loader = new YamlFileLoader($configFile);
             $loader->loadClassMetadata($meta);
         }
@@ -85,13 +86,13 @@ class FormIntegrationTestCase extends BaseTestCase
      * @param string $class
      * @return string
      */
-    function getBundleRootPath($class)
+    protected function getBundleRootPath($class)
     {
         $rclass = new \ReflectionClass($class);
 
         $path = false;
 
-        if (FALSE !== $pos = strrpos($rclass->getFileName(), 'Bundle')) {
+        if (false !== $pos = strrpos($rclass->getFileName(), 'Bundle')) {
             $path = substr($rclass->getFileName(), 0, $pos) . 'Bundle';
         }
 
