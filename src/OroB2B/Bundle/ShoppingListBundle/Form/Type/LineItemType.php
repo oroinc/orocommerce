@@ -102,7 +102,7 @@ class LineItemType extends AbstractType
                 'notes',
                 'textarea',
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'orob2b.shoppinglist.lineitem.notes_label',
                     'empty_data' => null,
                 ]
