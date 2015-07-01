@@ -41,7 +41,6 @@ class RequestProductType extends AbstractType
                 'create_enabled' => false,
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
-                'required'  => false,
                 'label'     => 'orob2b.rfpadmin.requestproductitem.entity_plural_label',
                 'add_label' => 'orob2b.rfpadmin.requestproductitem.add_label',
             ])

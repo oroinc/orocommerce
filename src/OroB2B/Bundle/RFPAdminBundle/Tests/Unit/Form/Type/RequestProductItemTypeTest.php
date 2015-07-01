@@ -2,30 +2,27 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
 
-class RequestProductItemTypeTest extends FormIntegrationTestCase
+use OroB2B\Bundle\RFPAdminBundle\Validator\Constraints;
+
+class RequestProductItemTypeTest extends AbstractTest
 {
     /**
      * @var RequestProductItemType
@@ -50,32 +47,31 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockObject|LocaleSettings */
-        $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /* @var $configManager \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
-        $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_currency.allowed_currencies')
-            ->will($this->returnValue(['USD', 'EUR']));
+        $priceType                  = $this->preparePriceType();
+        $currencySelectionType      = new CurrencySelectionTypeStub();
+        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
-                    PriceType::NAME                 => new PriceType(),
-                    CurrencySelectionType::NAME     => new CurrencySelectionType($configManager, $localeSettings),
-                    ProductUnitSelectionType::NAME  => new ProductUnitSelectionType(),
-                    'entity'                        => new EntityType([]),
+                    $priceType->getName()                   => $priceType,
+                    $currencySelectionType->getName()       => $currencySelectionType,
+                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidators()
+    {
+        $requestProductItemConstraint = new Constraints\RequestProductItem();
+        return [
+            $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
         ];
     }
 
@@ -113,7 +109,6 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
         $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
         $options = $config->getOptions();
 
-        $this->assertFalse($options['compact']);
         $this->assertFalse($options['disabled']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
     }
@@ -185,6 +180,67 @@ class RequestProductItemTypeTest extends FormIntegrationTestCase
                 'inputData'     => $item,
                 'expectedData'  => $item,
                 'choices'       => $choices,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function submitProvider()
+    {
+        return [
+            'empty form' => [
+                'isValid'       => false,
+                'submittedData' => [],
+                'expectedData'  => $this->getRequestProductItem(1),
+                'defaultData'   => $this->getRequestProductItem(1),
+            ],
+            'empty quantity' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'productUnit'   => 'kg',
+                    'price'         => [
+                        'value'     => 20,
+                        'currency'  => 'USD',
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProductItem(2, null, 'kg', Price::create(20, 'USD')),
+                'defaultData'   => $this->getRequestProductItem(2),
+            ],
+            'empty product unit' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'price'         => [
+                        'value'     => 20,
+                        'currency'  => 'USD',
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProductItem(3, 10, null, Price::create(20, 'USD')),
+                'defaultData'   => $this->getRequestProductItem(3),
+            ],
+            'empty price' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                ],
+                'expectedData'  => $this->getRequestProductItem(2, 10, 'kg'),
+                'defaultData'   => $this->getRequestProductItem(2),
+            ],
+            'valid data' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                    'price'         => [
+                        'value'     => 20,
+                        'currency'  => 'USD',
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', Price::create(20, 'USD')),
+                'defaultData'   => $this->getRequestProductItem(5),
             ],
         ];
     }
