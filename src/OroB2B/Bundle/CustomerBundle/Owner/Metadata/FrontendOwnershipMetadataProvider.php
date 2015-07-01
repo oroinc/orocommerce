@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Owner\Metadata;
 
+use Doctrine\Common\Cache\CacheProvider;
+
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
@@ -24,6 +26,11 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      * @var FrontendOwnershipMetadataProvider
      */
     private $noOwnershipMetadata;
+
+    /**
+     * @var CacheProvider
+     */
+    private $cache;
 
     /**
      * {@inheritDoc}
@@ -118,5 +125,18 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     public function getMaxAccessLevel($accessLevel, $object = null)
     {
         return $accessLevel;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCache()
+    {
+        if (!$this->cache) {
+            $this->cache = $this->getContainer()
+                ->get('orob2b_customer.owner.frontend_ownership_metadata_provider.cache');
+        }
+
+        return $this->cache;
     }
 }
