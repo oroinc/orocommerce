@@ -26,9 +26,12 @@ orob2b:
             add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
+            productreplacement.label: 'Suggested Replacement:'
             product_sku.label: 'Product SKU'
             quote.label: 'Quote'
             quote_product_items.label: 'Quote Product Lines'
+            comment.label: 'Seller Notes'
+            commentcustomer.label: 'Customer Notes'
             product.removed: '{title} - removed'
             type:
                 label: 'Type'
@@ -77,3 +80,7 @@ orob2b:
         controller:
             quote:
                 saved.message: 'Quote has been saved'
+
+        btn:
+            add_seller_notes: 'Add Notes'
+            remove_seller_notes: 'Remove Seller Notes'

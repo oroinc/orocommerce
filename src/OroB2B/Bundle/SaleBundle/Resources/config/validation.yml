@@ -41,7 +41,7 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.sale.quoteproductitem.product_unit.blank'
+                message: 'orob2b.sale.quoteproductoffer.product_unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Twig;
 
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
@@ -51,8 +52,13 @@ class QuoteExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_sale_quote_product_item',
+                'orob2b_format_sale_quote_product_offer',
                 [$this, 'formatProductOffer'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFilter(
+                'orob2b_format_sale_quote_product_request',
+                [$this, 'formatProductRequest'],
                 ['is_safe' => ['html']]
             ),
         ];
@@ -78,7 +84,39 @@ class QuoteExtension extends \Twig_Extension
         );
 
         $str = $this->translator->trans(
-            'orob2b.sale.quoteproductitem.item',
+            'orob2b.sale.quoteproductoffer.item',
+            [
+                '{units}'   => $units,
+                '{price}'   => $price,
+                '{unit}'    => $unit,
+            ]
+        );
+
+        return $str;
+    }
+
+
+    /**
+     * @param QuoteProductRequest $item
+     * @return string
+     */
+    public function formatProductRequest(QuoteProductRequest $item)
+    {
+        $units = $item->getProductUnit()
+            ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())
+            : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
+        ;
+
+        $price = $this->numberFormatter->formatCurrency(
+            $item->getPrice()->getValue(),
+            $item->getPrice()->getCurrency()
+        );
+        $unit = $this->translator->trans(
+            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
+        );
+
+        $str = $this->translator->trans(
+            'orob2b.sale.quoteproductrequest.item',
             [
                 '{units}'   => $units,
                 '{price}'   => $price,

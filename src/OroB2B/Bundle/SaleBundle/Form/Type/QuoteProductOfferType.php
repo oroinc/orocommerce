@@ -53,7 +53,7 @@ class QuoteProductOfferType extends AbstractType
                     'expanded' => true
             ])
             ->add('allowIncrements', 'checkbox', [
-                'required'  => true,
+                'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductoffer.allowincrements.label'
             ])
         ;

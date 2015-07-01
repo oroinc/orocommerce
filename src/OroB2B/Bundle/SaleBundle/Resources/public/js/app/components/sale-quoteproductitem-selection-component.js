@@ -17,15 +17,26 @@ define(function (require) {
          * @property {Object}
          */
         options: {
-            productSelect:  '.sale-quoteproduct-product-select input[type="hidden"]',
-            unitsSelect:    '.sale-quoteproductitem-productunit-select',
-            unitsRoute:     'orob2b_product_unit_product_units',
-            addItemButton:  '.add-list-item',
+            productSelect: '.sale-quoteproduct-product-select input[type="hidden"]',
+            productReplacementSelect: '.sale-quoteproduct-product-replacement-select input[type="hidden"]',
+            typeSelect: '.sale-quoteproduct-type-select',
+            unitsSelect: '.sale-quoteproductitem-productunit-select',
+            unitsRoute: 'orob2b_product_unit_product_units',
+            addItemButton: '.add-list-item',
+            addNotesButton: '.sale-quoteproduct-add-notes-btn',
+            removeNotesButton: '.sale-quoteproduct-remove-notes-btn',
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
-            errorMessage:   'Sorry, unexpected error was occurred',
+            productReplacementContainer: '.sale-quoteproduct-product-select-replacement',
+            sellerNotesContainer: '.sale-quoteproduct-notes-seller',
+            errorMessage: 'Sorry, unexpected error was occurred',
             units: {}
         },
-        
+
+        /**
+         * @property {int}
+         */
+        typeReplacement : null,
+
         /**
          * @property {array}
          */
@@ -40,17 +51,37 @@ define(function (require) {
          * @property {Object}
          */
         $productSelect : null,
+
+        /**
+         * @property {Object}
+         */
+        $typeSelect : null,
         
         /**
          * @property {Object}
          */
         $addItemButton : null,
+
+        /**
+         * @property {Object}
+         */
+        $addNotesButton : null,
         
         /**
          * @property {Object}
          */
         $itemsContainer : null,
-        
+
+        /**
+         * @property {Object}
+         */
+        $sellerNotesContainer : null,
+
+        /**
+         * @property {Object}
+         */
+        $productReplacementContainer : null,
+
         /** 
          * @property {LoadingMaskView|null}
          */
@@ -60,19 +91,28 @@ define(function (require) {
          * @inheritDoc
          */
         initialize: function (options) {
-            this.options    = _.defaults(options || {}, this.options);
-            this.units      = _.defaults(this.units, options.units);
+            this.options = _.defaults(options || {}, this.options);
+            this.units = _.defaults(this.units, options.units);
             
             this.$container = options._sourceElement;
-            
+
+            this.typeReplacement = options.typeReplacement;
+
             this.loadingMask = new LoadingMaskView({container: this.$container});
             
-            this.$productSelect     = this.$container.find(this.options.productSelect);
-            this.$addItemButton     = this.$container.find(this.options.addItemButton);
-            this.$itemsContainer    = this.$container.find(this.options.itemsContainer);
-            
+            this.$productSelect = this.$container.find(this.options.productSelect);
+            this.$typeSelect = this.$container.find(this.options.typeSelect);
+            this.$addItemButton = this.$container.find(this.options.addItemButton);
+            this.$addNotesButton = this.$container.find(this.options.addNotesButton);
+            this.$itemsContainer = this.$container.find(this.options.itemsContainer);
+            this.$productReplacementContainer = this.$container.find(this.options.productReplacementContainer);
+            this.$sellerNotesContainer = this.$container.find(this.options.sellerNotesContainer);
+
             this.$container
                 .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
+                .on('change', this.options.typeSelect, _.bind(this.onTypeChanged, this))
+                .on('click', this.options.addNotesButton, _.bind(this.onAddNotesClick, this))
+                .on('click', this.options.removeNotesButton, _.bind(this.onRemoveNotesClick, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
             
@@ -84,7 +124,7 @@ define(function (require) {
         },
         
         /**
-         * Handle change
+         * Handle Product change
          *
          * @param {jQuery.Event} e
          */
@@ -94,10 +134,23 @@ define(function (require) {
             if (this.$itemsContainer.children().length) {
                 this.onContentChanged(e);
             }
-        },        
+        },
 
         /**
-         * Handle change
+         * Handle Type change
+         *
+         * @param {jQuery.Event} e
+         */
+        onTypeChanged: function (e) {
+            if (this.typeReplacement === parseInt(this.$typeSelect.val())) {
+                this.$productReplacementContainer.show();
+            } else {
+                this.$productReplacementContainer.hide();
+            }
+        },
+
+        /**
+         * Handle Content change
          *
          * @param {jQuery.Event} e
          */
@@ -156,6 +209,26 @@ define(function (require) {
                 $(select).val(currentValue);
                 $(select).uniform('update');
             });
+        },
+
+        /**
+         * Handle Add Notes click
+         *
+         * @param {jQuery.Event} e
+         */
+        onAddNotesClick: function (e) {
+            this.$sellerNotesContainer.show();
+            this.$addNotesButton.css('visibility', 'hidden');
+        },
+
+        /**
+         * Handle Remove Notes click
+         *
+         * @param {jQuery.Event} e
+         */
+        onRemoveNotesClick: function (e) {
+            this.$sellerNotesContainer.hide();
+            this.$addNotesButton.css('visibility', 'visible');
         },
         
         dispose: function () {

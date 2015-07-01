@@ -52,7 +52,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
                 $ids = [
                     'orob2b.product_unit.kg.label.full'     => 'kilogram',
                     'orob2b.product_unit.item.label.full'   => 'item',
-                    'orob2b.sale.quoteproductitem.item'     => '{units}, {price} per {unit}',
+                    'orob2b.sale.quoteproductoffer.item'     => '{units}, {price} per {unit}',
                 ];
 
                 return str_replace(array_keys($params), array_values($params), $ids[$id]);
@@ -96,10 +96,13 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         /* @var $filters \Twig_SimpleFilter[] */
         $filters = $this->extension->getFilters();
 
-        $this->assertCount(1, $filters);
+        $this->assertCount(2, $filters);
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('orob2b_format_sale_quote_product_item', $filters[0]->getName());
+        $this->assertEquals('orob2b_format_sale_quote_product_offer', $filters[0]->getName());
+
+        $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
+        $this->assertEquals('orob2b_format_sale_quote_product_request', $filters[1]->getName());
     }
 
     /**

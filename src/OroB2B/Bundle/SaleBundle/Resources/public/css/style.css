@@ -136,15 +136,18 @@
 
 .sale-quoteproduct-table-column-1 {
     vertical-align: top;
+    min-width: 325px;
     width: 325px;
 }
 
 .sale-quoteproduct-table-column-2 {
     vertical-align: top;
+    min-width: 270px;
     width: 270px;
 }
 
 .sale-quoteproduct-table-column-3 {
+    min-width: 870px;
     width: 870px;
 }
 
@@ -152,11 +155,49 @@
     margin-top: -1px !important;
 }
 
-.sale-quoteproductitem-widget input [type="checkbox"] {
-    margin-top: 0 !important;
+.sale-quoteproductitem-widget input[type="checkbox"] {
+    margin-top: 0;
 }
 
 .sale-quoteproductitem-collection .btn.add-list-item {
   margin-left: 741px;
   position: absolute;
+}
+
+.sale-quoteproductitem-widget .control-group {
+    margin: 0;
+}
+
+.sale-quoteproduct-product-select-replacement {
+    margin-top: 10px;
+    display: none;
+}
+
+.sale-quoteproduct-product-select-replacement .controls{
+    margin-left: 0 !important;
+}
+
+.sale-quoteproduct-product-select-replacement label{
+    width: auto !important;
+}
+
+.sale-quoteproduct-product-select-replacement .entity-select-btn {
+    float: none;
+}
+
+.sale-quoteproduct-notes .control-group {
+    max-width: none;
+    margin-top: 15px;
+}
+
+.sale-quoteproduct-notes .control-group textarea {
+    width: 100%;
+}
+
+.sale-quoteproduct-remove-notes-btn {
+    float: right;
+}
+
+.sale-quoteproduct-notes-seller {
+    display: none;
 }

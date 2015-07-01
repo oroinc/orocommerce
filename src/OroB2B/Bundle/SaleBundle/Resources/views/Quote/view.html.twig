@@ -54,16 +54,16 @@
                                 {{ quoteProduct.productSku|raw }}
                             {% endif %}
                         </td>
-                        <td class="sale-quoteproductitems-info" style="">
+                        <td class="sale-quoteproductitems-info">
                             {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
                                 <div class="sale-quoteproductitem-info">
-                                    {{ quoteProductRequest|orob2b_format_sale_quote_product_item }}
+                                    {{ quoteProductRequest|orob2b_format_sale_quote_product_request }}
                                 </div>
                             {% endfor %}
 
                             {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
                                 <div class="sale-quoteproductitem-info">
-                                    {{ quoteProductOffer|orob2b_format_sale_quote_product_item }}
+                                    {{ quoteProductOffer|orob2b_format_sale_quote_product_offer }}
                                 </div>
                             {% endfor %}
                         </td>
@@ -89,4 +89,3 @@
 
     {{ parent() }}
 {% endblock content_data %}
-
