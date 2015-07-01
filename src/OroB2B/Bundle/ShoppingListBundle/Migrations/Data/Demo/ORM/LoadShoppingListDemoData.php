@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface
@@ -24,8 +25,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        /** @var User $user */
-        $user = $manager->getRepository('OroUserBundle:User')->findOneBy(['username' => 'admin']);
+        $user = $this->getAdminUser($manager);
 
         $this->createShoppingList($manager, $user, 'Shopping List 1');
         $this->createShoppingList($manager, $user, 'Shopping List 2');
@@ -49,5 +49,28 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $shoppingList->setLabel($label);
 
         $manager->persist($shoppingList);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return User
+     */
+    protected function getAdminUser(ObjectManager $manager)
+    {
+        $adminRole = $manager->getRepository('OroUserBundle:Role')
+            ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
+
+        if (!$adminRole) {
+            throw new \RuntimeException('Administrator role should exist.');
+        }
+
+        $adminUser = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($adminRole);
+
+        if (!$adminUser) {
+            throw new \RuntimeException('At least one administrator should exist.');
+        }
+
+        return $adminUser;
     }
 }
