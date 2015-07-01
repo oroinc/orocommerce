@@ -28,8 +28,9 @@ class RequestProductItemValidator extends ConstraintValidator
 
         $product        = $requestProductItem->getRequestProduct()->getProduct();
         $allowedUnits   = $product ? $product->getAvailableUnitCodes() : [];
-        $code           = $requestProductItem->getProductUnit() ? $requestProductItem->getProductUnit()->getCode() : null;
-        
+        $productUnit    = $requestProductItem->getProductUnit();
+        $code           = $productUnit ? $productUnit->getCode() : null;
+
         if (!in_array($code, $allowedUnits, true)) {
             $this->context->addViolationAt('productUnit', $constraint->message);
         }
