@@ -11,6 +11,7 @@ security:
             # secure everything started with /account/ except basic user operations
             pattern:                        ^/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
             provider:                       b2b_frontend_user
+            context:                        customer_identity
             organization-form-login:
                 csrf_provider:              form.csrf_provider
                 check_path:                 orob2b_customer_account_user_security_check
@@ -27,4 +28,5 @@ security:
         frontend:
             pattern:                        ^/
             provider:                       b2b_frontend_user
+            context:                        customer_identity
             anonymous:                      true
