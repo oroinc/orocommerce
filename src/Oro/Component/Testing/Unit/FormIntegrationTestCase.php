@@ -73,7 +73,18 @@ class FormIntegrationTestCase extends BaseTestCase
     }
 
     /**
-     * @return type
+     * @param ClassMetadata $meta
+     */
+    protected function loadMetadata(ClassMetadata $meta)
+    {
+        if (false !== ($configFile = $this->getConfigFile($meta->name))) {
+            $loader = new YamlFileLoader($configFile);
+            $loader->loadClassMetadata($meta);
+        }
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface
      */
     protected function getConstraintValidatorFactory()
     {
@@ -86,7 +97,9 @@ class FormIntegrationTestCase extends BaseTestCase
 
                 $className = $constraint->validatedBy();
 
-                if (!isset($this->validators[$className]) || $className === 'Symfony\Component\Validator\Constraints\CollectionValidator') {
+                if (!isset($this->validators[$className])
+                    || $className === 'Symfony\Component\Validator\Constraints\CollectionValidator')
+                {
                     $this->validators[$className] = new $className();
                 }
 
@@ -95,17 +108,6 @@ class FormIntegrationTestCase extends BaseTestCase
         ;
 
         return $factory;
-    }
-
-    /**
-     * @param ClassMetadata $meta
-     */
-    protected function loadMetadata(ClassMetadata $meta)
-    {
-        if (false !== ($configFile = $this->getConfigFile($meta->name))) {
-            $loader = new YamlFileLoader($configFile);
-            $loader->loadClassMetadata($meta);
-        }
     }
 
     /**
