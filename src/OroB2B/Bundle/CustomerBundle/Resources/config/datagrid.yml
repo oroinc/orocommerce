@@ -11,12 +11,14 @@ datagrid:
                     - customer.name
                     - customer_group.name as group_name
                     - parent.name as parent_name
+                    - internalRating.name as internal_rating_name
                 from:
                     - { table: %orob2b_customer.entity.customer.class%, alias: customer }
                 join:
                     left:
                         - { join: customer.group, alias: customer_group }
                         - { join: customer.parent, alias: parent }
+                        - { join: customer.internal_rating, alias: internalRating }
         columns:
             name:
                 label: orob2b.customer.name.label
@@ -24,6 +26,8 @@ datagrid:
                 label: orob2b.customer.group.label
             parent_name:
                 label: orob2b.customer.parent.label
+            internal_rating_name:
+                label: orob2b.customer.internal_rating.label
         properties:
             id: ~
         sorters:
