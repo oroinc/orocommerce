@@ -26,6 +26,8 @@ parameters:
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
 
+    orob2b_customer.owner.decision_maker.class: OroB2B\Bundle\CustomerBundle\Owner\EntityOwnershipDecisionMaker
+
 services:
     orob2b_customer.customer_tree_handler:
         class: %orob2b_customer.customer_tree_handler.class%
@@ -162,3 +164,10 @@ services:
             - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
+
+    orob2b_customer.owner.decision_maker:
+        public: false
+        class: %orob2b_customer.owner.decision_maker.class%
+        parent: oro_security.owner.decision_maker.abstract
+        tags:
+           - { name: oro_security.owner.ownership_decision_maker }
