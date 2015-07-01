@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 
@@ -11,6 +12,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -29,6 +31,9 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
 
     /** @var ObjectRepository|EntityRepository */
     protected $regionRepository;
+
+    /** @var ObjectRepository|EntityRepository */
+    protected $addressTypeRepository;
 
     /**
      * {@inheritdoc}
@@ -55,6 +60,7 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
         $manager = $userManager->getStorageManager();
         $this->countryRepository = $manager->getRepository('OroAddressBundle:Country');
         $this->regionRepository = $manager->getRepository('OroAddressBundle:Region');
+        $this->addressTypeRepository = $manager->getRepository('OroAddressBundle:AddressType');
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BCustomerBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
@@ -103,6 +109,18 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
             );
         }
 
+        $types = [];
+        $typesFromData = explode(',', $data['types']);
+        foreach ($typesFromData as $type) {
+            $types[] = $this->addressTypeRepository->find($type);
+        }
+
+        $defaultTypes = [];
+        $defaultTypesFromData = explode(',', $data['defaultTypes']);
+        foreach ($defaultTypesFromData as $defaultType) {
+            $defaultTypes[] = $this->addressTypeRepository->find($defaultType);
+        }
+
         $address = new CustomerAddress();
         $address
             ->setPrimary(true)
@@ -111,7 +129,9 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
             ->setStreet($data['street'])
             ->setCity($data['city'])
             ->setRegion($region)
-            ->setPostalCode($data['zipCode']);
+            ->setPostalCode($data['zipCode'])
+            ->setTypes(new ArrayCollection($types))
+            ->setDefaults(new ArrayCollection($defaultTypes));
 
         return $address;
     }
