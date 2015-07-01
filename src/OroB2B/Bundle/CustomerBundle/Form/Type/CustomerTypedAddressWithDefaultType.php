@@ -3,14 +3,13 @@
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
+
 use OroB2B\Bundle\CustomerBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
+
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class CustomerTypedAddressWithDefaultType extends AbstractType
@@ -56,7 +55,7 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
             'expanded' => true,
             'label'    => false,
         ])
-            ->addViewTransformer(new AddressTypeDefaultTransformer($em));
+        ->addViewTransformer(new AddressTypeDefaultTransformer($em));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -71,7 +70,7 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
         ]);
     }
 
-    public function setRegistry($registry)
+    public function setRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
