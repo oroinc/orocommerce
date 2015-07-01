@@ -11,6 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\Length;
 
+use Oro\Bundle\SecurityBundle\Form\Type\AclPrivilegeType;
+use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserRoleType extends AbstractType
@@ -69,16 +72,16 @@ class AccountUserRoleType extends AbstractType
         foreach ($options['privilege_config'] as $fieldName => $config) {
             $builder->add(
                 $fieldName,
-                'oro_acl_collection',
+                PrivilegeCollectionType::NAME,
                 [
-                    'type' => 'oro_acl_privilege',
+                    'type' => AclPrivilegeType::NAME,
                     'allow_add' => true,
                     'prototype' => false,
                     'allow_delete' => false,
                     'mapped' => false,
-                    'options' => array(
+                    'options' => [
                         'privileges_config' => $config,
-                    )
+                    ],
                 ]
             );
         }
