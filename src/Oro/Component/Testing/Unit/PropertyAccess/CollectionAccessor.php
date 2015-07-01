@@ -114,7 +114,9 @@ class CollectionAccessor
         if (!$addMethodFound || !$removeMethodFound) {
             throw new NoSuchPropertyException(sprintf(
                 'Not found a public methods "%s()" and/or "%s()" on class %s',
-                $addMethod,  $removeMethod, $reflClass->name
+                $addMethod,
+                $removeMethod,
+                $reflClass->name
             ));
         }
     }
