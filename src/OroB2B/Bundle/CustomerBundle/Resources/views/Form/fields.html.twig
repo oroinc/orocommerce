@@ -32,12 +32,15 @@
 
 {% block oro_address_collection_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-address-collection' }) %}
+        {% set options = {
+            disableDefaultWithoutType: true,
+            disableRepeatedTypes: true
+        } %}
+    <span
+      data-page-component-module="orob2bcustomer/js/app/components/customer-address-component"
+      data-page-component-options="{{ options|json_encode }}">
     {{ block('oro_collection_widget') }}
-    {# Disable unique type validation from AddressBundle #}
-    {% set id = id ~ '_collection' %}
-    {% import 'OroB2BCustomerBundle:Include:macros.html.twig' as macroses %}
-    {{ macroses.oro_collection_validate_default_types_js(_context) }}
-    {{ macroses.oro_collection_disable_default_types_js(_context) }}
+    </span>
 {% endblock %}
 
 {% block oro_combobox_dataconfig_parent_aware %}

@@ -1,5 +1,4 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
-{% form_theme form with ['OroFormBundle:Form:fields.html.twig', 'OroB2BCustomerBundle:Include:fields.html.twig'] %}
 
 {% set formAction = entity.id ? path('orob2b_customer_update', {id: entity.id}) : path('orob2b_customer_create') %}
 

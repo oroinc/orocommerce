@@ -1,5 +1,5 @@
-{#{% form_theme form with ['OroFormBundle:Form:fields.html.twig', _self] %}#}
-<div class="widget-content">
+<div class="widget-content" data-page-component-module="orob2bcustomer/js/app/components/customer-address-component"
+     data-page-component-options="{{ {disableDefaultWithoutType: true}|json_encode }}">
     {% if saved %}
         <script type="text/javascript">
         require(['oroui/js/widget-manager'],
@@ -33,8 +33,8 @@
             </fieldset>
         </form>
         {{ oro_form_js_validation(form) }}
-        {% import 'OroB2BCustomerBundle:Include:macros.html.twig' as macroses %}
-        {% set id = 'orob2b_customer_typed_address' %}
-        {{ macroses.oro_collection_disable_default_types_js(_context) }}
+        {#{% import 'OroB2BCustomerBundle:Include:macros.html.twig' as macroses %}#}
+        {#{% set id = 'orob2b_customer_typed_address' %}#}
+        {#{{ macroses.oro_collection_disable_default_types_js(_context) }}#}
     {% endif %}
 </div>

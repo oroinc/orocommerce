@@ -3,3 +3,4 @@ config:
         'orob2bcustomer/js/app/components/customer-tree-component': 'bundles/orob2bcustomer/js/app/components/customer-tree-component.js'
         'orob2bcustomer/js/app/components/account-user-management-component': 'bundles/orob2bcustomer/js/app/components/account-user-management-component.js'
         'orob2bcustomer/js/app/components/password-generate': 'bundles/orob2bcustomer/js/app/components/password-generate.js'
+        'orob2bcustomer/js/app/components/customer-address-component': 'bundles/orob2bcustomer/js/app/components/customer-address-component.js'
