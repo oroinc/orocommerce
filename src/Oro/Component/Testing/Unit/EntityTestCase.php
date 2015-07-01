@@ -2,6 +2,8 @@
 
 namespace Oro\Component\Testing\Unit;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Component\Testing\Unit\PropertyAccess\CollectionAccessor;
 
 use Oro\Component\Testing\Unit\Constraint\PropertyGetterReturnsDefaultValue;
@@ -149,7 +151,12 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
         self::assertSame(
             $instance,
             $propertyAccess->addItem($testItem),
-            sprintf('%s : %s() - must return $this', $propertyName, $propertyAccess->getAddItemMethod())
+            sprintf(
+                '%s::%s() - must return %s',
+                ClassUtils::getClass($instance),
+                $propertyAccess->getAddItemMethod(),
+                ClassUtils::getClass($instance)
+            )
         );
 
         // Check added item
@@ -180,10 +187,15 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
         );
 
         // Remove item
-        self::assertEquals(
+        self::assertSame(
             $instance,
             $propertyAccess->removeItem($testItem),
-            sprintf('%s : %s() - must return $this', $propertyName, $propertyAccess->getRemoveItemMethod())
+            sprintf(
+                '%s:%s() - must return %s',
+                ClassUtils::getClass($instance),
+                $propertyAccess->getRemoveItemMethod(),
+                ClassUtils::getClass($instance)
+            )
         );
 
         self::assertCount(
