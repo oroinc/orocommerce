@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomerAddress;
 
 /**
@@ -48,10 +49,8 @@ class CustomerAddress extends ExtendCustomerAddress
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
      * )
-     *
      **/
     protected $addressesToTypes;
-
 
     public function __construct()
     {
@@ -59,8 +58,11 @@ class CustomerAddress extends ExtendCustomerAddress
         parent::__construct();
     }
 
+
     /**
-     * {@inheritdoc}
+     * Get address types
+     *
+     * @return Collection|AddressType[]
      */
     public function getTypes()
     {
@@ -74,7 +76,10 @@ class CustomerAddress extends ExtendCustomerAddress
     }
 
     /**
-     * {@inheritdoc}
+     * Set address types
+     *
+     * @param Collection $types
+     * @return CustomerAddress
      */
     public function setTypes(Collection $types)
     {
@@ -88,6 +93,12 @@ class CustomerAddress extends ExtendCustomerAddress
         return $this;
     }
 
+    /**
+     * Remove address type
+     *
+     * @param AddressType $type
+     * @return CustomerAddress
+     */
     public function removeType(AddressType $type)
     {
         /** @var CustomerAddressToAddressType $addressesToType */
@@ -100,7 +111,12 @@ class CustomerAddress extends ExtendCustomerAddress
         return $this;
     }
 
-
+    /**
+     * Add address type
+     *
+     * @param AddressType $type
+     * @return CustomerAddress
+     */
     public function addType(AddressType $type)
     {
         $addressToType = new CustomerAddressToAddressType();
@@ -111,6 +127,11 @@ class CustomerAddress extends ExtendCustomerAddress
         return $this;
     }
 
+    /**
+     * Get default types
+     *
+     * @return Collection|AddressType[]
+     */
     public function getDefaults()
     {
         $defaultTypes = new ArrayCollection();
@@ -124,6 +145,12 @@ class CustomerAddress extends ExtendCustomerAddress
         return $defaultTypes;
     }
 
+    /**
+     * Set default types
+     *
+     * @param Collection|AddressType[] $defaults
+     * @return CustomerAddress
+     */
     public function setDefaults($defaults)
     {
         /** @var CustomerAddressToAddressType $addressToType */
@@ -178,10 +205,13 @@ class CustomerAddress extends ExtendCustomerAddress
      * Set customer as owner.
      *
      * @param Customer $owner
+     * @return $this
      */
     public function setOwner(Customer $owner = null)
     {
         $this->owner = $owner;
+
+        return $this;
     }
 
     /**

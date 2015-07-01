@@ -3,10 +3,12 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
+
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
