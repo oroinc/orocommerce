@@ -66,7 +66,8 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
      * on specified properties.
      *
      * @param object $instance
-     * @param array $properties <p>
+     * @param array $properties
+     * <pre>
      * Example:
      * [1] => Array(
      *   [1] => 'someProperty', // property name
@@ -79,7 +80,7 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
      *   [3] => false   // do not test default value (e.g. if the property is initialized in the constructor,
      *                  // or is lazy loaded by its getter)
      * )
-     * </p>
+     * </pre>
      */
     public static function assertPropertyAccessors($instance, $properties)
     {
@@ -101,7 +102,8 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
      * Performance assertPropertyCollection assertion on specified properties
      *
      * @param object $instance
-     * @param array $properties <pre>
+     * @param array $properties
+     * <pre>
      * Example:
      * [0] => Array(
      *      [0] => 'numbers', // property name - collection
