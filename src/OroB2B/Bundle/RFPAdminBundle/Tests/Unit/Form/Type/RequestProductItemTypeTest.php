@@ -87,9 +87,9 @@ class RequestProductItemTypeTest extends AbstractTest
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem',
-                'intention'     => 'rfp_admin_request_product_item',
-                'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
+                'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem',
+                'intention'  => 'rfp_admin_request_product_item',
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ])
         ;
 
@@ -109,7 +109,7 @@ class RequestProductItemTypeTest extends AbstractTest
         $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
         $options = $config->getOptions();
 
-        $this->assertEquals(false, $options['disabled']);
+        $this->assertFalse($options['disabled']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
     }
 
@@ -135,9 +135,9 @@ class RequestProductItemTypeTest extends AbstractTest
 
         $options = $config->getOptions();
 
+        $this->assertFalse($options['disabled']);
+        $this->assertTrue($options['required']);
         $this->assertEquals($choices, $options['choices']);
-        $this->assertEquals(false, $options['disabled']);
-        $this->assertEquals(true, $options['required']);
         $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
     }
 

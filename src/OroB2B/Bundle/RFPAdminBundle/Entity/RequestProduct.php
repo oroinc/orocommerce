@@ -73,7 +73,6 @@ class RequestProduct
      */
     protected $requestProductItems;
 
-
     /**
      * Constructor
      */

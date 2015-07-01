@@ -65,18 +65,11 @@ class RequestProductItemValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testAllowedUnits($data, $valid)
     {
-        if ($valid) {
-            $this->context
-                ->expects($this->never())
-                ->method('addViolationAt')
-            ;
-        } else {
-            $this->context
-                ->expects($this->once())
-                ->method('addViolationAt')
-                ->with('productUnit', $this->constraint->message)
-            ;
-        }
+        $this->context
+            ->expects($valid ? $this->never() : $this->once())
+            ->method('addViolationAt')
+            ->with('productUnit', $this->constraint->message)
+        ;
 
         $this->validator->validate($data, $this->constraint);
     }

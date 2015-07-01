@@ -91,9 +91,9 @@ class RequestProductTypeTest extends AbstractTest
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct',
-                'intention'     => 'rfp_admin_request_product',
-                'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"'
+                'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct',
+                'intention'  => 'rfp_admin_request_product',
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
             ])
         ;
 

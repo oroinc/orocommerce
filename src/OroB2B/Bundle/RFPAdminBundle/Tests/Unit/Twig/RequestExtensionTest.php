@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 use OroB2B\Bundle\RFPAdminBundle\Twig\RequestExtension;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
@@ -31,6 +32,11 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
     protected $productUnitValueFormatter;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
+     */
+    protected $productUnitLabelFormatter;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
      */
     protected $numberFormatter;
@@ -45,49 +51,27 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock()
         ;
 
-        $this->translator
-            ->expects($this->any())
-            ->method('trans')
-            ->will($this->returnCallback(function ($id, $params) {
-                $ids = [
-                    'orob2b.rfpadmin.requestproductitem.item'   => '{units}, {price} per {unit}',
-                    'orob2b.product_unit.kg.label.full'         => 'kilogram',
-                    'orob2b.product_unit.item.label.full'       => 'item',
-                ];
-
-                return str_replace(array_keys($params), array_values($params), $ids[$id]);
-            }))
-        ;
-
         $this->productUnitValueFormatter = $this->getMockBuilder(
             'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productUnitValueFormatter
-            ->expects($this->any())
-            ->method('format')
-            ->will($this->returnCallback(function ($quantity, ProductUnit $productUnit) {
-                $code = $this->translator->trans('orob2b.product_unit.' . $productUnit->getCode() . '.label.full');
-                return sprintf('%d %s', $quantity, $code);
-            }));
+        $this->productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->numberFormatter
-            ->expects($this->any())
-            ->method('formatCurrency')
-            ->will($this->returnCallback(function ($value, $currency) {
-                return sprintf('%01.2f %s', $value, $currency);
-            }));
-
         $this->extension = new RequestExtension(
             $this->translator,
             $this->numberFormatter,
-            $this->productUnitValueFormatter
+            $this->productUnitValueFormatter,
+            $this->productUnitLabelFormatter
         );
     }
 
@@ -98,20 +82,31 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $filters);
 
+        $this->assertArrayHasKey(0, $filters);
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
         $this->assertEquals('orob2b_format_rfpadmin_request_product_item', $filters[0]->getName());
     }
 
     /**
-     * @param string $expected
      * @param int $quantity
      * @param string $unitCode
+     * @param string $formattedUnits
      * @param Price $price
+     * @param string $formattedPrice
+     * @param string $formattedUnit
      * @param ProductUnit $unit
+     *
      * @dataProvider formatProductItemProvider
      */
-    public function testFormatProductItem($expected, $quantity, $unitCode, Price $price, ProductUnit $unit = null)
-    {
+    public function testFormatProductItem(
+        $quantity,
+        $unitCode,
+        $formattedUnits,
+        Price $price,
+        $formattedPrice,
+        $formattedUnit,
+        ProductUnit $unit = null
+    ) {
         $item = new RequestProductItem();
         $item
             ->setQuantity($quantity)
@@ -120,7 +115,34 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
             ->setPrice($price)
         ;
 
-        $this->assertEquals($expected, $this->extension->formatProductItem($item));
+        $this->productUnitValueFormatter->expects($unit ? $this->once() : $this->never())
+            ->method('format')
+            ->with($quantity, $unitCode)
+            ->will($this->returnValue($formattedUnits))
+        ;
+
+        $this->numberFormatter->expects($this->once())
+            ->method('formatCurrency')
+            ->with($price->getValue(), $price->getCurrency())
+            ->will($this->returnValue($formattedPrice))
+        ;
+
+        $this->productUnitLabelFormatter->expects($this->once())
+            ->method('format')
+            ->with($unitCode)
+            ->will($this->returnValue($formattedUnit))
+        ;
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('orob2b.rfpadmin.requestproductitem.item', [
+                '{units}'   => $formattedUnits,
+                '{price}'   => $formattedPrice,
+                '{unit}'    => $formattedUnit,
+            ])
+        ;
+
+        $this->extension->formatProductItem($item);
     }
 
     public function testGetName()
@@ -134,18 +156,22 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
     public function formatProductItemProvider()
     {
         return [
-            'existed product unit' => [
-                'expectedResult'    => '15 kilogram, 10.00 USD per kilogram',
+            'existing product unit' => [
                 'quantity'          => 15,
                 'unitCode'          => 'kg',
+                'formattedUnits'    => '15 kilogram',
                 'price'             => Price::create(10, 'USD'),
+                'formattedPrice'    => '10.00 USD',
+                'formattedUnit'     => 'kilogram',
                 'productUnit'       => (new ProductUnit())->setCode('kg'),
             ],
             'deleted product unit' => [
-                'expectedResult'    => '25 item, 20.00 EUR per item',
                 'quantity'          => 25,
                 'unitCode'          => 'item',
+                'formattedUnits'    => '25 item',
                 'price'             => Price::create(20, 'EUR'),
+                'formattedPrice'    => '20.00 EUR',
+                'formattedUnit'     => 'item',
                 'productUnit'       => null,
             ],
         ];
