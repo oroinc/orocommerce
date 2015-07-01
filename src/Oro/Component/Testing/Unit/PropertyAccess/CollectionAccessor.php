@@ -3,10 +3,10 @@
 namespace Oro\Component\Testing\Unit\PropertyAccess;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\Inflector;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\PropertyAccess\StringUtil;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
 class CollectionAccessor
@@ -27,9 +27,14 @@ class CollectionAccessor
     protected $accessor;
 
     /**
-     * @var array
+     * @var string
      */
-    protected $methods;
+    protected $addMethod;
+
+    /**
+     * @var string
+     */
+    protected $removeMethod;
 
     /**
      * @param object $object
@@ -37,12 +42,11 @@ class CollectionAccessor
      */
     public function __construct($object, $propertyName)
     {
-        $singulars = (array) StringUtil::singularify($this->camelize($propertyName));
-
         $this->accessor     = PropertyAccess::createPropertyAccessor();
-        $this->methods      = $this->findAdderAndRemover(new \ReflectionClass($object), $singulars);
         $this->object       = $object;
         $this->propertyName = $propertyName;
+
+        $this->findAdderAndRemover();
     }
 
     /**
@@ -76,7 +80,7 @@ class CollectionAccessor
      */
     public function getAddItemMethod()
     {
-        return $this->methods[0];
+        return $this->addMethod;
     }
 
     /**
@@ -84,40 +88,34 @@ class CollectionAccessor
      */
     public function getRemoveItemMethod()
     {
-        return $this->methods[1];
+        return $this->removeMethod;
     }
 
     /**
      * Searches for add and remove methods.
-     *
-     * @param \ReflectionClass $reflClass The reflection class for the given object
-     * @param array            $singulars The singular form of the property name or null
-     *
-     * @return array|null An array containing the adder and remover when found, null otherwise
-     *
-     * @throws NoSuchPropertyException If the property does not exist
      */
-    protected function findAdderAndRemover(\ReflectionClass $reflClass, array $singulars)
+    protected function findAdderAndRemover()
     {
-        foreach ($singulars as $singular) {
-            $addMethod      = 'add' . $singular;
-            $removeMethod   = 'remove' . $singular;
+        $reflClass = new \ReflectionClass($this->object);
 
-            $addMethodFound     = $this->isAccessible($reflClass, $addMethod, 1);
-            $removeMethodFound  = $this->isAccessible($reflClass, $removeMethod, 1);
+        $propertyName = Inflector::classify(Inflector::singularize($this->propertyName));
 
-            if ($addMethodFound && $removeMethodFound) {
-                return [$addMethod, $removeMethod];
-            }
+        $addMethod      = 'add' . $propertyName;
+        $removeMethod   = 'remove' . $propertyName;
 
-            if ($addMethodFound xor $removeMethodFound) {
-                throw new NoSuchPropertyException(sprintf(
-                    'Found the public method "%s()", but did not find a public "%s()" on class %s',
-                    $addMethodFound ? $addMethod : $removeMethod,
-                    $addMethodFound ? $removeMethod : $addMethod,
-                    $reflClass->name
-                ));
-            }
+        $addMethodFound     = $this->isAccessible($reflClass, $addMethod, 1);
+        $removeMethodFound  = $this->isAccessible($reflClass, $removeMethod, 1);
+
+        if ($addMethodFound && $removeMethodFound) {
+            $this->addMethod    = $addMethod;
+            $this->removeMethod = $removeMethod;
+        }
+
+        if (!$addMethodFound || !$removeMethodFound) {
+            throw new NoSuchPropertyException(sprintf(
+                'Not found a public methods "%s()" and/or "%s()" on class %s',
+                $addMethod,  $removeMethod, $reflClass->name
+            ));
         }
     }
 
@@ -131,7 +129,7 @@ class CollectionAccessor
      * @return bool Whether the method is public and has $parameters
      *              required parameters
      */
-    private function isAccessible(\ReflectionClass $class, $methodName, $parameters)
+    protected function isAccessible(\ReflectionClass $class, $methodName, $parameters)
     {
         if ($class->hasMethod($methodName)) {
             $method = $class->getMethod($methodName);
@@ -142,19 +140,5 @@ class CollectionAccessor
         }
 
         return false;
-    }
-
-    /**
-     * Camelizes a given string.
-     *
-     * @param string $string Some string
-     *
-     * @return string The camelized version of the string
-     */
-    protected function camelize($string)
-    {
-        return preg_replace_callback('/(^|_|\.)+(.)/', function ($match) {
-            return ('.' === $match[1] ? '_' : '') . strtoupper($match[2]);
-        }, $string);
     }
 }

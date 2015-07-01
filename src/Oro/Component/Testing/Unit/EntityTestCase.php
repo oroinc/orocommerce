@@ -96,8 +96,20 @@ abstract class EntityTestCase extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * Performance assertPropertyCollection assertion on specified properties
+     *
      * @param object $instance
-     * @param array $properties
+     * @param array $properties <pre>
+     * Example:
+     * [0] => Array(
+     *      [0] => 'numbers', // property name - collection
+     *      [1] => 123.45,    // a value - will be tested as item of a collection
+     * )
+     * [1] => Array(
+     *      [0] => 'someObjects',
+     *      [1] => SomeObject(),
+     * )
+     * </pre>
      */
     public static function assertPropertyCollections($instance, array $properties)
     {
