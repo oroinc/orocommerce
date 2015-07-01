@@ -52,7 +52,7 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )

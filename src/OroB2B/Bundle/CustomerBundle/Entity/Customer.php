@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
+
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CustomerBundle\Entity\Repository\CustomerRepository")
  * @ORM\Table(
@@ -30,14 +32,16 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
  * @Config()
  */
-class Customer
+class Customer extends ExtendCustomer
 {
+    const INTERNAL_RATING_CODE = 'cust_internal_rating';
+
     /**
      * @var integer
      *

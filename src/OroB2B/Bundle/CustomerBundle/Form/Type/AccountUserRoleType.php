@@ -6,8 +6,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\Length;
+
+use Oro\Bundle\SecurityBundle\Form\Type\AclPrivilegeType;
+use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
@@ -64,6 +69,23 @@ class AccountUserRoleType extends AbstractType
                 ]
             );
 
+        foreach ($options['privilege_config'] as $fieldName => $config) {
+            $builder->add(
+                $fieldName,
+                PrivilegeCollectionType::NAME,
+                [
+                    'type' => AclPrivilegeType::NAME,
+                    'allow_add' => true,
+                    'prototype' => false,
+                    'allow_delete' => false,
+                    'mapped' => false,
+                    'options' => [
+                        'privileges_config' => $config,
+                    ],
+                ]
+            );
+        }
+
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             /** @var AccountUserRole|null $role */
             $role = $event->getData();
@@ -82,7 +104,16 @@ class AccountUserRoleType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $resolver->setRequired(['privilege_config']);
         $resolver->setDefaults(['data_class' => $this->dataClass]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['privilegeConfig'] = $options['privilege_config'];
     }
 
     /**

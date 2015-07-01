@@ -80,12 +80,8 @@ class AccountUserRoleController extends Controller
      */
     protected function update(AccountUserRole $role)
     {
-        $form = $this->createForm(AccountUserRoleType::NAME, $role);
-        $handler = new AccountUserRoleHandler(
-            $form,
-            $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($role))
-        );
+        $handler = $this->get('orob2b_customer.form.handler.account_user_role');
+        $form = $handler->createForm($role);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $role,
