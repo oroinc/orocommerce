@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\AddressBundle\Tests\Unit\Fixtures\TypedAddressOwner;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Form\EventListener\FixCustomerAddressesDefaultSubscriber;
-use OroB2B\Bundle\CustomerBundle\Tests\Unit\Fixtures\CustomerTypedAddress;
 
 use Symfony\Component\Form\FormEvents;
 
@@ -37,7 +36,10 @@ class FixCustomerAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestC
     public function testPostSubmit(array $allAddresses, $formAddressKey, array $expectedAddressesData)
     {
         // Set owner for all addresses
-        (new TypedAddressOwner($allAddresses));
+        $customer = new Customer();
+        foreach ($allAddresses as $address) {
+            $customer->addAddress($address);
+        }
 
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
             ->setMethods(['getData'])
@@ -98,10 +100,10 @@ class FixCustomerAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestC
     }
 
     /**
-     * @return CustomerTypedAddress
+     * @return CustomerAddress
      */
     protected function createAddress()
     {
-        return new CustomerTypedAddress();
+        return new CustomerAddress();
     }
 }
