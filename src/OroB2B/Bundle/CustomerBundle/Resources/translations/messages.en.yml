@@ -156,4 +156,4 @@ orob2b.customer:
 
     security:
         permission:
-            register_account_user: 'Register account user'
+            register_account_user: 'Register Account User'
