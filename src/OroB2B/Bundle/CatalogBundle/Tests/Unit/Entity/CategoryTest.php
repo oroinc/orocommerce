@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Entity\ProductCategory;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
@@ -103,33 +102,30 @@ class CategoryTest extends EntityTestCase
 
     public function testProductAccessors()
     {
-        $category = new Category();
-        $this->assertEmpty($category->getProducts()->toArray());
-
         $firstProduct = new Product();
         $secondProduct = new Product();
 
-        $firstProductCategory = new ProductCategory();
-        $firstProductCategory->setProduct($firstProduct)
-            ->setCategory($category);
-        $secondProductCategory = new ProductCategory();
-        $secondProductCategory->setProduct($secondProduct)
-            ->setCategory($category);
-
-        $category->addProduct($firstProductCategory)
-            ->addProduct($secondProductCategory);
+        $firstProductCategory = new Category();
+        $firstProductCategory->addProduct($firstProduct);
+        $secondProductCategory = new Category();
+        $secondProductCategory->addProduct($secondProduct);
 
         $this->assertEquals(
-            [$firstProductCategory, $secondProductCategory],
-            array_values($category->getProducts()->toArray())
+            [$firstProduct, $secondProduct],
+            array_merge(
+                $firstProductCategory->getProducts()->toArray(),
+                $secondProductCategory->getProducts()->toArray()
+            )
         );
 
-        $category->removeProduct($firstProductCategory)
-            ->removeProduct($firstProductCategory);
+        $firstProductCategory->removeProduct($firstProduct);
 
         $this->assertEquals(
-            [$secondProductCategory],
-            array_values($category->getProducts()->toArray())
+            [$secondProduct],
+            array_merge(
+                $firstProductCategory->getProducts()->toArray(),
+                $secondProductCategory->getProducts()->toArray()
+            )
         );
     }
 
