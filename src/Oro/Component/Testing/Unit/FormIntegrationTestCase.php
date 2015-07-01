@@ -5,7 +5,9 @@ namespace Oro\Component\Testing\Unit;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase as BaseTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\ConstraintValidatorFactory;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidatorInterface;
+use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\ClassMetadataFactory;
 use Symfony\Component\Validator\Mapping\Loader\LoaderInterface;
@@ -15,6 +17,29 @@ use Symfony\Component\Validator\Validator;
 
 class FormIntegrationTestCase extends BaseTestCase
 {
+    /**
+     * @var ConstraintValidatorInterface[]
+     */
+    protected $validators;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->validators = $this->getValidators();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getValidators()
+    {
+        return [];
+    }
+
     /**
      * @param bool $loadMetadata
      * @return ValidatorExtension
@@ -40,7 +65,7 @@ class FormIntegrationTestCase extends BaseTestCase
 
         $validator = new Validator(
             new ClassMetadataFactory($loader),
-            new ConstraintValidatorFactory(),
+            $this->getConstraintValidatorFactory(),
             $this->getTranslator()
         );
 
@@ -48,11 +73,36 @@ class FormIntegrationTestCase extends BaseTestCase
     }
 
     /**
+     * @return type
+     */
+    protected function getConstraintValidatorFactory()
+    {
+        /* @var $factory \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface */
+        $factory = $this->getMock('Symfony\Component\Validator\ConstraintValidatorFactoryInterface');
+
+        $factory->expects($this->any())
+            ->method('getInstance')
+            ->will($this->returnCallback(function (Constraint $constraint) {
+
+                $className = $constraint->validatedBy();
+
+                if (!isset($this->validators[$className]) || $className === 'Symfony\Component\Validator\Constraints\CollectionValidator') {
+                    $this->validators[$className] = new $className();
+                }
+
+                return $this->validators[$className];
+            }))
+        ;
+
+        return $factory;
+    }
+
+    /**
      * @param ClassMetadata $meta
      */
     protected function loadMetadata(ClassMetadata $meta)
     {
-        if (false !== ($configFile = $this->getConfigPath($meta->name))) {
+        if (false !== ($configFile = $this->getConfigFile($meta->name))) {
             $loader = new YamlFileLoader($configFile);
             $loader->loadClassMetadata($meta);
         }
@@ -86,14 +136,14 @@ class FormIntegrationTestCase extends BaseTestCase
      * @param string $class
      * @return string
      */
-    protected function getBundleRootPath($class)
+    protected function getConfigFile($class)
     {
-        $rclass = new \ReflectionClass($class);
+        if (false !== ($path = $this->getBundleRootPath($class))) {
+            $path .= '/Resources/config/validation.yml';
 
-        $path = false;
-
-        if (false !== ($pos = strrpos($rclass->getFileName(), 'Bundle'))) {
-            $path = substr($rclass->getFileName(), 0, $pos) . 'Bundle';
+            if (!is_readable($path)) {
+                $path = false;
+            }
         }
 
         return $path;
@@ -103,12 +153,14 @@ class FormIntegrationTestCase extends BaseTestCase
      * @param string $class
      * @return string
      */
-    public function getConfigPath($class)
+    protected function getBundleRootPath($class)
     {
-        $path = $this->getBundleRootPath($class);
+        $rclass = new \ReflectionClass($class);
 
-        if ($path) {
-            $path .= '/Resources/config/validation.yml';
+        $path = false;
+
+        if (false !== ($pos = strrpos($rclass->getFileName(), 'Bundle'))) {
+            $path = substr($rclass->getFileName(), 0, $pos) . 'Bundle';
         }
 
         return $path;

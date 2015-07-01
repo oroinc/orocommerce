@@ -42,6 +42,11 @@ class RequestProductItemValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testConfiguration()
     {
+        $this->assertEquals(
+            'orob2b_rfp_admin.validator.request_product_item',
+            $this->constraint->validatedBy()
+        );
+
         $this->assertEquals([Constraint::CLASS_CONSTRAINT], $this->constraint->getTargets());
     }
 

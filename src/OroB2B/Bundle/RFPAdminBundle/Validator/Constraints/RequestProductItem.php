@@ -12,6 +12,19 @@ class RequestProductItem extends Constraint
     public $message = 'orob2b.rfpadmin.requestproductitem.unit.blank';
 
     /**
+     * @var string
+     */
+    public $service = 'orob2b_rfp_admin.validator.request_product_item';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function validatedBy()
+    {
+        return $this->service;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getTargets()

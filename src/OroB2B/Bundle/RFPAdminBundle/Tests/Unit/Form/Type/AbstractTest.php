@@ -135,7 +135,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param RequestProductItem[] $items
      * @return RequestProduct
      */
-    protected function getRequestProduct($productId, $items = [])
+    protected function getRequestProduct($productId, array $items = [])
     {
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
 

@@ -20,6 +20,8 @@ use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
 
+use OroB2B\Bundle\RFPAdminBundle\Validator\Constraints;
+
 class RequestProductItemTypeTest extends AbstractTest
 {
     /**
@@ -59,6 +61,17 @@ class RequestProductItemTypeTest extends AbstractTest
                 []
             ),
             $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidators()
+    {
+        $requestProductItemConstraint = new Constraints\RequestProductItem();
+        return [
+            $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
         ];
     }
 
