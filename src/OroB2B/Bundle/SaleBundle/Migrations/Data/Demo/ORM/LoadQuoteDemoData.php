@@ -13,7 +13,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -72,25 +72,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return User
-     * @throws \LogicException
-     */
-    protected function getUser(ObjectManager $manager)
-    {
-        /* @var $user User */
-        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
-            'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL
-        ]);
-
-        if (!$user) {
-            throw new \LogicException('There are no users in system');
-        }
-
-        return $user;
     }
 
     /**
@@ -163,5 +144,30 @@ class LoadQuoteDemoData extends AbstractFixture implements
             }
             $quote->addQuoteProduct($quoteProduct);
         }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return User
+     * @throws \RuntimeException
+     */
+    protected function getUser(ObjectManager $manager)
+    {
+        $role = $manager->getRepository('OroUserBundle:Role')
+            ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
+
+        if (!$role) {
+            throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
+        }
+
+        $user = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
+
+        if (!$user) {
+            throw new \RuntimeException(
+                sprintf('At least one user with role %s should exist.', LoadRolesData::ROLE_ADMINISTRATOR)
+            );
+        }
+
+        return $user;
     }
 }
