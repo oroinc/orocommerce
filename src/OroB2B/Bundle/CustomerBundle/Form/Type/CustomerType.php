@@ -38,7 +38,7 @@ class CustomerType extends AbstractType
                 'addresses',
                 'oro_address_collection',
                 [
-                    'label'    => false,
+                    'label'    => 'orob2b.customer.addresses.label',
                     'type'     => CustomerTypedAddressType::NAME,
                     'required' => true,
                     'options'  => [

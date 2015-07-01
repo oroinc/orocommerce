@@ -2,7 +2,11 @@
 namespace OroB2B\Bundle\CustomerBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\Collection;
+
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
+
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -63,14 +67,20 @@ class FixCustomerAddressesDefaultSubscriber implements EventSubscriberInterface
      */
     protected function handleDefaultType(CustomerAddress $address, $allAddresses)
     {
-        /** @var Collection|CustomerAddress[] $addressDefaults */
+        /** @var Collection|AddressType[] $addressDefaults */
         $addressDefaults = $address->getDefaults();
 
         foreach ($allAddresses as $otherAddresses) {
+            if ($address === $otherAddresses) {
+                continue;
+            }
+
             $otherAddressDefaults = $otherAddresses->getDefaults();
             foreach ($addressDefaults as $addressDefaultType) {
-                if ($otherAddressDefaults->contains($addressDefaultType) && $address !== $otherAddresses) {
-                    $otherAddressDefaults->removeElement($addressDefaultType);
+                foreach ($otherAddressDefaults as $otherAddressDefault) {
+                    if ($otherAddressDefault->getName() === $addressDefaultType->getName()) {
+                        $otherAddressDefaults->removeElement($otherAddressDefault);
+                    }
                 }
             }
             $otherAddresses->setDefaults($otherAddressDefaults);

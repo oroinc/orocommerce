@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\FixAddressesPrimarySubscriber;
+
 use OroB2B\Bundle\CustomerBundle\Form\EventListener\FixCustomerAddressesDefaultSubscriber;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
