@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\CustomerBundle\Form\DataTransformer;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+
 use Symfony\Component\Form\DataTransformerInterface;
 
 class AddressTypeDefaultTransformer implements DataTransformerInterface

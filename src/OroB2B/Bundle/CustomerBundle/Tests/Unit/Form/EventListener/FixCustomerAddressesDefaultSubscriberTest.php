@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\AddressBundle\Tests\Unit\Fixtures\TypedAddressOwner;
+
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Form\EventListener\FixCustomerAddressesDefaultSubscriber;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Fixtures\CustomerTypedAddress;
+
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use Oro\Bundle\AddressBundle\Tests\Unit\Fixtures\TypedAddressOwner;
 
 class FixCustomerAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCase
 {

@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\CustomerBundle\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
+
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 

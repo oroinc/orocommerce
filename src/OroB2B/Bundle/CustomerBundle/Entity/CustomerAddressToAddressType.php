@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 /**

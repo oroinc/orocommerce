@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\DataTransformer;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+
 use OroB2B\Bundle\CustomerBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
 class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
