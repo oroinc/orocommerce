@@ -5,7 +5,7 @@
 {{ UI.renderProperty('orob2b.rfpadmin.request.last_name.label'|trans, entity.lastName) }}
 {{ UI.renderHtmlProperty('orob2b.rfpadmin.request.email.label'|trans, EmailActions.sendEmailLink(entity.email, entity))}}
 {{ UI.renderProperty('orob2b.rfpadmin.request.phone.label'|trans, entity.phone) }}
-{{ UI.renderProperty('orob2b.rfpadmin.request.company.label'|trans, entity.company ? entity.company : 'N/A') }}
-{{ UI.renderProperty('orob2b.rfpadmin.request.role.label'|trans, entity.role ? entity.role : 'N/A') }}
+{{ UI.renderProperty('orob2b.rfpadmin.request.company.label'|trans, entity.company|default('N/A')) }}
+{{ UI.renderProperty('orob2b.rfpadmin.request.role.label'|trans, entity.role|default('N/A')) }}
 {{ UI.renderProperty('orob2b.rfpadmin.request.status.label'|trans, entity.status.label) }}
 

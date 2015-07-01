@@ -85,7 +85,6 @@ class RequestProductItem
      */
     protected $price;
 
-
     /**
      * Get id
      *

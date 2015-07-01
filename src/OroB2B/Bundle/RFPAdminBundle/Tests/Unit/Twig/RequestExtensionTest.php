@@ -98,6 +98,7 @@ class RequestExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $filters);
 
+        $this->assertArrayHasKey(0, $filters);
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
         $this->assertEquals('orob2b_format_rfpadmin_request_product_item', $filters[0]->getName());
     }

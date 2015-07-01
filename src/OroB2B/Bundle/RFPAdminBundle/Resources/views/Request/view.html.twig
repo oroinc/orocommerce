@@ -77,9 +77,9 @@
                         </td>
                         <td class="rfpadmin-requestproduct-info">
                             {% if requestProduct.product %}
-                                <a href="{{ path('orob2b_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product|raw }}</a>
+                                <a href="{{ path('orob2b_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product }}</a>
                             {% else %}
-                                {{ requestProduct.productSku|raw }}
+                                <label>{{ requestProduct.productSku }}</label>
                             {% endif %}
                         </td>
                         <td class="rfpadmin-requestproductitems-info">
@@ -88,17 +88,19 @@
                                     {{ requestProductItem|orob2b_format_rfpadmin_request_product_item }}
                                 </div>
                             {% endfor %}
-                      </td>
-                    </tr>
-                    <tr class="rfpadmin-requestproduct-comment">
-                        <td>&nbsp;</td>
-                        <td class="rfpadmin-requestproduct-info control-group">
-                            <label class="control-label">{{ 'orob2b.rfpadmin.requestproduct.comment.label'|trans }}</label>
-                        </td>
-                        <td class="rfpadmin-requestproductitems-info">
-                            <label>{{ requestProduct.comment|nl2br }}</label>
                         </td>
                     </tr>
+                    {% if requestProduct.comment %}
+                        <tr class="rfpadmin-requestproduct-comment">
+                            <td>&nbsp;</td>
+                            <td class="rfpadmin-requestproduct-info control-group">
+                                <label class="control-label">{{ 'orob2b.rfpadmin.requestproduct.comment.label'|trans }}</label>
+                            </td>
+                            <td class="rfpadmin-requestproductitems-info">
+                                <label>{{ requestProduct.comment|nl2br }}</label>
+                            </td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </table>
         </div>

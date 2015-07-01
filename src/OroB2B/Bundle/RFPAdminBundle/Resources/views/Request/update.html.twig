@@ -1,16 +1,16 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
-{% oro_title_set({params : {"%title%": form.vars.value|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%title%": entity|default('N/A'|trans)} }) %}
 
-{% set formAction = path('orob2b_rfp_admin_request_update', { 'id': form.vars.value.id }) %}
+{% set formAction = path('orob2b_rfp_admin_request_update', { 'id': entity.id }) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
-        'entity':      form.vars.value,
+        'entity':      entity,
         'indexPath':   path('orob2b_rfp_admin_request_index'),
-        'indexLabel': 'orob2b.rfpadmin.request.entity_plural_label'|trans,
-        'entityTitle':form.vars.value|default('N/A'|trans)
+        'indexLabel':  'orob2b.rfpadmin.request.entity_plural_label'|trans,
+        'entityTitle': entity|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
@@ -18,7 +18,7 @@
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_rfp_admin_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if form.vars.value.id or resource_granted('orob2b_rfp_admin_request_create') %}
+    {% if entity.id or resource_granted('orob2b_rfp_admin_request_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}

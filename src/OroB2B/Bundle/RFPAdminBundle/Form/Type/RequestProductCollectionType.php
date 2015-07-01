@@ -25,7 +25,7 @@ class RequestProductCollectionType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'type'  => RequestProductType::NAME,
+            'type' => RequestProductType::NAME,
             'show_form_when_empty'  => false,
             'error_bubbling'        => false,
             'prototype_name'        => '__namerequestproduct__',
