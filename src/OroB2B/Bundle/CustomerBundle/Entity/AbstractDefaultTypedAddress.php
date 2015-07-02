@@ -1,59 +1,35 @@
 <?php
-
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 
-use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomerAddress;
-
-/**
- * @ORM\Table("orob2b_customer_address")
- * @ORM\HasLifecycleCallbacks()
- * @Config(
- *       defaultValues={
- *          "entity"={
- *              "icon"="icon-map-marker"
- *          },
- *          "note"={
- *              "immutable"=true
- *          },
- *          "activity"={
- *              "immutable"=true
- *          },
- *          "attachment"={
- *              "immutable"=true
- *          }
- *      }
- * )
- * @ORM\Entity
- */
-class CustomerAddress extends ExtendCustomerAddress
+abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Customer", inversedBy="addresses", cascade={"persist"})
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
+     * Many-to-one relation field, relation parameters must be in specific class
+     *
+     * @var object
      */
     protected $owner;
 
     /**
-     * @var Collection
+     * One-to-many relation field, relation parameters must be in specific class
      *
-     * @ORM\OneToMany(
-     *      targetEntity="CustomerAddressToAddressType",
-     *      mappedBy="address",
-     *      cascade={"persist", "remove"},
-     *      orphanRemoval=true
-     * )
-     */
+     * @var Collection
+     **/
     protected $addressesToTypes;
 
     public function __construct()
     {
+        $this->addressesToTypes = new ArrayCollection();
         parent::__construct();
     }
+
 
     /**
      * Get address types
@@ -75,7 +51,7 @@ class CustomerAddress extends ExtendCustomerAddress
      * Set address types
      *
      * @param Collection $types
-     * @return CustomerAddress
+     * @return AbstractDefaultTypedAddress
      */
     public function setTypes(Collection $types)
     {
@@ -93,11 +69,11 @@ class CustomerAddress extends ExtendCustomerAddress
      * Remove address type
      *
      * @param AddressType $type
-     * @return CustomerAddress
+     * @return AbstractDefaultTypedAddress
      */
     public function removeType(AddressType $type)
     {
-        /** @var CustomerAddressToAddressType $addressesToType */
+        /** @var AbstractAddressToAddressType $addressesToType */
         foreach ($this->getAddressesToTypes() as $addressesToType) {
             if ($addressesToType->getType()->getName() === $type->getName()) {
                 $this->removeAddressesToType($addressesToType);
@@ -111,11 +87,11 @@ class CustomerAddress extends ExtendCustomerAddress
      * Add address type
      *
      * @param AddressType $type
-     * @return CustomerAddress
+     * @return AbstractDefaultTypedAddress
      */
     public function addType(AddressType $type)
     {
-        $addressToType = new CustomerAddressToAddressType();
+        $addressToType = $this->getAddressToAddressTypeEntity();
         $addressToType->setType($type);
         $addressToType->setAddress($this);
         $this->addAddressesToType($addressToType);
@@ -145,11 +121,11 @@ class CustomerAddress extends ExtendCustomerAddress
      * Set default types
      *
      * @param Collection|AddressType[] $defaults
-     * @return CustomerAddress
+     * @return AbstractDefaultTypedAddress
      */
     public function setDefaults($defaults)
     {
-        /** @var CustomerAddressToAddressType $addressToType */
+        /** @var AbstractAddressToAddressType $addressToType */
         foreach ($this->getAddressesToTypes() as $addressToType) {
             $addressToType->setDefault(false);
             /** @var AddressType $default */
@@ -167,14 +143,12 @@ class CustomerAddress extends ExtendCustomerAddress
     /**
      * Add addressesToTypes
      *
-     * @param CustomerAddressToAddressType $addressesToTypes
-     * @return CustomerAddress
+     * @param AbstractAddressToAddressType $addressesToTypes
+     * @return AbstractDefaultTypedAddress
      */
-    public function addAddressesToType(CustomerAddressToAddressType $addressesToTypes)
+    public function addAddressesToType(AbstractAddressToAddressType $addressesToTypes)
     {
-        if (!$this->getAddressesToTypes()->contains($addressesToTypes)) {
-            $this->addressesToTypes[] = $addressesToTypes;
-        }
+        $this->addressesToTypes[] = $addressesToTypes;
 
         return $this;
     }
@@ -182,16 +156,11 @@ class CustomerAddress extends ExtendCustomerAddress
     /**
      * Remove addressesToTypes
      *
-     * @param CustomerAddressToAddressType $addressesToType
-     * @return $this
+     * @param AbstractAddressToAddressType $addressesToTypes
      */
-    public function removeAddressesToType(CustomerAddressToAddressType $addressesToType)
+    public function removeAddressesToType(AbstractAddressToAddressType $addressesToTypes)
     {
-        if ($this->hasAddressToType($addressesToType)) {
-            $this->addressesToTypes->removeElement($addressesToType);
-        }
-
-        return $this;
+        $this->addressesToTypes->removeElement($addressesToTypes);
     }
 
     /**
@@ -205,21 +174,12 @@ class CustomerAddress extends ExtendCustomerAddress
     }
 
     /**
-     * @param CustomerAddressToAddressType $addressToType
-     * @return bool
-     */
-    protected function hasAddressToType(CustomerAddressToAddressType $addressToType)
-    {
-        return $this->getAddressesToTypes()->contains($addressToType);
-    }
-
-    /**
-     * Set customer as owner.
+     * Set owner.
      *
-     * @param Customer $owner
+     * @param $owner
      * @return $this
      */
-    public function setOwner(Customer $owner = null)
+    public function setOwner($owner = null)
     {
         $this->owner = $owner;
 
@@ -227,23 +187,20 @@ class CustomerAddress extends ExtendCustomerAddress
     }
 
     /**
-     * Get owner customer.
+     * Get owner.
      *
-     * @return Customer
+     * @return object
      */
     public function getOwner()
     {
         return $this->owner;
     }
 
-    /*
+    /**
      * Return entity for many-to-many entity.
      * Should be compatible with AbstractAddressToAddressType
      *
      * @return AbstractAddressToAddressType
      */
-    protected function getAddressToAddressTypeEntity()
-    {
-        return new CustomerAddressToAddressType();
-    }
+    abstract protected function getAddressToAddressTypeEntity();
 }
