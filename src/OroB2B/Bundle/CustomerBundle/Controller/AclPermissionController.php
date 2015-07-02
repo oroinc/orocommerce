@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Controller;
 
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,9 +29,7 @@ class AclPermissionController extends Controller
         }
 
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
-        $frontendMetadataProvider = $this->container->get('orob2b_customer.owner.frontend_ownership_metadata_provider');
-
-        $chainMetadataProvider->startProviderEmulation($frontendMetadataProvider);
+        $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
         $levels = $this
             ->get('oro_security.acl.manager')

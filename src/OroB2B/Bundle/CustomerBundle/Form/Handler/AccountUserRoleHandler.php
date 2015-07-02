@@ -11,6 +11,7 @@ use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class AccountUserRoleHandler extends AclRoleHandler
 {
@@ -23,11 +24,6 @@ class AccountUserRoleHandler extends AclRoleHandler
      * @var ChainMetadataProvider
      */
     protected $chainMetadataProvider;
-
-    /**
-     * @var MetadataProviderInterface
-     */
-    protected $emulatedMetadataProvider;
 
     /**
      * @param ConfigProviderInterface $provider
@@ -43,14 +39,6 @@ class AccountUserRoleHandler extends AclRoleHandler
     public function setChainMetadataProvider(ChainMetadataProvider $chainMetadataProvider)
     {
         $this->chainMetadataProvider = $chainMetadataProvider;
-    }
-
-    /**
-     * @param MetadataProviderInterface $emulatedMetadataProvider
-     */
-    public function setEmulatedMetadataProvider(MetadataProviderInterface $emulatedMetadataProvider)
-    {
-        $this->emulatedMetadataProvider = $emulatedMetadataProvider;
     }
 
     /**
@@ -126,8 +114,8 @@ class AccountUserRoleHandler extends AclRoleHandler
 
     protected function startFrontendProviderEmulation()
     {
-        if ($this->chainMetadataProvider && $this->emulatedMetadataProvider) {
-            $this->chainMetadataProvider->startProviderEmulation($this->emulatedMetadataProvider);
+        if ($this->chainMetadataProvider) {
+            $this->chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
         }
     }
 

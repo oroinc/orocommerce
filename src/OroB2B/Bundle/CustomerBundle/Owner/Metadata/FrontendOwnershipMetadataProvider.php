@@ -14,6 +14,8 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
 class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 {
+    const ALIAS = 'frontend_ownership';
+
     /**
      * @var string
      */

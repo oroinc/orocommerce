@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\ORM;
 
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
@@ -76,7 +77,6 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     protected function createAdministratorRole(AclManager $aclManager)
     {
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
-        $frontendMetadataProvider = $this->container->get('orob2b_customer.owner.frontend_ownership_metadata_provider');
 
         $allowedEntities = $this->getFrontendOwnedEntities();
         $allowedAcls = ['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL', 'DELETE_LOCAL', 'ASSIGN_LOCAL'];
@@ -87,7 +87,7 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
             $sid = $aclManager->getSid($role);
             foreach ($aclManager->getAllExtensions() as $extension) {
                 if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation($frontendMetadataProvider);
+                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
                     foreach ($allowedEntities as $className) {
                         $oid = $aclManager->getOid('entity:' . $className);
