@@ -14,7 +14,7 @@ services:
         calls:
             - [setContainer, ["@service_container"]]
         tags:
-            - { name: oro_security.owner.metadata_provider }
+            - { name: oro_security.owner.metadata_provider, alias: frontend_ownership }
 
     orob2b_customer.owner.frontend_ownership_metadata_provider.cache:
         parent: oro.cache.abstract

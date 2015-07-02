@@ -100,7 +100,6 @@ services:
             - [setRequest, [@request]]
             - [setOwnershipConfigProvider, [@oro_entity_config.provider.ownership]]
             - [setChainMetadataProvider, [@oro_security.owner.metadata_provider.chain]]
-            - [setEmulatedMetadataProvider, [@orob2b_customer.owner.frontend_ownership_metadata_provider]]
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
 
