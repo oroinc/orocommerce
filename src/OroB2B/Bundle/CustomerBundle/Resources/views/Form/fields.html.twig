@@ -15,33 +15,3 @@
         };
     };
 {% endblock %}
-
-{% block oro_acl_access_level_selector_account_user_role_widget %}
-    <div class="access_level_value"
-         data-identity="{{ identity }}"
-         data-selector-id="{{ id }}"
-         data-selector-name="{{ full_name }}"
-         data-value="{{ value }}"
-            >
-        <div class="access_level_value_link">
-            <a href="javascript:void(0);">
-                {% set label = level_label is not defined or level_label is empty ?
-                'orob2b.customer.security.access-level.NONE' :
-                'orob2b.customer.security.access-level.' ~ level_label
-                %}
-                {{ label|trans({}, translation_domain) }}
-            </a>
-            {% set type = type|default('hidden') %}
-            {{ block('form_widget_simple') }}
-        </div>
-        <div class="access_level_value_choice" style="display: none"></div>
-    </div>
-{% endblock %}
-
-{% block _orob2b_customer_account_user_role_entity_entry_permissions_entry_accessLevel_widget %}
-    {{ block('oro_acl_access_level_selector_account_user_role_widget') }}
-{% endblock %}
-
-{% block _orob2b_customer_account_user_role_action_entry_permissions_entry_accessLevel_widget %}
-    {{ block('oro_acl_access_level_selector_account_user_role_widget') }}
-{% endblock %}

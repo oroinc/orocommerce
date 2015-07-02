@@ -16,6 +16,8 @@ parameters:
 
     orob2b_customer.form.handler.account_user_role.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserRoleHandler
 
+    orob2b_customer.form.extension.oro_acl_access_level_selector.class: OroB2B\Bundle\CustomerBundle\Form\Extension\AclAccessLevelSelectorExtension
+
 services:
     orob2b_customer.form.type.customer:
         class: %orob2b_customer.form.type.customer.class%
@@ -101,3 +103,8 @@ services:
             - [setEmulatedMetadataProvider, [@orob2b_customer.owner.frontend_ownership_metadata_provider]]
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
+
+    orob2b_customer.form.extension.acl_permission:
+        class: %orob2b_customer.form.extension.oro_acl_access_level_selector.class%
+        tags:
+            - { name: form.type_extension, alias: oro_acl_access_level_selector }
