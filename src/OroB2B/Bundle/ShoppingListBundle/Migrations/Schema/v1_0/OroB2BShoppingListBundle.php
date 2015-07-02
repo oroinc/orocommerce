@@ -61,7 +61,7 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('notes', 'text', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
-            ['product_id', 'shopping_list_id', 'quantity', 'unit_code'],
+            ['product_id', 'shopping_list_id', 'unit_code'],
             'orob2b_shopping_list_line_item_uidx'
         );
         $table->addIndex(['product_id'], 'IDX_3C7A5D2E4584665A', []);

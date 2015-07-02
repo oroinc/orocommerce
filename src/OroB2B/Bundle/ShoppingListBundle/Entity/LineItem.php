@@ -12,7 +12,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *      uniqueConstraints={
  *          @ORM\UniqueConstraint(
  *              name="orob2b_shopping_list_line_item_uidx",
- *              columns={"product_id", "shopping_list_id", "quantity", "unit_code"}
+ *              columns={"product_id", "shopping_list_id", "unit_code"}
  *          )
  *      }
  * )
