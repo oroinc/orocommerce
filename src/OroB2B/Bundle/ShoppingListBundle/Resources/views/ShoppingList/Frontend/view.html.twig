@@ -1,0 +1,40 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%label%": entity.label }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_shopping_list_frontend_index'),
+        'indexLabel': 'orob2b.shoppinglist.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}{% endblock navButtons %}
+
+{% block content_data %}
+    {% set shoppingListInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'orob2b.shoppinglist.widgets.shopping_list_information'|trans,
+            'url': path('orob2b_shopping_list_frontend_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [shoppingListInformationWidget]}]%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.shoppinglist.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% set id = 'shopping-list-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

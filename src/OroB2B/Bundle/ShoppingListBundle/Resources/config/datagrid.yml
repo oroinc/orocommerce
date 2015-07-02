@@ -80,3 +80,64 @@ datagrid:
                 icon:          eye-open
                 acl_resource:  orob2b_shopping_list_view
                 rowAction:     true
+
+    account-user-shopping-list-grid:
+        extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
+        options:
+            entityHint:        shopping_list
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_shopping_list_frontend_view
+            type:         orm
+            query:
+                select:
+                    - shopping_list.id
+                    - shopping_list.label
+                    - shopping_list.createdAt
+                    - shopping_list.updatedAt
+                from:
+                    - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
+        columns:
+            label:
+                label:         orob2b.shoppinglist.label.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_shopping_list_frontend_view
+                params: [ id ]
+        sorters:
+            columns:
+                label:
+                    data_name: shopping_list.label
+                createdAt:
+                    data_name: shopping_list.createdAt
+                updatedAt:
+                    data_name: shopping_list.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                label:
+                    type:      string
+                    data_name: shopping_list.label
+                createdAt:
+                    type:      datetime
+                    data_name: shopping_list.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: shopping_list.updatedAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_shopping_list_frontend_view
+                rowAction:     true
