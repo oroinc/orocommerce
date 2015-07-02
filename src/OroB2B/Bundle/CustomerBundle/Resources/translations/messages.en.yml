@@ -3,6 +3,7 @@ orob2b.customer:
     entity_plural_label: 'Customers'
     name.label: 'Name'
     group.label: 'Group'
+    internal_rating.label: 'Internal rating'
     children.label: 'Children'
     id.label: 'Id'
     parent.label: 'Parent'
@@ -156,7 +157,7 @@ orob2b.customer:
 
     security:
         permission:
-            register_account_user: 'Register account user'
+            register_account_user: 'Register Account User'
         access-level:
             BASIC: 'Account User'
             LOCAL: 'Customer'
