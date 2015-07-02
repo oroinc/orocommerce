@@ -157,3 +157,10 @@ orob2b.customer:
     security:
         permission:
             register_account_user: 'Register account user'
+        access-level:
+            BASIC: 'Account User'
+            LOCAL: 'Customer'
+            DEEP: 'Not supported'
+            GLOBAL: 'Not supported'
+            SYSTEM: 'Full'
+            NONE: 'None'

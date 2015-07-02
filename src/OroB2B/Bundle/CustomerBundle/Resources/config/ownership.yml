@@ -4,6 +4,7 @@ parameters:
         basic_level: %orob2b_customer.entity.account_user.class%
 
     orob2b_customer.owner.frontend_ownership_metadata_provider.class: OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
+    orob2b_customer.owner.decision_maker.class: OroB2B\Bundle\CustomerBundle\Owner\EntityOwnershipDecisionMaker
 
 services:
     orob2b_customer.owner.frontend_ownership_metadata_provider:
@@ -19,3 +20,10 @@ services:
         parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ "oro_acl_entity_ownership.frontend.cache" ] ]
+
+    orob2b_customer.owner.decision_maker:
+        public: false
+        class: %orob2b_customer.owner.decision_maker.class%
+        parent: oro_security.owner.decision_maker.abstract
+        tags:
+           - { name: oro_security.owner.ownership_decision_maker, priority: 10 }
