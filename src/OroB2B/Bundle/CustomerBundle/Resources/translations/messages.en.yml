@@ -19,6 +19,7 @@ orob2b.customer:
         id.label: 'Id'
         customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
+        paymentterm.label: 'Payment term'
 
     accountuser:
         entity_label:                'Account User'

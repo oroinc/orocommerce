@@ -215,6 +215,7 @@ class OroB2BCustomerBundleInstaller implements
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('name', 'string', ['length' => 255]);
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
 

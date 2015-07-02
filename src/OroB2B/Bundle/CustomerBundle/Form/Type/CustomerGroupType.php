@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -48,6 +49,13 @@ class CustomerGroupType extends AbstractType
                 [
                     'label' => 'orob2b.customer.customergroup.name.label',
                     'required' => true
+                ]
+            )
+            ->add(
+                'paymentTerm',
+                PaymentTermSelectType::NAME,
+                [
+                    'label' => 'orob2b.customer.customergroup.paymentterm.label',
                 ]
             )
             ->add(
