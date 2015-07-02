@@ -44,7 +44,8 @@ class LoadShoppingListLineItems extends AbstractFixture
         ObjectManager $manager,
         ShoppingList $shoppingList,
         ProductUnit $unit,
-        Product $product, $referenceName
+        Product $product,
+        $referenceName
     ) {
         $item = new LineItem();
         $item->setNotes('Test Notes');
