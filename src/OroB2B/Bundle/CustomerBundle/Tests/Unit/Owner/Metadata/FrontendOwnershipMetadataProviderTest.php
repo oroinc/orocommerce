@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -26,7 +26,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     const BASIC_LEVEL = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser';
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProviderInterface
      */
     protected $configProvider;
 
@@ -55,6 +55,11 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $container;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProviderInterface
+     */
+    protected $securityConfigProvider;
+
     protected function setUp()
     {
         $this->configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
@@ -64,6 +69,9 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->securityConfigProvider = $this
+            ->getMock('Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface');
 
         $this->entityClassResolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\EntityClassResolver')
             ->disableOriginalConstructor()
@@ -108,6 +116,11 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                             'oro_security.security_facade',
                             ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
                             $this->securityFacade,
+                        ],
+                        [
+                            'oro_entity_config.provider.security',
+                            ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                            $this->securityConfigProvider,
                         ],
                     ]
                 )
@@ -309,5 +322,27 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $object = 'SomeClass';
 
         $this->assertEquals($accessLevel, $this->provider->getMaxAccessLevel($accessLevel, $object));
+    }
+
+    public function testWarmUpCacheFilterConfigsByScope()
+    {
+        $config1 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\User'));
+        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Customer'));
+
+        $this->configProvider->expects($this->once())->method('getConfigs')->willReturn([$config1, $config2]);
+        $this->securityConfigProvider->expects($this->atLeastOnce())->method('hasConfig')->willReturn(true);
+
+        $securityConfig1 = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
+        $securityConfig1->expects($this->once())->method('get')->with('group_name')->willReturn('');
+
+        $securityConfig2 = $this->getMock('Oro\Bundle\EntityConfigBundle\Config\ConfigInterface');
+        $securityConfig2->expects($this->once())->method('get')->with('group_name')->willReturn('commerce');
+
+        $this->securityConfigProvider->expects($this->atLeastOnce())->method('getConfig')
+            ->will($this->onConsecutiveCalls($securityConfig1, $securityConfig2));
+
+        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Customer'));
+
+        $this->provider->warmUpCache();
     }
 }
