@@ -3,4 +3,11 @@
 {% set gridName = 'account-user-shopping-list-grid' %}
 {% set pageTitle = 'orob2b.shoppinglist.entity_plural_label'|trans %}
 
-{% block navButtons %}{% endblock %}
+{% block navButtons %}
+    {% if resource_granted('orob2b_shopping_list_frontend_view') %}
+        {{ UI.addButton({
+            'path': path('orob2b_shopping_list_frontend_create'),
+            'entity_label': 'orob2b.shoppinglist.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}

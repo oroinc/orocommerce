@@ -20,3 +20,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        controller:
+            shopping_list.saved.message: Shopping List has been saved

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -11,6 +12,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
 class ShoppingListController extends Controller
 {
@@ -63,5 +65,77 @@ class ShoppingListController extends Controller
         return [
             'shopping_list' => $shoppingList
         ];
+    }
+
+    /**
+     * Create shopping list form
+     *
+     * @Route("/create", name="orob2b_shopping_list_frontend_create")
+     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @Acl(
+     *      id="orob2b_shopping_list_frontend_create",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:ShoppingList",
+     *      permission="CREATE"
+     * )
+     *
+     * @return array|RedirectResponse
+     */
+    public function createAction()
+    {
+        return $this->update(new ShoppingList());
+    }
+
+    /**
+     * Edit account user form
+     *
+     * @Route("/update/{id}", name="orob2b_shopping_list_frontend_update", requirements={"id"="\d+"})
+     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
+     * @Acl(
+     *      id="orob2b_customer_account_user_update",
+     *      type="entity",
+     *      class="OroB2BCustomerBundle:AccountUser",
+     *      permission="EDIT"
+     * )
+     *
+     * @param ShoppingList $shoppingList
+     *
+     * @return array|RedirectResponse
+     */
+    public function updateAction(ShoppingList $shoppingList)
+    {
+        return $this->update($shoppingList);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     *
+     * @return array|RedirectResponse
+     */
+    protected function update(ShoppingList $shoppingList)
+    {
+// TODO: remove dummy owner & organization
+$helper = $this->get('oro_entity.doctrine_helper');
+$owner = $helper->getEntityRepository('OroUserBundle:User')->find(1);
+$organization = $helper->getEntityRepository('OroOrganizationBundle:Organization')->find(1);
+$shoppingList->setOwner($owner)->setOrganization($organization);
+
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $shoppingList,
+            $this->createForm(ShoppingListType::NAME, $shoppingList),
+            function (ShoppingList $shoppingList) {
+                return [
+                    'route'      => 'orob2b_shopping_list_frontend_update',
+                    'parameters' => ['id' => $shoppingList->getId()]
+                ];
+            },
+            function (ShoppingList $shoppingList) {
+                return [
+                    'route'      => 'orob2b_shopping_list_frontend_view',
+                    'parameters' => ['id' => $shoppingList->getId()]
+                ];
+            },
+            $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message')
+        );
     }
 }

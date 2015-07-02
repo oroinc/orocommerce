@@ -9,3 +9,12 @@ orob2b_shopping_list_frontend:
     prefix:   /account/shoppinglist
     options:
         frontend: true
+
+orob2b_shopping_list_bundle_api:
+    resource:     "@OroB2BShoppingListBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
