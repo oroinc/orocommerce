@@ -139,6 +139,18 @@ class LineItemType extends AbstractType
     }
 
     /**
+     * @param string $productClass
+     *
+     * @return $this
+     */
+    public function setDataClass($productClass)
+    {
+        $this->dataClass = $productClass;
+
+        return $this;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -156,17 +168,5 @@ class LineItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param string $productClass
-     *
-     * @return $this
-     */
-    public function setDataClass($productClass)
-    {
-        $this->dataClass = $productClass;
-
-        return $this;
     }
 }
