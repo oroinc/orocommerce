@@ -10,7 +10,6 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
@@ -37,14 +36,14 @@ class QuoteProductType extends AbstractType
     {
         $builder
             ->add('product', ProductSelectType::NAME, [
-                'required'          => true,
-                'label'             => 'orob2b.product.entity_label',
-                'create_enabled'    => false,
+                'required' => true,
+                'label' => 'orob2b.product.entity_label',
+                'create_enabled' => false,
             ])
             ->add('productReplacement', ProductSelectType::NAME, [
-                'required'          => false,
-                'label'             => 'orob2b.sale.quoteproduct.productreplacement.label',
-                'create_enabled'    => false,
+                'required' => false,
+                'label' => 'orob2b.sale.quoteproduct.productreplacement.label',
+                'create_enabled' => false,
             ])
             ->add(
                 'quoteProductRequests',
@@ -64,17 +63,17 @@ class QuoteProductType extends AbstractType
                     'label' => 'orob2b.sale.quoteproduct.type.label',
                     'choices' => QuoteProduct::getTypeTitles(),
                     'required' => true,
-                    'expanded' => false
+                    'expanded' => false,
                 ]
             )
             ->add('commentCustomer', 'textarea', [
-                'required'  => false,
-                'disabled'  => true,
-                'label'     => 'orob2b.sale.quoteproduct.commentcustomer.label'
+                'required' => false,
+                'read_only' => true,
+                'label' => 'orob2b.sale.quoteproduct.commentcustomer.label',
             ])
             ->add('comment', 'textarea', [
-                'required'  => false,
-                'label'     => 'orob2b.sale.quoteproduct.comment.label'
+                'required' => false,
+                'label' => 'orob2b.sale.quoteproduct.comment.label',
             ])
 
         ;
@@ -87,9 +86,9 @@ class QuoteProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
-            'intention'     => 'sale_quote_product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
+            'intention' => 'sale_quote_product',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
 
@@ -113,20 +112,16 @@ class QuoteProductType extends AbstractType
         if ($quoteProduct && null !== $quoteProduct->getId()) {
             $product = $quoteProduct->getProduct();
             if (!$product) {
-                $form->add(
-                    'product',
-                    null,
-                    [
-                        'required'      => true,
-                        'label'         => 'orob2b.product.entity_label',
-                        'empty_value'   => $this->translator->trans(
+                $form->add('product', null, [
+                        'required' => true,
+                        'label' => 'orob2b.product.entity_label',
+                        'empty_value' => $this->translator->trans(
                             'orob2b.sale.quoteproduct.product.removed',
                             [
                                 '{title}' => $quoteProduct->getProductSku(),
                             ]
                         ),
-                    ]
-                );
+                ]);
             }
         }
     }

@@ -113,7 +113,6 @@ class QuoteProduct
      */
     protected $quoteProductRequests;
 
-
     /**
      * Constructor
      */
@@ -133,8 +132,8 @@ class QuoteProduct
         static $typeTitles = null;
         if (null === $typeTitles) {
             $typeTitles = [
-                static::TYPE_REQUESTED => 'orob2b.sale.quoteproduct.type.requested',
                 static::TYPE_OFFER => 'orob2b.sale.quoteproduct.type.offer',
+                static::TYPE_REQUESTED => 'orob2b.sale.quoteproduct.type.requested',
                 static::TYPE_NOT_AVAILABLE => 'orob2b.sale.quoteproduct.type.not_available',
             ];
         }

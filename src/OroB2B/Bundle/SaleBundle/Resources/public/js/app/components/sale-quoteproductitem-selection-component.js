@@ -17,6 +17,7 @@ define(function (require) {
          * @property {Object}
          */
         options: {
+            classNotesSellerActive: 'sale-quoteproduct-notes-seller-active',
             productSelect: '.sale-quoteproduct-product-select input[type="hidden"]',
             productReplacementSelect: '.sale-quoteproduct-product-replacement-select input[type="hidden"]',
             typeSelect: '.sale-quoteproduct-type-select',
@@ -25,12 +26,19 @@ define(function (require) {
             addItemButton: '.add-list-item',
             addNotesButton: '.sale-quoteproduct-add-notes-btn',
             removeNotesButton: '.sale-quoteproduct-remove-notes-btn',
+            itemsCollectionContainer: '.sale-quoteproductitem-collection',
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
-            productReplacementContainer: '.sale-quoteproduct-product-select-replacement',
+            productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
             sellerNotesContainer: '.sale-quoteproduct-notes-seller',
+            requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
             units: {}
         },
+
+        /**
+         * @property {int}
+         */
+        typeOffer : null,
 
         /**
          * @property {int}
@@ -55,6 +63,11 @@ define(function (require) {
         /**
          * @property {Object}
          */
+        $productReplacementSelect : null,
+
+        /**
+         * @property {Object}
+         */
         $typeSelect : null,
         
         /**
@@ -71,6 +84,16 @@ define(function (require) {
          * @property {Object}
          */
         $itemsContainer : null,
+
+        /**
+         * @property {Object}
+         */
+        $itemsCollectionContainer : null,
+
+        /**
+         * @property {Object}
+         */
+        $requestsOnlyContainer : null,
 
         /**
          * @property {Object}
@@ -96,20 +119,25 @@ define(function (require) {
             
             this.$container = options._sourceElement;
 
+            this.typeOffer = options.typeOffer;
             this.typeReplacement = options.typeReplacement;
 
             this.loadingMask = new LoadingMaskView({container: this.$container});
             
             this.$productSelect = this.$container.find(this.options.productSelect);
+            this.$productReplacementSelect = this.$container.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$container.find(this.options.typeSelect);
             this.$addItemButton = this.$container.find(this.options.addItemButton);
             this.$addNotesButton = this.$container.find(this.options.addNotesButton);
+            this.$itemsCollectionContainer = this.$container.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$container.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$container.find(this.options.productReplacementContainer);
             this.$sellerNotesContainer = this.$container.find(this.options.sellerNotesContainer);
+            this.$requestsOnlyContainer = this.$container.find(this.options.requestsOnlyContainer);
 
             this.$container
                 .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
+                .on('change', this.options.productReplacementSelect, _.bind(this.onProductChanged, this))
                 .on('change', this.options.typeSelect, _.bind(this.onTypeChanged, this))
                 .on('click', this.options.addNotesButton, _.bind(this.onAddNotesClick, this))
                 .on('click', this.options.removeNotesButton, _.bind(this.onRemoveNotesClick, this))
@@ -117,10 +145,11 @@ define(function (require) {
             ;
             
             this.checkAddButton();
+            this.$typeSelect.trigger('change');
         },
         
         checkAddButton: function() {
-            this.$productSelect.val() ? this.$addItemButton.show() : this.$addItemButton.hide();
+            this.getProductId() ? this.$addItemButton.show() : this.$addItemButton.hide();
         },
         
         /**
@@ -142,11 +171,18 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onTypeChanged: function (e) {
-            if (this.typeReplacement === parseInt(this.$typeSelect.val())) {
+            var typeValue = parseInt(this.$typeSelect.val());
+            if (this.typeReplacement === typeValue) {
                 this.$productReplacementContainer.show();
             } else {
                 this.$productReplacementContainer.hide();
             }
+            if (this.typeOffer === typeValue) {
+                this.$requestsOnlyContainer.hide();
+            } else {
+                this.$requestsOnlyContainer.show();
+            }
+            this.$productSelect.trigger('change');
         },
 
         /**
@@ -156,7 +192,7 @@ define(function (require) {
          */
         onContentChanged: function (e) {
             this.$container.find('select').uniform();
-            var productId = this.$productSelect.val();
+            var productId = this.getProductId();
             var productUnits = this.units[productId];
             
             if (!productId || productUnits) {
@@ -217,8 +253,8 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onAddNotesClick: function (e) {
-            this.$sellerNotesContainer.show();
-            this.$addNotesButton.css('visibility', 'hidden');
+            this.$itemsCollectionContainer.addClass(this.options.classNotesSellerActive);
+            this.$sellerNotesContainer.find('textarea').focus();
         },
 
         /**
@@ -227,8 +263,17 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onRemoveNotesClick: function (e) {
-            this.$sellerNotesContainer.hide();
-            this.$addNotesButton.css('visibility', 'visible');
+            this.$itemsCollectionContainer.removeClass(this.options.classNotesSellerActive);
+            this.$sellerNotesContainer.find('textarea').val('');
+        },
+
+        /**
+         * Get Product Id
+         */
+        getProductId: function () {
+            return this.typeReplacement === parseInt(this.$typeSelect.val())
+                ? this.$productReplacementSelect.val()
+                : this.$productSelect.val();
         },
         
         dispose: function () {

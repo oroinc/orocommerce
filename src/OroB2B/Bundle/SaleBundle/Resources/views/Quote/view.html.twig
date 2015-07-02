@@ -41,20 +41,40 @@
     {% endset %}
     {% set quoteProducts %}
         <div class="sale-quoteproducts-info control-group">
-            <table>
+            <table class="sale-quoteproduct-collection-table sale-quoteproduct-collection-table-view">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Type</th>
+                        <th>Offers</th>
+                    </tr>
+                </thead>
+                <tbody>
                 {% for quoteProduct in entity.quoteProducts %}
                     <tr>
-                        <td class="sale-quoteproduct-product">
-                            <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
-                        </td>
-                        <td class="sale-quoteproduct-info">
-                            {% if quoteProduct.product %}
-                                <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
-                            {% else %}
-                                {{ quoteProduct.productSku|raw }}
+                        <td>
+                            <div>
+                                {% if quoteProduct.product %}
+                                    <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
+                                {% else %}
+                                    {{ quoteProduct.productSku|raw }}
+                                {% endif %}
+                            </div>
+                            {% if quoteProduct.type is same as(constant('OroB2B\\Bundle\\SaleBundle\\Entity\\QuoteProduct::TYPE_NOT_AVAILABLE')) %}
+                                <div>
+                                    <div>{{ 'orob2b.sale.quoteproduct.productreplacement.label'|trans }}</div>
+                                    {% if quoteProduct.productReplacement %}
+                                        <a href="{{ path('orob2b_product_view', { id: quoteProduct.productReplacement.id }) }}">{{ quoteProduct.productReplacement|raw }}</a>
+                                    {% else %}
+                                        {{ quoteProduct.productReplacementSku|raw }}
+                                    {% endif %}
+                                </div>
                             {% endif %}
                         </td>
-                        <td class="sale-quoteproductitems-info">
+                        <td>
+                            {{ quoteProduct.typeTitle|trans }}
+                        </td>
+                        <td>
                             {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
                                 <div class="sale-quoteproductitem-info">
                                     {{ quoteProductRequest|orob2b_format_sale_quote_product_request }}
@@ -69,6 +89,7 @@
                         </td>
                     </tr>
                 {% endfor %}
+                </tbody>
             </table>
         </div>
     {% endset %}

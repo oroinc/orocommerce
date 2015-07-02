@@ -2,14 +2,13 @@
 
 namespace OroB2B\Bundle\SaleBundle\Twig;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteExtension extends \Twig_Extension
 {
@@ -83,8 +82,12 @@ class QuoteExtension extends \Twig_Extension
             sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
         );
 
+        $transConstant = QuoteProductOffer::PRICE_UNIT === $item->getPriceType()
+            ? 'orob2b.sale.quoteproductoffer.item'
+            : 'orob2b.sale.quoteproductoffer.item_bundled'
+        ;
         $str = $this->translator->trans(
-            'orob2b.sale.quoteproductoffer.item',
+            $transConstant,
             [
                 '{units}'   => $units,
                 '{price}'   => $price,

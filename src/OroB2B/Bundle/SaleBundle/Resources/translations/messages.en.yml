@@ -41,6 +41,7 @@ orob2b:
 
         quoteproductoffer:
             item: '{units}, {price} per {unit}'
+            item_bundled: '{units}, {price} for every {units}'
             entity_label: 'Quote Product Offer'
             entity_plural_label: 'Quote Product Offers'
             add_label: 'Add Offer'
@@ -70,7 +71,7 @@ orob2b:
             quantity.label: 'Requested Qty'
             product_unit.label: 'Product Unit'
             product_unit_code.label: 'Product Unit Code'
-            price.label: 'Price'
+            price.label: 'Requested Price'
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'

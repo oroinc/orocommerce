@@ -2,6 +2,14 @@
     margin-left: 90px;
 }
 
+.sale-quoteproduct-collection-table-view {
+    margin-left: inherit;
+}
+
+.sale-quoteproduct-collection-table-view > tbody > tr > td {
+    vertical-align: top;
+}
+
 .sale-quoteproduct-collection-table > tbody > tr > td,
 .sale-quoteproduct-collection-table th {
     border: 1px solid #e5e5e5;
@@ -46,8 +54,8 @@
 .sale-quoteproductitem-collection .btn.removeRow {
     position: absolute;
     width: 28px;
-    right: 0px;
-    top: 20px;
+    right: 0;
+    top: 13px;
     left: auto;
 }
 
@@ -56,9 +64,8 @@
     width: 100%;
 }
 
-.sale-quoteproductitem-collection > div > div > div {
+.sale-quoteproductoffer-collection > div > div > div {
     padding-right: 14px;
-    
 }
 
 .sale-quoteproductitem-widget {
@@ -75,11 +82,11 @@
 
 .sale-quoteproductitem-widget input[type="number"],
 .sale-quoteproductitem-widget input[type="text"] {
-    width: 130px !important;
+    width: 120px !important;
 }
 
 .sale-quoteproductitem-widget select {
-    width: 130px !important;
+    width: 120px !important;
     height: 20px;
     margin: 0;
 }
@@ -112,7 +119,7 @@
     margin-bottom: 7px;
 }
 
-.sale-quoteproductitem-collection .oro-item-collection > div table {
+.sale-quoteproductitem-collection .oro-item-collection > div > table {
     margin-top: 7px;
     margin-bottom: 7px;
 }
@@ -168,20 +175,20 @@
     margin: 0;
 }
 
-.sale-quoteproduct-product-select-replacement {
+.sale-quoteproduct-product-replacement-select {
     margin-top: 10px;
     display: none;
 }
 
-.sale-quoteproduct-product-select-replacement .controls{
+.sale-quoteproduct-product-replacement-select .controls{
     margin-left: 0 !important;
 }
 
-.sale-quoteproduct-product-select-replacement label{
+.sale-quoteproduct-product-replacement-select label{
     width: auto !important;
 }
 
-.sale-quoteproduct-product-select-replacement .entity-select-btn {
+.sale-quoteproduct-product-replacement-select .entity-select-btn {
     float: none;
 }
 
@@ -191,7 +198,7 @@
 }
 
 .sale-quoteproduct-notes .control-group textarea {
-    width: 100%;
+    width: 98%;
 }
 
 .sale-quoteproduct-remove-notes-btn {
@@ -200,4 +207,20 @@
 
 .sale-quoteproduct-notes-seller {
     display: none;
+}
+
+.sale-quoteproduct-notes-seller-active .sale-quoteproduct-notes-seller {
+    display: block;
+}
+
+.sale-quoteproduct-notes-seller-active .sale-quoteproduct-add-notes-btn {
+    visibility: hidden;
+}
+
+.sale-quoteproductrequest-collection label {
+    width: 115px !important;
+}
+
+.sale-quoteproductrequest-collection .controls {
+    margin-left: 125px !important;
 }
