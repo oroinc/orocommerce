@@ -1,3 +1,13 @@
 parameters:
     orob2b_shopping_list.entity.shopping_list.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
     orob2b_shopping_list.shopping_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_shopping_list.entity.line_item.class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
+    orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+
+services:
+    orob2b_shopping_list.line_item.manager.api:
+        class: %orob2b_pricing.price_list.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_shopping_list.entity.line_item.class%
+            - @doctrine.orm.entity_manager

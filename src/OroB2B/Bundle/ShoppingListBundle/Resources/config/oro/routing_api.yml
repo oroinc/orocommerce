@@ -1,3 +1,6 @@
 orob2b_shopping_list_api:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/Api/Rest/ShoppingListController.php"
     type:     rest
+orob2b_shopping_list_api_line_item:
+    resource: "@OroB2BShoppingListBundle/Controller/Api/Rest/LineItemController.php"
+    type:     rest

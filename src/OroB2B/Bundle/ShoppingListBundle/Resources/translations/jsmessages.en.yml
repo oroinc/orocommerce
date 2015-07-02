@@ -1,0 +1,5 @@
+orob2b:
+    shoppinglist:
+        line_item_save:
+            flash:
+                success: Line Item has been added
