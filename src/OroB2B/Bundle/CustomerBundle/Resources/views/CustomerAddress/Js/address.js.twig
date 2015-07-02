@@ -8,11 +8,8 @@
     <div class="title-item"><%= _.escape(label) %></div>
     <ul class="inline">
         <% if (primary) { %> <li><span class="label label-info"><%= _.__('Primary') %></span></li> <% } %>
-        <% _.each(defaults, function(defaultType) { %>
-            <li><span class="label label-info"><%= _.__('Default') %> <%= _.escape(defaultType.label) %></span></li>
-        <% }) %>
         <% _.each(types, function(type) { %>
-        <li><span class="label"><%= _.escape(type.label) %></span></li>
+        <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('Default') : '' %>&nbsp;<%= _.escape(type.label) %></span></li>
         <% }) %>
     </ul>
     <address>
