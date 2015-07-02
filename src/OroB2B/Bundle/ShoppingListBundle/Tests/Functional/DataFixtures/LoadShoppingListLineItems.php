@@ -40,9 +40,12 @@ class LoadShoppingListLineItems extends AbstractFixture
      * @param Product $product
      * @param string $referenceName
      */
-    protected function createLineItem(ObjectManager $manager, ShoppingList $shoppingList, ProductUnit $unit,
-                                              Product $product, $referenceName)
-    {
+    protected function createLineItem(
+        ObjectManager $manager,
+        ShoppingList $shoppingList,
+        ProductUnit $unit,
+        Product $product, $referenceName
+    ) {
         $item = new LineItem();
         $item->setNotes('Test Notes');
         $item->setShoppingList($shoppingList);
