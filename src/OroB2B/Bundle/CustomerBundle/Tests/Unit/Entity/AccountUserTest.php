@@ -98,7 +98,7 @@ class AccountUserTest extends AbstractUserTest
             ['loginCount', 11],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
-            ['salt', md5('user')],
+            ['salt', md5('user')]
         ];
     }
 
@@ -152,5 +152,49 @@ class AccountUserTest extends AbstractUserTest
 
         $user->preUpdate($event);
         $this->assertNotEquals($updatedAt, $user->getUpdatedAt());
+    }
+
+    public function testUnserialize()
+    {
+        $user = $this->getUser();
+        $serialized = [
+            'password',
+            'salt',
+            'username',
+            true,
+            false,
+            'confirmation_token',
+            10
+        ];
+        $user->unserialize(serialize($serialized));
+
+        $this->assertEquals($serialized[0], $user->getPassword());
+        $this->assertEquals($serialized[1], $user->getSalt());
+        $this->assertEquals($serialized[2], $user->getUsername());
+        $this->assertEquals($serialized[3], $user->isEnabled());
+        $this->assertEquals($serialized[4], $user->isConfirmed());
+        $this->assertEquals($serialized[5], $user->getConfirmationToken());
+        $this->assertEquals($serialized[6], $user->getId());
+    }
+
+    public function testIsEnabledAndIsConfirmed()
+    {
+        $user = $this->getUser();
+
+        $this->assertTrue($user->isEnabled());
+        $this->assertTrue($user->isConfirmed());
+        $this->assertTrue($user->isAccountNonExpired());
+        $this->assertTrue($user->isAccountNonLocked());
+
+        $user->setEnabled(false);
+
+        $this->assertFalse($user->isEnabled());
+        $this->assertFalse($user->isAccountNonLocked());
+
+        $user->setEnabled(true);
+        $user->setConfirmed(false);
+
+        $this->assertFalse($user->isConfirmed());
+        $this->assertFalse($user->isAccountNonLocked());
     }
 }

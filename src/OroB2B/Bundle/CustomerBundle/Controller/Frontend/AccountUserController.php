@@ -59,21 +59,59 @@ class AccountUserController extends Controller
             ->setOrganization($websiteOrganization)
             ->addRole($defaultRole);
 
+        $userManager = $this->get('orob2b_account_user.manager');
         $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler(
-            $form,
-            $this->getRequest(),
-            $this->get('orob2b_account_user.manager')
-        );
+        $handler = new FrontendAccountUserHandler($form, $this->getRequest(), $userManager);
+
+        if ($userManager->isConfirmationRequired()) {
+            $registrationMessage = 'orob2b.customer.controller.accountuser.registered_with_confirmation.message';
+        } else {
+            $registrationMessage = 'orob2b.customer.controller.accountuser.registered.message';
+        }
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_customer_account_user_security_login'],
             ['route' => 'orob2b_customer_account_user_security_login'],
-            $this->get('translator')->trans('orob2b.customer.controller.accountuser.registered.message'),
+            $this->get('translator')->trans($registrationMessage),
             $handler
         );
+    }
+
+    /**
+     * @Route("/confirm-email", name="orob2b_customer_frontend_account_user_confirmation")
+     * @return RedirectResponse
+     */
+    public function confirmEmailAction()
+    {
+        $request = $this->getRequest();
+        $userManager = $this->get('orob2b_account_user.manager');
+
+        /** @var AccountUser $accountUser */
+        $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
+        $token = $request->get('token');
+
+        if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
+            throw $this->createNotFoundException(
+                $this->get('translator')->trans('orob2b.customer.controller.accountuser.confirmation_error.message')
+            );
+        }
+
+        if (!$accountUser->isConfirmed()) {
+            $userManager->confirmRegistration($accountUser);
+            $userManager->updateUser($accountUser);
+
+            $messageType = 'success';
+            $message = 'orob2b.customer.controller.accountuser.confirmed.message';
+        } else {
+            $messageType = 'warn';
+            $message = 'orob2b.customer.controller.accountuser.already_confirmed.message';
+        }
+
+        $this->get('session')->getFlashBag()->add($messageType, $message);
+
+        return $this->redirect($this->generateUrl('orob2b_customer_account_user_security_login'));
     }
 
     /**

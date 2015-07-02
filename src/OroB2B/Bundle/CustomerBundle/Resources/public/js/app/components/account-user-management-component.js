@@ -3,15 +3,15 @@
 define(function (require) {
     'use strict';
 
-    var UserEnableDisableComponent,
+    var AccountUserManagementComponent,
         BaseComponent = require('oroui/js/app/components/base/component'),
         mediator = require('oroui/js/mediator'),
         Error = require('oroui/js/error'),
         $ = require('jquery');
 
-    UserEnableDisableComponent = BaseComponent.extend({
+    AccountUserManagementComponent = BaseComponent.extend({
         initialize: function (options) {
-            $('#' + options.id).on('click', function(e) {
+            options._sourceElement.find('a').on('click', function(e) {
                 e.preventDefault();
                 var el = $(this);
                 $.ajax({
@@ -33,5 +33,5 @@ define(function (require) {
         }
     });
 
-    return UserEnableDisableComponent;
+    return AccountUserManagementComponent;
 });
