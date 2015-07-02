@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
@@ -157,6 +158,16 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $birthday;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress",
+     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"primary" = "DESC"})
+     */
+    protected $addresses;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -169,6 +180,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @ORM\Column(name="updated_at", type="datetime")
      */
     protected $updatedAt;
+
+    public function __construct()
+    {
+        $this->addresses = new ArrayCollection();
+        parent::__construct();
+    }
+
 
     /**
      * {@inheritdoc}
@@ -408,6 +426,79 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         $this->birthday = $birthday;
 
         return $this;
+    }
+
+    /**
+     * Add addresses
+     *
+     * @param CustomerAddress $address
+     * @return Customer
+     */
+    public function addAddress(CustomerAddress $address)
+    {
+        /** @var CustomerAddress $address */
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove addresses
+     *
+     * @param CustomerAddress $addresses
+     */
+    public function removeAddress(CustomerAddress $addresses)
+    {
+        $this->addresses->removeElement($addresses);
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Collection
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * Gets one address that has specified type name.
+     *
+     * @param string $typeName
+     *
+     * @return CustomerAddress|null
+     */
+    public function getAddressByTypeName($typeName)
+    {
+        /** @var CustomerAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->hasTypeWithName($typeName)) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return CustomerAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        /** @var CustomerAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                return $address;
+            }
+        }
+
+        return null;
     }
 
     /**
