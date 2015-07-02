@@ -7,6 +7,8 @@ orob2b:
         label.label: Label
         notes.label: Notes
         owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
         organization.label: Organization
 
         menu:

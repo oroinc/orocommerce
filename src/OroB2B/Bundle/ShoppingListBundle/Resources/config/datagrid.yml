@@ -14,12 +14,17 @@ datagrid:
                     - shopping_list.notes
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
+                    - shopping_list_owner.firstName, ' ', shopping_list_owner.lastName) as owner
+                    - shopping_list_account.name as account
                     - CONCAT(shopping_list_owner.firstName, ' ', shopping_list_owner.lastName) as owner
+                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as account_user
                 from:
                     - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
                 join:
                     left:
                         - { join: shopping_list.owner, alias: shopping_list_owner }
+                        - { join: shopping_list.account, alias: shopping_list_account }
+                        - { join: shopping_list.account_user, alias: shopping_list_acc_user }
         columns:
             id:
                 label:         orob2b.shoppinglist.id.label
@@ -29,6 +34,10 @@ datagrid:
                 label:         orob2b.shoppinglist.notes.label
             owner:
                 label:         orob2b.shoppinglist.owner.label
+            account_user:
+                label:         orob2b.shoppinglist.account_user.label
+            account:
+                label:         orob2b.shoppinglist.account.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -49,6 +58,10 @@ datagrid:
                     data_name: shopping_list.label
                 owner:
                     data_name: owner
+                account:
+                    data_name: account
+                account_user:
+                    data_name: account_user
                 createdAt:
                     data_name: shopping_list.createdAt
                 updatedAt:
@@ -66,6 +79,12 @@ datagrid:
                 owner:
                     type:      string
                     data_name: owner
+                account:
+                    type:      string
+                    data_name: account_user
+                account_user:
+                    type:      string
+                    data_name: account_user
                 createdAt:
                     type:      datetime
                     data_name: shopping_list.createdAt

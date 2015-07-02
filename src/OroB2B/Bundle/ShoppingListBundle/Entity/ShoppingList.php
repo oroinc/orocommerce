@@ -11,7 +11,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Customer;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
@@ -154,6 +156,22 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
         parent::__construct();
         $this->lineItems = new ArrayCollection();
     }
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountUser;
+
+    /**
+     * @var Customer
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $account;
 
     /**
      * @return int
@@ -335,5 +353,45 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return Customer
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Customer $account
+     *
+     * @return $this
+     */
+    public function setAccount(Customer $account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return self
+     */
+    public function setAccountUser(AccountUser $accountUser)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
     }
 }
