@@ -59,6 +59,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  */
 class AccountUser extends AbstractUser implements FullNameInterface
 {
+    const SECURITY_GROUP = 'commerce';
+
     /**
      * @var AccountUserRole[]|Collection
      *
