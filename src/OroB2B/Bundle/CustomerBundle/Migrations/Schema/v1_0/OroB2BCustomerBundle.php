@@ -36,6 +36,7 @@ class OroB2BCustomerBundle implements
     const ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'orob2b_account_role_to_website';
     const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
+    const ORO_B2B_PAYMENT_TABLE_NAME = 'orob2b_payment_term';
     const ORO_B2B_CUSTOMER_ADDRESS_TABLE_NAME = 'orob2b_customer_address';
     const ORO_B2B_CUSTOMER_ADDRESS_TO_ADDRESS_TABLE_NAME = 'orob2b_customer_adr_adr_type';
     const ORO_DICTIONARY_REGION_TABLE_NAME = 'oro_dictionary_region';
@@ -118,6 +119,7 @@ class OroB2BCustomerBundle implements
         $this->addOroB2BAccountUserOrganizationForeignKeys($schema);
         $this->addOroB2BAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroB2BCustomerForeignKeys($schema);
+        $this->addOroB2BCustomerGroupForeignKeys($schema);
         $this->addOrob2BCustomerAddressForeignKeys($schema);
         $this->addOrob2BCustomerAdrAdrTypeForeignKeys($schema);
     }
@@ -260,11 +262,11 @@ class OroB2BCustomerBundle implements
         $table = $schema->createTable(static::ORO_B2B_CUSTOMER_GROUP_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
-
         $table->setPrimaryKey(['id']);
-
         $table->addIndex(['name'], 'orob2b_customer_group_name_idx', []);
+        $table->addIndex(['payment_term_id'], 'IDX_5A485C2B17653B16', []);
     }
 
     /**
@@ -328,6 +330,22 @@ class OroB2BCustomerBundle implements
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_CUSTOMER_TABLE_NAME),
             ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_customer_group foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BCustomerGroupForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(static::ORO_B2B_CUSTOMER_GROUP_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_B2B_PAYMENT_TABLE_NAME),
+            ['payment_term_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

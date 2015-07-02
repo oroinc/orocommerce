@@ -21,7 +21,9 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
     {
         return [
             'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerInternalRatingDemoData'
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerInternalRatingDemoData',
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData'
+
         ];
     }
 
@@ -34,18 +36,14 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
         $accountUsers = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findAll();
         $internalRatings =
             $manager->getRepository(ExtendHelper::buildEnumValueClassName(Customer::INTERNAL_RATING_CODE))->findAll();
+        $customerGroupRepository = $manager->getRepository('OroB2BCustomerBundle:CustomerGroup');
 
         $rootCustomer = null;
         $firstLevelCustomer = null;
 
-        // create customer groups
-        $rootGroup = $this->createCustomerGroup('Root');
-        $firstLevelGroup = $this->createCustomerGroup('First');
-        $secondLevelGroup = $this->createCustomerGroup('Second');
-
-        $manager->persist($rootGroup);
-        $manager->persist($firstLevelGroup);
-        $manager->persist($secondLevelGroup);
+        $rootGroup = $customerGroupRepository->findOneBy(['name' => 'Root']);
+        $firstLevelGroup = $customerGroupRepository->findOneBy(['name' => 'First']);
+        $secondLevelGroup = $customerGroupRepository->findOneBy(['name' => 'Second']);
 
         // create customers
         foreach ($accountUsers as $index => $accountUser) {
@@ -69,17 +67,5 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
         }
 
         $manager->flush();
-    }
-
-    /**
-     * @param string $name
-     * @return CustomerGroup
-     */
-    protected function createCustomerGroup($name)
-    {
-        $customerGroup = new CustomerGroup();
-        $customerGroup->setName($name);
-
-        return $customerGroup;
     }
 }

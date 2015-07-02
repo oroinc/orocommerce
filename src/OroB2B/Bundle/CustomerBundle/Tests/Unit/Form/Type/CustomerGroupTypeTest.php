@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -47,10 +49,19 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
     {
         $entityIdentifierType = new EntityIdentifierType([]);
 
+        $paymentTermSelectType = new EntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1),
+                2 => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 2)
+            ],
+            PaymentTermSelectType::NAME
+        );
+
         return [
             new PreloadedExtension(
                 [
-                    $entityIdentifierType->getName() => $entityIdentifierType
+                    $entityIdentifierType->getName() => $entityIdentifierType,
+                    PaymentTermSelectType::NAME => $paymentTermSelectType
                 ],
                 []
             )
@@ -98,13 +109,19 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
 
         $defaultGroup = new CustomerGroup();
         $defaultGroup->setName($groupName);
+        $defaultGroup->setPaymentTerm($this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1));
 
         /** @var CustomerGroup $existingGroupBefore */
         $existingGroupBefore = $this->getEntity(self::DATA_CLASS, 1);
         $existingGroupBefore->setName($groupName);
+        $existingGroupBefore->setPaymentTerm(null);
 
         $existingGroupAfter = clone $existingGroupBefore;
         $existingGroupAfter->setName($alteredGroupName);
+        $existingGroupAfter->setPaymentTerm($this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 2));
+
+        $groupWithEmptyPaymentTerm = clone $defaultGroup;
+        $groupWithEmptyPaymentTerm->setPaymentTerm(null);
 
         return [
             'empty' => [
@@ -113,6 +130,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'viewData' => null,
                 'submittedData' => [
                     'name' => $groupName,
+                    'paymentTerm' => 1
                 ],
                 'expectedData' => $defaultGroup
             ],
@@ -122,9 +140,20 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
                 'viewData' => $existingGroupBefore,
                 'submittedData' => [
                     'name' => $alteredGroupName,
+                    'paymentTerm' => 2
                 ],
                 'expectedData' => $existingGroupAfter
-            ]
+            ],
+            'empty payment term' => [
+                'options' => [],
+                'defaultData' => null,
+                'viewData' => null,
+                'submittedData' => [
+                    'name' => $groupName,
+                    'paymentTerm' => null
+                ],
+                'expectedData' => $groupWithEmptyPaymentTerm
+            ],
         ];
     }
 

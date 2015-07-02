@@ -105,11 +105,17 @@ datagrid:
                 select:
                     - customer_group.id
                     - customer_group.name
+                    - payment_term.label as payment_term_label
                 from:
                     - { table: %orob2b_customer.entity.customer_group.class%, alias: customer_group }
+                join:
+                    left:
+                        - { join: customer_group.paymentTerm, alias: payment_term }
         columns:
             name:
                 label: orob2b.customer.customergroup.name.label
+            payment_term_label:
+                label: orob2b.customer.customergroup.paymentterm.label
         properties:
             id: ~
         sorters:
