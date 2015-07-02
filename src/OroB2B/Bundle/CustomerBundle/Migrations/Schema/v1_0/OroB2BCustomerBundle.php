@@ -6,15 +6,23 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroB2BCustomerBundle implements Migration, AttachmentExtensionAwareInterface, NoteExtensionAwareInterface
+class OroB2BCustomerBundle implements
+    Migration,
+    AttachmentExtensionAwareInterface,
+    NoteExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     const ORO_B2B_CUSTOMER_TABLE_NAME = 'orob2b_customer';
     const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
@@ -32,6 +40,9 @@ class OroB2BCustomerBundle implements Migration, AttachmentExtensionAwareInterfa
     /** @var  AttachmentExtension */
     protected $attachmentExtension;
 
+    /** @var  ExtendExtension */
+    protected $extendExtension;
+    
     /**
      * Sets the AttachmentExtension
      *
@@ -52,6 +63,16 @@ class OroB2BCustomerBundle implements Migration, AttachmentExtensionAwareInterfa
         $this->noteExtension = $noteExtension;
     }
 
+    /**
+     * Sets the ExtendExtension
+     *
+     * @param ExtendExtension $extendExtension
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+    
     /**
      * {@inheritdoc}
      */
@@ -146,8 +167,13 @@ class OroB2BCustomerBundle implements Migration, AttachmentExtensionAwareInterfa
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation'
             ]
         );
-
         $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_CUSTOMER_TABLE_NAME);
+        $this->extendExtension->addEnumField(
+            $schema,
+            static::ORO_B2B_CUSTOMER_TABLE_NAME,
+            'internal_rating',
+            Customer::INTERNAL_RATING_CODE
+        );
     }
 
     /**
