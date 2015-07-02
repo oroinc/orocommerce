@@ -2,8 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Owner\Metadata;
 
+use Doctrine\Common\Cache\CacheProvider;
+
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -21,9 +24,19 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     protected $basicLevelClass;
 
     /**
+     * @var ConfigProviderInterface
+     */
+    private $securityConfigProvider;
+
+    /**
      * @var FrontendOwnershipMetadataProvider
      */
     private $noOwnershipMetadata;
+
+    /**
+     * @var CacheProvider
+     */
+    private $cache;
 
     /**
      * {@inheritDoc}
@@ -38,6 +51,18 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 
         $this->localLevelClass = $this->getEntityClassResolver()->getEntityClass($owningEntityNames['local_level']);
         $this->basicLevelClass = $this->getEntityClassResolver()->getEntityClass($owningEntityNames['basic_level']);
+    }
+
+    /**
+     * @return ConfigProviderInterface
+     */
+    protected function getSecurityConfigProvider()
+    {
+        if (!$this->securityConfigProvider) {
+            $this->securityConfigProvider = $this->getContainer()->get('oro_entity_config.provider.security');
+        }
+
+        return $this->securityConfigProvider;
     }
 
     /**
@@ -118,5 +143,44 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     public function getMaxAccessLevel($accessLevel, $className = null)
     {
         return $accessLevel;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCache()
+    {
+        if (!$this->cache) {
+            $this->cache = $this->getContainer()
+                ->get('orob2b_customer.owner.frontend_ownership_metadata_provider.cache');
+        }
+
+        return $this->cache;
+    }
+
+    /**
+     * Only commerce entities can have frontend ownership
+     *
+     * {@inheritdoc}
+     */
+    protected function getOwnershipConfigs()
+    {
+        $securityProvider = $this->getSecurityConfigProvider();
+
+        $configs = parent::getOwnershipConfigs();
+
+        foreach ($configs as $key => $value) {
+            $className = $value->getId()->getClassName();
+            if ($securityProvider->hasConfig($className)) {
+                $securityConfig = $securityProvider->getConfig($className);
+                if ($securityConfig->get('group_name') === AccountUser::SECURITY_GROUP) {
+                    continue;
+                }
+            }
+
+            unset($configs[$key]);
+        }
+
+        return $configs;
     }
 }

@@ -14,3 +14,8 @@ services:
             - [setContainer, ["@service_container"]]
         tags:
             - { name: oro_security.owner.metadata_provider }
+
+    orob2b_customer.owner.frontend_ownership_metadata_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ "oro_acl_entity_ownership.frontend.cache" ] ]
