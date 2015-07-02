@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\ORM;
 
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
@@ -18,6 +17,7 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
