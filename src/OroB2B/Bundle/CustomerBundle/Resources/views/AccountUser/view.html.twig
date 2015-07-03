@@ -110,12 +110,22 @@
     }) }}
     {% endset %}
 
+    {% set addressBookWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'contentClasses': [],
+            'url': path('orob2b_customer_account_user_address_book', {id: entity.id}),
+            'title': 'Address Book'|trans
+        }) }}
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.customer.sections.general'|trans,
             'class': 'active',
             'subblocks': [
-                {'data' : [accountUserInformationWidget]}
+                {'data' : [accountUserInformationWidget]},
+                {'data' : [addressBookWidget]},
             ]
         }
     ] %}

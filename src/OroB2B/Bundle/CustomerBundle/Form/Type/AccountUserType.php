@@ -155,6 +155,19 @@ class AccountUserType extends AbstractType
                     'label' => 'orob2b.customer.accountuser.birthday.label',
                 ]
             )
+            ->add(
+                'addresses',
+                'oro_address_collection',
+                [
+                    'label'    => 'orob2b.customer.addresses.label',
+                    'type'     => CustomerTypedAddressType::NAME,
+                    'required' => true,
+                    'options'  => [
+                        'data_class'  => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress',
+                        'single_form' => false
+                    ]
+                ]
+            )
         ;
 
         if ($this->securityFacade->isGranted('orob2b_customer_account_user_role_view')) {

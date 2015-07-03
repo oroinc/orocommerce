@@ -431,12 +431,12 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * Add addresses
      *
-     * @param CustomerAddress $address
-     * @return Customer
+     * @param AccountUserAddress $address
+     * @return AccountUser
      */
-    public function addAddress(CustomerAddress $address)
+    public function addAddress(AccountUserAddress $address)
     {
-        /** @var CustomerAddress $address */
+        /** @var AccountUserAddress $address */
         if (!$this->addresses->contains($address)) {
             $this->addresses->add($address);
             $address->setOwner($this);
@@ -448,9 +448,9 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * Remove addresses
      *
-     * @param CustomerAddress $addresses
+     * @param AccountUserAddress $addresses
      */
-    public function removeAddress(CustomerAddress $addresses)
+    public function removeAddress(AccountUserAddress $addresses)
     {
         $this->addresses->removeElement($addresses);
     }
@@ -470,11 +470,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @param string $typeName
      *
-     * @return CustomerAddress|null
+     * @return AccountUserAddress|null
      */
     public function getAddressByTypeName($typeName)
     {
-        /** @var CustomerAddress $address */
+        /** @var AccountUserAddress $address */
         foreach ($this->getAddresses() as $address) {
             if ($address->hasTypeWithName($typeName)) {
                 return $address;
@@ -487,11 +487,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * Gets primary address if it's available.
      *
-     * @return CustomerAddress|null
+     * @return AccountUserAddress|null
      */
     public function getPrimaryAddress()
     {
-        /** @var CustomerAddress $address */
+        /** @var AccountUserAddress $address */
         foreach ($this->getAddresses() as $address) {
             if ($address->isPrimary()) {
                 return $address;
