@@ -105,27 +105,20 @@ class CategoryTest extends EntityTestCase
         $firstProduct = new Product();
         $secondProduct = new Product();
 
-        $firstProductCategory = new Category();
-        $firstProductCategory->addProduct($firstProduct);
-        $secondProductCategory = new Category();
-        $secondProductCategory->addProduct($secondProduct);
+        $category = new Category();
+        $category->addProduct($firstProduct)
+            ->addProduct($secondProduct);
 
         $this->assertEquals(
-            [$firstProduct, $secondProduct],
-            array_merge(
-                $firstProductCategory->getProducts()->toArray(),
-                $secondProductCategory->getProducts()->toArray()
-            )
+            [0 => $firstProduct, 1 => $secondProduct],
+            $category->getProducts()->toArray()
         );
 
-        $firstProductCategory->removeProduct($firstProduct);
+        $category->removeProduct($firstProduct);
 
         $this->assertEquals(
-            [$secondProduct],
-            array_merge(
-                $firstProductCategory->getProducts()->toArray(),
-                $secondProductCategory->getProducts()->toArray()
-            )
+            [1 => $secondProduct],
+            $category->getProducts()->toArray()
         );
     }
 
