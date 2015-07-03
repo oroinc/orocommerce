@@ -2,21 +2,13 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub;
 
+use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class AddressCollectionTypeStub extends AbstractType
+class AddressCollectionTypeStub extends AddressCollectionType
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'oro_address_collection';
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -26,6 +18,8 @@ class AddressCollectionTypeStub extends AbstractType
             'type'     => CustomerTypedAddressType::NAME,
             'options'  => ['data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress']
         ]);
+
+        parent::setDefaultOptions($resolver);
     }
 
     /**

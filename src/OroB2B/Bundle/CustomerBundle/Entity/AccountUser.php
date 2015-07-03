@@ -187,7 +187,6 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         parent::__construct();
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -453,6 +452,30 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function removeAddress(AccountUserAddress $addresses)
     {
         $this->addresses->removeElement($addresses);
+    }
+
+    /**
+     * Set addresses
+     *
+     * @param Collection|AccountUserAddress[]|null $addresses
+     */
+    public function setAddresses($addresses)
+    {
+        if (!$addresses instanceof Collection && !is_array($addresses)) {
+            throw new \InvalidArgumentException(
+                '$addresses must be an instance of \Doctrine\Common\Collections\Collection or an array'
+            );
+        }
+
+        if ($addresses === null) {
+            return;
+        }
+
+        $this->addresses->clear();
+
+        foreach ($addresses as $address) {
+            $this->addAddress($address);
+        }
     }
 
     /**

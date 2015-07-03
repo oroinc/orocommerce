@@ -159,9 +159,10 @@ class AccountUserType extends AbstractType
                 'addresses',
                 'oro_address_collection',
                 [
-                    'label'    => 'orob2b.customer.addresses.label',
+                    'label'    => 'orob2b.customer.accountuser.addresses.label',
                     'type'     => CustomerTypedAddressType::NAME,
-                    'required' => true,
+                    'required' => false,
+                    'multiple' => true,
                     'options'  => [
                         'data_class'  => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress',
                         'single_form' => false
