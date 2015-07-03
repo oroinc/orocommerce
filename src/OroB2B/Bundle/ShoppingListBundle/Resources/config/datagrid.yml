@@ -14,7 +14,6 @@ datagrid:
                     - shopping_list.notes
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
-                    - shopping_list_owner.firstName, ' ', shopping_list_owner.lastName) as owner
                     - shopping_list_account.name as account
                     - CONCAT(shopping_list_owner.firstName, ' ', shopping_list_owner.lastName) as owner
                     - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as account_user
@@ -24,7 +23,7 @@ datagrid:
                     left:
                         - { join: shopping_list.owner, alias: shopping_list_owner }
                         - { join: shopping_list.account, alias: shopping_list_account }
-                        - { join: shopping_list.account_user, alias: shopping_list_acc_user }
+                        - { join: shopping_list.accountUser, alias: shopping_list_acc_user }
         columns:
             id:
                 label:         orob2b.shoppinglist.id.label
@@ -81,7 +80,7 @@ datagrid:
                     data_name: owner
                 account:
                     type:      string
-                    data_name: account_user
+                    data_name: account
                 account_user:
                     type:      string
                     data_name: account_user
