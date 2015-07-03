@@ -3,15 +3,18 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-
-use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 use Oro\Bundle\UserBundle\Entity\User;
+
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
  * @ORM\Table(
@@ -135,6 +138,40 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+
+    /**
+     * @var ArrayCollection|LineItem[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\LineItem",
+     *      mappedBy="shoppingList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $lineItems;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->lineItems = new ArrayCollection();
+    }
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountUser;
+
+    /**
+     * @var Customer
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $account;
 
     /**
      * @return int
@@ -263,6 +300,41 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
+     * @param LineItem $item
+     * @return $this
+     */
+    public function addLineItem(LineItem $item)
+    {
+        if (!$this->lineItems->contains($item)) {
+            $item->setShoppingList($this);
+            $this->lineItems->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LineItem $item
+     * @return $this
+     */
+    public function removeLineItem(LineItem $item)
+    {
+        if ($this->lineItems->contains($item)) {
+            $this->lineItems->removeElement($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|LineItem[]
+     */
+    public function getLineItems()
+    {
+        return $this->lineItems;
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -281,5 +353,45 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return Customer
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Customer $account
+     *
+     * @return $this
+     */
+    public function setAccount(Customer $account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return self
+     */
+    public function setAccountUser(AccountUser $accountUser)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
     }
 }

@@ -7,6 +7,8 @@ orob2b:
         label.label: Label
         notes.label: Notes
         owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
         organization.label: Organization
 
         menu:
@@ -23,3 +25,9 @@ orob2b:
 
         controller:
             shopping_list.saved.message: Shopping List has been saved
+
+        lineitem:
+            add_line_item: Add Line Item
+            entity_label: Line Item
+            entity_plural_label: Line Items
+            notes_label: Notes
