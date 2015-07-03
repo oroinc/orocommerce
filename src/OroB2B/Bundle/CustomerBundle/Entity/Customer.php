@@ -44,7 +44,6 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
  *          }
  *      }
  * )
- * @Config()
  */
 class Customer extends ExtendCustomer
 {
@@ -248,7 +247,7 @@ class Customer extends ExtendCustomer
     }
 
     /**
-     * @param AccountUser $user
+     * @param AccountUser $accountUser
      * @return Customer
      */
     public function addUser(AccountUser $accountUser)

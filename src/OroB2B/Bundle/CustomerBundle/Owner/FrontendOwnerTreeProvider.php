@@ -81,9 +81,9 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
         // map customers
         foreach ($customers as $customer) {
             if ($customer->getOrganization()) {
-                $tree->addBusinessUnit($customer->getId(), $customer->getOrganization()->getId());
+                $tree->addLocalEntity($customer->getId(), $customer->getOrganization()->getId());
                 if ($customer->getParent()) {
-                    $tree->addBusinessUnitRelation($customer->getId(), $customer->getParent()->getId());
+                    $tree->addDeepEntity($customer->getId(), $customer->getParent()->getId());
                 }
             }
         }
@@ -91,17 +91,15 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
         // map users
         foreach ($accountUsers as $user) {
             $customer = $user->getCustomer();
-            $tree->addUser($user->getId(), $customer ? $customer->getId() : null);
+            $tree->addBasicEntity($user->getId(), $customer ? $customer->getId() : null);
 
             foreach ($user->getOrganizations() as $organization) {
                 $organizationId = $organization->getId();
-                $tree->addUserOrganization($user->getId(), $organizationId);
+                $tree->addGlobalEntity($user->getId(), $organizationId);
                 if ($organizationId === $customer->getOrganization()->getId()) {
-                    $tree->addUserBusinessUnit($user->getId(), $organizationId, $customer->getId());
+                    $tree->addLocalEntityToBasic($user->getId(), $customer->getId(), $organizationId);
                 }
             }
         }
     }
-
-
 }
