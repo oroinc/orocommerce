@@ -10,7 +10,7 @@ define(
                 widgetManager.getWidgetInstance(
                     options._wid,
                     function (widget) {
-                        messenger.notificationFlashMessage('success', __('orob2b.shoppinglist.line_item_save.flash.success'));
+                        messenger.notificationFlashMessage('success', __('orob2b.shoppinglist.lineitem.save_flash_success'));
                         mediator.trigger('widget_success:' + widget.getAlias());
                         mediator.trigger('widget_success:' + widget.getWid());
                         widget.trigger('formSave', options.savedId);
