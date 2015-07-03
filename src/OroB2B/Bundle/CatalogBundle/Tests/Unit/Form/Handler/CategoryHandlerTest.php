@@ -72,7 +72,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
         $this->manager->expects($this->any())
             ->method('persist');
 
-        $this->manager->expects($this->once())
+        $this->manager->expects($this->any())
             ->method('flush');
 
         $this->assertTrue($this->handler->process($this->entity));
