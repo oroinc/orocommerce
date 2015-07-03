@@ -25,6 +25,16 @@ datagrid:
         columns:
             sku:
                 label:         orob2b.product.sku.label
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+            visibility:
+                label:         orob2b.product.visibility.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/visibility.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -37,6 +47,10 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
+                inventoryStatus:
+                    data_name: inventoryStatusName
+                visibility:
+                    data_name: visibilityName
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:

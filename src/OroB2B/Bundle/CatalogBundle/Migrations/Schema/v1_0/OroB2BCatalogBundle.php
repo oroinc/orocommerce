@@ -17,10 +17,12 @@ class OroB2BCatalogBundle implements Migration
         /** Tables generation **/
         $this->createOroB2BCatalogCategoryTable($schema);
         $this->createOroB2BCatalogCategoryTitleTable($schema);
+        $this->createOrob2BCategoryToProductTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BCatalogCategoryForeignKeys($schema);
         $this->addOroB2BCatalogCategoryTitleForeignKeys($schema);
+        $this->addOrob2BCategoryToProductForeignKeys($schema);
     }
 
     /**
@@ -59,6 +61,21 @@ class OroB2BCatalogBundle implements Migration
     }
 
     /**
+     * Create orob2b_category_to_product table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BCategoryToProductTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_category_to_product');
+        $table->addColumn('category_id', 'integer', []);
+        $table->addColumn('product_id', 'integer', []);
+        $table->setPrimaryKey(['category_id', 'product_id']);
+        $table->addUniqueIndex(['product_id'], 'UNIQ_FB6D81664584665A');
+        $table->addIndex(['category_id'], 'IDX_FB6D816612469DE2', []);
+    }
+
+    /**
      * Add orob2b_catalog_category foreign keys.
      *
      * @param Schema $schema
@@ -93,6 +110,28 @@ class OroB2BCatalogBundle implements Migration
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_category_to_product foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BCategoryToProductForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_category_to_product');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_catalog_category'),
+            ['category_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

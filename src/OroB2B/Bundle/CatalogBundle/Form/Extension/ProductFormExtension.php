@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Extension;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -15,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
@@ -98,15 +98,12 @@ class ProductFormExtension extends AbstractTypeExtension
         /** @var Category $productCategory */
         $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
 
-        if (
-            $productCategory instanceof Category
-            && $category !== $productCategory
-        ) {
+        if ($productCategory instanceof Category && $category !== $productCategory) {
             $productCategory->removeProduct($product);
             $this->entityManager->persist($productCategory);
         }
 
-        if($category instanceof Category) {
+        if ($category instanceof Category) {
             $category->addProduct($product);
             $this->entityManager->persist($category);
         }

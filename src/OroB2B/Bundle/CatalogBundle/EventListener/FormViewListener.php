@@ -10,6 +10,7 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class FormViewListener
 {
@@ -50,9 +51,9 @@ class FormViewListener
         $productId = $this->request->get('id');
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
-        $category = $this->doctrineHelper
-            ->getEntityRepository('OroB2BCatalogBundle:Category')
-            ->findOneByProduct($product);
+        /** @var CategoryRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository('OroB2BCatalogBundle:Category');
+        $category = $repository->findOneByProduct($product);
 
         $template = $event->getEnvironment()->render(
             'OroB2BCatalogBundle:Product:category_view.html.twig',
