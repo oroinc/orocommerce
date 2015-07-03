@@ -85,7 +85,6 @@ class CategoryHandler
 
             if ($productCategory instanceof Category) {
                 $productCategory->removeProduct($product);
-                $this->manager->persist($productCategory);
                 $this->manager->flush();
             }
 
