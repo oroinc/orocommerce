@@ -79,7 +79,7 @@ class Request extends ExtendRequest
     protected $updatedAt;
 
     /**
-     * @var AccountUser
+     * @var AccountUser|null
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
@@ -116,7 +116,7 @@ class Request extends ExtendRequest
     /**
      * @param Organization $organization
      */
-    public function setOrganization($organization)
+    public function setOrganization(Organization $organization)
     {
         $this->organization = $organization;
     }
@@ -132,7 +132,7 @@ class Request extends ExtendRequest
     /**
      * @param AccountUser $frontendOwner
      */
-    public function setFrontendOwner($frontendOwner)
+    public function setFrontendOwner(AccountUser $frontendOwner = null)
     {
         $this->frontendOwner = $frontendOwner;
     }

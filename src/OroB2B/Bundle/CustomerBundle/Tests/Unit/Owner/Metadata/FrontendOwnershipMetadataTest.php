@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Owner\Metadata;
 
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
+
 use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadata;
 
 class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
@@ -154,5 +156,58 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
     {
         $metadata = new FrontendOwnershipMetadata();
         $this->assertFalse($metadata->getGlobalOwnerFieldName());
+    }
+
+    /**
+     * @param array $arguments
+     * @param array $levels
+     * @dataProvider getAccessLevelNamesDataProvider
+     */
+    public function testGetAccessLevelNames(array $arguments, array $levels)
+    {
+        $reflection = new \ReflectionClass('OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadata');
+        /** @var FrontendOwnershipMetadata $metadata */
+        $metadata = $reflection->newInstanceArgs($arguments);
+        $this->assertEquals($levels, $metadata->getAccessLevelNames());
+    }
+
+    /**
+     * @return array
+     */
+    public function getAccessLevelNamesDataProvider()
+    {
+        return [
+            'no owner' => [
+                'arguments' => [],
+                'levels' => [
+                    0 => AccessLevel::NONE_LEVEL_NAME,
+                ],
+            ],
+            'basic level owned' => [
+                'arguments' => ['FRONTEND_USER', 'owner', 'owner_id'],
+                'levels' => [
+                    0 => AccessLevel::NONE_LEVEL_NAME,
+                    1 => AccessLevel::getAccessLevelName(1),
+                    2 => AccessLevel::getAccessLevelName(2),
+                ],
+            ],
+            'local level owned' => [
+                'arguments' => ['FRONTEND_CUSTOMER', 'owner', 'owner_id'],
+                'levels' => [
+                    0 => AccessLevel::NONE_LEVEL_NAME,
+                    2 => AccessLevel::getAccessLevelName(2),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessage Owner type 1 is not supported
+     */
+    public function testGetAccessLevelNamesInvalidOwner()
+    {
+        $metadata = new FrontendOwnershipMetadata('ORGANIZATION', 'owner', 'owner_id');
+        $metadata->getAccessLevelNames();
     }
 }

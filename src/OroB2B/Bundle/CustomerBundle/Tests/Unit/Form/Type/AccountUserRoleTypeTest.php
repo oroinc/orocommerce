@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
@@ -171,6 +172,21 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(AccountUserRoleType::NAME, $this->formType->getName());
+    }
+
+    public function testFinishView()
+    {
+        $privilegeConfig = ['config'];
+        $formView = new FormView();
+
+        $this->formType->finishView(
+            $formView,
+            $this->getMock('Symfony\Component\Form\FormInterface'),
+            ['privilege_config' => $privilegeConfig]
+        );
+
+        $this->assertArrayHasKey('privilegeConfig', $formView->vars);
+        $this->assertEquals($privilegeConfig, $formView->vars['privilegeConfig']);
     }
 
     /**
