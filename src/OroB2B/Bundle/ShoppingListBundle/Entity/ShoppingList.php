@@ -156,6 +156,14 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->label;
+    }
+
+    /**
      * @return int
      */
     public function getId()

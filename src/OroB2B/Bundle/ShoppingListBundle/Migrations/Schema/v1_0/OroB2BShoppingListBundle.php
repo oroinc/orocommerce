@@ -35,7 +35,7 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
-        $table->addColumn('notes', 'text', []);
+        $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['notnull' => false]);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
@@ -58,7 +58,7 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('quantity', 'float', []);
-        $table->addColumn('notes', 'text', []);
+        $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['product_id', 'shopping_list_id', 'unit_code'],
