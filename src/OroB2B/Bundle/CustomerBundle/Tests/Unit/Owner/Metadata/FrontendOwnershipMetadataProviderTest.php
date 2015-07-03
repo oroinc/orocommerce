@@ -316,12 +316,70 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetMaxAccessLevel()
+    /**
+     * @param int $maxAccessLevel
+     * @param int $accessLevel
+     * @param string|null $className
+     * @param bool|null $hasOwner
+     * @dataProvider getMaxAccessLevelDataProvider
+     */
+    public function testGetMaxAccessLevel($maxAccessLevel, $accessLevel, $className = null, $hasOwner = null)
     {
-        $accessLevel = AccessLevel::BASIC_LEVEL;
-        $object = 'SomeClass';
+        if (null !== $hasOwner) {
+            if ($hasOwner) {
+                $metadata = new FrontendOwnershipMetadata('FRONTEND_USER', 'owner', 'owner_id');
+            } else {
+                $metadata = new FrontendOwnershipMetadata();
+            }
 
-        $this->assertEquals($accessLevel, $this->provider->getMaxAccessLevel($accessLevel, $object));
+            $this->cache->expects($this->any())
+                ->method('fetch')
+                ->with($className)
+                ->willReturn($metadata);
+        }
+
+        $this->assertEquals($maxAccessLevel, $this->provider->getMaxAccessLevel($accessLevel, $className));
+    }
+
+    /**
+     * @return array
+     */
+    public function getMaxAccessLevelDataProvider()
+    {
+        return [
+            'without class' => [
+                'maxAccessLevel' => AccessLevel::NONE_LEVEL,
+                'accessLevel' => AccessLevel::SYSTEM_LEVEL,
+            ],
+            'NONE default' => [
+                'maxAccessLevel' => AccessLevel::NONE_LEVEL,
+                'accessLevel' => AccessLevel::NONE_LEVEL,
+                'className' => 'SomeClass',
+            ],
+            'BASIC default' => [
+                'maxAccessLevel' => AccessLevel::BASIC_LEVEL,
+                'accessLevel' => AccessLevel::BASIC_LEVEL,
+                'className' => 'SomeClass',
+            ],
+            'LOCAL default' => [
+                'maxAccessLevel' => AccessLevel::LOCAL_LEVEL,
+                'accessLevel' => AccessLevel::LOCAL_LEVEL,
+                'className' => 'SomeClass',
+            ],
+            'not allowed with owner' => [
+                'maxAccessLevel' => AccessLevel::LOCAL_LEVEL,
+                'accessLevel' => AccessLevel::SYSTEM_LEVEL,
+                'className' => 'SomeClass',
+                'hasOwner' => true,
+            ],
+            'not allowed without owner' => [
+                'maxAccessLevel' => AccessLevel::GLOBAL_LEVEL,
+                'accessLevel' => AccessLevel::GLOBAL_LEVEL,
+                'className' => 'SomeClass',
+                'hasOwner' => false,
+            ],
+
+        ];
     }
 
     public function testWarmUpCacheFilterConfigsByScope()

@@ -7,12 +7,15 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
 class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
 {
+    const ALIAS = 'frontend_ownership';
+
     /**
      * @var string
      */
@@ -142,7 +145,22 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
      */
     public function getMaxAccessLevel($accessLevel, $className = null)
     {
-        return $accessLevel;
+        if ($className) {
+            if (in_array($accessLevel, [AccessLevel::NONE_LEVEL, AccessLevel::BASIC_LEVEL, AccessLevel::LOCAL_LEVEL])) {
+                $maxLevel = $accessLevel;
+            } else {
+                $metadata = $this->getMetadata($className);
+                if ($metadata->hasOwner()) {
+                    $maxLevel = AccessLevel::LOCAL_LEVEL;
+                } else {
+                    $maxLevel = $accessLevel;
+                }
+            }
+        } else {
+            $maxLevel = AccessLevel::NONE_LEVEL;
+        }
+
+        return $maxLevel;
     }
 
     /**

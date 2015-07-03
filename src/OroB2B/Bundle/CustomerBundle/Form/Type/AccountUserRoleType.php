@@ -82,6 +82,9 @@ class AccountUserRoleType extends AbstractType
                     'options' => [
                         'privileges_config' => $config,
                     ],
+                    'page_component_options' => [
+                        'accessLevelRoute' => 'orob2b_customer_acl_access_levels'
+                    ],
                 ]
             );
         }

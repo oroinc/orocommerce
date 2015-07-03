@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Owner\Metadata;
 
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
+
 use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadata;
 
 class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
@@ -39,15 +41,15 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                ['USER', 'account_user', 'account_user_id'],
+                ['FRONTEND_USER', 'account_user', 'account_user_id'],
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_USER,
             ],
             [
-                ['CUSTOMER', 'customer', 'customer_id'],
+                ['FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', 'customer_id'],
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
             ],
             [
-                ['UNKNOWN', 'customer', 'customer_id'],
+                ['UNKNOWN', 'FRONTEND_CUSTOMER', 'customer_id'],
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
@@ -55,7 +57,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                ['UNKNOWN', 'customer', 'customer_id'],
+                ['UNKNOWN', 'FRONTEND_CUSTOMER', 'customer_id'],
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
@@ -67,7 +69,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_NONE,
             ],
             [
-                ['CUSTOMER', '', 'customer_id'],
+                ['FRONTEND_CUSTOMER', '', 'customer_id'],
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
@@ -75,7 +77,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                ['CUSTOMER', 'customer', ''],
+                ['FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', ''],
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
@@ -90,10 +92,10 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata = new FrontendOwnershipMetadata();
         $this->assertFalse($metadata->isBasicLevelOwned());
 
-        $metadata = new FrontendOwnershipMetadata('USER', 'account_user', 'account_user_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_USER', 'account_user', 'account_user_id');
         $this->assertTrue($metadata->isBasicLevelOwned());
 
-        $metadata = new FrontendOwnershipMetadata('CUSTOMER', 'customer', 'customer_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', 'customer_id');
         $this->assertFalse($metadata->isBasicLevelOwned());
     }
 
@@ -103,18 +105,18 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($metadata->isLocalLevelOwned());
         $this->assertFalse($metadata->isLocalLevelOwned(true));
 
-        $metadata = new FrontendOwnershipMetadata('CUSTOMER', 'customer', 'customer_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', 'customer_id');
         $this->assertTrue($metadata->isLocalLevelOwned());
         $this->assertTrue($metadata->isLocalLevelOwned(true));
 
-        $metadata = new FrontendOwnershipMetadata('USER', 'account_user', 'account_user_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_USER', 'account_user', 'account_user_id');
         $this->assertFalse($metadata->isLocalLevelOwned());
         $this->assertFalse($metadata->isLocalLevelOwned(true));
     }
 
     public function testSerialization()
     {
-        $metadata = new FrontendOwnershipMetadata('USER', 'account_user', 'account_user_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_USER', 'account_user', 'account_user_id');
         $data = serialize($metadata);
 
         $metadata = new FrontendOwnershipMetadata();
@@ -154,5 +156,58 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
     {
         $metadata = new FrontendOwnershipMetadata();
         $this->assertFalse($metadata->getGlobalOwnerFieldName());
+    }
+
+    /**
+     * @param array $arguments
+     * @param array $levels
+     * @dataProvider getAccessLevelNamesDataProvider
+     */
+    public function testGetAccessLevelNames(array $arguments, array $levels)
+    {
+        $reflection = new \ReflectionClass('OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadata');
+        /** @var FrontendOwnershipMetadata $metadata */
+        $metadata = $reflection->newInstanceArgs($arguments);
+        $this->assertEquals($levels, $metadata->getAccessLevelNames());
+    }
+
+    /**
+     * @return array
+     */
+    public function getAccessLevelNamesDataProvider()
+    {
+        return [
+            'no owner' => [
+                'arguments' => [],
+                'levels' => [
+                    0 => AccessLevel::NONE_LEVEL_NAME,
+                ],
+            ],
+            'basic level owned' => [
+                'arguments' => ['FRONTEND_USER', 'owner', 'owner_id'],
+                'levels' => [
+                    0 => AccessLevel::NONE_LEVEL_NAME,
+                    1 => AccessLevel::getAccessLevelName(1),
+                    2 => AccessLevel::getAccessLevelName(2),
+                ],
+            ],
+            'local level owned' => [
+                'arguments' => ['FRONTEND_CUSTOMER', 'owner', 'owner_id'],
+                'levels' => [
+                    0 => AccessLevel::NONE_LEVEL_NAME,
+                    2 => AccessLevel::getAccessLevelName(2),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @expectedException \BadMethodCallException
+     * @expectedExceptionMessage Owner type 1 is not supported
+     */
+    public function testGetAccessLevelNamesInvalidOwner()
+    {
+        $metadata = new FrontendOwnershipMetadata('ORGANIZATION', 'owner', 'owner_id');
+        $metadata->getAccessLevelNames();
     }
 }
