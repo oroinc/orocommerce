@@ -153,7 +153,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
                 if ($metadata->hasOwner()) {
                     $maxLevel = AccessLevel::LOCAL_LEVEL;
                 } else {
-                    $maxLevel = AccessLevel::NONE_LEVEL;
+                    $maxLevel = $accessLevel;
                 }
             }
         } else {
