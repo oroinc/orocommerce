@@ -78,6 +78,7 @@ class AccountUserType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function addEntityFields(FormBuilderInterface $builder)
     {
