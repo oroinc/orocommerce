@@ -28,7 +28,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function __construct(ManagerRegistry $registry)
     {
-        $this->entityManager = $registry->getManagerForClass('OroB2BCatalogBundle:ProductCategory');
+        $this->entityManager = $registry->getManager();
     }
 
     /**
@@ -99,17 +99,17 @@ class ProductFormExtension extends AbstractTypeExtension
         $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
 
         if (
-            !($category instanceof Category)
-            && $productCategory instanceof Category
+            $productCategory instanceof Category
+            && $category !== $productCategory
         ) {
-            $productCategory->getProducts()->remove($product);
+            $productCategory->removeProduct($product);
             $this->entityManager->persist($productCategory);
-
-            return;
         }
 
-        $category->getProducts()->add($product);
-        $this->entityManager->persist($category);
+        if($category instanceof Category) {
+            $category->addProduct($product);
+            $this->entityManager->persist($category);
+        }
     }
 
     /**

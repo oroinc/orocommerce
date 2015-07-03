@@ -30,7 +30,7 @@ class CategoryHandler
      */
     public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
     {
-        $this->form    = $form;
+        $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
     }
@@ -46,7 +46,6 @@ class CategoryHandler
 
         if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
             $this->form->submit($this->request);
-
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
@@ -81,6 +80,16 @@ class CategoryHandler
     {
         /** @var $product Product */
         foreach ($products as $product) {
+            $productCategory = $this->manager
+                ->getRepository('OroB2BCatalogBundle:Category')
+                ->findOneByProduct($product);
+
+            if ($productCategory instanceof Category) {
+
+                $productCategory->removeProduct($product);
+                $this->manager->persist($productCategory);
+            }
+
             $category->addProduct($product);
         }
     }
