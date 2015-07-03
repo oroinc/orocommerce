@@ -78,16 +78,15 @@ class CategoryHandler
      */
     protected function appendProducts(Category $category, array $products)
     {
+        $categoryRepository = $this->manager->getRepository('OroB2BCatalogBundle:Category');
         /** @var $product Product */
         foreach ($products as $product) {
-            $productCategory = $this->manager
-                ->getRepository('OroB2BCatalogBundle:Category')
-                ->findOneByProduct($product);
+            $productCategory = $categoryRepository->findOneByProduct($product);
 
             if ($productCategory instanceof Category) {
-
                 $productCategory->removeProduct($product);
                 $this->manager->persist($productCategory);
+                $this->manager->flush();
             }
 
             $category->addProduct($product);
