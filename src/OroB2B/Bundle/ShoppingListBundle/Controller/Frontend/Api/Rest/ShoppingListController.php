@@ -44,7 +44,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      */
     public function getManager()
     {
-        return $this->get('orob2b_shopping_list.shopping_list.manager.api.class');
+        return $this->get('orob2b_shopping_list.shopping_list.manager.api');
     }
 
     /**
