@@ -127,9 +127,6 @@ class Category
      */
     protected $products;
 
-    /**
-     * @inheritdoc
-     */
     public function __construct()
     {
         $this->titles          = new ArrayCollection();

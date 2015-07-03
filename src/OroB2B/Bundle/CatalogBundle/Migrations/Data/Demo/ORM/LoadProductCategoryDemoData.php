@@ -54,7 +54,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      */
     public function load(ObjectManager $manager)
     {
-        $locator  = $this->container->get('file_locator');
+        $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
 
         if (is_array($filePath)) {
@@ -67,7 +67,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $product  = $this->getProductBySku($manager, $row['productCode']);
+            $product = $this->getProductBySku($manager, $row['productCode']);
             $category = $this->getCategoryByDefaultTitle($manager, $row['productLine']);
             $category->addProduct($product);
             $manager->persist($category);
@@ -86,9 +86,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      */
     protected function getProductBySku(EntityManager $manager, $sku)
     {
-        if (!array_key_exists($sku, $this->products)) {
-            $this->products[$sku] = $manager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
-        }
+        $this->products[$sku] = $manager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
 
         return $this->products[$sku];
     }
@@ -101,9 +99,9 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      */
     protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
     {
+        $categoryRepo = $manager->getRepository('OroB2BCatalogBundle:Category');
         if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] =
-                $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
+            $this->categories[$title] = $categoryRepo->findOneByDefaultTitle($title);
         }
 
         return $this->categories[$title];
