@@ -95,12 +95,15 @@ class ProductFormExtension extends AbstractTypeExtension
 
         /** @var Category $category */
         $category = $form->get('category')->getData();
-        /** @var Category $productCategory */
-        $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
 
-        if ($productCategory instanceof Category && $category !== $productCategory) {
-            $productCategory->removeProduct($product);
-            $this->entityManager->persist($productCategory);
+        if (null !== $product->getId()) {
+            /** @var Category $productCategory */
+            $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
+
+            if ($productCategory instanceof Category && $category !== $productCategory) {
+                $productCategory->removeProduct($product);
+                $this->entityManager->persist($productCategory);
+            }
         }
 
         if ($category instanceof Category) {
