@@ -102,7 +102,6 @@ class ProductFormExtension extends AbstractTypeExtension
 
             if ($productCategory instanceof Category && $category !== $productCategory) {
                 $productCategory->removeProduct($product);
-                $this->entityManager->persist($productCategory);
             }
         }
 
