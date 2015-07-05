@@ -293,9 +293,9 @@ class Customer extends ExtendCustomer
     }
 
     /**
-     * @param Organization $organization
+     * @param Organization|null $organization
      */
-    public function setOrganization(Organization $organization)
+    public function setOrganization(Organization $organization = null)
     {
         $this->organization = $organization;
     }
