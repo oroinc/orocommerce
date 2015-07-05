@@ -115,6 +115,11 @@ datagrid:
                     - shopping_list.updatedAt
                 from:
                     - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
+                where:
+                    and:
+                        - shopping_list.accountUser = :account_user_id
+            bind_parameters:
+                - account_user_id
         columns:
             label:
                 label:         orob2b.shoppinglist.label.label

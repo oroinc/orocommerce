@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
@@ -114,11 +115,15 @@ class ShoppingListController extends Controller
      */
     protected function update(ShoppingList $shoppingList)
     {
-// TODO: remove dummy owner & organization
-$helper = $this->get('oro_entity.doctrine_helper');
-$owner = $helper->getEntityRepository('OroUserBundle:User')->find(1);
-$organization = $helper->getEntityRepository('OroOrganizationBundle:Organization')->find(1);
-$shoppingList->setOwner($owner)->setOrganization($organization);
+        // TODO: remove dummy owner after frontend ownership ready
+        $helper = $this->get('oro_entity.doctrine_helper');
+        $owner = $helper->getEntityRepository('OroUserBundle:User')->find(1);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+        $shoppingList->setOwner($owner)
+            ->setOrganization($accountUser->getOrganization())
+            ->setAccount($accountUser->getCustomer())
+            ->setAccountUser($accountUser);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $shoppingList,

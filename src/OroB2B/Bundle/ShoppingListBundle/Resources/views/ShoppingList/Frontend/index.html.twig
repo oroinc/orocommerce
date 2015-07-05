@@ -1,6 +1,9 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% set gridName = 'account-user-shopping-list-grid' %}
+{% set params = params|default({})|merge({
+    'account_user_id': app.user.id
+}) %}
 {% set pageTitle = 'orob2b.shoppinglist.entity_plural_label'|trans %}
 
 {% block navButtons %}
