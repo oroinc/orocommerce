@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use Oro\Bundle\SecurityBundle\Owner\AbstractOwnerTreeProvider;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
+use Oro\Bundle\SecurityBundle\Owner\OwnerTreeInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
@@ -67,7 +68,7 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
     /**
      * {@inheritdoc}
      */
-    protected function fillTree(OwnerTree $tree)
+    protected function fillTree(OwnerTreeInterface $tree)
     {
         $accountUserClass = $this->getOwnershipMetadataProvider()->getBasicLevelClass();
         $customerClass = $this->getOwnershipMetadataProvider()->getLocalLevelClass();

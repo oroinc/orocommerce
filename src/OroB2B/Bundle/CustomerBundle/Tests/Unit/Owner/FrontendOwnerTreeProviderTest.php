@@ -84,12 +84,26 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
         $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
-            ->willReturnMap([
-                ['orob2b_customer.owner.frontend_ownership_tree_provider.cache', 1, $this->cache],
-                ['orob2b_customer.owner.frontend_ownership_metadata_provider', 1, $this->ownershipMetadataProvider],
-                ['doctrine', 1, $this->managerRegistry],
-                ['oro_security.security_facade', 1, $this->securityFacade],
-            ]);
+            ->willReturnMap(
+                [
+                    [
+                        'orob2b_customer.owner.frontend_ownership_tree_provider.cache',
+                        ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                        $this->cache,
+                    ],
+                    [
+                        'orob2b_customer.owner.frontend_ownership_metadata_provider',
+                        ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                        $this->ownershipMetadataProvider,
+                    ],
+                    ['doctrine', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $this->managerRegistry],
+                    [
+                        'oro_security.security_facade',
+                        ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
+                        $this->securityFacade,
+                    ],
+                ]
+            );
 
         $this->treeProvider = new FrontendOwnerTreeProvider();
         $this->treeProvider->setContainer($this->container);
@@ -169,9 +183,10 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($schemaManager));
         $schemaManager->expects($this->any())
             ->method('listTableNames')
-            ->will($this->returnValue(array('test')));
+            ->will($this->returnValue(['test']));
 
         $this->treeProvider->warmUpCache();
+        /** @var OwnerTree $tree */
         $tree = $this->treeProvider->getTree();
         $this->assertTestData($tree);
     }

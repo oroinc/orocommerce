@@ -6,9 +6,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
-use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
 
 class AccountUserHandler
 {
