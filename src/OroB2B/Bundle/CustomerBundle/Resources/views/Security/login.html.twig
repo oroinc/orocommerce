@@ -1,11 +1,7 @@
-{% extends 'OroUserBundle::layout.html.twig' %}
+{% extends commerce.layout %}
 
-{% block bodyClass %}login-page{% endblock %}
-{% block messages %}
-{% endblock %}
 {% block content %}
 <div class="container">
-    <h1>FRONTEND</h1>
     <form id="login-form" action="{{ path('orob2b_customer_account_user_security_check') }}" method="post" class="form-signin">
         <div class="title-box">
             {% if oro_theme_logo() %}
@@ -30,7 +26,6 @@
                     <div>{{ error|trans }}</div>
                 </div>
             {% endif %}
-            {{ messagesContent }}
             {%- set usernameLabel = 'orob2b.customer.accountuser.email.label'|trans %}
             {%- set passwordLabel = 'orob2b.customer.accountuser.password.label'|trans %}
             {%- set showLabels = (usernameLabel|length <= 9) and (passwordLabel|trans <= 9) %}
@@ -55,7 +50,7 @@
                     <a href="{{ path('orob2b_customer_frontend_account_user_register') }}">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</a>
                 </div>
                 <div class="pull-right">
-                    <button type="submit" class="btn btn-large  btn-primary" id="_submit" name="_submit">{{ 'orob2b.customer.accountuser.profile.login'|trans }}</button>
+                    <button type="submit" class="btn btn-large btn-primary" id="_submit" name="_submit">{{ 'orob2b.customer.accountuser.profile.login'|trans }}</button>
                 </div>
             </div>
             {% placeholder oro_user_login_form %}

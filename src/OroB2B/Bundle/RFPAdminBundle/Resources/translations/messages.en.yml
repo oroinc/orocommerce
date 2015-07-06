@@ -12,6 +12,8 @@ orob2b.rfpadmin:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
+        frontend_owner.label: 'Owner'
+        organization.label: 'Organization'
 
     requeststatus:
         entity_label: 'Request For Proposal Status'
