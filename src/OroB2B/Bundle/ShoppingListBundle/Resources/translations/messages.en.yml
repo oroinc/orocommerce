@@ -8,6 +8,7 @@ orob2b:
         notes.label: Notes
         owner.label: Owner
         organization.label: Organization
+        line_items.label: Line Items
 
         menu:
             sales_tab.label: Sales
@@ -27,3 +28,9 @@ orob2b:
             entity_plural_label: Line Items
             notes_label: Notes
             save_flash_success: Line Item Saved Successfully
+            id.label: ID
+            notes.label: Notes
+            quantity.label: Quantity
+            product.label: Product
+            shopping_list: Shopping List
+            unit.label: Unit
