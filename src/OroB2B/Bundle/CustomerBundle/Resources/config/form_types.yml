@@ -14,8 +14,11 @@ parameters:
     orob2b_customer.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_customer.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType
 
+    orob2b_customer.form.handler.account_user_role.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserRoleHandler
+
     orob2b_customer.form.type.typed_address.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType
     orob2b_customer.form.type.typed_address_with_default.class: OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressWithDefaultType
+    orob2b_customer.form.extension.oro_acl_access_level_selector.class: OroB2B\Bundle\CustomerBundle\Form\Extension\AclAccessLevelSelectorExtension
 
 services:
     orob2b_customer.form.type.customer:
@@ -89,6 +92,17 @@ services:
         tags:
             - { name: form.type, alias: orob2b_customer_account_user_password_reset }
 
+    orob2b_customer.form.handler.account_user_role:
+        parent: oro_user.form.handler.abstract.acl_role
+        class: %orob2b_customer.form.handler.account_user_role.class%
+        scope: prototype
+        calls:
+            - [setRequest, [@request]]
+            - [setOwnershipConfigProvider, [@oro_entity_config.provider.ownership]]
+            - [setChainMetadataProvider, [@oro_security.owner.metadata_provider.chain]]
+            - [addExtensionFilter, ['entity', 'commerce']]
+            - [addExtensionFilter, ['action', 'commerce']]
+
     orob2b_customer.form.type.typed_address:
         class: %orob2b_customer.form.type.typed_address.class%
         tags:
@@ -100,3 +114,8 @@ services:
              - [setRegistry, [@doctrine]]
         tags:
              - { name: form.type, alias: orob2b_customer_typed_address_with_default}
+
+    orob2b_customer.form.extension.acl_permission:
+        class: %orob2b_customer.form.extension.oro_acl_access_level_selector.class%
+        tags:
+            - { name: form.type_extension, alias: oro_acl_access_level_selector }

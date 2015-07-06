@@ -28,6 +28,11 @@ orob2b_customer_account_user_role:
     type: annotation
     prefix: /account/user/role
 
+orob2b_customer_acl_permission:
+    resource: "@OroB2BCustomerBundle/Controller/AclPermissionController.php"
+    type: annotation
+    prefix: /account/acl
+
 orob2b_customer_frontend_account_user:
     resource: "@OroB2BCustomerBundle/Controller/Frontend/AccountUserController.php"
     type: annotation
