@@ -6,7 +6,9 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.product.sku.label'|trans, product.sku) }}
 
+            {{ UI.renderHtmlProperty('orob2b.product.status.label'|trans, product.status) }}
             {{ UI.renderHtmlProperty('orob2b.product.inventory_status.label'|trans, product.inventoryStatus) }}
+
             {{ UI.renderHtmlProperty(
                 'orob2b.product.image.label'|trans,
                 oro_image_view(product, product.image, null, 'image')

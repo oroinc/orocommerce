@@ -6,7 +6,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class LoadProductInventoryStatusData extends AbstractEnumFixture
+class LoadProductStatusData extends AbstractEnumFixture
 {
     /**
      * {@inheritdoc}
@@ -14,9 +14,8 @@ class LoadProductInventoryStatusData extends AbstractEnumFixture
     protected function getData()
     {
         return [
-            Product::INVENTORY_STATUS_IN_STOCK     => 'In Stock',
-            Product::INVENTORY_STATUS_OUT_OF_STOCK => 'Out of Stock',
-            Product::INVENTORY_STATUS_DISCONTINUED => 'Discontinued'
+            Product::STATUS_DISABLED => 'Disabled',
+            Product::STATUS_ENABLED => 'Enabled',
         ];
     }
 
@@ -25,7 +24,7 @@ class LoadProductInventoryStatusData extends AbstractEnumFixture
      */
     protected function getEnumCode()
     {
-        return 'prod_inventory_status';
+        return 'prod_status';
     }
 
     /**
@@ -33,6 +32,6 @@ class LoadProductInventoryStatusData extends AbstractEnumFixture
      */
     protected function getDefaultValue()
     {
-        return Product::INVENTORY_STATUS_IN_STOCK;
+        return Product::STATUS_DISABLED;
     }
 }

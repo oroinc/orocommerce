@@ -159,7 +159,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'category' => 2,
                     'unitPrecisions' => [],
                     'inventoryStatus' => 'in_stock',
-                    'visible' => 1
+                    'visible' => 1,
+                    'status' => 'disabled'
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
@@ -176,7 +177,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ]
                     ],
                     'inventoryStatus' => 'in_stock',
-                    'visible' => 1
+                    'visible' => 1,
+                    'status' => 'disabled'
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false

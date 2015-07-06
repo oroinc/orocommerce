@@ -30,4 +30,12 @@ class StubProduct extends Product
     {
 
     }
+
+    /**
+     * @return AbstractEnumValue
+     */
+    public function getStatus()
+    {
+
+    }
 }

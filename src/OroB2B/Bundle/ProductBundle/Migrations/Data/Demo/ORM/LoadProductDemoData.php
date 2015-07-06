@@ -67,13 +67,9 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue[] $inventoryStatuses */
-        $inventoryStatuses = $manager->getRepository($inventoryStatusClassName)->findAll();
-
-        $visibilityClassName = ExtendHelper::buildEnumValueClassName('prod_visibility');
-        /** @var AbstractEnumValue[] $visibilities */
-        $visibilities = $manager->getRepository($visibilityClassName)->findAll();
+        $inventoryStatuses = $this->getAllEnumValuesByCode($manager, 'prod_inventory_status');
+        $visibilities = $this->getAllEnumValuesByCode($manager, 'prod_visibility');
+        $statuses = $this->getAllEnumValuesByCode($manager, 'prod_status');
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -86,7 +82,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setSku($row['productCode'])
                 ->setCategory($category)
                 ->setInventoryStatus($inventoryStatuses[array_rand($inventoryStatuses)])
-                ->setVisibility($visibilities[array_rand($visibilities)]);
+                ->setVisibility($visibilities[array_rand($visibilities)])
+                ->setStatus($statuses[array_rand($statuses)]);
 
             $manager->persist($product);
         }
@@ -130,5 +127,17 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $this->categories[$title];
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $enumCode
+     * @return AbstractEnumValue[]
+     */
+    protected function getAllEnumValuesByCode(ObjectManager $manager, $enumCode)
+    {
+        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName($enumCode);
+
+        return $manager->getRepository($inventoryStatusClassName)->findAll();
     }
 }

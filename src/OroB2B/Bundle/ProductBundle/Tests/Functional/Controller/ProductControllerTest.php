@@ -17,6 +17,9 @@ class ProductControllerTest extends WebTestCase
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
 
+    const STATUS = 'Disabled';
+    const UPDATED_STATUS = 'Enabled';
+
     const INVENTORY_STATUS = 'In Stock';
     const UPDATED_INVENTORY_STATUS = 'Out of Stock';
 
@@ -61,6 +64,7 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product_form[category]'] = $category->getId();
         $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
         $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
+        $form['orob2b_product_form[status]'] = Product::STATUS_DISABLED;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -73,6 +77,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
         $this->assertContains(self::VISIBILITY, $html);
+        $this->assertContains(self::STATUS, $html);
     }
 
     /**
@@ -106,6 +111,7 @@ class ProductControllerTest extends WebTestCase
                 'category' => $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'visibility' => Product::VISIBILITY_NOT_VISIBLE,
+                'status' => Product::STATUS_ENABLED,
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
@@ -165,6 +171,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $html);
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
+        $this->assertContains(self::UPDATED_STATUS, $html);
 
         $product = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BProductBundle:Product')

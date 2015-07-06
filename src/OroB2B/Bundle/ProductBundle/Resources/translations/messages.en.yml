@@ -8,6 +8,7 @@ orob2b:
         category.label: Category
         inventory_status.label: Inventory Status
         visibility.label: Visible to Customers
+        status.label: Status
         owner.label: Owner
         organization.label: Organization
         in_category.label: In category
@@ -71,6 +72,10 @@ orob2b:
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
                 visibility.label: Visible to Customers
+
+        grid:
+            action:
+                duplicate: Duplicate
 
     product_unit.kg:
         label:

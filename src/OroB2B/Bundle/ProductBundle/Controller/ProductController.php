@@ -101,6 +101,25 @@ class ProductController extends Controller
     }
 
     /**
+     * Duplicate product
+     *
+     * @Route("/duplicate/{id}", name="orob2b_product_duplicate", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_product_duplicate",
+     *      type="entity",
+     *      class="OroB2BProductBundle:Product",
+     *      permission="CREATE"
+     * )
+     * @param Product $product
+     * @return array|RedirectResponse
+     */
+    public function duplicateAction(Product $product)
+    {
+        return '';
+    }
+
+    /**
      * @param Product $product
      * @return array|RedirectResponse
      */
