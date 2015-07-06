@@ -67,12 +67,15 @@ class CategoryControllerTest extends WebTestCase
     public function testCreateCategory()
     {
         $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
+
         return $this->assertCreate(self::DEFAULT_CATEGORY_TITLE, $this->masterCatalog->getId());
     }
 
     /**
      * @depends testCreateCategory
+     *
      * @param int $id
+     *
      * @return int
      */
     public function testEditCategory($id)
@@ -82,7 +85,9 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @depends testCreateCategory
+     *
      * @param int $id
+     *
      * @return int
      */
     public function testCreateSubCategory($id)
@@ -92,7 +97,9 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @depends testCreateSubCategory
+     *
      * @param int $id
+     *
      * @return int
      */
     public function testEditSubCategory($id)
@@ -102,6 +109,7 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @depends testEditCategory
+     *
      * @param int $id
      */
     public function testDelete($id)
@@ -131,7 +139,8 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @param string $title
-     * @param int $parentId
+     * @param int    $parentId
+     *
      * @return int
      */
     protected function assertCreate($title, $parentId)
@@ -144,15 +153,21 @@ class CategoryControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_catalog_category[titles][values][default]'] = $title;
-        $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getId() . ', '
-            . $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getId();
+
+        if ($parentId === $this->masterCatalog->getId()) {
+            $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getId() . ', '
+                . $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getId();
+        } else {
+            $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_04)->getId();
+        }
+
         $form['orob2b_catalog_category[appendProducts]'] = $appendProducts;
         $form->setValues(['input_action' => 'save_and_stay']);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
-
         $result = $this->client->getResponse();
+
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains("Category has been saved", $crawler->html());
 
@@ -162,7 +177,8 @@ class CategoryControllerTest extends WebTestCase
     /**
      * @param string $title
      * @param string $newTitle
-     * @param int $id
+     * @param int    $id
+     *
      * @return int
      */
     protected function assertEdit($title, $newTitle, $id)
@@ -171,27 +187,42 @@ class CategoryControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
         $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
-        $this->assertEquals(
-            $title,
-            $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getCategory()->getDefaultTitle()
-        );
-        $this->assertEquals(
-            $title,
-            $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getCategory()->getDefaultTitle()
-        );
+
+        $testProductOne = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01);
+        $testProductTwo = $this->getProductBySku(LoadProductData::TEST_PRODUCT_02);
+        $testProductThree = $this->getProductBySku(LoadProductData::TEST_PRODUCT_03);
+        $testProductFour = $this->getProductBySku(LoadProductData::TEST_PRODUCT_04);
+
+        $appendProduct = $testProductThree;
+
+        if ($title === self::DEFAULT_CATEGORY_TITLE) {
+            /** @var Category $productOneCategory */
+            $productOneCategory = $this->getProductCategoryByProduct($testProductOne);
+            /** @var Category $productTwoCategory */
+            $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
+            $this->assertEquals(
+                $title,
+                $productOneCategory->getDefaultTitle()
+            );
+
+            $this->assertEquals(
+                $title,
+                $productTwoCategory->getDefaultTitle()
+            );
+        }
+
+        if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
+            $appendProduct = $testProductFour;
+        };
+
 
         $form['orob2b_catalog_category[titles][values][default]'] = $newTitle;
-
-        $form['orob2b_catalog_category[appendProducts]']
-            = $this->getProductBySku(LoadProductData::TEST_PRODUCT_03)->getId();
-
-        $form['orob2b_catalog_category[removeProducts]']
-            = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getId();
-
+        $form['orob2b_catalog_category[appendProducts]'] = $appendProduct->getId();
+        $form['orob2b_catalog_category[removeProducts]'] = $testProductOne->getId();
         $form->setValues(['input_action' => 'save_and_stay']);
 
         foreach ($this->locales as $locale) {
-            $form['orob2b_catalog_category[titles][values][locales]['.$locale->getId().'][value]']
+            $form['orob2b_catalog_category[titles][values][locales][' . $locale->getId() . '][value]']
                 = $locale->getCode() . $newTitle;
         }
 
@@ -208,27 +239,43 @@ class CategoryControllerTest extends WebTestCase
         foreach ($this->locales as $locale) {
             $this->assertEquals(
                 $locale->getCode() . $newTitle,
-                $formValues['orob2b_catalog_category[titles][values][locales]['.$locale->getId().'][value]']
+                $formValues['orob2b_catalog_category[titles][values][locales][' . $locale->getId() . '][value]']
             );
         }
 
         $this->assertNull(
-            $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getCategory()
+            $this->getProductCategoryByProduct($testProductOne)
         );
-        $this->assertEquals(
-            $newTitle,
-            $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getCategory()->getDefaultTitle()
-        );
-        $this->assertEquals(
-            $newTitle,
-            $this->getProductBySku(LoadProductData::TEST_PRODUCT_03)->getCategory()->getDefaultTitle()
-        );
+
+        if ($title === self::DEFAULT_CATEGORY_TITLE) {
+            $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
+            $productThreeCategory = $this->getProductCategoryByProduct($testProductThree);
+
+            $this->assertEquals(
+                $newTitle,
+                $productTwoCategory->getDefaultTitle()
+            );
+            $this->assertEquals(
+                $newTitle,
+                $productThreeCategory->getDefaultTitle()
+            );
+        }
+
+        if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
+            $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
+
+            $this->assertEquals(
+                $newTitle,
+                $productFourCategory->getDefaultTitle()
+            );
+        }
 
         return $id;
     }
 
     /**
      * @param string $uri
+     *
      * @return int
      */
     protected function getCategoryIdByUri($uri)
@@ -243,6 +290,7 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @param string $sku
+     *
      * @return Product
      */
     protected function getProductBySku($sku)
@@ -250,5 +298,17 @@ class CategoryControllerTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BProductBundle:Product')
             ->findOneBy(['sku' => $sku]);
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return Category|null
+     */
+    protected function getProductCategoryByProduct(Product $product)
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
     }
 }
