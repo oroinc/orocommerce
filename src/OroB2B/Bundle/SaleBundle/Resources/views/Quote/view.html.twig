@@ -74,18 +74,51 @@
                         <td>
                             {{ quoteProduct.typeTitle|trans }}
                         </td>
-                        <td>
-                            {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
-                                <div class="sale-quoteproductitem-info">
-                                    {{ quoteProductRequest|orob2b_format_sale_quote_product_request }}
-                                </div>
-                            {% endfor %}
+                        <td class="sale-quoteproductitems-info">
+                            {% if quoteProduct.quoteProductRequests and quoteProduct.type is not same as(constant('OroB2B\\Bundle\\SaleBundle\\Entity\\QuoteProduct::TYPE_OFFER')) %}
+                                <table>
+                                    <tr>
+                                        <th>{{ 'orob2b.sale.quoteproductrequest.quantity.label'|trans }}</th>
+                                        <th>{{ 'orob2b.sale.quoteproductrequest.price.label'|trans }}</th>
+                                        <th>{{ 'orob2b.sale.quoteproductrequest.column_summary'|trans }}</th>
+                                    </tr>
+                                    {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
+                                        <tr>
+                                            <td>{{ quoteProductRequest.quantity is null ? 'N/A' : quoteProductRequest.quantity ~ ' ' ~ quoteProductRequest.productUnit }}</td>
+                                            <td>{{ quoteProductRequest.price is null ? 'N/A' : quoteProductRequest.price.value ~ ' ' ~ quoteProductRequest.price.currency }}</td>
+                                            <td>{{ quoteProductRequest|orob2b_format_sale_quote_product_request }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td colspan="3">{{ UI.renderProperty(
+                                                'orob2b.sale.quoteproduct.commentcustomer.label'|trans,
+                                                quoteProduct.commentCustomer ? : 'N/A'
+                                            ) }}</td>
+                                    </tr>
+                                    </table>
+                            {% endif %}
 
-                            {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
-                                <div class="sale-quoteproductitem-info">
-                                    {{ quoteProductOffer|orob2b_format_sale_quote_product_offer }}
-                                </div>
-                            {% endfor %}
+                            <table>
+                                <tr>
+                                    <th>{{ 'orob2b.sale.quoteproductoffer.quantity.label'|trans }}</th>
+                                    <th>{{ 'orob2b.sale.quoteproductoffer.price.label'|trans }}</th>
+                                    <th>{{ 'orob2b.sale.quoteproductoffer.column_summary'|trans }}</th>
+                                </tr>
+
+                                {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
+                                    <tr>
+                                        <td>{{ quoteProductOffer.quantity }} {{ quoteProductOffer.productUnit }}</td>
+                                        <td>{{ quoteProductOffer.price.value }} {{ quoteProductOffer.price.currency }}</td>
+                                        <td>{{ quoteProductOffer|orob2b_format_sale_quote_product_offer }}</td>
+                                    </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td colspan="3">{{ UI.renderProperty(
+                                            'orob2b.sale.quoteproduct.comment.label'|trans,
+                                            quoteProduct.comment ? : 'N/A'
+                                        ) }}</td>
+                                </tr>
+                            </table>
                         </td>
                     </tr>
                 {% endfor %}

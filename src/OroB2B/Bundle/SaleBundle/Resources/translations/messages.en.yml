@@ -61,6 +61,7 @@ orob2b:
 
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
+            column_summary: 'Summary'
 
         quoteproductrequest:
             item: '{units}, {price} per {unit}'
@@ -77,6 +78,7 @@ orob2b:
             quote_product.label: 'Quote Product'
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
+            column_summary: 'Summary'
 
         controller:
             quote:

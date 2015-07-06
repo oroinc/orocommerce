@@ -90,12 +90,11 @@ class QuoteProductOfferType extends AbstractType
         /* @var $quoteProductOffer QuoteProductOffer */
         $quoteProductOffer = $event->getData();
         $form = $event->getForm();
-        $choices = null;
+        $choices = [];
 
         if ($quoteProductOffer && null !== $quoteProductOffer->getId()) {
             $product = $quoteProductOffer->getQuoteProduct()->getProduct();
             if ($product) {
-                $choices = [];
                 foreach ($product->getUnitPrecisions() as $unitPrecision) {
                     $choices[] = $unitPrecision->getUnit();
                 }
@@ -114,7 +113,6 @@ class QuoteProductOfferType extends AbstractType
             'productUnit',
             ProductUnitSelectionType::NAME,
             [
-                'compact'   => false,
                 'label'     => 'orob2b.product.productunit.entity_label',
             ]
         );
@@ -128,7 +126,6 @@ class QuoteProductOfferType extends AbstractType
     protected function processProductUnitField(FormInterface $form, $quoteProductOffer, $choices)
     {
         $productUnitOptions = [
-            'compact'   => false,
             'required'  => true,
             'label'     => 'orob2b.product.productunit.entity_label',
             'choices'  => $choices,

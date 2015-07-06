@@ -82,7 +82,7 @@ class QuoteExtension extends \Twig_Extension
             sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
         );
 
-        $transConstant = QuoteProductOffer::PRICE_UNIT === $item->getPriceType()
+        $transConstant = null === $item->getPriceType() || QuoteProductOffer::PRICE_UNIT === $item->getPriceType()
             ? 'orob2b.sale.quoteproductoffer.item'
             : 'orob2b.sale.quoteproductoffer.item_bundled'
         ;

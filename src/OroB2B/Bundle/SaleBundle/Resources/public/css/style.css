@@ -109,6 +109,16 @@
     padding: 5px 0 0 10px;
 }
 
+.sale-quoteproductitems-info > table {
+    margin-bottom: 10px;
+}
+
+.sale-quoteproductitems-info > table th,
+.sale-quoteproductitems-info > table td {
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+}
+
 .sale-quoteproductitem-collection .oro-item-collection > div {
     border: 1px solid #e6e6e6 !important;
     background: #f8f8f8 !important;

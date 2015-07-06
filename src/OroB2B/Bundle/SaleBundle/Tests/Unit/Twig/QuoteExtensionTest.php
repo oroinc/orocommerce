@@ -52,7 +52,8 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
                 $ids = [
                     'orob2b.product_unit.kg.label.full'     => 'kilogram',
                     'orob2b.product_unit.item.label.full'   => 'item',
-                    'orob2b.sale.quoteproductoffer.item'     => '{units}, {price} per {unit}',
+                    'orob2b.sale.quoteproductoffer.item'    => '{units}, {price} per {unit}',
+                    'orob2b.sale.quoteproductoffer.item_bundled'    => '{units}, {price} for every {units}',
                 ];
 
                 return str_replace(array_keys($params), array_values($params), $ids[$id]);
@@ -123,7 +124,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             ->setPrice($price)
         ;
 
-        $this->assertEquals($expected, $this->extension->formatProductItem($item));
+        $this->assertEquals($expected, $this->extension->formatProductOffer($item));
     }
 
     public function testGetName()

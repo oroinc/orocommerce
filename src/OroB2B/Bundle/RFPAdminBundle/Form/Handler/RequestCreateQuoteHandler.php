@@ -87,6 +87,7 @@ class RequestCreateQuoteHandler
             $quoteProduct
                 ->setProduct($requestProduct->getProduct())
                 ->setType(QuoteProduct::TYPE_REQUESTED)
+                ->setCommentCustomer($requestProduct->getComment())
             ;
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
                 $quoteProductRequest = new QuoteProductRequest();
