@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\CustomerBundle\EventListener;
 
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+
 class LoginListener
 {
     /**
@@ -11,8 +13,10 @@ class LoginListener
      */
     public function onSecurityInteractiveLogin(InteractiveLoginEvent $event)
     {
-        $request = $event->getRequest();
+        if ($event->getAuthenticationToken()->getUser() instanceof AccountUser) {
+            $request = $event->getRequest();
 
-        $request->attributes->set('_fullRedirect', true);
+            $request->attributes->set('_fullRedirect', true);
+        }
     }
 }
