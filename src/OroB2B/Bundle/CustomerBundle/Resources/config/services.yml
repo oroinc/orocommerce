@@ -167,6 +167,7 @@ services:
 
     orob2b_customer.customer_address.manager.api:
         class: %orob2b_customer.customer_address.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_customer.customer_address.entity.class%
             - @doctrine.orm.entity_manager
