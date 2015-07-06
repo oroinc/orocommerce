@@ -27,8 +27,7 @@ OroB2B\Bundle\RFPAdminBundle\Entity\Request:
 OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct:
     properties:
         request:
-            - NotBlank:
-                groups: [ Import ]
+            - NotBlank: ~
         product:
             - NotBlank:
                 message: 'orob2b.rfpadmin.requestproduct.product.blank'
@@ -47,7 +46,6 @@ OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem:
         requestProduct:
             - NotBlank: ~
         quantity:
-            - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
@@ -56,7 +54,6 @@ OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem:
             - NotBlank:
                 groups: [ Import ]
         price:
-            - NotBlank: ~
             - Valid: ~
 
 OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus:

@@ -7,4 +7,10 @@ Oro\Bundle\CurrencyBundle\Model\Price:
                 min: 0
         currency:
             - NotBlank: ~
-            - Currency: ~
+            - Currency:
+                groups: [Default, Optional]
+
+Oro\Bundle\CurrencyBundle\Model\OptionalPrice:
+    constraints:
+        - Oro\Bundle\CurrencyBundle\Validator\Constraints\OptionalPrice:
+            groups: [Optional]

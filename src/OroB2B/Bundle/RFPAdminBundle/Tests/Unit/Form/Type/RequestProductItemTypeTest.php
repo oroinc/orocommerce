@@ -7,8 +7,6 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -19,8 +17,6 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
-
-use OroB2B\Bundle\RFPAdminBundle\Validator\Constraints;
 
 class RequestProductItemTypeTest extends AbstractTest
 {
@@ -40,39 +36,6 @@ class RequestProductItemTypeTest extends AbstractTest
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType = new RequestProductItemType($translator);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        $priceType                  = $this->preparePriceType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
-        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-
-        return [
-            new PreloadedExtension(
-                [
-                    $priceType->getName()                   => $priceType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                ],
-                []
-            ),
-            $this->getValidatorExtension(true),
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getValidators()
-    {
-        $requestProductItemConstraint = new Constraints\RequestProductItem();
-        return [
-            $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
-        ];
     }
 
     public function testGetName()
@@ -197,7 +160,7 @@ class RequestProductItemTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequestProductItem(1),
             ],
             'empty quantity' => [
-                'isValid'       => false,
+                'isValid'       => true,
                 'submittedData' => [
                     'productUnit'   => 'kg',
                     'price'         => [
@@ -205,7 +168,7 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(2, null, 'kg', Price::create(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(2, null, 'kg', $this->createPrice(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(2),
             ],
             'empty product unit' => [
@@ -217,17 +180,56 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(3, 10, null, Price::create(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(3, 10, null, $this->createPrice(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(3),
             ],
             'empty price' => [
-                'isValid'       => false,
+                'isValid'       => true,
                 'submittedData' => [
                     'quantity'      => 10,
                     'productUnit'   => 'kg',
                 ],
                 'expectedData'  => $this->getRequestProductItem(2, 10, 'kg'),
                 'defaultData'   => $this->getRequestProductItem(2),
+            ],
+            'empty price value' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                    'price' => [
+                        'currency' => 'USD',
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProductItem(2, 10, 'kg'),
+                'defaultData'   => $this->getRequestProductItem(2),
+            ],
+            'empty price currency' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                    'price' => [
+                        'value' => 10,
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(10, null)),
+                'defaultData'   => $this->getRequestProductItem(2),
+            ],
+            'empty request product' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'quantity'      => 10,
+                    'productUnit'   => 'kg',
+                    'price'         => [
+                        'value'     => 20,
+                        'currency'  => 'USD',
+                    ],
+                ],
+                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', $this->createPrice(20, 'USD'))
+                    ->setRequestProduct(null),
+                'defaultData'   => $this->getRequestProductItem(5)
+                    ->setRequestProduct(null),
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -239,9 +241,33 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', Price::create(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(5, 10, 'kg', $this->createPrice(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(5),
             ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        $priceType                  = $this->preparePriceType();
+        $optionalPriceType          = $this->prepareOptionalPriceType();
+        $currencySelectionType      = new CurrencySelectionTypeStub();
+        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+
+        return [
+            new PreloadedExtension(
+                [
+                    $priceType->getName()                   => $priceType,
+                    $optionalPriceType->getName()           => $optionalPriceType,
+                    $currencySelectionType->getName()       => $currencySelectionType,
+                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                ],
+                []
+            ),
+            $this->getValidatorExtension(true),
         ];
     }
 }

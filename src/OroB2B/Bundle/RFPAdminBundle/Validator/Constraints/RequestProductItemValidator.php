@@ -26,7 +26,8 @@ class RequestProductItemValidator extends ConstraintValidator
             );
         }
 
-        $product        = $requestProductItem->getRequestProduct()->getProduct();
+        $requestProduct = $requestProductItem->getRequestProduct();
+        $product        = $requestProduct ? $requestProduct->getProduct() : null;
         $allowedUnits   = $product ? $product->getAvailableUnitCodes() : [];
         $productUnit    = $requestProductItem->getProductUnit();
         $code           = $productUnit ? $productUnit->getCode() : null;
