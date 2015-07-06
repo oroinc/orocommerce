@@ -5,6 +5,7 @@ parameters:
 
     orob2b_customer.owner.frontend_ownership_metadata_provider.class: OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
     orob2b_customer.owner.decision_maker.class: OroB2B\Bundle\CustomerBundle\Owner\EntityOwnershipDecisionMaker
+    orob2b_customer.owner.tree_provider.class: OroB2B\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider
 
 services:
     orob2b_customer.owner.frontend_ownership_metadata_provider:
@@ -27,3 +28,15 @@ services:
         parent: oro_security.owner.decision_maker.abstract
         tags:
            - { name: oro_security.owner.ownership_decision_maker, priority: 10 }
+
+    orob2b_customer.owner.tree_provider:
+        public: false
+        parent: oro_security.abstract_ownership_tree_provider
+        class: %orob2b_customer.owner.tree_provider.class%
+        tags:
+            - { name: oro_security.ownership.tree_provider }
+
+    orob2b_customer.owner.frontend_ownership_tree_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ "oro_acl_owner_tree.frontend.cache" ] ]

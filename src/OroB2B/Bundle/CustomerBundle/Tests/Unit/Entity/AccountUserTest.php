@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -38,8 +39,12 @@ class AccountUserTest extends AbstractUserTest
 
     public function testCreateCustomer()
     {
+        $organization = new Organization();
+        $organization->setName('test');
+
         $user = $this->getUser();
-        $user->setFirstName('John')
+        $user->setOrganization($organization)
+            ->setFirstName('John')
             ->setLastName('Doe');
         $this->assertEmpty($user->getCustomer());
 
@@ -47,6 +52,7 @@ class AccountUserTest extends AbstractUserTest
         $user->createCustomer();
         $customer = $user->getCustomer();
         $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\Customer', $customer);
+        $this->assertEquals($organization, $customer->getOrganization());
         $this->assertEquals('John Doe', $customer->getName());
 
         // new customer created only if it not defined

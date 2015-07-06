@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
@@ -19,19 +22,25 @@ class AccountUserHandler
     /** @var AccountUserManager */
     protected $userManager;
 
+    /** @var SecurityContextInterface */
+    protected $securityContext;
+
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param AccountUserManager $userManager
+     * @param SecurityContextInterface $securityContext
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        AccountUserManager $userManager
+        AccountUserManager $userManager,
+        SecurityContextInterface $securityContext
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->userManager = $userManager;
+        $this->securityContext = $securityContext;
     }
 
     /**
@@ -55,6 +64,13 @@ class AccountUserHandler
                     if ($this->form->get('sendEmail')->getData()) {
                         $this->userManager->sendWelcomeEmail($accountUser);
                     }
+                }
+
+                $token = $this->securityContext->getToken();
+                if ($token instanceof OrganizationContextTokenInterface) {
+                    $organization = $token->getOrganizationContext();
+                    $accountUser->setOrganization($organization)
+                        ->addOrganization($organization);
                 }
 
                 $this->userManager->updateUser($accountUser);

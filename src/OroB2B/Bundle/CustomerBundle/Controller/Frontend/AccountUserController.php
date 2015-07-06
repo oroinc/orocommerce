@@ -117,12 +117,6 @@ class AccountUserController extends Controller
     /**
      * @Route("/profile", name="orob2b_customer_frontend_account_user_profile")
      * @Template("OroB2BCustomerBundle:AccountUser/Frontend:view.html.twig")
-     * @Acl(
-     *      id="orob2b_customer_frontend_account_user_profile",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="VIEW"
-     * )
      *
      * @return array
      */
