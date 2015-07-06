@@ -84,7 +84,16 @@ class ShoppingListController extends Controller
      */
     public function createAction()
     {
-        return $this->update(new ShoppingList());
+        $shoppingList = new ShoppingList();
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+        $shoppingList
+            ->setOwner($accountUser)
+            ->setOrganization($accountUser->getOrganization())
+            ->setAccount($accountUser->getCustomer())
+            ->setAccountUser($accountUser);
+
+        return $this->update($shoppingList);
     }
 
     /**
@@ -115,16 +124,6 @@ class ShoppingListController extends Controller
      */
     protected function update(ShoppingList $shoppingList)
     {
-        // TODO: remove dummy owner after frontend ownership ready
-        $helper = $this->get('oro_entity.doctrine_helper');
-        $owner = $helper->getEntityRepository('OroUserBundle:User')->find(1);
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $shoppingList->setOwner($owner)
-            ->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getCustomer())
-            ->setAccountUser($accountUser);
-
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $shoppingList,
             $this->createForm(ShoppingListType::NAME, $shoppingList),

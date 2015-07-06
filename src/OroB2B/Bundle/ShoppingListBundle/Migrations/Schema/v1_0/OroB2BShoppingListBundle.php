@@ -34,7 +34,7 @@ class OroB2BShoppingListBundle implements Migration
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
@@ -45,7 +45,7 @@ class OroB2BShoppingListBundle implements Migration
 
         $table->setPrimaryKey(['id']);
 
-        $table->addIndex(['user_owner_id'], 'IDX_39731EC59EB185F9', []);
+        $table->addIndex(['account_user_owner_id'], 'IDX_39731EC59EB185F9', []);
         $table->addIndex(['organization_id'], 'IDX_39731EC532C8A3DE', []);
         $table->addIndex(['account_user_id'], 'IDX_39731EC56E45C7DD', []);
         $table->addIndex(['account_id'], 'IDX_39731EC59B6B5FBA', []);
@@ -91,8 +91,8 @@ class OroB2BShoppingListBundle implements Migration
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_user'),
-            ['user_owner_id'],
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

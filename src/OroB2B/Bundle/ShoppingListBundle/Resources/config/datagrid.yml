@@ -15,13 +15,12 @@ datagrid:
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
                     - shopping_list_account.name as account
-                    - CONCAT(shopping_list_owner.firstName, ' ', shopping_list_owner.lastName) as owner
+                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as owner
                     - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as account_user
                 from:
                     - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
                 join:
                     left:
-                        - { join: shopping_list.owner, alias: shopping_list_owner }
                         - { join: shopping_list.account, alias: shopping_list_account }
                         - { join: shopping_list.accountUser, alias: shopping_list_acc_user }
         columns:
@@ -117,7 +116,7 @@ datagrid:
                     - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
                 where:
                     and:
-                        - shopping_list.accountUser = :account_user_id
+                        - shopping_list.owner = :account_user_id
             bind_parameters:
                 - account_user_id
         columns:

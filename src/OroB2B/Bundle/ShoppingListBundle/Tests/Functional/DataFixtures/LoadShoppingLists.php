@@ -6,22 +6,18 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\UserBundle\Entity\User;
-
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture
 {
-
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->getUser($manager);
         $accountUser = $this->getAccountUser($manager);
-        $this->createShoppingList($manager, 'shopping_list', $user, $accountUser);
+        $this->createShoppingList($manager, $accountUser, 'shopping_list');
 
         $manager->flush();
     }
@@ -29,15 +25,14 @@ class LoadShoppingLists extends AbstractFixture
     /**
      * @param ObjectManager $manager
      * @param string        $name
-     * @param User          $user
      * @param AccountUser   $accountUser
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, $name, User $user, AccountUser $accountUser)
+    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($user);
+        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
         $shoppingList->setAccount($accountUser->getCustomer());
@@ -48,28 +43,6 @@ class LoadShoppingLists extends AbstractFixture
         $this->addReference($name, $shoppingList);
 
         return $shoppingList;
-    }
-
-    /**
-     * @param EntityManager $manager
-     *
-     * @return User
-     * @throws \LogicException
-     */
-    protected function getUser(EntityManager $manager)
-    {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
-
-        if (!$user) {
-            throw new \LogicException('There are no users in the system');
-        }
-
-        return $user;
     }
 
     /**
