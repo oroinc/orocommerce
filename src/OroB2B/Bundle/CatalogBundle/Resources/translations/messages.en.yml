@@ -21,6 +21,10 @@ orob2b:
             categories_tree.description:            'Catalog categories tree'
             shortcut_categories_tree.description:   'View tree of categories'
 
+        product:
+            section.catalog: Master Catalog
+            in_category.label: In category
+
         controller:
             category:
                 saved.message:  'Category has been saved'
