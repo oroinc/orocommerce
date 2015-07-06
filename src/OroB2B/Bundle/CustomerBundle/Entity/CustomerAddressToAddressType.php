@@ -7,7 +7,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 /**
- * @ORM\Table("orob2b_customer_adr_adr_type")
+ * @ORM\Table("orob2b_customer_adr_adr_type",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_customer_adr_id_type_name_idx", columns={
+ *              "customer_address_id",
+ *              "type_name"
+ *          })
+ *      }
+ * )
  * @ORM\Entity
  */
 class CustomerAddressToAddressType

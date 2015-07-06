@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\CustomerBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\Collection;
@@ -29,6 +30,9 @@ class FixCustomerAddressesDefaultSubscriber implements EventSubscriberInterface
      */
     protected $addressAccess;
 
+    /**
+     * @param $addressesProperty
+     */
     public function __construct($addressesProperty)
     {
         $this->addressesAccess = PropertyAccess::createPropertyAccessor();

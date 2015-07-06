@@ -321,6 +321,7 @@ class OroB2BCustomerBundleInstaller implements
         $table->addColumn('customer_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['customer_address_id', 'type_name'], 'orob2b_customer_adr_id_type_name_idx');
         $table->addIndex(['customer_address_id'], 'IDX_15830A7187EABF7', []);
         $table->addIndex(['type_name'], 'IDX_15830A71892CBB0E', []);
     }
