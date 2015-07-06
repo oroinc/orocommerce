@@ -15,7 +15,6 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -23,11 +22,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
      * @var ContainerInterface
      */
     protected $container;
-
-    /**
-     * @var array
-     */
-    protected $categories = [];
 
     /**
      * {@inheritdoc}
@@ -44,7 +38,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     {
         return [
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadAttributeDemoData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData',
         ];
     }
 
@@ -78,13 +71,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $category = $this->getCategoryByDefaultTitle($manager, $row['productLine']);
-
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setSku($row['productCode'])
-                ->setCategory($category)
                 ->setInventoryStatus($inventoryStatuses[array_rand($inventoryStatuses)])
                 ->setVisibility($visibilities[array_rand($visibilities)]);
 
@@ -115,20 +105,5 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $user;
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @param string $title
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
-    {
-        if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] =
-                $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
-        }
-
-        return $this->categories[$title];
     }
 }
