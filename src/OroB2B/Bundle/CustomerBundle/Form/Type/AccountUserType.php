@@ -163,7 +163,6 @@ class AccountUserType extends AbstractType
                     'label'    => 'orob2b.customer.accountuser.addresses.label',
                     'type'     => CustomerTypedAddressType::NAME,
                     'required' => false,
-                    'multiple' => true,
                     'options'  => [
                         'data_class'  => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress',
                         'single_form' => false

@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;

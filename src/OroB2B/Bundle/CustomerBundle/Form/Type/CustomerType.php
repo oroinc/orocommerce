@@ -43,7 +43,7 @@ class CustomerType extends AbstractType
                 [
                     'label'    => 'orob2b.customer.addresses.label',
                     'type'     => CustomerTypedAddressType::NAME,
-                    'required' => true,
+                    'required' => false,
                     'options'  => [
                         'data_class'  => $this->addressClass,
                         'single_form' => false
