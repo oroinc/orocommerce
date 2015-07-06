@@ -1,6 +1,6 @@
 parameters:
     orob2b_customer.entity.customer.class: OroB2B\Bundle\CustomerBundle\Entity\Customer
-    orob2b_customer.customer_address.entity.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress
+    orob2b_customer.entity.customer_address.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress
     orob2b_customer.entity.customer_group.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup
     orob2b_customer.entity.account_user.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
     orob2b_customer.entity.account_user_role.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole
@@ -27,7 +27,6 @@ parameters:
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-
 
 services:
     orob2b_customer.customer_tree_handler:
@@ -170,5 +169,5 @@ services:
         class: %orob2b_customer.customer_address.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
-            - %orob2b_customer.customer_address.entity.class%
+            - %orob2b_customer.entity.customer_address.class%
             - @doctrine.orm.entity_manager
