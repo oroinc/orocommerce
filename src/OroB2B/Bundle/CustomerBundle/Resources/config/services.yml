@@ -26,7 +26,7 @@ parameters:
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_customer.customer_address.entity.class: OroB2b\Bundle\CustomerBundle\Entity\CustomerAddress
+    orob2b_customer.customer_address.entity.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress
 
 services:
     orob2b_customer.customer_tree_handler:
