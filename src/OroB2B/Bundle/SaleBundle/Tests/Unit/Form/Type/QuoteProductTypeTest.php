@@ -17,6 +17,7 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
 class QuoteProductTypeTest extends AbstractTest
 {
@@ -59,14 +60,15 @@ class QuoteProductTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                    => new CollectionType(),
-                    QuoteProductOfferType::NAME              => new QuoteProductOfferType($this->translator),
-                    QuoteProductOfferCollectionType::NAME    => new QuoteProductOfferCollectionType(),
-                    $priceType->getName()                   => $priceType,
-                    $entityType->getName()                  => $entityType,
-                    $productSelectType->getName()           => $productSelectType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    CollectionType::NAME                        => new CollectionType(),
+                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType($this->translator),
+                    QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
+                    QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
+                    $priceType->getName()                       => $priceType,
+                    $entityType->getName()                      => $entityType,
+                    $productSelectType->getName()               => $productSelectType,
+                    $currencySelectionType->getName()           => $currencySelectionType,
+                    $productUnitSelectionType->getName()        => $productUnitSelectionType,
                 ],
                 []
             ),

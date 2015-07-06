@@ -37,12 +37,12 @@ class QuoteProductOfferTest extends AbstractTest
         $this->assertEquals(Price::create(10, 'USD'), $item->getPrice());
     }
 
-    public function testPreSave()
+    public function testUpdatePrice()
     {
         $item = new QuoteProductOffer();
         $item->setPrice(Price::create(11, 'EUR'));
 
-        $item->preSave();
+        $item->updatePrice();
 
         $this->assertEquals(11, $this->getProperty($item, 'value'));
         $this->assertEquals('EUR', $this->getProperty($item, 'currency'));

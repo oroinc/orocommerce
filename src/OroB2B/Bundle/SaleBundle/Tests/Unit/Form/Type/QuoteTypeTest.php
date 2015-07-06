@@ -25,6 +25,7 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -71,18 +72,19 @@ class QuoteTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    OroDateTimeType::NAME                   => new OroDateTimeType(),
-                    QuoteProductType::NAME                  => new QuoteProductType($translator),
-                    CollectionType::NAME                    => new CollectionType(),
-                    QuoteProductOfferType::NAME              => new QuoteProductOfferType($translator),
-                    QuoteProductCollectionType::NAME        => new QuoteProductCollectionType(),
-                    QuoteProductOfferCollectionType::NAME    => new QuoteProductOfferCollectionType(),
-                    $priceType->getName()                   => $priceType,
-                    $entityType->getName()                  => $entityType,
-                    $userSelectType->getName()              => $userSelectType,
-                    $productSelectType->getName()           => $productSelectType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    OroDateTimeType::NAME                       => new OroDateTimeType(),
+                    QuoteProductType::NAME                      => new QuoteProductType($translator),
+                    CollectionType::NAME                        => new CollectionType(),
+                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType($translator),
+                    QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
+                    QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
+                    QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
+                    $priceType->getName()                       => $priceType,
+                    $entityType->getName()                      => $entityType,
+                    $userSelectType->getName()                  => $userSelectType,
+                    $productSelectType->getName()               => $productSelectType,
+                    $currencySelectionType->getName()           => $currencySelectionType,
+                    $productUnitSelectionType->getName()        => $productUnitSelectionType,
                 ],
                 []
             ),

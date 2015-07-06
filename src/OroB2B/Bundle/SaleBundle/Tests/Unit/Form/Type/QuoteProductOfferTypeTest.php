@@ -77,7 +77,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             ->method('setDefaults')
             ->with([
                 'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
-                'intention'     => 'sale_quote_product_item',
+                'intention'     => 'sale_quote_product_offer',
                 'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ])
         ;
@@ -87,7 +87,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_sale_quote_product_item', $this->formType->getName());
+        $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
     }
 
     /**
