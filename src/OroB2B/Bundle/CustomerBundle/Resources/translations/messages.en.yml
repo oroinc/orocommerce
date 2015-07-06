@@ -55,6 +55,7 @@ orob2b.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
+        addresses.label:             'Addresses'
 
         profile:
             registration.title: 'Registration'
@@ -87,6 +88,9 @@ orob2b.customer:
         label.label:                     'Label'
         role.label:                      'Role'
         websites.label:                  'Websites'
+
+    accountuseraddress:
+        entity_label                     'Account User Address'
 
     action:
         account_user:
