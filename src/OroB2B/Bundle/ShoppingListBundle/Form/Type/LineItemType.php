@@ -7,16 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints\Range;
-
-use Oro\Component\ConfigExpression\Condition\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class LineItemType extends AbstractType
 {
@@ -103,7 +99,7 @@ class LineItemType extends AbstractType
                 'textarea',
                 [
                     'required' => false,
-                    'label' => 'orob2b.shoppinglist.lineitem.notes_label',
+                    'label' => 'orob2b.shoppinglist.lineitem.notes.label',
                     'empty_data' => null,
                 ]
             );

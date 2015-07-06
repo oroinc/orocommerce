@@ -173,7 +173,7 @@ datagrid:
             type:              orm
             query:
                 select:
-                    - IDENTITY(lineItem.product) as productId
+                    - product.id as productId
                     - product.sku as productSku
                     - lineItem.id
                     - lineItem.quantity

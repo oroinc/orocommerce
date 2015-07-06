@@ -3,8 +3,12 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 
 /**
  * @ORM\Table(
@@ -17,8 +21,19 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *      }
  * )
  * @ORM\Entity
+ * @Config(
+ *      defaultValues={
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          },
+ *      }
+ * )
  */
-class LineItem
+class LineItem extends ExtendLineItem
 {
     /**
      * @var integer
@@ -34,6 +49,13 @@ class LineItem
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $product;
 
@@ -42,6 +64,13 @@ class LineItem
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList", inversedBy="lineItems")
      * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $shoppingList;
 
@@ -49,6 +78,13 @@ class LineItem
      * @var float
      *
      * @ORM\Column(name="quantity", type="float")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $quantity;
 
@@ -57,13 +93,27 @@ class LineItem
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
      * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", nullable=false, onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $unit;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="notes", type="text")
+     * @ORM\Column(name="notes", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $notes;
 

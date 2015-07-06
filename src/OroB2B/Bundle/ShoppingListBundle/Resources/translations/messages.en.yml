@@ -31,3 +31,4 @@ orob2b:
             entity_label: Line Item
             entity_plural_label: Line Items
             notes_label: Notes
+            save_flash_success: Line Item Saved Successfully
