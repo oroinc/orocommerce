@@ -1,12 +1,5 @@
 oro_menu_config:
     items:
-        sales_tab:
-            label:           'orob2b.order.menu.sales_tab.label'
-            uri:             '#'
-            extras:
-                icon:        icon-briefcase
-                position:    25
-
         orders_list:
             label:           'orob2b.order.entity_plural_label'
             route:           'orob2b_order_index'
@@ -31,7 +24,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                sales_tab:
+                sale_tab:
                     children:
                         orders_list: ~
         shortcuts:

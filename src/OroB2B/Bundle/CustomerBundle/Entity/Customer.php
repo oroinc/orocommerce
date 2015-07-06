@@ -7,6 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
+use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CustomerBundle\Entity\Repository\CustomerRepository")
@@ -24,20 +27,28 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          "entity"={
  *              "icon"="icon-user"
  *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
  *          "form"={
  *              "form_type"="orob2b_customer_select",
  *              "grid_name"="customer-customers-select-grid",
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
- * @Config()
  */
-class Customer
+class Customer extends ExtendCustomer
 {
+    const INTERNAL_RATING_CODE = 'cust_internal_rating';
+
     /**
      * @var integer
      *
@@ -87,10 +98,20 @@ class Customer
     protected $users;
 
     /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->children = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
@@ -226,7 +247,7 @@ class Customer
     }
 
     /**
-     * @param AccountUser $user
+     * @param AccountUser $accountUser
      * @return Customer
      */
     public function addUser(AccountUser $accountUser)
@@ -261,6 +282,22 @@ class Customer
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param Organization|null $organization
+     */
+    public function setOrganization(Organization $organization = null)
+    {
+        $this->organization = $organization;
     }
 
     /**

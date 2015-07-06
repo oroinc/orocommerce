@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -27,6 +29,16 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     protected $sendEmailForm;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityContextInterface
+     */
+    protected $securityContext;
+
+    /**
+     * @var AccountUser
+     */
+    protected $entity;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -47,10 +59,13 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->securityContext = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
+
         $this->handler = new AccountUserHandler(
             $this->form,
             $this->request,
-            $this->userManager
+            $this->userManager,
+            $this->securityContext
         );
     }
 
@@ -70,7 +85,21 @@ class AccountUserHandlerTest extends FormHandlerTestCase
      */
     public function testProcessSupportedRequest($method, $isValid, $isProcessed)
     {
+        $organization = null;
         if ($isValid) {
+            $organization = new Organization();
+            $organization->setName('test');
+
+            $organizationToken =
+                $this->getMock('Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface');
+            $organizationToken->expects($this->any())
+                ->method('getOrganizationContext')
+                ->willReturn($organization);
+
+            $this->securityContext->expects($this->any())
+                ->method('getToken')
+                ->willReturn($organizationToken);
+
             $this->form->expects($this->at(2))
                 ->method('get')
                 ->with('passwordGenerate')
@@ -101,6 +130,10 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->with($this->request);
 
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
+        if ($organization) {
+            $this->assertEquals($organization, $this->entity->getOrganization());
+            $this->assertTrue($this->entity->hasOrganization($organization));
+        }
     }
 
     /**

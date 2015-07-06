@@ -290,6 +290,7 @@
                     <arg line="--no-interaction"/>
                     <arg line="--env=@{iterate}"/>
                     <arg line="--fixtures src/Oro/src/Oro/Bundle/TestFrameworkBundle/Fixtures"/>
+                    <arg line="--fixtures src/OroB2B/src/Oro/Component/Testing/Fixtures"/>
                 </exec>
             </sequential>
         </for>
@@ -552,7 +553,9 @@
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
             <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
+            <arg line="--exclude=SaleBundle/Migrations/Schema"/>
             <arg line="--exclude=ProductBundle/Migrations/Schema"/>
+            <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

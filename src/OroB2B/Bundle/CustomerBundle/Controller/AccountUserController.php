@@ -113,7 +113,8 @@ class AccountUserController extends Controller
         $handler = new AccountUserHandler(
             $form,
             $this->getRequest(),
-            $this->get('orob2b_account_user.manager')
+            $this->get('orob2b_account_user.manager'),
+            $this->get('security.context')
         );
 
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(

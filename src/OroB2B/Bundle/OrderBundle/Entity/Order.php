@@ -34,7 +34,7 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )

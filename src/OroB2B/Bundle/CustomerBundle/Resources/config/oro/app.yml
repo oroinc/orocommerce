@@ -18,6 +18,7 @@ security:
                 login_path:                 orob2b_customer_account_user_security_login
             logout:
                 path:                       orob2b_customer_account_user_security_logout
+                invalidate_session:         false
             organization-remember-me:
                 key:                        %secret%
                 name:                       OROCOMMERCE
