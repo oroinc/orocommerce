@@ -30,6 +30,9 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *          "dataaudit"={
  *              "auditable"=true
  *          },
+ *          "entity"={
+ *              "icon"="icon-shopping-cart"
+ *          }
  *      }
  * )
  */

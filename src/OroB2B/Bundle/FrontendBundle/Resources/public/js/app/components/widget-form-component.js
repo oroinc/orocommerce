@@ -10,7 +10,11 @@ define(
                 widgetManager.getWidgetInstance(
                     options._wid,
                     function (widget) {
-                        messenger.notificationFlashMessage('success', __('orob2b.pricing.product_price_save.flash.success'));
+                        if (!options.message) {
+                            options.message = 'orob2b_frontend.widget_form_component.save_flash_success'
+                        }
+
+                        messenger.notificationFlashMessage('success', __(options.message));
                         mediator.trigger('widget_success:' + widget.getAlias());
                         mediator.trigger('widget_success:' + widget.getWid());
                         widget.trigger('formSave', options.savedId);
