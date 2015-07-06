@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -23,9 +23,6 @@ class ProductControllerTest extends WebTestCase
     const VISIBILITY = 'Yes';
     const UPDATED_VISIBILITY = 'No';
 
-    const CATEGORY_NAME = 'Test First Level';
-    const UPDATED_CATEGORY_NAME = 'Test Third Level 2';
-
     const FIRST_UNIT_CODE = 'item';
     const FIRST_UNIT_FULL_NAME = 'item';
     const FIRST_UNIT_PRECISION = '5';
@@ -37,7 +34,6 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
-        $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData']);
     }
 
     public function testIndex()
@@ -56,9 +52,7 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
         $form['orob2b_product_form[owner]'] = $this->getBusinessUnitId();
-
-        $category = $this->getCategoryByDefaultTitle(self::CATEGORY_NAME);
-        $form['orob2b_product_form[category]'] = $category->getId();
+        
         $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
         $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
 
@@ -89,7 +83,6 @@ class ProductControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
         $this->assertEquals(self::TEST_SKU, $result['sku']);
-        $this->assertEquals(self::CATEGORY_NAME, $result['category']);
 
         $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
@@ -103,7 +96,6 @@ class ProductControllerTest extends WebTestCase
                 '_token' => $form['orob2b_product_form[_token]']->getValue(),
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
-                'category' => $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'unitPrecisions' => [
@@ -166,11 +158,6 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
 
-        $product = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:Product')
-            ->findOneBy(['sku' => self::UPDATED_SKU]);
-        $this->assertNotEmpty($product->getCategory());
-
         $productUnitPrecision = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
             ->findOneBy(['product' => $id, 'unit' => self::FIRST_UNIT_CODE]);
@@ -180,8 +167,6 @@ class ProductControllerTest extends WebTestCase
             ->getRepository('OroB2BProductBundle:ProductUnitPrecision')
             ->findOneBy(['product' => $id, 'unit' => self::SECOND_UNIT_CODE]);
         $this->assertEquals(self::SECOND_UNIT_PRECISION, $productUnitPrecision->getPrecision());
-
-        $this->assertEquals(self::UPDATED_CATEGORY_NAME, $product->getCategory()->getDefaultTitle());
 
         return $id;
     }
@@ -201,17 +186,6 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
-    }
-
-    /**
-     * @param string $title
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle($title)
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->findOneByDefaultTitle($title);
     }
 
     /**
