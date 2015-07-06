@@ -23,14 +23,14 @@ orob2b:
             additional: Additional
 
         lineitem:
-            add_line_item: Add Line Item
             entity_label: Line Item
             entity_plural_label: Line Items
-            notes_label: Notes
-            save_flash_success: Line Item Saved Successfully
             id.label: ID
             notes.label: Notes
             quantity.label: Quantity
             product.label: Product
-            shopping_list: Shopping List
+            shopping_list.label: Shopping List
             unit.label: Unit
+            add_line_item: Add Line Item
+            save_flash_success: Line Item Saved Successfully
+
