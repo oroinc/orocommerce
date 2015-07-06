@@ -101,12 +101,13 @@ class AccountUserAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAddress
+     * @param $accountUserId
      */
-    public function testUpdateAddress($id)
+    public function testUpdateAddress($accountUserId)
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', ['accountUserId' => $id])
+            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', ['accountUserId' => $accountUserId])
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -115,7 +116,7 @@ class AccountUserAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'orob2b_customer_account_user_address_update',
-                ['accountUserId' => $id, 'id' => $address['id'], '_widgetContainer' => 'dialog']
+                ['accountUserId' => $accountUserId, 'id' => $address['id'], '_widgetContainer' => 'dialog']
             )
         );
 
@@ -134,7 +135,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', ['accountUserId' => $id])
+            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', ['accountUserId' => $accountUserId])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -157,5 +158,35 @@ class AccountUserAddressControllerTest extends WebTestCase
                 'label' => ucfirst(AddressType::TYPE_SHIPPING)
             ]
         ], $result['defaults']);
+
+        return $accountUserId;
+    }
+
+    /**
+     * @depends testCreateAddress
+     * @param $accountUserId
+     */
+    public function testDeleteAddress($accountUserId)
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_api_customer_account_user_get_accountuser_address_primary',
+                ['accountUserId' => $accountUserId]
+            )
+        );
+
+        $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_api_customer_account_user_delete_accountuser_address',
+                ['accountUserId' => $accountUserId, 'addressId' => $address['id']]
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEquals(204, $result->getStatusCode());
     }
 }
