@@ -6,12 +6,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -29,6 +31,16 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      * @var array
      */
     protected $categories = [];
+
+    /**
+     * @var EntityRepository
+     */
+    protected $productRepository;
+
+    /**
+     * @var CategoryRepository
+     */
+    protected $categoryRepository;
 
     /**
      * {@inheritDoc}
@@ -86,9 +98,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      */
     protected function getProductBySku(EntityManager $manager, $sku)
     {
-        $this->products[$sku] = $manager->getRepository('OroB2BProductBundle:Product')->findOneBy(['sku' => $sku]);
-
-        return $this->products[$sku];
+        return $this->getProductRepository($manager)->findOneBy(['sku' => $sku]);
     }
 
     /**
@@ -99,11 +109,38 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
      */
     protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
     {
-        $categoryRepo = $manager->getRepository('OroB2BCatalogBundle:Category');
         if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] = $categoryRepo->findOneByDefaultTitle($title);
+            $this->categories[$title] = $this->getCategoryRepository($manager)->findOneByDefaultTitle($title);
         }
 
         return $this->categories[$title];
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return EntityRepository
+     */
+    protected function getProductRepository(ObjectManager $manager)
+    {
+        if (!$this->productRepository) {
+            $this->productRepository = $manager->getRepository('OroB2BProductBundle:Product');
+        }
+
+        return $this->productRepository;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     *
+     * @return CategoryRepository
+     */
+    protected function getCategoryRepository(ObjectManager $manager)
+    {
+        if (!$this->categoryRepository) {
+            $this->categoryRepository = $manager->getRepository('OroB2BCatalogBundle:Category');
+        }
+
+        return $this->categoryRepository;
     }
 }
