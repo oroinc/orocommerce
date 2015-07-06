@@ -58,7 +58,6 @@ class CustomerAddress extends ExtendCustomerAddress
         parent::__construct();
     }
 
-
     /**
      * Get address types
      *

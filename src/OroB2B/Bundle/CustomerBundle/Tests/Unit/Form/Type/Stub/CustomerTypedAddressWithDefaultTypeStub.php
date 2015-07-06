@@ -55,14 +55,6 @@ class CustomerTypedAddressWithDefaultTypeStub extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getParent()
-    {
-        return 'form';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return self::NAME;
