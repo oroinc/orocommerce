@@ -1,0 +1,36 @@
+parameters:
+    orob2b_sale.form.type.quote.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteType
+    orob2b_sale.form.type.quote_product.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType
+    orob2b_sale.form.type.quote_product_item.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType
+    orob2b_sale.form.type.quote_product_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType
+    orob2b_sale.form.type.quote_product_item_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType
+
+services:
+    # Quote form types
+    orob2b_sale.form.type.quote:
+        class: %orob2b_sale.form.type.quote.class%
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote }
+    orob2b_sale.form.type.quote_product:
+        class: %orob2b_sale.form.type.quote_product.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_product }
+
+    orob2b_sale.form.type.quote_product_item:
+        class: %orob2b_sale.form.type.quote_product_item.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_product_item }
+
+    orob2b_sale.form.type.quote_product_collection:
+        class: %orob2b_sale.form.type.quote_product_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_product_collection }
+
+    orob2b_sale.form.type.quote_product_item_collection:
+        class: %orob2b_sale.form.type.quote_product_item_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_product_item_collection }

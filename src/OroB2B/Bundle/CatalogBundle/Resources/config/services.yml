@@ -1,26 +1,12 @@
 parameters:
     orob2b_catalog.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
-    orob2b_catalog.form.type.category.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType
-    orob2b_catalog.form.type.category_tree.class: OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType
     orob2b_catalog.category_tree_handler.class: OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler
     orob2b_catalog.category.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
+    orob2b_catalog.event_listener.form_view.class: OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener
+    orob2b_catalog.event_listener.datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener
+
 services:
-    orob2b_catalog.form.type.category:
-        class: %orob2b_catalog.form.type.category.class%
-        calls:
-            - [setDataClass, [%orob2b_catalog.category.class%]]
-            - [setProductClass, [%orob2b_product.product.class%]]
-        tags:
-            - { name: form.type, alias: orob2b_catalog_category }
-
-    orob2b_catalog.form.type.category_tree:
-        class: %orob2b_catalog.form.type.category_tree.class%
-        calls:
-            - [setEntityClass, [%orob2b_catalog.category.class%]]
-        tags:
-            - { name: form.type, alias: orob2b_catalog_category_tree }
-
     orob2b_catalog.category_tree_handler:
         class: %orob2b_catalog.category_tree_handler.class%
         arguments:
@@ -33,3 +19,19 @@ services:
         arguments:
             - %orob2b_catalog.category.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_catalog.event_listener.form_view:
+        class: %orob2b_catalog.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+
+    orob2b_catalog.event_listener.datagrid:
+        class: %orob2b_catalog.event_listener.datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }

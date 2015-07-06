@@ -1,0 +1,10 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{%- if entity and resource_granted('EDIT', entity) -%}
+    {% set category = UI.renderUrl(path('orob2b_catalog_category_update', {'id': entity.id}), entity.defaultTitle) %}
+{%- elseif entity -%}
+    {% set category = entity ? entity.defaultTitle : '' %}
+{%- else -%}
+    {% set category = '' %}
+{%- endif -%}
+{{ UI.renderHtmlProperty('orob2b.catalog.category.entity_label'|trans, category) }}

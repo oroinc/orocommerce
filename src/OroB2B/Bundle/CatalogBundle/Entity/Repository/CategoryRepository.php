@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @method CategoryRepository persistAsFirstChildOf() persistAsFirstChildOf(Category $node, Category $parent)
@@ -60,5 +61,19 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Product $product
+     *
+     * @return Category|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByProduct(Product $product)
+    {
+        return $this->createQueryBuilder('category')
+            ->where(':product MEMBER OF category.products')
+            ->setParameter('product', $product)
+            ->getQuery()->getOneOrNullResult();
     }
 }

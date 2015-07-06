@@ -45,13 +45,13 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BRfpRequestTable($schema);
-        $this->createOrob2BRfpStatusTable($schema);
-        $this->createOrob2BRfpStatusTranslationTable($schema);
+        $this->createOroB2BRfpRequestTable($schema);
+        $this->createOroB2BRfpStatusTable($schema);
+        $this->createOroB2BRfpStatusTranslationTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BRfpRequestForeignKeys($schema);
-        $this->addOrob2BRfpStatusForeignKeys($schema);
+        $this->addOroB2BRfpRequestForeignKeys($schema);
+        $this->addOroB2BRfpStatusForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addActivityAssociations($schema, $this->activityExtension);
@@ -62,10 +62,12 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRfpRequestTable(Schema $schema)
+    protected function createOroB2BRfpRequestTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_rfp_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('status_id', 'integer', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
         $table->addColumn('last_name', 'string', ['length' => 255]);
@@ -74,10 +76,9 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
         $table->addColumn('company', 'string', ['length' => 255]);
         $table->addColumn('role', 'string', ['length' => 255]);
         $table->addColumn('body', 'text', []);
-        $table->addColumn('created_at', 'datetime', []);
-        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['status_id'], 'IDX_512524246BF700BD', []);
     }
 
     /**
@@ -85,7 +86,7 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRfpStatusTable(Schema $schema)
+    protected function createOroB2BRfpStatusTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_rfp_status');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -102,7 +103,7 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
      *
      * @param Schema $schema
      */
-    protected function createOrob2BRfpStatusTranslationTable(Schema $schema)
+    protected function createOroB2BRfpStatusTranslationTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_rfp_status_translation');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -120,9 +121,21 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
      *
      * @param Schema $schema
      */
-    protected function addOrob2BRfpRequestForeignKeys(Schema $schema)
+    protected function addOroB2BRfpRequestForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_rfp_request');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['frontend_owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_rfp_status'),
             ['status_id'],
@@ -136,7 +149,7 @@ class OroB2BRFPAdminBundle implements Migration, NoteExtensionAwareInterface, Ac
      *
      * @param Schema $schema
      */
-    protected function addOrob2BRfpStatusForeignKeys(Schema $schema)
+    protected function addOroB2BRfpStatusForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_rfp_status_translation');
         $table->addForeignKeyConstraint(
