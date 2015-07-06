@@ -140,7 +140,8 @@ class OptionalPriceTypeTest extends FormIntegrationTestCase
         $currencyPrice->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
 
         return [
-            new PreloadedExtension([
+            new PreloadedExtension(
+                [
                     CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings),
                     $currencyPrice->getName()   => $currencyPrice,
                 ],

@@ -13,5 +13,4 @@ class OptionalPrice extends NotBlank
     {
         return [self::CLASS_CONSTRAINT];
     }
-
 }
