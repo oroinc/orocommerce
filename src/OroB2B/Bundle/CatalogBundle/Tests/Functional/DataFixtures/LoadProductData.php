@@ -15,6 +15,7 @@ class LoadProductData extends AbstractFixture
     const TEST_PRODUCT_01 = 'test_product_01';
     const TEST_PRODUCT_02 = 'test_product_02';
     const TEST_PRODUCT_03 = 'test_product_03';
+    const TEST_PRODUCT_04 = 'test_product_04';
 
     /**
      * @var array
@@ -22,7 +23,8 @@ class LoadProductData extends AbstractFixture
     protected $products = [
         ['productCode' => self::TEST_PRODUCT_01],
         ['productCode' => self::TEST_PRODUCT_02],
-        ['productCode' => self::TEST_PRODUCT_03]
+        ['productCode' => self::TEST_PRODUCT_03],
+        ['productCode' => self::TEST_PRODUCT_04]
     ];
 
     /**
@@ -42,6 +44,7 @@ class LoadProductData extends AbstractFixture
                 ->setSku($item['productCode']);
 
             $manager->persist($product);
+            $this->addReference($item['productCode'], $product);
         }
 
         $manager->flush();

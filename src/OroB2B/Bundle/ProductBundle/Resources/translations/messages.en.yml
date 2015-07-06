@@ -5,12 +5,12 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        category.label: Category
+        name.label: Name
+        description.label: Description
         inventory_status.label: Inventory Status
         visibility.label: Visible to Customers
         owner.label: Owner
         organization.label: Organization
-        in_category.label: In category
         unit_precisions.label: Unit Precisions
         image.label: Image
 
@@ -54,7 +54,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            catalog: Master Catalog
             visibility: Visibility
 
         widgets:

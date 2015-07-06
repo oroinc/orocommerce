@@ -16,7 +16,7 @@ class CategoryHandler
      * @var FormInterface
      */
     protected $form;
-    
+
     /** @var Request */
     protected $request;
 
@@ -25,18 +25,19 @@ class CategoryHandler
 
     /**
      * @param FormInterface $form
-     * @param Request $request
+     * @param Request       $request
      * @param ObjectManager $manager
      */
     public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
     {
-        $this->form    = $form;
+        $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
     }
 
     /**
      * @param Category $category
+     *
      * @return bool True on successful processing, false otherwise
      */
     public function process(Category $category)
@@ -45,7 +46,6 @@ class CategoryHandler
 
         if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
             $this->form->submit($this->request);
-
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
@@ -59,7 +59,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category $category
+     * @param Category  $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
      */
@@ -73,19 +73,27 @@ class CategoryHandler
     }
 
     /**
-     * @param Category $category
+     * @param Category  $category
      * @param Product[] $products
      */
     protected function appendProducts(Category $category, array $products)
     {
+        $categoryRepository = $this->manager->getRepository('OroB2BCatalogBundle:Category');
         /** @var $product Product */
         foreach ($products as $product) {
+            $productCategory = $categoryRepository->findOneByProduct($product);
+
+            if ($productCategory instanceof Category) {
+                $productCategory->removeProduct($product);
+                $this->manager->flush();
+            }
+
             $category->addProduct($product);
         }
     }
 
     /**
-     * @param Category $category
+     * @param Category  $category
      * @param Product[] $products
      */
     protected function removeProducts(Category $category, array $products)
