@@ -3,6 +3,7 @@ orob2b.customer:
     entity_plural_label: 'Customers'
     name.label: 'Name'
     group.label: 'Group'
+    internal_rating.label: 'Internal rating'
     children.label: 'Children'
     id.label: 'Id'
     parent.label: 'Parent'
@@ -153,3 +154,14 @@ orob2b.customer:
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'
+
+    security:
+        permission:
+            register_account_user: 'Register Account User'
+        access-level:
+            BASIC: 'Account User'
+            LOCAL: 'Customer'
+            DEEP: 'Not supported'
+            GLOBAL: 'Not supported'
+            SYSTEM: 'Full'
+            NONE: 'None'

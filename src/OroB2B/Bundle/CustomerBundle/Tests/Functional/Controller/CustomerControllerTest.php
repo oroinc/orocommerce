@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Crawler;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
@@ -25,7 +26,8 @@ class CustomerControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups'
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating'
             ]
         );
     }
@@ -47,7 +49,8 @@ class CustomerControllerTest extends WebTestCase
         $parent = $this->getReference('customer.level_1');
         /** @var CustomerGroup $group */
         $group = $this->getReference('customer_group.group1');
-        $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group);
+        $internalRating = $this->getReference('internal_rating.1 of 5');
+        $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating);
     }
 
     /**
@@ -75,7 +78,8 @@ class CustomerControllerTest extends WebTestCase
         $newParent = $this->getReference('customer.level_1.1');
         /** @var CustomerGroup $newGroup */
         $newGroup = $this->getReference('customer_group.group2');
-        $this->assertCustomerSave($crawler, self::UPDATED_NAME, $newParent, $newGroup);
+        $internalRating = $this->getReference('internal_rating.2 of 5');
+        $this->assertCustomerSave($crawler, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
 
         return $id;
     }
@@ -95,11 +99,14 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
         $this->assertContains(self::UPDATED_NAME . ' - Customers - Customers', $html);
+        $this->assertContains('Add attachment', $html);
+        $this->assertContains('Add note', $html);
         /** @var Customer $newParent */
         $newParent = $this->getReference('customer.level_1.1');
         /** @var CustomerGroup $newGroup */
         $newGroup = $this->getReference('customer_group.group2');
-        $this->assertViewPage($html, self::UPDATED_NAME, $newParent, $newGroup);
+        $internalRating = $this->getReference('internal_rating.2 of 5');
+        $this->assertViewPage($html, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
     }
 
     /**
@@ -108,13 +115,20 @@ class CustomerControllerTest extends WebTestCase
      * @param Customer $parent
      * @param CustomerGroup $group
      */
-    protected function assertCustomerSave(Crawler $crawler, $name, Customer $parent, CustomerGroup $group)
-    {
+    protected function assertCustomerSave(
+        Crawler $crawler,
+        $name,
+        Customer $parent,
+        CustomerGroup $group,
+        AbstractEnumValue $internalRating
+    ) {
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_customer_type[name]' => $name,
                 'orob2b_customer_type[parent]' => $parent->getId(),
-                'orob2b_customer_type[group]' => $group->getId()
+                'orob2b_customer_type[group]' => $group->getId(),
+                'orob2b_customer_type[internal_rating]' => $internalRating->getId(),
+
             ]
         );
 
@@ -126,7 +140,7 @@ class CustomerControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Customer has been saved', $html);
-        $this->assertViewPage($html, $name, $parent, $group);
+        $this->assertViewPage($html, $name, $parent, $group, $internalRating);
     }
 
     /**
@@ -135,10 +149,16 @@ class CustomerControllerTest extends WebTestCase
      * @param Customer $parent
      * @param CustomerGroup $group
      */
-    protected function assertViewPage($html, $name, Customer $parent, CustomerGroup $group)
-    {
+    protected function assertViewPage(
+        $html,
+        $name,
+        Customer $parent,
+        CustomerGroup $group,
+        AbstractEnumValue $internalRating
+    ) {
         $this->assertContains($name, $html);
         $this->assertContains($parent->getName(), $html);
         $this->assertContains($group->getName(), $html);
+        $this->assertContains($internalRating->getName(), $html);
     }
 }

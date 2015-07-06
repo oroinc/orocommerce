@@ -52,13 +52,15 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
  */
 class AccountUser extends AbstractUser implements FullNameInterface
 {
+    const SECURITY_GROUP = 'commerce';
+
     /**
      * @var AccountUserRole[]|Collection
      *
