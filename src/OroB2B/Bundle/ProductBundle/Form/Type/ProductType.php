@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
-
 class ProductType extends AbstractType
 {
     const NAME = 'orob2b_product';
@@ -33,7 +31,6 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
-            ->add('category', CategoryTreeType::NAME, ['required' => false, 'label' => 'orob2b.product.category.label'])
             ->add(
                 'inventoryStatus',
                 'oro_enum_select',

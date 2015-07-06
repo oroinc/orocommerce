@@ -102,28 +102,23 @@ class CategoryTest extends EntityTestCase
 
     public function testProductAccessors()
     {
-        $category = new Category();
-        $this->assertEmpty($category->getProducts()->toArray());
-
         $firstProduct = new Product();
         $secondProduct = new Product();
 
+        $category = new Category();
         $category->addProduct($firstProduct)
             ->addProduct($secondProduct);
 
         $this->assertEquals(
-            [$firstProduct, $secondProduct],
-            array_values($category->getProducts()->toArray())
+            [0 => $firstProduct, 1 => $secondProduct],
+            $category->getProducts()->toArray()
         );
 
-        $category->removeProduct($firstProduct)
-            ->removeProduct($firstProduct);
-
-        $this->assertEquals(null, $firstProduct->getCategory());
+        $category->removeProduct($firstProduct);
 
         $this->assertEquals(
-            [$secondProduct],
-            array_values($category->getProducts()->toArray())
+            [1 => $secondProduct],
+            $category->getProducts()->toArray()
         );
     }
 

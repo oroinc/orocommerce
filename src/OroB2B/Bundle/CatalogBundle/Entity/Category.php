@@ -114,21 +114,26 @@ class Category
     /**
      * @var Collection|Product[]
      *
-     * @ORM\OneToMany(
-     *      targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product",
-     *      mappedBy="category",
-     *      cascade={"persist"}
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinTable(
+     *      name="orob2b_category_to_product",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
      * )
      */
     protected $products;
 
     public function __construct()
     {
-        $this->titles = new ArrayCollection();
+        $this->titles          = new ArrayCollection();
         $this->childCategories = new ArrayCollection();
-        $this->products = new ArrayCollection();
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->products        = new ArrayCollection();
+        $this->createdAt       = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt       = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -149,6 +154,7 @@ class Category
 
     /**
      * @param LocalizedFallbackValue $title
+     *
      * @return $this
      */
     public function addTitle(LocalizedFallbackValue $title)
@@ -162,6 +168,7 @@ class Category
 
     /**
      * @param LocalizedFallbackValue $title
+     *
      * @return $this
      */
     public function removeTitle(LocalizedFallbackValue $title)
@@ -199,6 +206,7 @@ class Category
 
     /**
      * @param Category|null $parentCategory
+     *
      * @return $this
      */
     public function setParentCategory(Category $parentCategory = null)
@@ -218,6 +226,7 @@ class Category
 
     /**
      * @param Category $category
+     *
      * @return $this
      */
     public function addChildCategory(Category $category)
@@ -232,6 +241,7 @@ class Category
 
     /**
      * @param Category $category
+     *
      * @return $this
      */
     public function removeChildCategory(Category $category)
@@ -253,6 +263,7 @@ class Category
 
     /**
      * @param \DateTime $createdAt
+     *
      * @return $this
      */
     public function setCreatedAt($createdAt)
@@ -272,6 +283,7 @@ class Category
 
     /**
      * @param \DateTime $updatedAt
+     *
      * @return $this
      */
     public function setUpdatedAt($updatedAt)
@@ -291,13 +303,13 @@ class Category
 
     /**
      * @param Product $product
+     *
      * @return $this
      */
     public function addProduct(Product $product)
     {
         if (!$this->products->contains($product)) {
             $this->products->add($product);
-            $product->setCategory($this);
         }
 
         return $this;
@@ -305,13 +317,13 @@ class Category
 
     /**
      * @param Product $product
+     *
      * @return $this
      */
     public function removeProduct(Product $product)
     {
         if ($this->products->contains($product)) {
             $this->products->removeElement($product);
-            $product->setCategory(null);
         }
 
         return $this;
@@ -330,6 +342,6 @@ class Category
      */
     public function __toString()
     {
-        return (string)$this->getDefaultTitle()->getString();
+        return (string) $this->getDefaultTitle()->getString();
     }
 }
