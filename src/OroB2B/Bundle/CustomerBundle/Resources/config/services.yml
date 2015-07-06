@@ -34,7 +34,7 @@ parameters:
     orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.customer_address.entity.class: OroB2b\Bundle\CustomerBundle\Entity\CustomerAddress
     orob2b_customer.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_customer.account_user_address.entity.class: OroB2b\Bundle\CustomerBundle\Entity\AccountUserAddress
+    orob2b_customer.account_user_address.entity.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress
 
 services:
     orob2b_customer.customer_tree_handler:
