@@ -2,94 +2,126 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\Handler;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Common\Collections\ArrayCollection;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
+use Oro\Bundle\UserBundle\Entity\AbstractRole;
+use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class AccountUserRoleHandler
+class AccountUserRoleHandler extends AclRoleHandler
 {
-    /** @var FormInterface */
-    protected $form;
-
-    /** @var Request */
-    protected $request;
-
-    /** @var ObjectManager */
-    protected $manager;
+    /**
+     * @var ConfigProviderInterface
+     */
+    protected $ownershipConfigProvider;
 
     /**
-     * @param FormInterface $form
-     * @param Request $request
-     * @param ObjectManager $manager
+     * @var ChainMetadataProvider
      */
-    public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
+    protected $chainMetadataProvider;
+
+    /**
+     * @param ConfigProviderInterface $provider
+     */
+    public function setOwnershipConfigProvider(ConfigProviderInterface $provider)
     {
-        $this->form = $form;
-        $this->request = $request;
-        $this->manager = $manager;
+        $this->ownershipConfigProvider = $provider;
     }
 
     /**
-     * @param AccountUserRole $role
-     * @return bool
+     * @param ChainMetadataProvider $chainMetadataProvider
      */
-    public function process(AccountUserRole $role)
+    public function setChainMetadataProvider(ChainMetadataProvider $chainMetadataProvider)
     {
-        $this->form->setData($role);
+        $this->chainMetadataProvider = $chainMetadataProvider;
+    }
 
-        if ($this->request->isMethod('POST')) {
-            $this->form->submit($this->request);
+    /**
+     * {@inheritdoc}
+     */
+    protected function createRoleFormInstance(AbstractRole $role, array $privilegeConfig)
+    {
+        return $this->formFactory->create(
+            AccountUserRoleType::NAME,
+            $role,
+            ['privilege_config' => $privilegeConfig]
+        );
+    }
 
-            if ($this->form->isValid()) {
-                $this->onSuccess(
-                    $role,
-                    $this->form->get('appendUsers')->getData(),
-                    $this->form->get('removeUsers')->getData()
-                );
+    /**
+     * {@inheritdoc}
+     */
+    protected function filterPrivileges(ArrayCollection $privileges, array $rootIds)
+    {
+        $privileges = parent::filterPrivileges($privileges, $rootIds);
 
-                return true;
+        $entityPrefix = 'entity:';
+
+        foreach ($privileges as $key => $privilege) {
+            $oid = $privilege->getIdentity()->getId();
+            if (strpos($oid, $entityPrefix) === 0) {
+                $className = substr($oid, strlen($entityPrefix));
+                if (!$this->hasFrontendOwnership($className)) {
+                    unset($privileges[$key]);
+                }
             }
         }
 
+        return $privileges;
+    }
+
+    /**
+     * @param string $className
+     * @return bool
+     */
+    protected function hasFrontendOwnership($className)
+    {
+        if ($this->ownershipConfigProvider->hasConfig($className)) {
+            $config = $this->ownershipConfigProvider->getConfig($className);
+            if ($config->has('frontend_owner_type')) {
+                return true;
+            }
+        }
         return false;
     }
 
     /**
-     * @param AccountUserRole $role
-     * @param AccountUser[] $append
-     * @param AccountUser[] $remove
+     * {@inheritdoc}
      */
-    protected function onSuccess(AccountUserRole $role, array $append, array $remove)
+    protected function getRolePrivileges(AbstractRole $role)
     {
-        $this->appendUsers($role, $append);
-        $this->removeUsers($role, $remove);
-        $this->manager->persist($role);
-        $this->manager->flush();
+        $this->startFrontendProviderEmulation();
+        $privileges = parent::getRolePrivileges($role);
+        $this->stopFrontendProviderEmulation();
+
+        return $privileges;
     }
 
     /**
-     * @param AccountUserRole $role
-     * @param AccountUser[] $users
+     * {@inheritdoc}
      */
-    protected function appendUsers(AccountUserRole $role, array $users)
+    protected function processPrivileges(AbstractRole $role)
     {
-        foreach ($users as $user) {
-            $user->addRole($role);
+        $this->startFrontendProviderEmulation();
+        parent::processPrivileges($role);
+        $this->stopFrontendProviderEmulation();
+    }
+
+    protected function startFrontendProviderEmulation()
+    {
+        if ($this->chainMetadataProvider) {
+            $this->chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
         }
     }
 
-    /**
-     * @param AccountUserRole $role
-     * @param AccountUser[] $users
-     */
-    protected function removeUsers(AccountUserRole $role, array $users)
+    protected function stopFrontendProviderEmulation()
     {
-        foreach ($users as $user) {
-            $user->removeRole($role);
+        if ($this->chainMetadataProvider) {
+            $this->chainMetadataProvider->stopProviderEmulation();
         }
     }
 }

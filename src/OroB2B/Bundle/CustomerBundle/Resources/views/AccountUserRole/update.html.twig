@@ -59,6 +59,21 @@
         }
     ] %}
 
+    {% for name, config in form.vars.privilegeConfig %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': config.label|trans,
+            'subblocks': [
+                {
+                    'title': '',
+                    'useSpan': false,
+                    'data': [
+                        form_widget(form.children[name])
+                    ]
+                }
+            ]
+        }]) %}
+    {% endfor %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title' : 'orob2b.customer.accountuser.entity_plural_label'|trans,
         'subblocks': [{
