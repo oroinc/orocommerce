@@ -203,5 +203,35 @@ class CustomerAddressControllerTest extends WebTestCase
                 'label' => ucfirst(AddressType::TYPE_SHIPPING)
             ]
         ], $result['defaults']);
+
+        return $id;
+    }
+
+    /**
+     * @depends testCreateAddress
+     * @param $customerId
+     */
+    public function testDeleteAddress($customerId)
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_api_customer_get_customer_address_primary',
+                ['customerId' => $customerId]
+            )
+        );
+
+        $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_api_customer_delete_customer_address',
+                ['customerId' => $customerId, 'addressId' => $address['id']]
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEquals(204, $result->getStatusCode());
     }
 }
