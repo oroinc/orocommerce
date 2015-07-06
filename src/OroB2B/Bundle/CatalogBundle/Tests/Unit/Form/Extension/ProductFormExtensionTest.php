@@ -6,8 +6,6 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType;
@@ -20,11 +18,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
  */
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $entityManager;
-
     /**
      * @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -42,16 +35,17 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->entityManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->entityManager->expects($this->any())
+        $entityManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $entityManager->expects($this->once())
             ->method('getRepository')
             ->with('OroB2BCatalogBundle:Category')
             ->willReturn($this->categoryRepository);
 
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->any())
-            ->method('getManager')
-            ->willReturn($this->entityManager);
+        $registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BCatalogBundle:Category')
+            ->willReturn($entityManager);
 
         $this->extension = new ProductFormExtension($registry);
     }
@@ -87,46 +81,45 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->buildForm($builder, []);
     }
 
-    /**
-     * @param Product|null $product
-     *
-     * @dataProvider onPostSetDataDataProvider
-     */
-    public function testOnPostSetData($product)
+    public function testOnPostSetDataNoProduct()
     {
-        $event = $this->createEvent($product);
+        $event = $this->createEvent(null);
 
-        if ($product && $product->getId()) {
-            $category = $this->createCategory();
-
-            $this->categoryRepository->expects($this->once())
-                ->method('findOneByProduct')
-                ->with($product)
-                ->willReturn($category);
-
-            /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $categoryForm */
-            $categoryForm = $event->getForm()->get('category');
-            $categoryForm->expects($this->once())
-                ->method('setData')
-                ->with($category);
-        } else {
-            $this->categoryRepository->expects($this->never())
-                ->method('findOneByProduct');
-        }
+        $this->categoryRepository->expects($this->never())
+            ->method('findOneByProduct');
 
         $this->extension->onPostSetData($event);
     }
 
-    /**
-     * @return array
-     */
-    public function onPostSetDataDataProvider()
+    public function testOnPostSetDataNewProduct()
     {
-        return [
-            'no product'       => [null],
-            'new product'      => [$this->createProduct()],
-            'existing product' => [$this->createProduct(1)]
-        ];
+        $event = $this->createEvent($this->createProduct());
+
+        $this->categoryRepository->expects($this->never())
+            ->method('findOneByProduct');
+
+        $this->extension->onPostSetData($event);
+    }
+
+    public function testOnPostSetDataExistingProduct()
+    {
+        $product = $this->createProduct(1);
+        $event = $this->createEvent($product);
+
+        $category = $this->createCategory();
+
+        $this->categoryRepository->expects($this->once())
+            ->method('findOneByProduct')
+            ->with($product)
+            ->willReturn($category);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $categoryForm */
+        $categoryForm = $event->getForm()->get('category');
+        $categoryForm->expects($this->once())
+            ->method('setData')
+            ->with($category);
+
+        $this->extension->onPostSetData($event);
     }
 
     public function testOnPostSubmitNoProduct()
@@ -267,8 +260,5 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $categoryForm->expects($this->once())
             ->method('getData')
             ->will($this->returnValue($category));
-
-        $this->entityManager->expects($this->once())
-            ->method('persist');
     }
 }

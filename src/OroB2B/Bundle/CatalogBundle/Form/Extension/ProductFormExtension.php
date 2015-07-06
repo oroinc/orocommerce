@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
@@ -19,16 +18,17 @@ use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 class ProductFormExtension extends AbstractTypeExtension
 {
     /**
-     * @var ObjectManager
+     * @var CategoryRepository
      */
-    protected $entityManager;
+    protected $categoryRepository;
 
     /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
-        $this->entityManager = $registry->getManager();
+        $this->categoryRepository = $registry->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category');
     }
 
     /**
@@ -70,7 +70,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $category = $this->getCategoryRepository()->findOneByProduct($product);
+        $category = $this->categoryRepository->findOneByProduct($product);
 
         if ($category instanceof Category) {
             $event->getForm()->get('category')->setData($category);
@@ -98,7 +98,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         if (null !== $product->getId()) {
             /** @var Category $productCategory */
-            $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
+            $productCategory = $this->categoryRepository->findOneByProduct($product);
 
             if ($productCategory instanceof Category && $category !== $productCategory) {
                 $productCategory->removeProduct($product);
@@ -107,15 +107,6 @@ class ProductFormExtension extends AbstractTypeExtension
 
         if ($category instanceof Category) {
             $category->addProduct($product);
-            $this->entityManager->persist($category);
         }
-    }
-
-    /**
-     * @return CategoryRepository
-     */
-    protected function getCategoryRepository()
-    {
-        return $this->entityManager->getRepository('OroB2BCatalogBundle:Category');
     }
 }

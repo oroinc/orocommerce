@@ -85,7 +85,7 @@ class CategoryHandler
 
             if ($productCategory instanceof Category) {
                 $productCategory->removeProduct($product);
-                $this->manager->flush();
+                $this->manager->flush($productCategory);
             }
 
             $category->addProduct($product);
