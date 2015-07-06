@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
+use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
@@ -41,7 +41,7 @@ class RequestProductItemType extends AbstractType
                 'required'  => true,
                 'label'     => 'orob2b.rfpadmin.requestproductitem.quantity.label',
             ])
-            ->add('price', OptionalPriceType::NAME, [
+            ->add('price', PriceType::NAME, [
                 'required'  => true,
                 'label'     => 'orob2b.rfpadmin.requestproductitem.price.label',
             ])

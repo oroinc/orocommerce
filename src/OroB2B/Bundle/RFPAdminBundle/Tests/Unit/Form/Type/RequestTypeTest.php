@@ -173,8 +173,14 @@ class RequestTypeTest extends AbstractTest
      * @param string $role
      * @return Request
      */
-    protected function getRequest($firstName = null, $lastName = null, $email = null, $body = null, $company = null, $role = null)
-    {
+    protected function getRequest(
+        $firstName = null,
+        $lastName = null,
+        $email = null,
+        $body = null,
+        $company = null,
+        $role = null
+    ) {
         $request = new Request();
 
         $request

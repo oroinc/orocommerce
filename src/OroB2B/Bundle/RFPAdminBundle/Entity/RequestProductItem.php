@@ -204,7 +204,7 @@ class RequestProductItem
     }
 
     /**
-     * @return RPrice|null
+     * @return Price|null
      */
     public function getPrice()
     {
