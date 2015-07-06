@@ -43,7 +43,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )

@@ -162,3 +162,4 @@ services:
             - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
+
