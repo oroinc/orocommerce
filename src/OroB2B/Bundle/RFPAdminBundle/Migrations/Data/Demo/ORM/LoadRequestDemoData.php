@@ -58,6 +58,8 @@ class LoadRequestDemoData extends AbstractFixture implements
     {
         $statuses = $manager->getRepository('OroB2BRFPAdminBundle:RequestStatus')->findAll();
 
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+
         $locator  = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BRFPAdminBundle/Migrations/Data/Demo/ORM/data/requests.csv');
         if (is_array($filePath)) {
@@ -81,6 +83,7 @@ class LoadRequestDemoData extends AbstractFixture implements
 
             $status = $statuses[rand(0, count($statuses) - 1)];
             $request->setStatus($status);
+            $request->setOrganization($organization);
 
             $this->processRequestProducts($request, $manager);
 

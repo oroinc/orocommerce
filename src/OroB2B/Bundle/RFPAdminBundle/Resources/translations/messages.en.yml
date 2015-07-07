@@ -12,6 +12,8 @@ orob2b.rfpadmin:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
+        frontend_owner.label: 'Owner'
+        organization.label: 'Organization'
         request_products.label: 'Request Products'
 
     requestproduct:

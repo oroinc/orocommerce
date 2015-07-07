@@ -1,16 +1,28 @@
-{% extends 'OroUserBundle::layout.html.twig' %}
+{% extends commerce.layout %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>{{ 'orob2b.customer.entity_plural_label'|trans }}<span class="divider">/</span></li>
+        <li>{{ 'orob2b.customer.accountuser.entity_plural_label'|trans }}</li>
+    </ul>
+{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>{{ 'orob2b.customer.accountuser.profile.registration.title'|trans }}</h1>
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ path('orob2b_customer_frontend_account_user_register') }}"
-          method="{{ form.vars.method }}" {{ form_enctype(form) }}>
-        {{ form_widget(form) }}
-
-        <div>
-            <button type="submit" class="btn btn-primary">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</button>
-            <a href="{{ path('orob2b_customer_account_user_security_login') }}" class="btn">{{ 'Cancel'|trans }}</a>
+          class="form-signin" method="{{ form.vars.method }}" {{ form_enctype(form) }}>
+        <div class="title-box">
+            <h2 class="title">{{ 'orob2b.customer.accountuser.profile.registration.title'|trans }}</h2>
         </div>
+
+        <fieldset>
+            {{ form_widget(form) }}
+
+            <div class="form-row">
+                <a href="{{ path('orob2b_customer_account_user_security_login') }}" class="btn btn-link">&laquo; {{ 'orob2b.customer.accountuser.profile.return_to_login'|trans }}</a>
+                <button type="submit" class="btn btn-large btn-primary extra-submit">{{ 'orob2b.customer.accountuser.profile.register'|trans }}</button>
+            </div>
+        </fieldset>
     </form>
 
     {{ oro_form_js_validation(form) }}
