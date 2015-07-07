@@ -46,10 +46,12 @@ class ShoppingListHandler
             $this->form->submit($this->request);
 
             if ($this->form->isValid() && $shoppingList->getId() === null) {
-                return $this->manager->setCurrent(
+                $this->manager->setCurrent(
                     $shoppingList->getAccountUser(),
                     $shoppingList
                 );
+
+                return true;
             }
         }
 

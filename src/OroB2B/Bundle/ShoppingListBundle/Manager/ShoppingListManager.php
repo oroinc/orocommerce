@@ -39,14 +39,12 @@ class ShoppingListManager
             ->setAccountUser($accountUser)
             ->setLabel('Default');
 
-        return $this->setCurrent($accountUser, $shoppingList);
+        $this->setCurrent($accountUser, $shoppingList);
     }
 
     /**
      * @param AccountUser  $accountUser
      * @param ShoppingList $shoppingList
-     *
-     * @return bool
      */
     public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
     {
@@ -60,7 +58,5 @@ class ShoppingListManager
         $shoppingList->setCurrent(true);
         $this->manager->persist($shoppingList);
         $this->manager->flush();
-
-        return true;
     }
 }

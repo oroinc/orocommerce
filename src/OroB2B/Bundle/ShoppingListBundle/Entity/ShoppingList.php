@@ -358,10 +358,14 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
 
     /**
      * @param bool $isCurrent
+     *
+     * @return $this
      */
     public function setCurrent($isCurrent)
     {
         $this->isCurrent = (bool) $isCurrent;
+
+        return $this;
     }
 
 
