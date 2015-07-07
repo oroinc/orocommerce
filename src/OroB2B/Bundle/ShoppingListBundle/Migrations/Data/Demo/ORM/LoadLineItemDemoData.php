@@ -45,8 +45,28 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
+
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+        $labels = [];
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+            $labels[] = $row['label'];
+        }
+        fclose($handler);
+
+        if (count($labels) == 0) {
+            return;
+        }
+
         $shoppingLists = $manager->getRepository('OroB2BShoppingListBundle:ShoppingList')->findAll();
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, rand(0, 30));
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, rand(5, 15));
         $chunkedProducts = array_chunk($products, ceil(count($products) / count($shoppingLists)));
 
         foreach ($shoppingLists as $index => $shoppingList) {

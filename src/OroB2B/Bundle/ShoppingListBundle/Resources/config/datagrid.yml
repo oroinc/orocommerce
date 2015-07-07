@@ -82,6 +82,7 @@ datagrid:
                 rowAction:     true
 
     shopping-list-line-items-grid:
+        extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
         options:
             entityHint:        lineItem
         source:
