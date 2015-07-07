@@ -2,11 +2,13 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Entity;
 
-use OroB2B\Bundle\RFPBundle\Tests\Unit\Entity\RequestStatusTestCase;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Component\Testing\Unit\EntityTestCase;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 
-class RequestTest extends RequestStatusTestCase
+class RequestTest extends EntityTestCase
 {
     public function testConstruct()
     {
@@ -28,5 +30,19 @@ class RequestTest extends RequestStatusTestCase
 
         $this->assertInstanceOf('DateTime', $request->getUpdatedAt());
         $this->assertLessThanOrEqual(new \DateTime(), $request->getUpdatedAt());
+    }
+
+    /**
+     * Test setters getters
+     */
+    public function testOwnershipAccessors()
+    {
+        $properties = [
+            ['frontendOwner', null],
+            ['frontendOwner', new AccountUser()],
+            ['organization', new Organization()],
+        ];
+
+        $this->assertPropertyAccessors(new Request(), $properties);
     }
 }

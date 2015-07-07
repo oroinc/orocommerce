@@ -4,3 +4,8 @@ orob2b_customer_account_user_role_view:
     class: OroB2BCustomerBundle:AccountUserRole
     permission: VIEW
     group_name: ""
+
+orob2b_customer_register_account_user:
+    label: orob2b.customer.security.permission.register_account_user
+    type: action
+    group_name: "commerce"
