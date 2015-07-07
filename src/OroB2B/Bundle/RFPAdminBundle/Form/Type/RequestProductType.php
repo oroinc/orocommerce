@@ -92,7 +92,9 @@ class RequestProductType extends AbstractType
                 $form->add('product', ProductSelectType::NAME, [
                     'required' => true,
                     'label' => 'orob2b.product.entity_label',
-                    'empty_value' => $emptyValueTitle,
+                    'configs' => [
+                        'placeholder' => $emptyValueTitle
+                    ]
                 ]);
             }
         }

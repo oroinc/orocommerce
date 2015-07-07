@@ -74,13 +74,15 @@ class RequestProductTypeTest extends AbstractTest
     {
         $productSku = $inputData ? $inputData->getProductSku() : '';
 
+        $placeholder = $expectedData['configs']['placeholder'];
+
         $this->translator
-            ->expects($expectedData['empty_value'] ? $this->once() : $this->never())
+            ->expects($placeholder ? $this->once() : $this->never())
             ->method('trans')
-            ->with($expectedData['empty_value'], [
+            ->with($placeholder, [
                 '{title}' => $productSku,
             ])
-            ->will($this->returnValue($expectedData['empty_value']))
+            ->will($this->returnValue($placeholder))
         ;
 
         $form = $this->factory->create($this->formType);
@@ -109,7 +111,9 @@ class RequestProductTypeTest extends AbstractTest
             'empty item' => [
                 'inputData'     => null,
                 'expectedData'  => [
-                    'empty_value'       => null,
+                    'configs'   => [
+                        'placeholder'   => null,
+                    ],
                     'required'          => true,
                     'create_enabled'    => false,
                     'label'             => 'orob2b.product.entity_label',
@@ -118,9 +122,11 @@ class RequestProductTypeTest extends AbstractTest
             'deleted product' => [
                 'inputData'     => $this->createRequestProduct(1, null, 'sku'),
                 'expectedData'  => [
-                    'empty_value'   => 'orob2b.rfpadmin.message.requestproductitem.unit.removed',
-                    'required'      => true,
-                    'label'         => 'orob2b.product.entity_label',
+                    'configs'   => [
+                        'placeholder' => 'orob2b.rfpadmin.message.requestproductitem.unit.removed',
+                    ],
+                    'required'  => true,
+                    'label'     => 'orob2b.product.entity_label',
                 ],
             ],
         ];
