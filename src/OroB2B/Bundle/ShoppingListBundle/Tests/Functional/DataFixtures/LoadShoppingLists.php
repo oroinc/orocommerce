@@ -3,21 +3,39 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class LoadShoppingLists extends AbstractFixture
+class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
+    const SHOPPING_LIST_1 = 'shopping_list_1';
+    const SHOPPING_LIST_2 = 'shopping_list_2';
+
+    /**
+     * {@inheritdoc}
+     */
+    function getDependencies()
+    {
+        return [
+            'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
         $accountUser = $this->getAccountUser($manager);
-        $this->createShoppingList($manager, $accountUser, 'shopping_list');
+        $lists = $this->getData();
+        foreach ($lists as $listLabel) {
+            $isCurrent = $listLabel === self::SHOPPING_LIST_2;
+            $this->createShoppingList($manager, $accountUser, $listLabel, $isCurrent);
+        }
 
         $manager->flush();
     }
@@ -26,10 +44,11 @@ class LoadShoppingLists extends AbstractFixture
      * @param ObjectManager $manager
      * @param string        $name
      * @param AccountUser   $accountUser
+     * @param bool          $isCurrent
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name)
+    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name, $isCurrent = false)
     {
         $shoppingList = new ShoppingList();
         $shoppingList->setOwner($accountUser);
@@ -38,6 +57,7 @@ class LoadShoppingLists extends AbstractFixture
         $shoppingList->setAccount($accountUser->getCustomer());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
+        $shoppingList->setCurrent($isCurrent);
 
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
@@ -65,5 +85,13 @@ class LoadShoppingLists extends AbstractFixture
         }
 
         return $accountUser;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData()
+    {
+        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2];
     }
 }
