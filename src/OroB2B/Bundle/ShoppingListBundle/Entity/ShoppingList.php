@@ -170,13 +170,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @var bool
      *
      * @ORM\Column(name="is_current", type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $isCurrent;
 
