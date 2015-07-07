@@ -1,5 +1,6 @@
 parameters:
     oro_currency.price.model: Oro\Bundle\CurrencyBundle\Model\Price
+    oro_currency.optional_price.model: Oro\Bundle\CurrencyBundle\Model\OptionalPrice
     oro_currency.twig.currency.class: Oro\Bundle\CurrencyBundle\Twig\CurrencyExtension
 
 services:

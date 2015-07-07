@@ -8,7 +8,7 @@ define(function (require) {
         LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
         $ = require('jquery'),
         _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),        
+        __ = require('orotranslation/js/translator'),
         routing = require('routing'),
         messenger = require('oroui/js/messenger');
 
@@ -22,15 +22,17 @@ define(function (require) {
             unitsRoute:     'orob2b_product_unit_product_units',
             addItemButton:  '.add-list-item',
             itemsContainer: '.rfpadmin-requestproductitem-collection .oro-item-collection',
+            itemWidget:     '.rfpadmin-requestproductitem-widget',
+            syncClass:      'synchronized',
             errorMessage:   'Sorry, unexpected error was occurred',
             units: {}
         },
-        
+
         /**
          * @property {array}
          */
         units: {},
-        
+
         /**
          * @property {Object}
          */
@@ -40,18 +42,18 @@ define(function (require) {
          * @property {Object}
          */
         $productSelect : null,
-        
+
         /**
          * @property {Object}
          */
         $addItemButton : null,
-        
+
         /**
          * @property {Object}
          */
         $itemsContainer : null,
-        
-        /** 
+
+        /**
          * @property {LoadingMaskView|null}
          */
         loadingMask: null,
@@ -62,27 +64,33 @@ define(function (require) {
         initialize: function (options) {
             this.options    = _.defaults(options || {}, this.options);
             this.units      = _.defaults(this.units, options.units);
-            
+
             this.$container = options._sourceElement;
-            
+
             this.loadingMask = new LoadingMaskView({container: this.$container});
-            
+
             this.$productSelect     = this.$container.find(this.options.productSelect);
             this.$addItemButton     = this.$container.find(this.options.addItemButton);
             this.$itemsContainer    = this.$container.find(this.options.itemsContainer);
-            
+
             this.$container
                 .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
-            
+
             this.checkAddButton();
+
+            this.initSelects();
         },
-        
-        checkAddButton: function() {
-            this.$productSelect.val() ? this.$addItemButton.show() : this.$addItemButton.hide();
+
+        checkAddButton: function () {
+            this.$addItemButton.toggle(Boolean(this.$productSelect.val()));
         },
-        
+
+        initSelects: function () {
+            this.$container.find(this.options.unitsSelect).addClass(this.options.syncClass);
+        },
+
         /**
          * Handle change
          *
@@ -90,11 +98,11 @@ define(function (require) {
          */
         onProductChanged: function (e) {
             this.checkAddButton();
-            
+
             if (this.$itemsContainer.children().length) {
-                this.onContentChanged(e);
+                this.updateContent(true);
             }
-        },        
+        },
 
         /**
          * Handle change
@@ -102,12 +110,18 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onContentChanged: function (e) {
-            this.$container.find('select').uniform();
+            this.updateContent();
+        },
+
+        /**
+         * @param {Boolean} force
+         */
+        updateContent: function (force) {
             var productId = this.$productSelect.val();
             var productUnits = this.units[productId];
-            
+
             if (!productId || productUnits) {
-                this.updateProductUnits(productUnits);
+                this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
                 $.ajax({
@@ -118,7 +132,7 @@ define(function (require) {
                     },
                     success: function (response) {
                         self.units[productId] = response.units;
-                        self.updateProductUnits(response.units);
+                        self.updateProductUnits(response.units, true);
                     },
                     complete: function () {
                         self.loadingMask.hide();
@@ -135,17 +149,25 @@ define(function (require) {
          * Update available ProductUnit select
          *
          * @param {Object} data
+         * @param {Boolean} force
          */
-        updateProductUnits: function(data) {
+        updateProductUnits: function (data, force) {
             var self = this;
-            
+
             var units = data || {};
-            
-            var selects = self.$container.find(self.options.unitsSelect);
-            $.each(selects, function(index, select) {
+
+            var widgets = self.$container.find(self.options.itemWidget);
+
+            $.each(widgets, function (index, widget) {
+                var select = $(widget).find(self.options.unitsSelect);
+
+                if (!force && $(select).hasClass(self.options.syncClass)) {
+                    return;
+                }
+
                 var currentValue = $(select).val();
                 $(select).empty();
-                $.each(units, function(key, value) {
+                $.each(units, function (key, value) {
                     $(select)
                         .append($('<option/>').val(key).text(value))
                     ;
@@ -154,10 +176,18 @@ define(function (require) {
                     currentValue = $(select).find('option:first-child').val();
                 }
                 $(select).val(currentValue);
-                $(select).uniform('update');
+                $(select).addClass(self.options.syncClass);
+
+                if (!force) {
+                    $(widget).find('select').uniform('update');
+                }
             });
+
+            if (force) {
+                this.$container.find('select').uniform('update');
+            }
         },
-        
+
         dispose: function () {
             if (this.disposed) {
                 return;

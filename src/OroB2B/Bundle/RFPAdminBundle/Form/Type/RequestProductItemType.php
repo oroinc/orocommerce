@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
@@ -57,8 +57,8 @@ class RequestProductItemType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem',
-            'intention'     => 'rfp_admin_request_product_item',
+            'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem',
+            'intention'  => 'rfp_admin_request_product_item',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }

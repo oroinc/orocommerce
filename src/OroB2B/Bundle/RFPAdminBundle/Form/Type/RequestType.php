@@ -29,9 +29,9 @@ class RequestType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => 'OroB2B\Bundle\RFPAdminBundle\Entity\Request',
-            'intention'     => 'rfp_admin_request',
-            'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'data_class' => 'OroB2B\Bundle\RFPAdminBundle\Entity\Request',
+            'intention'  => 'rfp_admin_request',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
     }
 

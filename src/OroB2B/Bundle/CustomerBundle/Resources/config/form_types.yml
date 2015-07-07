@@ -14,6 +14,10 @@ parameters:
     orob2b_customer.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_customer.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType
 
+    orob2b_customer.form.handler.account_user_role.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserRoleHandler
+
+    orob2b_customer.form.extension.oro_acl_access_level_selector.class: OroB2B\Bundle\CustomerBundle\Form\Extension\AclAccessLevelSelectorExtension
+
 services:
     orob2b_customer.form.type.customer:
         class: %orob2b_customer.form.type.customer.class%
@@ -55,6 +59,8 @@ services:
 
     orob2b_customer.form.type.account_user_role:
         class: %orob2b_customer.form.type.account_user_role.class%
+        arguments:
+            - %oro_user.privileges%
         calls:
             - [setDataClass, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
@@ -85,3 +91,19 @@ services:
             - [setDataClass, [%orob2b_customer.entity.account_user.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_account_user_password_reset }
+
+    orob2b_customer.form.handler.account_user_role:
+        parent: oro_user.form.handler.abstract.acl_role
+        class: %orob2b_customer.form.handler.account_user_role.class%
+        scope: prototype
+        calls:
+            - [setRequest, [@request]]
+            - [setOwnershipConfigProvider, [@oro_entity_config.provider.ownership]]
+            - [setChainMetadataProvider, [@oro_security.owner.metadata_provider.chain]]
+            - [addExtensionFilter, ['entity', 'commerce']]
+            - [addExtensionFilter, ['action', 'commerce']]
+
+    orob2b_customer.form.extension.acl_permission:
+        class: %orob2b_customer.form.extension.oro_acl_access_level_selector.class%
+        tags:
+            - { name: form.type_extension, alias: oro_acl_access_level_selector }

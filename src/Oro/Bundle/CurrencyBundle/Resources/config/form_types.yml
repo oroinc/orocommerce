@@ -1,6 +1,7 @@
 parameters:
     oro_currency.form.type.currency_selection.class: Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType
     oro_currency.form.type.price.class: Oro\Bundle\CurrencyBundle\Form\Type\PriceType
+    oro_currency.form.type.optional_price.class: Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType
 
 services:
     oro_currency.form.type.currency_selection:
@@ -17,3 +18,10 @@ services:
             - [setDataClass, [%oro_currency.price.model%]]
         tags:
             - { name: form.type, alias: oro_currency_price }
+
+    oro_currency.form.type.optional_price:
+        class: %oro_currency.form.type.optional_price.class%
+        calls:
+            - [setDataClass, [%oro_currency.optional_price.model%]]
+        tags:
+            - { name: form.type, alias: oro_currency_optional_price }

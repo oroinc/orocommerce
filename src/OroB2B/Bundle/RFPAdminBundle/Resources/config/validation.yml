@@ -46,7 +46,6 @@ OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem:
         requestProduct:
             - NotBlank: ~
         quantity:
-            - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:

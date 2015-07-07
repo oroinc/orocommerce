@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;

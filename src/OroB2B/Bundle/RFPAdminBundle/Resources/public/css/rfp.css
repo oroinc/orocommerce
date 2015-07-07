@@ -93,14 +93,31 @@
     vertical-align: top;
 }
 
+.rfpadmin-requestproduct-info.control-group label.control-label {
+    width: auto;
+    padding-top: 2px;
+}
+
 .rfpadmin-requestproduct-comment .control-group label.control-label {
     width: auto;
-    float: right;
     padding-top: 2px;
 }
 
 .rfpadmin-requestproductitems-info {
-    padding: 5px 0 0 10px;
+    padding: 4px 0 0 10px;
+}
+
+.rfpadmin-requestproductitems-info table {
+    width: 100%;
+}
+
+.rfpadmin-requestproductitems-info th {
+    text-align: left;
+    min-width: 90px;
+}
+
+.rfpadmin-requestproductitems-info td {
+    width: 50%;
 }
 
 .rfpadmin-requestproductitem-info {

@@ -6,7 +6,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem as RequestProductItemEntity;
 
 class RequestProductItemValidator extends ConstraintValidator
@@ -15,8 +14,7 @@ class RequestProductItemValidator extends ConstraintValidator
      * {@inheritdoc}
      *
      * @param RequestProductItemEntity $requestProductItem
-     * @param RequestProductItem $constraint
-     * @throws UnexpectedTypeException
+     * @param Constraint $constraint
      */
     public function validate($requestProductItem, Constraint $constraint)
     {
@@ -26,11 +24,33 @@ class RequestProductItemValidator extends ConstraintValidator
                 'OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem'
             );
         }
-        /** @var $product Product */
-        $product = $requestProductItem->getRequestProduct()->getProduct();
-        $allowedUnits = $product ? $product->getAvailableUnitCodes() : [];
-        if (!in_array($requestProductItem->getProductUnit()->getCode(), $allowedUnits, true)) {
-            $this->context->addViolationAt('productUnit', $constraint->message);
+
+        if (null === ($requestProduct = $requestProductItem->getRequestProduct())) {
+            return $this->addViolation($constraint);
         }
+
+        if (null === ($product = $requestProduct->getProduct())) {
+            return $this->addViolation($constraint);
+        }
+
+        if (null === ($allowedUnits = $product->getAvailableUnitCodes())) {
+            return $this->addViolation($constraint);
+        }
+
+        if (null === ($productUnit = $requestProductItem->getProductUnit())) {
+            return $this->addViolation($constraint);
+        }
+
+        if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
+            return $this->addViolation($constraint);
+        }
+    }
+
+    /**
+     * @param RequestProductItem $constraint
+     */
+    protected function addViolation(RequestProductItem $constraint)
+    {
+        $this->context->addViolationAt('productUnit', $constraint->message);
     }
 }

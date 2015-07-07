@@ -6,15 +6,15 @@
 
 {% block orob2b_rfp_admin_request_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' rfpadmin-requestproduct-widget control-group'}) %}
-    
+
     {% set units = [] %}
     {% set product = form.vars.value.product|default(null) %}
     {% if product %}
         {% for code in product.availableUnitCodes %}
-            {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
+            {% set units = units|merge({ (code) : code|orob2b_format_product_unit_label}) %}
         {% endfor %}
     {% endif %}
-    
+
     <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
         data-page-component-module="orob2brfpadmin/js/app/components/rfpadmin-requestproductitems-component">
         {{ form_label(form.product, '', { label_attr: label_attr|merge({ class: 'control-label' })}) }}

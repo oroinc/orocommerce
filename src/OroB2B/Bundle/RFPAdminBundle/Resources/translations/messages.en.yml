@@ -12,6 +12,8 @@ orob2b.rfpadmin:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
+        frontend_owner.label: 'Owner'
+        organization.label: 'Organization'
         request_products.label: 'Request Products'
 
     requestproduct:
@@ -91,7 +93,7 @@ orob2b.rfpadmin:
 
     controller:
         request:
-                saved.message: 'Request has been saved'
+            saved.message: 'Request has been saved'
 
 # We MUST move this section form here in the future!
 orob2b.frontendadmin:
