@@ -11,6 +11,8 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
 
+        actions:
+            set_current: Set as current
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists

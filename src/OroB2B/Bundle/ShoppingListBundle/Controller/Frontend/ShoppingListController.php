@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 
 class ShoppingListController extends Controller
 {
@@ -109,6 +110,35 @@ class ShoppingListController extends Controller
     }
 
     /**
+     * @Route("/set-current/{id}", name="orob2b_shopping_list_frontend_set_current", requirements={"id"="\d+"})
+     * @Acl(
+     *      id="orob2b_shopping_list_frontend_set_current",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:ShoppingList",
+     *      permission="EDIT"
+     * )
+     *
+     * @param ShoppingList $shoppingList
+     *
+     * @return RedirectResponse
+     */
+    public function setCurrentAction(ShoppingList $shoppingList)
+    {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+        $this->get('orob2b_shopping_list.shopping_list.manager')->setCurrent(
+            $accountUser,
+            $shoppingList
+        );
+        $message = $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message');
+        $this->get('session')->getFlashBag()->add('success', $message);
+
+        return $this->redirect(
+            $this->generateUrl('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+        );
+    }
+
+    /**
      * @param ShoppingList $shoppingList
      *
      * @return array|RedirectResponse
@@ -124,23 +154,30 @@ class ShoppingListController extends Controller
             ->setOrganization($accountUser->getOrganization())
             ->setAccount($accountUser->getCustomer())
             ->setAccountUser($accountUser);
+        $form = $this->createForm(ShoppingListType::NAME);
+        $handler = new ShoppingListHandler(
+            $form,
+            $this->getRequest(),
+            $this->get('orob2b_shopping_list.shopping_list.manager')
+        );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $shoppingList,
             $this->createForm(ShoppingListType::NAME, $shoppingList),
             function (ShoppingList $shoppingList) {
                 return [
-                    'route'      => 'orob2b_shopping_list_frontend_update',
+                    'route' => 'orob2b_shopping_list_frontend_update',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
             function (ShoppingList $shoppingList) {
                 return [
-                    'route'      => 'orob2b_shopping_list_frontend_view',
+                    'route' => 'orob2b_shopping_list_frontend_view',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message')
+            $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
+            $handler
         );
     }
 }

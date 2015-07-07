@@ -13,6 +13,8 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture
 {
+    const SHOPPING_LIST_1 = 'shopping_list_1';
+    const SHOPPING_LIST_2 = 'shopping_list_2';
 
     /**
      * {@inheritdoc}
@@ -21,9 +23,13 @@ class LoadShoppingLists extends AbstractFixture
     {
         $user = $this->getUser($manager);
         $accountUser = $this->getAccountUser($manager);
-        $this->createShoppingList($manager, 'shopping_list', $user, $accountUser);
+        foreach ($this->getData() as $shoppingListLabel) {
+            $setCurrent = $shoppingListLabel === self::SHOPPING_LIST_2;
+            $this->createShoppingList($manager, $shoppingListLabel, $user, $accountUser, $setCurrent);
+        }
 
         $manager->flush();
+        die();
     }
 
     /**
@@ -31,11 +37,17 @@ class LoadShoppingLists extends AbstractFixture
      * @param string        $name
      * @param User          $user
      * @param AccountUser   $accountUser
+     * @param bool          $setCurrent
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, $name, User $user, AccountUser $accountUser)
-    {
+    protected function createShoppingList(
+        ObjectManager $manager,
+        $name,
+        User $user,
+        AccountUser $accountUser,
+        $setCurrent = false
+    ) {
         $shoppingList = new ShoppingList();
         $shoppingList->setOwner($user);
         $shoppingList->setOrganization($accountUser->getOrganization());
@@ -43,6 +55,7 @@ class LoadShoppingLists extends AbstractFixture
         $shoppingList->setAccount($accountUser->getCustomer());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
+        $shoppingList->setIsCurrent($setCurrent);
 
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
@@ -92,5 +105,13 @@ class LoadShoppingLists extends AbstractFixture
         }
 
         return $accountUser;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData()
+    {
+        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2];
     }
 }

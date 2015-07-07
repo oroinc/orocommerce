@@ -10,6 +10,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -30,7 +31,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     public function testCreate()
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference('shopping_list');
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
         /** @var Product $product2 */

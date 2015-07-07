@@ -23,7 +23,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *          @ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
  * @Config(
  *      routeName="orob2b_shopping_list_index",
  *      routeView="orob2b_shopping_list_view",
@@ -150,6 +150,20 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * )
      **/
     protected $lineItems;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_current", type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $isCurrent;
 
     public function __construct()
     {
@@ -341,6 +355,23 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     {
         return $this->lineItems;
     }
+
+    /**
+     * @return bool
+     */
+    public function getIsCurrent()
+    {
+        return $this->isCurrent;
+    }
+
+    /**
+     * @param bool $isCurrent
+     */
+    public function setIsCurrent($isCurrent)
+    {
+        $this->isCurrent = $isCurrent;
+    }
+
 
     /**
      * Pre persist event handler
