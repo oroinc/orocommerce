@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -13,16 +16,20 @@ use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\CustomerTypedAddressWithDefaultTypeStub;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
 {
     /** @var CustomerTypedAddressType */
     protected $formType;
+
+    /** @var AddressType */
     protected $billingType;
+
+    /** @var AddressType */
     protected $shippingType;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -53,13 +60,21 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
             }));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
 
         $this->formType = new CustomerTypedAddressType();
+        $this->formType->setAddressTypeDataClass('Oro\Bundle\AddressBundle\Entity\AddressType');
+        $this->formType->setDataClass('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->formType);
@@ -186,6 +201,9 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function submitWithFormSubscribersProvider()
     {
         $customerAddress1 = new CustomerAddress();
@@ -257,6 +275,9 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
         return $repo;
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function createEntityManagerMock()
     {
         return $this->getMockBuilder('Doctrine\ORM\EntityManager')
