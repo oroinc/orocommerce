@@ -1,18 +1,17 @@
-{% extends 'OroUserBundle::layout.html.twig' %}
+{% extends commerce.layout %}
 
-{% block bodyClass %}login-page{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>{{ 'orob2b.customer.entity_plural_label'|trans }}<span class="divider">/</span></li>
+        <li>{{ 'orob2b.customer.accountuser.entity_plural_label'|trans }}</li>
+    </ul>
+{% endblock %}
 
 {% block content %}
     <div class="container">
         <form action="{{ path('orob2b_customer_frontend_account_user_password_reset', { token: token, username: username }) }}" {{ form_enctype(form) }} method="post" class="form-signin"
               id="{{ form.vars.id }}" name="{{ form.vars.name }}" {{ form_enctype(form) }}>
             <div class="title-box">
-                {% if oro_theme_logo() %}
-                    <h1 class="oro-title logo-{{ oro_theme_logo() ? 'image' : 'text' }}">
-                        <img src="{{ asset(oro_theme_logo()) }}">
-                    </h1>
-                    <span class="divider-vertical"></span>
-                {% endif %}
                 <h2 class="title">{{ 'orob2b.customer.accountuser.profile.reset_password.title'|trans }}</h2>
             </div>
             <fieldset>
