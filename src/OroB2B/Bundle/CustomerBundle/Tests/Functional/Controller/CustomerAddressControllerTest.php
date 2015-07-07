@@ -224,7 +224,7 @@ class CustomerAddressControllerTest extends WebTestCase
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $crawler = $this->client->request(
-            'GET',
+            'DELETE',
             $this->getUrl(
                 'orob2b_api_customer_delete_customer_address',
                 ['customerId' => $customerId, 'addressId' => $address['id']]

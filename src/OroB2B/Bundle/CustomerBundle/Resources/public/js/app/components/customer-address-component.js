@@ -17,7 +17,6 @@ define(function (require) {
             if (options.disableRepeatedTypes) {
                 this.disableRepeatedTypes(targetElement);
             }
-
         },
 
         disableDefaultWithoutType: function (targetElement) {
