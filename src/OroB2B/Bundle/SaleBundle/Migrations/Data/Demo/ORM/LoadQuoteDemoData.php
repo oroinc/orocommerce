@@ -56,7 +56,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
     {
         $user = $this->getUser($manager);
         $organization = $user->getOrganization();
-        for ($i=0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             // set date in future
             $validUntil = new \DateTime('now');
             $addDays = sprintf('+%s days', rand(10, 100));
