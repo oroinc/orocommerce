@@ -31,9 +31,9 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *              "icon"="icon-shopping-cart"
  *          },
  *          "ownership"={
- *              "frontend_owner_type"="FRONTEND_CUSTOMER",
- *              "frontend_owner_field_name"="customer",
- *              "frontend_owner_column_name"="customer_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="owner",
+ *              "frontend_owner_column_name"="account_user_owner_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
