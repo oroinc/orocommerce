@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -11,6 +13,8 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var  ManagerRegistry  */
+    protected $managerRegistry;
     /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $entityManager;
     /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
@@ -57,11 +61,19 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(function (ShoppingList $obj) {
                 $this->shoppingLists[] = $obj;
             });
+
+        $this->managerRegistry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->willReturn($this->entityManager);
     }
 
     public function testCreateCurrent()
     {
-        $manager = new ShoppingListManager($this->entityManager);
+        $manager = new ShoppingListManager($this->managerRegistry);
         $manager->setCurrent(new AccountUser(), $this->shoppingListTwo);
         $this->assertTrue($this->shoppingListTwo->isCurrent());
         $this->assertFalse($this->shoppingListOne->isCurrent());
@@ -73,7 +85,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $accountUser = new AccountUser();
         $accountUser->setCustomer(new Customer());
         $accountUser->setFirstName('First');
-        $manager = new ShoppingListManager($this->entityManager);
+        $manager = new ShoppingListManager($this->managerRegistry);
         $manager->createCurrent($accountUser);
         $this->assertCount(1, $this->shoppingLists);
         /** @var ShoppingList $list */
