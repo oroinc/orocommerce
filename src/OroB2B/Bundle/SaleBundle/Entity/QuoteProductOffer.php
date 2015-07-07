@@ -63,8 +63,8 @@ class QuoteProductOffer extends BaseQuoteProductItem
         static $priceTypeTitles = null;
         if (null === $priceTypeTitles) {
             $priceTypeTitles = [
-                static::PRICE_UNIT => 'orob2b.sale.quoteproductoffer.pricetype.unit',
-                static::PRICE_BUNDLED => 'orob2b.sale.quoteproductoffer.pricetype.bundled',
+                static::PRICE_UNIT => 'orob2b.sale.quoteproductoffer.price_type.unit',
+                static::PRICE_BUNDLED => 'orob2b.sale.quoteproductoffer.price_type.bundled',
             ];
         }
 

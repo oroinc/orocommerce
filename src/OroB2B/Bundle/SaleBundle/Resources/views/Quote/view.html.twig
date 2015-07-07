@@ -62,7 +62,7 @@
                             </div>
                             {% if quoteProduct.type is same as(constant('OroB2B\\Bundle\\SaleBundle\\Entity\\QuoteProduct::TYPE_NOT_AVAILABLE')) %}
                                 <div>
-                                    <div>{{ 'orob2b.sale.quoteproduct.productreplacement.label'|trans }}</div>
+                                    <div>{{ 'orob2b.sale.quoteproduct.product_replacement.label'|trans }}</div>
                                     {% if quoteProduct.productReplacement %}
                                         <a href="{{ path('orob2b_product_view', { id: quoteProduct.productReplacement.id }) }}">{{ quoteProduct.productReplacement|raw }}</a>
                                     {% else %}
@@ -91,7 +91,7 @@
                                     {% endfor %}
                                     <tr>
                                         <td colspan="3">{{ UI.renderProperty(
-                                                'orob2b.sale.quoteproduct.commentcustomer.label'|trans,
+                                                'orob2b.sale.quoteproduct.comment_customer.label'|trans,
                                                 quoteProduct.commentCustomer ? : 'N/A'
                                             ) }}</td>
                                     </tr>

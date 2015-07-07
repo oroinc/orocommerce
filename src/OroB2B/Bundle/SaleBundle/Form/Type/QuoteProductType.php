@@ -42,7 +42,7 @@ class QuoteProductType extends AbstractType
             ])
             ->add('productReplacement', ProductSelectType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproduct.productreplacement.label',
+                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
             ])
             ->add(
@@ -69,7 +69,7 @@ class QuoteProductType extends AbstractType
             ->add('commentCustomer', 'textarea', [
                 'required' => false,
                 'read_only' => true,
-                'label' => 'orob2b.sale.quoteproduct.commentcustomer.label',
+                'label' => 'orob2b.sale.quoteproduct.comment_customer.label',
             ])
             ->add('comment', 'textarea', [
                 'required' => false,

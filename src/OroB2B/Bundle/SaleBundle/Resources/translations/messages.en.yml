@@ -12,6 +12,7 @@ orob2b:
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
+            request.label: 'Request'
             
             sections:
                 general: 'General'
@@ -26,12 +27,15 @@ orob2b:
             add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
-            productreplacement.label: 'Suggested Replacement:'
+            product_replacement.label: 'Suggested Replacement:'
             product_sku.label: 'Product SKU'
+            product_replacement_sku.label: 'Suggested Replacement SKU'
             quote.label: 'Quote'
-            quote_product_items.label: 'Quote Product Lines'
+            quote_product_offers.label: 'Quote Product Offers'
+            quote_product_requests.label: 'Quote Product Requests'
+            request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            commentcustomer.label: 'Customer Notes'
+            comment_customer.label: 'Customer Notes'
             product.removed: '{title} - removed'
             type:
                 label: 'Type'
@@ -53,8 +57,8 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
-            allowincrements.label: 'or more'
-            pricetype:
+            allow_increments.label: 'or more'
+            price_type:
                 label: 'Price Type'
                 bundled: 'bundled offer'
                 unit: 'at unit price of'
@@ -76,6 +80,7 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
+            request_product_item.label: 'Request Product Item'
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'

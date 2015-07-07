@@ -34,6 +34,7 @@ orob2b.rfpadmin:
         add_label: 'Add Request Item'
         id.label: 'ID'
         quantity.label: 'Quantity'
+        request_product.label: 'Request Product'
         product_unit.label: 'Product Unit'
         product_unit_code.label: 'Product Unit Code'
         price.label: 'Price'
@@ -48,6 +49,7 @@ orob2b.rfpadmin:
         label.label: 'Label'
         sort_order.label: 'Sort Order'
         deleted.label: 'Deleted'
+        translations.label: 'Translations'
 
     menu:
         rfp_tab.label: 'RFP'
