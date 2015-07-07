@@ -105,6 +105,21 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @param array $codes
+     * @return ProductUnit[]
+     */
+    protected function getProductUnits(array $codes)
+    {
+        $res = [];
+
+        foreach ($codes as $code) {
+            $res[] = (new ProductUnit())->setCode($code);
+        }
+
+        return $res;
+    }
+
+    /**
      * @return ProductUnitPrecision[]
      */
     protected function getProductUnitPrecisions()

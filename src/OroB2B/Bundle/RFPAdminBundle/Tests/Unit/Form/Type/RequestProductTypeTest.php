@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -11,6 +12,9 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+
+use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemCollectionType;
@@ -58,6 +62,68 @@ class RequestProductTypeTest extends AbstractTest
     public function testGetName()
     {
         $this->assertEquals(RequestProductType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @param RequestProduct $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider preSetDataProvider
+     */
+    public function testPreSetData(RequestProduct $inputData = null, array $expectedData = [])
+    {
+        $productSku = $inputData ? $inputData->getProductSku() : '';
+
+        $this->translator
+            ->expects($expectedData['empty_value'] ? $this->once() : $this->never())
+            ->method('trans')
+            ->with($expectedData['empty_value'], [
+                '{title}' => $productSku,
+            ])
+            ->will($this->returnValue($expectedData['empty_value']))
+        ;
+
+        $form = $this->factory->create($this->formType);
+
+        $this->formType->preSetData(new FormEvent($form, $inputData));
+
+        $this->assertTrue($form->has('product'));
+
+        $config = $form->get('product')->getConfig();
+
+        $this->assertEquals(ProductSelectType::NAME, $config->getType()->getName());
+
+        $options = $form->get('product')->getConfig()->getOptions();
+
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $options[$key], $key);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function preSetDataProvider()
+    {
+        return [
+            'empty item' => [
+                'inputData'     => null,
+                'expectedData'  => [
+                    'empty_value'       => null,
+                    'required'          => true,
+                    'create_enabled'    => false,
+                    'label'             => 'orob2b.product.entity_label',
+                ],
+            ],
+            'deleted product' => [
+                'inputData'     => $this->createRequestProduct(1, null, 'sku'),
+                'expectedData'  => [
+                    'empty_value'   => 'orob2b.rfpadmin.message.requestproductitem.unit.removed',
+                    'required'      => true,
+                    'label'         => 'orob2b.product.entity_label',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -129,6 +195,35 @@ class RequestProductTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem]),
             ],
         ];
+    }
+
+    /**
+     * @param int $id
+     * @param RequestProduct $product
+     * @param string $productSku
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     */
+    protected function createRequestProduct($id, $product, $productSku)
+    {
+        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        $requestProduct = $this->getMock('OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct');
+        $requestProduct
+            ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id))
+        ;
+        $requestProduct
+            ->expects($this->any())
+            ->method('getProduct')
+            ->will($this->returnValue($product))
+        ;
+        $requestProduct
+            ->expects($this->any())
+            ->method('getProductSku')
+            ->will($this->returnValue($productSku))
+        ;
+
+        return $requestProduct;
     }
 
     /**

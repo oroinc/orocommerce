@@ -113,6 +113,7 @@
 
 .rfpadmin-requestproductitems-info th {
     text-align: left;
+    min-width: 90px;
 }
 
 .rfpadmin-requestproductitems-info td {

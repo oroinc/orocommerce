@@ -26,16 +26,20 @@ class RequestProductItemTypeTest extends AbstractTest
     protected $formType;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->formType = new RequestProductItemType($translator);
+        $this->formType = new RequestProductItemType($this->translator);
     }
 
     public function testGetName()
@@ -77,18 +81,27 @@ class RequestProductItemTypeTest extends AbstractTest
     }
 
     /**
-     * @param mixed $inputData
-     * @param mixed $expectedData
-     * @param mixed $choices
+     * @param RequestProductItem $inputData
+     * @param array $expectedData
+     *
      * @dataProvider preSetDataProvider
      */
-    public function testPreSetData($inputData, $expectedData, $choices)
+    public function testPreSetData(RequestProductItem $inputData = null, array $expectedData = [])
     {
+        $unitCode = $inputData ? $inputData->getProductUnitCode() : '';
+
+        $this->translator
+            ->expects($expectedData['empty_value'] ? $this->once() : $this->never())
+            ->method('trans')
+            ->with($expectedData['empty_value'], [
+                '{title}' => $unitCode,
+            ])
+            ->will($this->returnValue($expectedData['empty_value']))
+        ;
+
         $form = $this->factory->create($this->formType);
 
-        $event = new FormEvent($form, $inputData);
-        $this->formType->preSetData($event);
-        $this->assertEquals($expectedData, $event->getData());
+        $this->formType->preSetData(new FormEvent($form, $inputData));
 
         $this->assertTrue($form->has('productUnit'));
 
@@ -96,12 +109,11 @@ class RequestProductItemTypeTest extends AbstractTest
 
         $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
 
-        $options = $config->getOptions();
+        $options = $form->get('productUnit')->getConfig()->getOptions();
 
-        $this->assertFalse($options['disabled']);
-        $this->assertTrue($options['required']);
-        $this->assertEquals($choices, $options['choices']);
-        $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $options[$key], $key);
+        }
     }
 
     /**
@@ -109,40 +121,48 @@ class RequestProductItemTypeTest extends AbstractTest
      */
     public function preSetDataProvider()
     {
-        $choices = [
-            (new ProductUnit())->setCode('unit1'),
-            (new ProductUnit())->setCode('unit2'),
-            (new ProductUnit())->setCode('unit3'),
-        ];
-
-        $product = new Product();
-        foreach ($choices as $unit) {
-            $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
-        }
-
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|RequestProductItem */
-        $item = $this->getMock('OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem');
-        $item
-            ->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue(123))
-        ;
-        $item
-            ->expects($this->any())
-            ->method('getRequestProduct')
-            ->will($this->returnValue((new RequestProduct())->setProduct($product)))
-        ;
+        $units = $this->getProductUnits(['kg', 'item']);
 
         return [
-            'set data new item' => [
+            'choices is []' => [
                 'inputData'     => null,
-                'expectedData'  => null,
-                'choices'       => [],
+                'expectedData'  => [
+                    'choices'       => [],
+                    'empty_value'   => null,
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
             ],
-            'set data existed item' => [
-                'inputData'     => $item,
-                'expectedData'  => $item,
-                'choices'       => $choices,
+            'choices is ProductUnit[]' => [
+                'inputData'     => $this->createRequestProductItem(1, $units, 'kg'),
+                'expectedData'  => [
+                    'choices'       => $units,
+                    'empty_value'   => null,
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+            'choices is ProductUnit[] and unit is deleted' => [
+                'inputData'     => $this->createRequestProductItem(1, $units, 'test'),
+                'expectedData'  => [
+                    'choices'       => $units,
+                    'empty_value'   => 'orob2b.rfpadmin.message.requestproductitem.unit.removed',
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+            'choices is [] and unit is deleted' => [
+                'inputData'     => $this->createRequestProductItem(1, [], 'test'),
+                'expectedData'  => [
+                    'choices'       => [],
+                    'empty_value'   => 'orob2b.rfpadmin.message.requestproductitem.unit.removed',
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
             ],
         ];
     }
@@ -245,6 +265,51 @@ class RequestProductItemTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequestProductItem(5),
             ],
         ];
+    }
+
+    /**
+     * @param int $id
+     * @param array $productUnits
+     * @param string $unitCode
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProductItem
+     */
+    protected function createRequestProductItem($id, array $productUnits = [], $unitCode = null)
+    {
+        $productUnit = null;
+
+        $product = new Product();
+        foreach ($productUnits as $unit) {
+            $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
+
+            if ($unitCode && $unit->getCode() == $unitCode) {
+                $productUnit = $unit;
+            }
+        }
+
+        /* @var $item \PHPUnit_Framework_MockObject_MockObject|RequestProductItem */
+        $item = $this->getMock('OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem');
+        $item
+            ->expects($this->any())
+            ->method('getId')
+            ->will($this->returnValue($id))
+        ;
+        $item
+            ->expects($this->any())
+            ->method('getRequestProduct')
+            ->will($this->returnValue((new RequestProduct())->setProduct($product)))
+        ;
+        $item
+            ->expects($this->any())
+            ->method('getProductUnit')
+            ->will($this->returnValue($productUnit))
+        ;
+        $item
+            ->expects($this->any())
+            ->method('getProductUnitCode')
+            ->will($this->returnValue($unitCode))
+        ;
+
+        return $item;
     }
 
     /**

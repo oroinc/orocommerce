@@ -11,7 +11,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;

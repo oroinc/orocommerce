@@ -6,6 +6,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
+use Oro\Bundle\CurrencyBundle\Validator\Constraints;
 
 class OptionalPriceValidator extends ConstraintValidator
 {
@@ -18,6 +19,7 @@ class OptionalPriceValidator extends ConstraintValidator
     public function validate($price, Constraint $constraint)
     {
         if ($price->getValue() && !$price->getCurrency()) {
+            /* @var $constraint Constraints\OptionalPrice */
             $this->context->addViolationAt('currency', $constraint->message);
         }
     }

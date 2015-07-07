@@ -83,11 +83,11 @@ define(function (require) {
             this.initSelects();
         },
 
-        checkAddButton: function() {
-            this.$productSelect.val() ? this.$addItemButton.show() : this.$addItemButton.hide();
+        checkAddButton: function () {
+            this.$addItemButton.toggle(Boolean(this.$productSelect.val()));
         },
 
-        initSelects: function() {
+        initSelects: function () {
             this.$container.find(this.options.unitsSelect).addClass(this.options.syncClass);
         },
 
@@ -114,7 +114,7 @@ define(function (require) {
         },
 
         /**
-         * @param bool force
+         * @param {Boolean} force
          */
         updateContent: function (force) {
             var productId = this.$productSelect.val();
@@ -149,9 +149,9 @@ define(function (require) {
          * Update available ProductUnit select
          *
          * @param {Object} data
-         * @param bool force
+         * @param {Boolean} force
          */
-        updateProductUnits: function(data, force) {
+        updateProductUnits: function (data, force) {
             var self = this;
 
             var units = data || {};
@@ -167,7 +167,7 @@ define(function (require) {
 
                 var currentValue = $(select).val();
                 $(select).empty();
-                $.each(units, function(key, value) {
+                $.each(units, function (key, value) {
                     $(select)
                         .append($('<option/>').val(key).text(value))
                     ;

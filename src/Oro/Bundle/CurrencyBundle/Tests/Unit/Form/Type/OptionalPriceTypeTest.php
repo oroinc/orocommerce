@@ -121,7 +121,7 @@ class OptionalPriceTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
+        /* @var $configManager \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -131,7 +131,7 @@ class OptionalPriceTypeTest extends FormIntegrationTestCase
             ->with('oro_currency.allowed_currencies')
             ->will($this->returnValue(['USD', 'EUR']));
 
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|LocaleSettings */
+        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockObject|LocaleSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();

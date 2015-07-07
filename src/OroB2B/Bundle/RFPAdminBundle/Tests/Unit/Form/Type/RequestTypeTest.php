@@ -18,6 +18,9 @@ use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductCollectionType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestProductItemCollectionType;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ */
 class RequestTypeTest extends AbstractTest
 {
     /**
