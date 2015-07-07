@@ -6,6 +6,8 @@ use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -32,6 +34,7 @@ class PriceTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /* @var $configManager \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -41,6 +44,7 @@ class PriceTypeTest extends FormIntegrationTestCase
             ->with('oro_currency.allowed_currencies')
             ->will($this->returnValue(['USD', 'EUR']));
 
+        /* @var $localeSettings \PHPUnit_Framework_MockObject_MockObject|LocaleSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
