@@ -26,8 +26,6 @@ class ShoppingListManager
 
     /**
      * @param AccountUser $accountUser
-     *
-     * @return bool
      */
     public function createCurrent(AccountUser $accountUser)
     {
