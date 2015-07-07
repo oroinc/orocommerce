@@ -24,6 +24,7 @@ parameters:
     orob2b_customer.account_user.password_reset.handler.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler
 
     orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
+    orob2b_customer.event_listener.login.class: OroB2B\Bundle\CustomerBundle\EventListener\LoginListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -164,6 +165,11 @@ services:
             - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
+
+    orob2b_customer.event_listener.login:
+        class: %orob2b_customer.event_listener.login.class%
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }
 
     orob2b_customer.customer_address.manager.api:
         class: %orob2b_customer.customer_address.manager.api.class%
