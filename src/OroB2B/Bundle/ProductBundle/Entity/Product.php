@@ -13,7 +13,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
@@ -126,21 +125,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     protected $owner;
 
     /**
-     * @var Category
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category", inversedBy="products")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $category;
-
-    /**
      * @var Organization
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
@@ -195,6 +179,24 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->sku = $sku;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->sku;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        // @codingStandardsIgnoreStart
+        return 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consequat, augue ac egestas pharetra, tortor diam auctor libero, id tincidunt libero erat a justo. Nam tortor quam, imperdiet sed eleifend eget, elementum convallis velit. Suspendisse non quam vitae lectus imperdiet efficitur id ac est. Interdum et malesuada fames ac ante ipsum primis in faucibus. Quisque metus lacus, imperdiet commodo velit eget, sodales vulputate nibh. Quisque nec odio vitae erat dapibus faucibus ac non erat. Fusce eros tortor, aliquet vel molestie iaculis, vehicula at lacus.';
+        // @codingStandardsIgnoreEnd
     }
 
     /**
@@ -271,25 +273,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function getOrganization()
     {
         return $this->organization;
-    }
-
-    /**
-     * @return Category
-     */
-    public function getCategory()
-    {
-        return $this->category;
-    }
-
-    /**
-     * @param Category $category
-     * @return $this
-     */
-    public function setCategory($category)
-    {
-        $this->category = $category;
-
-        return $this;
     }
 
     /**
