@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -157,5 +158,32 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $quoteProductOffer;
+    }
+
+    /**
+     * @param float $quantity
+     * @param string $unitCode
+     * @param Price $price
+     * @return QuoteProductOffer
+     */
+    protected function getQuoteProductRequest($quantity = null, $unitCode = null, Price $price = null)
+    {
+        $quoteProductRequest = new QuoteProductRequest();
+
+        if (null !== $quantity) {
+            $quoteProductRequest->setQuantity($quantity);
+        }
+
+        if (null !== $unitCode) {
+            $quoteProductRequest->setProductUnit(
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', $unitCode, 'code')
+            );
+        }
+
+        if (null !== $price) {
+            $quoteProductRequest->setPrice($price);
+        }
+
+        return $quoteProductRequest;
     }
 }
