@@ -18,6 +18,13 @@
             'path' : path('orob2b_shopping_list_frontend_update', { 'id': entity.id }),
             'entity_label': 'orob2b.shoppinglist.entity_label'|trans
         }) }}
+        {% if not entity.isCurrent %}
+            {{ UI.editButton({
+                'path' : path('orob2b_shopping_list_frontend_set_current', { 'id': entity.id }),
+                'entity_label': 'orob2b.shoppinglist.entity_label'|trans,
+                'label': 'orob2b.shoppinglist.actions.set_current'|trans
+            }) }}
+        {% endif %}
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({

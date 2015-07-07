@@ -34,7 +34,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
     public function load(ObjectManager $manager)
     {
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getReference('shopping_list');
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
         /** @var Product $product */
