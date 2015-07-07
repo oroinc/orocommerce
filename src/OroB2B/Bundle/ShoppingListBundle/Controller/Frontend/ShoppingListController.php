@@ -155,6 +155,7 @@ class ShoppingListController extends Controller
     protected function update(ShoppingList $shoppingList)
     {
         $form = $this->createForm(ShoppingListType::NAME);
+
         $handler = new ShoppingListHandler(
             $form,
             $this->getRequest(),

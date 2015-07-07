@@ -1,7 +1,7 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -9,14 +9,14 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class ShoppingListManager
 {
     /**
-     * @var ObjectManager
+     * @var EntityManager
      */
     protected $manager;
 
     /**
-     * @param ObjectManager $manager
+     * @param EntityManager $manager
      */
-    public function __construct(ObjectManager $manager)
+    public function __construct(EntityManager $manager)
     {
         $this->manager = $manager;
     }
@@ -29,8 +29,8 @@ class ShoppingListManager
     public function createCurrent(AccountUser $accountUser)
     {
         $shoppingList = new ShoppingList();
-        $owner = $this->manager->getRepository('OroUserBundle:User')->find(1);
-        $shoppingList->setOwner($owner)
+        $shoppingList
+            ->setOwner($accountUser)
             ->setOrganization($accountUser->getOrganization())
             ->setAccount($accountUser->getCustomer())
             ->setAccountUser($accountUser)
@@ -50,13 +50,11 @@ class ShoppingListManager
         $currentList = $this->manager
             ->getRepository('OroB2BShoppingListBundle:ShoppingList')
             ->findCurrentForAccountUser($accountUser);
-
         if ($currentList instanceof ShoppingList && $currentList !== $shoppingList) {
-            $currentList->setIsCurrent(false);
+            $currentList->setCurrent(false);
             $this->manager->persist($currentList);
         }
-
-        $shoppingList->setIsCurrent(true);
+        $shoppingList->setCurrent(true);
         $this->manager->persist($shoppingList);
         $this->manager->flush();
 
