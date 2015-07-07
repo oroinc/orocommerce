@@ -1,10 +1,11 @@
-{% extends 'OroUserBundle::layout.html.twig' %}
+{% extends commerce.layout %}
 
-{% block bodyClass %}login-page{% endblock %}
-
-{% block messages %}
-    {% set messagesContent = parent() %}
-{% endblock messages %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>{{ 'orob2b.customer.entity_plural_label'|trans }}<span class="divider">/</span></li>
+        <li>{{ 'orob2b.customer.accountuser.entity_plural_label'|trans }}</li>
+    </ul>
+{% endblock %}
 
 {% block content %}
     <form action="{{ path('orob2b_customer_frontend_account_user_reset_request') }}" class="form-signin" method="post"
@@ -14,8 +15,6 @@
         </div>
 
         <fieldset class="oro-forgot-password">
-            {{ messagesContent }}
-
             {% set formErrors = form_errors(form) %}
             {% if formErrors %}
                 <div class="alert alert-error">

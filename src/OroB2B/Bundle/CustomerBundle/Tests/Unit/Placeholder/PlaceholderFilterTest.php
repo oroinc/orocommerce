@@ -58,4 +58,30 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
             [new AccountUser(), true]
         ];
     }
+
+    /**
+     * @dataProvider isLoginRequiredDataProvider
+     *
+     * @param mixed $user
+     * @param bool $expected
+     */
+    public function testIsLoginRequired($user, $expected)
+    {
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn($user);
+
+        $this->assertEquals($expected, $this->placeholderFilter->isLoginRequired());
+    }
+
+    /**
+     * @return array
+     */
+    public function isLoginRequiredDataProvider()
+    {
+        return [
+            ['none', true],
+            [new AccountUser(), false]
+        ];
+    }
 }
