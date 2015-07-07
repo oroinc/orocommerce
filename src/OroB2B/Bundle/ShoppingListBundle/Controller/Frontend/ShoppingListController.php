@@ -102,7 +102,7 @@ class ShoppingListController extends Controller
      * @Route("/update/{id}", name="orob2b_shopping_list_frontend_update", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
      * @Acl(
-     *      id="orob2b_customer_account_user_update",
+     *      id="orob2b_shopping_list_frontend_update",
      *      type="entity",
      *      class="OroB2BCustomerBundle:AccountUser",
      *      permission="EDIT"
