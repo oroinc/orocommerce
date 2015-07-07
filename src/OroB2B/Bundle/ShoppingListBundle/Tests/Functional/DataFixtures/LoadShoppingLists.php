@@ -18,7 +18,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     /**
      * {@inheritdoc}
      */
-    function getDependencies()
+    public function getDependencies()
     {
         return [
             'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
