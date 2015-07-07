@@ -153,8 +153,6 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-
-
         return [
             'all default types' => [
                 'options' => ['single_form' => false],
@@ -169,7 +167,6 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
             ],
         ];
     }
-
 
     /**
      * @dataProvider submitWithFormSubscribersProvider

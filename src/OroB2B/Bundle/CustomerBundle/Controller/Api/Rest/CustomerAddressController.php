@@ -168,6 +168,9 @@ class CustomerAddressController extends RestController implements ClassResourceI
         return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
     }
 
+    /**
+     * @return \Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+     */
     protected function getCustomerManager()
     {
         return $this->get('orob2b_customer.manager.customer.api.attribute');

@@ -220,7 +220,6 @@ class Customer extends ExtendCustomer
         return $this->addresses;
     }
 
-
     /**
      * Gets one address that has specified type name.
      *

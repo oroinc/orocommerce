@@ -19,6 +19,9 @@ class CustomerAddressControllerTest extends WebTestCase
     /** @var Customer $customer */
     protected $customer;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));

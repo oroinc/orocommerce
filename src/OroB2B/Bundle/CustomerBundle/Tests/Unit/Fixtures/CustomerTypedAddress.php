@@ -9,9 +9,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 class CustomerTypedAddress extends CustomerAddress
 {
-    /**
-     * @var TypedAddressOwner
-     */
+    /** @var TypedAddressOwner */
     protected $owner;
 
     /**
