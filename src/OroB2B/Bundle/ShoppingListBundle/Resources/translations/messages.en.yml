@@ -43,4 +43,5 @@ orob2b:
             unit.label: Unit
             add_line_item: Add Line Item
             save_flash_success: Line Item Saved Successfully
+            new_shopping_list_label: Shopping List Label
 
