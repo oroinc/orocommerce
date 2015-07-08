@@ -27,6 +27,10 @@ class AccountUserController extends Controller
      */
     public function registerAction()
     {
+        if ($this->getUser()) {
+            return $this->redirect($this->generateUrl('orob2b_customer_frontend_account_user_profile'));
+        }
+
         $isRegistrationAllowed = $this->get('oro_config.manager')->get('oro_b2b_customer.registration_allowed');
         if (!$isRegistrationAllowed) {
             throw new AccessDeniedException();

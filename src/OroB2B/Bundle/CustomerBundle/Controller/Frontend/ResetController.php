@@ -26,6 +26,10 @@ class ResetController extends Controller
      */
     public function requestAction()
     {
+        if ($this->getUser()) {
+            return $this->redirect($this->generateUrl('orob2b_customer_frontend_account_user_profile'));
+        }
+
         /** @var AccountUserPasswordRequestHandler $handler */
         $handler = $this->get('orob2b_customer.account_user.password_request.handler');
         $form = $this->createForm(AccountUserPasswordRequestType::NAME);

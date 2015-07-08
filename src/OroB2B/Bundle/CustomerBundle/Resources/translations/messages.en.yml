@@ -56,7 +56,7 @@ orob2b.customer:
         has_role.label:              'Has Role'
 
         profile:
-            registration.title: 'Account User Registration'
+            registration.title: 'Registration'
             register: 'Register'
             forgot_password: 'Forgot Your Password'
             reset_password:
