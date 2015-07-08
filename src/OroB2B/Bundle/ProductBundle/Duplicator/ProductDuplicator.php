@@ -6,16 +6,29 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicator
 {
-    /** @var  ObjectManager */
+    /**
+     * @var ObjectManager
+     */
     protected $objectManager;
 
-    /** @var  EventDispatcher */
+    /**
+     * @var EventDispatcher
+     */
     protected $eventDispatcher;
+
+    /**
+     * @var SkuIncrementor
+     */
+    protected $skuIncrementor;
 
     /**
      * @param ObjectManager $objectManager
@@ -34,6 +47,14 @@ class ProductDuplicator
     }
 
     /**
+     * @param SkuIncrementor $skuIncrementor
+     */
+    public function setSkuIncrementor($skuIncrementor)
+    {
+        $this->skuIncrementor = $skuIncrementor;
+    }
+
+    /**
      * @param Product $product
      * @return Product
      */
@@ -41,10 +62,9 @@ class ProductDuplicator
     {
         $productCopy = clone $product;
 
-        /**
-         * @TODO Replace with SkuIncrementor
-         */
-        $productCopy->setSku($productCopy->getSku() . '-' . time());
+        $productCopy->setSku($this->skuIncrementor->increment($product->getSku()));
+
+        $productCopy->setStatus($this->getDisabledStatus());
 
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
             $unitPrecisionCopy = clone $unitPrecision;
@@ -69,5 +89,17 @@ class ProductDuplicator
         );
 
         return $productCopy;
+    }
+
+    /**
+     * @return null|AbstractEnumValue
+     */
+    private function getDisabledStatus()
+    {
+        $className = ExtendHelper::buildEnumValueClassName('prod_status');
+        /** @var EnumValueRepository $enumRepo */
+        $enumRepo = $this->objectManager->getRepository($className);
+
+        return $enumRepo->find(Product::STATUS_DISABLED);
     }
 }

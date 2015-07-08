@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
-use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -116,15 +115,7 @@ class ProductController extends Controller
      */
     public function duplicateAction(Product $product)
     {
-
-        /**
-         * @TODO move to services.yml
-         */
-        $duplicator = new ProductDuplicator();
-        $duplicator->setObjectManager($this->get('doctrine.orm.entity_manager'));
-        $duplicator->setEventDispatcher($this->get('event_dispatcher'));
-
-        $productCopy = $duplicator->duplicate($product);
+        $productCopy = $this->get('orob2b_product.service.duplicator')->duplicate($product);
 
         return $this->redirect(
             $this->generateUrl(

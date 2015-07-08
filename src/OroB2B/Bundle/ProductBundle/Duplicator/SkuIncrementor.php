@@ -9,15 +9,22 @@ class SkuIncrementor
     const INCREMENTED_SKU_PATTERN = '/^(.*)-\d+$/';
     const SKU_INCREMENT_PATTERN = '/^%s-(\d+)$/';
 
-    /** @var string[] */
+    /**
+     * @var string[]
+     */
     protected $existingIncrementedSku;
 
     /**
-     * @param ObjectManager $manager
+     * @var ObjectManager
      */
-    public function __construct(ObjectManager $manager)
+    protected $objectManager;
+
+    /**
+     * @param ObjectManager $objectManager
+     */
+    public function __construct(ObjectManager $objectManager)
     {
-        $this->manager = $manager;
+        $this->objectManager = $objectManager;
     }
 
     /**
@@ -52,6 +59,8 @@ class SkuIncrementor
 
     private function loadIncrementedSku()
     {
-        $this->existingIncrementedSku = $this->manager->getRepository('OroB2BProductBundle:Product')->getAllSku();
+        $this->existingIncrementedSku = $this->objectManager
+            ->getRepository('OroB2BProductBundle:Product')
+            ->getAllSku();
     }
 }

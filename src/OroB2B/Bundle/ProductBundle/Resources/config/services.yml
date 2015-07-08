@@ -7,6 +7,8 @@ parameters:
     orob2b_product.service.visibility_checker.class: OroB2B\Bundle\ProductBundle\Visibility\VisibilityChecker
     orob2b_product.formatter.product_unit_value.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
+    orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
+    orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
 
 services:
     orob2b_product.form.product:
@@ -52,3 +54,15 @@ services:
         class: %orob2b_product.service.visibility_checker.class%
         arguments:
             - @oro_config.manager
+
+    orob2b_product.service.sku_incrementor:
+        class: %orob2b_product.service.sku_incrementor.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+
+    orob2b_product.service.duplicator:
+        class: %orob2b_product.service.duplicator.class%
+        calls:
+            - [setObjectManager, [@doctrine.orm.entity_manager]]
+            - [setEventDispatcher, [@event_dispatcher]]
+            - [setSkuIncrementor, [@orob2b_product.service.sku_incrementor]]
