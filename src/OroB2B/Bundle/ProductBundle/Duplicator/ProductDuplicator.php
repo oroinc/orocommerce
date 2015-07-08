@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -26,31 +25,22 @@ class ProductDuplicator
     protected $eventDispatcher;
 
     /**
-     * @var SkuIncrementor
+     * @var SkuIncrementorInterface
      */
     protected $skuIncrementor;
 
     /**
      * @param ObjectManager $objectManager
-     */
-    public function setObjectManager(ObjectManager $objectManager)
-    {
-        $this->objectManager = $objectManager;
-    }
-
-    /**
      * @param EventDispatcher $eventDispatcher
+     * @param SkuIncrementorInterface $skuIncrementor
      */
-    public function setEventDispatcher(EventDispatcher $eventDispatcher)
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        EventDispatcher $eventDispatcher,
+        SkuIncrementorInterface $skuIncrementor
+    ) {
+        $this->objectManager = $objectManager;
         $this->eventDispatcher = $eventDispatcher;
-    }
-
-    /**
-     * @param SkuIncrementor $skuIncrementor
-     */
-    public function setSkuIncrementor($skuIncrementor)
-    {
         $this->skuIncrementor = $skuIncrementor;
     }
 
@@ -60,25 +50,7 @@ class ProductDuplicator
      */
     public function duplicate(Product $product)
     {
-        $productCopy = clone $product;
-
-        $productCopy->setSku($this->skuIncrementor->increment($product->getSku()));
-
-        $productCopy->setStatus($this->getDisabledStatus());
-
-        foreach ($product->getUnitPrecisions() as $unitPrecision) {
-            $unitPrecisionCopy = clone $unitPrecision;
-            $productCopy->addUnitPrecision($unitPrecisionCopy);
-        }
-
-        /**
-         * @TODO need to copy file itself
-         */
-        $productCopy->setImage(clone $product->getImage());
-
-        /**
-         * @TODO need to copy attachment
-         */
+        $productCopy = $this->createProductCopy($product);
 
         $this->objectManager->persist($productCopy);
         $this->objectManager->flush($productCopy);
@@ -92,14 +64,50 @@ class ProductDuplicator
     }
 
     /**
-     * @return null|AbstractEnumValue
+     * @param Product $product
+     * @return Product
+     */
+    private function createProductCopy(Product $product)
+    {
+        $productCopy = clone $product;
+
+        $productCopy->setSku($this->skuIncrementor->increment($product->getSku()));
+        $productCopy->setStatus($this->getDisabledStatus());
+
+        $this->cloneChildObjects($product, $productCopy);
+
+        return $productCopy;
+    }
+
+    /**
+     * @param Product $product
+     * @param Product $productCopy
+     */
+    private function cloneChildObjects(Product $product, Product $productCopy)
+    {
+        foreach ($product->getUnitPrecisions() as $unitPrecision) {
+            $productCopy->addUnitPrecision(clone $unitPrecision);
+        }
+
+        /**
+         * @TODO need to copy file itself
+         */
+        if ($image = $product->getImage()) {
+            $productCopy->setImage(clone $image);
+        }
+
+        /**
+         * @TODO need to copy attachment
+         */
+    }
+
+    /**
+     * @return AbstractEnumValue
      */
     private function getDisabledStatus()
     {
         $className = ExtendHelper::buildEnumValueClassName('prod_status');
-        /** @var EnumValueRepository $enumRepo */
-        $enumRepo = $this->objectManager->getRepository($className);
 
-        return $enumRepo->find(Product::STATUS_DISABLED);
+        return $this->objectManager->getRepository($className)->find(Product::STATUS_DISABLED);
     }
 }

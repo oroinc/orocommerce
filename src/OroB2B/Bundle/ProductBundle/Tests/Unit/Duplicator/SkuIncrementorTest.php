@@ -5,9 +5,12 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Duplicator;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
 {
+    const PRODUCT_CLASS = 'OroB2BProductBundle:Product';
+
     /**
      * @var SkuIncrementor
      */
@@ -27,7 +30,7 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->service = new SkuIncrementor($this->manager);
+        $this->service = new SkuIncrementor($this->manager, self::PRODUCT_CLASS);
     }
 
     /**
@@ -38,9 +41,9 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
     public function testIncrementSku(array $existingSku, array $testCases)
     {
         $this->manager
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BProductBundle:Product')
+            ->with(self::PRODUCT_CLASS)
             ->willReturn($this->getProductRepositoryMock($existingSku));
 
         foreach ($testCases as $expected => $sku) {
@@ -55,7 +58,7 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                ['ABC123', 'ABC123-66', 'ABC123-77', 'ABC123-88'],
+                ['ABC123', 'ABC123-66', 'ABC123-77', 'ABC123-88', 'ABC123-89abc'],
                 [
                     'ABC123-89' => 'ABC123-77',
                     'ABC123-90' => 'ABC123-77',
@@ -82,9 +85,17 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $mock
-            ->expects($this->once())
-            ->method('getAllSku')
+            ->expects($this->any())
+            ->method('findAllSkuByPattern')
+            ->withAnyParameters()
             ->willReturn($existingSku);
+
+        $mock
+            ->expects($this->any())
+            ->method('findOneBySku')
+            ->willReturnCallback(function ($sku) use ($existingSku) {
+                return in_array($sku, $existingSku) ? new Product() : null;
+            });
 
         return $mock;
     }

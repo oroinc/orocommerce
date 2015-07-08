@@ -59,10 +59,11 @@ services:
         class: %orob2b_product.service.sku_incrementor.class%
         arguments:
             - @doctrine.orm.entity_manager
+            - %orob2b_product.product.class%
 
     orob2b_product.service.duplicator:
         class: %orob2b_product.service.duplicator.class%
-        calls:
-            - [setObjectManager, [@doctrine.orm.entity_manager]]
-            - [setEventDispatcher, [@event_dispatcher]]
-            - [setSkuIncrementor, [@orob2b_product.service.sku_incrementor]]
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+            - @orob2b_product.service.sku_incrementor
