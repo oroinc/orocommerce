@@ -17,6 +17,7 @@ parameters:
 
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
+    orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -119,3 +120,11 @@ services:
         class: %orob2b_pricing.validator.product_price_currency.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_currency_validator }
+
+    orob2b_pricing.event_listener.product_duplicate:
+        class: %orob2b_pricing.event_listener.product_duplicate.class%
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setObjectManager, [@doctrine.orm.entity_manager]]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
