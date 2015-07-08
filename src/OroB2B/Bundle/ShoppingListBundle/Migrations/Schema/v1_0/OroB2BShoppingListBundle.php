@@ -42,7 +42,7 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('created_at', 'datetime', ['notnull' => false]);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('is_current', 'boolean', []);
+        $table->addColumn('is_current', 'boolean', ['default' => false]);
 
         $table->setPrimaryKey(['id']);
 

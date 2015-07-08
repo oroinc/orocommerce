@@ -169,9 +169,9 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @var bool
      *
-     * @ORM\Column(name="is_current", type="boolean")
+     * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
      */
-    protected $isCurrent;
+    protected $isCurrent = false;
 
     public function __construct()
     {

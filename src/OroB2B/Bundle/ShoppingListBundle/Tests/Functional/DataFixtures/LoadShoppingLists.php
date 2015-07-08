@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -21,7 +22,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
+            'Oro\Component\Testing\Fixtures\LoadAccountUserData'
         ];
     }
 
@@ -74,14 +75,10 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function getAccountUser(EntityManager $manager)
     {
         $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')
-            ->createQueryBuilder('accountUser')
-            ->orderBy('accountUser.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
         if (!$accountUser) {
-            throw new \LogicException('There are no account users in the system');
+            throw new \LogicException('Test account user not loaded');
         }
 
         return $accountUser;
