@@ -396,4 +396,12 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->unitPrecisions = new ArrayCollection();
+        }
+    }
 }

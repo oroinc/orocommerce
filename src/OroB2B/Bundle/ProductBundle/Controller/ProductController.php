@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
+use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -104,7 +105,6 @@ class ProductController extends Controller
      * Duplicate product
      *
      * @Route("/duplicate/{id}", name="orob2b_product_duplicate", requirements={"id"="\d+"})
-     * @Template
      * @Acl(
      *      id="orob2b_product_duplicate",
      *      type="entity",
@@ -112,11 +112,26 @@ class ProductController extends Controller
      *      permission="CREATE"
      * )
      * @param Product $product
-     * @return array|RedirectResponse
+     * @return RedirectResponse
      */
     public function duplicateAction(Product $product)
     {
-        return '';
+
+        /**
+         * @TODO move to services.yml
+         */
+        $duplicator = new ProductDuplicator();
+        $duplicator->setObjectManager($this->get('doctrine.orm.entity_manager'));
+        $duplicator->setEventDispatcher($this->get('event_dispatcher'));
+
+        $productCopy = $duplicator->duplicate($product);
+
+        return $this->redirect(
+            $this->generateUrl(
+                'orob2b_product_view',
+                ['id' => $productCopy->getId()]
+            )
+        );
     }
 
     /**
