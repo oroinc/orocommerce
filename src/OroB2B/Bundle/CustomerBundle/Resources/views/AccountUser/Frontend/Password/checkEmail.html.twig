@@ -1,6 +1,11 @@
-{% extends 'OroUserBundle::layout.html.twig' %}
+{% extends commerce.layout %}
 
-{% block bodyClass %}login-page{% endblock %}
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>{{ 'orob2b.customer.entity_plural_label'|trans }}<span class="divider">/</span></li>
+        <li>{{ 'orob2b.customer.accountuser.entity_plural_label'|trans }}</li>
+    </ul>
+{% endblock %}
 
 {% block content %}
 <div class="container">

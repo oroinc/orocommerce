@@ -1,0 +1,9 @@
+placeholders:
+    header_logo:
+        items:
+            logo:
+                order: 100
+
+items:
+    logo:
+        template: OroB2BFrontendBundle:Organization:logo.html.twig

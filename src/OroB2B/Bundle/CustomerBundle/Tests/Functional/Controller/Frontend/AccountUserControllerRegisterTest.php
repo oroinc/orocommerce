@@ -125,7 +125,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertNotEmpty($user);
         $this->assertTrue($user->isEnabled());
         $this->assertTrue($user->isConfirmed());
-        $this->assertContains('Registration successful', $crawler->filter('.alert-success')->html());
+        $this->assertContains('Registration successful', $crawler->html());
     }
 
     /**
@@ -187,10 +187,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $crawler = $this->client->followRedirect();
         $this->assertEquals('Login', $crawler->filter('h2.title')->html());
-        $this->assertContains(
-            'Please check your email to complete registration',
-            $crawler->filter('.alert-success')->html()
-        );
+        $this->assertContains('Please check your email to complete registration', $crawler->html());
 
         $this->client->followRedirects(true);
 
@@ -301,7 +298,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Login', $crawler->filter('h2.title')->html());
-        $this->assertContains('Password was created successfully.', $crawler->filter('.alert-success')->html());
+        $this->assertContains('Password was created successfully.', $crawler->html());
     }
 
     /**
@@ -363,7 +360,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertEquals('Forgot Your Password', $crawler->filter('h2.title')->html());
         $this->assertContains(
             'Email address "'. $unknownEmail .'" is not known',
-            $crawler->filter('.alert-error')->html()
+            $crawler->html()
         );
     }
 
