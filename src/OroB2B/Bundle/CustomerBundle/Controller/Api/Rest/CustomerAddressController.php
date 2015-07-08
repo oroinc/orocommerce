@@ -68,7 +68,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
     {
         /** @var Customer $customer */
         $customer = $this->getCustomerManager()->find($customerId);
-        $result  = [];
+        $result = [];
 
         if (!empty($customer)) {
             $items = $customer->getAddresses();
