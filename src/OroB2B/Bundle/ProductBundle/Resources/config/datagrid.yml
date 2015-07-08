@@ -147,8 +147,7 @@ datagrid:
             view_link:
                 type:  url
                 route: orob2b_product_frontend_product_view
-                params:
-                    - id
+                params: [ id ]
         sorters:
             columns:
                 sku:

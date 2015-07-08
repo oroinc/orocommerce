@@ -12,6 +12,9 @@ orob2b:
         organization.label: Organization
         line_items.label: Line Items
 
+        product:
+            add_to_shopping_list.label: Add To Shopping List
+
         actions:
             set_current: Set as current
         menu:
