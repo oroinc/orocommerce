@@ -139,26 +139,6 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Frontend entities are not owned by organization
-     */
-    public function testGetGlobalOwnerColumnName()
-    {
-        $metadata = new FrontendOwnershipMetadata();
-        $this->assertFalse($metadata->getGlobalOwnerColumnName());
-    }
-
-    /**
-     * @expectedException \BadMethodCallException
-     * @expectedExceptionMessage Frontend entities are not owned by organization
-     */
-    public function testGetGlobalOwnerFieldName()
-    {
-        $metadata = new FrontendOwnershipMetadata();
-        $this->assertFalse($metadata->getGlobalOwnerFieldName());
-    }
-
-    /**
      * @param array $arguments
      * @param array $levels
      * @dataProvider getAccessLevelNamesDataProvider

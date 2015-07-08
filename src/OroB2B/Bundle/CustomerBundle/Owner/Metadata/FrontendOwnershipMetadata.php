@@ -58,20 +58,4 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
 
         return AccessLevel::getAccessLevelNames($minLevel, $maxLevel);
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGlobalOwnerColumnName()
-    {
-        throw new \BadMethodCallException('Frontend entities are not owned by organization');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getGlobalOwnerFieldName()
-    {
-        throw new \BadMethodCallException('Frontend entities are not owned by organization');
-    }
 }
