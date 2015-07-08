@@ -6,6 +6,6 @@ orob2b:
             quote_product_items:
                 blank: 'Please add one or more offers.'
 
-        quoteproductitem:
+        quoteproductoffer:
             product_unit:
                 blank: 'Please choose existing Unit.'

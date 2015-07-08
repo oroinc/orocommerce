@@ -72,4 +72,24 @@ class QuoteProductTest extends AbstractTest
 
         $this->assertEquals($quoteProduct, $quoteProductRequest->getQuoteProduct());
     }
+
+    public function testGetTypeTitles()
+    {
+        $this->assertEquals(
+            [
+                QuoteProduct::TYPE_OFFER => 'orob2b.sale.quoteproduct.type.offer',
+                QuoteProduct::TYPE_REQUESTED => 'orob2b.sale.quoteproduct.type.requested',
+                QuoteProduct::TYPE_NOT_AVAILABLE => 'orob2b.sale.quoteproduct.type.not_available',
+            ],
+            QuoteProduct::getTypeTitles()
+        );
+    }
+
+    public function testGetTypeTitle()
+    {
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setType(QuoteProduct::TYPE_OFFER);
+
+        $this->assertEquals($quoteProduct->getTypeTitle(), 'orob2b.sale.quoteproduct.type.offer');
+    }
 }
