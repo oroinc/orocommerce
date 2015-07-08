@@ -26,23 +26,28 @@ class RequestProductItemValidator extends ConstraintValidator
         }
 
         if (null === ($requestProduct = $requestProductItem->getRequestProduct())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
         if (null === ($product = $requestProduct->getProduct())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
-        if (null === ($allowedUnits = $product->getAvailableUnitCodes())) {
-            return $this->addViolation($constraint);
+        if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
+            $this->addViolation($constraint);
+            return;
         }
 
         if (null === ($productUnit = $requestProductItem->getProductUnit())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
         if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
     }
 
