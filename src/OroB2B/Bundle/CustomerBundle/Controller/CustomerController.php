@@ -91,9 +91,22 @@ class CustomerController extends Controller
      */
     protected function update(Customer $customer)
     {
+        $options = [];
+        $translator = $this->get('translator');
+        if ($customer->getGroup() && $customer->getGroup()->getPaymentTerm()) {
+            $options['paymentTerm_placeholder'] =
+                $translator->trans(
+                    'orob2b.customer.payment_term_defined_in_group',
+                    ['%payment_term%' => $customer->getGroup()->getPaymentTerm()->getLabel()]
+                );
+        }
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $customer,
-            $this->createForm(CustomerType::NAME, $customer),
+            $this->createForm(
+                CustomerType::NAME,
+                $customer,
+                $options
+            ),
             function (Customer $customer) {
                 return [
                     'route' => 'orob2b_customer_update',

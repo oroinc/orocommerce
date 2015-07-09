@@ -9,6 +9,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 /**
  * @outputBuffering enabled
@@ -27,7 +29,8 @@ class CustomerControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating'
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+                'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'
             ]
         );
     }
@@ -50,7 +53,10 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerGroup $group */
         $group = $this->getReference('customer_group.group1');
         $internalRating = $this->getReference('internal_rating.1 of 5');
-        $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating);
+        $paymentTerm = $this->getReference(LoadPaymentTermData::TERM_LABEL_NET_10);
+
+        $this->assertCustomerPaymentTermText($crawler->html());
+        $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating, $paymentTerm);
     }
 
     /**
@@ -79,7 +85,8 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerGroup $newGroup */
         $newGroup = $this->getReference('customer_group.group2');
         $internalRating = $this->getReference('internal_rating.2 of 5');
-        $this->assertCustomerSave($crawler, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
+        $paymentTerm = $this->getReference(LoadPaymentTermData::TERM_LABEL_NET_30);
+        $this->assertCustomerSave($crawler, self::UPDATED_NAME, $newParent, $newGroup, $internalRating, $paymentTerm);
 
         return $id;
     }
@@ -107,7 +114,46 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerGroup $newGroup */
         $newGroup = $this->getReference('customer_group.group2');
         $internalRating = $this->getReference('internal_rating.2 of 5');
-        $this->assertViewPage($html, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
+        $paymentTerm = $this->getReference(LoadPaymentTermData::TERM_LABEL_NET_30);
+        $this->assertViewPage($html, self::UPDATED_NAME, $newParent, $newGroup, $internalRating, $paymentTerm);
+    }
+
+    /**
+     * @depends testUpdate
+     */
+    public function testUpdateWithEmptyPaymentTerm($id)
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_customer_update', ['id' => $id])
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        /** @var Customer $newParent */
+        $newParent = $this->getReference('customer.level_1.1');
+        /** @var CustomerGroup $newGroup */
+        $newGroup = $this->getReference('customer_group.group2');
+        $internalRating = $this->getReference('internal_rating.2 of 5');
+        $this->assertCustomerSave($crawler, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
+
+        return $id;
+    }
+
+    /**
+     * @depends testUpdateWithEmptyPaymentTerm
+     */
+    public function testUpdateViewAfterEmptyPaymentTerm($id)
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_customer_update', ['id' => $id])
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $paymentTerm = $this->getReference(LoadPaymentTermData::TERM_LABEL_NET_20);
+
+        $this->assertCustomerPaymentTermText($crawler->html(), true, $paymentTerm);
     }
 
     /**
@@ -115,13 +161,16 @@ class CustomerControllerTest extends WebTestCase
      * @param string $name
      * @param Customer $parent
      * @param CustomerGroup $group
+     * @param AbstractEnumValue $internalRating
+     * @param null|PaymentTerm $paymentTerm
      */
     protected function assertCustomerSave(
         Crawler $crawler,
         $name,
         Customer $parent,
         CustomerGroup $group,
-        AbstractEnumValue $internalRating
+        AbstractEnumValue $internalRating,
+        PaymentTerm $paymentTerm = null
     ) {
         $form = $crawler->selectButton('Save and Close')->form(
             [
@@ -129,6 +178,7 @@ class CustomerControllerTest extends WebTestCase
                 'orob2b_customer_type[parent]' => $parent->getId(),
                 'orob2b_customer_type[group]' => $group->getId(),
                 'orob2b_customer_type[internal_rating]' => $internalRating->getId(),
+                'orob2b_customer_type[paymentTerm]' => ($paymentTerm) ? $paymentTerm->getId() : null,
 
             ]
         );
@@ -141,7 +191,11 @@ class CustomerControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Customer has been saved', $html);
-        $this->assertViewPage($html, $name, $parent, $group, $internalRating);
+        if ($paymentTerm) {
+            $this->assertViewPage($html, $name, $parent, $group, $internalRating, $paymentTerm);
+        } else {
+            $this->assertCustomerPaymentTermText($html, true, $group->getPaymentTerm());
+        }
     }
 
     /**
@@ -149,17 +203,47 @@ class CustomerControllerTest extends WebTestCase
      * @param string $name
      * @param Customer $parent
      * @param CustomerGroup $group
+     * @param AbstractEnumValue $internalRating
+     * @param PaymentTerm $paymentTerm
      */
     protected function assertViewPage(
         $html,
         $name,
         Customer $parent,
         CustomerGroup $group,
-        AbstractEnumValue $internalRating
+        AbstractEnumValue $internalRating,
+        PaymentTerm $paymentTerm
     ) {
         $this->assertContains($name, $html);
         $this->assertContains($parent->getName(), $html);
         $this->assertContains($group->getName(), $html);
         $this->assertContains($internalRating->getName(), $html);
+        $this->assertContains($paymentTerm->getLabel(), $html);
+    }
+
+    /**
+     * @param             $html
+     * @param bool        $customerGroupHasPaymentTerm
+     * @param PaymentTerm $paymentTerm
+     */
+    protected function assertCustomerPaymentTermText(
+        $html,
+        $customerGroupHasPaymentTerm = false,
+        PaymentTerm $paymentTerm = null
+    ) {
+        $translator = $this->getContainer()->get('translator');
+
+        if ($customerGroupHasPaymentTerm && $paymentTerm) {
+            $text = $translator->trans(
+                'orob2b.customer.payment_term_defined_in_group',
+                [
+                    '%payment_term%' => $paymentTerm->getLabel()
+                ]
+            );
+        } else {
+            $text = $translator->trans('orob2b.customer.payment_term_non_defined_in_group');
+        }
+
+        $this->assertContains($text, $html);
     }
 }

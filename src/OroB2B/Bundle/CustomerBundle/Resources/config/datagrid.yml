@@ -12,13 +12,17 @@ datagrid:
                     - customer_group.name as group_name
                     - parent.name as parent_name
                     - internalRating.name as internal_rating_name
+                    - payment_term.label as payment_term_label
+                    - customer_group_payment_term.label as customer_group_payement_term_label
                 from:
                     - { table: %orob2b_customer.entity.customer.class%, alias: customer }
                 join:
                     left:
                         - { join: customer.group, alias: customer_group }
+                        - { join: customer_group.paymentTerm, alias: customer_group_payment_term }
                         - { join: customer.parent, alias: parent }
                         - { join: customer.internal_rating, alias: internalRating }
+                        - { join: customer.paymentTerm, alias: payment_term }
         columns:
             name:
                 label: orob2b.customer.name.label
@@ -28,6 +32,11 @@ datagrid:
                 label: orob2b.customer.parent.label
             internal_rating_name:
                 label: orob2b.customer.internal_rating.label
+            payment_term_label:
+                type: twig
+                label: orob2b.customer.payment_term.label
+                frontend_type: html
+                template: OroB2BCustomerBundle:Customer:Datagrid/Property/paymentTerm.html.twig
         properties:
             id: ~
         sorters:
@@ -56,6 +65,9 @@ datagrid:
                 parent_name:
                     type:      string
                     data_name: parent.name
+                payment_term_label:
+                    type:      string
+                    data_name: payment_term.label
 
     customer-customers-grid:
         extends: customer-customers-select-grid
@@ -115,7 +127,7 @@ datagrid:
             name:
                 label: orob2b.customer.customergroup.name.label
             payment_term_label:
-                label: orob2b.customer.customergroup.paymentterm.label
+                label: orob2b.customer.payment_term.label
         properties:
             id: ~
         sorters:
@@ -129,6 +141,9 @@ datagrid:
                 name:
                     type:      string
                     data_name: customer_group.name
+                payment_term_label:
+                    type:      string
+                    data_name: payment_term.label
 
     customer-groups-grid:
         extends: customer-groups-select-grid

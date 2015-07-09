@@ -4,8 +4,10 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 class CustomerType extends AbstractType
 {
@@ -62,8 +64,29 @@ class CustomerType extends AbstractType
                     'required' => false
                 ]
             )
+            ->add(
+                'paymentTerm',
+                PaymentTermSelectType::NAME,
+                [
+                    'label'     => 'orob2b.customer.payment_term.label',
+                    'configs' => [
+                        'placeholder' => $options['paymentTerm_placeholder']
+                    ]
+                ]
+            )
         ;
     }
+
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'paymentTerm_placeholder' => 'orob2b.customer.payment_term_non_defined_in_group'
+        ]);
+    }
+
 
     /**
      * {@inheritdoc}
