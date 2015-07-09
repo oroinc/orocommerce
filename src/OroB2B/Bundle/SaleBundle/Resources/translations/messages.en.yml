@@ -42,6 +42,10 @@ orob2b:
                 requested: 'Requested'
                 offer: 'Offer'
                 not_available: 'Not Available'
+            column:
+                product: 'Product'
+                type: 'Type'
+                quote_product_items: 'Offers'
 
         quoteproductoffer:
             item: '{units}, {price} per {unit}'

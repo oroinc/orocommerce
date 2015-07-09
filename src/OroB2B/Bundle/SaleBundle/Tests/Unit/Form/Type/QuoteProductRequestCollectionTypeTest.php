@@ -37,12 +37,12 @@ class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
                 'type' => QuoteProductRequestType::NAME,
                 'show_form_when_empty' => false,
                 'prototype_name' => '__namequoteproductrequest__',
-                       'allow_add' => false,
+                'allow_add' => false,
                 'allow_delete' => false,
             ])
         ;
 
-            $this->formType->setDefaultOptions($resolver);
+        $this->formType->setDefaultOptions($resolver);
     }
 
     public function testGetParent()
