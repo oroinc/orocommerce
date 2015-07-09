@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\DependencyInjection\Compiler;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+
 use OroB2B\Bundle\CustomerBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
 
 class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
@@ -16,6 +18,7 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
             ->method('addMethodCall')
             ->with('addSupportedClass', $this->isType('array'));
 
+        /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder */
         $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->disableOriginalConstructor()
             ->getMock();
