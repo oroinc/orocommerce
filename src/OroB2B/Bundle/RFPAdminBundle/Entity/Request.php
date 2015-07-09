@@ -2,13 +2,15 @@
 
 namespace OroB2B\Bundle\RFPAdminBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
-use Gedmo\Mapping\Annotation as Gedmo;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPAdminBundle\Model\ExtendRequest;
 
 /**
@@ -25,7 +27,14 @@ use OroB2B\Bundle\RFPAdminBundle\Model\ExtendRequest;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
+ *          },
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="frontendOwner",
+ *              "frontend_owner_column_name"="frontend_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "grouping"={"groups"={"activity"}}
  *      }
@@ -40,6 +49,13 @@ class Request extends ExtendRequest
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $status;
+
+    /**
+     * @var Collection|RequestProduct[]
+     *
+     * @ORM\OneToMany(targetEntity="RequestProduct", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $requestProducts;
 
     /**
      * @var \DateTime
@@ -70,6 +86,22 @@ class Request extends ExtendRequest
     protected $updatedAt;
 
     /**
+     * @var AccountUser|null
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $frontendOwner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -78,5 +110,81 @@ class Request extends ExtendRequest
 
         $this->createdAt  = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt  = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        $this->requestProducts = new ArrayCollection();
+    }
+
+
+    /**
+     * Add requestProducts
+     *
+     * @param RequestProduct $requestProduct
+     * @return Request
+     */
+    public function addRequestProduct(RequestProduct $requestProduct)
+    {
+        if (!$this->requestProducts->contains($requestProduct)) {
+            $this->requestProducts[] = $requestProduct;
+            $requestProduct->setRequest($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove requestProducts
+     *
+     * @param RequestProduct $requestProduct
+     * @return Request
+     */
+    public function removeRequestProduct(RequestProduct $requestProduct)
+    {
+        if ($this->requestProducts->contains($requestProduct)) {
+            $this->requestProducts->removeElement($requestProduct);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get requestProducts
+     *
+     * @return Collection|RequestProduct[]
+     */
+    public function getRequestProducts()
+    {
+        return $this->requestProducts;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param Organization $organization
+     */
+    public function setOrganization(Organization $organization)
+    {
+        $this->organization = $organization;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getFrontendOwner()
+    {
+        return $this->frontendOwner;
+    }
+
+    /**
+     * @param AccountUser $frontendOwner
+     */
+    public function setFrontendOwner(AccountUser $frontendOwner = null)
+    {
+        $this->frontendOwner = $frontendOwner;
     }
 }

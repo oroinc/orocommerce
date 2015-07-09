@@ -40,7 +40,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )

@@ -32,9 +32,6 @@ Nelmio\ApiDocBundle\Annotation\ApiDoc
 OroB2B\Bundle\AttributeBundle\AttributeType\String
 OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
 OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM\AbstractLoadAttributeData
-OroB2B\Bundle\CatalogBundle\Entity\Category
-OroB2B\Bundle\CatalogBundle\Form\Type\CategoryTreeType
-OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture
 Oro\Bundle\ConfigBundle\Config\ConfigManager
 Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder
 Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config

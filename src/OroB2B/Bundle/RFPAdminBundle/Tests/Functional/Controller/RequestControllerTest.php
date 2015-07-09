@@ -133,7 +133,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Request For Proposal Status was successfully changed", $result->getContent());
+        $this->assertContains('Request For Proposal Status was successfully changed', $result->getContent());
 
         $manager->refresh($entity);
 

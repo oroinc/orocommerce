@@ -28,7 +28,7 @@ class RequestStatusTest extends RequestStatusTestCase
 
         $propertyRequestStatus = new RequestStatus();
 
-        $this->assertPropertyAccessors($propertyRequestStatus, $properties);
+        static::assertPropertyAccessors($propertyRequestStatus, $properties);
     }
 
     /**

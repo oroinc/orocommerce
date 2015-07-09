@@ -25,7 +25,10 @@ class ProductSelectTypeStub extends AbstractType
         $resolver->setDefaults([
             'class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
             'property' => 'sku',
-            'create_enabled' => true
+            'create_enabled' => true,
+            'configs' => [
+                'placeholder' => null,
+            ],
         ]);
     }
 

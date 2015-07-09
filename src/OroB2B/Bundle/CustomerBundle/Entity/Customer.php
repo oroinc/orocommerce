@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
@@ -27,17 +28,23 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
  *          "entity"={
  *              "icon"="icon-user"
  *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
  *          "form"={
  *              "form_type"="orob2b_customer_select",
  *              "grid_name"="customer-customers-select-grid",
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
- * @Config()
  */
 class Customer extends ExtendCustomer
 {
@@ -92,6 +99,14 @@ class Customer extends ExtendCustomer
     protected $users;
 
     /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+
+    /**
      * @var PaymentTerm
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
@@ -104,6 +119,8 @@ class Customer extends ExtendCustomer
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->children = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
@@ -239,7 +256,7 @@ class Customer extends ExtendCustomer
     }
 
     /**
-     * @param AccountUser $user
+     * @param AccountUser $accountUser
      * @return Customer
      */
     public function addUser(AccountUser $accountUser)
@@ -274,6 +291,22 @@ class Customer extends ExtendCustomer
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param Organization|null $organization
+     */
+    public function setOrganization(Organization $organization = null)
+    {
+        $this->organization = $organization;
     }
 
     /**

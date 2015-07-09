@@ -7,6 +7,7 @@ orob2b.customer:
     children.label: 'Children'
     id.label: 'Id'
     parent.label: 'Parent'
+    organization.label: 'Organization'
     has_group.label: 'Has group'
     users.label: 'Users'
     form.choose: 'Choose a customer...'
@@ -59,7 +60,7 @@ orob2b.customer:
         has_role.label:              'Has Role'
 
         profile:
-            registration.title: 'Account User Registration'
+            registration.title: 'Registration'
             register: 'Register'
             forgot_password: 'Forgot Your Password'
             reset_password:
@@ -158,3 +159,14 @@ orob2b.customer:
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'
+
+    security:
+        permission:
+            register_account_user: 'Register Account User'
+        access-level:
+            BASIC: 'Account User'
+            LOCAL: 'Customer'
+            DEEP: 'Not supported'
+            GLOBAL: 'Not supported'
+            SYSTEM: 'Full'
+            NONE: 'None'

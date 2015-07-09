@@ -12,6 +12,33 @@ orob2b.rfpadmin:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
+        frontend_owner.label: 'Owner'
+        organization.label: 'Organization'
+        request_products.label: 'Request Products'
+
+    requestproduct:
+        entity_label: 'Request Product'
+        entity_plural_label: 'Request Products'
+        add_label: 'Add Line Item'
+        id.label: 'ID'
+        product.label: 'Product'
+        product_sku.label: 'Product SKU'
+        request.label: 'Request'
+        request_product_items.label: 'Request Product Lines'
+        comment.label: 'Notes'
+
+    requestproductitem:
+        item: '{units}, {price} per {unit}'
+        entity_label: 'Request Product Line'
+        entity_plural_label: 'Request Product Lines'
+        add_label: 'Add Request Item'
+        id.label: 'ID'
+        quantity.label: 'Quantity'
+        product_unit.label: 'Product Unit'
+        product_unit_code.label: 'Product Unit Code'
+        price.label: 'Price'
+        value.label: 'Price Value'
+        currency.label: 'Price Currency'
 
     requeststatus:
         entity_label: 'Request For Proposal Status'
@@ -32,6 +59,7 @@ orob2b.rfpadmin:
     sections:
         general:    'General'
         body:       'Request'
+        request_products: 'Line Items'
         label_translation: 'Labels'
 
     system_configuration:
@@ -46,6 +74,8 @@ orob2b.rfpadmin:
         request_status_not_found: 'Request Status not found'
         request_status_changed: 'Request For Proposal Status was successfully changed'
         request_status_not_deletable: 'Request Status is not deletable'
+        requestproduct.product.removed: '{title} - removed'
+        requestproductitem.unit.removed: '{title} - removed'
 
     datagrid:
         action_restore: 'Restore'
@@ -57,6 +87,10 @@ orob2b.rfpadmin:
 
     widget:
         change_status_title: 'Change Request For Proposal Status'
+
+    controller:
+        request:
+            saved.message: 'Request has been saved'
 
 # We MUST move this section form here in the future!
 orob2b.frontendadmin:

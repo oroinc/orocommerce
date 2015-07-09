@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CurrencyBundle\Tests\Model;
+namespace Oro\Bundle\CurrencyBundle\Tests\Unit\Model;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 

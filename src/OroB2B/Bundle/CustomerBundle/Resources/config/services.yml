@@ -12,6 +12,7 @@ parameters:
     orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.datagrid.action_permission_provider.class: OroB2B\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider
+    orob2b_customer.datagrid.extension.accoun_user.class: OroB2B\Bundle\CustomerBundle\Datagrid\Extension\AccountUserExtension
     orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
     orob2b_account_user.manager.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager
 
@@ -23,6 +24,7 @@ parameters:
     orob2b_customer.account_user.password_reset.handler.class: OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler
 
     orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
+    orob2b_customer.event_listener.login.class: OroB2B\Bundle\CustomerBundle\EventListener\LoginListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
 
@@ -91,6 +93,13 @@ services:
 
     orob2b_customer.datagrid.action_permission_provider:
         class: %orob2b_customer.datagrid.action_permission_provider.class%
+
+    orob2b_customer.datagrid.extension.accoun_user:
+        class: %orob2b_customer.datagrid.extension.accoun_user.class%
+        calls:
+            - [setContainer, [@service_container]]
+        tags:
+            - { name: oro_datagrid.extension }
 
     orob2b_customer.mailer.processor:
         class: %orob2b_customer.mailer.processor.class%
@@ -162,3 +171,8 @@ services:
             - [setClassName, [%orob2b_customer.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
+
+    orob2b_customer.event_listener.login:
+        class: %orob2b_customer.event_listener.login.class%
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }

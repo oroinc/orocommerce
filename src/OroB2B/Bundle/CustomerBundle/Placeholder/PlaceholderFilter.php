@@ -28,4 +28,12 @@ class PlaceholderFilter
     {
         return $this->securityFacade->getLoggedUser() instanceof AccountUser;
     }
+
+    /**
+     * @return bool
+     */
+    public function isLoginRequired()
+    {
+        return !is_object($this->securityFacade->getLoggedUser());
+    }
 }

@@ -11,12 +11,14 @@ security:
             # secure everything started with /account/ except basic user operations
             pattern:                        ^/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
             provider:                       b2b_frontend_user
+            context:                        customer_identity
             organization-form-login:
                 csrf_provider:              form.csrf_provider
                 check_path:                 orob2b_customer_account_user_security_check
                 login_path:                 orob2b_customer_account_user_security_login
             logout:
                 path:                       orob2b_customer_account_user_security_logout
+                invalidate_session:         false
             organization-remember-me:
                 key:                        %secret%
                 name:                       OROCOMMERCE
@@ -27,4 +29,5 @@ security:
         frontend:
             pattern:                        ^/
             provider:                       b2b_frontend_user
+            context:                        customer_identity
             anonymous:                      true
