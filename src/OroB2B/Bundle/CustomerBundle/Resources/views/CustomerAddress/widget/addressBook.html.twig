@@ -16,6 +16,6 @@
             addressUpdateParams: {'customerId': entity.id },
             currentAddresses: render(path('orob2b_api_customer_get_customer_addresses', {customerId: entity.id}))
          } %}
-    <div class="list-box map-box" id="address-book" data-page-component-module="orob2bcustomer/js/app/components/customer-address-book"
+    <div class="list-box map-box" id="address-book" data-page-component-module="orob2bcustomer/js/app/components/customer-address-book-component"
          data-page-component-options="{{ options|json_encode }}"></div>
 </div>
