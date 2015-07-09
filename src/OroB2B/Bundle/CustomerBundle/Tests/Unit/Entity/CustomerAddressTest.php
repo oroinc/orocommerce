@@ -37,8 +37,7 @@ class CustomerAddressTest extends EntityTestCase
      */
     public function testAddressesToTypesCollection()
     {
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $this->address->getAddressesToTypes());
-        $this->assertCount(0, $this->address->getAddressesToTypes());
+        static::assertPropertyCollections($this->address, [['addressesToTypes', new CustomerAddressToAddressType()]]);
 
         $addressToType = $this->createAddressToTypeEntity();
         $this->assertInstanceOf(
