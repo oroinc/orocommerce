@@ -3,111 +3,155 @@
 namespace OroB2B\Bundle\RFPBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+
+use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestChangeStatusHandler;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 
 class RequestController extends Controller
 {
     /**
-     * @Route("/create", name="orob2b_rfp_request_create")
-     * @Method("GET")
-     * @Template()
+     * @Route("/view/{id}", name="orob2b_rfp_request_view", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_rfp_request_view",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="VIEW"
+     * )
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function viewAction(Request $request)
+    {
+        return [
+            'entity' => $request
+        ];
+    }
+
+    /**
+     * @Route("/info/{id}", name="orob2b_rfp_request_info", requirements={"id"="\d+"})
+     * @Template
+     * @AclAncestor("orob2b_rfp_request_view")
+     *
+     * @param Request $request
+     * @return array
+     */
+    public function infoAction(Request $request)
+    {
+        return [
+            'entity' => $request
+        ];
+    }
+
+    /**
+     * @Route("/", name="orob2b_rfp_request_index")
+     * @Template
+     * @AclAncestor("orob2b_rfp_request_view")
      *
      * @return array
      */
-    public function createAction()
+    public function indexAction()
     {
-        $rfpRequest = new RFPRequest();
-
-        $form = $this->createCreateForm($rfpRequest);
-
         return [
-            'entity' => $rfpRequest,
-            'form'   => $form->createView()
+            'entity_class' => $this->container->getParameter('orob2b_rfp.request.class')
         ];
     }
 
     /**
-     * @Route("/create", name="orob2b_rfp_request_process")
-     * @Method("POST")
-     * @Template("OroB2BRFPBundle:Request:create.html.twig")
+     * @Route("/update/{id}", name="orob2b_rfp_request_update", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *     id="orob2b_rfp_request_update",
+     *     type="entity",
+     *     permission="EDIT",
+     *     class="OroB2BRFPBundle:Request"
+     * )
      *
      * @param Request $request
      *
-     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @return array|RedirectResponse
      */
-    public function processAction(Request $request)
+    public function updateAction(Request $request)
     {
-        $rfpRequest = new RFPRequest();
+        return $this->update($request);
+    }
 
-        $form = $this->createCreateForm($rfpRequest);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:Request');
-
-            // Clean body from different stuff
-            $rfpRequest->setBody($this->getPurifier()->purify($rfpRequest->getBody()));
-
-            $em->persist($rfpRequest);
-            $em->flush();
-
-            $this->get('orob2b_email.email_send_processor')->sendRequestCreateNotification($rfpRequest);
-
-            $request->getSession()->getFlashBag()->add(
-                'notice',
-                $this->get('translator')->trans('orob2b.rfp.message.request_saved')
-            );
-
-            return $this->redirect($this->generateUrl('orob2b_rfp_request_create'));
+    /**
+     * @Route("/change_status/{id}", name="orob2b_rfp_request_change_status", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_rfp_request_update",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     * @throws NotFoundHttpException
+     * @return array
+     */
+    public function changeStatusAction(Request $request)
+    {
+        if (!$this->getRequest()->get('_widgetContainer')) {
+            throw $this->createNotFoundException();
         }
 
+        $form = $this->createForm(RequestChangeStatusType::NAME, ['status' => $request->getStatus()]);
+        $handler = new RequestChangeStatusHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:Request'),
+            $this->container->get('templating')
+        );
+
+        $formAction = $this->get('router')->generate('orob2b_rfp_request_change_status', [
+            'id' => $request->getId()
+        ]);
+
         return [
-            'entity' => $rfpRequest,
-            'form'   => $form->createView()
+            'entity'     => $request,
+            'saved'      => $handler->process($request) ? true : false,
+            'form'       => $form->createView(),
+            'formAction' => $formAction
         ];
     }
 
     /**
-     * Creates form for RFPRequest
-     *
-     * @param RFPRequest $rfpRequest
-     *
-     * @return \Symfony\Component\Form\Form
+     * @param Request $request
+     * @return array|RedirectResponse
      */
-    public function createCreateForm(RFPRequest $rfpRequest)
+    protected function update(Request $request)
     {
-        $form = $this->createForm(
-            'orob2b_rfp_request_type',
-            $rfpRequest,
-            [
-                'action' => $this->generateUrl('orob2b_rfp_request_process'),
-                'method' => 'POST',
-            ]
+        /* @var $handler UpdateHandler */
+        $handler = $this->get('oro_form.model.update_handler');
+        return $handler->handleUpdate(
+            $request,
+            $this->createForm(RequestType::NAME, $request),
+            function (Request $request) {
+                return [
+                    'route'         => 'orob2b_rfp_request_update',
+                    'parameters'    => ['id' => $request->getId()]
+                ];
+            },
+            function (Request $request) {
+                return [
+                    'route'         => 'orob2b_rfp_request_view',
+                    'parameters'    => ['id' => $request->getId()]
+                ];
+            },
+            $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
         );
-
-        $form->add('submit', 'submit', [
-            'label' => 'orob2b.rfp.request.submit.label'
-        ]);
-
-        return $form;
-    }
-
-    /**
-     * Creates HTMLPurifier
-     *
-     * @return \HTMLPurifier
-     */
-    public function getPurifier()
-    {
-        $purifierConfig = \HTMLPurifier_Config::createDefault();
-        $purifierConfig->set('HTML.Allowed', '');
-
-        return new \HTMLPurifier($purifierConfig);
     }
 }

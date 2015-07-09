@@ -1,0 +1,36 @@
+oro_system_configuration:
+    groups:
+        frontend_application:
+            title: orob2b.frontendadmin.system_configuration.frontend_application_group_title
+        rfp_settings:
+            title: orob2b.rfp.system_configuration.group_title
+            icon: icon-file
+        rfp_requeststatus_settings:
+            title: orob2b.rfp.system_configuration.requeststatus_group_title
+
+    fields:
+        oro_b2b_rfp.default_request_status:
+            ui_only: true
+            data_type: string
+            type: orob2b_rfp_default_request_status
+            options:
+                label: orob2b.rfp.system_configuration.requeststatus_default_label
+        oro_b2b_rfp.default_user_for_notifications:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            options:
+                label: orob2b.rfp.system_configuration.default_user_for_notifications
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    frontend_application:
+                        children:
+                            rfp_settings:
+                                children:
+                                    rfp_requeststatus_settings:
+                                        children:
+                                            - oro_b2b_rfp.default_request_status
+                                            - oro_b2b_rfp.default_user_for_notifications
