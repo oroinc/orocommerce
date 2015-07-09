@@ -1,0 +1,11 @@
+orob2b:
+    rfpadmin:
+        requestproduct:
+            product:
+                blank: 'Please choose existing Product.'
+            request_product_items:
+                blank: 'Please add one or more requests.'
+
+        requestproductitem:
+            unit:
+                blank: 'Please choose existing Unit.'
