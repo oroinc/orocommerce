@@ -11,3 +11,31 @@
         }) }}
     {% endif %}
 {% endblock %}
+
+{% block content_datagrid %}
+    {% set parameters = {} %}
+
+    {% set renderParams = {
+        'enableFullScreenLayout': true,
+        'enableViews': false
+    } %}
+
+    {% set renderParamsTypes = {
+        'enableFullScreenLayout': 'bool',
+        'enableViews': 'bool'
+    } %}
+
+    {% set widgetRouteParameters = {
+        'gridName': gridName,
+        'parameters': parameters,
+        'renderParams': renderParams,
+        'renderParamsTypes': renderParamsTypes
+    } %}
+
+    {{ oro_widget_render({
+        'widgetType': 'block',
+        'url': path('oro_datagrid_widget', widgetRouteParameters),
+        'title': '',
+        'alias': 'products-grid-widget'
+    }) }}
+{% endblock %}
