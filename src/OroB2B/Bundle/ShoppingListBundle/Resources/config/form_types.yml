@@ -9,14 +9,28 @@ services:
             - { name: form.type, alias: orob2b_shopping_list_type }
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
-            
+
     orob2b_shopping_list.form.type.line_item:
         class: %orob2b_shopping_list.form.type.line_item.class%
         arguments:
             - @doctrine
-            - @orob2b_product.service.rounding
+            - @orob2b_shopping_list.line_item.manager
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setProductClass, [%orob2b_product.product.class%]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_line_item }
+
+    orob2b_shopping_list.form.type.add_product:
+        class: %orob2b_shopping_list.form.type.add_product.class%
+        arguments:
+            - @doctrine
+            - @orob2b_shopping_list.line_item.manager
+            - @orob2b_shopping_list.shopping_list.manager
+            - @security.context
+        calls:
+            - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
+            - [setProductClass, [%orob2b_product.product.class%]]
+            - [setShoppingListClass, [%%orob2b_shopping_list.entity.shopping_list.class%%]]
+        tags:
+            - { name: form.type, alias: orob2b_shopping_list_add_product }
