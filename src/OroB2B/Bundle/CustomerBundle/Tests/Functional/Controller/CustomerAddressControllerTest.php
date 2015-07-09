@@ -19,6 +19,9 @@ class CustomerAddressControllerTest extends WebTestCase
     /** @var Customer $customer */
     protected $customer;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -224,7 +227,7 @@ class CustomerAddressControllerTest extends WebTestCase
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $crawler = $this->client->request(
-            'GET',
+            'DELETE',
             $this->getUrl(
                 'orob2b_api_customer_delete_customer_address',
                 ['customerId' => $customerId, 'addressId' => $address['id']]

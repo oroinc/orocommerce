@@ -14,6 +14,15 @@ class CustomerTypedAddressType extends AbstractType
 {
     const NAME = 'orob2b_customer_typed_address';
 
+    /** @var string */
+    protected $dataClass;
+
+    /** @var string */
+    protected $addressTypeDataClass;
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['single_form'] && $options['all_addresses_property_path']) {
@@ -30,7 +39,7 @@ class CustomerTypedAddressType extends AbstractType
                 'types',
                 'translatable_entity',
                 [
-                    'class'    => 'OroAddressBundle:AddressType',
+                    'class'    => $this->addressTypeDataClass,
                     'property' => 'label',
                     'required' => false,
                     'multiple' => true,
@@ -39,9 +48,9 @@ class CustomerTypedAddressType extends AbstractType
             )
             ->add(
                 'defaults',
-                'orob2b_customer_typed_address_with_default',
+                CustomerTypedAddressWithDefaultType::NAME,
                 [
-                    'class'    => 'OroAddressBundle:AddressType',
+                    'class'    => $this->addressTypeDataClass,
                     'required' => false,
                 ]
             )
@@ -54,11 +63,14 @@ class CustomerTypedAddressType extends AbstractType
             );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
             [
-                'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress',
+                'data_class' => $this->dataClass,
                 'single_form' => true,
                 'all_addresses_property_path' => 'owner.addresses'
             ]
@@ -79,5 +91,21 @@ class CustomerTypedAddressType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param mixed $addressTypeDataClass
+     */
+    public function setAddressTypeDataClass($addressTypeDataClass)
+    {
+        $this->addressTypeDataClass = $addressTypeDataClass;
     }
 }

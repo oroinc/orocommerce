@@ -10,7 +10,7 @@ orob2b.customer:
     organization.label: 'Organization'
     has_group.label: 'Has group'
     users.label: 'Users'
-    addresses.label: ''
+    addresses.label: 'Addresses'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
 

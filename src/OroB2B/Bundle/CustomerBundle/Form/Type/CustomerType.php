@@ -11,6 +11,9 @@ class CustomerType extends AbstractType
 {
     const NAME = 'orob2b_customer_type';
 
+    /** @var string */
+    protected $addressClass;
+
     /**
      * {@inheritdoc}
      */
@@ -42,7 +45,7 @@ class CustomerType extends AbstractType
                     'type'     => CustomerTypedAddressType::NAME,
                     'required' => true,
                     'options'  => [
-                        'data_class'  => 'OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress',
+                        'data_class'  => $this->addressClass,
                         'single_form' => false
                     ]
                 ]
@@ -68,5 +71,13 @@ class CustomerType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param string $addressClass
+     */
+    public function setAddressClass($addressClass)
+    {
+        $this->addressClass = $addressClass;
     }
 }

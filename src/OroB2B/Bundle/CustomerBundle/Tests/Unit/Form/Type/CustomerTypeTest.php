@@ -2,6 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
@@ -11,24 +16,28 @@ use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
 class CustomerTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * @var CustomerType
-     */
+    /** @var CustomerType */
     protected $formType;
+
+    /** @var EntityManager */
     protected $entityManager;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         parent::setUp();
 
         $this->formType = new CustomerType();
+        $this->formType->setAddressClass('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->formType);

@@ -15,9 +15,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class CustomerTypedAddressWithDefaultType extends AbstractType
 {
     const NAME = 'orob2b_customer_typed_address_with_default';
-    /**
-     * @var ManagerRegistry
-     */
+
+    /** @var ManagerRegistry */
     protected $registry;
 
     public function buildForm(FormBuilderInterface $builder, array $options)

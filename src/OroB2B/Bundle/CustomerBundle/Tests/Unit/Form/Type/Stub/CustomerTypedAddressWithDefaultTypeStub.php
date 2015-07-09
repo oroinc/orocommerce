@@ -17,12 +17,19 @@ class CustomerTypedAddressWithDefaultTypeStub extends AbstractType
     protected $em;
     protected $types;
 
+    /**
+     * @param $types
+     * @param $em
+     */
     public function __construct($types, $em)
     {
         $this->types = $types;
         $this->em = $em;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $choices = [];
@@ -40,6 +47,9 @@ class CustomerTypedAddressWithDefaultTypeStub extends AbstractType
         ->addViewTransformer(new AddressTypeDefaultTransformer($this->em));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([

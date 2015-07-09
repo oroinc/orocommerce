@@ -21,9 +21,7 @@ use Doctrine\ORM\EntityRepository;
 
 class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var ContainerInterface */
     protected $container;
 
     /** @var ObjectRepository|EntityRepository */
@@ -86,13 +84,16 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
             $accountUser
                 ->getCustomer()
                 ->addAddress($this->createCustomerAddress($row));
-
         }
 
         fclose($handler);
         $manager->flush();
     }
 
+    /**
+     * @param array $data
+     * @return CustomerAddress
+     */
     protected function createCustomerAddress(array $data)
     {
         /** @var Country $country */

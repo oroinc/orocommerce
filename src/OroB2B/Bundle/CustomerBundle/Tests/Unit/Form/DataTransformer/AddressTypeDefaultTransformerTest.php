@@ -2,20 +2,35 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\DataTransformer;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 use OroB2B\Bundle\CustomerBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
 class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var EntityManager  */
     protected $em;
+
+    /** @var EntityRepository  */
     protected $addressRepository;
 
     /** @var AddressTypeDefaultTransformer */
     protected $transformer;
+
+    /** @var AddressType */
     protected $billingAddressType;
+
+    /** @var AddressType */
     protected $shippingAddressType;
 
+    /**
+     * @param null   $name
+     * @param array  $data
+     * @param string $dataName
+     */
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
@@ -47,6 +62,9 @@ class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
             }));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->transformer = new AddressTypeDefaultTransformer($this->em);
@@ -62,6 +80,9 @@ class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->transformer->transform($parameters));
     }
 
+    /**
+     * @return array
+     */
     public function transformerProvider()
     {
         return [
@@ -86,6 +107,9 @@ class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->transformer->reverseTransform($parameters));
     }
 
+    /**
+     * @return array
+     */
     public function reverseTransformerProvider()
     {
         return [
@@ -125,6 +149,9 @@ class AddressTypeDefaultTransformerTest extends \PHPUnit_Framework_TestCase
         return $repo;
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     protected function createEntityManagerMock()
     {
         return $this->getMockBuilder('Doctrine\ORM\EntityManager')

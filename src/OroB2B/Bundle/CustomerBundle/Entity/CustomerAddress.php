@@ -175,7 +175,9 @@ class CustomerAddress extends ExtendCustomerAddress
      */
     public function addAddressesToType(CustomerAddressToAddressType $addressesToTypes)
     {
-        $this->addressesToTypes[] = $addressesToTypes;
+        if (!$this->getAddressesToTypes()->contains($addressesToTypes)) {
+            $this->addressesToTypes[] = $addressesToTypes;
+        }
 
         return $this;
     }
