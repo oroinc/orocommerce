@@ -27,6 +27,8 @@ class ShoppingListManager
     /**
      * @param AccountUser $accountUser
      * @param string      $label
+     *
+     * @return ShoppingList
      */
     public function createCurrent(AccountUser $accountUser, $label = 'Default')
     {
@@ -39,6 +41,8 @@ class ShoppingListManager
             ->setLabel($label);
 
         $this->setCurrent($accountUser, $shoppingList);
+
+        return $shoppingList;
     }
 
     /**

@@ -1,17 +1,19 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class AddProductType extends AbstractType
 {
@@ -28,18 +30,47 @@ class AddProductType extends AbstractType
     protected $registry;
 
     /**
-     * @var RoundingService
+     * @var string
      */
-    protected $roundingService;
+    protected $productClass;
+
+    /**
+     * @var LineItemManager
+     */
+    protected $lineItemManager;
+
+    /**
+     * @var ShoppingListManager
+     */
+    protected $shoppingListManager;
+
+    /**
+     * @var AccountUser
+     */
+    protected $accountUser;
+
+    /**
+     * @var string
+     */
+    protected $shoppingListClass;
 
     /**
      * @param ManagerRegistry $registry
-     * @param RoundingService $roundingService
+     * @param LineItemManager $lineItemManager
+     * @param ShoppingListManager $shoppingListManager
+     * @param SecurityContext $securityContext
      */
-    public function __construct(ManagerRegistry $registry, RoundingService $roundingService)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        LineItemManager $lineItemManager,
+        ShoppingListManager $shoppingListManager,
+        SecurityContext $securityContext
+    ) {
         $this->registry = $registry;
-        $this->roundingService = $roundingService;
+        $this->lineItemManager = $lineItemManager;
+        $this->shoppingListManager = $shoppingListManager;
+
+        $this->accountUser = $securityContext->getToken()->getUser();
     }
 
     /**
@@ -47,17 +78,28 @@ class AddProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var LineItem $data */
-        $data = $builder->getData();
-        $isExisting = $data && $data->getId();
+        $accountUser = $this->accountUser;
 
         $builder
             ->add(
                 'shoppingList',
-                ShoppingListSelectType::NAME,
+                'entity',
                 [
-                    'required' => true,
-                    'label' => 'orob2b.pricing.productprice.product.label'
+                    'required' => false,
+                    'label' => 'orob2b.pricing.productprice.product.label',
+                    'class' => $this->shoppingListClass,
+                    'query_builder' => function (EntityRepository $repository) use ($accountUser) {
+                        $qb = $repository->createQueryBuilder('sl');
+
+                        return $qb->where(
+                            $qb->expr()->orX(
+                                'sl.accountUser = :accountUser',
+                                'sl.account = :account'
+                            )
+                        )
+                        ->setParameter('accountUser', $accountUser)
+                        ->setParameter('account', $accountUser->getCustomer());
+                    }
                 ]
             )
             ->add(
@@ -90,18 +132,6 @@ class AddProductType extends AbstractType
     }
 
     /**
-     * @param string $productClass
-     *
-     * @return $this
-     */
-    public function setDataClass($productClass)
-    {
-        $this->dataClass = $productClass;
-
-        return $this;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -114,10 +144,71 @@ class AddProductType extends AbstractType
     }
 
     /**
+     * @param FormEvent $event
+     */
+    public function preSubmitData(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        // Create new current shopping list
+        if (!$event->getForm()->get('shoppingList') && $data['shoppingListLabel']) {
+            $shoppingList = $this->shoppingListManager->createCurrent($this->accountUser, $data['shoppingListLabel']);
+            $data['shoppingList'] = $shoppingList->getId();
+
+            $event->setData($data);
+        }
+
+        // Round quantity
+        if (!isset($data['unit'], $data['quantity'])) {
+            return;
+        }
+
+        /** @var Product $product */
+        $product = $this->registry
+            ->getRepository($this->productClass)
+            ->find($data['product']);
+
+        if ($product) {
+            $data['quantity'] = $this->lineItemManager
+                ->roundProductQuantity($product, $data['unit'], $data['quantity']);
+
+            $event->setData($data);
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param string $productClass
+     *
+     * @return $this
+     */
+    public function setDataClass($productClass)
+    {
+        $this->dataClass = $productClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $productClass
+     */
+    public function setProductClass($productClass)
+    {
+        $this->productClass = $productClass;
+    }
+
+    /**
+     * @param string $shoppingListClass
+     */
+    public function setShoppingListClass($shoppingListClass)
+    {
+        $this->shoppingListClass = $shoppingListClass;
     }
 }

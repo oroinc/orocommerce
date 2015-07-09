@@ -42,7 +42,7 @@ class AjaxLineItemController extends Controller
     public function addProductAction(Product $product)
     {
         return [
-            'form' => $this->createForm(AddProductType::NAME)
+            //'form' => $this->createForm(AddProductType::NAME)->createView()
         ];
     }
 }
