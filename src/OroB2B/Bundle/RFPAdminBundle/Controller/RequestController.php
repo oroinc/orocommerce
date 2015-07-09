@@ -3,16 +3,20 @@
 namespace OroB2B\Bundle\RFPAdminBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Form\Handler\RequestChangeStatusHandler;
 use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestChangeStatusType;
+use OroB2B\Bundle\RFPAdminBundle\Form\Type\RequestType;
 
 class RequestController extends Controller
 {
@@ -66,6 +70,25 @@ class RequestController extends Controller
     }
 
     /**
+     * @Route("/update/{id}", name="orob2b_rfp_admin_request_update", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *     id="orob2b_rfp_admin_request_update",
+     *     type="entity",
+     *     permission="EDIT",
+     *     class="OroB2BRFPAdminBundle:Request"
+     * )
+     *
+     * @param Request $request
+     *
+     * @return array|RedirectResponse
+     */
+    public function updateAction(Request $request)
+    {
+        return $this->update($request);
+    }
+
+    /**
      * @Route("/change_status/{id}", name="orob2b_rfp_admin_request_change_status", requirements={"id"="\d+"})
      * @Template
      * @Acl(
@@ -76,6 +99,7 @@ class RequestController extends Controller
      * )
      *
      * @param Request $request
+     * @throws NotFoundHttpException
      * @return array
      */
     public function changeStatusAction(Request $request)
@@ -102,5 +126,32 @@ class RequestController extends Controller
             'form'       => $form->createView(),
             'formAction' => $formAction
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @return array|RedirectResponse
+     */
+    protected function update(Request $request)
+    {
+        /* @var $handler UpdateHandler */
+        $handler = $this->get('oro_form.model.update_handler');
+        return $handler->handleUpdate(
+            $request,
+            $this->createForm(RequestType::NAME, $request),
+            function (Request $request) {
+                return [
+                    'route'         => 'orob2b_rfp_admin_request_update',
+                    'parameters'    => ['id' => $request->getId()]
+                ];
+            },
+            function (Request $request) {
+                return [
+                    'route'         => 'orob2b_rfp_admin_request_view',
+                    'parameters'    => ['id' => $request->getId()]
+                ];
+            },
+            $this->get('translator')->trans('orob2b.rfpadmin.controller.request.saved.message')
+        );
     }
 }
