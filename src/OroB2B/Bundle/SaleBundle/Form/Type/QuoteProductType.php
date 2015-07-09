@@ -112,15 +112,18 @@ class QuoteProductType extends AbstractType
         if ($quoteProduct && null !== $quoteProduct->getId()) {
             $product = $quoteProduct->getProduct();
             if (!$product) {
-                $form->add('product', null, [
-                        'required' => true,
-                        'label' => 'orob2b.product.entity_label',
-                        'empty_value' => $this->translator->trans(
-                            'orob2b.sale.quoteproduct.product.removed',
-                            [
-                                '{title}' => $quoteProduct->getProductSku(),
-                            ]
-                        ),
+                $emptyValueTitle = $this->translator->trans(
+                    'orob2b.rfpadmin.message.requestproductitem.unit.removed',
+                    [
+                        '{title}' => $quoteProduct->getProductSku(),
+                    ]
+                );
+                $form->add('product', ProductSelectType::NAME, [
+                    'required' => true,
+                    'label' => 'orob2b.product.entity_label',
+                    'configs' => [
+                        'placeholder' => $emptyValueTitle,
+                    ],
                 ]);
             }
         }
