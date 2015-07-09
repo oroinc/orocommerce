@@ -4,8 +4,6 @@ parameters:
     orob2b_rfp_admin.datagrid.action_permission_provider.class: OroB2B\Bundle\RFPAdminBundle\Datagrid\ActionPermissionProvider
     #Validators
     orob2b_rfp_admin.validator.request_product_item.class: OroB2B\Bundle\RFPAdminBundle\Validator\Constraints\RequestProductItemValidator
-    #Twig extensions
-    orob2b_rfp_admin.twig.request.class: OroB2B\Bundle\RFPAdminBundle\Twig\RequestExtension
 
 services:
     orob2b_rfp_admin.datagrid.action_permission_provider:
@@ -17,13 +15,3 @@ services:
         class: %orob2b_rfp_admin.validator.request_product_item.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_rfp_admin.validator.request_product_item }
-
-    orob2b_rfp_admin.twig.request:
-        class: %orob2b_rfp_admin.twig.request.class%
-        arguments:
-            - @translator
-            - @oro_locale.formatter.number
-            - @orob2b_product.formatter.product_unit_value
-            - @orob2b_product.formatter.product_unit_label
-        tags:
-            - { name: twig.extension }

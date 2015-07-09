@@ -14,8 +14,7 @@ class RequestProductItemValidator extends ConstraintValidator
      * {@inheritdoc}
      *
      * @param RequestProductItemEntity $requestProductItem
-     * @param RequestProductItem $constraint
-     * @throws UnexpectedTypeException
+     * @param Constraint $constraint
      */
     public function validate($requestProductItem, Constraint $constraint)
     {
@@ -26,13 +25,37 @@ class RequestProductItemValidator extends ConstraintValidator
             );
         }
 
-        $product        = $requestProductItem->getRequestProduct()->getProduct();
-        $allowedUnits   = $product ? $product->getAvailableUnitCodes() : [];
-        $productUnit    = $requestProductItem->getProductUnit();
-        $code           = $productUnit ? $productUnit->getCode() : null;
-
-        if (!in_array($code, $allowedUnits, true)) {
-            $this->context->addViolationAt('productUnit', $constraint->message);
+        if (null === ($requestProduct = $requestProductItem->getRequestProduct())) {
+            $this->addViolation($constraint);
+            return;
         }
+
+        if (null === ($product = $requestProduct->getProduct())) {
+            $this->addViolation($constraint);
+            return;
+        }
+
+        if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
+            $this->addViolation($constraint);
+            return;
+        }
+
+        if (null === ($productUnit = $requestProductItem->getProductUnit())) {
+            $this->addViolation($constraint);
+            return;
+        }
+
+        if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
+            $this->addViolation($constraint);
+            return;
+        }
+    }
+
+    /**
+     * @param RequestProductItem $constraint
+     */
+    protected function addViolation(RequestProductItem $constraint)
+    {
+        $this->context->addViolationAt('productUnit', $constraint->message);
     }
 }

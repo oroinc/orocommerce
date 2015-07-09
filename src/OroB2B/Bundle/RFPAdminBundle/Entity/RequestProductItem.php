@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\RFPAdminBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -47,7 +47,7 @@ class RequestProductItem
     /**
      * @var float
      *
-     * @ORM\Column(name="quantity", type="float")
+     * @ORM\Column(name="quantity", type="float", nullable=true)
      */
     protected $quantity;
 
@@ -69,14 +69,14 @@ class RequestProductItem
     /**
      * @var float
      *
-     * @ORM\Column(name="value", type="money")
+     * @ORM\Column(name="value", type="money", nullable=true)
      */
     protected $value;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="currency", type="string", length=3)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
      */
     protected $currency;
 
@@ -194,9 +194,10 @@ class RequestProductItem
      * @param Price $price
      * @return RequestProductItem
      */
-    public function setPrice(Price $price)
+    public function setPrice(Price $price = null)
     {
         $this->price = $price;
+
         $this->updatePrice();
 
         return $this;
@@ -215,7 +216,9 @@ class RequestProductItem
      */
     public function loadPrice()
     {
-        $this->price = Price::create($this->value, $this->currency);
+        if ($this->value && $this->currency) {
+            $this->price = Price::create($this->value, $this->currency);
+        }
     }
 
     /**
@@ -224,7 +227,7 @@ class RequestProductItem
      */
     public function updatePrice()
     {
-        $this->value    = $this->price->getValue();
-        $this->currency = $this->price->getCurrency();
+        $this->value    = $this->price ? $this->price->getValue() : null;
+        $this->currency = $this->price ? $this->price->getCurrency() : null;
     }
 }

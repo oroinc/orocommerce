@@ -8,13 +8,16 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPAdminBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -49,6 +52,18 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     abstract public function submitProvider();
 
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getValidators()
+    {
+        $requestProductItemConstraint = new Constraints\RequestProductItem();
+        return [
+            $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
+        ];
+    }
+
     /**
      * @return PriceType
      */
@@ -56,6 +71,17 @@ abstract class AbstractTest extends FormIntegrationTestCase
     {
         $price = new PriceType();
         $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
+
+        return $price;
+    }
+
+    /**
+     * @return OptionalPriceType
+     */
+    protected function prepareOptionalPriceType()
+    {
+        $price = new OptionalPriceType();
+        $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\OptionalPrice');
 
         return $price;
     }
@@ -76,6 +102,21 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $products[3] = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3);
 
         return new EntityType($products);
+    }
+
+    /**
+     * @param array $codes
+     * @return ProductUnit[]
+     */
+    protected function getProductUnits(array $codes)
+    {
+        $res = [];
+
+        foreach ($codes as $code) {
+            $res[] = (new ProductUnit())->setCode($code);
+        }
+
+        return $res;
     }
 
     /**
@@ -106,6 +147,16 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @param float $value
+     * @param string $currency
+     * @return OptionalPrice
+     */
+    protected function createPrice($value, $currency)
+    {
+        return OptionalPrice::create($value, $currency);
+    }
+
+    /**
      * @param string $className
      * @param int $id
      * @param string $primaryKey
@@ -132,19 +183,28 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int $productId
+     * @param string $comment
      * @param RequestProductItem[] $items
      * @return RequestProduct
      */
-    protected function getRequestProduct($productId, array $items = [])
+    protected function getRequestProduct($productId = null, $comment = null, array $items = [])
     {
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+        $product = null;
 
-        foreach ($this->getProductUnitPrecisions() as $precision) {
-            $product->addUnitPrecision($precision);
+        if ($productId) {
+            $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+
+            foreach ($this->getProductUnitPrecisions() as $precision) {
+                $product->addUnitPrecision($precision);
+            }
         }
 
         $requestProduct = new RequestProduct();
-        $requestProduct->setProduct($product);
+        $requestProduct
+            ->setRequest($this->getEntity('OroB2B\Bundle\RFPAdminBundle\Entity\Request', $productId))
+            ->setProduct($product)
+            ->setComment($comment)
+        ;
 
         foreach ($items as $item) {
             $requestProduct->addRequestProductItem($item);
@@ -157,11 +217,15 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $productId
      * @param int $quantity
      * @param string $unitCode
-     * @param Price $price
+     * @param OptionalPrice $price
      * @return RequestProductItem
      */
-    protected function getRequestProductItem($productId, $quantity = null, $unitCode = null, Price $price = null)
-    {
+    protected function getRequestProductItem(
+        $productId,
+        $quantity = null,
+        $unitCode = null,
+        OptionalPrice $price = null
+    ) {
         $requestProductItem = new RequestProductItem();
         $requestProductItem->setRequestProduct($this->getRequestProduct($productId));
 

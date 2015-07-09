@@ -11,7 +11,7 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
@@ -118,9 +118,9 @@ class LoadRequestDemoData extends AbstractFixture implements
     protected function getCurrencies()
     {
         $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-        if (empty($currencies)) {
-            $currency = $this->container->get('oro_locale.settings')->getCurrency();
-            $currencies = $currency ? [$currency] : [];
+
+        if (!$currencies) {
+            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
         }
 
         if (!$currencies) {
@@ -138,16 +138,18 @@ class LoadRequestDemoData extends AbstractFixture implements
     {
         $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
-        for ($i = 0; $i < rand(1, 3); $i++) {
+        for ($i = 0; $i < rand(1, 10); $i++) {
             $product = $products[rand(0, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
+
+            if (!count($unitPrecisions)) {
+                continue;
+            }
+
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
             $requestProduct->setComment(sprintf('Notes %s', $i));
-            for ($j = 0; $j < rand(0, 3); $j++) {
-                if (!count($unitPrecisions)) {
-                    continue;
-                }
+            for ($j = 0; $j < rand(1, 10); $j++) {
                 $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];
