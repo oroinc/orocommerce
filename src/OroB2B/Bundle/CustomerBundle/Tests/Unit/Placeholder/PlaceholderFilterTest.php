@@ -36,7 +36,7 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider isUserApplicableDataProvider
      *
-     * @param object $user
+     * @param object|string $user
      * @param bool $expected
      */
     public function testIsUserApplicable($user, $expected)
