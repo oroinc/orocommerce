@@ -21,3 +21,24 @@
     margin-left: 4px;
     width: 293px;
 }
+
+.product-container .product-index-content {
+    margin-left: 335px;
+}
+
+.product-container .product-sidebar {
+    position: absolute;
+    padding-left: 20px;
+}
+
+.product-container .tier-price-choice label {
+    float: left;
+}
+
+.product-container .tier-price-choice label {
+    float: left;
+}
+
+.product-container .tier-price-choice input {
+    margin: 0 10px !important;
+}

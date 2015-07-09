@@ -11,3 +11,14 @@
         }) }}
     {% endif %}
 {% endblock %}
+
+{% block content_datagrid %}
+    <div class="product-container">
+        <div class="product-sidebar">
+            {% placeholder product_index_sidebar %}
+        </div>
+        <div class="product-index-content">
+            {{ parent() }}
+        </div>
+    </div>
+{% endblock content_datagrid %}
