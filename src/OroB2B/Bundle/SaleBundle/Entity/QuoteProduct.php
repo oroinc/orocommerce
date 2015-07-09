@@ -142,6 +142,36 @@ class QuoteProduct
     }
 
     /**
+     * Check that type is TYPE_OFFER
+     *
+     * @return boolean
+     */
+    public function isTypeOffer()
+    {
+        return static::TYPE_OFFER === $this->getType();
+    }
+
+    /**
+     * Check that type is TYPE_REQUESTED
+     *
+     * @return boolean
+     */
+    public function isTypeRequested()
+    {
+        return static::TYPE_REQUESTED === $this->getType();
+    }
+
+    /**
+     * Check that type is TYPE_NOT_AVAILABLE
+     *
+     * @return boolean
+     */
+    public function isTypeNotAvailable()
+    {
+        return static::TYPE_NOT_AVAILABLE === $this->getType();
+    }
+
+    /**
      * Get Type Title
      *
      * @return string
