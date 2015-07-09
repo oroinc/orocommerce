@@ -40,7 +40,7 @@ class RequestStatusRepositoryTest extends WebTestCase
             ->getRepository('OroB2BRFPAdminBundle:RequestStatus')
             ->getNotDeletedStatuses();
 
-        $this->assertCount(5, $statuses); // 3 from fixtures + 2 deafult
+        $this->assertCount(5, $statuses); // 3 from fixtures + 2 default
 
         foreach ($statuses as $status) {
             $this->assertInstanceOf('OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus', $status);
