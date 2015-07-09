@@ -7,6 +7,8 @@ use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
+use OroB2B\Bundle\CustomerBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
+
 class OroB2BCustomerExtension extends Extension
 {
     const ALIAS = 'oro_b2b_customer';
@@ -25,6 +27,7 @@ class OroB2BCustomerExtension extends Extension
         $loader->load('ownership.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
+        $container->addCompilerPass(new OwnerTreeListenerPass());
     }
 
     /**
