@@ -1,6 +1,8 @@
 parameters:
     orob2b_payment.entity.payment_term.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
     orob2b_payment.payment_term.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_payment.payment_term.manager.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTermManager
+    orob2b_payment.twig.delete_message_text_extension.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -10,6 +12,13 @@ services:
             - %orob2b_payment.entity.payment_term.class%
             - @doctrine.orm.entity_manager
 
+    orob2b_payment.payment_term.manager:
+        class: %orob2b_payment.payment_term.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+            - @translator
+            - @router
+
     orob2b_payment.form.autocomplete.payment_term.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
@@ -18,3 +27,10 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_payment_term, acl_resource: orob2b_payment_term_view }
         lazy: true
+
+    orob2b_payment.twig.delete_message_text_extension:
+        class: %orob2b_payment.twig.delete_message_text_extension.class%
+        arguments:
+            - @orob2b_payment.payment_term.manager
+        tags:
+            - { name: twig.extension }

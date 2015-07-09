@@ -1,0 +1,10 @@
+{% set customerPaymentTermLabel = record.getValue('payment_term_label') %}
+{% set customerGroupPaymentTermLabel = record.getValue('customer_group_payement_term_label') %}
+
+{% if customerPaymentTermLabel %}
+    {{ customerPaymentTermLabel }}
+{% elseif customerGroupPaymentTermLabel %}
+    {{ 'orob2b.customer.payment_term_defined_in_group'|trans({'%payment_term%': customerGroupPaymentTermLabel }) }}
+{% else %}
+    {{ 'orob2b.customer.payment_term_non_defined_in_group'|trans }}
+{% endif %}

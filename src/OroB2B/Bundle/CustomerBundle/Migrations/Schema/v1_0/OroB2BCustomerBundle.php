@@ -148,10 +148,12 @@ class OroB2BCustomerBundle implements
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_name_idx', []);
+        $table->addIndex(['payment_term_id'], 'orob2b_customer_to_payment_term_idx', []);
 
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
@@ -208,7 +210,7 @@ class OroB2BCustomerBundle implements
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['name'], 'orob2b_customer_group_name_idx', []);
-        $table->addIndex(['payment_term_id'], 'IDX_5A485C2B17653B16', []);
+        $table->addIndex(['payment_term_id'], 'orob2b_customer_group_to_payment_term_idx', []);
     }
 
     /**
@@ -333,6 +335,12 @@ class OroB2BCustomerBundle implements
         $table->addForeignKeyConstraint(
             $table,
             ['parent_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_B2B_PAYMENT_TABLE_NAME),
+            ['payment_term_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

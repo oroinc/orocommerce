@@ -22,7 +22,8 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
         return [
             'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerInternalRatingDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData'
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
+            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData'
 
         ];
     }
@@ -45,6 +46,9 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
         $firstLevelGroup = $customerGroupRepository->findOneBy(['name' => 'First']);
         $secondLevelGroup = $customerGroupRepository->findOneBy(['name' => 'Second']);
 
+        $paymentTermRepository = $manager->getRepository('OroB2BPaymentBundle:PaymentTerm');
+        $paymentTerms = $paymentTermRepository->findAll();
+
         // create customers
         foreach ($accountUsers as $index => $accountUser) {
             $customer = $accountUser->getCustomer();
@@ -54,13 +58,17 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
                     $rootCustomer = $customer;
                     break;
                 case 1:
-                    $customer->setGroup($firstLevelGroup)
-                        ->setParent($rootCustomer);
+                    $customer
+                        ->setGroup($firstLevelGroup)
+                        ->setParent($rootCustomer)
+                        ->setPaymentTerm($paymentTerms[array_rand($paymentTerms)]);
                     $firstLevelCustomer = $customer;
                     break;
                 case 2:
-                    $customer->setGroup($secondLevelGroup)
-                        ->setParent($firstLevelCustomer);
+                    $customer
+                        ->setGroup($secondLevelGroup)
+                        ->setParent($firstLevelCustomer)
+                        ->setPaymentTerm($paymentTerms[array_rand($paymentTerms)]);
                     break;
             }
             $customer->setInternalRating($internalRatings[array_rand($internalRatings)]);

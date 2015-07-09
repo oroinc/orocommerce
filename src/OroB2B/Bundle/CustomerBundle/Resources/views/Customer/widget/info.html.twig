@@ -59,6 +59,16 @@
             {% if entity.getInternalRating and is_granted('VIEW', entity.getInternalRating)%}
                 {{ UI.renderProperty('orob2b.customer.internal_rating.label'|trans, entity.getInternalRating.name) }}
             {% endif %}
+            {% if entity.paymentTerm and is_granted('VIEW', entity.paymentTerm)%}
+                {{ UI.renderProperty('orob2b.customer.payment_term.label'|trans, entity.paymentTerm.label) }}
+            {% elseif entity.group and is_granted('VIEW', entity.group) %}
+                {% if entity.group.paymentTerm and is_granted('VIEW', entity.group.paymentTerm) %}
+                    {% set paymentTermData = 'orob2b.customer.payment_term_defined_in_group'|trans({'%payment_term%': entity.group.paymentTerm.label})%}
+                {% else %}
+                    {% set paymentTermData = 'orob2b.customer.payment_term_non_defined_in_group'|trans %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.customer.payment_term.label'|trans, paymentTermData) }}
+            {% endif %}
         </div>
     </div>
 </div>

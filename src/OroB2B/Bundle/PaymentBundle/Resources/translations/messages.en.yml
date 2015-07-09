@@ -16,6 +16,8 @@ orob2b:
 
         controller:
             paymentterm.saved.message: Payment term has been saved
+            paymentterm.delete.with_two_url.message: It is currently being used by some %accounts% and %account_groups%.
+            paymentterm.delete.with_url.message: ' It is currently being used by some %url%.'
 
         sections:
             general_information: General information
