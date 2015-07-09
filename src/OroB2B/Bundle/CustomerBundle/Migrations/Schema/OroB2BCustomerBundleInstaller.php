@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\CustomerBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
@@ -23,6 +25,7 @@ class OroB2BCustomerBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
     AttachmentExtensionAwareInterface,
+    ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
 
@@ -40,6 +43,8 @@ class OroB2BCustomerBundleInstaller implements
     const ORO_DICTIONARY_REGION_TABLE_NAME = 'oro_dictionary_region';
     const ORO_DICTIONARY_COUNTRY_TABLE_NAME = 'oro_dictionary_country';
     const ORO_ADDRESS_TYPE_TABLE_NAME = 'oro_address_type';
+    const ORO_EMAIL = 'oro_email';
+    const ORO_CALENDAR_EVENT = 'oro_calendar_event';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -49,6 +54,9 @@ class OroB2BCustomerBundleInstaller implements
 
     /** @var AttachmentExtension */
     protected $attachmentExtension;
+
+    /** @var ActivityExtension */
+    protected $activityExtension;
 
     /**
      * Sets the AttachmentExtension
@@ -70,6 +78,15 @@ class OroB2BCustomerBundleInstaller implements
         $this->noteExtension = $noteExtension;
     }
 
+    /**
+     * Sets the ActivityExtension
+     *
+     * @param ActivityExtension $activityExtension
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -151,6 +168,36 @@ class OroB2BCustomerBundleInstaller implements
 
         $table->addUniqueIndex(['username'], 'UNIQ_689CD865F85E0677');
         $table->addUniqueIndex(['email'], 'UNIQ_689CD865E7927C74');
+
+        $this->attachmentExtension->addAttachmentAssociation(
+            $schema,
+            static::ORO_B2B_ACCOUNT_USER_TABLE_NAME,
+            [
+                'image/*',
+                'application/pdf',
+                'application/zip',
+                'application/x-gzip',
+                'application/msword',
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-powerpoint',
+                'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+            ]
+        );
+
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            static::ORO_EMAIL,
+            static::ORO_B2B_ACCOUNT_USER_TABLE_NAME
+        );
+        $this->activityExtension->addActivityAssociation(
+            $schema,
+            static::ORO_CALENDAR_EVENT,
+            static::ORO_B2B_ACCOUNT_USER_TABLE_NAME
+        );
     }
 
     /**

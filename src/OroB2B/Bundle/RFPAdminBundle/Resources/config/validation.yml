@@ -21,6 +21,40 @@ OroB2B\Bundle\RFPAdminBundle\Entity\Request:
         role:
             - Length:
                 max: 255
+        requestProducts:
+            - Valid: ~
+
+OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct:
+    properties:
+        request:
+            - NotBlank: ~
+        product:
+            - NotBlank:
+                message: 'orob2b.rfpadmin.requestproduct.product.blank'
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
+        requestProductItems:
+            - OroB2B\Bundle\RFPAdminBundle\Validator\Constraints\Count:
+                minMessage: 'orob2b.rfpadmin.requestproduct.request_product_items.blank'
+            - Valid: ~
+
+OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem:
+    constraints:
+        - OroB2B\Bundle\RFPAdminBundle\Validator\Constraints\RequestProductItem: ~
+    properties:
+        requestProduct:
+            - NotBlank: ~
+        quantity:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank: ~
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - Valid: ~
 
 OroB2B\Bundle\RFPAdminBundle\Entity\RequestStatus:
     constraints:

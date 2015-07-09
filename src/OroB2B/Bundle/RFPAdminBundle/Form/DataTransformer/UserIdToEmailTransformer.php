@@ -25,6 +25,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
 
     /**
      * @param string $email
+     * @throws TransformationFailedException
      * @return null|int
      */
     public function transform($email)
@@ -47,6 +48,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
 
     /**
      * @param mixed $value
+     * @throws TransformationFailedException
      * @return string|null
      */
     public function reverseTransform($value)

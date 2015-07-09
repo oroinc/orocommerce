@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
 class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -13,7 +14,7 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
     protected $extension;
 
     /**
-     * @var \OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $formatter;
 
