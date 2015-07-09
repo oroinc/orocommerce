@@ -185,11 +185,16 @@ class CustomerAddress extends ExtendCustomerAddress
     /**
      * Remove addressesToTypes
      *
-     * @param CustomerAddressToAddressType $addressesToTypes
+     * @param CustomerAddressToAddressType $addressesToType
+     * @return $this
      */
-    public function removeAddressesToType(CustomerAddressToAddressType $addressesToTypes)
+    public function removeAddressesToType(CustomerAddressToAddressType $addressesToType)
     {
-        $this->addressesToTypes->removeElement($addressesToTypes);
+        if ($this->hasAddressToType($addressesToType)) {
+            $this->addressesToTypes->removeElement($addressesToType);
+        }
+
+        return $this;
     }
 
     /**
@@ -200,6 +205,15 @@ class CustomerAddress extends ExtendCustomerAddress
     public function getAddressesToTypes()
     {
         return $this->addressesToTypes;
+    }
+
+    /**
+     * @param CustomerAddressToAddressType $addressToType
+     * @return bool
+     */
+    protected function hasAddressToType(CustomerAddressToAddressType $addressToType)
+    {
+        return $this->getAddressesToTypes()->contains($addressToType);
     }
 
     /**

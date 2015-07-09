@@ -204,10 +204,15 @@ class Customer extends ExtendCustomer
      * Remove addresses
      *
      * @param CustomerAddress $addresses
+     * @return $this
      */
     public function removeAddress(CustomerAddress $addresses)
     {
-        $this->addresses->removeElement($addresses);
+        if ($this->hasAddress($addresses)) {
+            $this->addresses->removeElement($addresses);
+        }
+
+        return $this;
     }
 
     /**
@@ -218,6 +223,15 @@ class Customer extends ExtendCustomer
     public function getAddresses()
     {
         return $this->addresses;
+    }
+
+    /**
+     * @param CustomerAddress $address
+     * @return bool
+     */
+    protected function hasAddress(CustomerAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
     }
 
     /**
