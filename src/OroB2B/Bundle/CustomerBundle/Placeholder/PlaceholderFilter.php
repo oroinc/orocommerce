@@ -36,4 +36,14 @@ class PlaceholderFilter
     {
         return !is_object($this->securityFacade->getLoggedUser());
     }
+
+    /**
+     * @return bool
+     */
+    public function isFrontendApplicable()
+    {
+        $user = $this->securityFacade->getLoggedUser();
+
+        return !is_object($user) || $user instanceof AccountUser;
+    }
 }
