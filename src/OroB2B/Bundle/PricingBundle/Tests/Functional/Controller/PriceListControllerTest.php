@@ -19,6 +19,7 @@ class PriceListControllerTest extends WebTestCase
     const PRICE_LIST_NAME = 'oldPriceList';
     const PRICE_LIST_NAME_EDIT = 'newPriceList';
     const CURRENCY = 'USD';
+    const ADD_NOTE_BUTTON_NAME = 'Add note';
 
     protected function setUp()
     {
@@ -110,6 +111,7 @@ class PriceListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertContains(self::PRICE_LIST_NAME, $crawler->html());
+        $this->assertContains(self::ADD_NOTE_BUTTON_NAME, $crawler->html());
 
         return $id;
     }
