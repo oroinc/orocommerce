@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Form\Type\TierProductPriceType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
+use OroB2B\Bundle\PricingBundle\Form\Type\TierProductPriceType;
 
 class ProductController extends Controller
 {
