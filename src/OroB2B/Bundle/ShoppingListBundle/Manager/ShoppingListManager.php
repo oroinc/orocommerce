@@ -17,7 +17,7 @@ class ShoppingListManager
     protected $manager;
 
     /**
-     * @param ManagerRegistry $manager
+     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -26,8 +26,9 @@ class ShoppingListManager
 
     /**
      * @param AccountUser $accountUser
+     * @param string      $label
      */
-    public function createCurrent(AccountUser $accountUser)
+    public function createCurrent(AccountUser $accountUser, $label = 'Default')
     {
         $shoppingList = new ShoppingList();
         $shoppingList
@@ -35,7 +36,7 @@ class ShoppingListManager
             ->setOrganization($accountUser->getOrganization())
             ->setAccount($accountUser->getCustomer())
             ->setAccountUser($accountUser)
-            ->setLabel('Default');
+            ->setLabel($label);
 
         $this->setCurrent($accountUser, $shoppingList);
     }

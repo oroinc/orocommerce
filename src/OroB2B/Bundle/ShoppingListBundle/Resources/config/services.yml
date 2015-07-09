@@ -3,6 +3,8 @@ parameters:
     orob2b_shopping_list.shopping_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_shopping_list.entity.line_item.class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
     orob2b_shopping_list.shopping_list.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager
+    orob2b_shopping_list.form.type.shopping_list_select.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListSelectType
+    orob2b_shopping_list.form.type.add_product.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType
 
 services:
     orob2b_shopping_list.line_item.manager.api:
@@ -22,3 +24,18 @@ services:
         class: %orob2b_shopping_list.shopping_list.manager.class%
         arguments:
             - @doctrine
+    orob2b_shopping_list.form.type.add_product:
+        class: %orob2b_shopping_list.form.type.add_product.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.service.rounding
+        calls:
+            - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_shopping_list_add_product }
+    orob2b_shopping_list.form.type.shopping_list_select:
+        class: %orob2b_shopping_list.form.type.shopping_list_select.class%
+        calls:
+            - [setDataClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_shopping_list_select }

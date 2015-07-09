@@ -199,7 +199,7 @@ datagrid:
                 frontend_type: html
                 template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
             notes:
-                label:         orob2b.shoppinglist.lineitem.notes_label
+                label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:
             columns:
                 productSku:
