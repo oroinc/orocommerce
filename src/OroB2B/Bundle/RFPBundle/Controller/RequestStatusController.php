@@ -61,7 +61,7 @@ class RequestStatusController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.request.status.class')
+            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.status.class')
         ];
     }
 
@@ -111,7 +111,9 @@ class RequestStatusController extends Controller
         $handler = new RequestStatusHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:RequestStatus')
+            $this->getDoctrine()->getManagerForClass(
+                $this->container->getParameter('orob2b_rfp.entity.request.status.class')
+            )
         );
         $handler->setDefaultLocale($this->container->getParameter('stof_doctrine_extensions.default_locale'));
 

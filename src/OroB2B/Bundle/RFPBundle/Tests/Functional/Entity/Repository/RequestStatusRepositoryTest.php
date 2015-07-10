@@ -63,11 +63,7 @@ class RequestStatusRepositoryTest extends WebTestCase
         foreach ($statuses as $status) {
             $this->assertInstanceOf('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', $status);
 
-            if ($status->getName() == 'deleted') {
-                $this->assertTrue($status->getDeleted());
-            } else {
-                $this->assertFalse($status->getDeleted());
-            }
+            $this->assertEquals($status->getName() === 'deleted', $status->getDeleted());
         }
     }
 }

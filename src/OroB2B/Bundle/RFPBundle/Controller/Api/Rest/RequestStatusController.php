@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Controller\Api\Rest;
 
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -40,8 +41,11 @@ class RequestStatusController extends FOSRestController implements ClassResource
      */
     public function deleteAction($id)
     {
-        $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
-        $requestStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
+        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $em = $this->get('doctrine')->getManagerForClass($requestStatusClass);
+
+        /** @var RequestStatus $requestStatus */
+        $requestStatus = $em->getRepository($requestStatusClass)->find($id);
 
         if (null === $requestStatus) {
             return $this->handleView(
@@ -78,8 +82,9 @@ class RequestStatusController extends FOSRestController implements ClassResource
      */
     public function restoreAction($id)
     {
-        $em = $this->get('doctrine')->getManagerForClass('OroB2BRFPBundle:RequestStatus');
-        $requestStatus = $em->getRepository('OroB2BRFPBundle:RequestStatus')->find($id);
+        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $em = $this->get('doctrine')->getManagerForClass($requestStatusClass);
+        $requestStatus = $em->getRepository($requestStatusClass)->find($id);
 
         if (null === $requestStatus) {
             return new JsonResponse(

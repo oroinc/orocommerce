@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Unit\Datagrid\Action;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 
 use OroB2B\Bundle\RFPBundle\Datagrid\Action\RequestChangeStatusDialogAction;
@@ -18,6 +20,7 @@ class RequestChangeStatusDialogActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetOptions(array $actionOptions, $link, $title, $translatedTitle)
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         if (count($actionOptions) > 1) {

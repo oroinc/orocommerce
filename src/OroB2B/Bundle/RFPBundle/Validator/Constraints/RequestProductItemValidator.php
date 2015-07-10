@@ -14,7 +14,7 @@ class RequestProductItemValidator extends ConstraintValidator
      * {@inheritdoc}
      *
      * @param RequestProductItemEntity $requestProductItem
-     * @param Constraint $constraint
+     * @param Constraint|RequestProductItem $constraint
      */
     public function validate($requestProductItem, Constraint $constraint)
     {

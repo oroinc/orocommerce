@@ -7,7 +7,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 
 class RequestStatusSelectType extends AbstractType
@@ -73,7 +72,7 @@ class RequestStatusSelectType extends AbstractType
     }
 
     /**
-     * @return RequestStatus[]
+     * {@inheritdoc}
      */
     public function getName()
     {

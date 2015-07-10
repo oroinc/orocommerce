@@ -91,6 +91,8 @@ class RequestStatusControllerTest extends WebTestCase
      * Test view
      *
      * @depends testUpdate
+     * @param int $id
+     * @return int
      */
     public function testView($id)
     {
