@@ -15,7 +15,6 @@ class PaymentTermManagerTest extends \PHPUnit_Framework_TestCase
     const ADDITIONAL_TEXT_FOR_CUSTOMER_ONLY = ' with customer link';
     const ADDITIONAL_TEXT_FOR_CUSTOMER_GROUP_ONLY = ' with customer link';
 
-
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject
      */
@@ -31,11 +30,20 @@ class PaymentTermManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected $router;
 
+    /**
+     * @var PaymentTermManager
+     */
     protected $paymentTermManager;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
     protected $customerRepository;
-    protected $customerGroupRepository;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $customerGroupRepository;
 
     protected function setUp()
     {
@@ -77,7 +85,6 @@ class PaymentTermManagerTest extends \PHPUnit_Framework_TestCase
             ->with(['paymentTerm' => $paymentTerm])
             ->will($this->returnValue($customer));
 
-
         $this->customerGroupRepository->expects($this->any())
             ->method('findBy')
             ->with(['paymentTerm' => $paymentTerm])
@@ -118,6 +125,9 @@ class PaymentTermManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedData, $this->paymentTermManager->getDeleteMessageText($paymentTerm));
     }
 
+    /**
+     * @return array
+     */
     public function deleteTextDataProvider()
     {
         return [
