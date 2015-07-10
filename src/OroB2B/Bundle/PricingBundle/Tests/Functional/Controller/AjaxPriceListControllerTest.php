@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\Intl\Intl;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use Symfony\Component\Intl\Intl;
 
 /**
  * @dbIsolation
