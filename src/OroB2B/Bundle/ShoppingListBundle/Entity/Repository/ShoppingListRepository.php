@@ -33,7 +33,7 @@ class ShoppingListRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('shopping_list');
 
-        $qb
+        return $qb
             ->select('shopping_list')
             ->where($qb->expr()->in('shopping_list.label', ':labels'))
             ->setParameter('labels', $labels)
