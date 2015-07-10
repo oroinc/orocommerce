@@ -190,6 +190,10 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
         return $em;
     }
 
+    /**
+     * @param $em
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     private function createManagerRegistryMock($em)
     {
         $registry = $this->getMockBuilder('\Doctrine\Common\Persistence\ManagerRegistry')
@@ -205,6 +209,9 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
         return $registry;
     }
 
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     private function createClassMetadataMock()
     {
         $classMetadata = $this->getMockBuilder('\Doctrine\ORM\Mapping\ClassMetadataInfo')
@@ -224,6 +231,10 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
         return $classMetadata;
     }
 
+    /**
+     * @param $field
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     public function createReflectionProperty($field)
     {
         $class = $this->getMockBuilder('\ReflectionProperty')
