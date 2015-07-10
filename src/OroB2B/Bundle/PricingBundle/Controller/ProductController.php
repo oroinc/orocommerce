@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\PricingBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Symfony\Component\Form\Form;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
-use OroB2B\Bundle\PricingBundle\Form\Type\TierProductPriceType;
 
 class ProductController extends Controller
 {
@@ -41,7 +41,19 @@ class ProductController extends Controller
 
         return [
             'priceList' => $priceListForm->createView(),
-            'tierPrice' => $this->createForm(TierProductPriceType::NAME)->createView()
+            'tierPrice' => $this->createTierPriceForm()->createView()
         ];
+    }
+
+    /**
+     * @return Form
+     */
+    protected function createTierPriceForm()
+    {
+        return $this->createForm(
+            'checkbox',
+            null,
+            ['label' => 'orob2b.pricing.productprice.tier_price.label', 'required' => false]
+        );
     }
 }
