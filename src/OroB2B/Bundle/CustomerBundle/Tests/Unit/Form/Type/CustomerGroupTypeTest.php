@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -11,6 +9,8 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 class CustomerGroupTypeTest extends FormIntegrationTestCase
 {

@@ -24,7 +24,6 @@ class LoadCustomerGroupDemoData extends AbstractFixture implements DependentFixt
         ];
     }
 
-
     private function getData()
     {
         return [
@@ -33,6 +32,7 @@ class LoadCustomerGroupDemoData extends AbstractFixture implements DependentFixt
             'Second'
         ];
     }
+
     /**
      * {@inheritdoc}
      */
