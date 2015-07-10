@@ -2,11 +2,12 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class LineItemHandler
 {

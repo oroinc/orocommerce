@@ -1,7 +1,6 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Controller;
 
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 
 class AjaxLineItemController extends Controller
 {
