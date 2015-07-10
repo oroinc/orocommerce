@@ -54,7 +54,6 @@ class LineItemHandler
                     $this->savedId = $existingLineItem->getId();
                 } else {
                     $this->om->persist($lineItem);
-                    $this->savedId = $lineItem->getId();
                 }
 
                 $this->om->flush();
@@ -74,7 +73,9 @@ class LineItemHandler
      */
     public function updateSavedId(array $result)
     {
-        $result['savedId'] = $this->savedId;
+        if ($this->savedId) {
+            $result['savedId'] = $this->savedId;
+        }
 
         return $result;
     }
