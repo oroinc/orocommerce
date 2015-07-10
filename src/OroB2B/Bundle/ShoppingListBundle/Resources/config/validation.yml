@@ -1,0 +1,23 @@
+OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
+    constraints:
+        - OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItem:
+            groups: [update]
+    properties:
+        product:
+            - NotNull:
+                groups: [create, update]
+        quantity:
+            - Type:
+                type: numeric
+                groups: [create, update]
+            - Range:
+                min: 1
+                groups: [create, update]
+        unit:
+            - NotNull:
+                groups: [create, update]
+
+OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    properties:
+        label:
+            - NotNull: ~
