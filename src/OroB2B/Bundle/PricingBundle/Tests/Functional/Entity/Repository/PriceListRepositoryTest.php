@@ -26,31 +26,38 @@ class PriceListRepositoryTest extends WebTestCase
 
     public function testDefaultState()
     {
-        $this->assertEquals([$this->getReference('price_list_3')], $this->getDefaultPriceList());
+        $this->assertEquals([$this->getReference('price_list_3')], $this->getDefaultPriceLists());
 
         $repository = $this->getRepository();
 
         $repository->dropDefaults();
-        $this->assertEquals([], $this->getDefaultPriceList());
+        $this->assertEquals([], $this->getDefaultPriceLists());
 
         /** @var PriceList $priceList1 */
         $priceList1 = $this->getReference('price_list_1');
         $repository->setDefault($priceList1);
-        $this->assertEquals([$priceList1], $this->getDefaultPriceList());
+        $this->assertEquals([$priceList1], $this->getDefaultPriceLists());
 
         /** @var PriceList $priceList2 */
         $priceList2 = $this->getReference('price_list_2');
         $repository->setDefault($priceList2);
-        $this->assertEquals([$priceList2], $this->getDefaultPriceList());
+        $this->assertEquals([$priceList2], $this->getDefaultPriceLists());
 
         $repository->dropDefaults();
-        $this->assertEquals([], $this->getDefaultPriceList());
+        $this->assertEquals([], $this->getDefaultPriceLists());
+    }
+
+    public function testGetDefault()
+    {
+        $defaultPriceLists = $this->getDefaultPriceLists();
+
+        $this->assertEquals(reset($defaultPriceLists), $this->getRepository()->getDefault());
     }
 
     /**
      * @return array|PriceList[]
      */
-    public function getDefaultPriceList()
+    public function getDefaultPriceLists()
     {
         return $this->getRepository()->findBy(['default' => true]);
     }

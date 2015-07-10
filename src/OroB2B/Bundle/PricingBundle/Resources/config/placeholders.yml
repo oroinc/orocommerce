@@ -1,0 +1,8 @@
+placeholders:
+    product_index_sidebar:
+        items:
+            product_sidebar_price_list_selector: ~
+
+items:
+    product_sidebar_price_list_selector:
+        action: OroB2BPricingBundle:Product:sidebar
