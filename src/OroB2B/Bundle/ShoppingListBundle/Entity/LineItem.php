@@ -20,7 +20,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *          )
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository")
  * @Config(
  *      defaultValues={
  *          "security"={

@@ -1,6 +1,7 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Controller;
 
+use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -74,8 +75,19 @@ class AjaxLineItemController extends Controller
     protected function update(LineItem $lineItem)
     {
         $form = $this->createForm(LineItemType::NAME, $lineItem);
+        $handler = null;
 
-        return $this->get('oro_form.model.update_handler')
-            ->handleUpdate($lineItem, $form, null, null, null);
+        if ($lineItem->getId() === null) {
+            $handler = new LineItemHandler($form, $this->getRequest(), $this->getDoctrine()->getManager());
+        }
+
+        $result = $this->get('oro_form.model.update_handler')
+            ->handleUpdate($lineItem, $form, null, null, null, $handler);
+
+        if ($handler) {
+            $result = $handler->updateSavedId($result);
+        }
+
+        return $result;
     }
 }

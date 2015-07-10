@@ -1,0 +1,16 @@
+OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
+    properties:
+        product:
+            - NotNull: ~
+        quantity:
+            - Type:
+                type: numeric
+            - Range:
+                min: 1
+        unit:
+            - NotNull: ~
+
+OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    properties:
+        label:
+            - NotNull: ~

@@ -33,3 +33,5 @@ orob2b:
             unit.label: Unit
             add_line_item: Add Line Item
 
+            controller:
+                saved.message: Line Item Saved Successfully
