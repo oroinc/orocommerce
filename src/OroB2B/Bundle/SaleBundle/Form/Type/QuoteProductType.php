@@ -188,7 +188,8 @@ class QuoteProductType extends AbstractType
     protected function replaceProductField(
         QuoteProduct $quoteProduct,
         FormInterface $form,
-        $field, $label,
+        $field,
+        $label,
         $emptyLabel = null
     ) {
         $options = [
@@ -198,12 +199,9 @@ class QuoteProductType extends AbstractType
         ];
 
         if ($emptyLabel) {
-            $emptyValueTitle = $this->translator->trans(
-               $emptyLabel,
-                [
-                    '{title}' => $quoteProduct->getProductSku(),
-                ]
-            );
+            $emptyValueTitle = $this->translator->trans($emptyLabel, [
+                '{title}' => $quoteProduct->getProductSku(),
+            ]);
 
             $options['configs'] = [
                 'placeholder' => $emptyValueTitle,
