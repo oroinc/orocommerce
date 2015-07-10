@@ -6,7 +6,9 @@ parameters:
     orob2b_product.service.rounding.class: OroB2B\Bundle\ProductBundle\Rounding\RoundingService
     orob2b_product.service.visibility_checker.class: OroB2B\Bundle\ProductBundle\Visibility\VisibilityChecker
     orob2b_product.formatter.product_unit_value.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
+    orob2b_product.formatter.product_unit_label.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
+    orob2b_product.twig.product_unit_label.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension
 
 services:
     orob2b_product.form.product:
@@ -32,10 +34,22 @@ services:
         arguments:
             - @translator
 
+    orob2b_product.formatter.product_unit_label:
+        class: %orob2b_product.formatter.product_unit_label.class%
+        arguments:
+            - @translator
+
     orob2b_product.twig.product_unit_value:
         class: %orob2b_product.twig.product_unit_value.class%
         arguments:
             - @orob2b_product.formatter.product_unit_value
+        tags:
+            - { name: twig.extension }
+
+    orob2b_product.twig.product_unit_label:
+        class: %orob2b_product.twig.product_unit_label.class%
+        arguments:
+            - @orob2b_product.formatter.product_unit_label
         tags:
             - { name: twig.extension }
 

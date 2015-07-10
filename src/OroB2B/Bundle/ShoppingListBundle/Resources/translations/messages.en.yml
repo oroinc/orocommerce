@@ -45,3 +45,5 @@ orob2b:
             save_flash_success: Line Item Saved Successfully
             new_shopping_list_label: Shopping List Label
 
+            controller:
+                saved.message: Line Item Saved Successfully

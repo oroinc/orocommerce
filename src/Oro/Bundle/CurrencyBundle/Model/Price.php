@@ -11,25 +11,26 @@ class Price
     protected $currency;
 
     /**
-     * @return float
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
      * @param float $value
      * @param string $currency
      * @return Price
      */
     public static function create($value, $currency)
     {
-        $price = new self();
+        /* @var $price self */
+        $price = new static();
         $price->setValue($value)
             ->setCurrency($currency);
 
         return $price;
+    }
+
+    /**
+     * @return float
+     */
+    public function getValue()
+    {
+        return $this->value;
     }
 
     /**
