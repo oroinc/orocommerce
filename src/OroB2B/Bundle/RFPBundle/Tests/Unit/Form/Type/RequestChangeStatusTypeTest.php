@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
@@ -34,9 +35,8 @@ class RequestChangeStatusTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->at(0))
             ->method('add')
             ->with(

@@ -65,7 +65,7 @@ class RequestController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.request.class')
+            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class')
         ];
     }
 
@@ -112,7 +112,9 @@ class RequestController extends Controller
         $handler = new RequestChangeStatusHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:Request'),
+            $this->getDoctrine()->getManagerForClass(
+                $this->container->getParameter('orob2b_rfp.entity.request.class')
+            ),
             $this->container->get('templating')
         );
 

@@ -32,8 +32,6 @@ class RequestTest extends EntityTestCase
     {
         $date = new \DateTime();
 
-        $propertyStatus = new RequestStatus();
-
         $properties = [
             ['id', 42],
             ['firstName', 'Grzegorz'],
@@ -43,7 +41,7 @@ class RequestTest extends EntityTestCase
             ['company', 'JohnDow Inc.'],
             ['role', 'cto'],
             ['body', 'test_request_body'],
-            ['status', $propertyStatus, false],
+            ['status', new RequestStatus(), false],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
         ];
@@ -51,6 +49,13 @@ class RequestTest extends EntityTestCase
         $propertyRequest = new Request();
 
         $this->assertPropertyAccessors($propertyRequest, $properties);
+
+        $this->assertPropertyCollections(
+            $propertyRequest,
+            [
+                ['requestProducts', new RequestProduct()],
+            ]
+        );
     }
 
     public function testPreUpdate()
@@ -76,21 +81,6 @@ class RequestTest extends EntityTestCase
         $this->assertPropertyAccessors(new Request(), $properties);
     }
 
-    /**
-     * @depends testAccessors
-     */
-    public function testAddRequestProduct()
-    {
-        $request        = new Request();
-        $requestProduct = new RequestProduct();
-
-        $this->assertNull($requestProduct->getRequest());
-
-        $request->addRequestProduct($requestProduct);
-
-        $this->assertEquals($request, $requestProduct->getRequest());
-    }
-    
     /**
      * Test toString
      */

@@ -21,7 +21,7 @@ class RequestStatusHandler
     protected $manager;
 
     /** @var string */
-    protected $defaultLocale = 'en';
+    protected $defaultLocale;
 
     /**
      * @param FormInterface       $form
@@ -36,6 +36,8 @@ class RequestStatusHandler
         $this->form       = $form;
         $this->request    = $request;
         $this->manager    = $manager;
+
+        $this->defaultLocale = \Locale::getDefault();
     }
 
     /**
@@ -56,7 +58,7 @@ class RequestStatusHandler
 
         $this->form->setData($entity);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {

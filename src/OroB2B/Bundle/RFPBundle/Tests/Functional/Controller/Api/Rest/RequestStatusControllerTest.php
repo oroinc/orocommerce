@@ -37,7 +37,7 @@ class RequestStatusControllerTest extends WebTestCase
             'DELETE',
             $this->getUrl('orob2b_api_rfp_delete_request_status', ['id' => $requestStatus->getId()])
         );
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 204);
 
         $entityManager->clear();
 
@@ -48,7 +48,7 @@ class RequestStatusControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_api_rfp_restore_request_status', ['id' => $requestStatus->getId()])
         );
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 200);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $entityManager->clear();
 

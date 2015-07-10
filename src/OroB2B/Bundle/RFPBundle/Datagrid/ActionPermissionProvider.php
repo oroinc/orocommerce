@@ -27,7 +27,7 @@ class ActionPermissionProvider
     {
         $isDeleted = $record->getValue('deleted');
         $isDefaultRequestStatus =
-            $this->configManager->get('oro_b2b_rfp.default_request_status') == $record->getValue('name');
+            $this->configManager->get('oro_b2b_rfp.default_request_status') === $record->getValue('name');
 
         return [
             'restore' => $isDeleted,

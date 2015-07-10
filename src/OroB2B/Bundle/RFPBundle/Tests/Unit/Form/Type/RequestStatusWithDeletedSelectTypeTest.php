@@ -2,6 +2,10 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType;
 
 class RequestStatusWithDeletedSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -34,6 +38,7 @@ class RequestStatusWithDeletedSelectTypeTest extends \PHPUnit_Framework_TestCase
             ->method('getNotDeletedAndDeletedWithRequestsStatuses')
             ->willReturn($this->choices);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
@@ -52,6 +57,7 @@ class RequestStatusWithDeletedSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetDefaultOptions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();

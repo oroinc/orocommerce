@@ -52,7 +52,9 @@ class RequestController extends Controller
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManagerForClass('OroB2BRFPBundle:Request');
+            $em = $this->getDoctrine()->getManagerForClass(
+                $this->container->getParameter('orob2b_rfp.entity.request.class')
+            );
 
             // Clean body from different stuff
             $rfpRequest->setBody($this->getPurifier()->purify($rfpRequest->getBody()));
@@ -65,13 +67,14 @@ class RequestController extends Controller
                 ->get('oro_b2b_rfp.default_user_for_notifications');
 
             if ($userForNotification) {
-                $userForNotification = $this->getDoctrine()->getRepository('OroUserBundle:User')
+                $userForNotification = $this->getDoctrine()
+                    ->getRepository($this->container->getParameter('oro_user.entity.class'))
                     ->find($userForNotification->getId());
                 $this->container->get('orob2b_rfp.mailer.processor')
                     ->sendRFPNotification($rfpRequest, $userForNotification);
             }
 
-            $request->getSession()->getFlashBag()->add(
+            $this->get('session')->getFlashBag()->add(
                 'success',
                 $this->get('translator')->trans('orob2b.rfp.request.message.request_saved')
             );

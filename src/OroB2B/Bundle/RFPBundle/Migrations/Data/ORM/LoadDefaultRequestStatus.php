@@ -30,7 +30,7 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
         $defaultLocale  = $localeSettings->getLocale();
         $locales        = $this->getTranslationLocales();
 
-        if (!in_array($defaultLocale, $locales)) {
+        if (!in_array($defaultLocale, $locales, true)) {
             throw new \LogicException('There are no default locale in translations!');
         }
 

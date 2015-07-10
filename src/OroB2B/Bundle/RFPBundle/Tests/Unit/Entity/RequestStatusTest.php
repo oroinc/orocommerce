@@ -4,10 +4,11 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatusTranslation;
 
-class RequestStatusTest
+class RequestStatusTest extends EntityTestCase
 {
     /**
      * Test setters getters

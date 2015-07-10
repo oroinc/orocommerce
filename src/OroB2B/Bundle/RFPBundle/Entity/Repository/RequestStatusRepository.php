@@ -5,12 +5,14 @@ namespace OroB2B\Bundle\RFPBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+
 class RequestStatusRepository extends EntityRepository
 {
     /**
      * Returns all statuses that are not deleted
      *
-     * @return \OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
+     * @return RequestStatus[]
      */
     public function getNotDeletedStatuses()
     {
@@ -24,18 +26,25 @@ class RequestStatusRepository extends EntityRepository
     /**
      * Returns all statuses that are not deleted and deleted statuse that have requests
      *
-     * @return \OroB2B\Bundle\RFPBundle\Entity\RequestStatus[]
+     * @return RequestStatus[]
      */
     public function getNotDeletedAndDeletedWithRequestsStatuses()
     {
-        return $this->getNotDeletedRequestStatusesQueryBuilder()
+        $qb = $this->getNotDeletedRequestStatusesQueryBuilder();
+
+        return $qb
             ->leftJoin(
                 'OroB2BRFPBundle:Request',
                 'request',
                 Join::WITH,
-                'IDENTITY(request.status) = requestStatus.id'
+                $qb->expr()->eq('IDENTITY(request.status)', 'requestStatus.id')
             )
-            ->orWhere('requestStatus.deleted = :deleted_param AND request.id IS NOT NULL')
+            ->orWhere(
+                $qb->expr()->andX(
+                    $qb->expr()->eq('requestStatus.deleted', ':deleted_param'),
+                    $qb->expr()->isNotNull('request.id')
+                )
+            )
             ->setParameter('deleted_param', true, \PDO::PARAM_BOOL)
             ->getQuery()
             ->getResult()
@@ -49,10 +58,11 @@ class RequestStatusRepository extends EntityRepository
      */
     protected function getNotDeletedRequestStatusesQueryBuilder()
     {
-        return $this
-            ->createQueryBuilder('requestStatus')
-            ->orderBy('requestStatus.sortOrder', 'ASC')
-            ->where('requestStatus.deleted = :not_deleted_param')
+        $qb = $this->createQueryBuilder('requestStatus');
+
+        return $qb
+            ->orderBy($qb->expr()->asc('requestStatus.sortOrder'))
+            ->where($qb->expr()->eq('requestStatus.deleted', ':not_deleted_param'))
             ->setParameter('not_deleted_param', false, \PDO::PARAM_BOOL)
         ;
     }

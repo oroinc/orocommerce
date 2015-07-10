@@ -2,6 +2,12 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
+
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType;
 
 class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
@@ -16,6 +22,7 @@ class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -25,6 +32,7 @@ class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
             ->with('oro_locale.languages')
             ->willReturn([]);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LocaleSettings $localeSettings */
         $localeSettings = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
             ->disableOriginalConstructor()
             ->getMock();
@@ -38,6 +46,7 @@ class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildForm()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilderInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -54,6 +63,7 @@ class RequestStatusTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetDefaultOptions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $optionsResolver */
         $optionsResolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();

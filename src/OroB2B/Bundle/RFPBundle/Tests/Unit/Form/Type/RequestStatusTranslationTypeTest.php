@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType;
-
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType;
 
 class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -42,6 +44,7 @@ class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetDefaultOptions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $optionsResolver */
         $optionsResolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolverInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -54,6 +57,7 @@ class RequestStatusTranslationTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildView()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $view = new FormView();
 

@@ -82,12 +82,9 @@ class RequestTypeTest extends AbstractTest
                             'comment'   => 'comment',
                             'requestProductItems' => [
                                 [
-                                    'quantity'      => 10,
-                                    'productUnit'   => 'kg',
-                                    'price'         => [
-                                        'value'     => 20,
-                                        'currency'  => 'USD',
-                                    ],
+                                    'quantity' => 10,
+                                    'productUnit' => 'kg',
+                                    'price' => ['value' => 20, 'currency' => 'USD',],
                                 ],
                             ],
                         ],

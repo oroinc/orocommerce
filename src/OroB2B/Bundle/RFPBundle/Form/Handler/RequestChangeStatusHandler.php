@@ -60,7 +60,7 @@ class RequestChangeStatusHandler
      */
     public function process(RFPRequest $rfpRequest)
     {
-        if (in_array($this->request->getMethod(), ['POST'])) {
+        if ($this->request->isMethod('POST')) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
