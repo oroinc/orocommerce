@@ -103,4 +103,24 @@ class ProductPriceRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Return product prices for specified price list and product IDs
+     *
+     * @param int $priceListId
+     * @param array $ids
+     * @return ProductPrice[]
+     */
+    public function findByPriceListIdAndProductIds($priceListId, array $ids)
+    {
+        $queryBuilder = $this->createQueryBuilder('price');
+        $queryBuilder
+            ->andWhere('IDENTITY(price.priceList) = :priceListId')
+            ->andWhere($queryBuilder->expr()->in('IDENTITY(price.product)', $ids))
+            ->setParameter('priceListId', $priceListId)
+            ->addOrderBy('price.unit')
+            ->addOrderBy('price.quantity');
+
+        return $queryBuilder->getQuery()->getResult();
+    }
 }
