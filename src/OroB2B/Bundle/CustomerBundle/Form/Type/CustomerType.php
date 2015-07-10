@@ -87,7 +87,6 @@ class CustomerType extends AbstractType
         ]);
     }
 
-
     /**
      * {@inheritdoc}
      */

@@ -25,7 +25,6 @@ class LoadGroups extends AbstractFixture implements DependentFixtureInterface
         ];
     }
 
-
     /**
      * {@inheritdoc}
      */

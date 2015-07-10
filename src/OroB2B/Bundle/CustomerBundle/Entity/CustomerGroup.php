@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 /**

@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
-use Doctrine\ORM\EntityManager;
-
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Symfony\Component\DomCrawler\Crawler;
+
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 /**
