@@ -4,17 +4,27 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote_product';
+
+    /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $labelFormatter;
 
     /**
      * @var TranslatorInterface
@@ -24,9 +34,52 @@ class QuoteProductType extends AbstractType
     /**
      * @param TranslatorInterface $translator
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, ProductUnitLabelFormatter $labelFormatter)
     {
         $this->translator = $translator;
+        $this->labelFormatter = $labelFormatter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $units = [];
+
+        /* @var $products Product[] */
+        $products = [];
+
+        if ($view->vars['value']) {
+            /* @var $quoteProduct QuoteProduct */
+            $quoteProduct = $view->vars['value'];
+
+            if ($quoteProduct->getProduct()) {
+                $product = $quoteProduct->getProduct();
+                $products[$product->getId()] = $product;
+            }
+
+            if ($quoteProduct->getProductReplacement()) {
+                $product = $quoteProduct->getProductReplacement();
+                $products[$product->getId()] = $product;
+            }
+        }
+
+        foreach ($products as $product) {
+            $units[$product->getId()] = [];
+
+            foreach ($product->getAvailableUnitCodes() as $unitCode) {
+                $units[$product->getId()][$unitCode] = $this->labelFormatter->format($unitCode);
+            }
+        }
+
+        $componentOptions = [
+            'units' => $units,
+            'typeOffer' => QuoteProduct::TYPE_OFFER,
+            'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+        ];
+
+        $view->vars['componentOptions'] = $componentOptions;
     }
 
     /**
@@ -45,27 +98,17 @@ class QuoteProductType extends AbstractType
                 'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
             ])
-            ->add(
-                'quoteProductRequests',
-                QuoteProductRequestCollectionType::NAME
-            )
-            ->add(
-                'quoteProductOffers',
-                QuoteProductOfferCollectionType::NAME,
-                [
-                    'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
-                ]
-            )
-            ->add(
-                'type',
-                'choice',
-                [
-                    'label' => 'orob2b.sale.quoteproduct.type.label',
-                    'choices' => QuoteProduct::getTypeTitles(),
-                    'required' => true,
-                    'expanded' => false,
-                ]
-            )
+            ->add('quoteProductRequests', QuoteProductRequestCollectionType::NAME, [
+            ])
+            ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
+                'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
+            ])
+            ->add('type', 'choice', [
+                'label' => 'orob2b.sale.quoteproduct.type.label',
+                'choices' => QuoteProduct::getTypeTitles(),
+                'required' => true,
+                'expanded' => false,
+            ])
             ->add('commentCustomer', 'textarea', [
                 'required' => false,
                 'read_only' => true,
@@ -107,25 +150,66 @@ class QuoteProductType extends AbstractType
     {
         /* @var $quoteProduct QuoteProduct */
         $quoteProduct = $event->getData();
+
+        if (!$quoteProduct || null === $quoteProduct->getId()) {
+            return;
+        }
+
         $form = $event->getForm();
 
-        if ($quoteProduct && null !== $quoteProduct->getId()) {
-            $product = $quoteProduct->getProduct();
-            if (!$product) {
-                $emptyValueTitle = $this->translator->trans(
-                    'orob2b.rfpadmin.message.requestproductitem.unit.removed',
-                    [
-                        '{title}' => $quoteProduct->getProductSku(),
-                    ]
-                );
-                $form->add('product', ProductSelectType::NAME, [
-                    'required' => true,
-                    'label' => 'orob2b.product.entity_label',
-                    'configs' => [
-                        'placeholder' => $emptyValueTitle,
-                    ],
-                ]);
-            }
+        if (!$quoteProduct->getProduct()) {
+            $this->replaceProductField(
+                $quoteProduct,
+                $form,
+                'product',
+                'orob2b.product.entity_label',
+                'orob2b.sale.quoteproduct.product.removed'
+            );
         }
+
+        if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
+            $this->replaceProductField(
+                $quoteProduct,
+                $form,
+                'productReplacement',
+                'orob2b.sale.quoteproduct.product_replacement.label',
+                'orob2b.sale.quoteproduct.product_replacement.removed'
+            );
+        }
+    }
+
+    /**
+     * @param QuoteProduct $quoteProduct
+     * @param FormInterface $form
+     * @param string $field
+     * @param string $label
+     * @param string $emptyLabel
+     */
+    protected function replaceProductField(
+        QuoteProduct $quoteProduct,
+        FormInterface $form,
+        $field, $label,
+        $emptyLabel = null
+    ) {
+        $options = [
+            'create_enabled' => false,
+            'required' => true,
+            'label' => $label,
+        ];
+
+        if ($emptyLabel) {
+            $emptyValueTitle = $this->translator->trans(
+               $emptyLabel,
+                [
+                    '{title}' => $quoteProduct->getProductSku(),
+                ]
+            );
+
+            $options['configs'] = [
+                'placeholder' => $emptyValueTitle,
+            ];
+        }
+
+        $form->add($field, ProductSelectType::NAME, $options);
     }
 }

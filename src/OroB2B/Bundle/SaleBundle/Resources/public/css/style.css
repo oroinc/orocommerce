@@ -18,16 +18,22 @@
 .sale-quoteproduct-collection-table th {
     border: 1px solid #e5e5e5;
     padding: 10px;
+    vertical-align: top;
 }
 
 .sale-quoteproduct-collection .btn.add-list-item {
     margin-left: 90px;
+    margin-top: 7px;
+}
+
+.sale-quoteproduct-collection .row-oro.oro-multiselect-holder {
+    margin-bottom: 0;
 }
 
 .sale-quoteproduct-collection .btn.removeRow {
     position: absolute;
     width: 28px;
-    top: 14px;
+    top: 11px;
     left: 388px;
 }
 
@@ -38,10 +44,6 @@
 .sale-quoteproduct-widget.control-group .controls {
     float: left;
     margin-left: 10px;
-}
-
-.sale-quoteproduct-widget .btn.add-list-item {
-    margin: 2px 0 2px 1px;
 }
 
 .sale-quoteproduct-widget .selector {
@@ -59,13 +61,17 @@
     position: absolute;
     width: 28px;
     right: 0;
-    top: 13px;
+    top: 11px;
     left: auto;
 }
 
 .sale-quoteproductitem-collection {
     float: left;
     width: 100%;
+}
+
+.sale-quoteproductoffer-collection .btn.add-list-item {
+    margin-top: 1px;
 }
 
 .sale-quoteproductoffer-collection > div > div > div {
@@ -78,6 +84,28 @@
 
 .sale-quoteproductitem-widget td {
     width: 150px;
+    vertical-align: top;
+    padding-bottom: 4px;
+}
+
+.sale-quoteproductitem-widget-quantity {
+    padding-top: 5px;
+}
+
+.sale-quoteproductitem-widget-more {
+    padding-top: 10px;
+}
+
+.sale-quoteproductitem-widget-pricetype > div {
+    margin-bottom: -10px;
+}
+
+.sale-quoteproductitem-widget-productunit {
+    padding-top: 5px;
+}
+
+.sale-quoteproductitem-widget-price {
+    padding-top: 5px;
 }
 
 .sale-quoteproductitem-widget td span.validation-failed {
@@ -104,12 +132,17 @@
     float: none;
 }
 
+.sale-quoteproducts-info.control-group {
+    max-width: none;
+}
+
 .sale-quoteproductitems-info {
     padding: 5px 0 0 10px;
 }
 
 .sale-quoteproductitems-info > table {
     margin-bottom: 10px;
+    width: 100%;
 }
 
 .sale-quoteproductitems-info > table th,
@@ -152,14 +185,14 @@
 
 .sale-quoteproduct-table-column-1 {
     vertical-align: top;
-    min-width: 325px;
-    width: 325px;
+    min-width: 330px;
+    width: 330px;
 }
 
 .sale-quoteproduct-table-column-2 {
     vertical-align: top;
-    min-width: 270px;
-    width: 270px;
+    min-width: 260px;
+    width: 260px;
 }
 
 .sale-quoteproduct-table-column-3 {
@@ -225,6 +258,7 @@
 
 .sale-quoteproduct-notes-seller-active .sale-quoteproduct-add-notes-btn {
     visibility: hidden;
+    margin-top: 1px;
 }
 
 .sale-quoteproductrequest-collection label {

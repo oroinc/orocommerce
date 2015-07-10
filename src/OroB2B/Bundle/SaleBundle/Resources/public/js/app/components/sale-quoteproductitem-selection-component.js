@@ -3,16 +3,16 @@
 define(function (require) {
     'use strict';
 
-    var QuoteProductItemUnitSelectionLimitationsComponent,
+    var QuoteProductItemSelectionComponent,
         BaseComponent = require('oroui/js/app/components/base/component'),
         LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
         $ = require('jquery'),
         _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),        
+        __ = require('orotranslation/js/translator'),
         routing = require('routing'),
         messenger = require('oroui/js/messenger');
 
-    QuoteProductItemUnitSelectionLimitationsComponent = BaseComponent.extend({
+    QuoteProductItemSelectionComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
@@ -28,6 +28,7 @@ define(function (require) {
             removeNotesButton: '.sale-quoteproduct-remove-notes-btn',
             itemsCollectionContainer: '.sale-quoteproductitem-collection',
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
+            itemWidget: '.sale-quoteproductitem-widget',
             productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
             sellerNotesContainer: '.sale-quoteproduct-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
@@ -49,7 +50,7 @@ define(function (require) {
          * @property {array}
          */
         units: {},
-        
+
         /**
          * @property {Object}
          */
@@ -69,17 +70,12 @@ define(function (require) {
          * @property {Object}
          */
         $typeSelect : null,
-        
+
         /**
          * @property {Object}
          */
         $addItemButton : null,
 
-        /**
-         * @property {Object}
-         */
-        $addNotesButton : null,
-        
         /**
          * @property {Object}
          */
@@ -105,7 +101,7 @@ define(function (require) {
          */
         $productReplacementContainer : null,
 
-        /** 
+        /**
          * @property {LoadingMaskView|null}
          */
         loadingMask: null,
@@ -116,19 +112,18 @@ define(function (require) {
         initialize: function (options) {
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
-            
+
             this.$container = options._sourceElement;
 
             this.typeOffer = options.typeOffer;
             this.typeReplacement = options.typeReplacement;
 
             this.loadingMask = new LoadingMaskView({container: this.$container});
-            
+
             this.$productSelect = this.$container.find(this.options.productSelect);
             this.$productReplacementSelect = this.$container.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$container.find(this.options.typeSelect);
             this.$addItemButton = this.$container.find(this.options.addItemButton);
-            this.$addNotesButton = this.$container.find(this.options.addNotesButton);
             this.$itemsCollectionContainer = this.$container.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$container.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$container.find(this.options.productReplacementContainer);
@@ -143,15 +138,17 @@ define(function (require) {
                 .on('click', this.options.removeNotesButton, _.bind(this.onRemoveNotesClick, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
-            
+
             this.checkAddButton();
+
+            this.$typeSelect.uniform();
             this.$typeSelect.trigger('change');
         },
-        
+
         checkAddButton: function() {
-            this.getProductId() ? this.$addItemButton.show() : this.$addItemButton.hide();
+            this.$addItemButton.toggle(Boolean(this.getProductId()));
         },
-        
+
         /**
          * Handle Product change
          *
@@ -159,9 +156,9 @@ define(function (require) {
          */
         onProductChanged: function (e) {
             this.checkAddButton();
-            
+
             if (this.$itemsContainer.children().length) {
-                this.onContentChanged(e);
+                this.updateContent(true);
             }
         },
 
@@ -172,31 +169,31 @@ define(function (require) {
          */
         onTypeChanged: function (e) {
             var typeValue = parseInt(this.$typeSelect.val());
-            if (this.typeReplacement === typeValue) {
-                this.$productReplacementContainer.show();
-            } else {
-                this.$productReplacementContainer.hide();
-            }
-            if (this.typeOffer === typeValue) {
-                this.$requestsOnlyContainer.hide();
-            } else {
-                this.$requestsOnlyContainer.show();
-            }
+
+            this.$productReplacementContainer.toggle(this.typeReplacement === typeValue);
+            this.$requestsOnlyContainer.toggle(this.typeOffer !== typeValue);
+
             this.$productSelect.trigger('change');
         },
 
         /**
-         * Handle Content change
+         * Handle change
          *
          * @param {jQuery.Event} e
          */
         onContentChanged: function (e) {
-            this.$container.find('select').uniform();
+            this.updateContent(false);
+        },
+
+        /**
+         * @param {Boolean} force
+         */
+        updateContent: function (force) {
             var productId = this.getProductId();
             var productUnits = this.units[productId];
-            
+
             if (!productId || productUnits) {
-                this.updateProductUnits(productUnits);
+                this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
                 $.ajax({
@@ -224,17 +221,25 @@ define(function (require) {
          * Update available ProductUnit select
          *
          * @param {Object} data
+         * @param {Boolean} force
          */
-        updateProductUnits: function(data) {
+        updateProductUnits: function(data, force) {
             var self = this;
-            
+
             var units = data || {};
-            
-            var selects = self.$container.find(self.options.unitsSelect);
-            $.each(selects, function(index, select) {
+
+            var widgets = self.$container.find(self.options.itemWidget);
+
+            $.each(widgets, function (index, widget) {
+                var select = $(widget).find(self.options.unitsSelect);
+
+                if (!force && $(select).hasClass(self.options.syncClass)) {
+                    return;
+                }
+
                 var currentValue = $(select).val();
                 $(select).empty();
-                $.each(units, function(key, value) {
+                $.each(units, function (key, value) {
                     $(select)
                         .append($('<option/>').val(key).text(value))
                     ;
@@ -243,8 +248,16 @@ define(function (require) {
                     currentValue = $(select).find('option:first-child').val();
                 }
                 $(select).val(currentValue);
-                $(select).uniform('update');
+                $(select).addClass(self.options.syncClass);
+
+                if (!force) {
+                    $(widget).find('select').uniform('update');
+                }
             });
+
+            if (force) {
+                this.$container.find('select').uniform('update');
+            }
         },
 
         /**
@@ -275,7 +288,7 @@ define(function (require) {
                 ? this.$productReplacementSelect.val()
                 : this.$productSelect.val();
         },
-        
+
         dispose: function () {
             if (this.disposed) {
                 return;
@@ -283,9 +296,9 @@ define(function (require) {
 
             this.$container.off();
 
-            QuoteProductItemUnitSelectionLimitationsComponent.__super__.dispose.call(this);
+            QuoteProductItemSelectionComponent.__super__.dispose.call(this);
         }
     });
 
-    return QuoteProductItemUnitSelectionLimitationsComponent;
+    return QuoteProductItemSelectionComponent;
 });

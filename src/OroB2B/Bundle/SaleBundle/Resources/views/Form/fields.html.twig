@@ -16,25 +16,11 @@
 {% block orob2b_sale_quote_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
 
-    {% set units = [] %}
-    {% set product = form.vars.value.product|default(null) %}
     {% set commentCustomer = form.vars.value.commentCustomer|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
-    {% if product %}
-        {% for code in product.availableUnitCodes %}
-            {% set units = units|merge({ (code) : ('orob2b.product_unit.' ~ code ~ '.label.full')|trans}) %}
-        {% endfor %}
-    {% endif %}
+
     <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }}
-           data-page-component-options="{% spaceless %}
-                {{
-                    {
-                        'typeReplacement': constant('OroB2B\\Bundle\\SaleBundle\\Entity\\QuoteProduct::TYPE_NOT_AVAILABLE'),
-                        'typeOffer': constant('OroB2B\\Bundle\\SaleBundle\\Entity\\QuoteProduct::TYPE_OFFER'),
-                        'units': units ? {(product.id) : units} : {}
-                    }|json_encode
-                }}
-           {% endspaceless %}"
+           data-page-component-options="{{ componentOptions|json_encode }}"
            data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component">
     <tr>
         <td class="sale-quoteproduct-table-column-1">
@@ -55,10 +41,12 @@
             <div class="sale-quoteproductitem-collection{% if commentSeller is not empty %} sale-quoteproduct-notes-seller-active{% endif %}">
                 <div class="sale-quoteproductrequest-collection sale-quoteproductrequest-only">
                     {{ form_widget(form.quoteProductRequests) }}
+                    {{ form_errors(form.quoteProductRequests) }}
                 </div>
 
                 <div class="sale-quoteproductoffer-collection">
                     {{ form_widget(form.quoteProductOffers) }}
+                    {{ form_errors(form.quoteProductOffers) }}
                 </div>
 
                 <div>
@@ -86,23 +74,23 @@
 {% block orob2b_sale_quote_product_offer_widget %}
     <table class="sale-quoteproductitem-widget">
         <tr>
-            <td>
+            <td class="sale-quoteproductitem-widget-quantity">
                 {{ form_widget(form.quantity) }}
                 {{ form_errors(form.quantity) }}
             </td>
-            <td>
+            <td class="sale-quoteproductitem-widget-more">
                 {{ form_widget(form.allowIncrements) }}&nbsp;{{ form_label(form.allowIncrements) }}
                 {{ form_errors(form.allowIncrements) }}
             </td>
-            <td>
+            <td class="sale-quoteproductitem-widget-pricetype">
                 {{ form_widget(form.priceType) }}
                 {{ form_errors(form.priceType) }}
             </td>
-            <td>
+            <td class="sale-quoteproductitem-widget-productunit">
                 {{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}
                 {{ form_errors(form.productUnit) }}
             </td>
-            <td>
+            <td class="sale-quoteproductitem-widget-price">
                 {{ form_widget(form.price) }}
             </td>
         </tr>

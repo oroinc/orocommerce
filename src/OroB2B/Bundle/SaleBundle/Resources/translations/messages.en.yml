@@ -5,7 +5,7 @@ orob2b:
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
-            
+
             id.label: 'Numeric ID'
             qid.label: 'ID'
             owner.label: 'Owner'
@@ -13,11 +13,11 @@ orob2b:
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             request.label: 'Request'
-            
+
             sections:
                 general: 'General'
                 quote_products: 'Line Items'
-            
+
             widgets:
                 quote_information: 'Quote Information'
 
@@ -37,6 +37,7 @@ orob2b:
             comment.label: 'Seller Notes'
             comment_customer.label: 'Customer Notes'
             product.removed: '{title} - removed'
+            product_replacement.removed: '{title} - removed'
             type:
                 label: 'Type'
                 requested: 'Requested'
