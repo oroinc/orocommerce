@@ -2,15 +2,17 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
 class ProductController extends Controller
 {
@@ -58,8 +60,27 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
+        $widgetRouteParameters = [
+            'gridName' => 'products-grid',
+            'renderParams' => [
+                'enableFullScreenLayout' => true,
+                'enableViews' => false
+            ],
+            'renderParamsTypes' => [
+                'enableFullScreenLayout' => 'bool',
+                'enableViews' => 'bool'
+            ]
+        ];
+
+        /** @var ProductGridWidgetRenderEvent $event */
+        $event = $this->get('event_dispatcher')->dispatch(
+            ProductGridWidgetRenderEvent::NAME,
+            new ProductGridWidgetRenderEvent($widgetRouteParameters)
+        );
+
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.product.class')
+            'entity_class' => $this->container->getParameter('orob2b_product.product.class'),
+            'widgetRouteParameters' => $event->getWidgetRouteParameters()
         ];
     }
 

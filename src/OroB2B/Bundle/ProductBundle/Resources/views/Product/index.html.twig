@@ -18,7 +18,12 @@
             {% placeholder product_index_sidebar %}
         </div>
         <div class="product-index-content">
-            {{ parent() }}
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                'title': '',
+                'alias': 'products-grid-widget'
+            }) }}
         </div>
     </div>
 {% endblock content_datagrid %}

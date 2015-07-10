@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\Form\Form;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -31,7 +32,7 @@ class ProductController extends Controller
         return [
             'priceList' => $this->createPriceListForm()->createView(),
             'currencies' => $this->createCurrenciesForm()->createView(),
-            'tierPrice' => $this->createTierPriceForm()->createView(),
+            'showTierPrices' => $this->createShowTierPricesForm()->createView()
         ];
     }
 
@@ -48,7 +49,7 @@ class ProductController extends Controller
                 'empty_value' => false,
                 'empty_data' => $this->getDefaultPriceList(),
                 'configs' => ['allowClear' => false],
-                'label' => false,
+                'label' => 'orob2b.pricing.pricelist.entity_label'
             ]
         );
     }
@@ -92,12 +93,12 @@ class ProductController extends Controller
     /**
      * @return Form
      */
-    protected function createTierPriceForm()
+    protected function createShowTierPricesForm()
     {
         return $this->createForm(
             'checkbox',
             null,
-            ['label' => 'orob2b.pricing.productprice.tier_price.label', 'required' => false]
+            ['label' => 'orob2b.pricing.productprice.show_tier_prices.label', 'required' => false]
         );
     }
 }
