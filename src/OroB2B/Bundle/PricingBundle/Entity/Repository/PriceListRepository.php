@@ -45,6 +45,21 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
+     * @return PriceList
+     */
+    public function getDefault()
+    {
+        $qb = $this->createQueryBuilder('pl');
+
+        return $qb
+            ->where($qb->expr()->eq('pl.default', ':default'))
+            ->setParameter('default', true)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
      * @param Customer $customer
      * @return PriceList|null
      */

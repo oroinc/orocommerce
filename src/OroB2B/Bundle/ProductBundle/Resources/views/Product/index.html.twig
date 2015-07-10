@@ -13,10 +13,17 @@
 {% endblock %}
 
 {% block content_datagrid %}
-    {{ oro_widget_render({
-        'widgetType': 'block',
-        'url': path('oro_datagrid_widget', widgetRouteParameters),
-        'title': '',
-        'alias': 'products-grid-widget'
-    }) }}
-{% endblock %}
+    <div class="product-container">
+        <div class="product-sidebar">
+            {% placeholder product_index_sidebar %}
+        </div>
+        <div class="product-index-content">
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                'title': '',
+                'alias': 'products-grid-widget'
+            }) }}
+        </div>
+    </div>
+{% endblock content_datagrid %}
