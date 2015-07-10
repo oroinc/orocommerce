@@ -39,6 +39,8 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
             - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        priceType:
+            - NotBlank: ~
         productUnit:
             - NotBlank:
                 message: 'orob2b.sale.quoteproductoffer.product_unit.blank'

@@ -15,7 +15,7 @@
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
-            'path' : path('orob2b_sale_quote_update', { 'id': entity.id }),
+            'path' : path('orob2b_sale_quote_update', {'id': entity.id}),
             'entity_label': 'orob2b.sale.quote.entity_label'|trans
         }) }}
     {% endif %}
@@ -36,7 +36,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'orob2b.sale.quote.widgets.quote_information'|trans,
-            'url': path('orob2b_sale_quote_info', {id: entity.id})
+            'url': path('orob2b_sale_quote_info', {'id': entity.id})
         }) }}
     {% endset %}
     {% set quoteProducts %}
@@ -44,9 +44,9 @@
             <table class="sale-quoteproduct-collection-table sale-quoteproduct-collection-table-view">
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Type</th>
-                        <th>Offers</th>
+                        <th>{{ 'orob2b.sale.quoteproduct.column.product'|trans }}</th>
+                        <th>{{ 'orob2b.sale.quoteproduct.column.type'|trans }}</th>
+                        <th>{{ 'orob2b.sale.quoteproduct.column.quote_product_items'|trans }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,7 +62,7 @@
                             </div>
                             {% if quoteProduct.type is same as(constant('OroB2B\\Bundle\\SaleBundle\\Entity\\QuoteProduct::TYPE_NOT_AVAILABLE')) %}
                                 <div>
-                                    <div>{{ 'orob2b.sale.quoteproduct.productreplacement.label'|trans }}</div>
+                                    <div>{{ 'orob2b.sale.quoteproduct.product_replacement.label'|trans }}</div>
                                     {% if quoteProduct.productReplacement %}
                                         <a href="{{ path('orob2b_product_view', { id: quoteProduct.productReplacement.id }) }}">{{ quoteProduct.productReplacement|raw }}</a>
                                     {% else %}
@@ -84,15 +84,15 @@
                                     </tr>
                                     {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
                                         <tr>
-                                            <td>{{ quoteProductRequest.quantity is null ? 'N/A' : quoteProductRequest.quantity ~ ' ' ~ quoteProductRequest.productUnit }}</td>
-                                            <td>{{ quoteProductRequest.price is null ? 'N/A' : quoteProductRequest.price.value ~ ' ' ~ quoteProductRequest.price.currency }}</td>
+                                            <td>{{ quoteProductRequest.quantity is null ? 'N/A'|trans : quoteProductRequest.quantity ~ ' ' ~ quoteProductRequest.productUnit }}</td>
+                                            <td>{{ quoteProductRequest.price is null ? 'N/A'|trans : quoteProductRequest.price|oro_format_price }}</td>
                                             <td>{{ quoteProductRequest|orob2b_format_sale_quote_product_request }}</td>
                                         </tr>
                                     {% endfor %}
                                     <tr>
                                         <td colspan="3">{{ UI.renderProperty(
-                                                'orob2b.sale.quoteproduct.commentcustomer.label'|trans,
-                                                quoteProduct.commentCustomer ? : 'N/A'
+                                                'orob2b.sale.quoteproduct.comment_customer.label'|trans,
+                                                quoteProduct.commentCustomer|default('N/A'|trans)
                                             ) }}</td>
                                     </tr>
                                     </table>
@@ -108,14 +108,14 @@
                                 {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
                                     <tr>
                                         <td>{{ quoteProductOffer.quantity }} {{ quoteProductOffer.productUnit }}</td>
-                                        <td>{{ quoteProductOffer.price.value }} {{ quoteProductOffer.price.currency }}</td>
+                                        <td>{{ quoteProductOffer.price|oro_format_price }}</td>
                                         <td>{{ quoteProductOffer|orob2b_format_sale_quote_product_offer }}</td>
                                     </tr>
                                 {% endfor %}
                                 <tr>
                                     <td colspan="3">{{ UI.renderProperty(
                                             'orob2b.sale.quoteproduct.comment.label'|trans,
-                                            quoteProduct.comment ? : 'N/A'
+                                            quoteProduct.comment|default('N/A'|trans)
                                         ) }}</td>
                                 </tr>
                             </table>

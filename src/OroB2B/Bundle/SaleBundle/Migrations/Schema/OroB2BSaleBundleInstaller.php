@@ -279,7 +279,7 @@ class OroB2BSaleBundleInstaller implements
     /**
      * Enable notes for Quote entity
      *
-     * @param Schema        $schema
+     * @param Schema $schema
      * @param NoteExtension $noteExtension
      */
     protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
@@ -290,7 +290,7 @@ class OroB2BSaleBundleInstaller implements
     /**
      * Enable Attachment for Quote entity
      *
-     * @param Schema        $schema
+     * @param Schema $schema
      * @param AttachmentExtension $attachmentExtension
      */
     protected function addAttachmentAssociations(Schema $schema, AttachmentExtension $attachmentExtension)
@@ -317,7 +317,7 @@ class OroB2BSaleBundleInstaller implements
     /**
      * Enable Events for Quote entity
      *
-     * @param Schema        $schema
+     * @param Schema $schema
      * @param ActivityExtension $activityExtension
      */
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)

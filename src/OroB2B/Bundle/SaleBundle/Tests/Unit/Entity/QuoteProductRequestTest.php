@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
@@ -19,6 +20,7 @@ class QuoteProductRequestTest extends AbstractTest
             ['productUnit', new ProductUnit()],
             ['productUnitCode', 'unit-code'],
             ['price', new Price()],
+            ['requestProductItem', new RequestProductItem()],
         ];
 
         static::assertPropertyAccessors(new QuoteProductRequest(), $properties);

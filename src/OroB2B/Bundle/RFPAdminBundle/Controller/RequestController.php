@@ -103,8 +103,7 @@ class RequestController extends Controller
      * )
      *
      * @param Request $request
-     * @throws NotFoundHttpException
-     * @return array
+     * @return RedirectResponse
      */
     public function createQuoteAction(Request $request)
     {
