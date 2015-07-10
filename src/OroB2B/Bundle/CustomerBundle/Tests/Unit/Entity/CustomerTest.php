@@ -11,6 +11,9 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class CustomerTest extends EntityTestCase
 {
     /**

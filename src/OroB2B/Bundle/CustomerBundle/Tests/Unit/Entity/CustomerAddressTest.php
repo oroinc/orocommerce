@@ -67,7 +67,8 @@ class CustomerAddressTest extends EntityTestCase
         /** @var Collection|CustomerAddressToAddressType[] $addressesToTypes */
         $addressesToTypes = $this->address->getAddressesToTypes();
         $this->assertCount(1, $addressesToTypes);
-        $addressToType = array_shift($addressesToTypes->toArray());
+        $addressesToTypesArray = $addressesToTypes->toArray();
+        $addressToType = array_shift($addressesToTypesArray);
         $this->assertEquals($this->address, $addressToType->getAddress());
         $this->assertEquals($this->billingType, $addressToType->getType());
 
@@ -106,7 +107,8 @@ class CustomerAddressTest extends EntityTestCase
         /** @var Collection|CustomerAddressToAddressType[] $addressesToTypes */
         $addressesToTypes = $this->address->getAddressesToTypes();
         $this->assertCount(1, $addressesToTypes);
-        $firstAddressesToType = array_shift($addressesToTypes->toArray());
+        $addressesToTypesArray = $addressesToTypes->toArray();
+        $firstAddressesToType = array_shift($addressesToTypesArray);
         $this->assertEquals($this->shippingType, $firstAddressesToType->getType());
         $this->assertEquals($this->address, $firstAddressesToType->getAddress());
     }
@@ -123,7 +125,8 @@ class CustomerAddressTest extends EntityTestCase
         $this->assertCount(0, $this->address->getDefaults());
 
         /** @var CustomerAddressToAddressType $addressToTypes */
-        $addressToTypes = array_shift($this->address->getAddressesToTypes()->toArray());
+        $addressesToTypesArray = $this->address->getAddressesToTypes()->toArray();
+        $addressToTypes = array_shift($addressesToTypesArray);
         $addressToTypes->setDefault(true);
 
         $this->assertCount(1, $this->address->getDefaults());
