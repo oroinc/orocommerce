@@ -111,7 +111,7 @@
 
                                     {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
                                         <tr>
-                                            <td>{{ quoteProductOffer.quantity }} {{ quoteProductOffer.productUnit }}</td>
+                                            <td>{{ quoteProductOffer.quantity|orob2b_format_product_unit_value(quoteProductOffer.productUnit) }}</td>
                                             <td>{{ quoteProductOffer.price|oro_format_price }}</td>
                                             <td>{{ quoteProductOffer|orob2b_format_sale_quote_product_offer }}</td>
                                         </tr>

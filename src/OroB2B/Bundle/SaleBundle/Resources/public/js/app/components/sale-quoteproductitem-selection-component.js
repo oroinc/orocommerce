@@ -29,6 +29,7 @@ define(function (require) {
             itemsCollectionContainer: '.sale-quoteproductitem-collection',
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
             itemWidget: '.sale-quoteproductitem-widget',
+            syncClass: 'synchronized',
             productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
             sellerNotesContainer: '.sale-quoteproduct-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
@@ -177,7 +178,7 @@ define(function (require) {
         },
 
         /**
-         * Handle change
+         * Handle Content change
          *
          * @param {jQuery.Event} e
          */
