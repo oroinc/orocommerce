@@ -90,7 +90,10 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User Role has been saved', $crawler->html());
+        $content = $crawler->html();
+        $this->assertContains('Account User Role has been saved', $content);
+        $this->assertContains('Add attachment', $content);
+        $this->assertContains('Add note', $content);
 
         $this->getObjectManager()->clear();
 

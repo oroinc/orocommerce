@@ -286,6 +286,8 @@ class OroB2BCustomerBundle implements
         $table->addColumn('label', 'string', ['length' => 64]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role'], 'uniq_e153330157698a6a');
+
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
     }
 
     /**
