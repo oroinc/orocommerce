@@ -130,7 +130,7 @@ class ProductPriceDatagridListener
                 }
             }
             if ($priceContainer) {
-                $record->addValueContainer($priceContainer);
+                $record->addData($priceContainer);
             }
         }
     }
