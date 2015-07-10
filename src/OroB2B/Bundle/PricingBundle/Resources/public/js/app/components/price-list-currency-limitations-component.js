@@ -81,18 +81,16 @@ define(function (require) {
          */
         prepareCurrencySelect: function (skipClear) {
             var priceListId = this.$priceListSelect.val();
+            var self = this;
 
             if (!priceListId) {
                 this.$currencySelect.attr('disabled', 'disabled');
                 return;
             }
 
-            var priceListCurrencies = this.currencies[priceListId];
-
-            if (priceListCurrencies) {
-                this.handleCurrencies(priceListCurrencies, skipClear);
+            if (false && _.has(this.currencies, priceListId)) {
+                this.handleCurrencies(this.currencies[priceListId], skipClear);
             } else {
-                var self = this;
                 $.ajax({
                     url: routing.generate(this.options.currenciesRoute, {'id': priceListId}),
                     type: 'GET',
@@ -100,7 +98,7 @@ define(function (require) {
                         self.loadingMaskView.show();
                     },
                     success: function (response) {
-                        priceListCurrencies = response;
+                        var priceListCurrencies = _.keys(response);
                         self.currencies[priceListId] = priceListCurrencies;
                         self.$elem.closest(self.options.container).data('currencies', self.currencies);
                         self.handleCurrencies(priceListCurrencies, skipClear);

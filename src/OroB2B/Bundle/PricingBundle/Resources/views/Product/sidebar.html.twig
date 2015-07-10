@@ -1,2 +1,27 @@
-<div class="default-price-list-choice">{{ form_row(priceList) }}</div>
-<div class="tier-price-choice">{{ form_row(tierPrice) }}</div>
+{% set currencyTemplate %}
+<div class="oro-clearfix">
+    <input
+            type="checkbox"
+            id="oro_currency_selection_<%- ftid %>-uid-<%- uid %>"
+            name="oro_currency_selection[]"
+            data-ftid="oro_currency_selection_<%- ftid %>"
+            value="<%- value %>"
+            checked="checked">
+    <label for="oro_currency_selection_<%- ftid %>-uid-<%- uid %>"><%- text %><em>&nbsp;</em></label>
+</div>
+{% endset %}
+
+{% set pageComponentOptions = {
+    'priceListSelector': '#' ~ priceList.vars.id,
+    'currenciesSelector': '#' ~ currencies.vars.id,
+    'currencyTemplate': currencyTemplate,
+} %}
+
+<div
+        data-page-component-module="orob2bpricing/js/app/components/product-sidebar-component"
+        data-page-component-options="{{ pageComponentOptions|json_encode }}"
+        >
+    <div class="default-price-list-choice">{{ form_row(priceList) }}</div>
+    <div class="currencies">{{ form_row(currencies) }}</div>
+    <div class="tier-price-choice">{{ form_row(tierPrice) }}</div>
+</div>

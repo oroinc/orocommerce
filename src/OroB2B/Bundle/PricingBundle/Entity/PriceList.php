@@ -258,11 +258,17 @@ class PriceList
      */
     public function getCurrencies()
     {
-        return $this->currencies->map(
-            function (PriceListCurrency $priceListCurrency) {
-                return $priceListCurrency->getCurrency();
-            }
-        )->toArray();
+        $currencies = $this->currencies
+            ->map(
+                function (PriceListCurrency $priceListCurrency) {
+                    return $priceListCurrency->getCurrency();
+                }
+            )
+            ->toArray();
+
+        sort($currencies);
+
+        return $currencies;
     }
 
     /**

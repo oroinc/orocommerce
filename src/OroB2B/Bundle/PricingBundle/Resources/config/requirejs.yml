@@ -6,5 +6,6 @@ config:
         'orob2bpricing/js/app/components/widget-form-component': 'bundles/orob2bpricing/js/app/components/widget-form-component.js'
         'orob2bpricing/js/app/modules/validator-constraints-module': 'bundles/orob2bpricing/js/app/modules/validator-constraints-module.js'
         'orob2bpricing/js/validator/unique-product-prices': 'bundles/orob2bpricing/js/validator/unique-product-prices.js'
+        'orob2bpricing/js/app/components/product-sidebar-component': 'bundles/orob2bpricing/js/app/components/product-sidebar-component.js'
     appmodules:
         - orob2bpricing/js/app/modules/validator-constraints-module
