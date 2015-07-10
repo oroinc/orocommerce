@@ -1,12 +1,11 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemHandler
@@ -18,7 +17,7 @@ class LineItemHandler
     protected $request;
 
     /** @var ObjectManager */
-    protected $om;
+    protected $manager;
 
     /** @var ObjectManager */
     protected $savedId;
@@ -26,16 +25,16 @@ class LineItemHandler
     /**
      * @param FormInterface $form
      * @param Request $request
-     * @param ObjectManager $om
+     * @param Registry $registry
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $om
+        Registry $registry
     ) {
         $this->form = $form;
         $this->request = $request;
-        $this->om = $om;
+        $this->manager = $registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
     }
 
     /**
@@ -48,15 +47,18 @@ class LineItemHandler
         if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $existingLineItem = $this->getExistingLineItem($lineItem);
+                $existingLineItem = $this->manager
+                    ->getRepository('OroB2BShoppingListBundle:LineItem')
+                    ->findDuplicate($lineItem);
+
                 if ($existingLineItem) {
                     $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
                     $this->savedId = $existingLineItem->getId();
                 } else {
-                    $this->om->persist($lineItem);
+                    $this->manager->persist($lineItem);
                 }
 
-                $this->om->flush();
+                $this->manager->flush();
                 return true;
             }
         }
@@ -78,17 +80,5 @@ class LineItemHandler
         }
 
         return $result;
-    }
-
-    /**
-     * @param LineItem $lineItem
-     *
-     * @return LineItem|null
-     */
-    protected function getExistingLineItem(LineItem $lineItem)
-    {
-        return $this->om
-            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem')
-            ->findByProductAndUnit($lineItem->getShoppingList(), $lineItem->getProduct(), $lineItem->getUnit());
     }
 }

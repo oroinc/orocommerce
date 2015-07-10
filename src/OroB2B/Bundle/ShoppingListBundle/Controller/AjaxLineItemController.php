@@ -44,7 +44,18 @@ class AjaxLineItemController extends Controller
         $lineItem = new LineItem();
         $lineItem->setShoppingList($shoppingList);
 
-        return $this->update($lineItem);
+        $request = $this->getRequest();
+        $form = $this->createForm(LineItemType::NAME, $lineItem);
+        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+
+        $result = $this->get('oro_form.model.update_handler')
+            ->handleUpdate($lineItem, $form, null, null, null, $handler);
+
+        if ($request->get('_wid')) {
+            $result = $handler->updateSavedId($result);
+        }
+
+        return $result;
     }
 
     /**
@@ -64,30 +75,8 @@ class AjaxLineItemController extends Controller
      */
     public function updateAction(LineItem $lineItem)
     {
-        return $this->update($lineItem);
-    }
-
-    /**
-     * @param LineItem $lineItem
-     *
-     * @return array|RedirectResponse
-     */
-    protected function update(LineItem $lineItem)
-    {
         $form = $this->createForm(LineItemType::NAME, $lineItem);
-        $handler = null;
-
-        if ($lineItem->getId() === null) {
-            $handler = new LineItemHandler($form, $this->getRequest(), $this->getDoctrine()->getManager());
-        }
-
-        $result = $this->get('oro_form.model.update_handler')
-            ->handleUpdate($lineItem, $form, null, null, null, $handler);
-
-        if ($handler) {
-            $result = $handler->updateSavedId($result);
-        }
-
-        return $result;
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate($lineItem, $form, null, null, null);
     }
 }

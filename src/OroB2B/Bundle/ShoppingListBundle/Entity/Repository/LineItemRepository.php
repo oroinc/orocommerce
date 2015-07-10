@@ -3,34 +3,33 @@ namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LineItemRepository extends EntityRepository
 {
     /**
-     * Find line item by product and unit
+     * Find line item with the same product and unit
      *
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @param ShoppingList $shoppingList
+     * @param LineItem $lineItem
      *
      * @return LineItem
      */
-    public function findByProductAndUnit(ShoppingList $shoppingList, Product $product, ProductUnit $unit)
+    public function findDuplicate(LineItem $lineItem)
     {
-        $result = $this->createQueryBuilder('li')
+        $qb = $this->createQueryBuilder('li')
             ->where('li.product = :product')
             ->andWhere('li.unit = :unit')
             ->andWhere('li.shoppingList = :shoppingList')
-            ->setParameter('product', $product)
-            ->setParameter('unit', $unit)
-            ->setParameter('shoppingList', $shoppingList)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setParameter('product', $lineItem->getProduct())
+            ->setParameter('unit', $lineItem->getUnit())
+            ->setParameter('shoppingList', $lineItem->getShoppingList());
 
-        return $result;
+        if ($lineItem->getId()) {
+            $qb
+                ->andWhere('li.id != :currentId')
+                ->setParameter('currentId', $lineItem->getId());
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -153,7 +154,10 @@ class LineItemType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
+                'validation_groups' => function (FormInterface $form) {
+                    return $form->getData()->getId() ? ['update'] : ['create'];
+                }
             ]
         );
     }
