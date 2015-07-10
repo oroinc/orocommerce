@@ -35,8 +35,8 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->assertContains(
-            $this->getContainer()->get('translator')->trans('orob2b.pricing.productprice.tier_price.label'),
-            $crawler->filter('.tier-price-choice')->html()
+            $this->getContainer()->get('translator')->trans('orob2b.pricing.productprice.show_tier_prices.label'),
+            $crawler->filter('.show-tier-prices-choice')->html()
         );
     }
 }

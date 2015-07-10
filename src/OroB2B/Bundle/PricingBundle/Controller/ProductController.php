@@ -35,25 +35,25 @@ class ProductController extends Controller
                 'empty_value' => false,
                 'empty_data' => $defaultPriceList,
                 'configs' => ['allowClear' => false],
-                'label' => false
+                'label' => 'orob2b.pricing.pricelist.entity_label'
             ]
         );
 
         return [
             'priceList' => $priceListForm->createView(),
-            'tierPrice' => $this->createTierPriceForm()->createView()
+            'showTierPrices' => $this->createShowTierPricesForm()->createView()
         ];
     }
 
     /**
      * @return Form
      */
-    protected function createTierPriceForm()
+    protected function createShowTierPricesForm()
     {
         return $this->createForm(
             'checkbox',
             null,
-            ['label' => 'orob2b.pricing.productprice.tier_price.label', 'required' => false]
+            ['label' => 'orob2b.pricing.productprice.show_tier_prices.label', 'required' => false]
         );
     }
 }
