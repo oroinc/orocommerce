@@ -63,6 +63,7 @@ orob2b:
 
         controller:
             product.saved.message: Product has been saved
+            product.saved_and_duplicated.message: Product has been saved and duplicated
 
         system_configuration:
             groups:
@@ -76,6 +77,10 @@ orob2b:
         grid:
             action:
                 duplicate: Duplicate
+
+        ui:
+            duplicate: Duplicate
+            save_and_duplicate: Save And Duplicate
 
     product_unit.kg:
         label:

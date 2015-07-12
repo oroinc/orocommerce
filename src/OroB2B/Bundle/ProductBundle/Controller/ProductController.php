@@ -131,7 +131,7 @@ class ProductController extends Controller
      */
     protected function update(Product $product)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->get('orob2b_product.form.product'),
             function (Product $product) {
