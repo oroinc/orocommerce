@@ -153,8 +153,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Ensure success message if not exist
-     *
      * @param $messageKey
      */
     protected function ensureSuccessMessage($messageKey)

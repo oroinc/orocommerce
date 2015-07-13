@@ -243,7 +243,6 @@ class ProductControllerTest extends WebTestCase
 
     /**
      * @depends testDelete
-     * This dependency to ensure that created&updated product already deleted
      *
      * @return int
      */
