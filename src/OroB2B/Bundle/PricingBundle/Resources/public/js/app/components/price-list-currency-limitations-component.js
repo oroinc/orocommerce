@@ -1,14 +1,14 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var PriceListCurrencyLimitationComponent,
-        _ = require('underscore'),
-        routing = require('routing'),
-        messenger = require('oroui/js/messenger'),
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var PriceListCurrencyLimitationComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var routing = require('routing');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     PriceListCurrencyLimitationComponent = BaseComponent.extend({
         /**
@@ -44,7 +44,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$elem = options._sourceElement;
 
@@ -54,7 +54,7 @@ define(function (require) {
             this.$currencySelect = this.$elem.find(options.currencySelector);
             this.$currencySelect.find('option').clone().each(
                 _.bind(
-                    function (idx, option) {
+                    function(idx, option) {
                         this.systemSupportedCurrencyOptions[option.value] = option;
                     },
                     this
@@ -66,7 +66,7 @@ define(function (require) {
                 'change',
                 options.priceListSelector,
                 _.bind(
-                    function () {
+                    function() {
                         this.prepareCurrencySelect(false);
                     },
                     this
@@ -79,7 +79,7 @@ define(function (require) {
          *
          *  @param {Boolean} skipClear
          */
-        prepareCurrencySelect: function (skipClear) {
+        prepareCurrencySelect: function(skipClear) {
             var priceListId = this.$priceListSelect.val();
             var self = this;
 
@@ -88,25 +88,25 @@ define(function (require) {
                 return;
             }
 
-            if (false && _.has(this.currencies, priceListId)) {
+            if (_.has(this.currencies, priceListId)) {
                 this.handleCurrencies(this.currencies[priceListId], skipClear);
             } else {
                 $.ajax({
                     url: routing.generate(this.options.currenciesRoute, {'id': priceListId}),
                     type: 'GET',
-                    beforeSend: function () {
+                    beforeSend: function() {
                         self.loadingMaskView.show();
                     },
-                    success: function (response) {
+                    success: function(response) {
                         var priceListCurrencies = _.keys(response);
                         self.currencies[priceListId] = priceListCurrencies;
                         self.$elem.closest(self.options.container).data('currencies', self.currencies);
                         self.handleCurrencies(priceListCurrencies, skipClear);
                     },
-                    complete: function () {
+                    complete: function() {
                         self.loadingMaskView.hide();
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         Error.handle({}, xhr, {enforce: true});
                     }
                 });
@@ -117,19 +117,19 @@ define(function (require) {
          * @param {array} priceListCurrencies
          * @param {Boolean} skipClear
          */
-        handleCurrencies: function (priceListCurrencies, skipClear) {
+        handleCurrencies: function(priceListCurrencies, skipClear) {
             // Add empty key for empty value placeholder
             priceListCurrencies.unshift('');
 
             var newOptions = _.filter(
                 this.systemSupportedCurrencyOptions,
-                function (option, key) {
+                function(option, key) {
                     return _.indexOf(priceListCurrencies, key) !== -1;
                 }
             );
 
             this.$currencySelect.html(newOptions);
-            this.$currencySelect.removeAttr("disabled");
+            this.$currencySelect.removeAttr('disabled');
 
             if (!skipClear) {
                 this.$currencySelect.val('');
@@ -137,7 +137,7 @@ define(function (require) {
             }
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
