@@ -16,6 +16,8 @@ class ProductControllerTest extends WebTestCase
 {
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
+    const FIRST_DUPLICATED_SKU = 'SKU-001-updated-1';
+    const SECOND_DUPLICATED_SKU = 'SKU-001-updated-1-1';
 
     const STATUS = 'Disabled';
     const UPDATED_STATUS = 'Enabled';
@@ -86,13 +88,8 @@ class ProductControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $response = $this->client->requestGrid(
-            'products-grid',
-            ['products-grid[_filter][sku][value]' => self::TEST_SKU]
-        );
+        $result = $this->getProductDataBySku(self::TEST_SKU);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
         $this->assertEquals(self::TEST_SKU, $result['sku']);
         $this->assertEquals(self::CATEGORY_NAME, $result['category']);
 
@@ -160,6 +157,40 @@ class ProductControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
+    public function testDuplicate($id)
+    {
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_duplicate', ['id' => $id]));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+        $this->assertContains("Product has been duplicated", $html);
+        $this->assertContains(self::FIRST_DUPLICATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(self::UPDATED_VISIBILITY, $html);
+        $this->assertContains(self::STATUS, $html);
+
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
+        );
+
+        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+
+        return $result['id'];
+    }
+
+    /**
+     * @depends testUpdate
+     * @param int $id
+     * @return int
+     */
     public function testView($id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
@@ -211,6 +242,66 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
+     * @depends testDelete
+     * This dependency to ensure that created&updated product already deleted
+     *
+     * @return int
+     */
+    public function testSaveAndDuplicate()
+    {
+        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+
+        $id = $result['id'];
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+
+        /** @var Form $form */
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $submittedData = [
+            'input_action' => 'save_and_duplicate',
+            'orob2b_product_form' => [
+                '_token' => $form['orob2b_product_form[_token]']->getValue(),
+                'sku' => self::FIRST_DUPLICATED_SKU,
+                'owner' => $this->getBusinessUnitId(),
+                'category' => $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME),
+                'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'visibility' => Product::VISIBILITY_NOT_VISIBLE,
+                'status' => Product::STATUS_ENABLED,
+                'unitPrecisions' => [
+                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
+                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
+                ]
+            ]
+        ];
+
+        $this->client->followRedirects(true);
+
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+        $this->assertContains("Product has been saved and duplicated", $html);
+        $this->assertContains(self::SECOND_DUPLICATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(self::UPDATED_VISIBILITY, $html);
+        $this->assertContains(self::STATUS, $html);
+
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
+        );
+
+        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+
+        return $result['id'];
+    }
+
+    /**
      * @param string $title
      * @return Category|null
      */
@@ -246,5 +337,27 @@ class ProductControllerTest extends WebTestCase
         });
 
         return $unitPrecisions;
+    }
+
+    private function getProductDataBySku($sku)
+    {
+        $response = $this->client->requestGrid(
+            'products-grid',
+            ['products-grid[_filter][sku][value]' => $sku]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertArrayHasKey('data', $result);
+        $this->assertNotEmpty($result['data']);
+
+        $result = reset($result['data']);
+        $this->assertNotEmpty($result);
+
+        return $result;
+    }
+
+    private function createUnitPrecisionString($name, $precision)
+    {
+        return sprintf('%s with precision %s decimal places', $name, $precision);
     }
 }

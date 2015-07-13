@@ -63,6 +63,7 @@ orob2b:
 
         controller:
             product.saved.message: Product has been saved
+            product.duplicated.message: Product has been duplicated
             product.saved_and_duplicated.message: Product has been saved and duplicated
 
         system_configuration:

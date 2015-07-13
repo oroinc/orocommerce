@@ -117,6 +117,8 @@ class ProductController extends Controller
     {
         $productCopy = $this->get('orob2b_product.service.duplicator')->duplicate($product);
 
+        $this->ensureSuccessMessage('orob2b.product.controller.product.duplicated.message');
+
         return $this->redirect(
             $this->generateUrl(
                 'orob2b_product_view',
@@ -148,5 +150,19 @@ class ProductController extends Controller
             },
             $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
         );
+    }
+
+    /**
+     * Ensure success message if not exist
+     *
+     * @param $messageKey
+     */
+    protected function ensureSuccessMessage($messageKey)
+    {
+        $flashBag = $this->get('session')->getFlashBag();
+        if (!$flashBag->has('success')) {
+            $message = $this->get('translator')->trans($messageKey);
+            $flashBag->set('success', $message);
+        }
     }
 }
