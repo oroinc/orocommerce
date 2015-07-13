@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Symfony\Component\Intl\Intl;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -59,6 +61,15 @@ class AjaxPriceListControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertEquals($priceList->getCurrencies(), $data);
+        $this->assertEquals($priceList->getCurrencies(), array_keys($data));
+        $this->assertEquals(
+            array_map(
+                function ($currencyCode) {
+                    return Intl::getCurrencyBundle()->getCurrencyName($currencyCode);
+                },
+                $priceList->getCurrencies()
+            ),
+            array_values($data)
+        );
     }
 }
