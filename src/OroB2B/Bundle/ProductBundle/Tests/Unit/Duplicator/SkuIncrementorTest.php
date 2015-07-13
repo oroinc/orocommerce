@@ -17,7 +17,7 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
     protected $service;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
      */
     protected $manager;
 

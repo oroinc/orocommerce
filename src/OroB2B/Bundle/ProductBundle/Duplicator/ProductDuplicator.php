@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
-use Symfony\Component\EventDispatcher\EventDispatcher;
-
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
@@ -22,7 +22,7 @@ class ProductDuplicator
     protected $objectManager;
 
     /**
-     * @var EventDispatcher
+     * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
 
@@ -43,14 +43,14 @@ class ProductDuplicator
 
     /**
      * @param ObjectManager $objectManager
-     * @param EventDispatcher $eventDispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      * @param SkuIncrementorInterface $skuIncrementor
      * @param AttachmentManager $attachmentManager
      * @param AttachmentProvider $attachmentProvider
      */
     public function __construct(
         ObjectManager $objectManager,
-        EventDispatcher $eventDispatcher,
+        EventDispatcherInterface $eventDispatcher,
         SkuIncrementorInterface $skuIncrementor,
         AttachmentManager $attachmentManager,
         AttachmentProvider $attachmentProvider

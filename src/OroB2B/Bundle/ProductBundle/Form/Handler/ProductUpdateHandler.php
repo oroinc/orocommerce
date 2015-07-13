@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
-use Oro\Bundle\UIBundle\Route\Router;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
+
+use Oro\Bundle\UIBundle\Route\Router;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -40,11 +43,17 @@ class ProductUpdateHandler extends UpdateHandler
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormInterface $form
+     * @param Product $entity
+     * @param array|callable $saveAndStayRoute
+     * @param array|callable $saveAndCloseRoute
+     * @param string $saveMessage
+     * @param null $resultCallback
+     * @return array|RedirectResponse
      */
     protected function processSave(
         FormInterface $form,
-        $entity,
+        Product $entity,
         $saveAndStayRoute,
         $saveAndCloseRoute,
         $saveMessage,
