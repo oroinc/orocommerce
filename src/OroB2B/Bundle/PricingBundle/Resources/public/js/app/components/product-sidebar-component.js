@@ -9,6 +9,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
     var messenger = require('oroui/js/messenger');
     var __ = require('orotranslation/js/translator');
 
@@ -19,6 +20,7 @@ define(function(require) {
         options: {
             priceListSelector: '.priceListSelectorContainer',
             currenciesSelector: '.currenciesSelectorContainer',
+            showTierPricesSelector: '.showTierPricesSelectorContainer',
             routeName: 'orob2b_pricing_price_list_currency_list',
             routingParams: {},
             currencyTemplate: '<input type="checkbox" id="<%- id %>" value="<%- value %>">' +
@@ -44,8 +46,10 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
             this.currenciesContainer = this.options._sourceElement.find(this.options.currenciesSelector);
 
-            this.options._sourceElement
-                .on('change', this.options.priceListSelector, _.bind(this.onPriceListChange, this));
+            var el = this.options._sourceElement;
+            el.on('change', this.options.priceListSelector, _.bind(this.onPriceListChange, this));
+            el.on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this));
+            el.on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
         },
 
         onPriceListChange: function(e) {
@@ -64,6 +68,35 @@ define(function(require) {
                     this
                 )
             });
+        },
+
+        onCurrenciesChange: function() {
+            this.triggerSidebarChanged(true);
+        },
+
+        onShowTierPricesChange: function() {
+            this.triggerSidebarChanged(false);
+        },
+
+        /**
+         * @param {Boolean} widgetReload
+         */
+        triggerSidebarChanged: function(widgetReload) {
+            if (widgetReload !== true) {
+                widgetReload = false;
+            }
+
+            var currencies = _.map($(this.options.currenciesSelector + ' input:checked'), function (input) {
+                return $(input).val();
+            });
+
+            var params = {
+                priceListId: $(this.options.priceListSelector).val(),
+                priceCurrencies: currencies,
+                showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
+            };
+
+            mediator.trigger('product_sidebar:changed', {widgetReload: widgetReload, params: params});
         },
 
         /**
@@ -102,6 +135,7 @@ define(function(require) {
          */
         _complete: function() {
             this.loadingMaskView.hide();
+            this.triggerSidebarChanged(false);
         },
 
         dispose: function() {
