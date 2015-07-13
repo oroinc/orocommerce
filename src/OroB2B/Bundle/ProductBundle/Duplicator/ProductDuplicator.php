@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -30,18 +32,34 @@ class ProductDuplicator
     protected $skuIncrementor;
 
     /**
+     * @var AttachmentManager
+     */
+    protected $attachmentManager;
+
+    /**
+     * @var AttachmentProvider
+     */
+    protected $attachmentProvider;
+
+    /**
      * @param ObjectManager $objectManager
      * @param EventDispatcher $eventDispatcher
      * @param SkuIncrementorInterface $skuIncrementor
+     * @param AttachmentManager $attachmentManager
+     * @param AttachmentProvider $attachmentProvider
      */
     public function __construct(
         ObjectManager $objectManager,
         EventDispatcher $eventDispatcher,
-        SkuIncrementorInterface $skuIncrementor
+        SkuIncrementorInterface $skuIncrementor,
+        AttachmentManager $attachmentManager,
+        AttachmentProvider $attachmentProvider
     ) {
         $this->objectManager = $objectManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->skuIncrementor = $skuIncrementor;
+        $this->attachmentManager = $attachmentManager;
+        $this->attachmentProvider = $attachmentProvider;
     }
 
     /**
@@ -53,7 +71,7 @@ class ProductDuplicator
         $productCopy = $this->createProductCopy($product);
 
         $this->objectManager->persist($productCopy);
-        $this->objectManager->flush($productCopy);
+        $this->objectManager->flush();
 
         $this->eventDispatcher->dispatch(
             ProductDuplicateAfterEvent::NAME,
@@ -89,16 +107,22 @@ class ProductDuplicator
             $productCopy->addUnitPrecision(clone $unitPrecision);
         }
 
-        /**
-         * @TODO need to copy file itself
-         */
-        if ($image = $product->getImage()) {
-            $productCopy->setImage(clone $image);
+        if ($imageFile = $product->getImage()) {
+            $imageFileCopy = $this->attachmentManager->copyAttachmentFile($imageFile);
+            $productCopy->setImage($imageFileCopy);
         }
 
-        /**
-         * @TODO need to copy attachment
-         */
+        $attachments = $this->attachmentProvider->getEntityAttachments($product);
+
+        foreach ($attachments as $attachment) {
+            $attachmentCopy = clone $attachment;
+            $attachmentFileCopy = $this->attachmentManager->copyAttachmentFile($attachment->getFile());
+            $attachmentCopy->setFile($attachmentFileCopy);
+
+            $attachmentCopy->setTarget($productCopy);
+
+            $this->objectManager->persist($attachmentCopy);
+        }
     }
 
     /**

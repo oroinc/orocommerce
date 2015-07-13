@@ -68,6 +68,8 @@ services:
             - @doctrine.orm.entity_manager
             - @event_dispatcher
             - @orob2b_product.service.sku_incrementor
+            - @oro_attachment.manager
+            - @oro_attachment.provider.attachment
 
     orob2b_product.service.product_update_handler:
         class: %orob2b_product.service.product_update_handler.class%
