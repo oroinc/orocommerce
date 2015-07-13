@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Rounding;
+namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 

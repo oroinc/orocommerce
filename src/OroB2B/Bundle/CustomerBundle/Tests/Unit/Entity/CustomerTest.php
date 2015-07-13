@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -19,7 +20,8 @@ class CustomerTest extends EntityTestCase
             ['id', 42],
             ['name', 'Adam Weishaupt'],
             ['parent', $this->createCustomerEntity()],
-            ['group', $this->createCustomerGroupEntity()]
+            ['group', $this->createCustomerGroupEntity()],
+            ['organization', $this->createOrganization()],
         ]);
     }
 
@@ -100,5 +102,13 @@ class CustomerTest extends EntityTestCase
     protected function createUserEntity()
     {
         return new AccountUser();
+    }
+
+    /**
+     * @return Organization
+     */
+    protected function createOrganization()
+    {
+        return new Organization();
     }
 }

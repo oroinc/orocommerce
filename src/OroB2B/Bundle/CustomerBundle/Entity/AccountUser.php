@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
@@ -44,21 +45,23 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *              "icon"="icon-briefcase"
  *          },
  *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_CUSTOMER",
+ *              "frontend_owner_field_name"="customer",
+ *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
  */
-class AccountUser extends AbstractUser implements FullNameInterface
+class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
 {
+    const SECURITY_GROUP = 'commerce';
+
     /**
      * @var AccountUserRole[]|Collection
      *
@@ -227,6 +230,7 @@ class AccountUser extends AbstractUser implements FullNameInterface
     {
         if (!$this->customer) {
             $this->customer = new Customer();
+            $this->customer->setOrganization($this->organization);
             $this->customer->setName(sprintf('%s %s', $this->firstName, $this->lastName));
         }
     }

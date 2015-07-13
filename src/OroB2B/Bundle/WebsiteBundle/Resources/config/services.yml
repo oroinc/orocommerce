@@ -4,9 +4,17 @@ parameters:
 
     orob2b_website.manager.class: OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager
 
+    orob2b_website.twig.website_extension.class: OroB2B\Bundle\WebsiteBundle\Twig\OroB2BWebsiteExtension
+
 services:
     orob2b_website.manager:
         class: %orob2b_website.manager.class%
-        scope: request
         arguments:
             - @doctrine
+
+    orob2b_website.twig.website_extension:
+        class: %orob2b_website.twig.website_extension.class%
+        arguments:
+            - @orob2b_website.manager
+        tags:
+            - { name: twig.extension }
