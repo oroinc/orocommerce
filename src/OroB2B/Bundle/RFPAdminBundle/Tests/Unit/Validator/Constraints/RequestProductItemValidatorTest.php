@@ -61,9 +61,9 @@ class RequestProductItemValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param mixed $data
      * @param boolean $valid
-     * @dataProvider allowedUnitsProvider
+     * @dataProvider validateProvider
      */
-    public function testAllowedUnits($data, $valid)
+    public function testValidate($data, $valid)
     {
         $this->context
             ->expects($valid ? $this->never() : $this->once())
@@ -77,7 +77,7 @@ class RequestProductItemValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function allowedUnitsProvider()
+    public function validateProvider()
     {
         $product = (new Product())
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit1')))
@@ -85,33 +85,51 @@ class RequestProductItemValidatorTest extends \PHPUnit_Framework_TestCase
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit3')))
         ;
 
-        $item1 = (new RequestProductItem())
-            ->setRequestProduct(new RequestProduct())
-            ->setProductUnit((new ProductUnit())->setCode('unit1'))
-        ;
+        $item1 = new RequestProductItem();
 
         $item2 = (new RequestProductItem())
-            ->setRequestProduct((new RequestProduct())->setProduct($product))
-            ->setProductUnit((new ProductUnit())->setCode('unit1'))
-        ;
+            ->setRequestProduct(new RequestProduct());
 
         $item3 = (new RequestProductItem())
+            ->setRequestProduct((new RequestProduct())->setProduct(new Product()));
+
+        $item4 = (new RequestProductItem())
+            ->setRequestProduct((new RequestProduct())->setProduct($product));
+
+        $item5 = (new RequestProductItem())
             ->setRequestProduct((new RequestProduct())->setProduct($product))
             ->setProductUnit((new ProductUnit())->setCode('unit5'))
         ;
 
+        $item6 = (new RequestProductItem())
+            ->setRequestProduct((new RequestProduct())->setProduct($product))
+            ->setProductUnit((new ProductUnit())->setCode('unit1'))
+        ;
+
         return [
-            'empty product' => [
+            'empty request product' => [
                 'data'  => $item1,
                 'valid' => false,
             ],
-            'valid unit code' => [
+            'empty product' => [
                 'data'  => $item2,
-                'valid' => true,
+                'valid' => false,
             ],
-            'ivalid unit code' => [
+            'empty allowed units' => [
                 'data'  => $item3,
                 'valid' => false,
+            ],
+            'empty product unit' => [
+                'data'  => $item4,
+                'valid' => false,
+            ],
+            'ivalid unit code' => [
+                'data'  => $item5,
+                'valid' => false,
+            ],
+            'valid unit code' => [
+                'data'  => $item6,
+                'valid' => true,
             ],
         ];
     }

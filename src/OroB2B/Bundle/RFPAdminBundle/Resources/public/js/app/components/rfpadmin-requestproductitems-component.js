@@ -110,7 +110,7 @@ define(function (require) {
          * @param {jQuery.Event} e
          */
         onContentChanged: function (e) {
-            this.updateContent();
+            this.updateContent(false);
         },
 
         /**

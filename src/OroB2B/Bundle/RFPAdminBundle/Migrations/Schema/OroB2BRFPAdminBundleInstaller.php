@@ -119,7 +119,6 @@ class OroB2BRFPAdminBundleInstaller implements
         $table->addColumn('body', 'text', []);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
     }
 
