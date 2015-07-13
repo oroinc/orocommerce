@@ -46,10 +46,10 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
             this.currenciesContainer = this.options._sourceElement.find(this.options.currenciesSelector);
 
-            var el = this.options._sourceElement;
-            el.on('change', this.options.priceListSelector, _.bind(this.onPriceListChange, this));
-            el.on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this));
-            el.on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
+            this.options._sourceElement
+                .on('change', this.options.priceListSelector, _.bind(this.onPriceListChange, this))
+                .on('change', this.options.currenciesSelector, _.bind(this.onCurrenciesChange, this))
+                .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
         },
 
         onPriceListChange: function(e) {
@@ -82,11 +82,7 @@ define(function(require) {
          * @param {Boolean} widgetReload
          */
         triggerSidebarChanged: function(widgetReload) {
-            if (widgetReload !== true) {
-                widgetReload = false;
-            }
-
-            var currencies = _.map($(this.options.currenciesSelector + ' input:checked'), function (input) {
+            var currencies = _.map($(this.options.currenciesSelector + ' input:checked'), function(input) {
                 return $(input).val();
             });
 
@@ -96,7 +92,7 @@ define(function(require) {
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
             };
 
-            mediator.trigger('product_sidebar:changed', {widgetReload: widgetReload, params: params});
+            mediator.trigger('product_sidebar:changed', {widgetReload: Boolean(widgetReload), params: params});
         },
 
         /**

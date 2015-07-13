@@ -1,16 +1,16 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var ProductSidebarGridComponent,
-        _ = require('underscore'),
-        $ = require('jquery'),
-        mediator = require('oroui/js/mediator'),
-        routing = require('routing'),
-        tools = require('oroui/js/tools'),
-        widgetManager = require('oroui/js/widget-manager'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var ProductSidebarGridComponent;
+    var _ = require('underscore');
+    var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
+    var tools = require('oroui/js/tools');
+    var widgetManager = require('oroui/js/widget-manager');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     ProductSidebarGridComponent = BaseComponent.extend({
         /**
@@ -24,7 +24,7 @@ define(function (require) {
                     enableFullScreenLayout: true,
                     enableViews: false
                 },
-                renderParamsTypes : {
+                renderParamsTypes: {
                     enableFullScreenLayout: 'bool',
                     enableViews: 'bool'
                 }
@@ -40,7 +40,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$container = options._sourceElement;
@@ -52,7 +52,7 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        onSidebarChange: function (data) {
+        onSidebarChange: function(data) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
 
@@ -60,7 +60,7 @@ define(function (require) {
 
             widgetManager.getWidgetInstanceByAlias(
                 this.options.widgetAlias,
-                function (widget) {
+                function(widget) {
                     widget.setUrl(routing.generate('oro_datagrid_widget', widgetParams));
 
                     if (data.widgetReload) {
@@ -76,7 +76,7 @@ define(function (require) {
          * @private
          * @return {Object}
          */
-        _getCurrentUrlParams: function () {
+        _getCurrentUrlParams: function() {
             var query = location.search.slice(1);
 
             return query.length ? tools.unpackFromQueryString(query) : {};
