@@ -118,7 +118,6 @@ services:
             - @oro_entity.doctrine_helper
         calls:
             - [setRequest, ["@?request="]]
-            - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }

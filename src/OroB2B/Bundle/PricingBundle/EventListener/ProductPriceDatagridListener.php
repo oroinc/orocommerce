@@ -31,11 +31,6 @@ class ProductPriceDatagridListener
     protected $request;
 
     /**
-     * @var string
-     */
-    protected $priceListClass;
-
-    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      */
@@ -51,14 +46,6 @@ class ProductPriceDatagridListener
     public function setRequest(Request $request = null)
     {
         $this->request = $request;
-    }
-
-    /**
-     * @param string $priceListClass
-     */
-    public function setPriceListClass($priceListClass)
-    {
-        $this->priceListClass = $priceListClass;
     }
 
     /**
