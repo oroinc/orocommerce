@@ -247,7 +247,6 @@ class ProductControllerTest extends WebTestCase
                 '_token' => $form['orob2b_product_form[_token]']->getValue(),
                 'sku' => self::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
-                'category' => $this->getCategoryByDefaultTitle(self::UPDATED_CATEGORY_NAME),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'status' => Product::STATUS_ENABLED,

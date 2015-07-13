@@ -53,7 +53,7 @@ class ProductUpdateHandler extends UpdateHandler
      */
     protected function processSave(
         FormInterface $form,
-        Product $entity,
+        $entity,
         $saveAndStayRoute,
         $saveAndCloseRoute,
         $saveMessage,
