@@ -1,6 +1,9 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -105,7 +108,43 @@ class LineItemType extends AbstractType
                 ]
             );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $entity = $event->getData();
+        $form = $event->getForm();
+
+        $form->add(
+            'unit',
+            ProductUnitSelectionType::NAME,
+            [
+                'required' => true,
+                'label' => 'orob2b.pricing.productprice.unit.label',
+                'empty_data' => null,
+                'empty_value' => 'orob2b.pricing.productprice.unit.choose',
+                'query_builder' => function (EntityRepository $er) use ($entity) {
+                    $qb = $er->createQueryBuilder('unit');
+                    $qb->select('unit')
+                        ->join(
+                            'OroB2BProductBundle:ProductUnitPrecision',
+                            'productUnitPrecision',
+                            Join::WITH,
+                            $qb->expr()->eq('productUnitPrecision.unit', 'unit')
+                        )
+                        ->addOrderBy('unit.code')
+                        ->where($qb->expr()->eq('productUnitPrecision.product', ':product'))
+                        ->setParameter('product', $entity->getProduct());
+
+                    return $qb;
+                }
+            ]
+        );
     }
 
     /**
