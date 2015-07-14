@@ -13,7 +13,9 @@ orob2b:
         line_items.label: Line Items
 
         product:
-            add_to_shopping_list.label: Add To Shopping List
+            add_to_shopping_list.label: Add to Shopping List
+            add_to.label: Add to
+            create_new_shopping_list.label: Create New Shopping List
 
         actions:
             set_current: Set as current

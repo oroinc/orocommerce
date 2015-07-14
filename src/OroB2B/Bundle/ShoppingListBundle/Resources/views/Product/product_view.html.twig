@@ -1,0 +1,57 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% if form.vars.errors|length > 0 %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+{% endif %}
+
+<form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+      method="{{ form.vars.method }}" data-collect="true" class="form-horizontal add-to-shopping-list-form">
+
+    <fieldset class="form-horizontal">
+        {{ form_row(form.quantity) }}
+        {{ form_row(form.unit) }}
+    </fieldset>
+
+    <div class="hidden">
+        {{ form_rest(form) }}
+    </div>
+
+    <div class="btn-group">
+        {% set buttonsHtml %}
+        {% if currentShoppingList %}
+            {{ UI.clientButton({
+                'dataUrl': path('orob2b_shopping_list_frontend_add_product', { 'shoppingListId': currentShoppingList.id, 'productId': product.id }),
+                'aCss':   'no-hash add-to-shopping-list-btn',
+                'iCss':   'icon-shopping-cart',
+                'label' : 'orob2b.shoppinglist.product.add_to_shopping_list.label'|trans
+            }) }}
+
+            {% for shoppingList in shoppingLists %}
+                {{ UI.clientButton({
+                    'dataUrl': path('orob2b_shopping_list_frontend_add_product', { 'shoppingListId': shoppingList.id, 'productId': product.id }),
+                    'aCss':   'no-hash add-to-shopping-list-btn',
+                    'iCss':   'icon-shopping-cart',
+                    'label' : 'orob2b.shoppinglist.product.add_to.label'|trans ~ ' ' ~ shoppingList.label
+                }) }}
+            {% endfor %}
+
+            {{ UI.buttonSeparator() }}
+        {% endif %}
+
+        {#{{ UI.clientButton({#}
+            {#'dataUrl': path('orob2b_shopping_list_frontend_add_product', { 'productId': product.id}) ,#}
+            {#'aCss':   'no-hash create-new-shopping-list-btn',#}
+            {#'iCss':   'icon-shopping-cart',#}
+            {#'label' : 'orob2b.shoppinglist.product.create_new_shopping_list.label'|trans#}
+        {#}) }}#}
+        {% endset %}
+        {{ UI.pinnedDropdownButton({'html': buttonsHtml}) }}
+    </div>
+</form>
+{{ oro_form_js_validation(form) }}
+
+<script type="text/javascript">
+    require(['orob2bshoppinglist/js/app/views/frontend-product-view'])
+</script>

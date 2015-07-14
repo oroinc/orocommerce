@@ -1,3 +1,4 @@
 config:
     paths:
         'orob2bshoppinglist/js/app/components/widget-form-component': 'bundles/orob2bshoppinglist/js/app/components/widget-form-component.js'
+        'orob2bshoppinglist/js/app/views/frontend-product-view': 'bundles/orob2bshoppinglist/js/app/views/frontend-product-view.js'

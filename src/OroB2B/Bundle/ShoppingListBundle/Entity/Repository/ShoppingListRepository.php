@@ -21,4 +21,19 @@ class ShoppingListRepository extends EntityRepository
             ->setParameter('accountUser', $accountUser)
             ->getQuery()->getOneOrNullResult();
     }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return array
+     */
+    public function findAllExceptCurrentForAccountUser(AccountUser $accountUser)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list')
+            ->where('list.accountUser = :accountUser')
+            ->andWhere('list.isCurrent = 0')
+            ->setParameter('accountUser', $accountUser)
+            ->getQuery()->getResult();
+    }
 }
