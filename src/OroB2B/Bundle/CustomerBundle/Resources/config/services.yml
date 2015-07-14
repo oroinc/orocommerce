@@ -3,6 +3,8 @@ parameters:
     orob2b_customer.entity.customer_group.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup
     orob2b_customer.entity.account_user.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
     orob2b_customer.entity.account_user_role.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole
+    orob2b_customer.entity.audit.class: OroB2B\Bundle\CustomerBundle\Entity\Audit
+    orob2b_customer.entity.audit_field.class: OroB2B\Bundle\CustomerBundle\Entity\AuditField
 
     orob2b_customer.customer_tree_handler.class: OroB2B\Bundle\CustomerBundle\JsTree\CustomerTreeHandler
     orob2b_customer.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager

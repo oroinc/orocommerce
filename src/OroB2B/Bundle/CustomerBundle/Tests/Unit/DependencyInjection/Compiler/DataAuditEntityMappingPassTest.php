@@ -4,19 +4,22 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-use OroB2B\Bundle\CustomerBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
+use OroB2B\Bundle\CustomerBundle\DependencyInjection\Compiler\DataAuditEntityMappingPass;
 
-class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
+class DataAuditEntityMappingPassTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcess()
     {
-        $listenerDefinition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
+        $definition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $listenerDefinition->expects($this->exactly(2))
+        $definition->expects($this->exactly(2))
             ->method('addMethodCall')
-            ->with('addSupportedClass', $this->isType('array'));
+            ->withConsecutive(
+                ['addAuditEntryClass', $this->isType('array')],
+                ['addAuditEntryFieldClass', $this->isType('array')]
+            );
 
         /** @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject $containerBuilder */
         $containerBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
@@ -25,19 +28,19 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
 
         $containerBuilder->expects($this->once())
             ->method('getDefinition')
-            ->with(OwnerTreeListenerPass::LISTENER_SERVICE)
-            ->willReturn($listenerDefinition);
+            ->with(DataAuditEntityMappingPass::MAPPER_SERVICE)
+            ->willReturn($definition);
 
         $containerBuilder->expects($this->once())
             ->method('hasDefinition')
-            ->with(OwnerTreeListenerPass::LISTENER_SERVICE)
-            ->willReturn(true);
+            ->with(DataAuditEntityMappingPass::MAPPER_SERVICE)
+            ->willReturn($definition);
 
-        $containerBuilder->expects($this->exactly(2))
+        $containerBuilder->expects($this->exactly(3))
             ->method('getParameter')
             ->with($this->isType('string'));
 
-        $compilerPass = new OwnerTreeListenerPass();
+        $compilerPass = new DataAuditEntityMappingPass();
         $compilerPass->process($containerBuilder);
     }
 
@@ -53,11 +56,10 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
 
         $containerBuilder->expects($this->once())
             ->method('hasDefinition')
-            ->with(OwnerTreeListenerPass::LISTENER_SERVICE)
+            ->with(DataAuditEntityMappingPass::MAPPER_SERVICE)
             ->willReturn(false);
 
-
-        $compilerPass = new OwnerTreeListenerPass();
+        $compilerPass = new DataAuditEntityMappingPass();
         $compilerPass->process($containerBuilder);
     }
 }
