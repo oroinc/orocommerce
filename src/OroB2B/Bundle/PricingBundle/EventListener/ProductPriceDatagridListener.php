@@ -88,6 +88,10 @@ class ProductPriceDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        if (!$this->request) {
+            return;
+        }
+
         $priceListId = $this->getPriceListId();
         $currencies = $this->getCurrencies();
         if (!$priceListId || !$currencies) {
@@ -114,6 +118,8 @@ class ProductPriceDatagridListener
                 $columnName = $this->buildColumnName($currencyIsoCode);
                 if (isset($groupedPrices[$productId][$currencyIsoCode])) {
                     $priceContainer[$columnName] = $groupedPrices[$productId][$currencyIsoCode];
+                } else {
+                    $priceContainer[$columnName] = [];
                 }
             }
             if ($priceContainer) {
