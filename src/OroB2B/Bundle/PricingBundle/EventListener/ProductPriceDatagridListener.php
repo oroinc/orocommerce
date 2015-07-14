@@ -31,11 +31,6 @@ class ProductPriceDatagridListener
     protected $request;
 
     /**
-     * @var string
-     */
-    protected $priceListClass;
-
-    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      */
@@ -51,14 +46,6 @@ class ProductPriceDatagridListener
     public function setRequest(Request $request = null)
     {
         $this->request = $request;
-    }
-
-    /**
-     * @param string $priceListClass
-     */
-    public function setPriceListClass($priceListClass)
-    {
-        $this->priceListClass = $priceListClass;
     }
 
     /**
@@ -101,6 +88,10 @@ class ProductPriceDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        if (!$this->request) {
+            return;
+        }
+
         $priceListId = $this->getPriceListId();
         $currencies = $this->getCurrencies();
         if (!$priceListId || !$currencies) {
@@ -127,10 +118,12 @@ class ProductPriceDatagridListener
                 $columnName = $this->buildColumnName($currencyIsoCode);
                 if (isset($groupedPrices[$productId][$currencyIsoCode])) {
                     $priceContainer[$columnName] = $groupedPrices[$productId][$currencyIsoCode];
+                } else {
+                    $priceContainer[$columnName] = [];
                 }
             }
             if ($priceContainer) {
-                $record->addValueContainer($priceContainer);
+                $record->addData($priceContainer);
             }
         }
     }
