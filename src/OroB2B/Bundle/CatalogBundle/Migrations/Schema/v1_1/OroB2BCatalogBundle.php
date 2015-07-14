@@ -6,9 +6,28 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroB2BCatalogBundle implements Migration
+class OroB2BCatalogBundle implements Migration, NoteExtensionAwareInterface
 {
+    const CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
+    const CATEGORY_TO_PRODUCT_TABLE_NAME = 'orob2b_category_to_product';
+    const PRODUCT_TABLE = 'orob2b_product';
+
+    /** @var  NoteExtension */
+    protected $noteExtension;
+
+    /**
+     * Sets the NoteExtension
+     *
+     * @param NoteExtension $noteExtension
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -19,6 +38,8 @@ class OroB2BCatalogBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOrob2BCategoryToProductForeignKeys($schema);
+
+        $this->addNoteToCategory($schema);
     }
 
     /**
@@ -28,7 +49,7 @@ class OroB2BCatalogBundle implements Migration
      */
     protected function createOrob2BCategoryToProductTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_category_to_product');
+        $table = $schema->createTable(static::CATEGORY_TO_PRODUCT_TABLE_NAME);
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'product_id']);
@@ -43,18 +64,26 @@ class OroB2BCatalogBundle implements Migration
      */
     protected function addOrob2BCategoryToProductForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_category_to_product');
+        $table = $schema->getTable(static::CATEGORY_TO_PRODUCT_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_catalog_category'),
+            $schema->getTable(static::CATEGORY_TABLE_NAME),
             ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_product'),
+            $schema->getTable(static::PRODUCT_TABLE),
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addNoteToCategory(Schema $schema)
+    {
+        $this->noteExtension->addNoteAssociation($schema, static::CATEGORY_TABLE_NAME);
     }
 }

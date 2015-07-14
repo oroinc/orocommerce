@@ -187,6 +187,7 @@ class CategoryControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
         $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
+        $this->assertContains('Add note', $crawler->html());
 
         $testProductOne = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01);
         $testProductTwo = $this->getProductBySku(LoadProductData::TEST_PRODUCT_02);
