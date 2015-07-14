@@ -3,8 +3,8 @@
     'savedId': savedId is defined and savedId ? savedId : null
 } %}
 <div class="widget-content"
-     data-page-component-module="orob2bshoppinglist/js/app/components/widget-form-component"
-     data-page-component-options="{{ pageComponentOptions|json_encode }}"
+     data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.line_item_save.flash.success'})|json_encode }}"
 >
     {% if form.vars.errors|length > 0 %}
         <div class="alert alert-error">

@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 
 class AjaxLineItemController extends Controller
 {
@@ -43,7 +44,18 @@ class AjaxLineItemController extends Controller
         $lineItem = new LineItem();
         $lineItem->setShoppingList($shoppingList);
 
-        return $this->update($lineItem);
+        $request = $this->getRequest();
+        $form = $this->createForm(LineItemType::NAME, $lineItem);
+        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+
+        $result = $this->get('oro_form.model.update_handler')
+            ->handleUpdate($lineItem, $form, null, null, null, $handler);
+
+        if ($request->get('_wid')) {
+            $result = $handler->updateSavedId($result);
+        }
+
+        return $result;
     }
 
     /**
@@ -63,18 +75,7 @@ class AjaxLineItemController extends Controller
      */
     public function updateAction(LineItem $lineItem)
     {
-        return $this->update($lineItem);
-    }
-
-    /**
-     * @param LineItem $lineItem
-     *
-     * @return array|RedirectResponse
-     */
-    protected function update(LineItem $lineItem)
-    {
         $form = $this->createForm(LineItemType::NAME, $lineItem);
-
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate($lineItem, $form, null, null, null);
     }
