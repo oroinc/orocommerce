@@ -39,8 +39,6 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['user_owner_id'], 'IDX_39731EC59EB185F9', []);
-        $table->addIndex(['organization_id'], 'IDX_39731EC532C8A3DE', []);
         $table->addIndex(['created_at'], 'orob2b_shop_lst_created_at_idx', []);
     }
 
@@ -63,9 +61,6 @@ class OroB2BShoppingListBundle implements Migration
             ['product_id', 'shopping_list_id', 'unit_code'],
             'orob2b_shopping_list_line_item_uidx'
         );
-        $table->addIndex(['product_id'], 'IDX_3C7A5D2E4584665A', []);
-        $table->addIndex(['shopping_list_id'], 'IDX_3C7A5D2E23245BF9', []);
-        $table->addIndex(['unit_code'], 'IDX_3C7A5D2EFBD3D1C2', []);
     }
 
     /**
