@@ -58,6 +58,7 @@ class RequestController extends Controller
 
             // Clean body from different stuff
             $rfpRequest->setBody($this->getPurifier()->purify($rfpRequest->getBody()));
+            $rfpRequest->setFrontendOwner($this->getUser());
 
             $em->persist($rfpRequest);
             $em->flush();
