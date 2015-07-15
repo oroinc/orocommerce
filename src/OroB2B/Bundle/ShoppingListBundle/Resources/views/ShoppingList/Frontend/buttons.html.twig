@@ -1,0 +1,22 @@
+{% macro addToShoppingListButton(shoppingList) -%}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ UI.clientButton({
+        'dataUrl': path('orob2b_shopping_list_add_products_massaction',
+            {
+                gridName: 'frontend-products-grid',
+                actionName: 'addproducts',
+                id: shoppingList.id
+            }
+        ),
+        'dataAttributes': {
+            'page-component-module': 'orob2bshoppinglist/js/app/components/add-products-button',
+            'page-component-options': {
+                'redirect': path('orob2b_shopping_list_frontend_index'),
+            } | json_encode,
+        },
+        'aCss': 'no-hash',
+        'iCss': 'icon-plus hide-text',
+        'dataId': shoppingList.id,
+        'label' : 'Add to ' ~ shoppingList.label
+    }) }}
+{% endmacro %}

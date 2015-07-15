@@ -17,7 +17,7 @@ class ShoppingListManager
     protected $manager;
 
     /**
-     * @param ManagerRegistry $manager
+     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -41,7 +41,7 @@ class ShoppingListManager
     }
 
     /**
-     * @param AccountUser  $accountUser
+     * @param AccountUser $accountUser
      * @param ShoppingList $shoppingList
      */
     public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)

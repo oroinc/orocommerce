@@ -1,0 +1,12 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as Buttons %}
+
+{% set buttonsHtml %}
+    {% for shoppingList in shoppingLists %}
+        {{ Buttons.addToShoppingListButton(shoppingList) }}
+    {% endfor %}
+{% endset %}
+
+{{ UI.pinnedDropdownButton({
+    'html': buttonsHtml
+}) }}

@@ -3,3 +3,7 @@ orob2b:
         line_item_save:
             flash:
                 success: Line Item has been added
+        menu:
+            add_products:
+                success.message: Successfully added to shopping list
+                error.message: Failed to add to shopping list

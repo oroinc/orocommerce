@@ -1,0 +1,10 @@
+#frontend-products-navButtons
+items:
+    add-products-btn:
+        action: OroB2BShoppingListBundle:Frontend/ShoppingList:getProductsAddBtn
+
+placeholders:
+    frontend_products_navButtons:
+        items:
+            add-products-btn:
+                order: 100
