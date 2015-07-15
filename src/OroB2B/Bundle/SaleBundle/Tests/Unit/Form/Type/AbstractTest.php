@@ -47,7 +47,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->quoteProductTypeFormatter = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter')
+        $this->quoteProductTypeFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter'
+        )
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -59,7 +61,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
             }))
         ;
 
-        $this->quoteProductOfferTypeFormatter = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter')
+        $this->quoteProductOfferTypeFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter'
+        )
             ->disableOriginalConstructor()
             ->getMock()
         ;
