@@ -17,6 +17,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
+/**
+ * @SuppressWarnings(PHPMD.NPathComplexity)
+ */
 class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
