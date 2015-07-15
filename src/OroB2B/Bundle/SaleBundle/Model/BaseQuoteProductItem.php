@@ -213,10 +213,12 @@ class BaseQuoteProductItem
     }
 
     /**
+     * Set price
+     *
      * @param Price $price
      * @return $this
      */
-    public function setPrice($price)
+    public function setPrice($price = null)
     {
         $this->price = $price;
 
@@ -226,6 +228,8 @@ class BaseQuoteProductItem
     }
 
     /**
+     * Get price
+     *
      * @return Price|null
      */
     public function getPrice()

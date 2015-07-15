@@ -74,7 +74,7 @@ class QuoteProductOffer extends BaseQuoteProductItem
     }
 
     /**
-     * Get Type Title
+     * Get priceType Title
      *
      * @return string
      */
@@ -87,6 +87,8 @@ class QuoteProductOffer extends BaseQuoteProductItem
     }
 
     /**
+     * Set priceType
+     *
      * @param int $priceType
      * @return QuoteProductOffer
      */
@@ -98,6 +100,8 @@ class QuoteProductOffer extends BaseQuoteProductItem
     }
 
     /**
+     * Get priceType
+     *
      * @return int
      */
     public function getPriceType()
@@ -106,6 +110,8 @@ class QuoteProductOffer extends BaseQuoteProductItem
     }
 
     /**
+     * Set allowIncrements
+     *
      * @param bool $allowIncrements
      * @return QuoteProductOffer
      */
@@ -117,19 +123,12 @@ class QuoteProductOffer extends BaseQuoteProductItem
     }
 
     /**
+     * Get allowIncrements
+     *
      * @return int
      */
     public function getAllowIncrements()
     {
         return $this->allowIncrements;
-    }
-
-    /**
-     * @param Price $price
-     * @return $this
-     */
-    public function setPrice($price = null)
-    {
-        return parent::setPrice($price);
     }
 }

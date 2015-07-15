@@ -205,7 +205,7 @@ define(function (require) {
                     },
                     success: function (response) {
                         self.units[productId] = response.units;
-                        self.updateProductUnits(response.units);
+                        self.updateProductUnits(response.units, force || false);
                     },
                     complete: function () {
                         self.loadingMask.hide();
