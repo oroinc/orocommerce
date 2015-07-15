@@ -69,6 +69,23 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
     }
 
+    public function testPreSubmit()
+    {
+        $form = $this->factory->create($this->formType, null, []);
+
+        $this->formType->preSubmit(new FormEvent($form, null));
+
+        $this->assertTrue($form->has('productUnit'));
+
+        $config = $form->get('productUnit')->getConfig();
+
+        $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
+        $options = $config->getOptions();
+
+        $this->assertEquals(false, $options['disabled']);
+        $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
+    }
+
     /**
      * @param QuoteProductOffer $inputData
      * @param array $expectedData
@@ -103,23 +120,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
         foreach ($expectedData as $key => $value) {
             $this->assertEquals($value, $options[$key], $key);
         }
-    }
-
-    public function testPreSubmit()
-    {
-        $form = $this->factory->create($this->formType, null, []);
-
-        $this->formType->preSubmit(new FormEvent($form, null));
-
-        $this->assertTrue($form->has('productUnit'));
-
-        $config = $form->get('productUnit')->getConfig();
-
-        $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
-        $options = $config->getOptions();
-
-        $this->assertEquals(false, $options['disabled']);
-        $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
     }
 
     /**
