@@ -45,9 +45,9 @@ class ProductPriceWidgetListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $event->expects($this->once())->method('getWidgetRouteParameters')->willReturn([]);
 
-        $this->priceListRequestHandler->expects($this->once())->method('getPriceListFromRequest')
+        $this->priceListRequestHandler->expects($this->once())->method('getPriceList')
             ->willReturn($priceList);
-        $this->priceListRequestHandler->expects($this->once())->method('getPriceListCurrenciesFromRequest')
+        $this->priceListRequestHandler->expects($this->once())->method('getPriceListCurrencies')
             ->willReturn($currencies);
         $this->priceListRequestHandler->expects($this->once())->method('showTierPrices')->willReturn($showTierPrices);
 
