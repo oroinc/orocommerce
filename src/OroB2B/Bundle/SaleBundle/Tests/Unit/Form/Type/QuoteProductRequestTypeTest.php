@@ -94,6 +94,8 @@ class QuoteProductRequestTypeTest extends AbstractTest
      */
     public function testPreSetData(QuoteProductRequest $inputData = null, array $expectedData = [])
     {
+        $form = $this->factory->create($this->formType);
+
         $unitCode = $inputData ? $inputData->getProductUnitCode() : '';
 
         $this->translator
@@ -104,8 +106,6 @@ class QuoteProductRequestTypeTest extends AbstractTest
             ])
             ->will($this->returnValue($expectedData['empty_value']))
         ;
-
-        $form = $this->factory->create($this->formType);
 
         $this->formType->preSetData(new FormEvent($form, $inputData));
 

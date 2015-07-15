@@ -94,13 +94,11 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     public function testPreSetData(QuoteProductOffer $inputData = null, array $expectedData = [])
     {
-        $unitCode = $inputData ? $inputData->getProductUnitCode() : '';
-
         $this->translator
             ->expects($expectedData['empty_value'] ? $this->once() : $this->never())
             ->method('trans')
             ->with($expectedData['empty_value'], [
-                    '{title}' => $unitCode,
+                    '{title}' => $inputData ? $inputData->getProductUnitCode() : '',
             ])
             ->will($this->returnValue($expectedData['empty_value']))
         ;
