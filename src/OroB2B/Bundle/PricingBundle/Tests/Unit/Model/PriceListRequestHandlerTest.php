@@ -4,10 +4,14 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Symfony\Component\HttpFoundation\Request;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PriceListRequestHandler */
@@ -99,26 +103,51 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['USD'], $this->handler->getPriceListCurrencies());
     }
 
-    public function testGetPriceListCurrenciesWithoutParamShouldReturnAll()
-    {
-        $priceList = $this->getPriceList(2, ['USD']);
+    /**
+     * @param mixed $paramValue
+     * @param array $currencies
+     * @param array $expected
+     *
+     * @dataProvider currenciesDataProvider
+     */
+    public function testGetPriceListCurrenciesWithTrueParamShouldReturnArray(
+        $paramValue,
+        array $currencies = [],
+        array $expected = []
+    ) {
+        $priceList = $this->getPriceList(2, $currencies);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->handler->setRequest($request);
 
-        $request->expects($this->once())->method('get')->will(
+        $request->expects($this->atLeastOnce())->method('get')->will(
             $this->returnValueMap(
                 [
                     [PriceListRequestHandler::PRICE_LIST_KEY, null, false, $priceList->getId()],
-                    [PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, null],
+                    [PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, $paramValue],
                 ]
             )
         );
 
         $this->repository->expects($this->never())->method('getDefault');
         $this->repository->expects($this->once())->method('find')->with($priceList->getId())->willReturn($priceList);
-        $this->assertSame(['USD'], $this->handler->getPriceListCurrencies());
+        $this->assertEquals($expected, $this->handler->getPriceListCurrencies());
+    }
+
+    /**
+     * @return array
+     */
+    public function currenciesDataProvider()
+    {
+        return [
+            'true returns all price list currencies wih cast' => ['true', ['USD', 'EUR'], ['EUR', 'USD']],
+            'true returns all price list currencies' => [true, ['USD', 'EUR'], ['EUR', 'USD']],
+            'false returns nothings with cast' => [false, ['USD', 'EUR'], []],
+            'false returns nothings' => ['false', ['USD', 'EUR'], []],
+            'submit invalid currency' => [['USD', 'UAH'], ['USD', 'EUR'], ['USD']],
+            'null value returns all currencies on initial state' => [null, ['USD', 'EUR'], ['EUR', 'USD']],
+        ];
     }
 
     public function testShowTierPricesWithoutRequest()
