@@ -92,7 +92,7 @@ class ProductControllerTest extends WebTestCase
                 'orob2b_pricing_price_product_sidebar',
                 [
                     PriceListRequestHandler::PRICE_LIST_KEY => $priceList->getId(),
-                    PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => [],
+                    PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY => false,
                 ]
             )
         );
