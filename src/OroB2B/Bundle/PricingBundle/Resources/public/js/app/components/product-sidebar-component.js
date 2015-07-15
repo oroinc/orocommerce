@@ -86,6 +86,10 @@ define(function(require) {
                 return $(input).val();
             });
 
+            if (_.isEmpty(currencies)) {
+                currencies = false;
+            }
+
             var params = {
                 priceListId: $(this.options.priceListSelector).val(),
                 priceCurrencies: currencies,
