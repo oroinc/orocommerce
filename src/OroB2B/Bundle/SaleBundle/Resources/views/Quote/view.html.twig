@@ -72,7 +72,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{ quoteProduct.typeTitle|trans }}
+                            {{ quoteProduct.type|orob2b_format_sale_quote_product_type }}
                         </td>
                         <td class="sale-quoteproductitems-info">
                             {% if quoteProduct.quoteProductRequests|length and not quoteProduct.isTypeOffer %}

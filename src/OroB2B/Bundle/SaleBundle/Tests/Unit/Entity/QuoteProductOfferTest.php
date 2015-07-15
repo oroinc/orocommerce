@@ -19,7 +19,7 @@ class QuoteProductOfferTest extends AbstractTest
             ['productUnit', new ProductUnit()],
             ['productUnitCode', 'unit-code'],
             ['price', new Price()],
-            ['priceType', QuoteProductOffer::PRICE_UNIT],
+            ['priceType', QuoteProductOffer::PRICE_TYPE_UNIT],
             ['allowIncrements', true],
         ];
 
@@ -74,22 +74,15 @@ class QuoteProductOfferTest extends AbstractTest
         $this->assertEquals('kg', $item->getProductUnitCode());
     }
 
-    public function testGetPriceTypeTitles()
+    public function testGetPriceTypes()
     {
         $this->assertEquals(
             [
-                QuoteProductOffer::PRICE_UNIT => 'orob2b.sale.quoteproductoffer.price_type.unit',
-                QuoteProductOffer::PRICE_BUNDLED => 'orob2b.sale.quoteproductoffer.price_type.bundled',
+                QuoteProductOffer::PRICE_TYPE_UNIT => 'unit',
+                QuoteProductOffer::PRICE_TYPE_BUNDLED => 'bundled',
             ],
-            QuoteProductOffer::getPriceTypeTitles()
+            QuoteProductOffer::getPriceTypes()
         );
     }
 
-    public function testGetPriceTypeTitle()
-    {
-        $item = new QuoteProductOffer();
-        $item->setPriceType(QuoteProductOffer::PRICE_UNIT);
-
-        $this->assertEquals($item->getPriceTypeTitle(), 'orob2b.sale.quoteproductoffer.price_type.unit');
-    }
 }

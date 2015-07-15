@@ -165,10 +165,14 @@ class QuoteTypeTest extends AbstractTest
                     OroDateTimeType::NAME                       => new OroDateTimeType(),
                     QuoteProductType::NAME                      => new QuoteProductType(
                         $translator,
-                        $productUnitLabelFormatter
+                        $productUnitLabelFormatter,
+                        $this->quoteProductTypeFormatter
                     ),
                     CollectionType::NAME                        => new CollectionType(),
-                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType($translator),
+                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
+                        $translator,
+                        $this->quoteProductOfferTypeFormatter
+                    ),
                     QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),

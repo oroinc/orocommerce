@@ -28,8 +28,8 @@ use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
  */
 class QuoteProductOffer extends BaseQuoteProductItem
 {
-    const PRICE_UNIT = 10;
-    const PRICE_BUNDLED = 20;
+    const PRICE_TYPE_UNIT       = 10;
+    const PRICE_TYPE_BUNDLED    = 20;
 
     /**
      * @var QuoteProduct
@@ -54,34 +54,14 @@ class QuoteProductOffer extends BaseQuoteProductItem
     protected $allowIncrements;
 
     /**
-     * Get priceType Titles array
-     *
      * @return array
      */
-    public static function getPriceTypeTitles()
+    public static function getPriceTypes()
     {
-        static $priceTypeTitles = null;
-        if (null === $priceTypeTitles) {
-            $priceTypeTitles = [
-                static::PRICE_UNIT => 'orob2b.sale.quoteproductoffer.price_type.unit',
-                static::PRICE_BUNDLED => 'orob2b.sale.quoteproductoffer.price_type.bundled',
-            ];
-        }
-
-        return $priceTypeTitles;
-    }
-
-    /**
-     * Get priceType Title
-     *
-     * @return string
-     */
-    public function getPriceTypeTitle()
-    {
-        $priceType = $this->getPriceType();
-        $titles = static::getPriceTypeTitles();
-
-        return isset($titles[$priceType]) ? $titles[$priceType] : '';
+        return [
+            self::PRICE_TYPE_UNIT       => 'unit',
+            self::PRICE_TYPE_BUNDLED    => 'bundled',
+        ];
     }
 
     /**

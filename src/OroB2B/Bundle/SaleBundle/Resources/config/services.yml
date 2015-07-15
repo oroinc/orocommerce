@@ -2,6 +2,8 @@ parameters:
     orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.entity.quote.class: OroB2B\Bundle\SaleBundle\Entity\Quote
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_sale.formatter.quote_product_type.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter
+    orob2b_sale.formatter.quote_product_offer_type.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter
     #Validators
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
     #Twig extensions
@@ -32,5 +34,16 @@ services:
             - @oro_locale.formatter.number
             - @orob2b_product.formatter.product_unit_value
             - @orob2b_product.formatter.product_unit_label
+            - @orob2b_sale.formatter.quote_product_type
         tags:
             - { name: twig.extension }
+
+    orob2b_sale.formatter.quote_product_type:
+        class: %orob2b_sale.formatter.quote_product_type.class%
+        arguments:
+            - @translator
+
+    orob2b_sale.formatter.quote_product_offer_type:
+        class: %orob2b_sale.formatter.quote_product_offer_type.class%
+        arguments:
+            - @translator

@@ -13,6 +13,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
@@ -65,6 +66,12 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->quoteProductTypeFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
             ->disableOriginalConstructor()
             ->getMock();
@@ -73,7 +80,8 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             $this->translator,
             $this->numberFormatter,
             $this->productUnitValueFormatter,
-            $this->productUnitLabelFormatter
+            $this->productUnitLabelFormatter,
+            $this->quoteProductTypeFormatter
         );
     }
 
@@ -82,18 +90,67 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         /* @var $filters \Twig_SimpleFilter[] */
         $filters = $this->extension->getFilters();
 
-        $this->assertCount(2, $filters);
+        $this->assertCount(3, $filters);
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
         $this->assertEquals('orob2b_format_sale_quote_product_offer', $filters[0]->getName());
 
         $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
-        $this->assertEquals('orob2b_format_sale_quote_product_request', $filters[1]->getName());
+        $this->assertEquals('orob2b_format_sale_quote_product_type', $filters[1]->getName());
+
+        $this->assertInstanceOf('Twig_SimpleFilter', $filters[2]);
+        $this->assertEquals('orob2b_format_sale_quote_product_request', $filters[2]->getName());
     }
 
     public function testGetName()
     {
         $this->assertEquals(QuoteExtension::NAME, $this->extension->getName());
+    }
+
+    /**
+     * @param bool $valid
+     * @param mixed $inputData
+     * @param mixed $expectedData
+     *
+     * @dataProvider formatProductTypeProvider
+     */
+    public function testFormatProductType($valid, $inputData, $expectedData)
+    {
+        $this->quoteProductTypeFormatter->expects($valid ? $this->once() : $this->never())
+            ->method('formatTypeLabel')
+            ->with($expectedData)
+        ;
+
+        $this->translator->expects($valid ? $this->never() : $this->once())
+            ->method('trans')
+            ->with('N/A')
+        ;
+
+        $this->extension->formatProductType($inputData);
+    }
+
+    /**
+     * @return array
+     */
+    public function formatProductTypeProvider()
+    {
+        $res = [
+            'invalid type' => [
+                'valid'     => false,
+                'input'     => 'asdf',
+                'expected'  => 'N/A',
+            ],
+        ];
+
+        foreach (QuoteProduct::getTypes() as $key => $value) {
+            $res[$value] = [
+                'valid'     => true,
+                'input'     => $key,
+                'expected'  => $value,
+            ];
+        }
+
+        return $res;
     }
 
     /**
@@ -302,7 +359,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             'existing product unit and bundled price type' => [
                 'inputData' => [
-                    'item'      => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_BUNDLED),
+                    'item'      => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED),
                     'quantity'  => 15,
                     'unitCode'  => 'kg',
                     'price'     => OptionalPrice::create(10, 'USD'),

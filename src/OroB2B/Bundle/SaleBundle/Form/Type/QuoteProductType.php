@@ -15,6 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
@@ -27,6 +28,11 @@ class QuoteProductType extends AbstractType
     protected $labelFormatter;
 
     /**
+     * @var QuoteProductTypeFormatter
+     */
+    protected $typeFormatter;
+
+    /**
      * @var TranslatorInterface
      */
     protected $translator;
@@ -34,11 +40,16 @@ class QuoteProductType extends AbstractType
     /**
      * @param TranslatorInterface $translator
      * @param ProductUnitLabelFormatter $labelFormatter
+     * @param QuoteProductTypeFormatter $typeFormatter
      */
-    public function __construct(TranslatorInterface $translator, ProductUnitLabelFormatter $labelFormatter)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        ProductUnitLabelFormatter $labelFormatter,
+        QuoteProductTypeFormatter $typeFormatter
+    ) {
         $this->translator = $translator;
         $this->labelFormatter = $labelFormatter;
+        $this->typeFormatter= $typeFormatter;
     }
 
     /**
@@ -106,7 +117,7 @@ class QuoteProductType extends AbstractType
             ])
             ->add('type', 'choice', [
                 'label' => 'orob2b.sale.quoteproduct.type.label',
-                'choices' => QuoteProduct::getTypeTitles(),
+                'choices' => $this->typeFormatter->formatTypeLabels(QuoteProduct::getTypes()),
                 'required' => true,
                 'expanded' => false,
             ])

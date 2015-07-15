@@ -9,6 +9,8 @@ use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
@@ -33,6 +35,11 @@ class QuoteExtension extends \Twig_Extension
     protected $productUnitLabelFormatter;
 
     /**
+     * @var QuoteProductTypeFormatter
+     */
+    protected $quoteProductTypeFormatter;
+
+    /**
      * @var NumberFormatter
      */
     protected $numberFormatter;
@@ -42,17 +49,20 @@ class QuoteExtension extends \Twig_Extension
      * @param NumberFormatter $numberFormatter
      * @param ProductUnitValueFormatter $productUnitValueFormatter
      * @param ProductUnitLabelFormatter $productUnitLabelFormatter
+     * @param QuoteProductTypeFormatter $quoteProductTypeFormatter
      */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
         ProductUnitValueFormatter $productUnitValueFormatter,
-        ProductUnitLabelFormatter $productUnitLabelFormatter
+        ProductUnitLabelFormatter $productUnitLabelFormatter,
+        QuoteProductTypeFormatter $quoteProductTypeFormatter
     ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;
         $this->productUnitValueFormatter    = $productUnitValueFormatter;
         $this->productUnitLabelFormatter    = $productUnitLabelFormatter;
+        $this->quoteProductTypeFormatter    = $quoteProductTypeFormatter;
     }
 
     /**
@@ -64,6 +74,11 @@ class QuoteExtension extends \Twig_Extension
             new \Twig_SimpleFilter(
                 'orob2b_format_sale_quote_product_offer',
                 [$this, 'formatProductOffer'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFilter(
+                'orob2b_format_sale_quote_product_type',
+                [$this, 'formatProductType'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFilter(
@@ -81,7 +96,7 @@ class QuoteExtension extends \Twig_Extension
     public function formatProductOffer(QuoteProductOffer $item)
     {
         switch ($item->getPriceType()) {
-            case QuoteProductOffer::PRICE_BUNDLED:
+            case QuoteProductOffer::PRICE_TYPE_BUNDLED:
                 $transConstant = 'orob2b.sale.quoteproductoffer.item_bundled';
                 break;
             default:
@@ -99,6 +114,21 @@ class QuoteExtension extends \Twig_Extension
         );
 
         return $str;
+    }
+
+    /**
+     * @param int $type
+     * @return string
+     */
+    public function formatProductType($type)
+    {
+        $types = QuoteProduct::getTypes();
+
+        if (isset($types[$type])) {
+            return $this->quoteProductTypeFormatter->formatTypeLabel($types[$type]);
+        } else {
+            return $this->translator->trans('N/A');
+        }
     }
 
     /**

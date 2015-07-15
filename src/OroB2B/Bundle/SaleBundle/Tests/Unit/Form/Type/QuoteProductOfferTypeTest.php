@@ -45,7 +45,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->formType = new QuoteProductOfferType($this->translator);
+        $this->formType = new QuoteProductOfferType($this->translator, $this->quoteProductOfferTypeFormatter);
     }
 
     public function testSetDefaultOptions()
