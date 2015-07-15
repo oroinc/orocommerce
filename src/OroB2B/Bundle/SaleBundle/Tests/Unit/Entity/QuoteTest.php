@@ -26,6 +26,10 @@ class QuoteTest extends AbstractTest
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);
+
+        static::assertPropertyCollections(new Quote(), [
+            ['quoteProducts', new QuoteProduct()],
+        ]);
     }
 
     public function testPrePersist()

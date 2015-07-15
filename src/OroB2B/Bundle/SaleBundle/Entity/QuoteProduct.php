@@ -316,6 +316,8 @@ class QuoteProduct
     }
 
     /**
+     * Set type
+     *
      * @param int $type
      * @return QuoteProduct
      */
@@ -327,6 +329,8 @@ class QuoteProduct
     }
 
     /**
+     * Get type
+     *
      * @return int
      */
     public function getType()
@@ -335,6 +339,8 @@ class QuoteProduct
     }
 
     /**
+     * Set seller comment
+     *
      * @param string $comment
      * @return QuoteProduct
      */
@@ -346,6 +352,8 @@ class QuoteProduct
     }
 
     /**
+     * Get seller comment
+     *
      * @return string
      */
     public function getComment()
@@ -354,6 +362,8 @@ class QuoteProduct
     }
 
     /**
+     * Set customer comment
+     *
      * @param string $commentCustomer
      * @return QuoteProduct
      */
@@ -365,6 +375,8 @@ class QuoteProduct
     }
 
     /**
+     * Get customer comment
+     *
      * @return string
      */
     public function getCommentCustomer()
