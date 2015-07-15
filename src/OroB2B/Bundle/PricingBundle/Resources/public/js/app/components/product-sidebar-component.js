@@ -124,6 +124,8 @@ define(function(require) {
             });
 
             this.currenciesContainer.html(html.join(''));
+
+            this.triggerSidebarChanged(true);
         },
 
         /**
@@ -131,7 +133,6 @@ define(function(require) {
          */
         _complete: function() {
             this.loadingMaskView.hide();
-            this.triggerSidebarChanged(false);
         },
 
         dispose: function() {
