@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\CustomerBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
+use OroB2B\Bundle\CustomerBundle\DependencyInjection\Compiler\DataAuditEntityMappingPass;
 use OroB2B\Bundle\CustomerBundle\DependencyInjection\Compiler\OwnerTreeListenerPass;
 use OroB2B\Bundle\CustomerBundle\DependencyInjection\OroB2BCustomerExtension;
 
@@ -18,6 +19,7 @@ class OroB2BCustomerBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new OwnerTreeListenerPass());
+        $container->addCompilerPass(new DataAuditEntityMappingPass());
     }
 
     /**
