@@ -127,7 +127,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
      */
     public function preSetDataProvider()
     {
-        $units = $this->getProductUnits(['kg', 'item']);
+        $units = $this->getProductUnits(['kg1', 'item1']);
 
         return [
             'choices is []' => [
@@ -141,7 +141,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 ],
             ],
             'choices is ProductUnit[]' => [
-                'inputData'     => $this->createQuoteProductOffer(1, $units, 'kg'),
+                'inputData'     => $this->createQuoteProductOffer(1, $units, 'item1'),
                 'expectedData'  => [
                     'choices'       => $units,
                     'empty_value'   => null,
@@ -151,7 +151,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 ],
             ],
             'choices is ProductUnit[] and unit is deleted' => [
-                'inputData'     => $this->createQuoteProductOffer(1, $units, 'test'),
+                'inputData'     => $this->createQuoteProductOffer(1, $units, 'test1'),
                 'expectedData'  => [
                     'choices'       => $units,
                     'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
@@ -161,7 +161,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 ],
             ],
             'choices is [] and unit is deleted' => [
-                'inputData'     => $this->createQuoteProductOffer(1, [], 'test'),
+                'inputData'     => $this->createQuoteProductOffer(1, [], 'test2'),
                 'expectedData'  => [
                     'choices'       => [],
                     'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
