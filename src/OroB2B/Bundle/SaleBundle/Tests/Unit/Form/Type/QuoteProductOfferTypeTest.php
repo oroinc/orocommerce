@@ -145,7 +145,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(2, 88, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(99, 'EUR'))
+                'expectedData'  => $this
+                    ->getQuoteProductOffer(2, 88, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(99, 'EUR'))
                     ->setQuoteProduct(null),
                 'defaultData'   => $this->getQuoteProductOffer(2)
                     ->setQuoteProduct(null),
@@ -160,7 +161,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(3, null, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
+                'expectedData'  => $this
+                    ->getQuoteProductOffer(3, null, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(3),
             ],
             'empty price type' => [
@@ -186,7 +188,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(5, 22, null, self::QPO_PRICE_TYPE1, $this->createPrice(33, 'EUR')),
+                'expectedData'  => $this
+                    ->getQuoteProductOffer(5, 22, null, self::QPO_PRICE_TYPE1, $this->createPrice(33, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(5),
             ],
             'empty price' => [
@@ -210,7 +213,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(7, 11, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(22, 'EUR')),
+                'expectedData'  => $this
+                    ->getQuoteProductOffer(7, 11, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(22, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(7),
             ],
         ];
@@ -281,7 +285,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         foreach ($productUnits as $unit) {
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
 
-            if ($unitCode && $unit->getCode() == $unitCode) {
+            if ($unitCode && $unit->getCode() === $unitCode) {
                 $productUnit = $unit;
             }
         }

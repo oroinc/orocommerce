@@ -25,6 +25,11 @@ class QuoteProductTest extends AbstractTest
         ];
 
         static::assertPropertyAccessors(new QuoteProduct(), $properties);
+
+        static::assertPropertyCollections(new QuoteProduct(), [
+            ['quoteProductOffers', new QuoteProductOffer()],
+            ['quoteProductRequests', new QuoteProductRequest()],
+        ]);
     }
 
     public function testSetProduct()
