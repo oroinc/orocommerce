@@ -130,7 +130,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $units = $this->getProductUnits(['kg1', 'item1']);
 
         return [
-            'choices is []' => [
+            'choices is [] (empty)' => [
                 'inputData'     => null,
                 'expectedData'  => [
                     'choices'       => [],
@@ -140,7 +140,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     'label'         => 'orob2b.product.productunit.entity_label',
                 ],
             ],
-            'choices is ProductUnit[]' => [
+            'choices is ProductUnit[] (not empty)' => [
                 'inputData'     => $this->createQuoteProductOffer(1, $units, 'item1'),
                 'expectedData'  => [
                     'choices'       => $units,
@@ -150,7 +150,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     'label'         => 'orob2b.product.productunit.entity_label',
                 ],
             ],
-            'choices is ProductUnit[] and unit is deleted' => [
+            'unit is deleted and choices is ProductUnit[]' => [
                 'inputData'     => $this->createQuoteProductOffer(1, $units, 'test1'),
                 'expectedData'  => [
                     'choices'       => $units,
@@ -160,7 +160,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     'label'         => 'orob2b.product.productunit.entity_label',
                 ],
             ],
-            'choices is [] and unit is deleted' => [
+            'unit is deleted and choices is []' => [
                 'inputData'     => $this->createQuoteProductOffer(1, [], 'test2'),
                 'expectedData'  => [
                     'choices'       => [],

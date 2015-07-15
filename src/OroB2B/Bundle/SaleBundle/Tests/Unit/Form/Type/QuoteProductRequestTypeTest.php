@@ -140,21 +140,21 @@ class QuoteProductRequestTypeTest extends AbstractTest
                     'label'         => 'orob2b.product.productunit.entity_label',
                 ],
             ],
-            'choices is ProductUnit[]' => [
-                'inputData'     => $this->createQuoteProductRequest(1, $units, 'kg2'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
             'choices is ProductUnit[] and unit is deleted' => [
                 'inputData'     => $this->createQuoteProductRequest(1, $units, 'test2'),
                 'expectedData'  => [
                     'choices'       => $units,
                     'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+            'choices is ProductUnit[]' => [
+                'inputData'     => $this->createQuoteProductRequest(1, $units, 'kg2'),
+                'expectedData'  => [
+                    'choices'       => $units,
+                    'empty_value'   => null,
                     'required'      => true,
                     'disabled'      => false,
                     'label'         => 'orob2b.product.productunit.entity_label',
