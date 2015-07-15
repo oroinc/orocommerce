@@ -80,11 +80,11 @@ class PriceListRequestHandler
             return $priceListCurrencies;
         }
 
-        if (false === $this->request->get(self::PRICE_LIST_CURRENCY_KEY, false)) {
+        $currencies = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
+        if (null === $currencies) {
             return $priceListCurrencies;
         }
 
-        $currencies = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
         if (!is_array($currencies)) {
             return filter_var($currencies, FILTER_VALIDATE_BOOLEAN) ? $priceListCurrencies : [];
         }
