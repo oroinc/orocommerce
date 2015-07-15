@@ -105,25 +105,22 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
      */
     public function load(ObjectManager $manager)
     {
+        /** @var BaseUserManager $userManager */
+        $userManager = $this->container->get('orob2b_account_user.manager');
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        $accountUserRoleRepository =  $this->container
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
+            ->getRepository('OroB2BCustomerBundle:AccountUserRole');
+
         foreach ($this->users as $user) {
-            /** @var BaseUserManager $userManager */
-            $userManager = $this->container->get('orob2b_account_user.manager');
-            if ($userManager->getRepository()->findBy(['username' => $user['email']])) {
+            if ($userManager->findUserByUsernameOrEmail($user['email'])) {
                 continue;
             }
 
-            $organization = $manager
-                ->getRepository('OroOrganizationBundle:Organization')
-                ->getFirst();
-
             /** @var AccountUser $entity */
             $entity = $userManager->createUser();
-
-            $role = $this->container
-                ->get('doctrine')
-                ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
-                ->getRepository('OroB2BCustomerBundle:AccountUserRole')
-                ->findOneBy(['role' => $user['role']]);
+            $role = $accountUserRoleRepository->findOneBy(['role' => $user['role']]);
 
             /** @var Customer $customer */
             $customer = $this->getReference($user['customer']);

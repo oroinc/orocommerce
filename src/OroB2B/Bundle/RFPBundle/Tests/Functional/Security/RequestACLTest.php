@@ -2,35 +2,27 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Security;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Doctrine\Common\Collections\ArrayCollection;
+
+use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Model\AclPermission;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class RequestACLTest extends WebTestCase
 {
-    /** @var  Request */
-    protected $request;
-
-    /** @var SecurityFacade */
-    protected $securityFacade;
-
     protected function setUp()
     {
         $this->initClient(
@@ -54,11 +46,14 @@ class RequestACLTest extends WebTestCase
     public function testRFPPermissions($level, $permissions)
     {
         $this->setRolePermissions($level);
-
         $this->login(LoadAccountUsersData::USER_EMAIL, LoadAccountUsersData::USER_PASSWORD);
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
+        /** @var AccountUser $user */
+        $user = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
+        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $user);
+        $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
@@ -79,51 +74,29 @@ class RequestACLTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check isset RFP request with first user ownership
-        $this->request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
+        $request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        /** @var AccountUser $user */
-        $user = $this->getContainer()->get('security.context')->getToken()->getUser();
-        $this->assertEquals($user, $this->request->getFrontendOwner());
+        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $request->getFrontendOwner());
+        $this->assertEquals($user->getId(), $request->getFrontendOwner()->getId());
 
         // Check owner access
-        $this->assertEquals(
-            $permissions['owner'],
-            $this->getContainer()->get('oro_security.security_facade')->isGranted('VIEW', $this->request)
-        );
+        $this->assertIsGranted($permissions['owner'], $request);
 
         // Login another user in same customer
         $this->login(LoadAccountUsersData::SAME_CUSTOMER_USER_EMAIL, LoadAccountUsersData::SAME_CUSTOMER_USER_PASSWORD);
-
-        $this->client->request('GET', $this->getUrl('_frontend'));
-
-        $this->assertEquals(
-            $permissions['sameCustomerUser'],
-            $this->getContainer()->get('oro_security.security_facade')->isGranted('VIEW', $this->request)
-        );
+        $this->assertIsGranted($permissions['sameCustomerUser'], $request);
 
         // Login another user in sub customer
         $this->login(LoadAccountUsersData::SUB_CUSTOMER_USER_EMAIL, LoadAccountUsersData::SUB_CUSTOMER_USER_PASSWORD);
-
-        $this->client->request('GET', $this->getUrl('_frontend'));
-
-        $this->assertEquals(
-            $permissions['subCustomerUser'],
-            $this->getContainer()->get('oro_security.security_facade')->isGranted('VIEW', $this->request)
-        );
+        $this->assertIsGranted($permissions['subCustomerUser'], $request);
 
         // Login another user in another customer
         $this->login(
             LoadAccountUsersData::NOT_SAME_CUSTOMER_USER_EMAIL,
             LoadAccountUsersData::NOT_SAME_CUSTOMER_USER_PASSWORD
         );
-
-        $this->client->request('GET', $this->getUrl('_frontend'));
-
-        $this->assertEquals(
-            $permissions['notSameCustomerUser'],
-            $this->getContainer()->get('oro_security.security_facade')->isGranted('VIEW', $this->request)
-        );
+        $this->assertIsGranted($permissions['notSameCustomerUser'], $request);
     }
 
     /**
@@ -200,7 +173,9 @@ class RequestACLTest extends WebTestCase
             new ArrayCollection([$aclPrivilege])
         );
 
+        $chainMetadataProvider->clearCache();
         $chainMetadataProvider->stopProviderEmulation();
+        $chainMetadataProvider->clearCache();
     }
 
     /**
@@ -220,5 +195,22 @@ class RequestACLTest extends WebTestCase
                 ['HTTP_X-CSRF-Header' => 1]
             )
         );
+
+        $this->client->request('GET', $this->getUrl('_frontend'));
+    }
+
+    /**
+     * @param bool $expected
+     * @param Request $request
+     */
+    protected function assertIsGranted($expected, Request $request)
+    {
+        $securityFacade = $this->getContainer()->get('oro_security.security_facade');
+
+        $this->assertEquals($expected, $securityFacade->isGranted('VIEW', $request));
+        $this->assertEquals($expected, $securityFacade->isGranted('CREATE', $request));
+        $this->assertEquals($expected, $securityFacade->isGranted('EDIT', $request));
+        $this->assertEquals($expected, $securityFacade->isGranted('DELETE', $request));
+        $this->assertEquals($expected, $securityFacade->isGranted('ASSIGN', $request));
     }
 }
