@@ -27,9 +27,9 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  */
 class QuoteProduct
 {
-    const TYPE_REQUESTED = 10;
-    const TYPE_OFFER = 20;
-    const TYPE_NOT_AVAILABLE = 30;
+    const TYPE_REQUESTED        = 10;
+    const TYPE_OFFER            = 20;
+    const TYPE_NOT_AVAILABLE    = 30;
 
     /**
      * @var int
@@ -118,27 +118,20 @@ class QuoteProduct
      */
     public function __construct()
     {
-        $this->quoteProductOffers = new ArrayCollection();
+        $this->quoteProductOffers   = new ArrayCollection();
         $this->quoteProductRequests = new ArrayCollection();
     }
 
     /**
-     * Get Type Titles array
-     *
      * @return array
      */
-    public static function getTypeTitles()
+    public static function getTypes()
     {
-        static $typeTitles = null;
-        if (null === $typeTitles) {
-            $typeTitles = [
-                static::TYPE_OFFER => 'orob2b.sale.quoteproduct.type.offer',
-                static::TYPE_REQUESTED => 'orob2b.sale.quoteproduct.type.requested',
-                static::TYPE_NOT_AVAILABLE => 'orob2b.sale.quoteproduct.type.not_available',
-            ];
-        }
-
-        return $typeTitles;
+        return [
+            self::TYPE_OFFER            => 'offer',
+            self::TYPE_REQUESTED        => 'requested',
+            self::TYPE_NOT_AVAILABLE    => 'not_available',
+        ];
     }
 
     /**
@@ -169,19 +162,6 @@ class QuoteProduct
     public function isTypeNotAvailable()
     {
         return static::TYPE_NOT_AVAILABLE === $this->getType();
-    }
-
-    /**
-     * Get Type Title
-     *
-     * @return string
-     */
-    public function getTypeTitle()
-    {
-        $status = $this->getType();
-        $titles = static::getTypeTitles();
-
-        return isset($titles[$status]) ? $titles[$status] : '';
     }
 
     /**

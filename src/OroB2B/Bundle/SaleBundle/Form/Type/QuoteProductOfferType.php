@@ -12,6 +12,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductOfferType extends AbstractType
@@ -24,11 +26,18 @@ class QuoteProductOfferType extends AbstractType
     protected $translator;
 
     /**
-     * @param TranslatorInterface $translator
+     * @var QuoteProductOfferTypeFormatter
      */
-    public function __construct(TranslatorInterface $translator)
+    protected $typeFormatter;
+
+    /**
+     * @param TranslatorInterface $translator
+     * @param QuoteProductOfferTypeFormatter $typeFormatter
+     */
+    public function __construct(TranslatorInterface $translator, QuoteProductOfferTypeFormatter $typeFormatter)
     {
         $this->translator = $translator;
+        $this->typeFormatter = $typeFormatter;
     }
 
     /**
@@ -47,7 +56,7 @@ class QuoteProductOfferType extends AbstractType
             ])
             ->add('priceType', 'choice', [
                 'label' => 'orob2b.sale.quoteproductoffer.price_type.label',
-                'choices' => QuoteProductOffer::getPriceTypeTitles(),
+                'choices' => $this->typeFormatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),
                 'required' => true,
                 'expanded' => true,
             ])

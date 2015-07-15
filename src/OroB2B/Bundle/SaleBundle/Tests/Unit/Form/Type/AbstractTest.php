@@ -25,12 +25,54 @@ use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 abstract class AbstractTest extends FormIntegrationTestCase
 {
     const QP_TYPE1          = QuoteProduct::TYPE_REQUESTED;
-    const QPO_PRICE_TYPE1   = QuoteProductOffer::PRICE_UNIT;
+    const QPO_PRICE_TYPE1   = QuoteProductOffer::PRICE_TYPE_UNIT;
 
     /**
      * @var FormTypeInterface
      */
     protected $formType;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductTypeFormatter
+     */
+    protected $quoteProductTypeFormatter;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductOfferTypeFormatter
+     */
+    protected $quoteProductOfferTypeFormatter;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        $this->quoteProductTypeFormatter = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->quoteProductTypeFormatter->expects($this->any())
+            ->method('formatTypeLabels')
+            ->will($this->returnCallback(function (array $types) {
+                return $types;
+            }))
+        ;
+
+        $this->quoteProductOfferTypeFormatter = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->quoteProductOfferTypeFormatter->expects($this->any())
+            ->method('formatPriceTypeLabels')
+            ->will($this->returnCallback(function (array $types) {
+                return $types;
+            }))
+        ;
+
+        parent::setUp();
+    }
 
     /**
      * @param bool $isValid

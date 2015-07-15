@@ -62,7 +62,11 @@ class QuoteProductTypeTest extends AbstractTest
 
         parent::setUp();
 
-        $this->formType = new QuoteProductType($this->translator, $productUnitLabelFormatter);
+        $this->formType = new QuoteProductType(
+            $this->translator,
+            $productUnitLabelFormatter,
+            $this->quoteProductTypeFormatter
+        );
     }
 
     public function testSetDefaultOptions()
@@ -345,7 +349,10 @@ class QuoteProductTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     CollectionType::NAME                        => new CollectionType(),
-                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType($this->translator),
+                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
+                        $this->translator,
+                        $this->quoteProductOfferTypeFormatter
+                    ),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     $priceType->getName()                       => $priceType,
