@@ -49,7 +49,7 @@ class CustomerAddress extends ExtendCustomerAddress
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
      * )
-     **/
+     */
     protected $addressesToTypes;
 
     public function __construct()

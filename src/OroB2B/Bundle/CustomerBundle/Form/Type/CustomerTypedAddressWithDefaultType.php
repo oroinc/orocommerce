@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
@@ -33,6 +34,7 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
         $repository = $em->getRepository($options['class']);
         $entities   = $repository->findAll();
 
+        /** @var ClassMetadataInfo $classMetadata */
         $classMetadata   = $em->getClassMetadata($options['class']);
         $identifierField = $classMetadata->getSingleIdentifierFieldName();
 
