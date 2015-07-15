@@ -31,5 +31,6 @@ services:
             - @translator
             - @oro_locale.formatter.number
             - @orob2b_product.formatter.product_unit_value
+            - @orob2b_product.formatter.product_unit_label
         tags:
             - { name: twig.extension }

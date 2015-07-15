@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -38,11 +38,11 @@ class QuoteProductRequestType extends AbstractType
     {
         $builder
             ->add('quantity', 'integer', [
-                'required'  => true,
+                'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductrequest.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
-                'required'  => true,
+                'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductrequest.price.label',
             ])
         ;

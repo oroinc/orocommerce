@@ -6,6 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
+
 use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
@@ -120,5 +122,14 @@ class QuoteProductOffer extends BaseQuoteProductItem
     public function getAllowIncrements()
     {
         return $this->allowIncrements;
+    }
+
+    /**
+     * @param Price $price
+     * @return $this
+     */
+    public function setPrice($price = null)
+    {
+        return parent::setPrice($price);
     }
 }

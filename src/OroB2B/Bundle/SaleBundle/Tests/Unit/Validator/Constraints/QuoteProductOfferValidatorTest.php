@@ -61,64 +61,66 @@ class QuoteProductOfferValidatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param mixed $data
      * @param boolean $valid
-     * @dataProvider allowedUnitsProvider
+     * @dataProvider validateProvider
      */
-    public function testAllowedUnits($data, $valid)
+    public function testValidate($data, $valid)
     {
-        if ($valid) {
-            $this->context
-                ->expects($this->never())
-                ->method('addViolationAt')
-            ;
-        } else {
-            $this->context
-                ->expects($this->once())
-                ->method('addViolationAt')
-                ->with('productUnit', $this->constraint->message)
-            ;
-        }
-
+        $this->context
+            ->expects($valid ? $this->never() : $this->once())
+            ->method('addViolationAt')
+            ->with('productUnit', $this->constraint->message)
+        ;
         $this->validator->validate($data, $this->constraint);
     }
-
     /**
      * @return array
      */
-    public function allowedUnitsProvider()
+    public function validateProvider()
     {
         $product = (new Product())
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit1')))
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit2')))
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit3')))
         ;
-
-        $item1 = (new QuoteProductOffer())
-            ->setQuoteProduct(new QuoteProduct())
-            ->setProductUnit((new ProductUnit())->setCode('unit1'))
-        ;
-
+        $item1 = new QuoteProductOffer();
         $item2 = (new QuoteProductOffer())
-            ->setQuoteProduct((new QuoteProduct())->setProduct($product))
-            ->setProductUnit((new ProductUnit())->setCode('unit1'))
-        ;
-
+            ->setQuoteProduct(new QuoteProduct());
         $item3 = (new QuoteProductOffer())
+            ->setQuoteProduct((new QuoteProduct())->setProduct(new Product()));
+        $item4 = (new QuoteProductOffer())
+            ->setQuoteProduct((new QuoteProduct())->setProduct($product));
+        $item5 = (new QuoteProductOffer())
             ->setQuoteProduct((new QuoteProduct())->setProduct($product))
             ->setProductUnit((new ProductUnit())->setCode('unit5'))
         ;
-
+        $item6 = (new QuoteProductOffer())
+            ->setQuoteProduct((new QuoteProduct())->setProduct($product))
+            ->setProductUnit((new ProductUnit())->setCode('unit1'))
+        ;
         return [
-            'empty product' => [
+            'empty request product' => [
                 'data'  => $item1,
                 'valid' => false,
             ],
-            'valid unit code' => [
+            'empty product' => [
                 'data'  => $item2,
-                'valid' => true,
+                'valid' => false,
             ],
-            'ivalid unit code' => [
+            'empty allowed units' => [
                 'data'  => $item3,
                 'valid' => false,
+            ],
+            'empty product unit' => [
+                'data'  => $item4,
+                'valid' => false,
+            ],
+            'ivalid unit code' => [
+                'data'  => $item5,
+                'valid' => false,
+            ],
+            'valid unit code' => [
+                'data'  => $item6,
+                'valid' => true,
             ],
         ];
     }

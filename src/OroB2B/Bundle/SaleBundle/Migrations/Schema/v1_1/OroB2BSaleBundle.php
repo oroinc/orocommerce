@@ -64,9 +64,14 @@ class OroB2BSaleBundle implements Migration
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quote_product_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_unit_code', 'string', ['length' => 255]);
-        $table->addColumn('quantity', 'float', []);
-        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
-        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn('quantity', 'float', ['notnull' => false]);
+        $table->addColumn('value', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('price_type', 'smallint', []);
         $table->addColumn('allow_increments', 'boolean', []);
         $table->setPrimaryKey(['id']);
@@ -84,10 +89,15 @@ class OroB2BSaleBundle implements Migration
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('request_product_item_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('quantity', 'float', []);
         $table->addColumn('product_unit_code', 'string', ['length' => 255]);
-        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
-        $table->addColumn('currency', 'string', ['length' => 255]);
+        $table->addColumn('quantity', 'float', ['notnull' => false]);
+        $table->addColumn('value', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 

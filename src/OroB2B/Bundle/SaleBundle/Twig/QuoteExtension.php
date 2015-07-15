@@ -6,9 +6,12 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 class QuoteExtension extends \Twig_Extension
 {
@@ -25,6 +28,11 @@ class QuoteExtension extends \Twig_Extension
     protected $productUnitValueFormatter;
 
     /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $productUnitLabelFormatter;
+
+    /**
      * @var NumberFormatter
      */
     protected $numberFormatter;
@@ -33,15 +41,18 @@ class QuoteExtension extends \Twig_Extension
      * @param TranslatorInterface $translator
      * @param NumberFormatter $numberFormatter
      * @param ProductUnitValueFormatter $productUnitValueFormatter
+     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
      */
     public function __construct(
         TranslatorInterface $translator,
         NumberFormatter $numberFormatter,
-        ProductUnitValueFormatter $productUnitValueFormatter
+        ProductUnitValueFormatter $productUnitValueFormatter,
+        ProductUnitLabelFormatter $productUnitLabelFormatter
     ) {
         $this->translator                   = $translator;
         $this->numberFormatter              = $numberFormatter;
         $this->productUnitValueFormatter    = $productUnitValueFormatter;
+        $this->productUnitLabelFormatter    = $productUnitLabelFormatter;
     }
 
     /**
@@ -69,35 +80,26 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductOffer(QuoteProductOffer $item)
     {
-        $units = $item->getProductUnit()
-            ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())
-            : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
-        ;
+        switch ($item->getPriceType()) {
+            case QuoteProductOffer::PRICE_BUNDLED:
+                $transConstant = 'orob2b.sale.quoteproductoffer.item_bundled';
+            break;
+            default:
+                $transConstant = 'orob2b.sale.quoteproductoffer.item';
+        }
 
-        $price = $this->numberFormatter->formatCurrency(
-            $item->getPrice()->getValue(),
-            $item->getPrice()->getCurrency()
-        );
-        $unit = $this->translator->trans(
-            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
-        );
-
-        $transConstant = null === $item->getPriceType() || QuoteProductOffer::PRICE_UNIT === $item->getPriceType()
-            ? 'orob2b.sale.quoteproductoffer.item'
-            : 'orob2b.sale.quoteproductoffer.item_bundled'
-        ;
-        $str = $this->translator->trans(
+        $str = $this->translator->transChoice(
             $transConstant,
+            (int)$item->getAllowIncrements(),
             [
-                '{units}'   => $units,
-                '{price}'   => $price,
-                '{unit}'    => $unit,
+                '{units}'   => $this->formatProductUnit($item),
+                '{price}'   => $this->formatPrice($item),
+                '{unit}'    => $this->formatUnitCode($item),
             ]
         );
 
         return $str;
     }
-
 
     /**
      * @param QuoteProductRequest $item
@@ -105,29 +107,70 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductRequest(QuoteProductRequest $item)
     {
-        $units = $item->getProductUnit()
-            ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())
-            : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
-        ;
+        $default = $this->translator->trans('N/A');
 
-        $price = $this->numberFormatter->formatCurrency(
-            $item->getPrice()->getValue(),
-            $item->getPrice()->getCurrency()
-        );
-        $unit = $this->translator->trans(
-            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
-        );
-
-        $str = $this->translator->trans(
-            'orob2b.sale.quoteproductrequest.item',
-            [
-                '{units}'   => $units,
-                '{price}'   => $price,
-                '{unit}'    => $unit,
-            ]
-        );
+        if (!$item->getQuantity() && !$item->getPrice()) {
+            $str = $default;
+        } else {
+            $str = $this->translator->trans(
+                'orob2b.sale.quoteproductrequest.item',
+                [
+                    '{units}'   => $this->formatProductUnit($item, $default),
+                    '{price}'   => $this->formatPrice($item, $default),
+                    '{unit}'    => $this->formatUnitCode($item),
+                ]
+            );
+        }
 
         return $str;
+    }
+
+    /**
+     * @param BaseQuoteProductItem $item
+     * @param string $default
+     * @return string
+     */
+    protected function formatProductUnit(BaseQuoteProductItem $item, $default = '')
+    {
+        $units = $default;
+
+        if (!$item->getProductUnit()) {
+            $units = sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode());
+        } elseif ($item->getQuantity()) {
+            $units = $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit());
+        }
+
+        return $units;
+    }
+
+    /**
+     * @param BaseQuoteProductItem $item
+     * @param string $default
+     * @return string
+     */
+    protected function formatPrice(BaseQuoteProductItem $item, $default = '')
+    {
+        $price = $default;
+
+        if ($item->getPrice()) {
+            $price = $this->numberFormatter->formatCurrency(
+                $item->getPrice()->getValue(),
+                $item->getPrice()->getCurrency()
+            );
+        }
+
+        return $price;
+    }
+
+    /**
+     * @param BaseQuoteProductItem $item
+     * @return string
+     */
+    protected function formatUnitCode(BaseQuoteProductItem $item)
+    {
+        $unit = $this->productUnitLabelFormatter->format($item->getProductUnitCode());
+
+        return $unit;
     }
 
     /**

@@ -12,6 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
@@ -152,7 +153,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 if ($quoteProduct->isTypeRequested() || $quoteProduct->isTypeNotAvailable()) {
                     $quoteProductRequest = new QuoteProductRequest();
                     $quoteProductRequest
-                        ->setPrice(Price::create(rand(1, 100), $currency))
+                        ->setPrice(OptionalPrice::create(rand(1, 100), $currency))
                         ->setQuantity(rand(1, 100))
                         ->setProductUnit($productUnit)
                     ;
