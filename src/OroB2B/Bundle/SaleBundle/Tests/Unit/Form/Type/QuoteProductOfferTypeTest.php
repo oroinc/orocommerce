@@ -82,12 +82,9 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $this->translator
             ->expects($expectedData['empty_value'] ? $this->once() : $this->never())
             ->method('trans')
-            ->with(
-                $expectedData['empty_value'],
-                [
+            ->with($expectedData['empty_value'], [
                     '{title}' => $unitCode,
-                ]
-            )
+            ])
             ->will($this->returnValue($expectedData['empty_value']))
         ;
 

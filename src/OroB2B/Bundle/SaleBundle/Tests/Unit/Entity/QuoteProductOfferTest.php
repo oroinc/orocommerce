@@ -84,5 +84,4 @@ class QuoteProductOfferTest extends AbstractTest
             QuoteProductOffer::getPriceTypes()
         );
     }
-
 }
