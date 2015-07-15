@@ -1,6 +1,5 @@
 config:
     paths:
-        'orob2bshoppinglist/js/app/components/widget-form-component': 'bundles/orob2bshoppinglist/js/app/components/widget-form-component.js'
         'orob2bshoppinglist/js/app/components/add-products-button': 'bundles/orob2bshoppinglist/js/app/components/add-products-button.js'
 
         'oro/datagrid/action/add-products-mass-action': 'bundles/orob2bshoppinglist/js/datagrid/action/add-products-mass-action.js'

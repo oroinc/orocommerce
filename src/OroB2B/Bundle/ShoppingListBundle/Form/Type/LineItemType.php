@@ -1,11 +1,15 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -104,7 +108,43 @@ class LineItemType extends AbstractType
                 ]
             );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $entity = $event->getData();
+        $form = $event->getForm();
+
+        $form->add(
+            'unit',
+            ProductUnitSelectionType::NAME,
+            [
+                'required' => true,
+                'label' => 'orob2b.pricing.productprice.unit.label',
+                'empty_data' => null,
+                'empty_value' => 'orob2b.pricing.productprice.unit.choose',
+                'query_builder' => function (EntityRepository $er) use ($entity) {
+                    $qb = $er->createQueryBuilder('unit');
+                    $qb->select('unit')
+                        ->join(
+                            'OroB2BProductBundle:ProductUnitPrecision',
+                            'productUnitPrecision',
+                            Join::WITH,
+                            $qb->expr()->eq('productUnitPrecision.unit', 'unit')
+                        )
+                        ->addOrderBy('unit.code')
+                        ->where($qb->expr()->eq('productUnitPrecision.product', ':product'))
+                        ->setParameter('product', $entity->getProduct());
+
+                    return $qb;
+                }
+            ]
+        );
     }
 
     /**
@@ -153,7 +193,10 @@ class LineItemType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
+                'validation_groups' => function (FormInterface $form) {
+                    return $form->getData()->getId() ? ['update'] : ['create'];
+                }
             ]
         );
     }

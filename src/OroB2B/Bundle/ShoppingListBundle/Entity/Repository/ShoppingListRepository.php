@@ -2,7 +2,9 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
 class ShoppingListRepository extends EntityRepository
@@ -39,5 +41,22 @@ class ShoppingListRepository extends EntityRepository
             ->setParameter('accountUser', $accountUser)
             ->setParameter('id', $id)
             ->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param string[] $labels
+     *
+     * @return ShoppingList[]|ArrayCollection
+     */
+    public function findInLabels(array $labels)
+    {
+        $qb = $this->createQueryBuilder('shopping_list');
+
+        $qb
+            ->select('shopping_list')
+            ->where($qb->expr()->in('shopping_list.label', ':labels'))
+            ->setParameter('labels', $labels)
+            ->getQuery()
+            ->execute();
     }
 }

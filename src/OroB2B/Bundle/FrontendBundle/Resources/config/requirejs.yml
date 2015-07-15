@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2bfrontend/js/app/components/widget-form-component': 'bundles/orob2bfrontend/js/app/components/widget-form-component.js'

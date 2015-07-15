@@ -45,11 +45,33 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        $shoppingLists = $manager->getRepository('OroB2BShoppingListBundle:ShoppingList')->findAll();
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, rand(0, 30));
-        $chunkedProducts = array_chunk($products, ceil(count($products) / count($shoppingLists)));
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
-        foreach ($shoppingLists as $index => $shoppingList) {
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+        $labels = [];
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+            $labels[] = $row['label'];
+        }
+        fclose($handler);
+
+        if (count($labels) == 0) {
+            return;
+        }
+
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, rand(5, 15));
+        $chunkedProducts = array_chunk($products, ceil(count($products) / count($labels)));
+        $shoppingListRepository = $manager->getRepository('OroB2BShoppingListBundle:ShoppingList');
+
+        foreach ($labels as $index => $shoppingListLabel) {
+            $shoppingList = $shoppingListRepository->findOneBy(['label' => $shoppingListLabel]);
+
             /** @var Product $product */
             foreach ($chunkedProducts[$index] as $id => $product) {
                 $lineItem = (new LineItem())
@@ -60,8 +82,9 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
                     ->setUnit($product->getUnitPrecisions()->current()->getUnit());
 
                 $manager->persist($lineItem);
-                $manager->flush();
             }
         }
+
+        $manager->flush();
     }
 }
