@@ -51,11 +51,6 @@ class ProductPriceDatagridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
-        $priceList = $this->getPriceList();
-        if (!$priceList) {
-            return;
-        }
-
         $currencies = $this->getCurrencies();
         if (!$currencies) {
             return;
@@ -75,9 +70,7 @@ class ProductPriceDatagridListener
                 'frontend_type' => 'html',
             ];
 
-            $select = $config->offsetGetByPath('[columns]');
-            $select[$columnName] = $column;
-            $config->offsetSetByPath('[columns]', $select);
+            $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
         }
     }
 
@@ -86,11 +79,6 @@ class ProductPriceDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
-        $priceList = $this->getPriceList();
-        if (!$priceList) {
-            return;
-        }
-
         $currencies = $this->getCurrencies();
         if (!$currencies) {
             return;
@@ -106,6 +94,8 @@ class ProductPriceDatagridListener
 
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
+
+        $priceList = $this->getPriceList();
         $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds);
         $groupedPrices = $this->groupPrices($prices);
 
@@ -140,7 +130,7 @@ class ProductPriceDatagridListener
      */
     protected function getPriceList()
     {
-        return $this->priceListRequestHandler->getPriceListFromRequest();
+        return $this->priceListRequestHandler->getPriceList();
     }
 
     /**
@@ -148,7 +138,7 @@ class ProductPriceDatagridListener
      */
     protected function getCurrencies()
     {
-        return $this->priceListRequestHandler->getPriceListCurrenciesFromRequest();
+        return $this->priceListRequestHandler->getPriceListCurrencies();
     }
 
     /**

@@ -41,7 +41,7 @@ class ProductController extends Controller
      */
     protected function createPriceListForm()
     {
-        $priceList = $this->getPriceListHandler()->getPriceListFromRequest();
+        $priceList = $this->getPriceListHandler()->getPriceList();
 
         return $this->createForm(
             PriceListSelectType::NAME,
@@ -69,8 +69,8 @@ class ProductController extends Controller
                 'expanded' => true,
                 'multiple' => true,
                 'csrf_protection' => false,
-                'currencies_list' => $this->getPriceListHandler()->getPriceListFromRequest()->getCurrencies(),
-                'data' => $this->getPriceListHandler()->getPriceListCurrenciesFromRequest(),
+                'currencies_list' => $this->getPriceListHandler()->getPriceList()->getCurrencies(),
+                'data' => $this->getPriceListHandler()->getPriceListCurrencies(),
             ]
         );
     }

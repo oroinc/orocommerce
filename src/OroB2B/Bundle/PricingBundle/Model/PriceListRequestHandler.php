@@ -46,7 +46,7 @@ class PriceListRequestHandler
     /**
      * @return PriceList
      */
-    public function getPriceListFromRequest()
+    public function getPriceList()
     {
         if (!$this->request) {
             return $this->getDefaultPriceList();
@@ -72,18 +72,24 @@ class PriceListRequestHandler
     /**
      * @return string[]
      */
-    public function getPriceListCurrenciesFromRequest()
+    public function getPriceListCurrencies()
     {
-        $priceListCurrencies = $this->getPriceListFromRequest()->getCurrencies();
+        $priceListCurrencies = $this->getPriceList()->getCurrencies();
 
         if (!$this->request) {
             return $priceListCurrencies;
         }
 
-        $currencies = array_intersect(
-            $priceListCurrencies,
-            (array)$this->request->get(self::PRICE_LIST_CURRENCY_KEY, [])
-        );
+        if (false === $this->request->get(self::PRICE_LIST_CURRENCY_KEY, false)) {
+            return $priceListCurrencies;
+        }
+
+        $currencies = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
+        if (!is_array($currencies)) {
+            return filter_var($currencies, FILTER_VALIDATE_BOOLEAN) ? $priceListCurrencies : [];
+        }
+
+        $currencies = array_intersect($priceListCurrencies, $currencies);
 
         sort($currencies);
 

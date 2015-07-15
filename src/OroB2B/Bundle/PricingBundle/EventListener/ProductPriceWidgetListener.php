@@ -27,10 +27,10 @@ class ProductPriceWidgetListener
     {
         $params = $event->getWidgetRouteParameters();
         $params[PriceListRequestHandler::PRICE_LIST_KEY]
-            = $this->priceListRequestHandler->getPriceListFromRequest()->getId();
+            = $this->priceListRequestHandler->getPriceList()->getId();
 
         $params[PriceListRequestHandler::PRICE_LIST_CURRENCY_KEY]
-            = $this->priceListRequestHandler->getPriceListCurrenciesFromRequest();
+            = $this->priceListRequestHandler->getPriceListCurrencies();
 
         $params[PriceListRequestHandler::TIER_PRICES_KEY] = $this->priceListRequestHandler->showTierPrices();
 
