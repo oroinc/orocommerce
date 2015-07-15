@@ -2,6 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Mapping\ClassMetadataInfo;
 
@@ -9,16 +14,23 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 use OroB2B\Bundle\CustomerBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
 
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-
 class CustomerTypedAddressWithDefaultType extends AbstractType
 {
     const NAME = 'orob2b_customer_typed_address_with_default';
 
     /** @var ManagerRegistry */
     protected $registry;
+
+    /** @var TranslatorInterface */
+    protected $translator;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritdoc}
@@ -50,7 +62,12 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
                 $value = (string)$entity;
             }
 
-            $choiceLabels[$pkValue] = 'Default ' . $value;
+            $choiceLabels[$pkValue] = $this->translator->trans(
+                'orob2b.customer.customer_typed_address_with_default_type.choice.default_text',
+                [
+                    '%type_name%' => $value
+                ]
+            );
         }
 
         $builder->add('default', 'choice', [

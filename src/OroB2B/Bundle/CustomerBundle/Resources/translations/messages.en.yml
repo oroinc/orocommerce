@@ -198,3 +198,6 @@ orob2b.customer:
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
+
+    customer_typed_address_with_default_type:
+        choice.default_text: 'Default %type_name%'

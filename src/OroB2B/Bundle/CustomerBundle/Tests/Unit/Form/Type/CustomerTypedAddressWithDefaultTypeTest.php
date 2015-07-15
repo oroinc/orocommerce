@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\ORM\EntityManager;
 
@@ -11,6 +12,9 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressWithDefaultType;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
 {
     /** @var CustomerTypedAddressWithDefaultType */
@@ -53,7 +57,8 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new CustomerTypedAddressWithDefaultType();
+        $translator = $this->createTranslatorMock();
+        $this->formType = new CustomerTypedAddressWithDefaultType($translator);
         $this->formType->setRegistry($this->registry);
     }
 
@@ -270,5 +275,13 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
             }));
 
         return $class;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    private function createTranslatorMock()
+    {
+        return $this->getMock('Symfony\Component\Translation\TranslatorInterface');
     }
 }
