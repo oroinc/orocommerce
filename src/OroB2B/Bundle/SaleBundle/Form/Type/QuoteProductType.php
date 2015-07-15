@@ -33,6 +33,7 @@ class QuoteProductType extends AbstractType
 
     /**
      * @param TranslatorInterface $translator
+     * @param ProductUnitLabelFormatter $labelFormatter
      */
     public function __construct(TranslatorInterface $translator, ProductUnitLabelFormatter $labelFormatter)
     {

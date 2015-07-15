@@ -3,15 +3,12 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -187,5 +184,4 @@ class QuoteTypeTest extends AbstractTest
             $this->getValidatorExtension(true),
         ];
     }
-
 }

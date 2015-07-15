@@ -14,8 +14,6 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProduct;
-
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
@@ -146,7 +144,9 @@ class QuoteProductRequestTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductRequest(2, 10, 'kg', $this->createPrice(20, 'EUR'))->setQuoteProduct(null),
+                'expectedData'  => $this
+                    ->getQuoteProductRequest(2, 10, 'kg', $this->createPrice(20, 'EUR'))
+                    ->setQuoteProduct(null),
                 'defaultData'   => $this->getQuoteProductRequest(2)->setQuoteProduct(null),
             ],
             'empty quantity' => [
@@ -278,7 +278,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
         foreach ($productUnits as $unit) {
             $product->addUnitPrecision((new ProductUnitPrecision())->setUnit($unit));
 
-            if ($unitCode && $unit->getCode() == $unitCode) {
+            if ($unitCode && $unit->getCode() === $unitCode) {
                 $productUnit = $unit;
             }
         }

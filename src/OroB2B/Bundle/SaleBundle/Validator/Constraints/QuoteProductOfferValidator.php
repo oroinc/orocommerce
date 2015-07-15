@@ -27,23 +27,28 @@ class QuoteProductOfferValidator extends ConstraintValidator
         }
 
         if (null === ($quoteProduct = $quoteProductOffer->getQuoteProduct())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
         if (null === ($product = $quoteProduct->getProduct())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
         if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
         if (null === ($productUnit = $quoteProductOffer->getProductUnit())) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
 
         if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
-            return $this->addViolation($constraint);
+            $this->addViolation($constraint);
+            return;
         }
     }
 
@@ -54,5 +59,4 @@ class QuoteProductOfferValidator extends ConstraintValidator
     {
         $this->context->addViolationAt('productUnit', $constraint->message);
     }
-
 }

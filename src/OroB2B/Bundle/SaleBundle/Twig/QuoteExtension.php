@@ -83,7 +83,7 @@ class QuoteExtension extends \Twig_Extension
         switch ($item->getPriceType()) {
             case QuoteProductOffer::PRICE_BUNDLED:
                 $transConstant = 'orob2b.sale.quoteproductoffer.item_bundled';
-            break;
+                break;
             default:
                 $transConstant = 'orob2b.sale.quoteproductoffer.item';
         }
