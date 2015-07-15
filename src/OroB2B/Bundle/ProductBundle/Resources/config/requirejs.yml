@@ -2,3 +2,4 @@ config:
     paths:
         'orob2bproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/orob2bproduct/js/app/components/product-unit-selection-limitations-component.js'
         'orob2bproduct/js/app/components/product-sidebar-grid-component': 'bundles/orob2bproduct/js/app/components/product-sidebar-grid-component.js'
+        'oro/filter/price-filter': 'bundles/orob2bproduct/js/filter/price-filter.js'

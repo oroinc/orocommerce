@@ -76,6 +76,10 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: product.updatedAt
+                price:
+                    type:      price
+                    data_name: product.price
+                    label:     orob2b.pricing.productprice.price.label
 
     products-grid:
         extends: products-select-grid

@@ -9,6 +9,7 @@ parameters:
     orob2b_product.formatter.product_unit_label.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
     orob2b_product.twig.product_unit_label.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension
+    orob2b_product.price_filter.class: OroB2B\Bundle\ProductBundle\Filter\PriceFilter
 
 services:
     orob2b_product.form.product:
@@ -66,3 +67,11 @@ services:
         class: %orob2b_product.service.visibility_checker.class%
         arguments:
             - @oro_config.manager
+
+    orob2b_product.price_filter:
+            class: %orob2b_product.price_filter.class%
+            arguments:
+                - @form.factory
+                - @oro_filter.filter_utility
+            tags:
+                - { name: oro_filter.extension.orm_filter.filter, type: price }
