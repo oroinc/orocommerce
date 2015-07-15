@@ -125,6 +125,57 @@ class QuoteProductRequestTypeTest extends AbstractTest
     /**
      * @return array
      */
+    public function preSetDataProvider()
+    {
+        $units = $this->getProductUnits(['kg', 'item']);
+
+        return [
+            'choices is []' => [
+                'inputData'     => null,
+                'expectedData'  => [
+                    'choices'       => [],
+                    'empty_value'   => null,
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+            'choices is ProductUnit[]' => [
+                'inputData'     => $this->createQuoteProductRequest(1, $units, 'kg'),
+                'expectedData'  => [
+                    'choices'       => $units,
+                    'empty_value'   => null,
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+            'choices is ProductUnit[] and unit is deleted' => [
+                'inputData'     => $this->createQuoteProductRequest(1, $units, 'test'),
+                'expectedData'  => [
+                    'choices'       => $units,
+                    'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+            'choices is [] and unit is deleted' => [
+                'inputData'     => $this->createQuoteProductRequest(1, [], 'test'),
+                'expectedData'  => [
+                    'choices'       => [],
+                    'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
+                    'required'      => true,
+                    'disabled'      => false,
+                    'label'         => 'orob2b.product.productunit.entity_label',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
     public function submitProvider()
     {
         return [
@@ -209,57 +260,6 @@ class QuoteProductRequestTypeTest extends AbstractTest
                 ],
                 'expectedData'  => $this->getQuoteProductRequest(5, 11, 'kg', $this->createPrice(22, 'EUR')),
                 'defaultData'   => $this->getQuoteProductRequest(5),
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function preSetDataProvider()
-    {
-        $units = $this->getProductUnits(['kg', 'item']);
-
-        return [
-            'choices is []' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'choices'       => [],
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is ProductUnit[]' => [
-                'inputData'     => $this->createQuoteProductRequest(1, $units, 'kg'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is ProductUnit[] and unit is deleted' => [
-                'inputData'     => $this->createQuoteProductRequest(1, $units, 'test'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is [] and unit is deleted' => [
-                'inputData'     => $this->createQuoteProductRequest(1, [], 'test'),
-                'expectedData'  => [
-                    'choices'       => [],
-                    'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
             ],
         ];
     }
