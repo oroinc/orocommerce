@@ -27,6 +27,11 @@ class ShoppingListTest extends EntityTestCase
         $this->assertPropertyCollections(new ShoppingList(), [
             ['lineItems', new LineItem()]
         ]);
+
+        $label = 'label-test-775';
+        $shoppingList = new ShoppingList();
+        $shoppingList->setLabel($label);
+        $this->assertEquals($label, $shoppingList);
     }
 
     public function testPrePersist()

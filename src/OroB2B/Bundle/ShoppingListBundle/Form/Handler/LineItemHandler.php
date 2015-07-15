@@ -25,8 +25,8 @@ class LineItemHandler
 
     /**
      * @param FormInterface $form
-     * @param Request $request
-     * @param Registry $registry
+     * @param Request       $request
+     * @param Registry      $registry
      */
     public function __construct(
         FormInterface $form,
@@ -60,6 +60,7 @@ class LineItemHandler
                 }
 
                 $this->manager->flush();
+
                 return true;
             }
         }
