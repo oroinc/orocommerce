@@ -122,10 +122,10 @@ class QuoteProductTypeTest extends AbstractTest
             ],
             'empty product and replacement' => [
                 'input'     => [
-                    'value' => $this->createQuoteProduct(),
+                    'value' => new QuoteProduct(),
                 ],
                 'expected'  => [
-                    'value' => $this->createQuoteProduct(),
+                    'value' => new QuoteProduct(),
                     'componentOptions' => [
                         'units' => [],
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
@@ -136,13 +136,13 @@ class QuoteProductTypeTest extends AbstractTest
             'existing product and replacement' => [
                 'input'     => [
                     'value' => (new QuoteProduct())
-                                    ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
-                                    ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                        ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
+                        ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
-                                    ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
-                                    ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                        ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
+                        ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
                     'componentOptions' => [
                         'units' => [
                             1 => [
@@ -163,28 +163,6 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param string $className
-     * @param array $fields
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMockEntity($className, array $fields = [])
-    {
-        $mock = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        foreach ($fields as $method => $value) {
-            $mock->expects($this->any())
-                ->method($method)
-                ->will($this->returnValue($value))
-            ;
-        }
-
-        return $mock;
-    }
-
-    /**
      * @param int $id
      * @param array $units
      * @return \PHPUnit_Framework_MockObject_MockObject|Product
@@ -200,13 +178,6 @@ class QuoteProductTypeTest extends AbstractTest
         );
 
         return $product;
-    }
-
-    protected function createQuoteProduct($product = null, $replacement = null)
-    {
-        $quoteProduct = new QuoteProduct();
-
-        return $quoteProduct;
     }
 
     /**
@@ -243,8 +214,17 @@ class QuoteProductTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [clone $quoteProductOffer])->setQuote(null),
-                'inputData'     => $this->getQuoteProduct(2)->setQuote(null)->setProduct(null),
+                'expectedData' => $this->getQuoteProduct(
+                    2,
+                    self::QP_TYPE1,
+                    'comment1',
+                    'comment2',
+                    [],
+                    [
+                        clone $quoteProductOffer,
+                    ]
+                )->setQuote(null),
+                'inputData' => $this->getQuoteProduct(2)->setQuote(null)->setProduct(null),
             ],
             'empty product' => [
                 'isValid'       => false,
@@ -264,8 +244,17 @@ class QuoteProductTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [clone $quoteProductOffer])->setProduct(null),
-                'inputData'     => $this->getQuoteProduct(2)->setProduct(null),
+                'expectedData' => $this->getQuoteProduct(
+                    2,
+                    self::QP_TYPE1,
+                    'comment1',
+                    'comment2',
+                    [],
+                    [
+                        clone $quoteProductOffer,
+                    ]
+                )->setProduct(null),
+                'inputData' => $this->getQuoteProduct(2)->setProduct(null),
             ],
             'empty type' => [
                 'isValid'       => false,
@@ -285,8 +274,17 @@ class QuoteProductTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProduct(2, null, 'comment1', 'comment2', [], [clone $quoteProductOffer]),
-                'inputData'     => $this->getQuoteProduct(2)->setProduct(null),
+                'expectedData' => $this->getQuoteProduct(
+                    2,
+                    null,
+                    'comment1',
+                    'comment2',
+                    [],
+                    [
+                        clone $quoteProductOffer,
+                    ]
+                ),
+                'inputData' => $this->getQuoteProduct(2)->setProduct(null),
             ],
             'empty offers' => [
                 'isValid'       => false,
@@ -317,8 +315,17 @@ class QuoteProductTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [clone $quoteProductOffer]),
-                'inputData'     => $this->getQuoteProduct(2)->setProduct(null),
+                'expectedData' => $this->getQuoteProduct(
+                    2,
+                    self::QP_TYPE1,
+                    'comment1',
+                    'comment2',
+                    [],
+                    [
+                        clone $quoteProductOffer,
+                    ]
+                ),
+                'inputData' => $this->getQuoteProduct(2)->setProduct(null),
             ],
         ];
     }

@@ -91,8 +91,8 @@ class QuoteTypeTest extends AbstractTest
      */
     public function submitProvider()
     {
-        $quoteProductOffer  = $this->getQuoteProductOffer(2, 33, 'kg', self::QPO_PRICE_TYPE1, Price::create(44, 'USD'));
-        $quoteProduct       = $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [$quoteProductOffer]);
+        $quoteProductOffer = $this->getQuoteProductOffer(2, 33, 'kg', self::QPO_PRICE_TYPE1, Price::create(44, 'USD'));
+        $quoteProduct = $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [$quoteProductOffer]);
 
         return [
             'empty owner' => [
@@ -166,7 +166,10 @@ class QuoteTypeTest extends AbstractTest
             new PreloadedExtension(
                 [
                     OroDateTimeType::NAME                       => new OroDateTimeType(),
-                    QuoteProductType::NAME                      => new QuoteProductType($translator, $productUnitLabelFormatter),
+                    QuoteProductType::NAME                      => new QuoteProductType(
+                        $translator,
+                        $productUnitLabelFormatter
+                    ),
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferType::NAME                 => new QuoteProductOfferType($translator),
                     QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
