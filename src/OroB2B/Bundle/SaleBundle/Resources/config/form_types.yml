@@ -17,6 +17,7 @@ services:
         class: %orob2b_sale.form.type.quote_product.class%
         arguments:
             - @translator
+            - @orob2b_product.formatter.product_unit_label
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product }
 

@@ -5,13 +5,16 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Twig;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,6 +34,11 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
     protected $productUnitValueFormatter;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
+     */
+    protected $productUnitLabelFormatter;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
      */
     protected $numberFormatter;
@@ -45,50 +53,27 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock()
         ;
 
-        $this->translator
-            ->expects($this->any())
-            ->method('trans')
-            ->will($this->returnCallback(function ($id, $params) {
-                $ids = [
-                    'orob2b.product_unit.kg.label.full'     => 'kilogram',
-                    'orob2b.product_unit.item.label.full'   => 'item',
-                    'orob2b.sale.quoteproductoffer.item'    => '{units}, {price} per {unit}',
-                    'orob2b.sale.quoteproductoffer.item_bundled'    => '{units}, {price} for every {units}',
-                ];
-
-                return str_replace(array_keys($params), array_values($params), $ids[$id]);
-            }))
-        ;
-
-        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->numberFormatter
-            ->expects($this->any())
-            ->method('formatCurrency')
-            ->will($this->returnCallback(function ($value, $currency) {
-                return sprintf('%01.2f %s', $value, $currency);
-            }));
-
         $this->productUnitValueFormatter = $this->getMockBuilder(
             'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productUnitValueFormatter
-            ->expects($this->any())
-            ->method('format')
-            ->will($this->returnCallback(function ($quantity, ProductUnit $productUnit) {
-                $code = $this->translator->trans('orob2b.product_unit.' . $productUnit->getCode() . '.label.full');
-                return sprintf('%d %s', $quantity, $code);
-            }));
+        $this->productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->extension = new QuoteExtension(
             $this->translator,
             $this->numberFormatter,
-            $this->productUnitValueFormatter
+            $this->productUnitValueFormatter,
+            $this->productUnitLabelFormatter
         );
     }
 
@@ -106,51 +91,278 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('orob2b_format_sale_quote_product_request', $filters[1]->getName());
     }
 
-    /**
-     * @param string $expected
-     * @param int $quantity
-     * @param string $unitCode
-     * @param Price $price
-     * @param ProductUnit $unit
-     * @dataProvider formatProductItemProvider
-     */
-    public function testFormatProductItem($expected, $quantity, $unitCode, Price $price, ProductUnit $unit = null)
-    {
-        $item = new QuoteProductOffer();
-        $item
-            ->setQuantity($quantity)
-            ->setProductUnit($unit)
-            ->setProductUnitCode($unitCode)
-            ->setPrice($price)
-        ;
-
-        $this->assertEquals($expected, $this->extension->formatProductOffer($item));
-    }
-
     public function testGetName()
     {
         $this->assertEquals(QuoteExtension::NAME, $this->extension->getName());
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider formatProductOfferProvider
+     */
+    public function testFormatProductOffer(array $inputData, array $expectedData)
+    {
+        $item = $inputData['item'];
+
+        $item
+            ->setQuantity($inputData['quantity'])
+            ->setProductUnit($inputData['unit'])
+            ->setProductUnitCode($inputData['unitCode'])
+            ->setPrice($inputData['price'])
+        ;
+
+        $this->productUnitValueFormatter->expects($inputData['unit'] ? $this->once() : $this->never())
+            ->method('format')
+            ->with($inputData['quantity'], $inputData['unitCode'])
+            ->will($this->returnValue($expectedData['formattedUnits']))
+        ;
+
+        $price = $inputData['price'] ?: new Price();
+
+        $this->numberFormatter->expects($price ? $this->once() : $this->never())
+            ->method('formatCurrency')
+            ->with($price->getValue(), $price->getCurrency())
+            ->will($this->returnValue($expectedData['formattedPrice']))
+        ;
+
+        $this->productUnitLabelFormatter->expects($this->once())
+            ->method('format')
+            ->with($inputData['unitCode'])
+            ->will($this->returnValue($expectedData['formattedUnit']))
+        ;
+
+        $this->translator->expects($this->once())
+            ->method('transChoice')
+            ->with($expectedData['transConstant'], $expectedData['transIndex'], [
+                '{units}'   => $expectedData['formattedUnits'],
+                '{price}'   => $expectedData['formattedPrice'],
+                '{unit}'    => $expectedData['formattedUnit'],
+            ])
+        ;
+
+        $this->extension->formatProductOffer($inputData['item']);
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider formatProductRequestProvider
+     */
+    public function testFormatProductRequest(array $inputData, array $expectedData)
+    {
+        $item = $inputData['item'];
+
+        $item
+            ->setQuantity($inputData['quantity'])
+            ->setProductUnit($inputData['unit'])
+            ->setProductUnitCode($inputData['unitCode'])
+            ->setPrice($inputData['price'])
+        ;
+
+        $this->productUnitValueFormatter->expects($expectedData['formatUnitValue'] ? $this->once() : $this->never())
+            ->method('format')
+            ->with($inputData['quantity'], $inputData['unitCode'])
+            ->will($this->returnValue($expectedData['formattedUnits']))
+        ;
+
+        $price = $inputData['price'] ?: new OptionalPrice();
+
+        $this->numberFormatter->expects($expectedData['formatPrice'] ? $this->once() : $this->never())
+            ->method('formatCurrency')
+            ->with($price->getValue(), $price->getCurrency())
+            ->will($this->returnValue($expectedData['formattedPrice']))
+        ;
+
+        $this->productUnitLabelFormatter->expects($expectedData['formatUnitLabel'] ? $this->once() : $this->never())
+            ->method('format')
+            ->with($inputData['unitCode'])
+            ->will($this->returnValue($expectedData['formattedUnit']))
+        ;
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->will($this->returnCallback(function ($id) {
+                return $id;
+            }))
+        ;
+
+        $this->assertSame(
+            $expectedData['formattedString'],
+            $this->extension->formatProductRequest($inputData['item'])
+        );
+    }
+
+    /**
      * @return array
      */
-    public function formatProductItemProvider()
+    public function formatProductRequestProvider()
     {
         return [
-            'existed product unit' => [
-                'expectedResult'    => '15 kilogram, 10.00 USD per kilogram',
-                'quantity'          => 15,
-                'unitCode'          => 'kg',
-                'price'             => Price::create(10, 'USD'),
-                'productUnit'       => (new ProductUnit())->setCode('kg'),
+            'existing product unit' => [
+                'inputData' => [
+                    'item'      => new QuoteProductRequest(),
+                    'quantity'  => 15,
+                    'unitCode'  => 'kg',
+                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formatPrice'       => true,
+                    'formatUnitValue'   => true,
+                    'formatUnitLabel'   => true,
+                    'formattedUnits'    => '15 kilogram',
+                    'formattedPrice'    => '10.00 USD',
+                    'formattedUnit'     => 'kilogram',
+                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                ],
+            ],
+            'empty price' => [
+                'inputData' => [
+                    'item'      => new QuoteProductRequest(),
+                    'quantity'  => 15,
+                    'unitCode'  => 'kg',
+                    'price'     => null,
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formatPrice'       => false,
+                    'formatUnitValue'   => true,
+                    'formatUnitLabel'   => true,
+                    'formattedUnits'    => '15 kilogram',
+                    'formattedPrice'    => 'N/A',
+                    'formattedUnit'     => 'kilogram',
+                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                ],
+            ],
+            'empty quantity' => [
+                'inputData' => [
+                    'item'      => new QuoteProductRequest(),
+                    'quantity'  => null,
+                    'unitCode'  => 'kg',
+                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formatPrice'       => true,
+                    'formatUnitValue'   => false,
+                    'formatUnitLabel'   => true,
+                    'formattedUnits'    => 'N/A',
+                    'formattedPrice'    => '10.00 USD',
+                    'formattedUnit'     => 'kilogram',
+                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                ],
+            ],
+            'empty quantity and price' => [
+                'inputData' => [
+                    'item'      => new QuoteProductRequest(),
+                    'quantity'  => null,
+                    'unitCode'  => 'kg',
+                    'price'     => null,
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formatPrice'       => false,
+                    'formatUnitValue'   => false,
+                    'formatUnitLabel'   => false,
+                    'formattedUnits'    => 'N/A',
+                    'formattedPrice'    => 'N/A',
+                    'formattedUnit'     => 'kilogram',
+                    'formattedString'   => 'N/A',
+                ],
             ],
             'deleted product unit' => [
-                'expectedResult'    => '25 item, 20.00 EUR per item',
-                'quantity'          => 25,
-                'unitCode'          => 'item',
-                'price'             => Price::create(20, 'EUR'),
-                'productUnit'       => null,
+                'inputData' => [
+                    'item'      => new QuoteProductRequest(),
+                    'quantity'  => 25,
+                    'unitCode'  => 'item',
+                    'price'     => OptionalPrice::create(20, 'EUR'),
+                    'unit'      => null,
+                ],
+                'expectedData' => [
+                    'formatPrice'       => true,
+                    'formatUnitValue'   => false,
+                    'formatUnitLabel'   => true,
+                    'formattedUnits'    => '25 item',
+                    'formattedPrice'    => '20.00 EUR',
+                    'formattedUnit'     => 'item',
+                    'formattedString'   => 'orob2b.sale.quoteproductrequest.item',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function formatProductOfferProvider()
+    {
+        return [
+            'existing product unit and bundled price type' => [
+                'inputData' => [
+                    'item'      => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_BUNDLED),
+                    'quantity'  => 15,
+                    'unitCode'  => 'kg',
+                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formattedUnits'    => '15 kilogram',
+                    'formattedPrice'    => '10.00 USD',
+                    'formattedUnit'     => 'kilogram',
+                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item_bundled',
+                    'transIndex'        => 0,
+                ],
+            ],
+            'existing product unit and default price type' => [
+                'inputData' => [
+                    'item'      => new QuoteProductOffer(),
+                    'quantity'  => 15,
+                    'unitCode'  => 'kg',
+                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formattedUnits'    => '15 kilogram',
+                    'formattedPrice'    => '10.00 USD',
+                    'formattedUnit'     => 'kilogram',
+                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item',
+                    'transIndex'        => 0,
+                ],
+            ],
+            'existing product unit and allowed increments' => [
+                'inputData' => [
+                    'item'      => (new QuoteProductOffer())->setAllowIncrements(true),
+                    'quantity'  => 15,
+                    'unitCode'  => 'kg',
+                    'price'     => OptionalPrice::create(10, 'USD'),
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formattedUnits'    => '15 kilogram',
+                    'formattedPrice'    => '10.00 USD',
+                    'formattedUnit'     => 'kilogram',
+                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item',
+                    'transIndex'        => 1,
+                ],
+            ],
+            'deleted product unit' => [
+                'inputData' => [
+                    'item'      => new QuoteProductOffer(),
+                    'quantity'  => 25,
+                    'unitCode'  => 'item',
+                    'price'     => OptionalPrice::create(20, 'EUR'),
+                    'unit'      => null,
+                ],
+                'expectedData' => [
+                    'formattedUnits'    => '25 item',
+                    'formattedPrice'    => '20.00 EUR',
+                    'formattedUnit'     => 'item',
+                    'transConstant'     => 'orob2b.sale.quoteproductoffer.item',
+                    'transIndex'        => 0,
+                ],
             ],
         ];
     }

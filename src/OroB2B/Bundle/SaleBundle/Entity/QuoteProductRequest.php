@@ -9,6 +9,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+
 /**
  * QuoteProductRequest
  *
@@ -62,5 +64,24 @@ class QuoteProductRequest extends BaseQuoteProductItem
     public function getRequestProductItem()
     {
         return $this->requestProductItem;
+    }
+
+    /**
+     * @param OptionalPrice $price
+     * @return $this
+     */
+    public function setPrice($price = null)
+    {
+        return parent::setPrice($price);
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function postLoad()
+    {
+        if (null !== $this->value && null !==  $this->currency) {
+            $this->price = OptionalPrice::create($this->value, $this->currency);
+        }
     }
 }
