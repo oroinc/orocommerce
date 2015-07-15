@@ -125,6 +125,24 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => [$this->shippingType],
             ],
+            'all default types with custom em' => [
+                'options'       => ['class' => 'Oro\Bundle\AddressBundle\Entity\AddressType', 'em' => 'EntityManager'],
+                'defaultData'   => [],
+                'viewData'      => [],
+                'submittedData' => [
+                    'default' => [AddressType::TYPE_SHIPPING],
+                ],
+                'expectedData'  => [$this->shippingType],
+            ],
+            'all default types with custom property' => [
+                'options'       => ['class' => 'Oro\Bundle\AddressBundle\Entity\AddressType', 'property' => 'name'],
+                'defaultData'   => [],
+                'viewData'      => [],
+                'submittedData' => [
+                    'default' => [AddressType::TYPE_SHIPPING],
+                ],
+                'expectedData'  => [$this->shippingType],
+            ],
         ];
     }
 
@@ -201,6 +219,10 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
             ->getMock();
         $registry->expects($this->any())
             ->method('getManagerForClass')
+            ->will($this->returnValue($em));
+        $registry->expects($this->any())
+            ->method('getManager')
+            ->with($this->equalTo('EntityManager'))
             ->will($this->returnValue($em));
         $registry->expects($this->any())
             ->method('getManager')

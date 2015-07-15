@@ -8,6 +8,11 @@ define(function (require) {
         $ = require('jquery');
 
     CustomerAddressComponent = BaseComponent.extend({
+        /**
+         * @property {Object}
+         */
+        targetElement: null,
+
         initialize: function (options) {
             this.targetElement = $(options._sourceElement);
             if (options.disableDefaultWithoutType) {
@@ -24,8 +29,8 @@ define(function (require) {
                 return;
             }
 
-            this.targetElement.off('[name$="[defaults][default][]"]');
-            this.targetElement.off('[name$="[types][]"]');
+            this.targetElement.off('click', '[name$="[defaults][default][]"]');
+            this.targetElement.off('click', '[name$="[types][]"]');
 
             CustomerAddressComponent.__super__.dispose.call(this);
         },

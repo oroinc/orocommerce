@@ -102,7 +102,7 @@ class CustomerTypedAddressType extends AbstractType
     }
 
     /**
-     * @param mixed $addressTypeDataClass
+     * @param string $addressTypeDataClass
      */
     public function setAddressTypeDataClass($addressTypeDataClass)
     {

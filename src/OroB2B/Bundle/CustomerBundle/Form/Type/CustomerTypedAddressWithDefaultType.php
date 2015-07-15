@@ -19,6 +19,9 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
     /** @var ManagerRegistry */
     protected $registry;
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($options['em'] === null) {
@@ -57,6 +60,9 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
         ->addViewTransformer(new AddressTypeDefaultTransformer($em));
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
@@ -69,6 +75,9 @@ class CustomerTypedAddressWithDefaultType extends AbstractType
         ]);
     }
 
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function setRegistry(ManagerRegistry $registry)
     {
         $this->registry = $registry;

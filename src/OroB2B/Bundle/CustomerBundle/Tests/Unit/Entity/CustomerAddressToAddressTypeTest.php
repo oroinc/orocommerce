@@ -25,16 +25,26 @@ class CustomerAddressToAddressTypeTest extends EntityTestCase
         ]);
     }
 
+    /**
+     * @return CustomerAddressToAddressType
+     */
     protected function createAddressToAddressTypeEntity()
     {
         return new CustomerAddressToAddressType();
     }
 
+    /**
+     * @return CustomerAddress
+     */
     protected function createAddressEntity()
     {
         return new CustomerAddress();
     }
 
+    /**
+     * @param string $name
+     * @return AddressType
+     */
     protected function createAddressTypeEntity($name)
     {
         return new AddressType($name);
