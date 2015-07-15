@@ -6,8 +6,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
-
 use OroB2B\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
