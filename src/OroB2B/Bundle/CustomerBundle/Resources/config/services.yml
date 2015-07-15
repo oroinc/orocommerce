@@ -4,6 +4,8 @@ parameters:
     orob2b_customer.entity.customer_group.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup
     orob2b_customer.entity.account_user.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
     orob2b_customer.entity.account_user_role.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole
+    orob2b_customer.entity.audit.class: OroB2B\Bundle\CustomerBundle\Entity\Audit
+    orob2b_customer.entity.audit_field.class: OroB2B\Bundle\CustomerBundle\Entity\AuditField
 
     orob2b_customer.customer_tree_handler.class: OroB2B\Bundle\CustomerBundle\JsTree\CustomerTreeHandler
     orob2b_customer.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -28,6 +30,7 @@ parameters:
     orob2b_customer.event_listener.login.class: OroB2B\Bundle\CustomerBundle\EventListener\LoginListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
+    orob2b_customer.acl.group_provider.class: OroB2B\Bundle\CustomerBundle\Acl\Group\AclGroupProvider
     orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
@@ -185,3 +188,10 @@ services:
         class: %orob2b_customer.event_listener.login.class%
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }
+
+    orob2b_customer.acl.group_provider:
+        class: %orob2b_customer.acl.group_provider.class%
+        arguments:
+            - @service_container
+        tags:
+            - { name: oro_security.acl.group_provider, alias: frontend_group }
