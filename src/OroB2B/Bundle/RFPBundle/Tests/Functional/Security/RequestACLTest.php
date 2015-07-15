@@ -173,9 +173,7 @@ class RequestACLTest extends WebTestCase
             new ArrayCollection([$aclPrivilege])
         );
 
-        $chainMetadataProvider->clearCache();
         $chainMetadataProvider->stopProviderEmulation();
-        $chainMetadataProvider->clearCache();
     }
 
     /**
