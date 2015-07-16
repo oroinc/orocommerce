@@ -75,7 +75,7 @@ class ProductController extends Controller
         /** @var ProductGridWidgetRenderEvent $event */
         $event = $this->get('event_dispatcher')->dispatch(
             ProductGridWidgetRenderEvent::NAME,
-            new ProductGridWidgetRenderEvent($widgetRouteParameters)
+            new ProductGridWidgetRenderEvent(array_merge($widgetRouteParameters, $this->getRequest()->query->all()))
         );
 
         return [
@@ -131,16 +131,16 @@ class ProductController extends Controller
             $product,
             $this->get('orob2b_product.form.product'),
             function (Product $product) {
-                return array(
+                return [
                     'route' => 'orob2b_product_update',
-                    'parameters' => array('id' => $product->getId())
-                );
+                    'parameters' => ['id' => $product->getId()]
+                ];
             },
             function (Product $product) {
-                return array(
+                return [
                     'route' => 'orob2b_product_view',
-                    'parameters' => array('id' => $product->getId())
-                );
+                    'parameters' => ['id' => $product->getId()]
+                ];
             },
             $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
         );

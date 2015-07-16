@@ -26,40 +26,34 @@ class PriceListRepositoryTest extends WebTestCase
 
     public function testDefaultState()
     {
-        $this->assertEquals([$this->getReference('price_list_3')], $this->getDefaultPriceLists());
-
         $repository = $this->getRepository();
-
-        $repository->dropDefaults();
-        $this->assertEquals([], $this->getDefaultPriceLists());
 
         /** @var PriceList $priceList1 */
         $priceList1 = $this->getReference('price_list_1');
         $repository->setDefault($priceList1);
-        $this->assertEquals([$priceList1], $this->getDefaultPriceLists());
+        $this->assertEquals($priceList1->getId(), $this->getDefaultPriceList()->getId());
 
         /** @var PriceList $priceList2 */
         $priceList2 = $this->getReference('price_list_2');
         $repository->setDefault($priceList2);
-        $this->assertEquals([$priceList2], $this->getDefaultPriceLists());
-
-        $repository->dropDefaults();
-        $this->assertEquals([], $this->getDefaultPriceLists());
+        $this->assertEquals($priceList2->getId(), $this->getDefaultPriceList()->getId());
     }
 
     public function testGetDefault()
     {
-        $defaultPriceLists = $this->getDefaultPriceLists();
-
-        $this->assertEquals(reset($defaultPriceLists), $this->getRepository()->getDefault());
+        $this->assertEquals($this->getDefaultPriceList()->getId(), $this->getRepository()->getDefault()->getId());
     }
 
     /**
-     * @return array|PriceList[]
+     * @return PriceList
      */
-    public function getDefaultPriceLists()
+    public function getDefaultPriceList()
     {
-        return $this->getRepository()->findBy(['default' => true]);
+        $defaultPriceLists = $this->getRepository()->findBy(['default' => true]);
+
+        $this->assertCount(1, $defaultPriceLists);
+
+        return reset($defaultPriceLists);
     }
 
     public function testCustomerPriceList()
@@ -73,23 +67,24 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertTrue($priceList->getCustomers()->contains($customer));
 
         $this->assertEquals(
-            $priceList,
-            $this->getRepository()->getPriceListByCustomer($customer)
+            $priceList->getId(),
+            $this->getRepository()->getPriceListByCustomer($customer)->getId()
         );
+        $this->getRepository()->setPriceListToCustomer($customer, null);
+        $this->getManager()->flush();
 
         /** @var PriceList $newPriceList */
         $newPriceList = $this->getReference('price_list_2');
 
         $this->getRepository()->setPriceListToCustomer($customer, $newPriceList);
-
         $this->getManager()->flush();
 
         $this->assertFalse($priceList->getCustomers()->contains($customer));
         $this->assertTrue($newPriceList->getCustomers()->contains($customer));
 
         $this->assertEquals(
-            $newPriceList,
-            $this->getRepository()->getPriceListByCustomer($customer)
+            $newPriceList->getId(),
+            $this->getRepository()->getPriceListByCustomer($customer)->getId()
         );
     }
 
@@ -104,8 +99,8 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertTrue($priceList->getCustomerGroups()->contains($customerGroup));
 
         $this->assertEquals(
-            $priceList,
-            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)
+            $priceList->getId(),
+            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)->getId()
         );
 
         /** @var PriceList $newPriceList */
@@ -119,8 +114,8 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertTrue($newPriceList->getCustomerGroups()->contains($customerGroup));
 
         $this->assertEquals(
-            $newPriceList,
-            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)
+            $newPriceList->getId(),
+            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)->getId()
         );
     }
 
@@ -135,8 +130,8 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertTrue($priceList->getWebsites()->contains($website));
 
         $this->assertEquals(
-            $priceList,
-            $this->getRepository()->getPriceListByWebsite($website)
+            $priceList->getId(),
+            $this->getRepository()->getPriceListByWebsite($website)->getId()
         );
 
         /** @var PriceList $newPriceList */
@@ -150,8 +145,8 @@ class PriceListRepositoryTest extends WebTestCase
         $this->assertTrue($newPriceList->getWebsites()->contains($website));
 
         $this->assertEquals(
-            $newPriceList,
-            $this->getRepository()->getPriceListByWebsite($website)
+            $newPriceList->getId(),
+            $this->getRepository()->getPriceListByWebsite($website)->getId()
         );
     }
 

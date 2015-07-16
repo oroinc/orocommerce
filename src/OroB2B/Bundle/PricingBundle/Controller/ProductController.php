@@ -10,17 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class ProductController extends Controller
 {
-    /**
-     * @var PriceList
-     */
-    protected $defaultPriceList;
-
     /**
      * @Route("/sidebar", name="orob2b_pricing_price_product_sidebar")
      * @Template
@@ -32,7 +26,7 @@ class ProductController extends Controller
         return [
             'priceList' => $this->createPriceListForm()->createView(),
             'currencies' => $this->createCurrenciesForm()->createView(),
-            'showTierPrices' => $this->createShowTierPricesForm()->createView()
+            'showTierPrices' => $this->createShowTierPricesForm()->createView(),
         ];
     }
 
@@ -41,34 +35,19 @@ class ProductController extends Controller
      */
     protected function createPriceListForm()
     {
+        $priceList = $this->getPriceListHandler()->getPriceList();
+
         return $this->createForm(
             PriceListSelectType::NAME,
-            $this->getDefaultPriceList(),
+            $priceList,
             [
                 'create_enabled' => false,
                 'empty_value' => false,
-                'empty_data' => $this->getDefaultPriceList(),
+                'empty_data' => $priceList,
                 'configs' => ['allowClear' => false],
-                'label' => 'orob2b.pricing.pricelist.entity_label'
+                'label' => 'orob2b.pricing.pricelist.entity_label',
             ]
         );
-    }
-
-    /**
-     * @return PriceList
-     */
-    protected function getDefaultPriceList()
-    {
-        if (!$this->defaultPriceList) {
-            /** @var PriceListRepository $repository */
-            $repository = $this->getDoctrine()->getRepository(
-                $this->container->getParameter('orob2b_pricing.entity.price_list.class')
-            );
-
-            $this->defaultPriceList = $repository->getDefault();
-        }
-
-        return $this->defaultPriceList;
     }
 
     /**
@@ -84,8 +63,8 @@ class ProductController extends Controller
                 'expanded' => true,
                 'multiple' => true,
                 'csrf_protection' => false,
-                'currencies_list' => $this->getDefaultPriceList()->getCurrencies(),
-                'data' => $this->getDefaultPriceList()->getCurrencies(),
+                'currencies_list' => $this->getPriceListHandler()->getPriceList()->getCurrencies(),
+                'data' => $this->getPriceListHandler()->getPriceListSelectedCurrencies(),
             ]
         );
     }
@@ -98,7 +77,19 @@ class ProductController extends Controller
         return $this->createForm(
             'checkbox',
             null,
-            ['label' => 'orob2b.pricing.productprice.show_tier_prices.label', 'required' => false]
+            [
+                'label' => 'orob2b.pricing.productprice.show_tier_prices.label',
+                'required' => false,
+                'data' => $this->getPriceListHandler()->getShowTierPrices(),
+            ]
         );
+    }
+
+    /**
+     * @return PriceListRequestHandler
+     */
+    protected function getPriceListHandler()
+    {
+        return $this->get('orob2b_pricing.model.price_list_request_hanlder');
     }
 }
