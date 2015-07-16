@@ -38,7 +38,7 @@ class RequestStatusController extends Controller
 
     /**
      * @Route("/info/{id}", name="orob2b_rfp_request_status_info", requirements={"id"="\d+"})
-     * @Template("OroB2BRFPBundle:RequestStatus:view.html.twig")
+     * @Template("OroB2BRFPBundle:RequestStatus/widget:info.html.twig")
      * @AclAncestor("orob2b_rfp_request_status_view")
      *
      * @param RequestStatus $requestStatus
