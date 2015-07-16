@@ -18,16 +18,16 @@
     {% block navButtons %}
         {% if resource_granted('EDIT', entity) %}
             {{ UI.editButton({
-                'path' : path('orob2b_rfp_admin_request_update', { 'id': entity.id }),
-                'entity_label': 'orob2b.rfpadmin.request.entity_label'|trans
+                'path' : path('orob2b_rfp_request_update', { 'id': entity.id }),
+                'entity_label': 'orob2b.rfp.request.entity_label'|trans
             }) }}
         {% endif %}
         {{ UI.clientButton({
-            'dataUrl': path('orob2b_rfp_admin_request_change_status', {id: entity.id}),
+            'dataUrl': path('orob2b_rfp_request_change_status', {id: entity.id}),
             'aCss': 'no-hash',
             'iCss': 'icon-edit',
             'dataId': entity.id,
-            'label': 'orob2b.rfpadmin.btn.change_status'|trans,
+            'label': 'orob2b.rfp.btn.change_status'|trans,
             'widget' : {
                 'type' : 'dialog',
                 'multiple' : false,
@@ -36,7 +36,7 @@
                 'options' : {
                     'alias': 'request-change-status-dialog',
                     'dialogOptions' : {
-                        'title' : 'orob2b.rfpadmin.widget.change_status_title'|trans,
+                        'title' : 'orob2b.rfp.widget.change_status_title'|trans,
                         'allowMaximize': false,
                         'allowMinimize': false,
                         'dblclick': 'maximize',
@@ -47,7 +47,7 @@
                 }
             },
             'messages': {
-                'saved': 'orob2b.rfpadmin.message.request_status_changed'|trans
+                'saved': 'orob2b.rfp.message.request_status_changed'|trans
             }
         }) }}
     {% endblock navButtons %}

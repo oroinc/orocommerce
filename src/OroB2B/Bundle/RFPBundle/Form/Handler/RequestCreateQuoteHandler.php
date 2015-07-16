@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPAdminBundle\Form\Handler;
+namespace OroB2B\Bundle\RFPBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -12,7 +12,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use OroB2B\Bundle\RFPAdminBundle\Entity as en;
+use OroB2B\Bundle\RFPBundle\Entity;
 
 class RequestCreateQuoteHandler
 {
@@ -51,10 +51,10 @@ class RequestCreateQuoteHandler
     }
 
     /**
-     * @param en\Request $request
+     * @param Entity\Request $request
      * @return boolean
      */
-    public function process(en\Request $request)
+    public function process(Entity\Request $request)
     {
         $this->form->setData($request);
 
@@ -72,10 +72,10 @@ class RequestCreateQuoteHandler
     /**
      * "Success" form handler
      *
-     * @param en\Request $entity
+     * @param Entity\Request $entity
      * @return int
      */
-    protected function onSuccess(en\Request $entity)
+    protected function onSuccess(Entity\Request $entity)
     {
         $quote = new Quote();
         $quote

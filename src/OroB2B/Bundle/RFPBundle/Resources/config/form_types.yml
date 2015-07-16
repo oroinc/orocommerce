@@ -33,7 +33,7 @@ services:
             - { name: form.type, alias: orob2b_rfp_request_status_with_deleted_select }
 
     # Request form types
-    orob2b_rfp_admin.form.type.request:
+    orob2b_rfp.form.type.request:
         class: %orob2b_rfp.form.type.request.class%
         tags:
             - { name: form.type, alias: orob2b_rfp_request }

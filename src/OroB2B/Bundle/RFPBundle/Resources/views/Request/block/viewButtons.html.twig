@@ -11,7 +11,7 @@
         {% endfor -%}
         {% set items = items|merge([
             '<li>'
-                ~ include('OroB2BRFPAdminBundle:Request:block/createQuoteButton.html.twig', { formCreateQuote: formCreateQuote })
+                ~ include('OroB2BRFPBundle:Request:block/createQuoteButton.html.twig', { formCreateQuote: formCreateQuote })
                 ~ '</li>'
         ]) -%}
         {{ UI.dropdownButton({
