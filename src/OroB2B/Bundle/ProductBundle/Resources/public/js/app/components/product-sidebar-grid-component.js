@@ -85,7 +85,7 @@ define(function(require) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
 
-            var pageUrl = location.pathname + '?' + encodeURIComponent(this._urlParamsToString(params)) + location.hash;
+            var pageUrl = location.pathname + '?' + this._urlParamsToString(params) + location.hash;
             history.pushState({}, document.title, pageUrl);
 
             this._patchGridCollectionUrl(params);
