@@ -42,7 +42,7 @@ class DatagridListener
             'type' => 'addproducts',
             'entity_name' => '%orob2b_product.product.class%',
             'data_identifier' => 'product.id',
-            'label' => 'orob2b.shoppinglist.actions.add_to_current_shopping_list'
+            'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label'
         ];
         $this->addConfigElement($config, '[mass_actions]', $addToShoppingListMassAction, 'addproducts');
     }

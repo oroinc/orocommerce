@@ -4,7 +4,7 @@
             {% set btnLabel =  shoppingList.label %}
             {% set btnId = shoppingList.id %}
         {% else %}
-            {% set btnLabel =  'orob2b.shoppinglist.current_label'|trans %}
+            {% set btnLabel =  'orob2b.shoppinglist.entity_label'|trans %}
             {% set btnId = 'current' %}
     {% endif %}
     {{ UI.clientButton({
