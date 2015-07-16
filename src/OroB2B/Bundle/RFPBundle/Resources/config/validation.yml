@@ -21,3 +21,50 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
         role:
             - Length:
                 max: 255
+        requestProducts:
+            - Valid: ~
+
+OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
+    properties:
+        request:
+            - NotBlank: ~
+        product:
+            - NotBlank:
+                message: 'orob2b.rfp.requestproduct.product.blank'
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
+        requestProductItems:
+            - OroB2B\Bundle\RFPBundle\Validator\Constraints\Count:
+                minMessage: 'orob2b.rfp.requestproduct.request_product_items.blank'
+            - Valid: ~
+
+OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
+    constraints:
+        - OroB2B\Bundle\RFPBundle\Validator\Constraints\RequestProductItem: ~
+    properties:
+        requestProduct:
+            - NotBlank: ~
+        quantity:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank: ~
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - Valid: ~
+
+OroB2B\Bundle\RFPBundle\Entity\RequestStatus:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+              fields:     [ name ]
+              ignoreNull: false
+    properties:
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
+        sortOrder:
+            - NotBlank: ~
