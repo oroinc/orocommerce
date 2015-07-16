@@ -24,8 +24,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const UNIT2     = 'product_unit.bottle';
     const UNIT3     = 'product_unit.box';
 
-    const CURRENCY1 = 'sale.currency.USD';
-    const CURRENCY2 = 'sale.currency.EUR';
+    const CURRENCY1 = 'USD';
+    const CURRENCY2 = 'EUR';
 
     /**
      * @var array

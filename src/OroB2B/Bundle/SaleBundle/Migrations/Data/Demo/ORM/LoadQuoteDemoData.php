@@ -125,8 +125,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
             QuoteProduct::TYPE_NOT_AVAILABLE,
         ];
         $priceTypes = [
-            QuoteProductOffer::PRICE_UNIT,
-            QuoteProductOffer::PRICE_BUNDLED,
+            QuoteProductOffer::PRICE_TYPE_UNIT,
+            QuoteProductOffer::PRICE_TYPE_BUNDLED,
         ];
         for ($i = 0; $i < rand(1, 3); $i++) {
             $product = $products[rand(1, count($products) - 1)];
