@@ -11,7 +11,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListRepository extends EntityRepository
 {
-    public function dropDefaults()
+    protected function dropDefaults()
     {
         $qb = $this->createQueryBuilder('pl');
 
