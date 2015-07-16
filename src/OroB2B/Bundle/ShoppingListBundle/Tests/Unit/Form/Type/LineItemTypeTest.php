@@ -2,10 +2,14 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\FormBuilder;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -35,9 +39,11 @@ class LineItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|RoundingService $roundingService */
         $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();
@@ -52,6 +58,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilder $builder */
         $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -221,6 +228,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
             ->with($data['product'])
             ->will($this->returnValue($product));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
@@ -228,6 +236,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
             ->method('getRepository')
             ->will($this->returnValue($objectRepository));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|RoundingService $roundingService */
         $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();
@@ -241,6 +250,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')
