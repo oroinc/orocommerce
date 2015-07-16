@@ -58,7 +58,15 @@ class RequestController extends Controller
 
             // Clean body from different stuff
             $rfpRequest->setBody($this->getPurifier()->purify($rfpRequest->getBody()));
-            $rfpRequest->setFrontendOwner($this->getUser());
+
+            $user = $this->getUser();
+            if ($user) {
+                $rfpRequest->setFrontendOwner($user);
+            } else {
+                $rfpRequest->setOrganization(
+                    $this->get('orob2b_website.manager')->getCurrentWebsite()->getOrganization()
+                );
+            }
 
             $em->persist($rfpRequest);
             $em->flush();

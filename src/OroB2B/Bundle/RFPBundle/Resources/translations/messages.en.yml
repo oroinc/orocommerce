@@ -12,7 +12,7 @@ orob2b.rfp:
         role.label: 'Role'
         status.label: 'Status'
         body.label: 'Request body'
-        frontend_owner.label: 'Owner'
+        frontend_owner.label: 'Submitted By'
         organization.label: 'Organization'
         request_products.label: 'Request Products'
         first_name.label: 'First Name'
