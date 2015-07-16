@@ -31,7 +31,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         [
             'product' => 'product.1',
             'priceList' => 'price_list_1',
-            'qty' => 10,
+            'qty' => 11,
             'unit' => 'product_unit.bottle',
             'price' => 12.2,
             'currency' => 'EUR',
@@ -40,7 +40,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         [
             'product' => 'product.2',
             'priceList' => 'price_list_1',
-            'qty' => 10,
+            'qty' => 12,
             'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',
@@ -49,7 +49,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         [
             'product' => 'product.2',
             'priceList' => 'price_list_2',
-            'qty' => 10,
+            'qty' => 13,
             'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',
@@ -58,7 +58,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         [
             'product' => 'product.2',
             'priceList' => 'price_list_2',
-            'qty' => 10,
+            'qty' => 14,
             'unit' => 'product_unit.bottle',
             'price' => 12.2,
             'currency' => 'USD',
@@ -67,7 +67,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         [
             'product' => 'product.1',
             'priceList' => 'price_list_2',
-            'qty' => 10,
+            'qty' => 15,
             'unit' => 'product_unit.liter',
             'price' => 12.2,
             'currency' => 'USD',

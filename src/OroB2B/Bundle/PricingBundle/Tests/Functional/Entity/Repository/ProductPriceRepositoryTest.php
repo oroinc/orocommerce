@@ -89,6 +89,70 @@ class ProductPriceRepositoryTest extends WebTestCase
         ];
     }
 
+    /**
+     * @param string|null $priceList
+     * @param array $products
+     * @param array $expectedPrices
+     * @dataProvider findByPriceListIdAndProductIdsDataProvider
+     */
+    public function testFindByPriceListIdAndProductIds($priceList, array $products, array $expectedPrices)
+    {
+        $priceListId = -1;
+        if ($priceList) {
+            /** @var PriceList $priceListEntity */
+            $priceListEntity = $this->getReference($priceList);
+            $priceListId = $priceListEntity->getId();
+        }
+
+        $productIds = [];
+        foreach ($products as $product) {
+            /** @var Product $productEntity */
+            $productEntity = $this->getReference($product);
+            $productIds[] = $productEntity->getId();
+        }
+
+        $expectedPriceIds = [];
+        foreach ($expectedPrices as $price) {
+            /** @var ProductPrice $priceEntity */
+            $priceEntity = $this->getReference($price);
+            $expectedPriceIds[] = $priceEntity->getId();
+        }
+
+        $actualPrices = $this->repository->findByPriceListIdAndProductIds($priceListId, $productIds);
+        $actualPriceIds = $this->getPriceIds($actualPrices);
+
+        $this->assertEquals($expectedPriceIds, $actualPriceIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function findByPriceListIdAndProductIdsDataProvider()
+    {
+        return [
+            'empty products' => [
+                'priceList' => 'price_list_1',
+                'products' => [],
+                'expectedPrices' => [],
+            ],
+            'not existing price list' => [
+                'priceList' => null,
+                'products' => ['product.1'],
+                'expectedPrices' => [],
+            ],
+            'first valid set' => [
+                'priceList' => 'price_list_1',
+                'products' => ['product.1'],
+                'expectedPrices' => ['product_price.2', 'product_price.1'],
+            ],
+            'second valid set' => [
+                'priceList' => 'price_list_2',
+                'products' => ['product.1', 'product.2'],
+                'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
+            ],
+        ];
+    }
+
     public function testDeleteByProductUnit()
     {
         /** @var Product $product */

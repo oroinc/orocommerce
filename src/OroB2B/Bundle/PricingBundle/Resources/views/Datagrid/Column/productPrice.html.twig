@@ -1,0 +1,13 @@
+{% if value and value|length > 0 %}
+    {% set shownUnit = '' %}
+
+    {% for price in value %}
+        {% if shownUnit != price.unit.code %}
+            <div class="product-price-unit">{{ price.unit.code|orob2b_format_product_unit_label|capitalize }}</div>
+            {% set shownUnit = price.unit.code %}
+        {% endif %}
+
+        <span class="product-price-qty">{{ price.quantity }}</span>:
+        <span class="product-price">{{ price.price|oro_format_price }}</span><br/>
+    {% endfor %}
+{% endif %}
