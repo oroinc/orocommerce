@@ -53,14 +53,6 @@ class LineItemType extends AbstractType
     }
 
     /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -118,6 +110,11 @@ class LineItemType extends AbstractType
     public function preSetData(FormEvent $event)
     {
         $entity = $event->getData();
+
+        if (!$entity->getId()) {
+            return;
+        }
+
         $form = $event->getForm();
 
         $form->add(
@@ -176,12 +173,20 @@ class LineItemType extends AbstractType
 
     /**
      * @param string $productClass
+     */
+    public function setProductClass($productClass)
+    {
+        $this->productClass = $productClass;
+    }
+
+    /**
+     * @param string $dataClass
      *
      * @return $this
      */
-    public function setDataClass($productClass)
+    public function setDataClass($dataClass)
     {
-        $this->dataClass = $productClass;
+        $this->dataClass = $dataClass;
 
         return $this;
     }
