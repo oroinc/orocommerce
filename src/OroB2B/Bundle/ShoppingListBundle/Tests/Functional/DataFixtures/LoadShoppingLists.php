@@ -11,7 +11,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture
 {
-
     /**
      * {@inheritdoc}
      */
