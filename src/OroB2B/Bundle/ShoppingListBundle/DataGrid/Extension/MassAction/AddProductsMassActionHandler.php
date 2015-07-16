@@ -2,7 +2,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -11,10 +11,15 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink;
 
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {
     const CURRENT_SHOPPING_LIST_KEY = 'current';
+    const FLUSH_BATCH_SIZE = 100;
 
     /** @var  EntityManager */
     protected $entityManager;
@@ -55,15 +60,24 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     public function handle(MassActionHandlerArgs $args)
     {
         $data = $args->getData();
-        $user = $this->securityContext->getToken()->getUser();
         $isAllSelected = $this->isAllSelected($args->getData());
         $shoppingList = $this->getShoppingList($data['shoppingList']);
         $productIds = !$isAllSelected && array_key_exists('data', $data) ? explode(',', $data['data']) : [];
 
         $iterableResult = $this->getProductsQueryBuilder($productIds)->getQuery()->iterate();
 
-        foreach ($iterableResult as $entity) {
+        /** @var Product $entity */
+        foreach ($iterableResult as $iteration => $entity) {
             $entity = $entity[0];
+            /** @var ProductUnitPrecision $unitPrecision */
+            $unitPrecision = $entity->getUnitPrecisions()->first();
+            $lineItem = (new LineItem())
+                ->setProduct($entity)
+                ->setQuantity(1)
+                ->setUnit($unitPrecision->getUnit());
+
+            $flush = ($iteration % self::FLUSH_BATCH_SIZE) === 0;
+            $this->shoppingListManager->addLineItem($lineItem, $shoppingList, $flush);
         }
 
         die('handle AddProductsMassActionHandler');
@@ -108,8 +122,14 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $isCurrent = $shoppingList === self::CURRENT_SHOPPING_LIST_KEY;
         $repository = $this->entityManager->getRepository('OroB2BShoppingListBundle:ShoppingList');
 
-        return !$isCurrent
+        $shoppingList = !$isCurrent
             ? $repository->findByUserAndId($user, $shoppingList)
             : $repository->findCurrentForAccountUser($user);
+
+        if (!$shoppingList instanceof ShoppingList) {
+            $shoppingList = $this->shoppingListManager->createCurrent();
+        }
+
+        return $shoppingList;
     }
 }
