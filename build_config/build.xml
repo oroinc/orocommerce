@@ -558,6 +558,7 @@
             <arg line="--exclude=SaleBundle/Migrations/Schema"/>
             <arg line="--exclude=ProductBundle/Migrations/Schema"/>
             <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
+            <arg line="--exclude=RFPBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>
