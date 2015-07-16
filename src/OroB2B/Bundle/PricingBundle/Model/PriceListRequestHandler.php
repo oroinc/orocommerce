@@ -72,7 +72,7 @@ class PriceListRequestHandler
     /**
      * @return string[]
      */
-    public function getPriceListCurrencies()
+    public function getPriceListSelectedCurrencies()
     {
         $priceListCurrencies = $this->getPriceList()->getCurrencies();
 
@@ -99,7 +99,7 @@ class PriceListRequestHandler
     /**
      * @return bool
      */
-    public function showTierPrices()
+    public function getShowTierPrices()
     {
         if (!$this->request) {
             return false;

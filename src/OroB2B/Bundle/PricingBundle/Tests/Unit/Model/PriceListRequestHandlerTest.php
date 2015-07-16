@@ -100,7 +100,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getPriceList(2, ['USD']);
         $this->repository->expects($this->once())->method('getDefault')->willReturn($priceList);
         $this->repository->expects($this->never())->method('find');
-        $this->assertSame(['USD'], $this->handler->getPriceListCurrencies());
+        $this->assertSame(['USD'], $this->handler->getPriceListSelectedCurrencies());
     }
 
     /**
@@ -132,7 +132,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->expects($this->never())->method('getDefault');
         $this->repository->expects($this->once())->method('find')->with($priceList->getId())->willReturn($priceList);
-        $this->assertEquals($expected, $this->handler->getPriceListCurrencies());
+        $this->assertEquals($expected, $this->handler->getPriceListSelectedCurrencies());
     }
 
     /**
@@ -152,7 +152,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testShowTierPricesWithoutRequest()
     {
-        $this->assertFalse($this->handler->showTierPrices());
+        $this->assertFalse($this->handler->getShowTierPrices());
     }
 
     public function testShowTierPricesWithoutParam()
@@ -164,8 +164,8 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->exactly(2))->method('get')->with(PriceListRequestHandler::TIER_PRICES_KEY)
             ->will($this->onConsecutiveCalls([null, false]));
 
-        $this->assertFalse($this->handler->showTierPrices());
-        $this->assertFalse($this->handler->showTierPrices());
+        $this->assertFalse($this->handler->getShowTierPrices());
+        $this->assertFalse($this->handler->getShowTierPrices());
     }
 
     public function testShowTierPrices()
@@ -177,7 +177,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('get')->with(PriceListRequestHandler::TIER_PRICES_KEY)
             ->willReturn(true);
 
-        $this->assertTrue($this->handler->showTierPrices());
+        $this->assertTrue($this->handler->getShowTierPrices());
     }
 
     /**

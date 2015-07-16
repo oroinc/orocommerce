@@ -47,9 +47,10 @@ class ProductPriceWidgetListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListRequestHandler->expects($this->once())->method('getPriceList')
             ->willReturn($priceList);
-        $this->priceListRequestHandler->expects($this->once())->method('getPriceListCurrencies')
+        $this->priceListRequestHandler->expects($this->once())->method('getPriceListSelectedCurrencies')
             ->willReturn($currencies);
-        $this->priceListRequestHandler->expects($this->once())->method('showTierPrices')->willReturn($showTierPrices);
+        $this->priceListRequestHandler->expects($this->once())->method('getShowTierPrices')
+            ->willReturn($showTierPrices);
 
         $event->expects($this->once())->method('setWidgetRouteParameters')->with(
             $this->logicalAnd(
