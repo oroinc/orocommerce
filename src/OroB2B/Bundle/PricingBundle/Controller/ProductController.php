@@ -11,16 +11,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class ProductController extends Controller
 {
-    /**
-     * @var PriceList
-     */
-    protected $defaultPriceList;
-
     /**
      * @Route("/sidebar", name="orob2b_pricing_price_product_sidebar")
      * @Template
@@ -70,7 +64,7 @@ class ProductController extends Controller
                 'multiple' => true,
                 'csrf_protection' => false,
                 'currencies_list' => $this->getPriceListHandler()->getPriceList()->getCurrencies(),
-                'data' => $this->getPriceListHandler()->getPriceListCurrencies(),
+                'data' => $this->getPriceListHandler()->getPriceListSelectedCurrencies(),
             ]
         );
     }
@@ -86,7 +80,7 @@ class ProductController extends Controller
             [
                 'label' => 'orob2b.pricing.productprice.show_tier_prices.label',
                 'required' => false,
-                'data' => $this->getPriceListHandler()->showTierPrices(),
+                'data' => $this->getPriceListHandler()->getShowTierPrices(),
             ]
         );
     }

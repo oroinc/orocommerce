@@ -91,7 +91,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
             $this->priceListRequestHandler
                 ->expects($this->any())
-                ->method('getPriceListCurrencies')
+                ->method('getPriceListSelectedCurrencies')
                 ->will(
                     $this->returnCallback(
                         function () use ($priceCurrencies) {
@@ -190,7 +190,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
             $this->priceListRequestHandler
                 ->expects($this->any())
-                ->method('getPriceListCurrencies')
+                ->method('getPriceListSelectedCurrencies')
                 ->will(
                     $this->returnCallback(
                         function () use ($priceCurrencies) {

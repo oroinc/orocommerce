@@ -138,7 +138,7 @@ class ProductPriceDatagridListener
      */
     protected function getCurrencies()
     {
-        return $this->priceListRequestHandler->getPriceListCurrencies();
+        return $this->priceListRequestHandler->getPriceListSelectedCurrencies();
     }
 
     /**
