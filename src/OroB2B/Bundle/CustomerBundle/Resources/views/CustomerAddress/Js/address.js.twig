@@ -1,15 +1,15 @@
 <script type="text/html" id="template-addressbook-item">
     <div class="actions">
         {% if address_edit_acl_resource is not defined or resource_granted(address_edit_acl_resource) %}
-        <button class="btn item-edit-button" title="<%= _.__('Edit') %>"><i class="icon-edit hide-text"><%= _.__('Edit') %></i></button>
-        <% if (!primary) { %><button class="btn item-remove-button" title="<%= _.__('Remove') %>"><i class="icon-trash hide-text"><%= _.__('Remove') %></i></button><% } %>
+        <button class="btn item-edit-button" title="<%= _.__('orob2b.customer.address.edit') %>"><i class="icon-edit hide-text"><%= _.__('orob2b.customer.address.edit') %></i></button>
+        <% if (!primary) { %><button class="btn item-remove-button" title="<%= _.__('orob2b.customer.address.remove') %>"><i class="icon-trash hide-text"><%= _.__('orob2b.customer.address.remove') %></i></button><% } %>
         {% endif %}
     </div>
     <div class="title-item"><%= _.escape(label) %></div>
     <ul class="inline">
-        <% if (primary) { %> <li><span class="label label-info"><%= _.__('Primary') %></span></li> <% } %>
+        <% if (primary) { %> <li><span class="label label-info"><%= _.__('orob2b.customer.address.primary') %></span></li> <% } %>
         <% _.each(types, function(type) { %>
-        <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('Default') : '' %>&nbsp;<%= _.escape(type.label) %></span></li>
+        <li><span class="label"><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('orob2b.customer.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></span></li>
         <% }) %>
     </ul>
     <address>
