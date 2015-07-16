@@ -1,0 +1,17 @@
+<script type="text/template" id="price-filter-template">
+    <div class="price-filter">
+        <div class="btn-group btn-block price-unit-filter">
+            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                <%- selectedChoiceLabel %><span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <% _.each(choices, function (option) { %>
+                <li<% if (selectedChoice == option.value) { %> class="active"<% } %>>
+                <a class="choice-value" href="#" data-value="<%= option.value %>"><%- option.label %></a>
+                </li>
+                <% }); %>
+            </ul>
+            <input type="hidden" name="unit" id="unit" value="<%= selectedChoice %>"/>
+        </div>
+    </div>
+</script>

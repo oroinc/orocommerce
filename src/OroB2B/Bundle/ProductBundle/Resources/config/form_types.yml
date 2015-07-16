@@ -6,7 +6,7 @@ parameters:
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
-    orob2b_product.form.type.price.filter.class: OroB2B\Bundle\ProductBundle\Form\Type\PriceFilterType
+    orob2b_product.form.type.price_filter.class: OroB2B\Bundle\ProductBundle\Form\Type\PriceFilterType
 
 services:
     # Product form types
@@ -55,10 +55,10 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product_default_visibility }
 
-    orob2b_product.form.type.price.filter:
-        class: %orob2b_product.form.type.price.filter.class%
+    orob2b_product.form.type.price_filter:
+        class: %orob2b_product.form.type.price_filter.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @doctrine
             - @orob2b_product.formatter.product_unit_label
         tags:
             - { name: form.type, alias: orob2b_product_price_filter }

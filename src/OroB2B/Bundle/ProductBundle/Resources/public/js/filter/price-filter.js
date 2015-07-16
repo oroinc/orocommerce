@@ -1,32 +1,42 @@
 define([
     'underscore',
-    './choice-filter',
-    'orofilter/js/formatter/number-formatter'
-], function(_, ChoiceFilter, NumberFormatter) {
+    'oro/filter/number-filter'
+], function(_, NumberFilter) {
     'use strict';
 
     var PriceFilter;
 
-    PriceFilter = ChoiceFilter.extend({
-        /**
-         * @property {boolean}
-         */
-        wrapHintValue: false,
+    PriceFilter = NumberFilter.extend({
+        unitTemplate: _.template($('#price-filter-template').html()),
 
         /**
-         * Initialize.
-         *
-         * @param {Object} options
-         * @param {*} [options.formatter] Object with methods fromRaw and toRaw or
-         *      a string name of formatter (e.g. "integer", "decimal")
+         * @inheritDoc
+         */
+        criteriaValueSelectors: {
+            unit: 'input[name="unit"]:last',
+            type: 'input[type="hidden"]:last',
+            value: 'input[name="value"]'
+        },
+
+        /**
+         * @inheritDoc
          */
         initialize: function(options) {
-            // init formatter options if it was not initialized so far
-            if (_.isUndefined(this.formatterOptions)) {
-                this.formatterOptions = {};
-            }
-            this.formatter = new NumberFormatter(this.formatterOptions);
-            PriceFilter.__super__.initialize.apply(this, arguments);
+            this.emptyValue = {
+                unit: (_.isEmpty(this.unitChoices) ? '' : _.first(this.unitChoices).value),
+                type: (_.isEmpty(this.choices) ? '' : _.first(this.choices).value),
+                value: ''
+            };
+
+            return PriceFilter.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        _renderCriteria: function() {
+            this._checkAppendFilter();
+            return PriceFilter.__super__._renderCriteria.apply(this, arguments);
         },
 
         /**
@@ -36,34 +46,90 @@ define([
             if (this.disposed) {
                 return;
             }
-            delete this.formatter;
-            PriceFilter.__super__.dispose.call(this);
+            delete this.unitChoices;
+            return PriceFilter.__super__.dispose.apply(this, arguments);
         },
 
         /**
          * @inheritDoc
          */
-        _formatRawValue: function(value) {
-            if (value.value === '') {
-                value.value = undefined;
+        _writeDOMValue: function(value) {
+            this._setInputValue(this.criteriaValueSelectors.unit, value.unit);
+            return PriceFilter.__super__._writeDOMValue.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        _readDOMValue: function() {
+            var dataValue = PriceFilter.__super__._readDOMValue.apply(this, arguments);
+            dataValue.unit = this._getInputValue(this.criteriaValueSelectors.unit);
+            return dataValue;
+        },
+
+        /**
+         * @inheritDoc
+         */
+        _onClickChoiceValue: function(e) {
+            if ($(e.currentTarget).closest('.price-unit-filter').get(0)) {
+                $(e.currentTarget).parent().parent().find('li').each(function() {
+                    $(this).removeClass('active');
+                });
+                $(e.currentTarget).parent().addClass('active');
+
+                var parentDiv = $(e.currentTarget).parent().parent().parent();
+                var type = $(e.currentTarget).attr('data-value');
+                var choiceName = $(e.currentTarget).html();
+
+                var criteriaValues = this.$(this.criteriaValueSelectors.unit).val(type);
+                this.fixSelects();
+                criteriaValues.trigger('change');
+                choiceName += this.caret;
+                parentDiv.find('.dropdown-toggle').html(choiceName);
+
+                this._handleEmptyFilter(type);
+
+                e.preventDefault();
             } else {
-                value.value = this.formatter.toRaw(String(value.value));
+                return PriceFilter.__super__._onClickChoiceValue.apply(this, arguments);
             }
-            return value;
         },
 
         /**
-         * @inheritDoc
+         * @private
          */
-        _formatDisplayValue: function(value) {
-            if (value.value && _.isString(value.value)) {
-                value.value = parseFloat(value.value);
+        _checkAppendFilter: function() {
+            if (this._appendFilter !== this._appendUnitFilter) {
+                this._appendUnitFilter._appendFilter = this._appendFilter;
+                this._appendFilter = this._appendUnitFilter;
+            }
+        },
+
+        /**
+         * @private
+         */
+        _appendUnitFilter: function($filter) {
+            var value,
+                selectedChoiceLabel = '',
+                $unitFilter;
+
+            value = _.extend({}, this.emptyValue, this.value);
+
+            if (!_.isEmpty(this.unitChoices)) {
+                selectedChoiceLabel = _.find(this.unitChoices, function(choice) {
+                    return (choice.value === value.unit);
+                }).label;
             }
 
-            if (_.isNumber(value.value)) {
-                value.value = this.formatter.fromRaw(value.value);
-            }
-            return value;
+            $unitFilter = $(this.unitTemplate({
+                choices: this.unitChoices,
+                selectedChoice: value.unit,
+                selectedChoiceLabel: selectedChoiceLabel
+            }));
+
+            $unitFilter.append($filter)
+
+            this._appendUnitFilter._appendFilter.call(this, $unitFilter);
         }
     });
 

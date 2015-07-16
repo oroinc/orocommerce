@@ -2,71 +2,60 @@
 
 namespace OroB2B\Bundle\ProductBundle\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\FilterBundle\Form\Type\Filter\FilterType;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
-use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
+use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberFilterTypeTest;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\PriceFilterType;
 
-class PriceFilterTypeTest extends AbstractTypeTestCase
+class PriceFilterTypeTest extends NumberFilterTypeTest
 {
     /**
-     * @var PriceFilterType
+     * @var ManagerRegistry
      */
-    private $type;
-
-    /**
-     * @var ObjectManager
-     */
-    private $manager;
-
-    /**
-     * @var string
-     */
-    protected $defaultLocale = 'en';
+    private $registry;
 
     protected function setUp()
     {
-        $translator             = $this->createMockTranslator();
-        $this->formExtensions[] = new CustomFormExtension([new FilterType($translator)]);
+        $translator = $this->createMockTranslator();
+        $this->formExtensions[] = new CustomFormExtension([new NumberFilterType($translator)]);
 
         parent::setUp();
 
         $formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $formatter->method('format')->with('item')
+        $formatter->expects($this->any())
+            ->method('format')
+            ->with('item')
             ->will($this->returnValue('Item'));
 
-        $this->type = new PriceFilterType($this->getObjectManager(), $formatter);
+        $this->type = new PriceFilterType($this->getRegistry(), $formatter);
     }
-    public function getObjectManager()
+
+    public function getRegistry()
     {
-        if (!$this->manager) {
+        if (!$this->registry) {
             $productUnitMock = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
-            $productUnitMock->method('getCode')
+            $productUnitMock->expects($this->any())
+                ->method('getCode')
                 ->will($this->returnValue('item'));
 
             $productUnitRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-            $productUnitRepository->method('findAll')
+            $productUnitRepository->expects($this->any())
+                ->method('findAll')
                 ->will($this->returnValue([$productUnitMock]));
 
-            $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-            $this->manager->method('getRepository')->with($this->equalTo('OroB2BProductBundle:ProductUnit'))
+            $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+            $this->registry->expects($this->any())
+                ->method('getManagerForClass')
+                ->with($this->equalTo('OroB2BProductBundle:ProductUnit'))
                 ->will($this->returnValue($productUnitRepository));
         }
 
-        return $this->manager;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function getTestFormType()
-    {
-        return $this->type;
+        return $this->registry;
     }
 
     public function testGetName()
@@ -81,13 +70,7 @@ class PriceFilterTypeTest extends AbstractTypeTestCase
     {
         return [
             [
-                'defaultOptions' => [
-                    'field_type'        => 'number',
-                    'operator_choices'  => [
-                        'item'          => 'Item',
-                    ],
-                    'formatter_options' => [],
-                ],
+                'defaultOptions' => [],
             ],
         ];
     }
@@ -97,37 +80,14 @@ class PriceFilterTypeTest extends AbstractTypeTestCase
      */
     public function bindDataProvider()
     {
-        return [
-            'not formatted price' => [
-                'bindData' => ['type' => 'item', 'value' => '12345.67890'],
-                'formData' => ['type' => 'item', 'value' => 12345.6789],
-                'viewData' => [
-                    'value' => ['type' => 'item', 'value' => '12,345.68'],
-                ],
-                'customOptions' => [
-                    'field_options' => ['grouping' => true, 'precision' => 2],
-                ],
-            ],
-            'formatted price' => [
-                'bindData' => ['type' => 'item', 'value' => '12,345.68'],
-                'formData' => ['type' => 'item', 'value' => 12345.68],
-                'viewData' => [
-                    'value' => ['type' => 'item', 'value' => '12,345.68'],
-                ],
-                'customOptions' => [
-                    'field_options' => ['grouping' => true, 'precision' => 2],
-                ],
-            ],
-            'invalid format' => [
-                'bindData' => ['type' => 'item', 'value' => 'abcd.67890'],
-                'formData' => ['type' => 'item'],
-                'viewData' => [
-                    'value' => ['type' => 'item', 'value' => 'abcd.67890'],
-                ],
-                'customOptions' => [
-                    'field_options' => ['grouping' => true, 'precision' => 2],
-                ],
-            ],
-        ];
+        $bindData = parent::bindDataProvider();
+
+        foreach ($bindData as $key => $data) {
+            $data['bindData']['unit'] = 'item';
+            $data['formData']['unit'] = 'item';
+            $data['viewData']['value']['unit'] = 'item';
+        }
+
+        return $bindData;
     }
 }

@@ -24,4 +24,15 @@ class PriceFilter extends AbstractFilter
     {
         return true;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMetadata()
+    {
+        $metadata = parent::getMetadata();
+        $metadata['unitChoices'] = $this->getForm()->createView()['unit']->vars['choices'];
+
+        return $metadata;
+    }
 }
