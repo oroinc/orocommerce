@@ -22,36 +22,36 @@ class DatagridListener
     {
         // properties
         $addToShoppingListLink = [
-            'type'   => 'url',
-            'route'  => 'orob2b_product_frontend_product_view',
+            'type' => 'url',
+            'route' => 'orob2b_product_frontend_product_view',
             'params' => ['id'],
         ];
         $this->addConfigElement($config, '[properties]', $addToShoppingListLink, 'add_to_shopping_list_link');
 
         // actions
         $addToShoppingList = [
-            'type'  => 'navigate',
+            'type' => 'navigate',
             'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
-            'link'  => 'add_to_shopping_list_link',
-            'icon'  => 'shopping-cart',
+            'link' => 'add_to_shopping_list_link',
+            'icon' => 'shopping-cart',
         ];
         $this->addConfigElement($config, '[actions]', $addToShoppingList, 'add_to_shopping_list');
 
         //mass actions
         $addToShoppingListMassAction = [
-            'type'  => 'addproducts',
+            'type' => 'addproducts',
             'entity_name' => '%orob2b_product.product.class%',
             'data_identifier' => 'product.id',
-            'label' => 'Add to current Shopping List'
+            'label' => 'orob2b.shoppinglist.actions.add_to_current_shopping_list'
         ];
         $this->addConfigElement($config, '[mass_actions]', $addToShoppingListMassAction, 'addproducts');
     }
 
     /**
      * @param DatagridConfiguration $config
-     * @param string                $path
-     * @param mixed                 $element
-     * @param mixed                 $key
+     * @param string $path
+     * @param mixed $element
+     * @param mixed $key
      */
     protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key = null)
     {

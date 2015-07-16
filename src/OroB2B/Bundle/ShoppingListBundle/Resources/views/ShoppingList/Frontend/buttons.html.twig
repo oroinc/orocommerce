@@ -1,11 +1,18 @@
 {% macro addToShoppingListButton(shoppingList) -%}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% if shoppingList %}
+            {% set btnLabel =  shoppingList.label %}
+            {% set btnId = shoppingList.id %}
+        {% else %}
+            {% set btnLabel =  'orob2b.shoppinglist.current_label'|trans %}
+            {% set btnId = 'current' %}
+    {% endif %}
     {{ UI.clientButton({
         'dataUrl': path('orob2b_shopping_list_add_products_massaction',
             {
                 gridName: 'frontend-products-grid',
                 actionName: 'addproducts',
-                id: shoppingList.id
+                id: btnId
             }
         ),
         'dataAttributes': {
@@ -16,7 +23,7 @@
         },
         'aCss': 'no-hash',
         'iCss': 'icon-plus hide-text',
-        'dataId': shoppingList.id,
-        'label' : 'Add to ' ~ shoppingList.label
+        'dataId': btnId,
+        'label' : 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans ~ ' ' ~ btnLabel
     }) }}
 {% endmacro %}

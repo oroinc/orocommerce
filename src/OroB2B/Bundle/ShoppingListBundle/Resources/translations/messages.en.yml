@@ -11,12 +11,15 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
+        current_label: Current Shopping List
 
         product:
             add_to_shopping_list.label: Add To Shopping List
 
         actions:
             set_current: Set as current
+            add_to_shopping_list: Add to
+            add_to_current_shopping_list: Add to Current Shopping List
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
