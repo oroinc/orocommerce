@@ -8,14 +8,14 @@ use Symfony\Component\Form\Test\FormInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 
-use OroB2B\Bundle\PricingBundle\Filter\PriceFilter;
+use OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter;
 
-class PriceFilterTest extends \PHPUnit_Framework_TestCase
+class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PriceFilter
+     * @var ProductPriceFilter
      */
-    protected $priceFilter;
+    protected $productPriceFilter;
 
     public function setUp()
     {
@@ -36,7 +36,7 @@ class PriceFilterTest extends \PHPUnit_Framework_TestCase
             ->method('getExcludeParams')
             ->will($this->returnValue([]));
 
-        $this->priceFilter = new PriceFilter($formFactory, $filterUtility);
+        $this->productPriceFilter = new ProductPriceFilter($formFactory, $filterUtility);
     }
 
     public function testApply()
@@ -46,12 +46,12 @@ class PriceFilterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->assertEquals(false, $this->priceFilter->apply($ds, []));
+        $this->assertEquals(false, $this->productPriceFilter->apply($ds, []));
     }
 
     public function testGetMetadata()
     {
-        $metadata = $this->priceFilter->getMetadata();
+        $metadata = $this->productPriceFilter->getMetadata();
         $this->assertEquals(true, array_key_exists('unitChoices', $metadata));
     }
 }

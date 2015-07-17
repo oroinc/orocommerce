@@ -4,5 +4,5 @@ orob2b:
             flash:
                 success: Product Price has been added
         filter:
-            price:
+            product_price:
                 per: per

@@ -5,16 +5,16 @@ namespace OroB2B\Bundle\PricingBundle\Filter;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\NumberFilter;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\Filter\PriceFilterType;
+use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 
-class PriceFilter extends NumberFilter
+class ProductPriceFilter extends NumberFilter
 {
     /**
      * {@inheritdoc}
      */
     protected function getFormType()
     {
-        return PriceFilterType::NAME;
+        return ProductPriceFilterType::NAME;
     }
 
     /**

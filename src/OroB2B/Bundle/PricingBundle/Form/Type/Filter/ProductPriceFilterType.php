@@ -13,9 +13,9 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class PriceFilterType extends AbstractType
+class ProductPriceFilterType extends AbstractType
 {
-    const NAME = 'orob2b_pricing_price_filter';
+    const NAME = 'orob2b_pricing_product_price_filter';
 
     /**
      * @var TranslatorInterface

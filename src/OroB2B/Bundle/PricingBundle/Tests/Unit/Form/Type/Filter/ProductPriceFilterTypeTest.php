@@ -11,10 +11,10 @@ use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberFilterTypeTest;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\Filter\PriceFilterType;
+use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class PriceFilterTypeTest extends NumberFilterTypeTest
+class ProductPriceFilterTypeTest extends NumberFilterTypeTest
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
@@ -40,7 +40,7 @@ class PriceFilterTypeTest extends NumberFilterTypeTest
             ->with('item')
             ->will($this->returnValue('Item'));
 
-        $this->type = new PriceFilterType($translator, $this->getRegistry(), $formatter);
+        $this->type = new ProductPriceFilterType($translator, $this->getRegistry(), $formatter);
     }
 
     /**
@@ -83,7 +83,7 @@ class PriceFilterTypeTest extends NumberFilterTypeTest
      */
     public function testGetName()
     {
-        $this->assertEquals(PriceFilterType::NAME, $this->type->getName());
+        $this->assertEquals(ProductPriceFilterType::NAME, $this->type->getName());
     }
 
     /**
