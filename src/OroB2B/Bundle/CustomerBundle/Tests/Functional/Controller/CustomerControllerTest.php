@@ -101,6 +101,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertContains(self::UPDATED_NAME . ' - Customers - Customers', $html);
         $this->assertContains('Add attachment', $html);
         $this->assertContains('Add note', $html);
+        $this->assertContains('Address Book', $html);
         /** @var Customer $newParent */
         $newParent = $this->getReference('customer.level_1.1');
         /** @var CustomerGroup $newGroup */
