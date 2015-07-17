@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Unit\Form\Type;
+namespace OroB2B\Bundle\PricingBundle\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -8,7 +8,7 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberFilterTypeTest;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\PriceFilterType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceFilterType;
 
 class PriceFilterTypeTest extends NumberFilterTypeTest
 {

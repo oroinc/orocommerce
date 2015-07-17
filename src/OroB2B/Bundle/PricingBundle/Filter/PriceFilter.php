@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Filter;
+namespace OroB2B\Bundle\PricingBundle\Filter;
 
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\AbstractFilter;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\PriceFilterType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceFilterType;
 
 class PriceFilter extends AbstractFilter
 {

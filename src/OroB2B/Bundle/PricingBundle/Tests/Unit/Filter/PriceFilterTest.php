@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Filter;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Filter;
 
-use OroB2B\Bundle\ProductBundle\Filter\PriceFilter;
+use OroB2B\Bundle\PricingBundle\Filter\PriceFilter;
 
 class PriceFilterTest extends \PHPUnit_Framework_TestCase
 {

@@ -1,8 +1,0 @@
-placeholders:
-    scripts_before:
-        items:
-            product_filter_templates: ~
-
-items:
-   product_filter_templates:
-        template: OroB2BProductBundle:Js:product_filter_templates.js.twig

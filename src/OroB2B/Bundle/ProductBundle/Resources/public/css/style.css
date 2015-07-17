@@ -14,13 +14,3 @@
 .product-container div.box-type1 div.title {
     padding: 0 !important;
 }
-
-.price-filter .price-unit-filter {
-    margin-bottom: 0px;
-}
-
-.price-filter .price-unit-filter,
-.price-filter .choice-filter{
-    display: inline-block;
-    width: auto;
-}

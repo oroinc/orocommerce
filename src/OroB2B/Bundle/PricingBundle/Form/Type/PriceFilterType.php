@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Type;
+namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class PriceFilterType extends AbstractType
 {
-    const NAME = 'orob2b_product_price_filter';
+    const NAME = 'orob2b_pricing_price_filter';
 
     /**
      * @var ManagerRegistry
