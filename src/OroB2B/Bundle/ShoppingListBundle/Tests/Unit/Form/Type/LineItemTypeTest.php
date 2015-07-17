@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
@@ -107,7 +106,6 @@ class LineItemTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, $submittedData, $expectedData)
     {
-        $this->markTestSkipped('Symfony\Component\OptionsResolver\Exception\InvalidOptionsException: The option "query_builder" does not exist.');
         $form = $this->factory->create($this->type, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -136,13 +134,19 @@ class LineItemTypeTest extends FormIntegrationTestCase
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes('my note');
 
-        $existingLineItem = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 1);
+        $existingLineItem = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 2);
         $existingLineItem
             ->setShoppingList($shoppingList)
             ->setProduct($expectedProduct)
-            ->setQuantity('15')
+            ->setQuantity(5)
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes('my note2');
+
+        $expectedLineItem2 = clone $existingLineItem;
+        $expectedLineItem2
+            ->setQuantity(15.112)
+            ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
+            ->setNotes('note1');
 
         return [
             'new line item'      => [
@@ -158,12 +162,12 @@ class LineItemTypeTest extends FormIntegrationTestCase
             'existing line item' => [
                 'defaultData'   => $existingLineItem,
                 'submittedData' => [
-                    'product'  => 1,
-                    'quantity' => 10,
+                    'product'  => 2,
+                    'quantity' => 15.1119,
                     'unit'     => 'kg',
-                    'notes'    => 'my note',
+                    'notes'    => 'note1',
                 ],
-                'expectedData'  => $expectedLineItem
+                'expectedData'  => $expectedLineItem2
             ],
         ];
     }
