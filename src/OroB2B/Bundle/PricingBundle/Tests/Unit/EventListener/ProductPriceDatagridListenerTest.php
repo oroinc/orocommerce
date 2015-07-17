@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -13,7 +12,9 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -34,6 +35,11 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $doctrineHelper;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     */
+    protected $priceListRequestHandler;
+
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
@@ -43,6 +49,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(
                 function ($id, array $params = []) {
                     $id = str_replace(array_keys($params), array_values($params), $id);
+
                     return $id . '.trans';
                 }
             );
@@ -51,18 +58,47 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new ProductPriceDatagridListener($this->translator, $this->doctrineHelper);
+        $this->priceListRequestHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new ProductPriceDatagridListener(
+            $this->translator,
+            $this->doctrineHelper,
+            $this->priceListRequestHandler
+        );
+    }
+
+    protected function tearDown()
+    {
+        unset($this->doctrineHelper, $this->translator, $this->priceListRequestHandler, $this->listener);
     }
 
     /**
-     * @param array|null $requestData
+     * @param int|null $priceListId
+     * @param array $priceCurrencies
      * @param array $expectedConfig
      * @dataProvider onBuildBeforeDataProvider
      */
-    public function testOnBuildBefore($requestData, array $expectedConfig = [])
+    public function testOnBuildBefore($priceListId = null, array $priceCurrencies = [], array $expectedConfig = [])
     {
-        if (is_array($requestData)) {
-            $this->listener->setRequest(new Request($requestData));
+        if ($priceListId && $priceCurrencies) {
+            $this->priceListRequestHandler
+                ->expects($this->any())
+                ->method('getPriceList')
+                ->willReturn($this->getPriceList($priceListId));
+
+            $this->priceListRequestHandler
+                ->expects($this->any())
+                ->method('getPriceListSelectedCurrencies')
+                ->will(
+                    $this->returnCallback(
+                        function () use ($priceCurrencies) {
+                            return array_intersect(['USD', 'EUR'], $priceCurrencies);
+                        }
+                    )
+                );
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
@@ -81,20 +117,20 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function onBuildBeforeDataProvider()
     {
         return [
-            'no request' => [
-                'requestData' => null,
-            ],
+            'no request' => [],
             'no price list id' => [
-                'requestData' => ['priceCurrencies' => ['USD']],
+                'priceCurrencies' => ['USD'],
             ],
             'no currencies' => [
-                'requestData' => ['priceListId' => 1],
+                'priceListId' => 1,
             ],
             'invalid currencies' => [
-                'requestData' => ['priceListId' => 1, 'priceCurrencies' => ['@#$', '%^&']],
+                'priceListId' => 1,
+                'priceCurrencies' => ['@#$', '%^&'],
             ],
             'valid currencies' => [
-                'requestData' => ['priceListId' => 1, 'priceCurrencies' => ['USD', 'EUR']],
+                'priceListId' => 1,
+                'priceCurrencies' => ['USD', 'EUR'],
                 'expectedConfig' => [
                     'columns' => [
                         'price_column_usd' => [
@@ -109,6 +145,18 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                         ],
+                    ],
+                    'filters' => [
+                        'columns' => [
+                            'price_column_usd' => [
+                                'type' => 'product-price',
+                                'data_name' => 'USD'
+                            ],
+                            'price_column_eur' => [
+                                'type' => 'product-price',
+                                'data_name' => 'EUR'
+                            ]
+                        ]
                     ]
                 ],
             ],
@@ -116,14 +164,16 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array|null $requestData
+     * @param int|null $priceListId
+     * @param array $priceCurrencies
      * @param array $sourceResults
      * @param ProductPrice[] $prices
      * @param array $expectedResults
      * @dataProvider onResultAfterDataProvider
      */
     public function testOnResultAfter(
-        $requestData,
+        $priceListId = null,
+        array $priceCurrencies = [],
         array $sourceResults = [],
         array $prices = [],
         array $expectedResults = []
@@ -144,16 +194,29 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $productIds[] = $sourceResult['id'];
         }
 
-        if (is_array($requestData)) {
-            $this->listener->setRequest(new Request($requestData));
+        if ($priceListId && $priceCurrencies) {
+            $this->priceListRequestHandler
+                ->expects($this->any())
+                ->method('getPriceList')
+                ->willReturn($this->getPriceList($priceListId));
 
-            $priceListId = isset($requestData['priceListId']) ? $requestData['priceListId'] : null;
-            if ($priceListId) {
-                $priceRepository->expects($this->any())
-                    ->method('findByPriceListIdAndProductIds')
-                    ->with($priceListId, $productIds)
-                    ->willReturn($prices);
-            }
+            $this->priceListRequestHandler
+                ->expects($this->any())
+                ->method('getPriceListSelectedCurrencies')
+                ->will(
+                    $this->returnCallback(
+                        function () use ($priceCurrencies) {
+                            return array_intersect(['USD', 'EUR'], $priceCurrencies);
+                        }
+                    )
+                );
+
+            $this->priceListRequestHandler->expects($this->any())->method('getShowTierPrices')->willReturn(true);
+
+            $priceRepository->expects($this->any())
+                ->method('findByPriceListIdAndProductIds')
+                ->with($priceListId, $productIds)
+                ->willReturn($prices);
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
@@ -177,32 +240,32 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function onResultAfterDataProvider()
     {
         return [
-            'no request' => [
-                'requestData' => null,
-            ],
+            'no request' => [],
             'no price list id' => [
-                'requestData' => ['priceCurrencies' => ['USD']],
+                'priceCurrencies' => ['USD'],
             ],
             'no currencies' => [
-                'requestData' => ['priceListId' => 1],
+                'priceListId' => 1,
             ],
             'invalid currencies' => [
-                'requestData' => ['priceListId' => 1, 'priceCurrencies' => ['@#$', '%^&']],
+                'priceListId' => 1,
+                'priceCurrencies' => ['@#$', '%^&'],
             ],
             'valid data' => [
-                'requestData' => ['priceListId' => 1, 'priceCurrencies' => ['USD', 'EUR']],
+                'priceListId' => 1,
+                'priceCurrencies' => ['USD', 'EUR'],
                 'sourceResults' => [
                     [
                         'id' => 1,
-                        'name' => 'first'
+                        'name' => 'first',
                     ],
                     [
                         'id' => 2,
-                        'name' => 'second'
+                        'name' => 'second',
                     ],
                     [
                         'id' => 3,
-                        'name' => 'third'
+                        'name' => 'third',
                     ],
                 ],
                 'prices' => [
@@ -217,22 +280,39 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'name' => 'first',
                         'price_column_usd' => [$this->createPrice(1, 10, 'USD')],
                         'price_column_eur' => [$this->createPrice(1, 11, 'EUR'), $this->createPrice(1, 12, 'EUR')],
+                        'showTierPrices' => true
                     ],
                     [
                         'id' => 2,
                         'name' => 'second',
                         'price_column_usd' => [$this->createPrice(2, 20, 'USD')],
                         'price_column_eur' => [],
+                        'showTierPrices' => true
                     ],
                     [
                         'id' => 3,
                         'name' => 'third',
                         'price_column_usd' => [],
                         'price_column_eur' => [],
+                        'showTierPrices' => true
                     ],
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param int $id
+     * @return PriceList
+     */
+    protected function getPriceList($id)
+    {
+        $priceList = new PriceList();
+        $reflection = new \ReflectionProperty(get_class($priceList), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($priceList, $id);
+
+        return $priceList;
     }
 
     /**

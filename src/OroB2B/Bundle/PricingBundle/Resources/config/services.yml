@@ -18,6 +18,11 @@ parameters:
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
+    orob2b_pricing.event_listener.product_price_widget.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceWidgetListener
+
+    orob2b_pricing.model.price_list_request_hanlder.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
+
+    orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -68,7 +73,7 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_pricing_price_list, acl_resource: orob2b_pricing_price_list_view }
         lazy: true
-        
+
     orob2b_pricing.listener.product_unit_precision:
         class: %orob2b_pricing.listener.product_unit_precision.class%
         calls:
@@ -116,11 +121,17 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-        calls:
-            - [setRequest, ["@?request="]]
+            - @orob2b_pricing.model.price_list_request_hanlder
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+
+    orob2b_pricing.event_listener.product_price_widget:
+        class: %orob2b_pricing.event_listener.product_price_widget.class%
+        arguments:
+            - @orob2b_pricing.model.price_list_request_hanlder
+        tags:
+            - { name: kernel.event_listener, event: product_grid.render, method: onWidgetRender, priority: 10 }
 
     orob2b_pricing.validator.product_price_allowed_units:
         class: %orob2b_pricing.validator.product_price_allowed_units.class%
@@ -131,3 +142,19 @@ services:
         class: %orob2b_pricing.validator.product_price_currency.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_currency_validator }
+
+    orob2b_pricing.model.price_list_request_hanlder:
+        class: %orob2b_pricing.model.price_list_request_hanlder.class%
+        arguments:
+            - @doctrine
+            - %orob2b_pricing.entity.price_list.class%
+        calls:
+            - [setRequest, ["@?request="]]
+
+    orob2b_pricing.filter.product_price:
+            class: %orob2b_pricing.filter.product_price.class%
+            arguments:
+                - @form.factory
+                - @oro_filter.filter_utility
+            tags:
+                - { name: oro_filter.extension.orm_filter.filter, type: product-price }

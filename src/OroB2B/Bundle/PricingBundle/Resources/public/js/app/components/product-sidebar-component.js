@@ -86,6 +86,10 @@ define(function(require) {
                 return $(input).val();
             });
 
+            if (_.isEmpty(currencies)) {
+                currencies = false;
+            }
+
             var params = {
                 priceListId: $(this.options.priceListSelector).val(),
                 priceCurrencies: currencies,
@@ -124,6 +128,8 @@ define(function(require) {
             });
 
             this.currenciesContainer.html(html.join(''));
+
+            this.triggerSidebarChanged(true);
         },
 
         /**
@@ -131,7 +137,6 @@ define(function(require) {
          */
         _complete: function() {
             this.loadingMaskView.hide();
-            this.triggerSidebarChanged(false);
         },
 
         dispose: function() {
