@@ -46,3 +46,22 @@
 .product-container .grid-container .product-price-unit-with-margin {
     margin-top: 5px !important;
 }
+
+.product-price-filter .value-field-frame {
+    margin-right: 0px !important;
+}
+
+.product-price-filter .value-field-frame input[type=text]  {
+    width: 100px !important;
+    border-right-width: 1px !important;
+}
+
+.product-price-filter .product-price-unit-filter {
+    margin-bottom: 0px;
+}
+
+.product-price-filter .product-price-unit-filter,
+.product-price-filter .choice-filter{
+    display: inline-block;
+    width: auto;
+}
