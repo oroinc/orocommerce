@@ -1,7 +1,8 @@
 define([
     'underscore',
+    'orotranslation/js/translator',
     'oro/filter/number-filter'
-], function(_, NumberFilter) {
+], function(_, __, NumberFilter) {
     'use strict';
 
     var PriceFilter;
@@ -70,6 +71,30 @@ define([
         /**
          * @inheritDoc
          */
+        _getCriteriaHint: function() {
+
+            var value, hintValue, unitOption;
+
+            value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
+
+            if (!value.value) {
+                return this.placeholder;
+            }
+
+            hintValue = PriceFilter.__super__._getCriteriaHint.apply(this, arguments);
+
+            if (!_.isUndefined(value.unit) && value.unit) {
+                unitOption = _.findWhere(this.unitChoices, {value: value.unit}).label;
+            }
+
+            hintValue += ' ' + __('per') + ' ' + unitOption;
+
+            return hintValue;
+        },
+
+        /**
+         * @inheritDoc
+         */
         _onClickChoiceValue: function(e) {
             if ($(e.currentTarget).closest('.price-unit-filter').get(0)) {
                 $(e.currentTarget).parent().parent().find('li').each(function() {
@@ -111,6 +136,7 @@ define([
         _appendUnitFilter: function($filter) {
             var value,
                 selectedChoiceLabel = '',
+                $updateBtn,
                 $unitFilter;
 
             value = _.extend({}, this.emptyValue, this.value);
@@ -127,7 +153,8 @@ define([
                 selectedChoiceLabel: selectedChoiceLabel
             }));
 
-            $unitFilter.append($filter)
+            $updateBtn = $filter.find('.filter-update');
+            $unitFilter.prepend($filter).append($updateBtn);
 
             this._appendUnitFilter._appendFilter.call(this, $unitFilter);
         }
