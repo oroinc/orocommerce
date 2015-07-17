@@ -241,6 +241,9 @@ class CustomerTest extends EntityTestCase
         return new Organization();
     }
 
+    /**
+     * @return CustomerAddress
+     */
     protected function createAddressEntity()
     {
         return new CustomerAddress();
