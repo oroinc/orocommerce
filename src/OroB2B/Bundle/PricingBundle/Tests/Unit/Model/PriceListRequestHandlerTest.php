@@ -155,17 +155,57 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($this->handler->getShowTierPrices());
     }
 
-    public function testShowTierPricesWithoutParam()
+    /**
+     * @dataProvider showTierPricesWithoutParamDataProvider
+     *
+     * @param mixed $value
+     * @param bool $expected
+     */
+    public function testShowTierPricesWithoutParam($value, $expected)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
         $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
         $this->handler->setRequest($request);
 
-        $request->expects($this->exactly(2))->method('get')->with(PriceListRequestHandler::TIER_PRICES_KEY)
-            ->will($this->onConsecutiveCalls([null, false]));
+        $request->expects($this->once())
+            ->method('get')
+            ->with(PriceListRequestHandler::TIER_PRICES_KEY)
+            ->willReturn($value);
 
-        $this->assertFalse($this->handler->getShowTierPrices());
-        $this->assertFalse($this->handler->getShowTierPrices());
+        $this->assertEquals($expected, $this->handler->getShowTierPrices());
+    }
+
+    /**
+     * @return array
+     */
+    public function showTierPricesWithoutParamDataProvider()
+    {
+        return [
+            [
+                'value' => null,
+                'expected' => false
+            ],
+            [
+                'value' => false,
+                'expected' => false
+            ],
+            [
+                'value' => 'true',
+                'expected' => true
+            ],
+            [
+                'value' => 'false',
+                'expected' => false
+            ],
+            [
+                'value' => 1,
+                'expected' => true
+            ],
+            [
+                'value' => 0,
+                'expected' => false
+            ]
+        ];
     }
 
     public function testShowTierPrices()

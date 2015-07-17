@@ -35,7 +35,19 @@ define(function(require) {
         /**
          * @property {Object}
          */
+        listen: {
+            'grid_load:complete mediator': 'onGridLoadComplete'
+        },
+
+        /**
+         * @property {Object}
+         */
         $container: null,
+
+        /**
+         * @property {Object}
+         */
+        gridCollection: null,
 
         /**
          * @inheritDoc
@@ -49,6 +61,23 @@ define(function(require) {
         },
 
         /**
+         * @param {Object} collection
+         */
+        onGridLoadComplete: function(collection) {
+            if (collection.inputName === this.options.widgetRouteParameters.gridName) {
+                this.gridCollection = collection;
+
+                var self = this;
+                widgetManager.getWidgetInstanceByAlias(
+                    this.options.widgetAlias,
+                    function(widget) {
+                        self._patchGridCollectionUrl(self._getQueryParamsFromUrl(widget.options.url));
+                    }
+                );
+            }
+        },
+
+        /**
          *
          * @param {Object} data
          */
@@ -56,7 +85,10 @@ define(function(require) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
 
-            history.pushState({}, document.title, location.pathname + '?' + $.param(params) + location.hash);
+            var pageUrl = location.pathname + '?' + this._urlParamsToString(params) + location.hash;
+            history.pushState({}, document.title, pageUrl);
+
+            this._patchGridCollectionUrl(params);
 
             widgetManager.getWidgetInstanceByAlias(
                 this.options.widgetAlias,
@@ -73,13 +105,58 @@ define(function(require) {
         },
 
         /**
+         * @param {Object} params
+         * @private
+         */
+        _patchGridCollectionUrl: function(params) {
+            var collection = this.gridCollection;
+            if (!_.isUndefined(collection)) {
+                var url = collection.url.substring(0, collection.url.indexOf('?'));
+                var newParams = _.extend(this._getQueryParamsFromUrl(collection.url), params);
+
+                collection.url = url + '?' + this._urlParamsToString(newParams);
+            }
+        },
+
+        /**
          * @private
          * @return {Object}
          */
         _getCurrentUrlParams: function() {
-            var query = location.search.slice(1);
+            return this._queryStringToObject(location.search.slice(1));
+        },
 
-            return query.length ? tools.unpackFromQueryString(query) : {};
+        /**
+         * @param {String} query
+         * @return {Object}
+         * @private
+         */
+        _queryStringToObject: function(query) {
+            return query.length ? tools.unpackFromQueryString(decodeURIComponent(query)) : {};
+        },
+
+        /**
+         * @param {String} url
+         * @returns {Object}
+         * @private
+         */
+        _getQueryParamsFromUrl: function(url) {
+            var params = {};
+
+            if (url.indexOf('?') !== -1) {
+                params = this._queryStringToObject(decodeURIComponent(url.substring(url.indexOf('?') + 1, url.length)));
+            }
+
+            return params;
+        },
+
+        /**
+         * @param {Object} params
+         * @return {String}
+         * @private
+         */
+        _urlParamsToString: function(params) {
+            return $.param(params);
         }
     });
 
