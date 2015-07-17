@@ -111,7 +111,7 @@ class LineItemType extends AbstractType
     {
         $entity = $event->getData();
 
-        if (!$entity->getId()) {
+        if (!($entity instanceof LineItem) || !$entity->getId()) {
             return;
         }
 

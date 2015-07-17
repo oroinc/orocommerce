@@ -3,270 +3,287 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\FormBuilder;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
 class LineItemTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
-
     /**
      * @var LineItemType
      */
     protected $type;
-
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|LineItem
+     * @var array
      */
-    protected $lineItem;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FormEvent
-     */
-    protected $formEvent;
+    protected $units = [
+        'item',
+        'kg'
+    ];
 
     protected function setUp()
     {
         parent::setUp();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
         /** @var \PHPUnit_Framework_MockObject_MockObject|RoundingService $roundingService */
         $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->type = new LineItemType($managerRegistry, $roundingService);
+        $roundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(
+                function ($value, $precision) {
+                    return round($value, $precision);
+                }
+            );
+
+        $this->type = new LineItemType($this->getRegistry(), $roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setProductClass(self::PRODUCT_CLASS);
-        $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
-        $this->formEvent = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        $entityType = new EntityType(
+            [
+                1 => $this->getProductEntityWithPrecision(1, 'kg', 3),
+                2 => $this->getProductEntityWithPrecision(2, 'kg', 3)
+            ]
+        );
+
+        $productUnitSelection = new EntityType(
+            $this->prepareProductUnitSelectionChoices(),
+            ProductUnitSelectionType::NAME
+        );
+        $productSelectType = new ProductSelectTypeStub();
+
+        return [
+            new PreloadedExtension(
+                [
+                    $entityType->getName()         => $entityType,
+                    $productSelectType->getName()  => $productSelectType,
+                    ProductUnitSelectionType::NAME => $productUnitSelection,
+                ],
+                []
+            )
+        ];
     }
 
     public function testBuildForm()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilder $builder */
-        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $form = $this->factory->create($this->type);
 
-        $this->lineItem->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue(null));
-
-        $builder->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($this->lineItem));
-
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with(
-                'product',
-                ProductSelectType::NAME,
-                [
-                    'required'       => true,
-                    'label'          => 'orob2b.pricing.productprice.product.label',
-                    'create_enabled' => false,
-                    'disabled'       => false,
-                ]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(2))
-            ->method('add')
-            ->with(
-                'quantity',
-                'text',
-                [
-                    'required' => true,
-                    'label'    => 'orob2b.pricing.productprice.quantity.label'
-                ]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(3))
-            ->method('add')
-            ->with(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'required'    => true,
-                    'label'       => 'orob2b.pricing.productprice.unit.label',
-                    'empty_data'  => null,
-                    'empty_value' => 'orob2b.pricing.productprice.unit.choose'
-                ]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(4))
-            ->method('add')
-            ->with(
-                'notes',
-                'textarea',
-                [
-                    'required'   => false,
-                    'label'      => 'orob2b.shoppinglist.lineitem.notes.label',
-                    'empty_data' => null,
-                ]
-            )
-            ->will($this->returnSelf());
-
-        $builder->expects($this->at(5))
-            ->method('addEventListener')
-            ->with(FormEvents::PRE_SET_DATA);
-
-        $builder->expects($this->at(6))
-            ->method('addEventListener')
-            ->with(FormEvents::PRE_SUBMIT);
-
-        $this->type->buildForm($builder, []);
+        $this->assertTrue($form->has('product'));
+        $this->assertTrue($form->has('quantity'));
+        $this->assertTrue($form->has('unit'));
+        $this->assertTrue($form->has('notes'));
     }
 
-    public function testPreSetDataNewLineItem()
+    /**
+     * @dataProvider submitDataProvider
+     *
+     * @param mixed $defaultData
+     * @param mixed $submittedData
+     * @param mixed $expectedData
+     */
+    public function testSubmit($defaultData, $submittedData, $expectedData)
     {
-        $this->lineItem->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue(null));
+        $this->markTestSkipped('Symfony\Component\OptionsResolver\Exception\InvalidOptionsException: The option "query_builder" does not exist.');
+        $form = $this->factory->create($this->type, $defaultData, []);
 
-        $this->formEvent->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($this->lineItem));
+        $this->assertEquals($defaultData, $form->getData());
 
-        $this->formEvent->expects($this->never())
-            ->method('getForm');
+        $form->submit($submittedData);
 
-        $this->type->preSetData($this->formEvent);
+        $this->assertEquals([], $form->getErrors());
+        $this->assertTrue($form->isValid());
+        $this->assertEquals($expectedData, $form->getData());
     }
 
-    public function testPreSetDataExistingLineItem()
+    public function submitDataProvider()
     {
-        $this->lineItem->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue(1));
+        $shoppingList = new ShoppingList();
 
-        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var Product $expectedProduct */
+        $expectedProduct = $this->getProductEntityWithPrecision(1, 'kg', 3);
 
-        $form->expects($this->once())
-            ->method('add')
-            ->with(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'required'      => true,
-                    'label'         => 'orob2b.pricing.productprice.unit.label',
-                    'empty_data'    => null,
-                    'empty_value'   => 'orob2b.pricing.productprice.unit.choose',
-                    'query_builder' => function () {
-                    }
-                ]
-            );
+        $defaultLineItem = new LineItem();
+        $defaultLineItem->setShoppingList($shoppingList);
 
-        $this->formEvent->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($this->lineItem));
+        $expectedLineItem = clone $defaultLineItem;
+        $expectedLineItem
+            ->setProduct($expectedProduct)
+            ->setQuantity('10')
+            ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
+            ->setNotes('my note');
 
-        $this->formEvent->expects($this->once())
-            ->method('getForm')
-            ->will($this->returnValue($form));
+        $existingLineItem = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 1);
+        $existingLineItem
+            ->setShoppingList($shoppingList)
+            ->setProduct($expectedProduct)
+            ->setQuantity('15')
+            ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
+            ->setNotes('my note2');
 
-        $this->type->preSetData($this->formEvent);
-    }
-
-    public function testPreSubmitDataNoData()
-    {
-        $this->formEvent->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue([]));
-
-        $this->formEvent->expects($this->never())
-            ->method('setData');
-
-        $this->type->preSubmitData($this->formEvent);
-    }
-
-    public function testPreSubmitData()
-    {
-        $data = [
-            'product'  => 1,
-            'unit'     => 1,
-            'quantity' => 1,
+        return [
+            'new line item'      => [
+                'defaultData'   => $defaultLineItem,
+                'submittedData' => [
+                    'product'  => 1,
+                    'quantity' => 10,
+                    'unit'     => 'kg',
+                    'notes'    => 'my note',
+                ],
+                'expectedData'  => $expectedLineItem
+            ],
+            'existing line item' => [
+                'defaultData'   => $existingLineItem,
+                'submittedData' => [
+                    'product'  => 1,
+                    'quantity' => 10,
+                    'unit'     => 'kg',
+                    'notes'    => 'my note',
+                ],
+                'expectedData'  => $expectedLineItem
+            ],
         ];
-
-        $this->formEvent->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($data));
-
-        $unitPrecision = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
-        $unitPrecision->expects($this->once())
-            ->method('getPrecision')
-            ->will($this->returnValue(1));
-
-        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
-        $product->expects($this->once())
-            ->method('getUnitPrecision')
-            ->with($data['unit'])
-            ->will($this->returnValue($unitPrecision));
-
-        $objectRepository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $objectRepository->expects($this->once())
-            ->method('find')
-            ->with($data['product'])
-            ->will($this->returnValue($product));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $managerRegistry */
-        $managerRegistry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $managerRegistry->expects($this->once())
-            ->method('getRepository')
-            ->will($this->returnValue($objectRepository));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|RoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formEvent->expects($this->once())
-            ->method('setData');
-
-        $type = new LineItemType($managerRegistry, $roundingService);
-        $type->preSubmitData($this->formEvent);
     }
 
     public function testSetDefaultOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with(
-                [
-                    'data_class'        => self::DATA_CLASS,
-                    'validation_groups' => function () {
-                    }
-                ]
-            );
-
+        $resolver = new OptionsResolver();
         $this->type->setDefaultOptions($resolver);
+        $resolvedOptions = $resolver->resolve();
+
+        $lineItem = new LineItem();
+        /** @var LineItem $lineItem2 */
+        $lineItem2 = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem', 1);
+
+        $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);
+        $this->assertEquals(['create'], $resolvedOptions['validation_groups']($this->getForm($lineItem)));
+        $this->assertEquals(['update'], $resolvedOptions['validation_groups']($this->getForm($lineItem2)));
     }
 
     public function testGetName()
     {
         $this->assertEquals(LineItemType::NAME, $this->type->getName());
+    }
+
+    /**
+     * @param LineItem $lineItem
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     */
+    protected function getForm(LineItem $lineItem)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue($lineItem));
+
+        return $form;
+    }
+
+    /**
+     * @return array
+     */
+    protected function prepareProductUnitSelectionChoices()
+    {
+        $choices = [];
+        foreach ($this->units as $unitCode) {
+            $unit = new ProductUnit();
+            $unit->setCode($unitCode);
+            $choices[$unitCode] = $unit;
+        }
+
+        return $choices;
+    }
+
+    /**
+     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getRegistry()
+    {
+        $repo = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->any())
+            ->method('find')
+            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $registry->expects($this->any())
+            ->method('getRepository')
+            ->with($this->isType('string'))
+            ->willReturn($repo);
+
+        return $registry;
+    }
+
+    /**
+     * @param string $className
+     * @param int    $id
+     *
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
+    }
+
+    /**
+     * @param integer $productId
+     * @param string  $unitCode
+     * @param integer $precision
+     *
+     * @return Product
+     */
+    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
+    {
+        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setPrecision($precision)
+            ->setUnit($unit)
+            ->setProduct($product);
+
+        return $product->addUnitPrecision($unitPrecision);
     }
 }

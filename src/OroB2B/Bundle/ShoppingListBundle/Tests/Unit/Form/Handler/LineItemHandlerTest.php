@@ -91,6 +91,9 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->lineItem->expects($this->once())
             ->method('getQuantity')
             ->will($this->returnValue(40));
+        $this->lineItem->expects($this->exactly(2))
+            ->method('getNotes')
+            ->will($this->returnValue('note1'));
 
         $existingLineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
         $existingLineItem->expects($this->once())
@@ -98,6 +101,11 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(10));
         $existingLineItem->expects($this->once())
             ->method('setQuantity');
+        $existingLineItem->expects($this->once())
+            ->method('getNotes')
+            ->will($this->returnValue('note2'));
+        $existingLineItem->expects($this->once())
+            ->method('setNotes');
         $existingLineItem->expects($this->once())
             ->method('getId')
             ->will($this->returnValue(123));

@@ -54,6 +54,9 @@ class LineItemHandler
 
                 if ($existingLineItem) {
                     $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
+                    if ('' !== $lineItem->getNotes()) {
+                        $existingLineItem->setNotes($lineItem->getNotes() . ' ' . $existingLineItem->getNotes());
+                    }
                     $this->savedId = $existingLineItem->getId();
                 } else {
                     $this->manager->persist($lineItem);
