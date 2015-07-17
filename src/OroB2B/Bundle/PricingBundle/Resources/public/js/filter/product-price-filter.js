@@ -40,10 +40,6 @@ define([
          * @inheritDoc
          */
         initialize: function() {
-            if (_.isUndefined(this.unitChoices)) {
-                this.unitChoices = [];
-            }
-
             this.emptyValue = {
                 unit: (_.isEmpty(this.unitChoices) ? '' : _.first(this.unitChoices).value),
                 type: (_.isEmpty(this.choices) ? '' : _.first(this.choices).value),
