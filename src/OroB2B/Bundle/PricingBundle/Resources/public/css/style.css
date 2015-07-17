@@ -43,6 +43,15 @@
     margin: 0 10px !important;
 }
 
+.price-filter .value-field-frame {
+    margin-right: 0px !important;
+}
+
+.price-filter .value-field-frame input[type=text]  {
+    width: 100px !important;
+    border-right-width: 1px !important;
+}
+
 .price-filter .price-unit-filter {
     margin-bottom: 0px;
 }
