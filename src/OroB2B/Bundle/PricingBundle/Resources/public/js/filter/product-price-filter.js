@@ -7,13 +7,23 @@ define([
 ], function($, _, __, NumberFilter) {
     'use strict';
 
-    var PriceFilter;
+    var ProductPriceFilter;
 
-    PriceFilter = NumberFilter.extend({
-        unitTemplate: _.template($('#price-filter-template').html()),
+    /**
+     * Product price filter
+     *
+     * @export  oro/filter/product-price-filter
+     * @class   oro.filter.ProductPriceFilter
+     * @extends oro.filter.NumberFilter
+     */
+    ProductPriceFilter = NumberFilter.extend({
+        /**
+         * @property
+         */
+        unitTemplate: _.template($('#product-price-filter-template').html()),
 
         /**
-         * @inheritDoc
+         * @property {Object}
          */
         criteriaValueSelectors: {
             unit: 'input[name="unit"]',
@@ -31,7 +41,7 @@ define([
                 value: ''
             };
 
-            return PriceFilter.__super__.initialize.apply(this, arguments);
+            return ProductPriceFilter.__super__.initialize.apply(this, arguments);
         },
 
         /**
@@ -39,7 +49,7 @@ define([
          */
         _renderCriteria: function() {
             this._checkAppendFilter();
-            return PriceFilter.__super__._renderCriteria.apply(this, arguments);
+            return ProductPriceFilter.__super__._renderCriteria.apply(this, arguments);
         },
 
         /**
@@ -50,7 +60,7 @@ define([
                 return;
             }
             delete this.unitChoices;
-            return PriceFilter.__super__.dispose.apply(this, arguments);
+            return ProductPriceFilter.__super__.dispose.apply(this, arguments);
         },
 
         /**
@@ -58,14 +68,14 @@ define([
          */
         _writeDOMValue: function(value) {
             this._setInputValue(this.criteriaValueSelectors.unit, value.unit);
-            return PriceFilter.__super__._writeDOMValue.apply(this, arguments);
+            return ProductPriceFilter.__super__._writeDOMValue.apply(this, arguments);
         },
 
         /**
          * @inheritDoc
          */
         _readDOMValue: function() {
-            var dataValue = PriceFilter.__super__._readDOMValue.apply(this, arguments);
+            var dataValue = ProductPriceFilter.__super__._readDOMValue.apply(this, arguments);
             dataValue.unit = this._getInputValue(this.criteriaValueSelectors.unit);
             return dataValue;
         },
@@ -74,22 +84,20 @@ define([
          * @inheritDoc
          */
         _getCriteriaHint: function() {
-
-            var value, hintValue, unitOption;
-
-            value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
+            var value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
 
             if (!value.value) {
                 return this.placeholder;
             }
 
-            hintValue = PriceFilter.__super__._getCriteriaHint.apply(this, arguments);
+            var hintValue = ProductPriceFilter.__super__._getCriteriaHint.apply(this, arguments);
 
+            var unitOption = '';
             if (!_.isUndefined(value.unit) && value.unit) {
                 unitOption = _.findWhere(this.unitChoices, {value: value.unit}).label;
             }
 
-            hintValue += ' ' + __('per') + ' ' + unitOption;
+            hintValue += ' ' + __('orob2b.pricing.filter.product_price.per') + ' ' + unitOption;
 
             return hintValue;
         },
@@ -98,7 +106,7 @@ define([
          * @inheritDoc
          */
         _onClickChoiceValue: function(e) {
-            if ($(e.currentTarget).closest('.price-unit-filter').get(0)) {
+            if ($(e.currentTarget).closest('.product-price-unit-filter').get(0)) {
                 $(e.currentTarget).parent().parent().find('li').each(function() {
                     $(this).removeClass('active');
                 });
@@ -118,7 +126,7 @@ define([
 
                 e.preventDefault();
             } else {
-                return PriceFilter.__super__._onClickChoiceValue.apply(this, arguments);
+                return ProductPriceFilter.__super__._onClickChoiceValue.apply(this, arguments);
             }
         },
 
@@ -162,5 +170,5 @@ define([
         }
     });
 
-    return PriceFilter;
+    return ProductPriceFilter;
 });
