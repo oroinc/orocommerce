@@ -17,7 +17,7 @@ define([
          */
         criteriaValueSelectors: {
             unit: 'input[name="unit"]',
-            type: 'input[name="price"]',
+            type: 'input.name_input',
             value: 'input[name="value"]'
         },
 
