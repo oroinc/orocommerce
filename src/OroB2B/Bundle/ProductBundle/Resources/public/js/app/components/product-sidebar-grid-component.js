@@ -111,7 +111,10 @@ define(function(require) {
         _patchGridCollectionUrl: function(params) {
             var collection = this.gridCollection;
             if (!_.isUndefined(collection)) {
-                var url = collection.url.substring(0, collection.url.indexOf('?'));
+                var url = collection.url;
+                if (url.indexOf('?') !== -1) {
+                    url = url.substring(0, url.indexOf('?'));
+                }
                 var newParams = _.extend(this._getQueryParamsFromUrl(collection.url), params);
 
                 collection.url = url + '?' + this._urlParamsToString(newParams);
