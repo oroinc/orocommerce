@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type\Filter;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 
@@ -33,12 +33,15 @@ class ProductPriceFilterType extends AbstractType
     protected $formatter;
 
     /**
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface       $translator
      * @param ManagerRegistry           $registry
      * @param ProductUnitLabelFormatter $formatter
      */
-    public function __construct(TranslatorInterface $translator, ManagerRegistry $registry, ProductUnitLabelFormatter $formatter)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        ManagerRegistry $registry,
+        ProductUnitLabelFormatter $formatter
+    ) {
         $this->translator = $translator;
         $this->registry = $registry;
         $this->formatter = $formatter;
@@ -85,14 +88,24 @@ class ProductPriceFilterType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_type' => NumberFilterType::DATA_DECIMAL,
-                'operator_choices'  => array(
-                    NumberFilterType::TYPE_EQUAL         => $this->translator->trans('oro.filter.form.label_type_equal'),
-                    NumberFilterType::TYPE_NOT_EQUAL     => $this->translator->trans('oro.filter.form.label_type_not_equal'),
-                    NumberFilterType::TYPE_GREATER_EQUAL => $this->translator->trans('oro.filter.form.label_type_greater_equal'),
-                    NumberFilterType::TYPE_GREATER_THAN  => $this->translator->trans('oro.filter.form.label_type_greater_than'),
-                    NumberFilterType::TYPE_LESS_EQUAL    => $this->translator->trans('oro.filter.form.label_type_less_equal'),
-                    NumberFilterType::TYPE_LESS_THAN     => $this->translator->trans('oro.filter.form.label_type_less_than'),
-                ),
+                'operator_choices'  => [
+                    NumberFilterType::TYPE_EQUAL => $this->translator->trans('oro.filter.form.label_type_equal'),
+                    NumberFilterType::TYPE_NOT_EQUAL => $this->translator->trans(
+                        'oro.filter.form.label_type_not_equal'
+                    ),
+                    NumberFilterType::TYPE_GREATER_EQUAL => $this->translator->trans(
+                        'oro.filter.form.label_type_greater_equal'
+                    ),
+                    NumberFilterType::TYPE_GREATER_THAN => $this->translator->trans(
+                        'oro.filter.form.label_type_greater_than'
+                    ),
+                    NumberFilterType::TYPE_LESS_EQUAL => $this->translator->trans(
+                        'oro.filter.form.label_type_less_equal'
+                    ),
+                    NumberFilterType::TYPE_LESS_THAN => $this->translator->trans(
+                        'oro.filter.form.label_type_less_than'
+                    )
+                ],
             ]
         );
     }
