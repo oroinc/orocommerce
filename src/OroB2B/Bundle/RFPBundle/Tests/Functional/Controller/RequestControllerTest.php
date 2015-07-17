@@ -149,6 +149,42 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
+     * @depends testView
+     * @param integer $id
+     */
+    public function testUpdate($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_update', ['id' => $id]));
+
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Request has been saved', $crawler->html());
+    }
+
+    /**
+     * @depends testView
+     * @param integer $id
+     */
+    public function testCreateQuote($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_view', ['id' => $id]));
+
+        $form = $crawler->selectButton('Create Quote')->form();
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('New Quote created', $crawler->html());
+    }
+
+    /**
      * @param Request $entity
      * @return \Oro\Bundle\ActivityListBundle\Entity\ActivityList[]
      */

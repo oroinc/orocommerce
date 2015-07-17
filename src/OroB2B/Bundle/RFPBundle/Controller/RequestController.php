@@ -98,7 +98,7 @@ class RequestController extends Controller
      * @Acl(
      *      id="orob2b_rfp_request_create_quote",
      *      type="entity",
-     *      class="OroB2BRFBundle:Request",
+     *      class="OroB2BRFPBundle:Request",
      *      permission="EDIT"
      * )
      *
