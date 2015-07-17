@@ -22,7 +22,7 @@ parameters:
 
     orob2b_pricing.model.price_list_request_hanlder.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
 
-    orob2b_pricing.filter.price_filter.class: OroB2B\Bundle\PricingBundle\Filter\PriceFilter
+    orob2b_pricing.filter.price.class: OroB2B\Bundle\PricingBundle\Filter\PriceFilter
 
 services:
     orob2b_pricing.acl.voter.product_list:
@@ -151,8 +151,8 @@ services:
         calls:
             - [setRequest, ["@?request="]]
 
-    orob2b_pricing.filter.price_filter:
-            class: %orob2b_pricing.filter.price_filter.class%
+    orob2b_pricing.filter.price:
+            class: %orob2b_pricing.filter.price.class%
             arguments:
                 - @form.factory
                 - @oro_filter.filter_utility

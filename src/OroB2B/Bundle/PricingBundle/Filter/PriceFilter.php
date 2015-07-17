@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Filter;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\NumberFilter;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceFilterType;
+use OroB2B\Bundle\PricingBundle\Form\Type\Filter\PriceFilterType;
 
 class PriceFilter extends NumberFilter
 {

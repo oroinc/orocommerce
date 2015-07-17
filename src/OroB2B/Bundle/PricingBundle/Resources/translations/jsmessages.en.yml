@@ -3,3 +3,6 @@ orob2b:
         product_price_save:
             flash:
                 success: Product Price has been added
+        filter:
+            price:
+                per: per

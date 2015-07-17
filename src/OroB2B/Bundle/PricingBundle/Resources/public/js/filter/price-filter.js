@@ -9,11 +9,21 @@ define([
 
     var PriceFilter;
 
+    /**
+     * Product price filter
+     *
+     * @export  oro/filter/price-filter
+     * @class   oro.filter.PriceFilter
+     * @extends oro.filter.NumberFilter
+     */
     PriceFilter = NumberFilter.extend({
+        /**
+         * @property
+         */
         unitTemplate: _.template($('#price-filter-template').html()),
 
         /**
-         * @inheritDoc
+         * @property {Object}
          */
         criteriaValueSelectors: {
             unit: 'input[name="unit"]',
@@ -74,22 +84,20 @@ define([
          * @inheritDoc
          */
         _getCriteriaHint: function() {
-
-            var value, hintValue, unitOption;
-
-            value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
+            var value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
 
             if (!value.value) {
                 return this.placeholder;
             }
 
-            hintValue = PriceFilter.__super__._getCriteriaHint.apply(this, arguments);
+            var hintValue = PriceFilter.__super__._getCriteriaHint.apply(this, arguments);
 
+            var unitOption = '';
             if (!_.isUndefined(value.unit) && value.unit) {
                 unitOption = _.findWhere(this.unitChoices, {value: value.unit}).label;
             }
 
-            hintValue += ' ' + __('per') + ' ' + unitOption;
+            hintValue += ' ' + __('orob2b.pricing.filter.price.per') + ' ' + unitOption;
 
             return hintValue;
         },

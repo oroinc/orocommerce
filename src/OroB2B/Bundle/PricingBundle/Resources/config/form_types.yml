@@ -4,7 +4,7 @@ parameters:
     orob2b_pricing.form.type.product_price_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType
     orob2b_pricing.form.type.product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
-    orob2b_pricing.form.type.price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceFilterType
+    orob2b_pricing.form.type.filter.price.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\PriceFilterType
 
     orob2b_pricing.form.extension.customer_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerFormExtension
     orob2b_pricing.form.extension.customer_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension
@@ -54,9 +54,10 @@ services:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
             - [setProductClass, [%orob2b_product.product.class%]]
 
-    orob2b_pricing.form.type.price_filter:
-        class: %orob2b_pricing.form.type.price_filter.class%
+    orob2b_pricing.form.type.filter.price:
+        class: %orob2b_pricing.form.type.filter.price.class%
         arguments:
+            - @translator
             - @doctrine
             - @orob2b_product.formatter.product_unit_label
         tags:
