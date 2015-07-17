@@ -23,6 +23,11 @@ define([
         unitTemplate: _.template($('#product-price-filter-template').html()),
 
         /**
+         * @property {Array}
+         */
+        unitChoices: [],
+
+        /**
          * @property {Object}
          */
         criteriaValueSelectors: {
@@ -106,15 +111,17 @@ define([
          * @inheritDoc
          */
         _onClickChoiceValue: function(e) {
-            if ($(e.currentTarget).closest('.product-price-unit-filter').get(0)) {
-                $(e.currentTarget).parent().parent().find('li').each(function() {
+            var target = $(e.currentTarget);
+
+            if (target.closest('.product-price-unit-filter').get(0)) {
+                target.parent().parent().find('li').each(function() {
                     $(this).removeClass('active');
                 });
-                $(e.currentTarget).parent().addClass('active');
+                target.parent().addClass('active');
 
-                var parentDiv = $(e.currentTarget).parent().parent().parent();
-                var type = $(e.currentTarget).attr('data-value');
-                var choiceName = $(e.currentTarget).html();
+                var parentDiv = target.parent().parent().parent();
+                var type = target.attr('data-value');
+                var choiceName = target.html();
 
                 var criteriaValues = this.$(this.criteriaValueSelectors.unit).val(type);
                 this.fixSelects();
@@ -144,12 +151,10 @@ define([
          * @private
          */
         _appendUnitFilter: function($filter) {
-            var value,
-                selectedChoiceLabel = '',
-                $updateBtn,
-                $unitFilter;
-
-            value = _.extend({}, this.emptyValue, this.value);
+            var value = _.extend({}, this.emptyValue, this.value);
+            var selectedChoiceLabel = '';
+            var $updateBtn;
+            var $unitFilter;
 
             if (!_.isEmpty(this.unitChoices)) {
                 selectedChoiceLabel = _.find(this.unitChoices, function(choice) {

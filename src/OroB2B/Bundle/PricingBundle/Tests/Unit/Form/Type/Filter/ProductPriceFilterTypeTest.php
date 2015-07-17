@@ -9,8 +9,8 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberFilterTypeTest;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -91,21 +91,21 @@ class ProductPriceFilterTypeTest extends NumberFilterTypeTest
      */
     public function setDefaultOptionsDataProvider()
     {
-        return array(
-            array(
-                'defaultOptions' => array(
+        return [
+            [
+                'defaultOptions' => [
                     'data_type'         => NumberFilterType::DATA_DECIMAL,
-                    'operator_choices'  => array(
+                    'operator_choices'  => [
                         NumberFilterType::TYPE_EQUAL         => 'oro.filter.form.label_type_equal',
                         NumberFilterType::TYPE_NOT_EQUAL     => 'oro.filter.form.label_type_not_equal',
                         NumberFilterType::TYPE_GREATER_EQUAL => 'oro.filter.form.label_type_greater_equal',
                         NumberFilterType::TYPE_GREATER_THAN  => 'oro.filter.form.label_type_greater_than',
                         NumberFilterType::TYPE_LESS_EQUAL    => 'oro.filter.form.label_type_less_equal',
                         NumberFilterType::TYPE_LESS_THAN     => 'oro.filter.form.label_type_less_than',
-                    ),
-                )
-            )
-        );
+                    ]
+                ]
+            ]
+        ];
     }
 
     /**
