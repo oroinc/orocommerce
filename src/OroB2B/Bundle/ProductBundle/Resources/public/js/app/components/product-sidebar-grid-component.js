@@ -42,12 +42,12 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        $container: null,
+        $container: {},
 
         /**
          * @property {Object}
          */
-        gridCollection: null,
+        gridCollection: {},
 
         /**
          * @inheritDoc
@@ -137,7 +137,7 @@ define(function(require) {
 
         /**
          * @param {String} url
-         * @returns {Object}
+         * @return {Object}
          * @private
          */
         _getQueryParamsFromUrl: function(url) {
