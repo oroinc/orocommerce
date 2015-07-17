@@ -13,6 +13,8 @@ orob2b:
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             request.label: 'Request'
+            account.label: 'Account'
+            account_user.label: 'Account User'
 
             sections:
                 general: 'General'

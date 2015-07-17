@@ -11,6 +11,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
@@ -30,12 +32,16 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "organization_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accauntUser",
+ *              "frontend_owner_column_name"="accaunt_user_id"
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
- *          }
+ *              "group_name"="commerce"
+ *          },
+ *          "grouping"={"groups"={"activity"}}
  *      }
  * )
  */
@@ -71,6 +77,22 @@ class Quote extends ExtendQuote
      * )
      */
     protected $owner;
+
+    /**
+     * @var AccountUser|null
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountUser;
+
+    /**
+     * @var Customer
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer"),
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $account;
 
     /**
      * @var OrganizationInterface
@@ -325,6 +347,44 @@ class Quote extends ExtendQuote
     public function getQuoteProducts()
     {
         return $this->quoteProducts;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return Quote
+     */
+    public function setAccountUser(AccountUser $accountUser = null)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
+    }
+
+    /**
+     * @return Customer
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Customer $account
+     * @return Quote
+     */
+    public function setAccount(Customer $account = null)
+    {
+        $this->account = $account;
+
+        return $this;
     }
 
     /**

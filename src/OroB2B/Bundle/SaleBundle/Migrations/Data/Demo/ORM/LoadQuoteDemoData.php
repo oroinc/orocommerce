@@ -16,6 +16,8 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -47,7 +49,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData'
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
         ];
     }
 
@@ -58,6 +62,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
     {
         $user = $this->getUser($manager);
         $organization = $user->getOrganization();
+        $accountUsers = $this->getAccountUsers($manager);
+        $accounts = $this->getAccounts($manager);
         for ($i = 0; $i < 100; $i++) {
             // set date in future
             $validUntil = new \DateTime('now');
@@ -68,6 +74,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setOwner($user)
                 ->setOrganization($organization)
                 ->setValidUntil($validUntil)
+                ->setAccountUser($accountUsers[rand(0, count($accountUsers) - 1)])
+                ->setAccount($accounts[rand(0, count($accounts) - 1)])
             ;
             $this->processQuoteProducts($quote, $manager);
             $manager->persist($quote);
@@ -90,6 +98,26 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $products;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|AccountUser[]
+     * @throws \LogicException
+     */
+    protected function getAccountUsers(ObjectManager $manager)
+    {
+        return array_merge([null], $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findBy([], null, 10));
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|Customer[]
+     * @throws \LogicException
+     */
+    protected function getAccounts(ObjectManager $manager)
+    {
+        return array_merge([null], $manager->getRepository('OroB2BCustomerBundle:Customer')->findBy([], null, 10));
     }
 
     /**

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
 
 class QuoteProductOfferTypeFormatterTest extends \PHPUnit_Framework_TestCase

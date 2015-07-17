@@ -8,6 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+
 class QuoteType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote';
@@ -22,6 +24,14 @@ class QuoteType extends AbstractType
             ->add('owner', 'oro_user_select', [
                 'label'     => 'orob2b.sale.quote.owner.label',
                 'required'  => true,
+            ])
+            ->add('accountUser', null, [
+                'label'     => 'orob2b.sale.quote.account_user.label',
+                'required'  => false,
+            ])
+            ->add('account', CustomerSelectType::NAME, [
+                'label'     => 'orob2b.sale.quote.customer.label',
+                'required'  => false,
             ])
             ->add('validUntil', OroDateTimeType::NAME, [
                 'label'     => 'orob2b.sale.quote.valid_until.label',

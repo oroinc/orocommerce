@@ -19,7 +19,8 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase

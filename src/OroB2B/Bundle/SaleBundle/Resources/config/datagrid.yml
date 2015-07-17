@@ -12,6 +12,8 @@ datagrid:
                     - quote.id
                     - quote.qid
                     - quoteOwner.username as ownerName
+                    - quoteAccountUser.username as accountUserName
+                    - quoteAccount.name as accountName
                     - quote.createdAt
                     - quote.updatedAt
                     - quote.validUntil
@@ -20,6 +22,8 @@ datagrid:
                 join:
                     left:
                         - { join: quote.owner, alias: quoteOwner }
+                        - { join: quote.accountUser, alias: quoteAccountUser }
+                        - { join: quote.account, alias: quoteAccount }
         columns:
             id:
                 label:         orob2b.sale.quote.id.label
@@ -27,6 +31,10 @@ datagrid:
                 label:         orob2b.sale.quote.qid.label
             ownerName:
                 label:         orob2b.sale.quote.owner.label
+            accountUserName:
+                label:         orob2b.sale.quote.account_user.label
+            accountName:
+                label:         orob2b.sale.quote.account.label
             validUntil:
                 label:         orob2b.sale.quote.valid_until.label
                 frontend_type: datetime
@@ -58,6 +66,10 @@ datagrid:
                     data_name: quote.qid
                 ownerName:
                     data_name: ownerName
+                accountUserName:
+                    data_name: accountUserName
+                accountName:
+                    data_name: accountName
                 createdAt:
                     data_name: quote.createdAt
                 updatedAt:
@@ -81,6 +93,21 @@ datagrid:
                         field_options:
                             class:      %oro_user.entity.class%
                             multiple:   true
+                accountUserName:
+                    type:      entity
+                    data_name: quote.accountUser
+                    options:
+                        field_options:
+                            class:      %orob2b_customer.entity.account_user.class%
+                            multiple:   false
+                accountName:
+                    type:      entity
+                    data_name: quote.account
+                    options:
+                        field_options:
+                            property:   name
+                            class:      %orob2b_customer.entity.customer.class%
+                            multiple:   false
                 validUntil:
                     type:      datetime
                     data_name: quote.validUntil
