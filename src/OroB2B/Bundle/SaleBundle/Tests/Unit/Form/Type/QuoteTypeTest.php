@@ -99,6 +99,7 @@ class QuoteTypeTest extends AbstractTest
         $quoteProductOffer = $this->getQuoteProductOffer(2, 33, 'kg', self::QPO_PRICE_TYPE1, Price::create(44, 'USD'));
         $quoteProduct = $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [$quoteProductOffer]);
         $accountUser =  $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', 3);
+
         return [
             'empty owner' => [
                 'isValid'       => false,
