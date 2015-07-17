@@ -103,12 +103,25 @@ class LineItemTypeTest extends FormIntegrationTestCase
      * @param mixed $defaultData
      * @param mixed $submittedData
      * @param mixed $expectedData
+     * @param bool $isExisting
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData)
+    public function testSubmit($defaultData, $submittedData, $expectedData, $isExisting)
     {
         $form = $this->factory->create($this->type, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
+
+        if ($isExisting) {
+            $repo = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+                ->disableOriginalConstructor()
+                ->getMock();
+            $repo->expects($this->once())
+                ->method('getProductUnitsQueryBuilder')
+                ->will($this->returnValue(null));
+
+            $closure = $form->get('unit')->getConfig()->getOptions()['query_builder'];
+            $this->assertNull($closure($repo));
+        }
 
         $form->submit($submittedData);
 
@@ -157,7 +170,8 @@ class LineItemTypeTest extends FormIntegrationTestCase
                     'unit'     => 'kg',
                     'notes'    => 'my note',
                 ],
-                'expectedData'  => $expectedLineItem
+                'expectedData'  => $expectedLineItem,
+                'isExisting'    => false,
             ],
             'existing line item' => [
                 'defaultData'   => $existingLineItem,
@@ -167,7 +181,8 @@ class LineItemTypeTest extends FormIntegrationTestCase
                     'unit'     => 'kg',
                     'notes'    => 'note1',
                 ],
-                'expectedData'  => $expectedLineItem2
+                'expectedData'  => $expectedLineItem2,
+                'isExisting'    => true,
             ],
         ];
     }
