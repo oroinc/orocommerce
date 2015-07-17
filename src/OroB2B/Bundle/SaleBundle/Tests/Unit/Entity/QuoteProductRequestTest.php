@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\RFPAdminBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 

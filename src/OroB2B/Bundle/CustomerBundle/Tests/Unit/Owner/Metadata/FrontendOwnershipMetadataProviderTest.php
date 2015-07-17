@@ -348,7 +348,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'without class' => [
-                'maxAccessLevel' => AccessLevel::NONE_LEVEL,
+                'maxAccessLevel' => AccessLevel::SYSTEM_LEVEL,
                 'accessLevel' => AccessLevel::SYSTEM_LEVEL,
             ],
             'NONE default' => [

@@ -7,7 +7,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\RFPAdminBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
