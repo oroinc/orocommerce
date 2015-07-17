@@ -43,6 +43,10 @@
     margin: 0 10px !important;
 }
 
+.product-container .grid-container .product-price-unit-with-margin {
+    margin-top: 5px !important;
+}
+
 .product-price-filter .value-field-frame {
     margin-right: 0px !important;
 }

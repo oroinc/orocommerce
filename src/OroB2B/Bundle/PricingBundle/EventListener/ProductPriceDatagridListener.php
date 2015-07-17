@@ -96,10 +96,13 @@ class ProductPriceDatagridListener
         $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
 
         $priceList = $this->getPriceList();
-        $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds);
+        $showTierPrices = $this->priceListRequestHandler->getShowTierPrices();
+        $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds, $showTierPrices);
         $groupedPrices = $this->groupPrices($prices);
 
         foreach ($records as $record) {
+            $record->addData(['showTierPrices' => $showTierPrices]);
+
             $productId = $record->getValue('id');
             $priceContainer = [];
             foreach ($currencies as $currencyIsoCode) {
