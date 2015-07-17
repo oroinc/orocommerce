@@ -83,6 +83,10 @@ class PriceFilterType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults([]);
+        $resolver->setDefaults(
+            [
+                'data_type' => NumberFilterType::DATA_DECIMAL,
+            ]
+        );
     }
 }

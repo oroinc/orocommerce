@@ -33,7 +33,7 @@ class PriceFilterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->assertEquals(true, $this->priceFilter->apply($ds, []));
+        $this->assertEquals(false, $this->priceFilter->apply($ds, []));
     }
 
     public function testGetMetadata()
