@@ -7,6 +7,12 @@
             {{ UI.renderProperty('orob2b.sale.quote.id.label'|trans, entity.id) }}
             {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
+            {% if entity.request %}
+                {% set request %}
+                    <a href="{{ path('orob2b_rfp_request_view', { id: entity.request.id }) }}">{{ entity.request }}</a>
+                {% endset %}
+                {{ UI.renderHtmlProperty('orob2b.sale.quote.request.label'|trans, request) }}
+            {% endif %}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

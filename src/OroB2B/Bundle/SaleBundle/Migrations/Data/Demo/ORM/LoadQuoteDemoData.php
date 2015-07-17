@@ -12,11 +12,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -47,7 +48,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData'
+            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData',
         ];
     }
 
@@ -57,8 +59,10 @@ class LoadQuoteDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $user = $this->getUser($manager);
+        $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
-        for ($i = 0; $i < 100; $i++) {
+
+        for ($i = 0; $i < 20; $i++) {
             // set date in future
             $validUntil = new \DateTime('now');
             $addDays = sprintf('+%s days', rand(10, 100));
@@ -69,7 +73,13 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setOrganization($organization)
                 ->setValidUntil($validUntil)
             ;
+
+            if (1 === rand(1, 3)) {
+                $quote->setRequest($requests[rand(1, count($requests) - 1)]);
+            }
+
             $this->processQuoteProducts($quote, $manager);
+
             $manager->persist($quote);
         }
 
@@ -77,9 +87,119 @@ class LoadQuoteDemoData extends AbstractFixture implements
     }
 
     /**
+     * @param Quote $quote
+     * @param ObjectManager $manager
+     */
+    protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
+    {
+        $products   = $this->getProducts($manager);
+        $currencies = $this->getCurrencies();
+
+        $types = [
+            QuoteProduct::TYPE_REQUESTED,
+            QuoteProduct::TYPE_NOT_AVAILABLE,
+        ];
+
+        $priceTypes = [
+            QuoteProductOffer::PRICE_TYPE_UNIT,
+            QuoteProductOffer::PRICE_TYPE_BUNDLED,
+        ];
+
+        if ($quote->getRequest()) {
+            foreach ($quote->getRequest()->getRequestProducts() as $requestProduct) {
+                $type = $types[rand(0, count($types) - 1)];
+
+                $quoteProduct = $this->createQuoteProduct($requestProduct->getProduct(), $type);
+
+                $this->processRequestProductItems($quoteProduct, $requestProduct);
+
+                $quote->addQuoteProduct($quoteProduct);
+            }
+        } else {
+            for ($i = 0; $i < rand(1, 3); $i++) {
+                $product = $products[rand(1, count($products) - 1)];
+                $quote->addQuoteProduct($this->createQuoteProduct($product, QuoteProduct::TYPE_OFFER));
+            }
+        }
+
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+
+            $unitPrecisions = $quoteProduct->getProduct()->getUnitPrecisions();
+
+            for ($j = 0; $j < rand(1, 3); $j++) {
+                if (!count($unitPrecisions)) {
+                    continue;
+                }
+
+                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
+
+                $currency = $currencies[rand(0, count($currencies) - 1)];
+                $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
+
+                $quoteProductOffer = new QuoteProductOffer();
+                $quoteProductOffer
+                    ->setPrice(Price::create(rand(1, 100), $currency))
+                    ->setQuantity(rand(1, 100))
+                    ->setProductUnit($productUnit)
+                    ->setPriceType($priceType)
+                    ->setAllowIncrements((bool)rand(0, 1))
+                ;
+
+                if ($quoteProduct->isTypeNotAvailable()) {
+                    $productReplacement = $products[rand(1, count($products) - 1)];
+                    $unitPrecisionsRepl = $productReplacement->getUnitPrecisions();
+                    $productUnitRepl = $unitPrecisionsRepl[rand(0, count($unitPrecisionsRepl) - 1)]->getUnit();
+                    $quoteProduct->setProductReplacement($productReplacement);
+                    $quoteProductOffer->setProductUnit($productUnitRepl);
+                }
+
+                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+            }
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @param int $type
+     * @return QuoteProduct
+     */
+    protected function createQuoteProduct(Product $product, $type)
+    {
+        static $index = 0;
+
+        $index++;
+
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct
+            ->setProduct($product)
+            ->setType($type)
+            ->setComment(sprintf('Seller Notes %s', $index + 1))
+            ->setCommentCustomer(sprintf('Customer Notes %s', $index + 1))
+        ;
+
+        return $quoteProduct;
+    }
+
+    /**
+     * @param QuoteProduct $quoteProduct
+     * @param RFPRequestProduct $requestProduct
+     */
+    protected function processRequestProductItems(QuoteProduct $quoteProduct, RFPRequestProduct $requestProduct)
+    {
+        foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
+            $quoteProductRequest = new QuoteProductRequest();
+            $quoteProductRequest
+                ->setPrice($requestProductItem->getPrice())
+                ->setQuantity($requestProductItem->getQuantity())
+                ->setProductUnit($requestProductItem->getProductUnit())
+            ;
+            $quoteProduct->addQuoteProductRequest($quoteProductRequest);
+        }
+    }
+
+    /**
      * @param ObjectManager $manager
      * @return Collection|Product[]
-     * @throws \LogicException
      */
     protected function getProducts(ObjectManager $manager)
     {
@@ -90,6 +210,21 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $products;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|RFPRequest[]
+     */
+    protected function getRequests(ObjectManager $manager)
+    {
+        $requests = $manager->getRepository('OroB2BRFPBundle:Request')->findBy([], null, 10);
+
+        if (!count($requests)) {
+            throw new \LogicException('There are no RFPRequests in system');
+        }
+
+        return $requests;
     }
 
     /**
@@ -109,80 +244,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $currencies;
-    }
-
-    /**
-     * @param Quote $quote
-     * @param ObjectManager $manager
-     */
-    protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
-    {
-        $products   = $this->getProducts($manager);
-        $currencies = $this->getCurrencies();
-        $types = [
-            QuoteProduct::TYPE_OFFER,
-            QuoteProduct::TYPE_REQUESTED,
-            QuoteProduct::TYPE_NOT_AVAILABLE,
-        ];
-        $priceTypes = [
-            QuoteProductOffer::PRICE_TYPE_UNIT,
-            QuoteProductOffer::PRICE_TYPE_BUNDLED,
-        ];
-        for ($i = 0; $i < rand(1, 3); $i++) {
-            $product = $products[rand(1, count($products) - 1)];
-            $unitPrecisions = $product->getUnitPrecisions();
-            $type = $types[rand(0, count($types) - 1)];
-            $quoteProduct = new QuoteProduct();
-            $quoteProduct
-                ->setProduct($product)
-                ->setType($type)
-                ->setComment(sprintf('Seller Notes %s', $i + 1))
-                ->setCommentCustomer(sprintf('Customer Notes %s', $i + 1))
-            ;
-
-            for ($j = 0; $j < rand(1, 3); $j++) {
-                if (!count($unitPrecisions)) {
-                    continue;
-                }
-
-                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
-
-                $currency = $currencies[rand(0, count($currencies) - 1)];
-                $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
-
-                if ($quoteProduct->isTypeRequested() || $quoteProduct->isTypeNotAvailable()) {
-                    $quoteProductRequest = new QuoteProductRequest();
-                    $quoteProductRequest
-                        ->setPrice(OptionalPrice::create(rand(1, 100), $currency))
-                        ->setQuantity(rand(1, 100))
-                        ->setProductUnit($productUnit)
-                    ;
-                    $quoteProduct->addQuoteProductRequest($quoteProductRequest);
-                }
-
-                $quoteProductOffer = new QuoteProductOffer();
-                $quoteProductOffer
-                    ->setPrice(Price::create(rand(1, 100), $currency))
-                    ->setQuantity(rand(1, 100))
-                    ->setProductUnit($productUnit)
-                    ->setPriceType($priceType)
-                    ->setAllowIncrements((bool)rand(0, 1))
-                ;
-
-                if ($quoteProduct->isTypeNotAvailable()) {
-                    $productReplacement = $products[rand(1, count($products) - 1)];
-                    $unitPrecisionsRepl = $productReplacement->getUnitPrecisions();
-                    if (count($unitPrecisions)) {
-                        $productUnitRepl = $unitPrecisionsRepl[rand(0, count($unitPrecisionsRepl) - 1)]->getUnit();
-                        $quoteProduct->setProductReplacement($productReplacement);
-                        $quoteProductOffer->setProductUnit($productUnitRepl);
-                    }
-                }
-
-                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
-            }
-            $quote->addQuoteProduct($quoteProduct);
-        }
     }
 
     /**
