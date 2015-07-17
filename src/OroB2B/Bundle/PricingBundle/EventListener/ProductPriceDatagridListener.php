@@ -71,6 +71,13 @@ class ProductPriceDatagridListener
             ];
 
             $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
+
+            $filter = [
+                'type' => 'product-price',
+                'data_name' => $currencyIsoCode
+            ];
+
+            $config->offsetSetByPath(sprintf('[filters][columns][%s]', $columnName), $filter);
         }
     }
 

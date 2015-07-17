@@ -18,6 +18,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
     protected $formFactory;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     */
+    protected $form;
+
+    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|FilterUtility
      */
     protected $filterUtility;
@@ -29,7 +34,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
         $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->formFactory->expects($this->any())
+            ->method('create')
+            ->will($this->returnValue($this->form));
 
         $this->filterUtility = $this->getMockBuilder('Oro\Bundle\FilterBundle\Filter\FilterUtility')
             ->disableOriginalConstructor()
@@ -43,7 +52,38 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        unset($this->formFactory, $this->filterUtility, $this->productPriceFilter);
+        unset($this->formFactory, $this->form, $this->filterUtility, $this->productPriceFilter);
+    }
+
+    /**
+     * @dataProvider parseDataDataProvider
+     * @param $data
+     * @param $expected
+     */
+    public function testParseData($data, $expected)
+    {
+        $this->assertEquals($expected, $this->productPriceFilter->parseData($data));
+    }
+
+    /**
+     * @return array
+     */
+    public function parseDataDataProvider()
+    {
+        return [
+            'correct' => [
+                'data' => ['value' => 20, 'type' => 'type'],
+                'expected' => ['value' => 20, 'type' => 'type']
+            ],
+            'without value' => [
+                'data' => [],
+                'expected' => false
+            ],
+            'not numeric value' => [
+                'data' => ['value' => 'not numeric'],
+                'expected' => false
+            ]
+        ];
     }
 
     public function testGetMetadata()
@@ -59,13 +99,9 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
             'unit' => clone $childFormView
         ];
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
-        $form->expects($this->any())
+        $this->form->expects($this->any())
             ->method('createView')
             ->willReturn($formView);
-
-        $this->formFactory->expects($this->any())->method('create')->willReturn($form);
 
         $metadata = $this->productPriceFilter->getMetadata();
 

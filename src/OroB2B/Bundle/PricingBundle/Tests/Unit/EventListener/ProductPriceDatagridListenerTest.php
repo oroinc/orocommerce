@@ -146,6 +146,18 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'frontend_type' => 'html',
                         ],
                     ],
+                    'filters' => [
+                        'columns' => [
+                            'price_column_usd' => [
+                                'type' => 'product-price',
+                                'data_name' => 'USD'
+                            ],
+                            'price_column_eur' => [
+                                'type' => 'product-price',
+                                'data_name' => 'EUR'
+                            ]
+                        ]
+                    ]
                 ],
             ],
         ];

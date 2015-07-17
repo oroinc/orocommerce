@@ -98,7 +98,7 @@ define(function(require) {
                     if (data.widgetReload) {
                         widget.render();
                     } else {
-                        mediator.trigger('datagrid:doReset:' + widgetParams.gridName);
+                        mediator.trigger('datagrid:doRefresh:' + widgetParams.gridName);
                     }
                 }
             );
