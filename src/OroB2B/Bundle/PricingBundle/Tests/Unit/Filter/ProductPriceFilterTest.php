@@ -2,56 +2,66 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Filter;
 
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\Test\FormInterface;
-
-use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
-use Oro\Bundle\FilterBundle\Filter\FilterUtility;
-
 use OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter;
 
 class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ProductPriceFilter
-     */
-    protected $productPriceFilter;
+    /** @var  ProductPriceFilter */
+    protected $priceFilter;
+
+    /** @var \Symfony\Component\Form\FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $formFactory;
+
+    /** @var \Oro\Bundle\FilterBundle\Filter\FilterUtility|\PHPUnit_Framework_MockObject_MockObject */
+    protected $filterUtility;
 
     public function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormFactoryInterface $formFactory */
-        $formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
-        $formFactory->expects($this->any())
+        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->formFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($form));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FilterUtility $filterUtility */
-        $filterUtility = $this->getMockBuilder('Oro\Bundle\FilterBundle\Filter\FilterUtility')
+        $this->filterUtility = $this->getMockBuilder('Oro\Bundle\FilterBundle\Filter\FilterUtility')
             ->disableOriginalConstructor()
             ->getMock();
-        $filterUtility->expects($this->any())
+        $this->filterUtility->expects($this->any())
             ->method('getExcludeParams')
             ->will($this->returnValue([]));
 
-        $this->productPriceFilter = new ProductPriceFilter($formFactory, $filterUtility);
+        $this->priceFilter = new ProductPriceFilter($this->formFactory, $this->filterUtility);
     }
 
-    public function testApply()
+    /**
+     * @dataProvider parseDataDataProvider
+     * @param $data
+     * @param $expected
+     */
+    public function testParseData($data, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OrmFilterDatasourceAdapter $ds */
-        $ds = $this->getMockBuilder('Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->assertEquals(false, $this->productPriceFilter->apply($ds, []));
+        $this->assertEquals($expected, $this->priceFilter->parseData($data));
     }
 
-    public function testGetMetadata()
+    /**
+     * @return array
+     */
+    public function parseDataDataProvider()
     {
-        $metadata = $this->productPriceFilter->getMetadata();
-        $this->assertEquals(true, array_key_exists('unitChoices', $metadata));
+        return [
+            'correct' => [
+                'data' => ['value' => 20, 'type' => 'type'],
+                'expected' => ['value' => 20, 'type' => 'type']
+            ],
+            'without value' => [
+                'data' => [],
+                'expected' => false
+            ],
+            'not numeric value' => [
+                'data' => ['value' => 'not numeric'],
+                'expected' => false
+            ]
+        ];
     }
 }
