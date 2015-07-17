@@ -199,6 +199,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     )
                 );
 
+            $this->priceListRequestHandler->expects($this->any())->method('getShowTierPrices')->willReturn(true);
+
             $priceRepository->expects($this->any())
                 ->method('findByPriceListIdAndProductIds')
                 ->with($priceListId, $productIds)
@@ -266,18 +268,21 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'name' => 'first',
                         'price_column_usd' => [$this->createPrice(1, 10, 'USD')],
                         'price_column_eur' => [$this->createPrice(1, 11, 'EUR'), $this->createPrice(1, 12, 'EUR')],
+                        'showTierPrices' => true
                     ],
                     [
                         'id' => 2,
                         'name' => 'second',
                         'price_column_usd' => [$this->createPrice(2, 20, 'USD')],
                         'price_column_eur' => [],
+                        'showTierPrices' => true
                     ],
                     [
                         'id' => 3,
                         'name' => 'third',
                         'price_column_usd' => [],
                         'price_column_eur' => [],
+                        'showTierPrices' => true
                     ],
                 ],
             ],

@@ -42,3 +42,7 @@
 .product-container .show-tier-prices-choice input {
     margin: 0 10px !important;
 }
+
+.product-container .grid-container .product-price-unit-with-margin {
+    margin-top: 5px !important;
+}
