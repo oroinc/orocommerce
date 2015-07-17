@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -10,6 +9,8 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
@@ -26,26 +27,23 @@ class ProductPriceDatagridListener
     protected $doctrineHelper;
 
     /**
-     * @var Request
+     * @var PriceListRequestHandler
      */
-    protected $request;
+    protected $priceListRequestHandler;
 
     /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
+     * @param PriceListRequestHandler $priceListRequestHandler
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        PriceListRequestHandler $priceListRequestHandler
+    ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest(Request $request = null)
-    {
-        $this->request = $request;
+        $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
     /**
@@ -53,13 +51,8 @@ class ProductPriceDatagridListener
      */
     public function onBuildBefore(BuildBefore $event)
     {
-        if (!$this->request) {
-            return;
-        }
-
-        $priceListId = $this->getPriceListId();
         $currencies = $this->getCurrencies();
-        if (!$priceListId || !$currencies) {
+        if (!$currencies) {
             return;
         }
 
@@ -77,9 +70,7 @@ class ProductPriceDatagridListener
                 'frontend_type' => 'html',
             ];
 
-            $select = $config->offsetGetByPath('[columns]');
-            $select[$columnName] = $column;
-            $config->offsetSetByPath('[columns]', $select);
+            $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
         }
     }
 
@@ -88,13 +79,8 @@ class ProductPriceDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
-        if (!$this->request) {
-            return;
-        }
-
-        $priceListId = $this->getPriceListId();
         $currencies = $this->getCurrencies();
-        if (!$priceListId || !$currencies) {
+        if (!$currencies) {
             return;
         }
 
@@ -108,7 +94,9 @@ class ProductPriceDatagridListener
 
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
-        $prices = $priceRepository->findByPriceListIdAndProductIds($priceListId, $productIds);
+
+        $priceList = $this->getPriceList();
+        $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds);
         $groupedPrices = $this->groupPrices($prices);
 
         foreach ($records as $record) {
@@ -138,11 +126,11 @@ class ProductPriceDatagridListener
     }
 
     /**
-     * @return int
+     * @return PriceList
      */
-    protected function getPriceListId()
+    protected function getPriceList()
     {
-        return (int)$this->request->get('priceListId');
+        return $this->priceListRequestHandler->getPriceList();
     }
 
     /**
@@ -150,15 +138,7 @@ class ProductPriceDatagridListener
      */
     protected function getCurrencies()
     {
-        $currencies = (array)$this->request->get('priceCurrencies', []);
-
-        foreach ($currencies as $key => $code) {
-            if (!preg_match('/^[a-zA-Z0-9]+$/', $code)) {
-                unset($currencies[$key]);
-            }
-        }
-
-        return $currencies;
+        return $this->priceListRequestHandler->getPriceListSelectedCurrencies();
     }
 
     /**
