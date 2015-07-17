@@ -51,6 +51,7 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.quantity.label'
             ])
             ->add('price', PriceType::NAME, [
+                'error_bubbling' => false,
                 'required' => true,
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
             ])
