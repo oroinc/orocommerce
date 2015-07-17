@@ -18,6 +18,7 @@ define(function(require) {
          */
         options: {
             widgetAlias: 'products-grid-widget',
+            widgetContent: '.product-index-content',
             widgetRouteParameters: {
                 gridName: 'products-grid',
                 renderParams: {
@@ -56,8 +57,14 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$container = options._sourceElement;
+            this.$widgetContent = $(options.widgetContent);
 
             mediator.on('product_sidebar:changed', this.onSidebarChange, this);
+
+            this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
+            this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
+
+            this._maximizeOrMaximize(null);
         },
 
         /**
@@ -85,8 +92,7 @@ define(function(require) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
 
-            var pageUrl = location.pathname + '?' + this._urlParamsToString(params) + location.hash;
-            history.pushState({}, document.title, pageUrl);
+            history.pushState({}, document.title, location.pathname + '?' + $.param(params) + location.hash);
 
             this._patchGridCollectionUrl(params);
 
@@ -129,6 +135,56 @@ define(function(require) {
             return this._queryStringToObject(location.search.slice(1));
         },
 
+        /**
+         * @private
+         * @param {Object} params
+         */
+        _pushState: function(params) {
+            var paramsString = this._urlParamsToString(params);
+            if (paramsString.length > 0) {
+                paramsString = '?' + paramsString;
+            }
+
+            history.pushState({}, document.title, location.pathname + paramsString + location.hash);
+        },
+
+
+        minimize: function() {
+            this._maximizeOrMaximize('off');
+        },
+
+        maximize: function() {
+            this._maximizeOrMaximize('on');
+        },
+
+        /**
+         * @private
+         * @param {string} state
+         */
+        _maximizeOrMaximize: function(state) {
+            var params = this._getCurrentUrlParams();
+
+            if (state === null) {
+                state = params.sidebar || 'on';
+            }
+
+            if (state === 'on') {
+                this.$container.find('.sidebar-minimized').hide();
+                this.$container.find('.sidebar-maximized').show();
+                this.$widgetContent.addClass('product-sidebar-maximized').removeClass('product-sidebar-minimized');
+
+                delete params.sidebar;
+            } else {
+                this.$container.find('.sidebar-maximized').hide();
+                this.$container.find('.sidebar-minimized').show();
+                this.$widgetContent.addClass('product-sidebar-minimized').removeClass('product-sidebar-maximized');
+
+                params.sidebar = state;
+            }
+
+            this._pushState(params);
+        },
+        
         /**
          * @param {String} query
          * @return {Object}

@@ -22,7 +22,13 @@
         data-page-component-module="orob2bpricing/js/app/components/product-sidebar-component"
         data-page-component-options="{{ pageComponentOptions|json_encode }}"
         >
-    <div class="sidebar-item default-price-list-choice">{{ form_row(priceList) }}</div>
-    <div class="sidebar-item currencies">{{ form_row(currencies) }}</div>
-    <div class="sidebar-item show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
+    <div class="sidebar-header">
+        <div class="sidebar-item sidebar-minimized sidebar-controls" style="display: none;"><i class="icon-double-angle-right control-maximize"></i></div>
+        <div class="sidebar-item sidebar-maximized sidebar-controls"><i class="icon-double-angle-left control-minimize"></i></div>
+    </div>
+    <div class="sidebar-content sidebar-maximized">
+        <div class="sidebar-item default-price-list-choice">{{ form_row(priceList) }}</div>
+        <div class="sidebar-item currencies">{{ form_row(currencies) }}</div>
+        <div class="sidebar-item show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
+    </div>
 </div>

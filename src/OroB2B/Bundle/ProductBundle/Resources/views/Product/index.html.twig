@@ -14,7 +14,7 @@
 
 {% block content_datagrid %}
     <div class="product-container">
-        {% set componentOptions = {widgetAlias: 'products-grid-widget', widgetRouteParameters: widgetRouteParameters} %}
+        {% set componentOptions = {widgetAlias: 'products-grid-widget', widgetContent: '.product-index-content', widgetRouteParameters: widgetRouteParameters} %}
         <div class="product-sidebar"
              data-page-component-module="orob2bproduct/js/app/components/product-sidebar-grid-component"
              data-page-component-options="{{ componentOptions|json_encode }}"

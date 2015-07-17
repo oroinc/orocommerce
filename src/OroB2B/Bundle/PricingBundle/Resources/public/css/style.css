@@ -22,13 +22,23 @@
     width: 293px;
 }
 
-.product-container .product-index-content {
+.product-container .product-index-content.product-sidebar-maximized {
     margin-left: 335px;
+}
+
+.product-container .product-index-content.product-sidebar-minimized {
+    margin-left: 45px;
 }
 
 .product-container .product-sidebar {
     position: absolute;
     padding-left: 20px;
+}
+
+.product-container .product-sidebar .control-maximize,
+.product-container .product-sidebar .control-minimize
+{
+    cursor: pointer;
 }
 
 .product-container .show-tier-prices-choice label {
@@ -41,6 +51,15 @@
 
 .product-container .show-tier-prices-choice input {
     margin: 0 10px !important;
+}
+
+.product-sidebar .sidebar-content {
+    width: 293px;
+}
+
+.product-sidebar .sidebar-controls,
+.product-sidebar .sidebar-controls i {
+    float: right;
 }
 
 .product-container .grid-container .product-price-unit-with-margin {
