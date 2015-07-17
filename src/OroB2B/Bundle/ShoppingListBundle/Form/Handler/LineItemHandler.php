@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 
 class LineItemHandler
 {
@@ -24,8 +25,8 @@ class LineItemHandler
 
     /**
      * @param FormInterface $form
-     * @param Request $request
-     * @param Registry $registry
+     * @param Request       $request
+     * @param Registry      $registry
      */
     public function __construct(
         FormInterface $form,
@@ -44,12 +45,12 @@ class LineItemHandler
      */
     public function process(LineItem $lineItem)
     {
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $existingLineItem = $this->manager
-                    ->getRepository('OroB2BShoppingListBundle:LineItem')
-                    ->findDuplicate($lineItem);
+                /** @var LineItemRepository $lineItemRepository */
+                $lineItemRepository = $this->manager->getRepository('OroB2BShoppingListBundle:LineItem');
+                $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
                 if ($existingLineItem) {
                     $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
@@ -59,6 +60,7 @@ class LineItemHandler
                 }
 
                 $this->manager->flush();
+
                 return true;
             }
         }

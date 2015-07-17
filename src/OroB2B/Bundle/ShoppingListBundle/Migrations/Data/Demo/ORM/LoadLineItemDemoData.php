@@ -65,11 +65,13 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
             return;
         }
 
-        $shoppingLists = $manager->getRepository('OroB2BShoppingListBundle:ShoppingList')->findAll();
         $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, rand(5, 15));
-        $chunkedProducts = array_chunk($products, ceil(count($products) / count($shoppingLists)));
+        $chunkedProducts = array_chunk($products, ceil(count($products) / count($labels)));
+        $shoppingListRepository = $manager->getRepository('OroB2BShoppingListBundle:ShoppingList');
 
-        foreach ($shoppingLists as $index => $shoppingList) {
+        foreach ($labels as $index => $shoppingListLabel) {
+            $shoppingList = $shoppingListRepository->findOneBy(['label' => $shoppingListLabel]);
+
             /** @var Product $product */
             foreach ($chunkedProducts[$index] as $id => $product) {
                 $lineItem = (new LineItem())
@@ -80,8 +82,9 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
                     ->setUnit($product->getUnitPrecisions()->current()->getUnit());
 
                 $manager->persist($lineItem);
-                $manager->flush();
             }
         }
+
+        $manager->flush();
     }
 }

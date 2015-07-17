@@ -63,10 +63,43 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertSaved($form);
     }
 
+    public function testCreateDuplicate()
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_shopping_list_line_item_create_widget',
+                [
+                    'shoppingListId' => $lineItem->getShoppingList()->getId(),
+                    '_widgetContainer' => 'dialog',
+                    '_wid' => 'test-uuid'
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $form = $crawler->selectButton('Save')->form(
+            [
+                'orob2b_shopping_list_line_item[product]' => $lineItem->getProduct()->getId(),
+                'orob2b_shopping_list_line_item[quantity]' => 100,
+                'orob2b_shopping_list_line_item[notes]' => 'test_notes',
+                'orob2b_shopping_list_line_item[unit]' => $lineItem->getUnit()->getCode()
+            ]
+        );
+
+        $this->assertSaved($form);
+    }
+
     public function testUpdate()
     {
         /** @var LineItem $lineItem */
         $lineItem = $this->getReference('shopping_list_line_item.1');
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
 
         $crawler = $this->client->request(
             'GET',
@@ -85,6 +118,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form(
             [
                 'orob2b_shopping_list_line_item[quantity]' => 33.3,
+                'orob2b_shopping_list_line_item[unit]' => $unit->getCode(),
                 'orob2b_shopping_list_line_item[notes]' => 'Updated test notes',
             ]
         );

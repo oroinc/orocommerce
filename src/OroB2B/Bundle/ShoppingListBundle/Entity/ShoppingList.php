@@ -22,7 +22,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *          @ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})
  *      }
  * )
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
+ * @ORM\Entity
  * @Config(
  *      routeName="orob2b_shopping_list_index",
  *      routeView="orob2b_shopping_list_view",
@@ -184,7 +184,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function __toString()
     {
-        return $this->label;
+        return (string) $this->label;
     }
 
     /**
@@ -315,6 +315,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
 
     /**
      * @param LineItem $item
+     *
      * @return $this
      */
     public function addLineItem(LineItem $item)
@@ -329,6 +330,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
 
     /**
      * @param LineItem $item
+     *
      * @return $this
      */
     public function removeLineItem(LineItem $item)

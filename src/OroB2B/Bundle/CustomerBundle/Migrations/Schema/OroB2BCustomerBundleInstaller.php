@@ -18,7 +18,6 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 /**
- * Class OroB2BCustomerBundleInstaller
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class OroB2BCustomerBundleInstaller implements
@@ -88,7 +87,7 @@ class OroB2BCustomerBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -114,6 +113,8 @@ class OroB2BCustomerBundleInstaller implements
         $this->createOroB2BAccountUserRoleToWebsiteTable($schema);
         $this->createOroB2BCustomerTable($schema);
         $this->createOroB2BCustomerGroupTable($schema);
+        $this->createOroB2BAuditFieldTable($schema);
+        $this->createOroB2BAuditTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -121,6 +122,8 @@ class OroB2BCustomerBundleInstaller implements
         $this->addOroB2BAccountUserOrganizationForeignKeys($schema);
         $this->addOroB2BAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroB2BCustomerForeignKeys($schema);
+        $this->addOroB2BAuditFieldForeignKeys($schema);
+        $this->addOroB2BAuditForeignKeys($schema);
     }
 
     /**
@@ -267,6 +270,56 @@ class OroB2BCustomerBundleInstaller implements
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_group_name_idx', []);
+    }
+
+    /**
+     * Create orob2b_audit_field table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAuditFieldTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_audit_field');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('audit_id', 'integer', []);
+        $table->addColumn('field', 'string', ['length' => 255]);
+        $table->addColumn('data_type', 'string', ['length' => 255]);
+        $table->addColumn('old_integer', 'bigint', ['notnull' => false]);
+        $table->addColumn('old_float', 'float', ['notnull' => false]);
+        $table->addColumn('old_boolean', 'boolean', ['notnull' => false]);
+        $table->addColumn('old_text', 'text', ['notnull' => false]);
+        $table->addColumn('old_date', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
+        $table->addColumn('old_time', 'time', ['notnull' => false, 'comment' => '(DC2Type:time)']);
+        $table->addColumn('old_datetime', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
+        $table->addColumn('new_integer', 'bigint', ['notnull' => false]);
+        $table->addColumn('new_float', 'float', ['notnull' => false]);
+        $table->addColumn('new_boolean', 'boolean', ['notnull' => false]);
+        $table->addColumn('new_text', 'text', ['notnull' => false]);
+        $table->addColumn('new_date', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
+        $table->addColumn('new_time', 'time', ['notnull' => false, 'comment' => '(DC2Type:time)']);
+        $table->addColumn('new_datetime', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_audit table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAuditTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_audit');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('object_name', 'string', ['length' => 255]);
+        $table->addColumn('action', 'string', ['length' => 8]);
+        $table->addColumn('logged_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('object_id', 'integer', ['notnull' => false]);
+        $table->addColumn('object_class', 'string', ['length' => 255]);
+        $table->addColumn('version', 'integer', []);
+        $table->addIndex(['logged_at'], 'idx_orob2b_audit_logged_at', []);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -427,6 +480,44 @@ class OroB2BCustomerBundleInstaller implements
             ['account_user_role_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_audit_field foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAuditFieldForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_audit_field');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_audit'),
+            ['audit_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_audit foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAuditForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_audit');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }
