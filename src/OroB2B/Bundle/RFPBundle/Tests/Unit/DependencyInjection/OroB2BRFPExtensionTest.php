@@ -18,16 +18,11 @@ class OroB2BRFPExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedParameters = [
-            'orob2b_rfp.form.type.request.class'
+            'orob2b_rfp.entity.request.class',
+            'orob2b_rfp.entity.request.status.class',
         ];
 
         $this->assertParametersLoaded($expectedParameters);
-
-        $expectedDefenitions = [
-            'orob2b_rfp.form.type.request'
-        ];
-
-        $this->assertDefinitionsLoaded($expectedDefenitions);
 
         $this->assertEquals('oro_b2b_rfp', $extension->getAlias());
     }

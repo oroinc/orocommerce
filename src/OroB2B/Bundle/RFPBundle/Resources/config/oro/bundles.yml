@@ -1,0 +1,2 @@
+bundles:
+    - { name: OroB2B\Bundle\RFPBundle\OroB2BRFPBundle, priority: 20 }

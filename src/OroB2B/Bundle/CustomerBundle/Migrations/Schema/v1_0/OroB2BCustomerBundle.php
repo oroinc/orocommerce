@@ -156,8 +156,8 @@ class OroB2BCustomerBundle implements
 
         $table->setPrimaryKey(['id']);
 
-        $table->addUniqueIndex(['username'], 'UNIQ_689CD865F85E0677');
-        $table->addUniqueIndex(['email'], 'UNIQ_689CD865E7927C74');
+        $table->addUniqueIndex(['username']);
+        $table->addUniqueIndex(['email']);
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
             static::ORO_B2B_ACCOUNT_USER_TABLE_NAME,
@@ -294,7 +294,7 @@ class OroB2BCustomerBundle implements
         $table->addColumn('role', 'string', ['length' => 64]);
         $table->addColumn('label', 'string', ['length' => 64]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['role'], 'uniq_e153330157698a6a');
+        $table->addUniqueIndex(['role']);
     }
 
     /**
@@ -308,7 +308,7 @@ class OroB2BCustomerBundle implements
         $table->addColumn('account_user_role_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['account_user_role_id', 'website_id']);
-        $table->addUniqueIndex(['website_id'], 'UNIQ_EC532EDD18F45C82');
+        $table->addUniqueIndex(['website_id']);
     }
 
     /**

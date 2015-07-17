@@ -43,11 +43,8 @@ class OroB2BCMSBundle implements Migration
         $table->addColumn('tree_root', 'integer', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addUniqueIndex(['current_slug_id'], 'uniq_99cf638e9b14e34b');
+        $table->addUniqueIndex(['current_slug_id']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['parent_id'], 'idx_64a9fc9e2aaa38', []);
-        $table->addIndex(['current_slug_id'], 'idx_630cccaba7bf3f', []);
-        $table->addIndex(['organization_id'], 'idx_af6a6ae1a9aa6f', []);
     }
 
     /**
@@ -61,8 +58,7 @@ class OroB2BCMSBundle implements Migration
         $table->addColumn('page_id', 'integer', []);
         $table->addColumn('slug_id', 'integer', []);
         $table->setPrimaryKey(['page_id', 'slug_id']);
-        $table->addIndex(['page_id'], 'idx_5c529a7f4e8a67', []);
-        $table->addUniqueIndex(['slug_id'], 'uniq_cb7c4340311966ce');
+        $table->addUniqueIndex(['slug_id']);
     }
 
     /**
