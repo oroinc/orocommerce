@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 class ProductController extends Controller
 {
@@ -16,6 +17,7 @@ class ProductController extends Controller
      *
      * @Route("/", name="orob2b_product_frontend_product_index")
      * @Template("OroB2BProductBundle:Product\Frontend:index.html.twig")
+     * @AclAncestor("orob2b_product_view_products")
      *
      * @return array
      */
