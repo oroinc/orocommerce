@@ -1,8 +1,10 @@
+/*global define*/
 define([
+    'jquery',
     'underscore',
     'orotranslation/js/translator',
     'oro/filter/number-filter'
-], function(_, __, NumberFilter) {
+], function($, _, __, NumberFilter) {
     'use strict';
 
     var PriceFilter;
@@ -14,15 +16,15 @@ define([
          * @inheritDoc
          */
         criteriaValueSelectors: {
-            unit: 'input[name="unit"]:last',
-            type: 'input[type="hidden"]:last',
+            unit: 'input[name="unit"]',
+            type: 'input[name="price"]',
             value: 'input[name="value"]'
         },
 
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
+        initialize: function() {
             this.emptyValue = {
                 unit: (_.isEmpty(this.unitChoices) ? '' : _.first(this.unitChoices).value),
                 type: (_.isEmpty(this.choices) ? '' : _.first(this.choices).value),
