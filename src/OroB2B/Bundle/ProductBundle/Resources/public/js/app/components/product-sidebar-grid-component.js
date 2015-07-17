@@ -49,8 +49,8 @@ define(function(require) {
 
             mediator.on('product_sidebar:changed', this.onSidebarChange, this);
 
-            this.$container.find('.controll-minimize').click(_.bind(this.minimize, this));
-            this.$container.find('.controll-maximize').click(_.bind(this.maximize, this));
+            this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
+            this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
 
             this._maximizeOrMaximize(null);
         },
@@ -113,16 +113,16 @@ define(function(require) {
 
         /**
          * @private
-         * @param {string} sidebar
+         * @param {string} state
          */
-        _maximizeOrMaximize: function(sidebar) {
+        _maximizeOrMaximize: function(state) {
             var params = this._getCurrentUrlParams();
 
-            if (sidebar === null) {
-                sidebar = params.sidebar || 'on';
+            if (state === null) {
+                state = params.sidebar || 'on';
             }
 
-            if (sidebar === 'on') {
+            if (state === 'on') {
                 this.$container.find('.sidebar-minimized').hide();
                 this.$container.find('.sidebar-maximized').show();
                 this.$widgetContent.addClass('product-sidebar-maximized').removeClass('product-sidebar-minimized');
@@ -133,7 +133,7 @@ define(function(require) {
                 this.$container.find('.sidebar-minimized').show();
                 this.$widgetContent.addClass('product-sidebar-minimized').removeClass('product-sidebar-maximized');
 
-                params.sidebar = sidebar;
+                params.sidebar = state;
             }
 
             this._pushState(params);
