@@ -1,16 +1,16 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var QuoteProductItemSelectionComponent,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        $ = require('jquery'),
-        _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),
-        routing = require('routing'),
-        messenger = require('oroui/js/messenger');
+    var QuoteProductItemSelectionComponent;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
+    var routing = require('routing');
+    var messenger = require('oroui/js/messenger');
 
     QuoteProductItemSelectionComponent = BaseComponent.extend({
         /**
@@ -40,12 +40,12 @@ define(function (require) {
         /**
          * @property {int}
          */
-        typeOffer : null,
+        typeOffer: null,
 
         /**
          * @property {int}
          */
-        typeReplacement : null,
+        typeReplacement: null,
 
         /**
          * @property {array}
@@ -55,52 +55,52 @@ define(function (require) {
         /**
          * @property {Object}
          */
-        $container : null,
+        $container: null,
 
         /**
          * @property {Object}
          */
-        $productSelect : null,
+        $productSelect: null,
 
         /**
          * @property {Object}
          */
-        $productReplacementSelect : null,
+        $productReplacementSelect: null,
 
         /**
          * @property {Object}
          */
-        $typeSelect : null,
+        $typeSelect: null,
 
         /**
          * @property {Object}
          */
-        $addItemButton : null,
+        $addItemButton: null,
 
         /**
          * @property {Object}
          */
-        $itemsContainer : null,
+        $itemsContainer: null,
 
         /**
          * @property {Object}
          */
-        $itemsCollectionContainer : null,
+        $itemsCollectionContainer: null,
 
         /**
          * @property {Object}
          */
-        $requestsOnlyContainer : null,
+        $requestsOnlyContainer: null,
 
         /**
          * @property {Object}
          */
-        $sellerNotesContainer : null,
+        $sellerNotesContainer: null,
 
         /**
          * @property {Object}
          */
-        $productReplacementContainer : null,
+        $productReplacementContainer: null,
 
         /**
          * @property {LoadingMaskView|null}
@@ -110,7 +110,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
 
@@ -140,10 +140,10 @@ define(function (require) {
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
 
-            this.checkAddButton();
-
             this.$typeSelect.uniform();
             this.$typeSelect.trigger('change');
+
+            this.checkAddButton();
         },
 
         checkAddButton: function() {
@@ -155,7 +155,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onProductChanged: function (e) {
+        onProductChanged: function(e) {
             this.checkAddButton();
 
             if (this.$itemsContainer.children().length) {
@@ -168,7 +168,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onTypeChanged: function (e) {
+        onTypeChanged: function(e) {
             var typeValue = parseInt(this.$typeSelect.val());
 
             this.$productReplacementContainer.toggle(this.typeReplacement === typeValue);
@@ -182,14 +182,14 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onContentChanged: function (e) {
+        onContentChanged: function(e) {
             this.updateContent(false);
         },
 
         /**
          * @param {Boolean} force
          */
-        updateContent: function (force) {
+        updateContent: function(force) {
             var productId = this.getProductId();
             var productUnits = this.units[productId];
 
@@ -200,17 +200,17 @@ define(function (require) {
                 $.ajax({
                     url: routing.generate(this.options.unitsRoute, {'id': productId}),
                     type: 'GET',
-                    beforeSend: function () {
+                    beforeSend: function() {
                         self.loadingMask.show();
                     },
-                    success: function (response) {
+                    success: function(response) {
                         self.units[productId] = response.units;
                         self.updateProductUnits(response.units, force || false);
                     },
-                    complete: function () {
+                    complete: function() {
                         self.loadingMask.hide();
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         self.loadingMask.hide();
                         messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
                     }
@@ -231,7 +231,7 @@ define(function (require) {
 
             var widgets = self.$container.find(self.options.itemWidget);
 
-            $.each(widgets, function (index, widget) {
+            $.each(widgets, function(index, widget) {
                 var select = $(widget).find(self.options.unitsSelect);
 
                 if (!force && $(select).hasClass(self.options.syncClass)) {
@@ -240,7 +240,7 @@ define(function (require) {
 
                 var currentValue = $(select).val();
                 $(select).empty();
-                $.each(units, function (key, value) {
+                $.each(units, function(key, value) {
                     $(select)
                         .append($('<option/>').val(key).text(value))
                     ;
@@ -266,7 +266,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onAddNotesClick: function (e) {
+        onAddNotesClick: function(e) {
             this.$itemsCollectionContainer.addClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').focus();
         },
@@ -276,7 +276,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onRemoveNotesClick: function (e) {
+        onRemoveNotesClick: function(e) {
             this.$itemsCollectionContainer.removeClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').val('');
         },
@@ -284,13 +284,13 @@ define(function (require) {
         /**
          * Get Product Id
          */
-        getProductId: function () {
-            return this.typeReplacement === parseInt(this.$typeSelect.val())
-                ? this.$productReplacementSelect.val()
-                : this.$productSelect.val();
+        getProductId: function() {
+            var isTypeReplacement = this.typeReplacement === parseInt(this.$typeSelect.val());
+
+            return isTypeReplacement ? this.$productReplacementSelect.val() : this.$productSelect.val();
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
