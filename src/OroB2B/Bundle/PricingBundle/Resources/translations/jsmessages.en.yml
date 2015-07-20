@@ -5,4 +5,4 @@ orob2b:
                 success: Product Price has been added
         filter:
             product_price:
-                per: per
+                per: '/'
