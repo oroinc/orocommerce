@@ -22,12 +22,12 @@ define(function(require) {
             widgetRouteParameters: {
                 gridName: 'products-grid',
                 renderParams: {
-                    enableFullScreenLayout: true,
-                    enableViews: false
+                    enableFullScreenLayout: 1,
+                    enableViews: 0
                 },
                 renderParamsTypes: {
-                    enableFullScreenLayout: 'bool',
-                    enableViews: 'bool'
+                    enableFullScreenLayout: 'int',
+                    enableViews: 'int'
                 }
             },
             sidebarItemSelector: '.sidebar-item'
@@ -184,7 +184,7 @@ define(function(require) {
 
             this._pushState(params);
         },
-        
+
         /**
          * @param {String} query
          * @return {Object}
