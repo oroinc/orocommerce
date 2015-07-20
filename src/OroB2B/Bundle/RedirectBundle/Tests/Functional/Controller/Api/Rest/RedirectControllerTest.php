@@ -6,11 +6,14 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use FOS\RestBundle\Util\Codes;
 
+/**
+ * @dbIsolation
+ */
 class RedirectControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient(array(), $this->generateWsseAuthHeader());
+        $this->initClient([], $this->generateWsseAuthHeader());
     }
 
     /**
