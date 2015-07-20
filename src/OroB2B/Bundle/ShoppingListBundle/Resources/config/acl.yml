@@ -1,0 +1,5 @@
+orob2b_shoppinglist_add_product:
+    label: Add Product
+    type: action
+    group_name: "commerce"
+    bindings: ~

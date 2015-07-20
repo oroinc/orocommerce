@@ -16,6 +16,9 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
         unit:
             - NotNull:
                 groups: [create, update]
+        shoppingList:
+            - NotNull:
+                groups: [create, update]
 
 OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:

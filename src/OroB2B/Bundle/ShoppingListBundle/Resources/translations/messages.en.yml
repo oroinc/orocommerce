@@ -42,6 +42,7 @@ orob2b:
             shopping_list.label: Shopping List
             unit.label: Unit
             add_line_item: Add Line Item
+            create_new_shopping_list: Create New
             new_shopping_list_label: Shopping List Label
 
             controller:

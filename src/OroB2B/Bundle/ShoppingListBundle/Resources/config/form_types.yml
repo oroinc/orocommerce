@@ -31,6 +31,6 @@ services:
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setProductClass, [%orob2b_product.product.class%]]
-            - [setShoppingListClass, [%%orob2b_shopping_list.entity.shopping_list.class%%]]
+            - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_add_product }

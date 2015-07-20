@@ -14,6 +14,8 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 class AddProductType extends AbstractType
 {
@@ -86,7 +88,7 @@ class AddProductType extends AbstractType
                 'entity',
                 [
                     'required' => false,
-                    'label' => 'orob2b.pricing.productprice.product.label',
+                    'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
                     'query_builder' => function (EntityRepository $repository) use ($accountUser) {
                         $qb = $repository->createQueryBuilder('sl');
@@ -99,7 +101,8 @@ class AddProductType extends AbstractType
                         )
                         ->setParameter('accountUser', $accountUser)
                         ->setParameter('account', $accountUser->getCustomer());
-                    }
+                    },
+                    'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
                 ]
             )
             ->add(
@@ -138,9 +141,23 @@ class AddProductType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
+                'constraint' => [
+                    new Callback(['methods' => [[$this, 'checkShoppingListLabel']]])
+                ]
             ]
         );
+    }
+
+    /**
+     * @param $data
+     * @param ExecutionContextInterface $context
+     */
+    public function checkShoppingListLabel($data, ExecutionContextInterface $context)
+    {
+        if (!$data['shoppingList'] && !$data['shoppingListLabel']) {
+            $context->addViolation('Shopping List label must not be empty');
+        }
     }
 
     /**
