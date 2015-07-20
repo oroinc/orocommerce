@@ -137,3 +137,79 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_sale_quote_delete
+
+    frontend-quotes-grid:
+        extended_entity_name: %orob2b_sale.entity.quote.class%
+        options:
+            entityHint:        quote
+            entity_pagination: true
+        source:
+            type:         orm
+            query:
+                select:
+                    - quote.id
+                    - quote.qid
+                    - quoteAccountUser.username as accountUserName
+                    - quoteAccount.name as accountName
+                    - quote.createdAt
+                    - quote.validUntil
+                from:
+                    - { table: %orob2b_sale.entity.quote.class%, alias: quote }
+                join:
+                    left:
+                        - { join: quote.accountUser, alias: quoteAccountUser }
+                        - { join: quote.account, alias: quoteAccount }
+        columns:
+            qid:
+                label:         orob2b.sale.quote.qid.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            validUntil:
+                label:         orob2b.sale.quote.valid_until.label
+                frontend_type: datetime
+            accountUserName:
+                label:         orob2b.sale.quote.column.assigned_to
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_sale_frontend_quote_view
+                params: [ id ]
+        sorters:
+            columns:
+                qid:
+                    data_name: quote.qid
+                accountUserName:
+                    data_name: accountUserName
+                createdAt:
+                    data_name: quote.createdAt
+                validUntil:
+                    data_name: quote.validUntil
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                qid:
+                    type:      string
+                    data_name: quote.qid
+                accountUserName:
+                    type:      entity
+                    data_name: quote.accountUser
+                    options:
+                        field_options:
+                            class:      %orob2b_customer.entity.account_user.class%
+                            multiple:   false
+                validUntil:
+                    type:      datetime
+                    data_name: quote.validUntil
+                createdAt:
+                    type:      datetime
+                    data_name: quote.createdAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
