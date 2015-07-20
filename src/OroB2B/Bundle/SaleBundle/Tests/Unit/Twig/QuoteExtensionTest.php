@@ -16,7 +16,7 @@ use OroB2B\Bundle\SaleBundle\Twig\QuoteExtension;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
@@ -41,6 +41,11 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
      */
     protected $productUnitLabelFormatter;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductTypeFormatter
+     */
+    protected $quoteProductTypeFormatter;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
@@ -164,6 +169,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatProductOffer(array $inputData, array $expectedData)
     {
+        /* @var $item QuoteProductOffer */
         $item = $inputData['item'];
 
         $item
@@ -213,6 +219,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFormatProductRequest(array $inputData, array $expectedData)
     {
+        /* @var $item QuoteProductRequest */
         $item = $inputData['item'];
 
         $item

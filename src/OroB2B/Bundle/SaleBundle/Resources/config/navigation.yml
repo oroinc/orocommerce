@@ -2,7 +2,7 @@ oro_menu_config:
     items:
         sale_tab:
             label: 'orob2b.sale.menu.label'
-            uri:   'javascript: void(0);'
+            uri:   '#'
             extras:
                 position: 60
 
@@ -12,7 +12,7 @@ oro_menu_config:
             extras:
                 position: 61
                 routes: ['/^orob2b_sale/']
-                
+
     tree:
         application_menu:
             children:

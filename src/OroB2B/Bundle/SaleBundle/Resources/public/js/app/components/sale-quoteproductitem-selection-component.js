@@ -267,6 +267,8 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onAddNotesClick: function(e) {
+            e.preventDefault();
+
             this.$itemsCollectionContainer.addClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').focus();
         },
@@ -277,6 +279,8 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onRemoveNotesClick: function(e) {
+            e.preventDefault();
+
             this.$itemsCollectionContainer.removeClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').val('');
         },

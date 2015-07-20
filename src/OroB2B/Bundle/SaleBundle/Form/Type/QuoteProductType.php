@@ -184,9 +184,10 @@ class QuoteProductType extends AbstractType
 
         if (!$quoteProduct->getProduct()) {
             $this->replaceProductField(
-                $quoteProduct,
                 $form,
                 'product',
+                true,
+                $quoteProduct->getProductSku(),
                 'orob2b.product.entity_label',
                 'orob2b.sale.quoteproduct.product.removed'
             );
@@ -194,9 +195,10 @@ class QuoteProductType extends AbstractType
 
         if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
             $this->replaceProductField(
-                $quoteProduct,
                 $form,
                 'productReplacement',
+                false,
+                $quoteProduct->getProductReplacementSku(),
                 'orob2b.sale.quoteproduct.product_replacement.label',
                 'orob2b.sale.quoteproduct.product_replacement.removed'
             );
@@ -204,28 +206,30 @@ class QuoteProductType extends AbstractType
     }
 
     /**
-     * @param QuoteProduct $quoteProduct
      * @param FormInterface $form
      * @param string $field
+     * @param bool $required
+     * @param string $productSku
      * @param string $label
      * @param string $emptyLabel
      */
     protected function replaceProductField(
-        QuoteProduct $quoteProduct,
         FormInterface $form,
         $field,
+        $required,
+        $productSku,
         $label,
         $emptyLabel = null
     ) {
         $options = [
             'create_enabled' => false,
-            'required' => true,
+            'required' => $required,
             'label' => $label,
         ];
 
         if ($emptyLabel) {
             $emptyValueTitle = $this->translator->trans($emptyLabel, [
-                '{title}' => $quoteProduct->getProductSku(),
+                '{title}' => $productSku,
             ]);
 
             $options['configs'] = [

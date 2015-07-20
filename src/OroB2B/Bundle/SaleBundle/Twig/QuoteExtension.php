@@ -140,19 +140,17 @@ class QuoteExtension extends \Twig_Extension
         $default = $this->translator->trans('N/A');
 
         if (!$item->getQuantity() && !$item->getPrice()) {
-            $str = $default;
-        } else {
-            $str = $this->translator->trans(
-                'orob2b.sale.quoteproductrequest.item',
-                [
-                    '{units}'   => $this->formatProductUnit($item, $default),
-                    '{price}'   => $this->formatPrice($item, $default),
-                    '{unit}'    => $this->formatUnitCode($item),
-                ]
-            );
+            return $default;
         }
 
-        return $str;
+        return $this->translator->trans(
+            'orob2b.sale.quoteproductrequest.item',
+            [
+                '{units}'   => $this->formatProductUnit($item, $default),
+                '{price}'   => $this->formatPrice($item, $default),
+                '{unit}'    => $this->formatUnitCode($item),
+            ]
+        );
     }
 
     /**
@@ -162,15 +160,13 @@ class QuoteExtension extends \Twig_Extension
      */
     protected function formatProductUnit(BaseQuoteProductItem $item, $default = '')
     {
-        $units = $default;
-
         if (!$item->getProductUnit()) {
-            $units = sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode());
+            return sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode());
         } elseif ($item->getQuantity()) {
-            $units = $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit());
+            return $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit());
         }
 
-        return $units;
+        return $default;
     }
 
     /**
@@ -180,16 +176,14 @@ class QuoteExtension extends \Twig_Extension
      */
     protected function formatPrice(BaseQuoteProductItem $item, $default = '')
     {
-        $price = $default;
-
         if ($item->getPrice()) {
-            $price = $this->numberFormatter->formatCurrency(
+            return $this->numberFormatter->formatCurrency(
                 $item->getPrice()->getValue(),
                 $item->getPrice()->getCurrency()
             );
         }
 
-        return $price;
+        return $default;
     }
 
     /**

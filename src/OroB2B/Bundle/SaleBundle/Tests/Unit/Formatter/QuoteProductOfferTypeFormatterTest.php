@@ -9,7 +9,7 @@ use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
 class QuoteProductOfferTypeFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QuoteProductTypeFormatter
+     * @var QuoteProductOfferTypeFormatter
      */
     protected $formatter;
 
@@ -39,9 +39,12 @@ class QuoteProductOfferTypeFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
      * @dataProvider formatPriceTypeLabelsProvider
      */
-    public function testFormatPriceTypeLabels($inputData, $expectedData)
+    public function testFormatPriceTypeLabels(array $inputData, array $expectedData)
     {
         $this->translator->expects($this->any())
             ->method('trans')

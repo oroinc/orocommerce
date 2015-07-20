@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
@@ -108,38 +109,34 @@ class QuoteProductTypeTest extends AbstractTest
         $this->assertEquals($expectedData, $view->vars);
     }
 
-//    /**
-//     * @param RequestProduct $inputData
-//     * @param array $expectedData
-//     *
-//     * @dataProvider preSetDataProvider
-//     */
-//    public function testPreSetData(RequestProduct $inputData = null, array $expectedData = [])
-//    {
-//        $productSku = $inputData ? $inputData->getProductSku() : '';
-//
-//        $placeholder = $expectedData['configs']['placeholder'];
-//
-//        $this->translator
-//            ->expects($placeholder ? $this->once() : $this->never())
-//            ->method('trans')
-//            ->with($placeholder, [
-//                '{title}' => $productSku,
-//            ])
-//            ->will($this->returnValue($placeholder))
-//        ;
-//
-//        $form = $this->factory->create($this->formType);
-//
-//        $this->formType->preSetData(new FormEvent($form, $inputData));
-//
-//        $options = $form->get('product')->getConfig()->getOptions();
-//
-//        foreach ($expectedData as $key => $value) {
-//            $this->assertEquals($value, $options[$key], $key);
-//        }
-//    }
-//
+    /**
+     * @param QuoteProduct $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider preSetDataProvider
+     */
+    public function testPreSetData(QuoteProduct $inputData = null, array $expectedData = [])
+    {
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->will($this->returnCallback(function ($id, array $params) {
+                return $id . ':' .$params['{title}'];
+            }))
+        ;
+
+        $form = $this->factory->create($this->formType);
+
+        $this->formType->preSetData(new FormEvent($form, $inputData));
+
+        foreach ($expectedData as $field => $fieldOptions) {
+            $options = $form->get($field)->getConfig()->getOptions();
+
+            foreach ($fieldOptions as $key => $value) {
+                $this->assertEquals($value, $options[$key], $key);
+            }
+        }
+    }
+
     /**
      * @return array
      */
@@ -369,35 +366,165 @@ class QuoteProductTypeTest extends AbstractTest
         ];
     }
 
-//    /**
-//     * @return array
-//     */
-//    public function preSetDataProvider()
-//    {
-//        return [
-//            'empty item' => [
-//                'inputData'     => null,
-//                'expectedData'  => [
-//                    'configs'   => [
-//                        'placeholder'   => null,
-//                    ],
-//                    'required'          => true,
-//                    'create_enabled'    => false,
-//                    'label'             => 'orob2b.product.entity_label',
-//                ],
-//            ],
-//            'deleted product' => [
-//                'inputData'     => $this->createRequestProduct(1, null, 'sku'),
-//                'expectedData'  => [
-//                    'configs'   => [
-//                        'placeholder' => 'orob2b.rfp.message.requestproductitem.unit.removed',
-//                    ],
-//                    'required'  => true,
-//                    'label'     => 'orob2b.product.entity_label',
-//                ],
-//            ],
-//        ];
-//    }
+    /**
+     * @return array
+     */
+    public function preSetDataProvider()
+    {
+        return [
+            'empty item' => [
+                'inputData'     => null,
+                'expectedData'  => [
+                    'product' => [
+                        'configs'   => [
+                            'placeholder'   => null,
+                        ],
+                        'required'          => true,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.product.entity_label',
+                    ],
+                    'productReplacement' => [
+                        'configs'   => [
+                            'placeholder'   => null,
+                        ],
+                        'required'          => false,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
+                    ],
+                ],
+            ],
+            'deleted product' => [
+                'inputData'     => $this->createQuoteProduct(1, null, 'sku', null, ''),
+                'expectedData'  => [
+                    'product' => [
+                        'configs'   => [
+                            'placeholder'   => 'orob2b.sale.quoteproduct.product.removed:sku',
+                        ],
+                        'required'          => true,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.product.entity_label',
+                    ],
+                    'productReplacement' => [
+                        'configs'   => [
+                            'placeholder'   => null,
+                        ],
+                        'required'          => false,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
+                    ],
+                ],
+            ],
+            'deleted product replacement' => [
+                'inputData'     => $this->createQuoteProduct(
+                    1,
+                    new Product(),
+                    'sku',
+                    null,
+                    'sku2',
+                    QuoteProduct::TYPE_NOT_AVAILABLE
+                ),
+                'expectedData'  => [
+                    'product' => [
+                        'configs'   => [
+                            'placeholder'   => null,
+                        ],
+                        'required'          => true,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.product.entity_label',
+                    ],
+                    'productReplacement' => [
+                        'configs'   => [
+                            'placeholder'   => 'orob2b.sale.quoteproduct.product_replacement.removed:sku2',
+                        ],
+                        'required'          => false,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
+                    ],
+                ],
+            ],
+            'existing product and replacement' => [
+                'inputData'     => $this->createQuoteProduct(
+                    1,
+                    new Product(),
+                    'sku',
+                    new Product(),
+                    'sku2',
+                    QuoteProduct::TYPE_NOT_AVAILABLE
+                ),
+                'expectedData'  => [
+                    'product' => [
+                        'configs'   => [
+                            'placeholder'   => null,
+                        ],
+                        'required'          => true,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.product.entity_label',
+                    ],
+                    'productReplacement' => [
+                        'configs'   => [
+                            'placeholder'   => null,
+                        ],
+                        'required'          => false,
+                        'create_enabled'    => false,
+                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param int $id
+     * @param Product $product
+     * @param string $productSku
+     * @param Product $replacement
+     * @param string $replacementSku
+     * @param int $type
+     * @return PHPUnit_Framework_MockObject_MockObject|QuoteProduct
+     */
+    protected function createQuoteProduct(
+        $id,
+        Product $product = null,
+        $productSku = null,
+        Product $replacement = null,
+        $replacementSku = null,
+        $type = QuoteProduct::TYPE_OFFER
+    ) {
+        /* @var $quoteProduct PHPUnit_Framework_MockObject_MockObject|QuoteProduct */
+        $quoteProduct = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
+        $quoteProduct
+            ->expects($this->any())
+            ->method('getId')
+            ->willReturn($id)
+        ;
+        $quoteProduct
+            ->expects($this->any())
+            ->method('isTypeNotAvailable')
+            ->willReturn($type === QuoteProduct::TYPE_NOT_AVAILABLE)
+        ;
+        $quoteProduct
+            ->expects($this->any())
+            ->method('getProduct')
+            ->willReturn($product)
+        ;
+        $quoteProduct
+            ->expects($this->any())
+            ->method('getProductSku')
+            ->willReturn($productSku)
+        ;
+        $quoteProduct
+            ->expects($this->any())
+            ->method('getProductReplacement')
+            ->willReturn($replacement)
+        ;
+        $quoteProduct
+            ->expects($this->any())
+            ->method('getProductReplacementSku')
+            ->willReturn($replacementSku)
+        ;
+
+        return $quoteProduct;
+    }
 
     /**
      * {@inheritdoc}

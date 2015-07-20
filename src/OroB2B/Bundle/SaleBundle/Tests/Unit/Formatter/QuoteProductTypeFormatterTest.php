@@ -39,9 +39,12 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
      * @dataProvider formatTypeLabelsProvider
      */
-    public function testFormatTypeLabels($inputData, $expectedData)
+    public function testFormatTypeLabels(array $inputData, array $expectedData)
     {
         $this->translator->expects($this->any())
             ->method('trans')
