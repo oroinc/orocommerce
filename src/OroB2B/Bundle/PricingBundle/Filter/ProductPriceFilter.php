@@ -16,12 +16,16 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductPriceFilter extends NumberFilter
 {
-
     /**
      * @var ProductUnitLabelFormatter
      */
     protected $formatter;
 
+    /**
+     * @param FormFactoryInterface $factory
+     * @param FilterUtility $util
+     * @param ProductUnitLabelFormatter $formatter
+     */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,
@@ -151,6 +155,7 @@ class ProductPriceFilter extends NumberFilter
         $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
         foreach ($unitChoices as $choice) {
             $metadata['unitChoices'][] = [
+                'data' => $choice->data,
                 'value' => $choice->value,
                 'label' => $choice->label,
                 'shortLabel' => $this->formatter->format($choice->value, true),
