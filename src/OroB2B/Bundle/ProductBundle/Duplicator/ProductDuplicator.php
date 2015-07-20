@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Exception;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
@@ -17,9 +18,9 @@ use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 class ProductDuplicator
 {
     /**
-     * @var ObjectManager
+     * @var DoctrineHelper
      */
-    protected $objectManager;
+    protected $doctrineHelper;
 
     /**
      * @var EventDispatcherInterface
@@ -42,22 +43,19 @@ class ProductDuplicator
     protected $attachmentProvider;
 
     /**
-     * @param ObjectManager $objectManager
+     * @param DoctrineHelper $doctrineHelper
      * @param EventDispatcherInterface $eventDispatcher
-     * @param SkuIncrementorInterface $skuIncrementor
      * @param AttachmentManager $attachmentManager
      * @param AttachmentProvider $attachmentProvider
      */
     public function __construct(
-        ObjectManager $objectManager,
+        DoctrineHelper $doctrineHelper,
         EventDispatcherInterface $eventDispatcher,
-        SkuIncrementorInterface $skuIncrementor,
         AttachmentManager $attachmentManager,
         AttachmentProvider $attachmentProvider
     ) {
-        $this->objectManager = $objectManager;
+        $this->doctrineHelper = $doctrineHelper;
         $this->eventDispatcher = $eventDispatcher;
-        $this->skuIncrementor = $skuIncrementor;
         $this->attachmentManager = $attachmentManager;
         $this->attachmentProvider = $attachmentProvider;
     }
@@ -65,27 +63,46 @@ class ProductDuplicator
     /**
      * @param Product $product
      * @return Product
+     * @throws Exception
      */
     public function duplicate(Product $product)
     {
-        $productCopy = $this->createProductCopy($product);
+        $objectManager = $this->doctrineHelper->getEntityManager($product);
+        $objectManager->getConnection()->beginTransaction();
 
-        $this->objectManager->persist($productCopy);
-        $this->objectManager->flush();
+        try {
+            $productCopy = $this->createProductCopy($product);
 
-        $this->eventDispatcher->dispatch(
-            ProductDuplicateAfterEvent::NAME,
-            new ProductDuplicateAfterEvent($productCopy, $product)
-        );
+            $objectManager->persist($productCopy);
+            $objectManager->flush();
+
+            $this->eventDispatcher->dispatch(
+                ProductDuplicateAfterEvent::NAME,
+                new ProductDuplicateAfterEvent($productCopy, $product)
+            );
+
+            $objectManager->getConnection()->commit();
+        } catch (Exception $e) {
+            $objectManager->getConnection()->rollBack();
+            throw $e;
+        }
 
         return $productCopy;
+    }
+
+    /**
+     * @param SkuIncrementorInterface $skuIncrementor
+     */
+    public function setSkuIncrementor(SkuIncrementorInterface $skuIncrementor)
+    {
+        $this->skuIncrementor = $skuIncrementor;
     }
 
     /**
      * @param Product $product
      * @return Product
      */
-    private function createProductCopy(Product $product)
+    protected function createProductCopy(Product $product)
     {
         $productCopy = clone $product;
 
@@ -101,7 +118,7 @@ class ProductDuplicator
      * @param Product $product
      * @param Product $productCopy
      */
-    private function cloneChildObjects(Product $product, Product $productCopy)
+    protected function cloneChildObjects(Product $product, Product $productCopy)
     {
         foreach ($product->getUnitPrecisions() as $unitPrecision) {
             $productCopy->addUnitPrecision(clone $unitPrecision);
@@ -121,17 +138,17 @@ class ProductDuplicator
 
             $attachmentCopy->setTarget($productCopy);
 
-            $this->objectManager->persist($attachmentCopy);
+            $this->doctrineHelper->getEntityManager($attachmentCopy)->persist($attachmentCopy);
         }
     }
 
     /**
      * @return AbstractEnumValue
      */
-    private function getDisabledStatus()
+    protected function getDisabledStatus()
     {
         $className = ExtendHelper::buildEnumValueClassName('prod_status');
 
-        return $this->objectManager->getRepository($className)->find(Product::STATUS_DISABLED);
+        return $this->doctrineHelper->getEntityRepository($className)->find(Product::STATUS_DISABLED);
     }
 }

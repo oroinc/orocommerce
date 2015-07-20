@@ -12,6 +12,19 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if not entity.status %}
+            {# status not defined #}
+        {% elseif entity.status.id is constant('STATUS_ENABLED', entity) %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-status-enabled icon-circle"></i>{{ entity.status }}</div>
+        {% elseif entity.status.id is constant('STATUS_DISABLED', entity) %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-status-disabled icon-circle"></i>{{ entity.status }}</div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({

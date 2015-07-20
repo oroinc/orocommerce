@@ -125,6 +125,6 @@ services:
         class: %orob2b_pricing.event_listener.product_duplicate.class%
         calls:
             - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
-            - [setObjectManager, [@doctrine.orm.entity_manager]]
+            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }

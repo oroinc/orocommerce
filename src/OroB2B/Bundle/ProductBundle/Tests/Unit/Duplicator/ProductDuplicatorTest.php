@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -11,6 +12,7 @@ use Oro\Bundle\AttachmentBundle\Entity\Attachment;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
@@ -31,9 +33,14 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     const UNIT_PRECISION_DEFAULT_PRECISION_2 = 4;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|EntityManager
      */
     protected $objectManager;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     */
+    protected $doctrineHelper;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
@@ -66,6 +73,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     protected $productStatusDisabled;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|Connection
+     */
+    protected $connection;
+
+    /**
      * @var ProductDuplicator
      */
     protected $duplicator;
@@ -75,7 +87,10 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->objectManager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+        $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
@@ -96,11 +111,23 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->productStatusDisabled = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue')
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
+        $this->connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->objectManager->expects($this->once())
-            ->method('getRepository')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
             ->with(ExtendHelper::buildEnumValueClassName('prod_status'))
             ->will($this->returnValue($this->productStatusRepository));
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityManager')
+            ->with($this->anything())
+            ->will($this->returnValue($this->objectManager));
+
+        $this->objectManager->expects($this->any())
+            ->method('getConnection')
+            ->will($this->returnValue($this->connection));
 
         $this->productStatusRepository->expects($this->once())
             ->method('find')
@@ -108,12 +135,13 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($this->productStatusDisabled));
 
         $this->duplicator = new ProductDuplicator(
-            $this->objectManager,
+            $this->doctrineHelper,
             $this->eventDispatcher,
-            $this->skuIncrementor,
             $this->attachmentManager,
             $this->attachmentProvider
         );
+
+        $this->duplicator->setSkuIncrementor($this->skuIncrementor);
     }
 
     public function testDuplicate()

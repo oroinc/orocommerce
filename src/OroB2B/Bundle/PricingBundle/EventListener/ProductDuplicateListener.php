@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
@@ -10,9 +10,9 @@ use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 class ProductDuplicateListener
 {
     /**
-     * @var OroEntityManager
+     * @var DoctrineHelper
      */
-    protected $objectManager;
+    protected $doctrineHelper;
 
     /**
      * @var string
@@ -20,11 +20,11 @@ class ProductDuplicateListener
     protected $productPriceClass;
 
     /**
-     * @param OroEntityManager $objectManager
+     * @param DoctrineHelper $doctrineHelper
      */
-    public function setObjectManager(OroEntityManager $objectManager)
+    public function setDoctrineHelper(DoctrineHelper $doctrineHelper)
     {
-        $this->objectManager = $objectManager;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -46,14 +46,15 @@ class ProductDuplicateListener
         $sourceProduct = $event->getSourceProduct();
 
         $productPrices = $this->getProductPriceRepository()->getPricesByProduct($sourceProduct);
+        $objectManager = $this->doctrineHelper->getEntityManager($this->productPriceClass);
 
         foreach ($productPrices as $productPrice) {
             $productPriceCopy = clone $productPrice;
             $productPriceCopy->setProduct($product);
-            $this->objectManager->persist($productPriceCopy);
+            $objectManager->persist($productPriceCopy);
         }
 
-        $this->objectManager->flush();
+        $objectManager->flush();
     }
 
     /**
@@ -61,6 +62,6 @@ class ProductDuplicateListener
      */
     protected function getProductPriceRepository()
     {
-        return $this->objectManager->getRepository($this->productPriceClass);
+        return $this->doctrineHelper->getEntityRepository($this->productPriceClass);
     }
 }

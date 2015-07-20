@@ -8,8 +8,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
-
 use Oro\Bundle\UIBundle\Route\Router;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductUpdateHandler extends UpdateHandler

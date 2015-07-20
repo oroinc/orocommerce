@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Event;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\EventDispatcher\Event;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 abstract class AbstractProductDuplicateEvent extends Event
 {

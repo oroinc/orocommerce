@@ -59,7 +59,7 @@ datagrid:
                     data_name: inventoryStatusName
                 visibility:
                     data_name: visibilityName
-                visibility:
+                status:
                     data_name: statusName
                 createdAt:
                     data_name: product.createdAt

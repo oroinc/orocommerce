@@ -141,9 +141,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [],
-                    'inventoryStatus' => 'in_stock',
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => 'disabled'
+                    'status' => Product::STATUS_DISABLED
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
@@ -158,9 +158,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                             'precision' => 3
                         ]
                     ],
-                    'inventoryStatus' => 'in_stock',
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => 'disabled'
+                    'status' => Product::STATUS_DISABLED
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
