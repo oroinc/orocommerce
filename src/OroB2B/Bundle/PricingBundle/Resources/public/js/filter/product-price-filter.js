@@ -99,7 +99,7 @@ define([
 
             var unitOption = '';
             if (!_.isUndefined(value.unit) && value.unit) {
-                unitOption = _.findWhere(this.unitChoices, {value: value.unit}).label;
+                unitOption = _.findWhere(this.unitChoices, {value: value.unit}).shortLabel;
             }
 
             hintValue += ' ' + __('orob2b.pricing.filter.product_price.per') + ' ' + unitOption;

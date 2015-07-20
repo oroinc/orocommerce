@@ -9,6 +9,7 @@ use Symfony\Component\Form\Test\FormInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 
 use OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -32,6 +33,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected $productPriceFilter;
 
+    /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $formatter;
+
     public function setUp()
     {
         $this->form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
@@ -47,7 +53,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
             ->method('getExcludeParams')
             ->willReturn([]);
 
-        $this->productPriceFilter = new ProductPriceFilter($this->formFactory, $this->filterUtility);
+        $this->formatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productPriceFilter = new ProductPriceFilter($this->formFactory, $this->filterUtility, $this->formatter);
     }
 
     public function tearDown()
