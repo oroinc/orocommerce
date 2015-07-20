@@ -1,6 +1,0 @@
-config:
-    paths:
-        'oro/datagrid/action/request-change-status-dialog-action': 'bundles/orob2brfpadmin/js/datagrid/action/request-change-status-dialog-action.js'
-        'orob2brfpadmin/js/app/components/request-change-status-widget-component': 'bundles/orob2brfpadmin/js/app/components/request-change-status-widget-component.js'
-        'orob2brfpadmin/js/app/components/request-status-delete-restore-component': 'bundles/orob2brfpadmin/js/app/components/request-status-delete-restore-component.js'
-        'rfpadmin-requestproductitems-component': 'bundles/orob2brfpadmin/js/app/components/rfpadmin-requestproductitems-component.js'
