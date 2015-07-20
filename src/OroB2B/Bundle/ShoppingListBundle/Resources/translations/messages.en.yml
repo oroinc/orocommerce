@@ -18,6 +18,7 @@ orob2b:
         actions:
             set_current: Set as current
             add_to_shopping_list: Add to
+            add_to_new_shopping_list: Create new
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists

@@ -1,0 +1,5 @@
+orob2b_product_view_products:
+    label: Create shopping list
+    type: action
+    group_name: "commerce"
+    bindings: ~

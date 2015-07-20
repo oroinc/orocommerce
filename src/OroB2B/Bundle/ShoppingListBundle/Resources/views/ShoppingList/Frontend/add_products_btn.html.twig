@@ -6,6 +6,7 @@
     {% for shoppingList in shoppingLists %}
         {{ Buttons.addToShoppingListButton(shoppingList) }}
     {% endfor %}
+    {{ Buttons.addToShoppingListButton(null, true) }}
 {% endset %}
 
 {{ UI.pinnedDropdownButton({
