@@ -40,7 +40,6 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('notes', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['notnull' => false]);
         $table->addColumn('updated_at', 'datetime', []);
-        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'orob2b_shop_lst_created_at_idx', []);
     }
