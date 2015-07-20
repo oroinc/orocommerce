@@ -5,9 +5,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -24,6 +21,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
         return [
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
         ];
     }

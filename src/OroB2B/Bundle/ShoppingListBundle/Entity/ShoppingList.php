@@ -177,7 +177,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function __toString()
     {
-        return $this->label;
+        return (string) $this->label;
     }
 
     /**
@@ -308,6 +308,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
 
     /**
      * @param LineItem $item
+     *
      * @return $this
      */
     public function addLineItem(LineItem $item)
@@ -322,6 +323,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
 
     /**
      * @param LineItem $item
+     *
      * @return $this
      */
     public function removeLineItem(LineItem $item)

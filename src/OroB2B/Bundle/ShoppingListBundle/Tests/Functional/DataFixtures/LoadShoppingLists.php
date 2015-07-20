@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -58,12 +57,12 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      *
      * @return AccountUser
      * @throws \LogicException
      */
-    protected function getAccountUser(EntityManager $manager)
+    protected function getAccountUser(ObjectManager $manager)
     {
         $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);

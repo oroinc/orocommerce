@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orob2bshoppinglist/js/app/components/widget-form-component': 'bundles/orob2bshoppinglist/js/app/components/widget-form-component.js'
