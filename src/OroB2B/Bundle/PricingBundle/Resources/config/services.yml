@@ -156,5 +156,6 @@ services:
             arguments:
                 - @form.factory
                 - @oro_filter.filter_utility
+                - @orob2b_product.formatter.product_unit_label
             tags:
                 - { name: oro_filter.extension.orm_filter.filter, type: product-price }
