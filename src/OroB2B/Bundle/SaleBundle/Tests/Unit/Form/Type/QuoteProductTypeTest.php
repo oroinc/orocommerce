@@ -20,7 +20,6 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
@@ -70,6 +69,7 @@ class QuoteProductTypeTest extends AbstractTest
             $productUnitLabelFormatter,
             $this->quoteProductTypeFormatter
         );
+        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
     }
 
     public function testSetDefaultOptions()
@@ -108,6 +108,38 @@ class QuoteProductTypeTest extends AbstractTest
         $this->assertEquals($expectedData, $view->vars);
     }
 
+//    /**
+//     * @param RequestProduct $inputData
+//     * @param array $expectedData
+//     *
+//     * @dataProvider preSetDataProvider
+//     */
+//    public function testPreSetData(RequestProduct $inputData = null, array $expectedData = [])
+//    {
+//        $productSku = $inputData ? $inputData->getProductSku() : '';
+//
+//        $placeholder = $expectedData['configs']['placeholder'];
+//
+//        $this->translator
+//            ->expects($placeholder ? $this->once() : $this->never())
+//            ->method('trans')
+//            ->with($placeholder, [
+//                '{title}' => $productSku,
+//            ])
+//            ->will($this->returnValue($placeholder))
+//        ;
+//
+//        $form = $this->factory->create($this->formType);
+//
+//        $this->formType->preSetData(new FormEvent($form, $inputData));
+//
+//        $options = $form->get('product')->getConfig()->getOptions();
+//
+//        foreach ($expectedData as $key => $value) {
+//            $this->assertEquals($value, $options[$key], $key);
+//        }
+//    }
+//
     /**
      * @return array
      */
@@ -337,6 +369,36 @@ class QuoteProductTypeTest extends AbstractTest
         ];
     }
 
+//    /**
+//     * @return array
+//     */
+//    public function preSetDataProvider()
+//    {
+//        return [
+//            'empty item' => [
+//                'inputData'     => null,
+//                'expectedData'  => [
+//                    'configs'   => [
+//                        'placeholder'   => null,
+//                    ],
+//                    'required'          => true,
+//                    'create_enabled'    => false,
+//                    'label'             => 'orob2b.product.entity_label',
+//                ],
+//            ],
+//            'deleted product' => [
+//                'inputData'     => $this->createRequestProduct(1, null, 'sku'),
+//                'expectedData'  => [
+//                    'configs'   => [
+//                        'placeholder' => 'orob2b.rfp.message.requestproductitem.unit.removed',
+//                    ],
+//                    'required'  => true,
+//                    'label'     => 'orob2b.product.entity_label',
+//                ],
+//            ],
+//        ];
+//    }
+
     /**
      * {@inheritdoc}
      */
@@ -348,20 +410,21 @@ class QuoteProductTypeTest extends AbstractTest
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($this->translator);
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($this->translator);
+
         return [
             new PreloadedExtension(
                 [
                     CollectionType::NAME                        => new CollectionType(),
-                    QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
-                        $this->translator,
-                        $this->quoteProductOfferTypeFormatter
-                    ),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $productSelectType->getName()               => $productSelectType,
                     $currencySelectionType->getName()           => $currencySelectionType,
+                    $quoteProductOfferType->getName()           => $quoteProductOfferType,
+                    $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
                 ],
                 []

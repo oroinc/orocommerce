@@ -16,7 +16,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 class RequestProductTypeTest extends AbstractTest
@@ -27,7 +26,7 @@ class RequestProductTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
      */
     protected $translator;
 
@@ -39,13 +38,14 @@ class RequestProductTypeTest extends AbstractTest
         $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType     = new RequestProductType($this->translator);
+        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
     }
 
     public function testSetDefaultOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
+        /* @var $resolver PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -207,11 +207,11 @@ class RequestProductTypeTest extends AbstractTest
      * @param int $id
      * @param RequestProduct $product
      * @param string $productSku
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     * @return PHPUnit_Framework_MockObject_MockObject|RequestProduct
      */
     protected function createRequestProduct($id, $product, $productSku)
     {
-        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        /* @var $requestProduct PHPUnit_Framework_MockObject_MockObject|RequestProduct */
         $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
         $requestProduct
             ->expects($this->any())
@@ -242,18 +242,19 @@ class RequestProductTypeTest extends AbstractTest
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $productSelectType          = new ProductSelectTypeStub();
         $currencySelectionType      = new CurrencySelectionTypeStub();
+        $requestProductItemType     = $this->prepareRequestProductItemType($this->translator);
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
                     CollectionType::NAME                    => new CollectionType(),
-                    RequestProductItemType::NAME            => new RequestProductItemType($this->translator),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $productSelectType->getName()           => $productSelectType,
+                    $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],

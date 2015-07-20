@@ -11,14 +11,19 @@ services:
     # Quote form types
     orob2b_sale.form.type.quote:
         class: %orob2b_sale.form.type.quote.class%
+        calls:
+            - [setDataClass, [%orob2b_sale.entity.quote.class%]]
         tags:
             - { name: form.type, alias: orob2b_sale_quote }
+
     orob2b_sale.form.type.quote_product:
         class: %orob2b_sale.form.type.quote_product.class%
         arguments:
             - @translator
             - @orob2b_product.formatter.product_unit_label
             - @orob2b_sale.formatter.quote_product_type
+        calls:
+            - [setDataClass, [%orob2b_sale.entity.quote_product.class%]]
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product }
 
@@ -27,6 +32,8 @@ services:
         arguments:
             - @translator
             - @orob2b_sale.formatter.quote_product_offer_type
+        calls:
+            - [setDataClass, [%orob2b_sale.entity.quote_product_offer.class%]]
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_offer }
 
@@ -34,6 +41,8 @@ services:
         class: %orob2b_sale.form.type.quote_product_request.class%
         arguments:
             - @translator
+        calls:
+            - [setDataClass, [%orob2b_sale.entity.quote_product_request.class%]]
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_request }
 

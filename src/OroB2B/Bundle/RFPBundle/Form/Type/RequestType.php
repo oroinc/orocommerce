@@ -11,6 +11,19 @@ class RequestType extends AbstractType
     const NAME = 'orob2b_rfp_request';
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -29,7 +42,7 @@ class RequestType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class'           => 'OroB2B\Bundle\RFPBundle\Entity\Request',
+            'data_class'           => $this->dataClass,
             'intention'            => 'rfp_request',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);

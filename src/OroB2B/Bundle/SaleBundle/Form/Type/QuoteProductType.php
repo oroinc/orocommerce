@@ -38,6 +38,11 @@ class QuoteProductType extends AbstractType
     protected $translator;
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
      * @param TranslatorInterface $translator
      * @param ProductUnitLabelFormatter $labelFormatter
      * @param QuoteProductTypeFormatter $typeFormatter
@@ -50,6 +55,14 @@ class QuoteProductType extends AbstractType
         $this->translator = $translator;
         $this->labelFormatter = $labelFormatter;
         $this->typeFormatter= $typeFormatter;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
     }
 
     /**
@@ -141,7 +154,7 @@ class QuoteProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
+            'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
