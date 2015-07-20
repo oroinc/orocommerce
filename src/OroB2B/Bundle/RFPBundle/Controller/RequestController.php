@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -40,7 +41,7 @@ class RequestController extends Controller
     {
         return [
             'entity' => $request,
-            'formCreateQuote' => $this->createForm(new RequestCreateQuoteType(), $request)->createView()
+            'formCreateQuote' => $this->getCreateQuoteForm($request)->createView()
         ];
     }
 
@@ -185,30 +186,40 @@ class RequestController extends Controller
      */
     protected function createQuote(Request $request)
     {
-        $form = $this->createForm(new RequestCreateQuoteType(), $request);
+        $form = $this->getCreateQuoteForm($request);
         $handler = new RequestCreateQuoteHandler(
             $form,
             $this->getRequest(),
             $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList'),
             $this->getUser()
         );
-        $quoteId = $handler->process($request);
-        /* @var $flashBag FlashBag */
-        $flashBag = $this->getRequest()->getSession()->getFlashBag();
-        if ($quoteId) {
-            $flashBag->add(
-                'success',
-                $this->get('translator')->trans('orob2b.rfp.message.request.create_quote.success')
-            );
 
-            return $this->redirect($this->generateUrl('orob2b_sale_quote_update', ['id' => $quoteId]));
-        } else {
-            $flashBag->add(
-                'error',
-                $this->get('translator')->trans('orob2b.rfp.message.request.create_quote.error')
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate(
+                $request,
+                $form,
+                function (Request $request) {
+                    return [
+                        'route'         => 'orob2b_rfp_request_view',
+                        'parameters'    => ['id' => $request->getId()]
+                    ];
+                },
+                function (Request $request) use ($handler) {
+                    return [
+                        'route'         => 'orob2b_sale_quote_update',
+                        'parameters'    => ['id' => $handler->getQuote()->getId()]
+                    ];
+                },
+                $this->get('translator')->trans('orob2b.rfp.message.request.create_quote.success'),
+                $handler
             );
+    }
 
-            return $this->redirect($this->generateUrl('orob2b_rfp_request_view', ['id' => $request->getId()]));
-        }
+    /**
+     * @return Form
+     */
+    protected function getCreateQuoteForm(Request $request = null)
+    {
+        return $this->createFormBuilder($request)->getForm();
     }
 }

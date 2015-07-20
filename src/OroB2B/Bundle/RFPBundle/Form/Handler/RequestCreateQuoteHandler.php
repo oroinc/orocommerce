@@ -9,10 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
-use OroB2B\Bundle\RFPBundle\Entity;
 
 class RequestCreateQuoteHandler
 {
@@ -37,6 +38,11 @@ class RequestCreateQuoteHandler
     protected $user;
 
     /**
+     * @var Quote
+     */
+    protected $quote;
+
+    /**
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
@@ -51,14 +57,23 @@ class RequestCreateQuoteHandler
     }
 
     /**
-     * @param Entity\Request $request
+     * @return Quote
+     */
+    public function getQuote()
+    {
+        return $this->quote;
+    }
+
+    /**
+     * @param RFPRequest $request
      * @return boolean
      */
-    public function process(Entity\Request $request)
+    public function process(RFPRequest $request)
     {
         $this->form->setData($request);
 
-        if (in_array($this->request->getMethod(), ['POST'], true)) {
+        //if ($this->request->isMethod('post')) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
@@ -72,16 +87,17 @@ class RequestCreateQuoteHandler
     /**
      * "Success" form handler
      *
-     * @param Entity\Request $entity
-     * @return int
+     * @param RFPRequest $entity
+     * @return bool
      */
-    protected function onSuccess(Entity\Request $entity)
+    protected function onSuccess(RFPRequest $entity)
     {
         $quote = new Quote();
         $quote
             ->setRequest($entity)
             ->setOwner($this->user)
         ;
+
         foreach ($entity->getRequestProducts() as $requestProduct) {
             $quoteProduct = new QuoteProduct();
             $quoteProduct
@@ -101,9 +117,12 @@ class RequestCreateQuoteHandler
             }
             $quote->addQuoteProduct($quoteProduct);
         }
+
         $this->manager->persist($quote);
         $this->manager->flush();
 
-        return $quote->getId();
+        $this->quote = $quote;
+
+        return true;
     }
 }
