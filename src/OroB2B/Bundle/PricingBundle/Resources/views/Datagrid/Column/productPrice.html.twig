@@ -7,7 +7,7 @@
             {% if shownUnit != price.unit.code %}
                 {% set shownUnit = price.unit.code %}
                 <tr>
-                    <td colspan="2">
+                    <td{% if showTierPrices %} colspan="2"{% endif %}>
                         <div class="product-price-unit{% if key != 0 %}-with-margin{% endif %}">
                             <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
                         </div>
