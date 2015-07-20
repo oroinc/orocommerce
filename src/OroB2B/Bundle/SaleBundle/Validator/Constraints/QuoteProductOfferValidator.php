@@ -31,9 +31,11 @@ class QuoteProductOfferValidator extends ConstraintValidator
             return;
         }
 
-        $isTypeNotAvailable = $quoteProduct->isTypeNotAvailable();
-
-        $product = $isTypeNotAvailable ? $quoteProduct->getProductReplacement() : $quoteProduct->getProduct();
+        if ($quoteProduct->isTypeNotAvailable()) {
+            $product = $quoteProduct->getProductReplacement();
+        } else {
+            $product = $quoteProduct->getProduct();
+        }
 
         if (null === $product) {
             $this->addViolation($constraint);
