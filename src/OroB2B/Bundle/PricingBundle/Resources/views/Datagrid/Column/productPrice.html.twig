@@ -2,15 +2,29 @@
 {% if value and value|length > 0 %}
     {% set shownUnit = '' %}
 
-    {% for key, price in value %}
-        {% if shownUnit != price.unit.code %}
-            <div class="product-price-unit{% if key != 0 %}-with-margin{% endif %}">
-                {{ price.unit.code|orob2b_format_product_unit_label|capitalize }}
-            </div>
-            {% set shownUnit = price.unit.code %}
-        {% endif %}
+    <table>
+        {% for key, price in value %}
+            {% if shownUnit != price.unit.code %}
+                {% set shownUnit = price.unit.code %}
+                <tr>
+                    <td colspan="2">
+                        <div class="product-price-unit{% if key != 0 %}-with-margin{% endif %}">
+                            <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
+                        </div>
+                    </td>
+                </tr>
+            {% endif %}
 
-        {% if showTierPrices %}<span class="product-price-qty">{{ price.quantity }}</span>:{% endif %}
-        <span class="product-price">{{ price.price|oro_format_price }}</span><br/>
-    {% endfor %}
+            <tr>
+                {% if showTierPrices %}
+                    <td>
+                        <div class="text-right">{{ price.quantity }}:&nbsp;</div>
+                    </td>
+                {% endif %}
+                <td>
+                    <div class="text-left">{{ price.price|oro_format_price }}</div>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
 {% endif %}

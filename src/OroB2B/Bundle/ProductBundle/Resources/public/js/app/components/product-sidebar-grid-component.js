@@ -148,7 +148,6 @@ define(function(require) {
             history.pushState({}, document.title, location.pathname + paramsString + location.hash);
         },
 
-
         minimize: function() {
             this._maximizeOrMaximize('off');
         },
@@ -184,7 +183,7 @@ define(function(require) {
 
             this._pushState(params);
         },
-        
+
         /**
          * @param {String} query
          * @return {Object}
@@ -216,6 +215,16 @@ define(function(require) {
          */
         _urlParamsToString: function(params) {
             return $.param(params);
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            delete this.gridCollection;
+
+            ProductSidebarGridComponent.__super__.dispose.call(this);
         }
     });
 
