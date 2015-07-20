@@ -265,24 +265,6 @@ class LineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
-    }
-
-    /**
      * @param integer $productId
      * @param string  $unitCode
      * @param integer $precision
@@ -304,5 +286,23 @@ class LineItemTypeTest extends FormIntegrationTestCase
             ->setProduct($product);
 
         return $product->addUnitPrecision($unitPrecision);
+    }
+
+    /**
+     * @param string $className
+     * @param int    $id
+     *
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }
