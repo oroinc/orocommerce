@@ -34,8 +34,8 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accauntUser",
- *              "frontend_owner_column_name"="accaunt_user_id"
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id"
  *          },
  *          "security"={
  *              "type"="ACL",

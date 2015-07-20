@@ -23,6 +23,10 @@ orob2b:
             widgets:
                 quote_information: 'Quote Information'
 
+            column:
+                assigned_to: 'Assigned to'
+
+
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
