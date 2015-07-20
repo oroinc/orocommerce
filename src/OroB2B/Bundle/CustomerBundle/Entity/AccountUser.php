@@ -58,6 +58,7 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
 {
@@ -431,7 +432,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * Add addresses
      *
      * @param AccountUserAddress $address
-     * @return AccountUser
+     * @return $this
      */
     public function addAddress(AccountUserAddress $address)
     {
@@ -447,35 +448,16 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * Remove addresses
      *
-     * @param AccountUserAddress $addresses
+     * @param AccountUserAddress $address
+     * @return $this
      */
-    public function removeAddress(AccountUserAddress $addresses)
+    public function removeAddress(AccountUserAddress $address)
     {
-        $this->addresses->removeElement($addresses);
-    }
-
-    /**
-     * Set addresses
-     *
-     * @param Collection|AccountUserAddress[]|null $addresses
-     */
-    public function setAddresses($addresses)
-    {
-        if (!$addresses instanceof Collection && !is_array($addresses)) {
-            throw new \InvalidArgumentException(
-                '$addresses must be an instance of \Doctrine\Common\Collections\Collection or an array'
-            );
+        if ($this->hasAddress($address)) {
+            $this->addresses->removeElement($address);
         }
 
-        if ($addresses === null) {
-            return;
-        }
-
-        $this->addresses->clear();
-
-        foreach ($addresses as $address) {
-            $this->addAddress($address);
-        }
+        return $this;
     }
 
     /**
@@ -486,6 +468,15 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function getAddresses()
     {
         return $this->addresses;
+    }
+
+    /**
+     * @param AccountUserAddress $address
+     * @return bool
+     */
+    protected function hasAddress(AccountUserAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
     }
 
     /**

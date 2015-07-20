@@ -88,31 +88,7 @@ class CustomerTest extends EntityTestCase
     public function testAddressesCollection()
     {
         $customer = $this->createCustomerEntity();
-
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $customer->getAddresses());
-        $this->assertCount(0, $customer->getAddresses());
-
-        $address = $this->createAddressEntity();
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\CustomerBundle\Entity\Customer',
-            $customer->addAddress($address)
-        );
-        $this->assertEquals([$address], $customer->getAddresses()->toArray());
-
-        // entity added only once
-        $customer->addAddress($address);
-        $this->assertEquals([$address], $customer->getAddresses()->toArray());
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\CustomerBundle\Entity\Customer',
-            $customer->removeAddress($address)
-        );
-        $this->assertCount(0, $customer->getAddresses());
-
-        // undefined user can't be removed
-        $customer->removeAddress($address);
-        $this->assertCount(0, $customer->getAddresses());
+        static::assertPropertyCollections($customer, [['addresses', $this->createAddressEntity()]]);
     }
 
     /**

@@ -107,7 +107,9 @@ class AccountUserAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', ['accountUserId' => $accountUserId])
+            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', [
+                'accountUserId' => $accountUserId
+            ])
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -135,7 +137,9 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', ['accountUserId' => $accountUserId])
+            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', [
+                'accountUserId' => $accountUserId
+            ])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -179,7 +183,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $crawler = $this->client->request(
-            'GET',
+            'DELETE',
             $this->getUrl(
                 'orob2b_api_customer_account_user_delete_accountuser_address',
                 ['accountUserId' => $accountUserId, 'addressId' => $address['id']]

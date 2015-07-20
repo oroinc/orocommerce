@@ -169,6 +169,9 @@ class AccountUserAddressController extends RestController implements ClassResour
         return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
     }
 
+    /**
+     * @return \Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+     */
     protected function getAccountUserManager()
     {
         return $this->get('orob2b_customer.manager.account_user.api.attribute');
@@ -203,7 +206,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     protected function getPreparedItem($entity, $resultFields = [])
     {
-        // conver   t addresses to plain array
+        // convert addresses to plain array
         $addressTypesData = [];
 
         /** @var $addressType AddressType */

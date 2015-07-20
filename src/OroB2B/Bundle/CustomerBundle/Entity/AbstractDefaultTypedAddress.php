@@ -148,7 +148,9 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      */
     public function addAddressesToType(AbstractAddressToAddressType $addressesToTypes)
     {
-        $this->addressesToTypes[] = $addressesToTypes;
+        if (!$this->getAddressesToTypes()->contains($addressesToTypes)) {
+            $this->addressesToTypes[] = $addressesToTypes;
+        }
 
         return $this;
     }
@@ -156,11 +158,16 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     /**
      * Remove addressesToTypes
      *
-     * @param AbstractAddressToAddressType $addressesToTypes
+     * @param AbstractAddressToAddressType $addressesToType
+     * @return $this
      */
-    public function removeAddressesToType(AbstractAddressToAddressType $addressesToTypes)
+    public function removeAddressesToType(AbstractAddressToAddressType $addressesToType)
     {
-        $this->addressesToTypes->removeElement($addressesToTypes);
+        if ($this->hasAddressToType($addressesToType)) {
+            $this->addressesToTypes->removeElement($addressesToType);
+        }
+
+        return $this;
     }
 
     /**
@@ -171,6 +178,15 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     public function getAddressesToTypes()
     {
         return $this->addressesToTypes;
+    }
+
+    /**
+     * @param AbstractAddressToAddressType $addressToType
+     * @return bool
+     */
+    protected function hasAddressToType(AbstractAddressToAddressType $addressToType)
+    {
+        return $this->getAddressesToTypes()->contains($addressToType);
     }
 
     /**

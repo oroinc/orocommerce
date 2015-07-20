@@ -5,38 +5,17 @@
     {# widget container and actions #}
     <div class="widget-actions">
         {% if address_edit_acl_resource is not defined or resource_granted(address_edit_acl_resource) %}
-        <button class="btn btn-mini btn-primary btn-uppercase" type="button" data-action-name="add_address"> + {{ 'Add Address'|trans }}</button>
+            <button class="btn btn-mini btn-primary btn-uppercase" type="button" data-action-name="add_address"> + {{ 'Add Address'|trans }}</button>
         {% endif %}
     </div>
-    <div class="list-box map-box" id="address-book"></div>
-
-    <script type="text/javascript">
-    require(['jquery', 'underscore', 'routing', 'oroaddress/js/address-book', 'oroui/js/widget-manager'],
-    function($, _, routing, AddressBook, widgetManager) {
-        widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget){
-            /** @type oroaddress.AddressBook */
-            var addressBook = new AddressBook({
-                el: '#address-book',
-                addressListUrl: {{ path('orob2b_api_customer_account_user_get_accountuser_addresses', {'accountUserId': entity.id})|json_encode|raw }},
-                addressCreateUrl: {{ path('orob2b_customer_account_user_address_create', {'accountUserId': entity.id})|json_encode|raw }},
-                addressUpdateUrl: function() {
-                    var address = arguments[0];
-                    return routing.generate(
-                        'orob2b_customer_account_user_address_update',
-                        {
-                            'accountUserId': {{ entity.id|json_encode|raw }},
-                            'id': address.get('id')
-                        }
-                    )
-                }
-            });
-            widget.getAction('add_address', 'adopted', function(action) {
-                action.on('click', _.bind(addressBook.createAddress, addressBook));
-            });
-            addressBook
-                .getCollection()
-                .reset({{ render(path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id})) }});
-        });
-    });
-    </script>
+    {% set options = {
+    wid: app.request.get('_wid'),
+    addressListUrl: path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id}),
+    addressCreateUrl: path('orob2b_customer_account_user_address_create', {accountUserId: entity.id}),
+    addressUpdateRouteName: 'orob2b_customer_account_user_address_update',
+    addressUpdateParams: {'accountUserId': entity.id },
+    currentAddresses: render(path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id}))
+    } %}
+    <div class="list-box map-box" id="address-book" data-page-component-module="orob2bcustomer/js/app/components/customer-address-book-component"
+         data-page-component-options="{{ options|json_encode }}"></div>
 </div>
