@@ -150,7 +150,6 @@ datagrid:
                     - quote.id
                     - quote.qid
                     - quoteAccountUser.username as accountUserName
-                    - quoteAccount.name as accountName
                     - quote.createdAt
                     - quote.validUntil
                 from:
@@ -158,7 +157,6 @@ datagrid:
                 join:
                     left:
                         - { join: quote.accountUser, alias: quoteAccountUser }
-                        - { join: quote.account, alias: quoteAccount }
         columns:
             qid:
                 label:         orob2b.sale.quote.qid.label
