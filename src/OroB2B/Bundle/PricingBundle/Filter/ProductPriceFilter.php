@@ -4,15 +4,37 @@ namespace OroB2B\Bundle\PricingBundle\Filter;
 
 use Doctrine\ORM\Query\Expr\Join;
 
+use Symfony\Component\Form\FormFactoryInterface;
+
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Filter\NumberFilter;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductPriceFilter extends NumberFilter
 {
+    /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $formatter;
+
+    /**
+     * @param FormFactoryInterface $factory
+     * @param FilterUtility $util
+     * @param ProductUnitLabelFormatter $formatter
+     */
+    public function __construct(
+        FormFactoryInterface $factory,
+        FilterUtility $util,
+        ProductUnitLabelFormatter $formatter
+    ) {
+        parent::__construct($factory, $util);
+        $this->formatter = $formatter;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -128,7 +150,17 @@ class ProductPriceFilter extends NumberFilter
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
-        $metadata['unitChoices'] = $this->getForm()->createView()['unit']->vars['choices'];
+        $metadata['unitChoices'] = [];
+
+        $unitChoices = $this->getForm()->createView()['unit']->vars['choices'];
+        foreach ($unitChoices as $choice) {
+            $metadata['unitChoices'][] = [
+                'data' => $choice->data,
+                'value' => $choice->value,
+                'label' => $choice->label,
+                'shortLabel' => $this->formatter->format($choice->value, true),
+            ];
+        }
 
         return $metadata;
     }

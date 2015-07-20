@@ -61,6 +61,7 @@ class ProductController extends Controller
             [
                 'label' => false,
                 'expanded' => true,
+                'compact' => true,
                 'multiple' => true,
                 'csrf_protection' => false,
                 'currencies_list' => $this->getPriceListHandler()->getPriceList()->getCurrencies(),
