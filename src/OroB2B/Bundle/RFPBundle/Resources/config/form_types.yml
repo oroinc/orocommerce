@@ -36,7 +36,7 @@ services:
     orob2b_rfp.form.type.request:
         class: %orob2b_rfp.form.type.request.class%
         calls:
-            - [setRequestStatusClass, [%orob2b_rfp.entity.request.class%]]
+            - [setDataClass, [%orob2b_rfp.entity.request.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request }
 
@@ -81,7 +81,7 @@ services:
         arguments:
             - @translator
         calls:
-            - [setRequestStatusClass, [%orob2b_rfp.entity.request_product.class%]]
+            - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product }
 
@@ -90,7 +90,7 @@ services:
         arguments:
             - @translator
         calls:
-            - [setRequestStatusClass, [%orob2b_rfp.entity.request_product_item.class%]]
+            - [setDataClass, [%orob2b_rfp.entity.request_product_item.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product_item }
 
