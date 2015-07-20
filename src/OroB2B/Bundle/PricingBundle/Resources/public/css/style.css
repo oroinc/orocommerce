@@ -23,16 +23,16 @@
 }
 
 .product-container .product-index-content.product-sidebar-maximized {
-    margin-left: 335px;
+    margin-left: 320px;
 }
 
 .product-container .product-index-content.product-sidebar-minimized {
-    margin-left: 45px;
+    margin-left: 40px;
 }
 
 .product-container .product-sidebar {
     position: absolute;
-    padding-left: 20px;
+    padding: 0;
 }
 
 .product-container .product-sidebar .control-maximize,
@@ -53,13 +53,33 @@
     margin: 0 10px !important;
 }
 
-.product-sidebar .sidebar-content {
+.product-sidebar {
+    height: 100%;
+    background-color: #efefef;
+}
+
+.product-sidebar .sidebar-content,
+.product-sidebar .sidebar-maximized.sidebar-controls {
     width: 293px;
+}
+
+.product-sidebar .sidebar-header {
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.product-sidebar .sidebar-header,
+.product-sidebar .sidebar-content {
+    padding: 5px 10px;
 }
 
 .product-sidebar .sidebar-controls,
 .product-sidebar .sidebar-controls i {
-    float: right;
+    font-size: 8px;
+    line-height: 12px;
+}
+
+.product-sidebar .sidebar-item .control-label {
+    font-weight: bold;
 }
 
 .product-container .grid-container .product-price-unit-with-margin {
@@ -73,7 +93,7 @@
 }
 
 .product-price-filter .value-field-frame {
-    margin-right: 0px !important;
+    margin-right: 0 !important;
 }
 
 .product-price-filter .value-field-frame input[type=text]  {
@@ -82,7 +102,7 @@
 }
 
 .product-price-filter .product-price-unit-filter {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .product-price-filter .product-price-unit-filter,
