@@ -17,6 +17,7 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
+
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */

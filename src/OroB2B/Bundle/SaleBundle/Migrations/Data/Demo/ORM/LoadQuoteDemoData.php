@@ -123,7 +123,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
-
             $unitPrecisions = $quoteProduct->getProduct()->getUnitPrecisions();
 
             for ($j = 0; $j < rand(1, 3); $j++) {
