@@ -66,6 +66,12 @@
     margin-top: 5px !important;
 }
 
+.product-container .grid-container .string-cell tbody td {
+    padding: 0 !important;
+    height: 10px !important;
+    border: 0 !important;
+}
+
 .product-price-filter .value-field-frame {
     margin-right: 0px !important;
 }
