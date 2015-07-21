@@ -179,7 +179,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ],
                 'submittedData' => [
                     'name' => 'Test Price List 01',
-                    'currencies' => ['USD', 'EUR'],
+                    'currencies' => ['EUR', 'USD'],
                     'appendCustomers' => [1],
                     'removeCustomers' => [2],
                     'appendCustomerGroups' => [3],
@@ -189,7 +189,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List 01',
-                    'currencies' => ['USD', 'EUR'],
+                    'currencies' => ['EUR', 'USD'],
                     'appendCustomers' => [$this->getEntity(self::CUSTOMER_CLASS, 1)],
                     'removeCustomers' => [$this->getEntity(self::CUSTOMER_CLASS, 2)],
                     'appendCustomerGroups' => [

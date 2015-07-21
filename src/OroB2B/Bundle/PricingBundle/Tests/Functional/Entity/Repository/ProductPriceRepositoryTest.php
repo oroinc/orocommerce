@@ -51,21 +51,6 @@ class ProductPriceRepositoryTest extends WebTestCase
             $expectedPrices[] = $this->getReference($priceReference);
         }
 
-        // prices must be sorted by price list, unit and currency
-        usort($expectedPrices, function (ProductPrice $a, ProductPrice $b) {
-            $priceListCompare = strcmp($a->getPriceList()->getId(), $b->getPriceList()->getId());
-            if ($priceListCompare !== 0) {
-                return $priceListCompare;
-            }
-
-            $unitCompare = strcmp($a->getUnit()->getCode(), $b->getUnit()->getCode());
-            if ($unitCompare !== 0) {
-                return $unitCompare;
-            }
-
-            return strcmp($a->getPrice()->getCurrency(), $b->getUnit()->getCode());
-        });
-
         $this->assertEquals(
             $this->getPriceIds($expectedPrices),
             $this->getPriceIds($this->repository->getPricesByProduct($product))
@@ -80,11 +65,103 @@ class ProductPriceRepositoryTest extends WebTestCase
         return [
             'first product' => [
                 'productReference' => 'product.1',
-                'priceReferences' => ['product_price.1', 'product_price.2', 'product_price.6'],
+                'priceReferences' => ['product_price.2', 'product_price.7', 'product_price.1', 'product_price.6'],
             ],
             'second product' => [
                 'productReference' => 'product.2',
-                'priceReferences' => ['product_price.3', 'product_price.4', 'product_price.5'],
+                'priceReferences' => ['product_price.8', 'product_price.3', 'product_price.5', 'product_price.4'],
+            ],
+        ];
+    }
+
+    /**
+     * @param string|null $priceList
+     * @param array $products
+     * @param array $expectedPrices
+     * @param bool $getTierPrices
+     *
+     * @dataProvider findByPriceListIdAndProductIdsDataProvider
+     */
+    public function testFindByPriceListIdAndProductIds(
+        $priceList,
+        array $products,
+        array $expectedPrices,
+        $getTierPrices = true
+    ) {
+        $priceListId = -1;
+        if ($priceList) {
+            /** @var PriceList $priceListEntity */
+            $priceListEntity = $this->getReference($priceList);
+            $priceListId = $priceListEntity->getId();
+        }
+
+        $productIds = [];
+        foreach ($products as $product) {
+            /** @var Product $productEntity */
+            $productEntity = $this->getReference($product);
+            $productIds[] = $productEntity->getId();
+        }
+
+        $expectedPriceIds = [];
+        foreach ($expectedPrices as $price) {
+            /** @var ProductPrice $priceEntity */
+            $priceEntity = $this->getReference($price);
+            $expectedPriceIds[] = $priceEntity->getId();
+        }
+
+        $actualPrices = $this->repository->findByPriceListIdAndProductIds($priceListId, $productIds, $getTierPrices);
+        $actualPriceIds = $this->getPriceIds($actualPrices);
+
+        $this->assertEquals($expectedPriceIds, $actualPriceIds);
+    }
+
+    /**
+     * @return array
+     */
+    public function findByPriceListIdAndProductIdsDataProvider()
+    {
+        return [
+            'empty products' => [
+                'priceList' => 'price_list_1',
+                'products' => [],
+                'expectedPrices' => [],
+            ],
+            'empty products without tier prices' => [
+                'priceList' => 'price_list_1',
+                'products' => [],
+                'expectedPrices' => [],
+            ],
+            'not existing price list' => [
+                'priceList' => null,
+                'products' => ['product.1'],
+                'expectedPrices' => [],
+            ],
+            'not existing price list without tier prices' => [
+                'priceList' => null,
+                'products' => ['product.1'],
+                'expectedPrices' => [],
+            ],
+            'first valid set' => [
+                'priceList' => 'price_list_1',
+                'products' => ['product.1'],
+                'expectedPrices' => ['product_price.2', 'product_price.7', 'product_price.1'],
+            ],
+            'first valid set without tier prices' => [
+                'priceList' => 'price_list_1',
+                'products' => ['product.1'],
+                'expectedPrices' => ['product_price.7'],
+                'getTierPrices' => false
+            ],
+            'second valid set' => [
+                'priceList' => 'price_list_2',
+                'products' => ['product.1', 'product.2'],
+                'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
+            ],
+            'second valid set without tier prices' => [
+                'priceList' => 'price_list_2',
+                'products' => ['product.1', 'product.2'],
+                'expectedPrices' => [],
+                'getTierPrices' => false
             ],
         ];
     }

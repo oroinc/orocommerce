@@ -2,15 +2,17 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
 
 class ProductController extends Controller
 {
@@ -58,8 +60,27 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
+        $widgetRouteParameters = [
+            'gridName' => 'products-grid',
+            'renderParams' => [
+                'enableFullScreenLayout' => 1,
+                'enableViews' => 0
+            ],
+            'renderParamsTypes' => [
+                'enableFullScreenLayout' => 'int',
+                'enableViews' => 'int'
+            ]
+        ];
+
+        /** @var ProductGridWidgetRenderEvent $event */
+        $event = $this->get('event_dispatcher')->dispatch(
+            ProductGridWidgetRenderEvent::NAME,
+            new ProductGridWidgetRenderEvent(array_merge($widgetRouteParameters, $this->getRequest()->query->all()))
+        );
+
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.product.class')
+            'entity_class' => $this->container->getParameter('orob2b_product.product.class'),
+            'widgetRouteParameters' => $event->getWidgetRouteParameters()
         ];
     }
 
@@ -110,16 +131,16 @@ class ProductController extends Controller
             $product,
             $this->get('orob2b_product.form.product'),
             function (Product $product) {
-                return array(
+                return [
                     'route' => 'orob2b_product_update',
-                    'parameters' => array('id' => $product->getId())
-                );
+                    'parameters' => ['id' => $product->getId()]
+                ];
             },
             function (Product $product) {
-                return array(
+                return [
                     'route' => 'orob2b_product_view',
-                    'parameters' => array('id' => $product->getId())
-                );
+                    'parameters' => ['id' => $product->getId()]
+                ];
             },
             $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
         );

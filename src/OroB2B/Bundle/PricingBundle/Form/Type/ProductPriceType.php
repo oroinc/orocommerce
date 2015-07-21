@@ -15,6 +15,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceType extends AbstractType
 {
@@ -97,6 +98,14 @@ class ProductPriceType extends AbstractType
                     'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
                 ]
             );
+        });
+
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            /** @var ProductPrice $price */
+            $price = $event->getData();
+            if ($price) {
+                $price->updatePrice();
+            }
         });
     }
 
