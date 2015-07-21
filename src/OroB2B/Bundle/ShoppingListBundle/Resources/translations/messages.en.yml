@@ -8,6 +8,7 @@ orob2b:
         notes.label: Notes
         owner.label: Owner
         organization.label: Organization
+        line_items.label: Line Items
 
         menu:
             sales_tab.label: Sales
@@ -20,3 +21,17 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        lineitem:
+            entity_label: Line Item
+            entity_plural_label: Line Items
+            id.label: ID
+            notes.label: Notes
+            quantity.label: Quantity
+            product.label: Product
+            shopping_list.label: Shopping List
+            unit.label: Unit
+            add_line_item: Add Line Item
+
+            controller:
+                saved.message: Line Item Saved Successfully

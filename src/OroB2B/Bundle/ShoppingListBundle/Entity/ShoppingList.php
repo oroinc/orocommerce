@@ -3,15 +3,16 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
-use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @ORM\Table(
@@ -137,6 +138,32 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $organization;
 
     /**
+     * @var ArrayCollection|LineItem[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\LineItem",
+     *      mappedBy="shoppingList",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     **/
+    protected $lineItems;
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->lineItems = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string) $this->label;
+    }
+
+    /**
      * @return int
      */
     public function getId()
@@ -260,6 +287,43 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
         $this->owner = $owningUser;
 
         return $this;
+    }
+
+    /**
+     * @param LineItem $item
+     *
+     * @return $this
+     */
+    public function addLineItem(LineItem $item)
+    {
+        if (!$this->lineItems->contains($item)) {
+            $item->setShoppingList($this);
+            $this->lineItems->add($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LineItem $item
+     *
+     * @return $this
+     */
+    public function removeLineItem(LineItem $item)
+    {
+        if ($this->lineItems->contains($item)) {
+            $this->lineItems->removeElement($item);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|LineItem[]
+     */
+    public function getLineItems()
+    {
+        return $this->lineItems;
     }
 
     /**

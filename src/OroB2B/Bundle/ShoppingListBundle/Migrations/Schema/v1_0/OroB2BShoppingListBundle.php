@@ -15,16 +15,20 @@ class OroB2BShoppingListBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BShoppingListTable($schema);
+        $this->createOrob2BShoppingListTable($schema);
+        $this->createOrob2BShoppingListLineItemTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BShoppingListForeignKeys($schema);
+        $this->addOrob2BShoppingListForeignKeys($schema);
+        $this->addOrob2BShoppingListLineItemForeignKeys($schema);
     }
 
     /**
+     * Create orob2b_shopping_list table
+     *
      * @param Schema $schema
      */
-    public function createOroB2BShoppingListTable(Schema $schema)
+    protected function createOrob2BShoppingListTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_shopping_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -39,10 +43,32 @@ class OroB2BShoppingListBundle implements Migration
     }
 
     /**
+     * Create orob2b_shopping_list_line_item table
+     *
      * @param Schema $schema
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    public function addOroB2BShoppingListForeignKeys(Schema $schema)
+    protected function createOrob2BShoppingListLineItemTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_shopping_list_line_item');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('shopping_list_id', 'integer', []);
+        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('unit_code', 'string', ['length' => 255]);
+        $table->addColumn('quantity', 'float', []);
+        $table->addColumn('notes', 'text', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(
+            ['product_id', 'shopping_list_id', 'unit_code'],
+            'orob2b_shopping_list_line_item_uidx'
+        );
+    }
+
+    /**
+     * Add orob2b_shopping_list foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShoppingListForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_shopping_list');
         $table->addForeignKeyConstraint(
@@ -56,6 +82,34 @@ class OroB2BShoppingListBundle implements Migration
             ['user_owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_shopping_list_line_item foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BShoppingListLineItemForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_shopping_list_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_shopping_list'),
+            ['shopping_list_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product_unit'),
+            ['unit_code'],
+            ['code'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }
