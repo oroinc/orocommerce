@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use ReflectionObject;
+
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
@@ -120,5 +122,26 @@ class ProductTest extends EntityTestCase
         $product->addUnitPrecision($unitPrecision);
 
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
+    }
+
+    public function testClone()
+    {
+        $id = 123;
+        $product = new Product();
+        $product->getUnitPrecisions()->add(new ProductUnitPrecision());
+
+        $refProduct = new ReflectionObject($product);
+        $refId = $refProduct->getProperty('id');
+        $refId->setAccessible(true);
+        $refId->setValue($product, $id);
+
+        $this->assertEquals($id, $product->getId());
+        $this->assertCount(1, $product->getUnitPrecisions());
+
+        $productCopy = clone $product;
+
+        $this->assertNull($productCopy->getId());
+        $this->assertCount(0, $productCopy->getUnitPrecisions());
+
     }
 }
