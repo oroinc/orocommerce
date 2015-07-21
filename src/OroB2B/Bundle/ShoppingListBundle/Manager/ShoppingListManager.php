@@ -17,7 +17,7 @@ class ShoppingListManager
     protected $manager;
 
     /**
-     * @param ManagerRegistry $manager
+     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
