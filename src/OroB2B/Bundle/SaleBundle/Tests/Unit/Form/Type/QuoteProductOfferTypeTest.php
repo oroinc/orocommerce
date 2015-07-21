@@ -46,7 +46,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->formType = new QuoteProductOfferType($this->translator, $this->quoteProductOfferTypeFormatter);
+        $this->formType = new QuoteProductOfferType($this->translator, $this->quoteProductOfferFormatter);
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
     }
 

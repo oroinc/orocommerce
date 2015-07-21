@@ -22,8 +22,8 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
@@ -38,42 +38,42 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductTypeFormatter
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductFormatter
      */
-    protected $quoteProductTypeFormatter;
+    protected $quoteProductFormatter;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductOfferTypeFormatter
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductOfferFormatter
      */
-    protected $quoteProductOfferTypeFormatter;
+    protected $quoteProductOfferFormatter;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->quoteProductTypeFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter'
+        $this->quoteProductFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
-        $this->quoteProductTypeFormatter->expects($this->any())
+        $this->quoteProductFormatter->expects($this->any())
             ->method('formatTypeLabels')
             ->will($this->returnCallback(function (array $types) {
                 return $types;
             }))
         ;
 
-        $this->quoteProductOfferTypeFormatter = $this->getMockBuilder(
-            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter'
+        $this->quoteProductOfferFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter'
         )
             ->disableOriginalConstructor()
             ->getMock()
         ;
 
-        $this->quoteProductOfferTypeFormatter->expects($this->any())
+        $this->quoteProductOfferFormatter->expects($this->any())
             ->method('formatPriceTypeLabels')
             ->will($this->returnCallback(function (array $types) {
                 return $types;
@@ -126,7 +126,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function prepareQuoteProductOfferType(TranslatorInterface $translator)
     {
-        $quoteProductOfferType = new QuoteProductOfferType($translator, $this->quoteProductOfferTypeFormatter);
+        $quoteProductOfferType = new QuoteProductOfferType($translator, $this->quoteProductOfferFormatter);
         $quoteProductOfferType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
 
         return $quoteProductOfferType;

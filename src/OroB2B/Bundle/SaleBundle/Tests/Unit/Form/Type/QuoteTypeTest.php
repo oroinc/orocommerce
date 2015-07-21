@@ -166,7 +166,7 @@ class QuoteTypeTest extends AbstractTest
         $quoteProductType = new QuoteProductType(
             $translator,
             $productUnitLabelFormatter,
-            $this->quoteProductTypeFormatter
+            $this->quoteProductFormatter
         );
         $quoteProductType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
 
@@ -177,7 +177,7 @@ class QuoteTypeTest extends AbstractTest
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
                         $translator,
-                        $this->quoteProductOfferTypeFormatter
+                        $this->quoteProductOfferFormatter
                     ),
                     QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),

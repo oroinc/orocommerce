@@ -21,7 +21,7 @@ services:
         arguments:
             - @translator
             - @orob2b_product.formatter.product_unit_label
-            - @orob2b_sale.formatter.quote_product_type
+            - @orob2b_sale.formatter.quote_product
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product.class%]]
         tags:
@@ -31,7 +31,7 @@ services:
         class: %orob2b_sale.form.type.quote_product_offer.class%
         arguments:
             - @translator
-            - @orob2b_sale.formatter.quote_product_offer_type
+            - @orob2b_sale.formatter.quote_product_offer
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product_offer.class%]]
         tags:

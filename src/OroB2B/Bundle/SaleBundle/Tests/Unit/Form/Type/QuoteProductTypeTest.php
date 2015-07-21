@@ -68,7 +68,7 @@ class QuoteProductTypeTest extends AbstractTest
         $this->formType = new QuoteProductType(
             $this->translator,
             $productUnitLabelFormatter,
-            $this->quoteProductTypeFormatter
+            $this->quoteProductFormatter
         );
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
     }
@@ -480,7 +480,7 @@ class QuoteProductTypeTest extends AbstractTest
      * @param Product $replacement
      * @param string $replacementSku
      * @param int $type
-     * @return PHPUnit_Framework_MockObject_MockObject|QuoteProduct
+     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProduct
      */
     protected function createQuoteProduct(
         $id,
@@ -490,7 +490,7 @@ class QuoteProductTypeTest extends AbstractTest
         $replacementSku = null,
         $type = QuoteProduct::TYPE_OFFER
     ) {
-        /* @var $quoteProduct PHPUnit_Framework_MockObject_MockObject|QuoteProduct */
+        /* @var $quoteProduct \PHPUnit_Framework_MockObject_MockObject|QuoteProduct */
         $quoteProduct = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
         $quoteProduct
             ->expects($this->any())
