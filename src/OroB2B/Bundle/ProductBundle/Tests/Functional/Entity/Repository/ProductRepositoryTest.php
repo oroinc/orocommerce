@@ -52,8 +52,8 @@ class ProductRepositoryTest extends WebTestCase
             'exact search 1' => [ProductFixture::PRODUCT_1, [ProductFixture::PRODUCT_1]],
             'exact search 2' => [ProductFixture::PRODUCT_2, [ProductFixture::PRODUCT_2]],
             'not found' => [uniqid(), []],
-            'mask all products 1' => ['product.%', [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2]],
-            'mask all products 2' => ['pro%', [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2]],
+            'mask all products 1' => ['product.%', [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2, ProductFixture::PRODUCT_3]],
+            'mask all products 2' => ['pro%', [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2, ProductFixture::PRODUCT_3]],
             'product suffixed with 1' => ['%.1', [ProductFixture::PRODUCT_1]],
             'product suffixed with 2' => ['%2', [ProductFixture::PRODUCT_2]],
         ];
