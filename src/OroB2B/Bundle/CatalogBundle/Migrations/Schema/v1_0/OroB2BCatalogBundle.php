@@ -40,7 +40,6 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['parent_id'], 'idx_fbd712dd727aca70', []);
     }
 
     /**
@@ -54,8 +53,7 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id'], 'uniq_179c42f5eb576e89');
-        $table->addIndex(['category_id'], 'idx_179c42f512469de2', []);
+        $table->addUniqueIndex(['localized_value_id']);
     }
 
     /**
