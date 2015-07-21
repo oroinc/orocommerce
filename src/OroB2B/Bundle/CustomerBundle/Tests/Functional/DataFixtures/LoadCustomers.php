@@ -36,6 +36,10 @@ class LoadCustomers extends AbstractFixture
     {
         $customer = new Customer();
         $customer->setName($name);
+        $organization = $manager
+            ->getRepository('OroOrganizationBundle:Organization')
+            ->getFirst();
+        $customer->setOrganization($organization);
         if ($parent) {
             $customer->setParent($parent);
         }

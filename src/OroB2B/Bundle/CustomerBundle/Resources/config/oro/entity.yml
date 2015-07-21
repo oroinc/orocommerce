@@ -1,0 +1,8 @@
+oro_entity:
+    entity_aliases:
+        OroB2B\Bundle\CustomerBundle\Entity\Audit:
+            alias:        account_user_audit
+            plural_alias: account_user_audits
+        OroB2B\Bundle\CustomerBundle\Entity\AuditField:
+            alias:        account_user_audit_field
+            plural_alias: account_user_audit_fields

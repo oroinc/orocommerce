@@ -1,0 +1,45 @@
+OroB2B\Bundle\RFPBundle\Entity\Request:
+    alias:                          orob2b_rfp_request
+    title_fields:                   [firstName, lastName, email]
+    route:
+        name:                       orob2b_rfp_request_view
+        parameters:
+            id:                     id
+    search_template:                OroB2BRFPBundle:Request:searchResult.html.twig
+    fields:
+        -
+            name:                   firstName
+            target_type:            text
+            target_fields:          [firstName]
+        -
+            name:                   lastName
+            target_type:            text
+            target_fields:          [lastName]
+        -
+            name:                   email
+            target_type:            text
+            target_fields:          [email]
+        -
+            name:                   phone
+            target_type:            text
+            target_fields:          [phone]
+        -
+            name:                   company
+            target_type:            text
+            target_fields:          [company]
+        -
+            name:                   role
+            target_type:            text
+            target_fields:          [role]
+        -
+            name:                   body
+            target_type:            text
+            target_fields:          [body]
+        -
+            name:                   status
+            relation_type:          many-to-one
+            relation_fields:
+                -
+                    name:           label
+                    target_type:    text
+                    target_fields:  [status]
