@@ -9,12 +9,12 @@
         {% endif %}
     </div>
     {% set options = {
-    wid: app.request.get('_wid'),
-    addressListUrl: path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id}),
-    addressCreateUrl: path('orob2b_customer_account_user_address_create', {accountUserId: entity.id}),
-    addressUpdateRouteName: 'orob2b_customer_account_user_address_update',
-    addressUpdateParams: {'accountUserId': entity.id },
-    currentAddresses: render(path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id}))
+        wid: app.request.get('_wid'),
+        addressListUrl: path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id}),
+        addressCreateUrl: path('orob2b_customer_account_user_address_create', {accountUserId: entity.id}),
+        addressUpdateRouteName: 'orob2b_customer_account_user_address_update',
+        addressUpdateParams: {'accountUserId': entity.id },
+        currentAddresses: render(path('orob2b_api_customer_account_user_get_accountuser_addresses', {accountUserId: entity.id}))
     } %}
     <div class="list-box map-box" id="address-book" data-page-component-module="orob2bcustomer/js/app/components/customer-address-book-component"
          data-page-component-options="{{ options|json_encode }}"></div>

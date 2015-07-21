@@ -68,7 +68,6 @@ abstract class AbstractAddressTest extends EntityTestCase
         $addressToType = array_shift($addressesToTypesArray);
         $this->assertEquals($this->address, $addressToType->getAddress());
         $this->assertEquals($this->billingType, $addressToType->getType());
-
     }
 
     public function testSetTypes()

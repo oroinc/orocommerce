@@ -578,7 +578,7 @@ class OroB2BCustomerBundle implements
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_dictionary_region'),
+            $schema->getTable(static::ORO_DICTIONARY_REGION_TABLE_NAME),
             ['region_code'],
             ['combined_code'],
             ['onDelete' => null, 'onUpdate' => null]
@@ -623,13 +623,13 @@ class OroB2BCustomerBundle implements
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADR_TO_ADR_TYPE_TABLE_NAME);
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_address_type'),
+            $schema->getTable(static::ORO_ADDRESS_TYPE_TABLE_NAME),
             ['type_name'],
             ['name'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user_address'),
+            $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME),
             ['account_user_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]

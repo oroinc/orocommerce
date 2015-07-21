@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\Common\Collections\ArrayCollection;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;

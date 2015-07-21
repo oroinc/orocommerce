@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CustomerBundle\Entity\Traits;
 
 use Doctrine\Common\Collections\Collection;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
 trait AddressEntityTrait

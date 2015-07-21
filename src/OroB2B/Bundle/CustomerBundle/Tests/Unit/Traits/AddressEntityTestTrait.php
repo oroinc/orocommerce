@@ -32,6 +32,9 @@ trait AddressEntityTestTrait
         $this->assertEquals($expectedAddress, $actualAddress);
     }
 
+    /**
+     * @return array
+     */
     public function getAddressByTypeNameProvider()
     {
         $billingType = new AddressType(AddressType::TYPE_BILLING);

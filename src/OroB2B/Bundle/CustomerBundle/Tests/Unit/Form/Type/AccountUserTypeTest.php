@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -14,6 +10,7 @@ use Symfony\Component\Validator\Validation;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as CustomerSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;

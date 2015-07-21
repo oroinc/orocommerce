@@ -27,11 +27,17 @@ class AccountUserTest extends AbstractUserTest
         return new AccountUser();
     }
 
+    /**
+     * @return AccountUserAddress
+     */
     public function createAddressEntity()
     {
         return new AccountUserAddress();
     }
 
+    /**
+     * @return AccountUser
+     */
     protected function createTestedEntity()
     {
         return $this->getUser();

@@ -1,15 +1,16 @@
 <?php
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Traits;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
+
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 trait AddressTestTrait
 {
     /**
      * Fill form for address tests (create test)
+     *
      * @param Form $form
      * @return \Symfony\Component\DomCrawler\Form
      */
@@ -50,6 +51,7 @@ trait AddressTestTrait
 
     /**
      * Fill form for address tests (update test)
+     *
      * @param Form $form
      * @return Form
      */

@@ -56,10 +56,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
     }
 
     /**
-     * Return entity for many-to-many entity.
-     * Should be compatible with AbstractAddressToAddressType
-     *
-     * @return AbstractAddressToAddressType
+     * {@inheritdoc}
      */
     protected function getAddressToAddressTypeEntity()
     {

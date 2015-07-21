@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Form;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Tests\Functional\Traits\AddressTestTrait;
-
-use Symfony\Component\DomCrawler\Form;
 
 /**
  * @outputBuffering enabled

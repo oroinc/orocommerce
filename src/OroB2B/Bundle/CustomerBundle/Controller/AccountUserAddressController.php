@@ -2,19 +2,19 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Controller;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
-
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
+
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 
 class AccountUserAddressController extends Controller
 {

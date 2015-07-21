@@ -56,10 +56,7 @@ class CustomerAddress extends ExtendCustomerAddress
     }
 
     /**
-     * Return entity for many-to-many entity.
-     * Should be compatible with AbstractAddressToAddressType
-     *
-     * @return AbstractAddressToAddressType
+     * {@inheritdoc}
      */
     protected function getAddressToAddressTypeEntity()
     {

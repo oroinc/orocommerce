@@ -11,6 +11,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
+
 use OroB2B\Bundle\CustomerBundle\Entity\Traits\AddressEntityTrait;
 
 /**

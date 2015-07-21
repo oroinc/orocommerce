@@ -2,14 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Controller\Api\Rest;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -18,6 +10,14 @@ use FOS\RestBundle\Routing\ClassResourceInterface;
 use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
+
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 /**
  * @NamePrefix("orob2b_api_customer_account_user_")

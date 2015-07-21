@@ -49,6 +49,7 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
 class Customer extends ExtendCustomer
 {
     use AddressEntityTrait;
+
     const INTERNAL_RATING_CODE = 'cust_internal_rating';
 
     /**

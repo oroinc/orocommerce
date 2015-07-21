@@ -39,7 +39,7 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     public function getTypes()
     {
         $types = new ArrayCollection();
-        /** @var CustomerAddressToAddressType $addressToType */
+        /** @var AbstractAddressToAddressType $addressToType */
         foreach ($this->getAddressesToTypes() as $addressToType) {
             $types->add($addressToType->getType());
         }
@@ -107,7 +107,7 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     public function getDefaults()
     {
         $defaultTypes = new ArrayCollection();
-        /** @var CustomerAddressToAddressType $addressToType */
+        /** @var AbstractAddressToAddressType $addressToType */
         foreach ($this->getAddressesToTypes() as $addressToType) {
             if ($addressToType->isDefault()) {
                 $defaultTypes->add($addressToType->getType());
@@ -213,7 +213,7 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     }
 
     /**
-     * Return entity for many-to-many entity.
+     * Return entity for many-to-many relationship.
      * Should be compatible with AbstractAddressToAddressType
      *
      * @return AbstractAddressToAddressType

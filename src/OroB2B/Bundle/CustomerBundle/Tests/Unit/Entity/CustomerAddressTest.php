@@ -7,11 +7,17 @@ use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
 
 class CustomerAddressTest extends AbstractAddressTest
 {
+    /**
+     * @return CustomerAddress
+     */
     protected function createAddressEntity()
     {
         return new CustomerAddress();
     }
 
+    /**
+     * @return CustomerAddressToAddressType
+     */
     protected function createAddressToTypeEntity()
     {
         return new CustomerAddressToAddressType();
