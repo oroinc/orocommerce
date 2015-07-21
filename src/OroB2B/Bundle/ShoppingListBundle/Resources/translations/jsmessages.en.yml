@@ -1,5 +1,7 @@
 orob2b:
     shoppinglist:
+        flash:
+            success: Shopping list was created successfuly
         line_item_save:
             flash:
                 success: Line Item has been added
@@ -7,3 +9,5 @@ orob2b:
             add_products:
                 success.message: Successfully added to shopping list
                 error.message: Failed to add to shopping list
+        widget:
+            add_to_new_shopping_list: Create new

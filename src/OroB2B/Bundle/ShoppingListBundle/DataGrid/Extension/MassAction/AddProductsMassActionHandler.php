@@ -3,6 +3,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -62,10 +63,11 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $data = $args->getData();
         $isAllSelected = $this->isAllSelected($args->getData());
         $shoppingList = $this->getShoppingList($data['shoppingList']);
-        $productIds = !$isAllSelected && array_key_exists('data', $data) ? explode(',', $data['data']) : [];
+        $productIds = !$isAllSelected && array_key_exists('values', $data) ? explode(',', $data['values']) : [];
 
         $iterableResult = $this->getProductsQueryBuilder($productIds)->getQuery()->iterate();
 
+        $iteration = 0;
         /** @var Product $entity */
         foreach ($iterableResult as $iteration => $entity) {
             $entity = $entity[0];
@@ -75,12 +77,12 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
                 ->setProduct($entity)
                 ->setQuantity(1)
                 ->setUnit($unitPrecision->getUnit());
-
             $flush = ($iteration % self::FLUSH_BATCH_SIZE) === 0;
             $this->shoppingListManager->addLineItem($lineItem, $shoppingList, $flush);
         }
+        $this->entityManager->flush();
 
-        die('handle AddProductsMassActionHandler');
+        return $this->getResponse($args, ++$iteration);
     }
 
     /**
@@ -95,7 +97,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             ->select('p');
         if (count($productIds) > 0) {
             $productsQueryBuilder
-                ->where('p MEMBER OF :product_ids')
+                ->where('p IN (:product_ids)')
                 ->setParameter('product_ids', $productIds);
         }
 
@@ -131,5 +133,33 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         }
 
         return $shoppingList;
+    }
+
+    /**
+     * @param MassActionHandlerArgs $args
+     * @param int $entitiesCount
+     *
+     * @return MassActionResponse
+     */
+    protected function getResponse(MassActionHandlerArgs $args, $entitiesCount = 0)
+    {
+        $massAction = $args->getMassAction();
+        $responseMessage = $massAction->getOptions()->offsetGetByPath(
+            '[messages][success]',
+            'orob2b.shoppinglist.actions.add_success_message'
+        );
+
+        $successful = $entitiesCount > 0;
+        $options = ['count' => $entitiesCount];
+
+        return new MassActionResponse(
+            $successful,
+            $this->translator->transChoice(
+                $responseMessage,
+                $entitiesCount,
+                ['%count%' => $entitiesCount]
+            ),
+            $options
+        );
     }
 }

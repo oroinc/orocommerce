@@ -19,12 +19,12 @@ orob2b:
             set_current: Set as current
             add_to_shopping_list: Add to
             add_to_new_shopping_list: Create new
+            add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
+
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the account users
-            mark_read.label: Mark read
-            mark_unread.label: Mark unread
 
         widgets:
             shopping_list_information: Shopping Lists Information

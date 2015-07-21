@@ -7,26 +7,33 @@ define(function (require) {
         mediator = require('oroui/js/mediator'),
         DialogWidget = require('oro/dialog-widget'),
         routing = require('routing'),
+        messenger = require('oroui/js/messenger'),
         options = {
             successMessage: 'orob2b.shoppinglist.menu.add_products.success.message',
             errorMessage: 'orob2b.shoppinglist.menu.add_products.error.message',
             redirect: '/'
         };
 
+    mediator.on('frontend:shoppinglist:add-widget-requested-response', showForm, this);
+
     function onClick(e) {
         e.preventDefault();
 
         if ($(e.currentTarget).data('id') === 'new') {
-            showForm(); return;
+            mediator.trigger('frontend:shoppinglist:add-widget-requested');
+        } else {
+            mediator.trigger('frontend:shoppinglist:products-add', {id: $(this).data('id')})
         }
-
-        mediator.trigger('frontend:shoppinglist:products-add', {id: $(this).data('id')})
     }
 
-    function showForm() {
+    function showForm(selections) {
+        if (selections.cnt < 1) {
+            messenger.notificationFlashMessage('warning', selections.reason);
+            return;
+        }
         var dialog = new DialogWidget({
             'url': routing.generate('orob2b_shopping_list_frontend_create'),
-            'title': 'orob2b.shoppinglist.actions.add_to_new_shopping_list',
+            'title': 'Create new shopping list',
             'regionEnabled': false,
             'incrementalPosition': false,
             'dialogOptions': {
@@ -38,8 +45,7 @@ define(function (require) {
         });
         dialog.render();
         dialog.on('formSave', _.bind(function (response) {
-            dialog.remove();
-            mediator.trigger('frontend:shoppinglist:products-add', {id: response });
+            mediator.trigger('frontend:shoppinglist:products-add', {id: response});
         }, this));
     }
 

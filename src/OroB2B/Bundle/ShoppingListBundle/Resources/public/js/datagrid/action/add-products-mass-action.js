@@ -22,6 +22,7 @@ define([
         initialize: function (options) {
             AddProductsAction.__super__.initialize.apply(this, arguments);
             mediator.on('frontend:shoppinglist:products-add', this._beforeProductsAdd, this);
+            mediator.on('frontend:shoppinglist:add-widget-requested', this._checkSelectionState, this);
         },
         /**
          * @param {object} eventArgs
@@ -29,6 +30,23 @@ define([
         _beforeProductsAdd: function (eventArgs) {
             this.route_parameters['shoppingList'] = eventArgs.id;
             this.run(true);
+        },
+        _checkSelectionState: function () {
+            var selectionState = this.datagrid.getSelectionState(),
+                models = selectionState.selectedModels,
+                length = 0,
+                reason;
+
+            for (var key in models) {
+                if (models.hasOwnProperty(key)) {
+                    length++
+                }
+            }
+            if (length < 1) {
+                reason = AddProductsAction.__super__.defaultMessages.empty_selection;
+            }
+
+            mediator.trigger('frontend:shoppinglist:add-widget-requested-response', {cnt: length, reason: reason})
         },
         /**
          * Overridden in order to set shoppingList route param
