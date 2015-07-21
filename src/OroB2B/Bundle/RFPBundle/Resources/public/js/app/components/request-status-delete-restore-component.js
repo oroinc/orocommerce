@@ -5,9 +5,9 @@ define(function(require) {
 
     var RequestStatusDeleteRestoreComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var  mediator = require('oroui/js/mediator');
+    var mediator = require('oroui/js/mediator');
     var Error = require('oroui/js/error');
-    var  $ = require('jquery');
+    var $ = require('jquery');
 
     RequestStatusDeleteRestoreComponent = BaseComponent.extend({
         initialize: function(options) {
