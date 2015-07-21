@@ -35,8 +35,6 @@ class OroB2BShoppingListBundle implements Migration
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['user_owner_id'], 'IDX_39731EC59EB185F9', []);
-        $table->addIndex(['organization_id'], 'IDX_39731EC532C8A3DE', []);
         $table->addIndex(['created_at'], 'orob2b_shop_lst_created_at_idx', []);
     }
 

@@ -36,6 +36,11 @@ class OroB2BCustomerBundle implements
     const ORO_B2B_ACCOUNT_ROLE_TO_WEBSITE_TABLE_NAME = 'orob2b_account_role_to_website';
     const ORO_B2B_WEBSITE_TABLE_NAME = 'orob2b_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
+    const ORO_B2B_CUSTOMER_ADDRESS_TABLE_NAME = 'orob2b_customer_address';
+    const ORO_B2B_CUSTOMER_ADDRESS_TO_ADDRESS_TABLE_NAME = 'orob2b_customer_adr_adr_type';
+    const ORO_DICTIONARY_REGION_TABLE_NAME = 'oro_dictionary_region';
+    const ORO_DICTIONARY_COUNTRY_TABLE_NAME = 'oro_dictionary_country';
+    const ORO_ADDRESS_TYPE_TABLE_NAME = 'oro_address_type';
     const ORO_EMAIL = 'oro_email';
     const ORO_CALENDAR_EVENT = 'oro_calendar_event';
 
@@ -104,6 +109,8 @@ class OroB2BCustomerBundle implements
         $this->createOroB2BAccountUserRoleToWebsiteTable($schema);
         $this->createOroB2BCustomerTable($schema);
         $this->createOroB2BCustomerGroupTable($schema);
+        $this->createOrob2BCustomerAddressTable($schema);
+        $this->createOrob2BCustomerAdrAdrTypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -111,6 +118,8 @@ class OroB2BCustomerBundle implements
         $this->addOroB2BAccountUserOrganizationForeignKeys($schema);
         $this->addOroB2BAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroB2BCustomerForeignKeys($schema);
+        $this->addOrob2BCustomerAddressForeignKeys($schema);
+        $this->addOrob2BCustomerAdrAdrTypeForeignKeys($schema);
     }
 
     /**
@@ -147,8 +156,8 @@ class OroB2BCustomerBundle implements
 
         $table->setPrimaryKey(['id']);
 
-        $table->addUniqueIndex(['username'], 'UNIQ_689CD865F85E0677');
-        $table->addUniqueIndex(['email'], 'UNIQ_689CD865E7927C74');
+        $table->addUniqueIndex(['username']);
+        $table->addUniqueIndex(['email']);
         $this->attachmentExtension->addAttachmentAssociation(
             $schema,
             static::ORO_B2B_ACCOUNT_USER_TABLE_NAME,
@@ -285,7 +294,7 @@ class OroB2BCustomerBundle implements
         $table->addColumn('role', 'string', ['length' => 64]);
         $table->addColumn('label', 'string', ['length' => 64]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['role'], 'uniq_e153330157698a6a');
+        $table->addUniqueIndex(['role']);
     }
 
     /**
@@ -299,7 +308,7 @@ class OroB2BCustomerBundle implements
         $table->addColumn('account_user_role_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['account_user_role_id', 'website_id']);
-        $table->addUniqueIndex(['website_id'], 'UNIQ_EC532EDD18F45C82');
+        $table->addUniqueIndex(['website_id']);
     }
 
     /**
@@ -414,6 +423,108 @@ class OroB2BCustomerBundle implements
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME),
             ['account_user_role_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Create orob2b_customer_address table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BCustomerAddressTable(Schema $schema)
+    {
+        $table = $schema->createTable(static::ORO_B2B_CUSTOMER_ADDRESS_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
+        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
+        $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
+        $table->addColumn('city', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('organization', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('name_prefix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('first_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('created', 'datetime', []);
+        $table->addColumn('updated', 'datetime', []);
+        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['owner_id'], 'IDX_DEDF1E3D7E3C61F9', []);
+        $table->addIndex(['country_code'], 'IDX_DEDF1E3DF026BB7C', []);
+        $table->addIndex(['region_code'], 'IDX_DEDF1E3DAEB327AF', []);
+    }
+
+    /**
+     * Create orob2b_customer_adr_adr_type table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BCustomerAdrAdrTypeTable(Schema $schema)
+    {
+        $table = $schema->createTable(static::ORO_B2B_CUSTOMER_ADDRESS_TO_ADDRESS_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('type_name', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('customer_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('is_default', 'boolean', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['customer_address_id', 'type_name'], 'orob2b_customer_adr_id_type_name_idx');
+        $table->addIndex(['customer_address_id'], 'IDX_15830A7187EABF7', []);
+        $table->addIndex(['type_name'], 'IDX_15830A71892CBB0E', []);
+    }
+
+    /**
+     * Add orob2b_customer_address foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BCustomerAddressForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(static::ORO_B2B_CUSTOMER_ADDRESS_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_B2B_CUSTOMER_TABLE_NAME),
+            ['owner_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_DICTIONARY_REGION_TABLE_NAME),
+            ['region_code'],
+            ['combined_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_DICTIONARY_COUNTRY_TABLE_NAME),
+            ['country_code'],
+            ['iso2_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_customer_adr_adr_type foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BCustomerAdrAdrTypeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(static::ORO_B2B_CUSTOMER_ADDRESS_TO_ADDRESS_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_ADDRESS_TYPE_TABLE_NAME),
+            ['type_name'],
+            ['name'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_B2B_CUSTOMER_ADDRESS_TABLE_NAME),
+            ['customer_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
