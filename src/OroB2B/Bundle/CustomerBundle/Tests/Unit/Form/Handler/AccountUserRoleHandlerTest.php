@@ -17,6 +17,7 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\CustomerBundle\Form\Handler\AccountUserRoleHandler;
@@ -257,6 +258,21 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn([]);
 
+        $firstEntityPrivilege = $this->createPrivilege('entity', 'entity:FirstClass', 'VIEW');
+        $secondEntityPrivilege = $this->createPrivilege('entity', 'entity:SecondClass', 'VIEW');
+
+        $entityForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $entityForm->expects($this->once())
+            ->method('getData')
+            ->willReturn([$firstEntityPrivilege, $secondEntityPrivilege]);
+
+        $actionPrivilege = $this->createPrivilege('action', 'action', 'random_action');
+
+        $actionForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $actionForm->expects($this->once())
+            ->method('getData')
+            ->willReturn([$actionPrivilege]);
+
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
             ->method('submit')
@@ -269,6 +285,8 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturnMap([
                 ['appendUsers', $appendForm],
                 ['removeUsers', $removeForm],
+                ['entity', $entityForm],
+                ['action', $actionForm],
             ]);
 
         $this->formFactory->expects($this->once())
@@ -281,8 +299,23 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(get_class($role))
             ->willReturn($objectManager);
 
+        $expectedFirstEntityPrivilege = $this->createPrivilege('entity', 'entity:FirstClass', 'VIEW');
+        $expectedFirstEntityPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+
+        $expectedSecondEntityPrivilege = $this->createPrivilege('entity', 'entity:SecondClass', 'VIEW');
+        $expectedSecondEntityPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+
+        $expectedActionPrivilege = $this->createPrivilege('action', 'action', 'random_action');
+        $expectedActionPrivilege->setGroup(AccountUser::SECURITY_GROUP);
+
         $this->privilegeRepository->expects($this->once())
-            ->method('savePrivileges');
+            ->method('savePrivileges')
+            ->with(
+                $roleSecurityIdentity,
+                new ArrayCollection(
+                    [$expectedFirstEntityPrivilege, $expectedSecondEntityPrivilege, $expectedActionPrivilege]
+                )
+            );
 
         $this->aclManager->expects($this->any())
             ->method('getSid')
@@ -295,7 +328,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $this->chainMetadataProvider->expects($this->once())
             ->method('stopProviderEmulation');
 
-        $handler = new AccountUserRoleHandler($this->formFactory, []);
+        $handler = new AccountUserRoleHandler($this->formFactory, $this->privilegeConfig);
         $handler->setManagerRegistry($this->managerRegistry);
         $handler->setAclPrivilegeRepository($this->privilegeRepository);
         $handler->setAclManager($this->aclManager);
