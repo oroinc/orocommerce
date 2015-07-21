@@ -4,19 +4,21 @@ namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUserTest extends AbstractUserTest
 {
+    use AddressEntityTestTrait;
+
     /**
      * @return AccountUser
      */
@@ -28,6 +30,11 @@ class AccountUserTest extends AbstractUserTest
     public function createAddressEntity()
     {
         return new AccountUserAddress();
+    }
+
+    protected function createTestedEntity()
+    {
+        return $this->getUser();
     }
 
     public function testProperties()
@@ -212,105 +219,5 @@ class AccountUserTest extends AbstractUserTest
 
         $this->assertFalse($user->isConfirmed());
         $this->assertFalse($user->isAccountNonLocked());
-    }
-
-    public function testAddressesCollection()
-    {
-        $accountUser = $this->getUser();
-        static::assertPropertyCollections($accountUser, [['addresses', $this->createAddressEntity()]]);
-    }
-
-    /**
-     * @param AccountUserAddress[] $addresses
-     * @param string            $searchName
-     * @param AccountUserAddress   $expectedAddress
-     * @dataProvider getAddressByTypeNameProvider
-     */
-    public function testGetAddressByTypeName($addresses, $searchName, $expectedAddress)
-    {
-        $accountUser = $this->getUser();
-        foreach ($addresses as $address) {
-            $accountUser->addAddress($address);
-        }
-
-        $actualAddress = $accountUser->getAddressByTypeName($searchName);
-        $this->assertEquals($expectedAddress, $actualAddress);
-    }
-
-    public function getAddressByTypeNameProvider()
-    {
-        $billingType = new AddressType(AddressType::TYPE_BILLING);
-        $shippingType = new AddressType(AddressType::TYPE_SHIPPING);
-
-        $addressWithBilling = $this->createAddressEntity();
-        $addressWithBilling->addType($billingType);
-
-        $addressWithShipping = $this->createAddressEntity();
-        $addressWithShipping->addType($shippingType);
-
-        $addressWithShippingAndBilling = $this->createAddressEntity();
-        $addressWithShippingAndBilling->addType($shippingType);
-        $addressWithShippingAndBilling->addType($billingType);
-
-        return [
-            'not found address with type (empty addresses)' => [
-                'addresses' => [],
-                'searchName' => AddressType::TYPE_BILLING,
-                'expectedAddress' => null
-            ],
-            'not found address with type (some address exists)' => [
-                'addresses' => [$addressWithShipping],
-                'searchName' => AddressType::TYPE_BILLING,
-                'expectedAddress' => null
-            ],
-            'find address by shipping name' => [
-                'addresses' => [$addressWithShipping],
-                'searchName' => AddressType::TYPE_SHIPPING,
-                'expectedAddress' => $addressWithShipping
-            ],
-            'find first address by shipping name' => [
-                'addresses' => [$addressWithShippingAndBilling, $addressWithShipping],
-                'searchName' => AddressType::TYPE_SHIPPING,
-                'expectedAddress' => $addressWithShippingAndBilling
-            ],
-        ];
-    }
-
-    /**
-     * @param $addresses
-     * @param $expectedAddress
-     * @dataProvider getPrimaryAddressProvider
-     */
-    public function testGetPrimaryAddress($addresses, $expectedAddress)
-    {
-        $accountUser = $this->getUser();
-        foreach ($addresses as $address) {
-            $accountUser->addAddress($address);
-        }
-
-        $this->assertEquals($expectedAddress, $accountUser->getPrimaryAddress());
-    }
-
-    public function getPrimaryAddressProvider()
-    {
-        $primaryAddress = $this->createAddressEntity();
-        $primaryAddress->setPrimary(true);
-
-        $notPrimaryAddress = $this->createAddressEntity();
-
-        return [
-            'without primary address' => [
-                'addresses' => [$notPrimaryAddress],
-                'expectedAddress' => null
-            ],
-            'one primary address' => [
-                'addresses' => [$primaryAddress],
-                'expectedAddress' => $primaryAddress
-            ],
-            'get one primary by few address' => [
-                'addresses' => [$primaryAddress, $notPrimaryAddress],
-                'expectedAddress' => $primaryAddress
-            ],
-        ];
     }
 }

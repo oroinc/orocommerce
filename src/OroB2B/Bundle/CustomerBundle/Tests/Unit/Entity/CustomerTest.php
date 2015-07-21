@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
@@ -10,12 +9,15 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CustomerTest extends EntityTestCase
 {
+    use AddressEntityTestTrait;
+
     /**
      * Test setters getters
      */
@@ -85,106 +87,6 @@ class CustomerTest extends EntityTestCase
         $this->assertCount(0, $customer->getUsers());
     }
 
-    public function testAddressesCollection()
-    {
-        $customer = $this->createCustomerEntity();
-        static::assertPropertyCollections($customer, [['addresses', $this->createAddressEntity()]]);
-    }
-
-    /**
-     * @param CustomerAddress[] $addresses
-     * @param string            $searchName
-     * @param CustomerAddress   $expectedAddress
-     * @dataProvider getAddressByTypeNameProvider
-     */
-    public function testGetAddressByTypeName($addresses, $searchName, $expectedAddress)
-    {
-        $customer = $this->createCustomerEntity();
-        foreach ($addresses as $address) {
-            $customer->addAddress($address);
-        }
-
-        $actualAddress = $customer->getAddressByTypeName($searchName);
-        $this->assertEquals($expectedAddress, $actualAddress);
-    }
-
-    public function getAddressByTypeNameProvider()
-    {
-        $billingType = new AddressType(AddressType::TYPE_BILLING);
-        $shippingType = new AddressType(AddressType::TYPE_SHIPPING);
-
-        $addressWithBilling = $this->createAddressEntity();
-        $addressWithBilling->addType($billingType);
-
-        $addressWithShipping = $this->createAddressEntity();
-        $addressWithShipping->addType($shippingType);
-
-        $addressWithShippingAndBilling = $this->createAddressEntity();
-        $addressWithShippingAndBilling->addType($shippingType);
-        $addressWithShippingAndBilling->addType($billingType);
-
-        return [
-            'not found address with type (empty addresses)' => [
-                'addresses' => [],
-                'searchName' => AddressType::TYPE_BILLING,
-                'expectedAddress' => null
-            ],
-            'not found address with type (some address exists)' => [
-                'addresses' => [$addressWithShipping],
-                'searchName' => AddressType::TYPE_BILLING,
-                'expectedAddress' => null
-            ],
-            'find address by shipping name' => [
-                'addresses' => [$addressWithShipping],
-                'searchName' => AddressType::TYPE_SHIPPING,
-                'expectedAddress' => $addressWithShipping
-            ],
-            'find first address by shipping name' => [
-                'addresses' => [$addressWithShippingAndBilling, $addressWithShipping],
-                'searchName' => AddressType::TYPE_SHIPPING,
-                'expectedAddress' => $addressWithShippingAndBilling
-            ],
-        ];
-    }
-
-    /**
-     * @param $addresses
-     * @param $expectedAddress
-     * @dataProvider getPrimaryAddressProvider
-     */
-    public function testGetPrimaryAddress($addresses, $expectedAddress)
-    {
-        $customer = $this->createCustomerEntity();
-        foreach ($addresses as $address) {
-            $customer->addAddress($address);
-        }
-
-        $this->assertEquals($expectedAddress, $customer->getPrimaryAddress());
-    }
-
-    public function getPrimaryAddressProvider()
-    {
-        $primaryAddress = $this->createAddressEntity();
-        $primaryAddress->setPrimary(true);
-
-        $notPrimaryAddress = $this->createAddressEntity();
-
-        return [
-            'without primary address' => [
-                'addresses' => [$notPrimaryAddress],
-                'expectedAddress' => null
-            ],
-            'one primary address' => [
-                'addresses' => [$primaryAddress],
-                'expectedAddress' => $primaryAddress
-            ],
-            'get one primary by few address' => [
-                'addresses' => [$primaryAddress, $notPrimaryAddress],
-                'expectedAddress' => $primaryAddress
-            ],
-        ];
-    }
-
     /**
      * @return CustomerGroup
      */
@@ -220,5 +122,10 @@ class CustomerTest extends EntityTestCase
     protected function createAddressEntity()
     {
         return new CustomerAddress();
+    }
+
+    protected function createTestedEntity()
+    {
+        return $this->createCustomerEntity();
     }
 }

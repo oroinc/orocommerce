@@ -11,6 +11,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Traits\AddressEntityTrait;
 
 /**
  * @ORM\Entity
@@ -62,6 +63,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  */
 class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
 {
+    use AddressEntityTrait;
+
     const SECURITY_GROUP = 'commerce';
 
     /**
@@ -429,90 +432,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * Add addresses
-     *
-     * @param AccountUserAddress $address
-     * @return $this
-     */
-    public function addAddress(AccountUserAddress $address)
-    {
-        /** @var AccountUserAddress $address */
-        if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
-            $address->setOwner($this);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove addresses
-     *
-     * @param AccountUserAddress $address
-     * @return $this
-     */
-    public function removeAddress(AccountUserAddress $address)
-    {
-        if ($this->hasAddress($address)) {
-            $this->addresses->removeElement($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get addresses
-     *
-     * @return Collection
+     * {@inheritdoc}
      */
     public function getAddresses()
     {
         return $this->addresses;
-    }
-
-    /**
-     * @param AccountUserAddress $address
-     * @return bool
-     */
-    protected function hasAddress(AccountUserAddress $address)
-    {
-        return $this->getAddresses()->contains($address);
-    }
-
-    /**
-     * Gets one address that has specified type name.
-     *
-     * @param string $typeName
-     *
-     * @return AccountUserAddress|null
-     */
-    public function getAddressByTypeName($typeName)
-    {
-        /** @var AccountUserAddress $address */
-        foreach ($this->getAddresses() as $address) {
-            if ($address->hasTypeWithName($typeName)) {
-                return $address;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets primary address if it's available.
-     *
-     * @return AccountUserAddress|null
-     */
-    public function getPrimaryAddress()
-    {
-        /** @var AccountUserAddress $address */
-        foreach ($this->getAddresses() as $address) {
-            if ($address->isPrimary()) {
-                return $address;
-            }
-        }
-
-        return null;
     }
 
     /**
