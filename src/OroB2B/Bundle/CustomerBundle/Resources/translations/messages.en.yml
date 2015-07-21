@@ -10,6 +10,7 @@ orob2b.customer:
     organization.label: 'Organization'
     has_group.label: 'Has group'
     users.label: 'Users'
+    addresses.label: 'Addresses'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
 
@@ -96,10 +97,41 @@ orob2b.customer:
 
     sections:
         general: 'General Information'
+        addresses: 'Addresses'
         customergroup:
             customers: 'Customers'
         roles:   'Frontend Capabilities'
         password: 'Password'
+
+    customeraddress:
+        city.label:          City
+        country.label:       Country
+        entity_description:  Represent customer's address
+        entity_label:        Customer Address
+        entity_plural_label: Customer Addresses
+        first_name.label:    First name
+        id.label:            Id
+        label.label:         Label
+        last_name.label:     Last name
+        middle_name.label:   Middle name
+        name_prefix.label:   Name prefix
+        name_suffix.label:   Name suffix
+        organization.label:  Organization
+        owner.label:         Owner
+        postal_code.label:   Zip/postal code
+        primary.label:       Primary
+        region.label:        State
+        region_text.label:   State
+        street.label:        Street
+        street2.label:       Street 2
+        types.label:         Types
+        addresses_to_types.label:   Addresses to address types
+
+        country_name.label:      Country name
+        country_iso2_code.label: Country ISO2 code
+        country_iso3_code.label: Country ISO3 code
+        region_name.label:       State name
+        region_code.label:       State ISO code
 
     menu:
         customer_tab.label: 'Customers'
@@ -166,3 +198,6 @@ orob2b.customer:
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
+
+    customer_typed_address_with_default_type:
+        choice.default_text: 'Default %type_name%'

@@ -58,7 +58,6 @@ class LineItemValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateNoDuplicate()
     {
-
         $this->repository->expects($this->once())
             ->method('findDuplicate')
             ->with($this->lineItem)

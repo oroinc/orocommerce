@@ -1,0 +1,30 @@
+{% extends commerce.layout %}
+
+{% oro_title_set({params : {"%entityName%": 'orob2b.rfp.request.entity_label'|trans} }) %}
+
+{% block content %}
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        <div class="flash-notice">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <div class="form-container">
+        <div class="responsive-cell">
+        <fieldset class="form-horizontal rfp-form">
+            {{ form_start(form) }}
+            {{ form_errors(form) }}
+            {{ form_row(form.firstName) }}
+            {{ form_row(form.lastName) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.phone) }}
+            {{ form_row(form.company) }}
+            {{ form_row(form.role) }}
+            {{ form_row(form.body) }}
+            <div class="control-group text-center">
+                {{ form_row(form.submit, {'attr': {'class': 'btn  btn-primary '}}) }}
+            </div>
+            {{ form_end(form) }}
+        </fieldset>
+        </div>
+    </div>
+{% endblock content %}

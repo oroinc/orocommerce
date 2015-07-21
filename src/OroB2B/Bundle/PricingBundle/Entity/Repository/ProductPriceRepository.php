@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -75,7 +74,7 @@ class ProductPriceRepository extends EntityRepository
         $currencies = $qb
             ->distinct()
             ->select('productPrice.currency')
-            ->orderBy('productPrice.currency', Criteria::ASC)
+            ->orderBy($qb->expr()->asc('productPrice.currency'))
             ->getQuery()
             ->getArrayResult();
 
@@ -94,13 +93,50 @@ class ProductPriceRepository extends EntityRepository
      */
     public function getPricesByProduct(Product $product)
     {
-        return $this->createQueryBuilder('price')
+        $qb = $this->createQueryBuilder('price');
+        return $qb
             ->andWhere('price.product = :product')
-            ->addOrderBy('price.priceList', Criteria::ASC)
-            ->addOrderBy('price.unit', Criteria::ASC)
-            ->addOrderBy('price.currency', Criteria::ASC)
+            ->addOrderBy($qb->expr()->asc('price.priceList'))
+            ->addOrderBy($qb->expr()->asc('price.unit'))
+            ->addOrderBy($qb->expr()->asc('price.currency'))
+            ->addOrderBy($qb->expr()->asc('price.quantity'))
             ->setParameter('product', $product)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Return product prices for specified price list and product IDs
+     *
+     * @param int $priceListId
+     * @param array $productIds
+     * @param bool $getTierPrices
+     * @return ProductPrice[]
+     */
+    public function findByPriceListIdAndProductIds($priceListId, array $productIds, $getTierPrices = true)
+    {
+        if (!$productIds) {
+            return [];
+        }
+
+        $queryBuilder = $this->createQueryBuilder('price');
+        $where = $queryBuilder->expr()->andX(
+            $queryBuilder->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
+            $queryBuilder->expr()->in('IDENTITY(price.product)', ':productIds')
+        );
+
+        if (!$getTierPrices) {
+            $where->add($queryBuilder->expr()->eq('price.quantity', ':priceQuantity'));
+            $queryBuilder->setParameter('priceQuantity', 1);
+        }
+
+        $queryBuilder
+            ->andWhere($where)
+            ->setParameter('priceListId', $priceListId)
+            ->setParameter('productIds', $productIds)
+            ->addOrderBy('price.unit')
+            ->addOrderBy('price.quantity');
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

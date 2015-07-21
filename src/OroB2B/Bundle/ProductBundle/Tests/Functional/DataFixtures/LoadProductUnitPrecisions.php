@@ -22,6 +22,7 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
         $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.liter', 3);
         $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.bottle', 1);
         $this->createProductUnitPrecision($manager, 'product.2', 'product_unit.box');
+        $this->createProductUnitPrecision($manager, 'product.3', 'product_unit.liter', 3);
 
         $manager->flush();
     }

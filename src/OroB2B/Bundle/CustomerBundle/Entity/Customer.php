@@ -81,6 +81,16 @@ class Customer extends ExtendCustomer
     protected $children;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress",
+     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"primary" = "DESC"})
+     */
+    protected $addresses;
+
+    /**
      * @var CustomerGroup
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup", inversedBy="customers")
@@ -113,6 +123,7 @@ class Customer extends ExtendCustomer
         parent::__construct();
 
         $this->children = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -170,6 +181,93 @@ class Customer extends ExtendCustomer
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * Add addresses
+     *
+     * @param CustomerAddress $address
+     * @return Customer
+     */
+    public function addAddress(CustomerAddress $address)
+    {
+        /** @var CustomerAddress $address */
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove addresses
+     *
+     * @param CustomerAddress $addresses
+     * @return $this
+     */
+    public function removeAddress(CustomerAddress $addresses)
+    {
+        if ($this->hasAddress($addresses)) {
+            $this->addresses->removeElement($addresses);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Collection
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * @param CustomerAddress $address
+     * @return bool
+     */
+    protected function hasAddress(CustomerAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
+    }
+
+    /**
+     * Gets one address that has specified type name.
+     *
+     * @param string $typeName
+     *
+     * @return CustomerAddress|null
+     */
+    public function getAddressByTypeName($typeName)
+    {
+        /** @var CustomerAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->hasTypeWithName($typeName)) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return CustomerAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        /** @var CustomerAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                return $address;
+            }
+        }
+
+        return null;
     }
 
     /**

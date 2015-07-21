@@ -21,3 +21,8 @@ orob2b_pricing_bundle_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_product_price_product:
+    resource:     "@OroB2BPricingBundle/Controller/ProductController.php"
+    type:         annotation
+    prefix:       /productprice/product
