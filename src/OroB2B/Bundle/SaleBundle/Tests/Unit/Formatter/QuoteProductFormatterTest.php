@@ -18,6 +18,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
+/**
+ * @SuppressWarnings(PHPMD.NPathComplexity)
+ */
 class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
