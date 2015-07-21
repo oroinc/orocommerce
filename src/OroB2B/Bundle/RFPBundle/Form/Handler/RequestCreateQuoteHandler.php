@@ -72,7 +72,6 @@ class RequestCreateQuoteHandler
     {
         $this->form->setData($request);
 
-        //if ($this->request->isMethod('post')) {
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
 
