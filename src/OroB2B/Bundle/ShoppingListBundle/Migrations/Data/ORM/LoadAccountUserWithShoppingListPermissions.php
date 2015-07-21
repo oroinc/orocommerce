@@ -15,7 +15,9 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class LoadAccountUserWithShoppingListPermissions extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadAccountUserWithShoppingListPermissions extends AbstractFixture implements
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
     const SHOPPING_LIST_CLASS = 'OroB2BShoppingListBundle:ShoppingList';
     const ROLE_FRONTEND_BUYER = 'ROLE_FRONTEND_BUYER';
