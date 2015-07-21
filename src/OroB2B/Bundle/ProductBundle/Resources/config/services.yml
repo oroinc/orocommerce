@@ -73,7 +73,7 @@ services:
     orob2b_product.service.sku_incrementor:
         class: %orob2b_product.service.sku_incrementor.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @oro_entity.doctrine_helper
             - %orob2b_product.product.class%
 
     orob2b_product.service.duplicator:

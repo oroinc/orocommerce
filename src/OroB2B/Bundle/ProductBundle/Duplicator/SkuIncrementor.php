@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
@@ -13,9 +13,9 @@ class SkuIncrementor implements SkuIncrementorInterface
     const SKU_INCREMENT_DATABASE_PATTERN = '%s-%%';
 
     /**
-     * @var ObjectManager
+     * @var DoctrineHelper
      */
-    protected $objectManager;
+    protected $doctrineHelper;
 
     /**
      * @var string[]
@@ -25,15 +25,15 @@ class SkuIncrementor implements SkuIncrementorInterface
     /**
      * @var string
      */
-    private $productClass;
+    protected $productClass;
 
     /**
-     * @param ObjectManager $objectManager
+     * @param DoctrineHelper $doctrineHelper
      * @param string $productClass
      */
-    public function __construct(ObjectManager $objectManager, $productClass)
+    public function __construct(DoctrineHelper $doctrineHelper, $productClass)
     {
-        $this->objectManager = $objectManager;
+        $this->doctrineHelper = $doctrineHelper;
         $this->productClass = $productClass;
     }
 
@@ -48,7 +48,7 @@ class SkuIncrementor implements SkuIncrementorInterface
         $possibleMatches = array_merge($this->getPreMatchedIncrementSku($sku), $this->newSku);
 
         foreach ($possibleMatches as $incrementedSku) {
-            if (preg_match(sprintf(self::SKU_INCREMENT_PATTERN, $sku), $incrementedSku, $matches)) {
+            if (preg_match($this->buildSkuIncrementPattern($sku), $incrementedSku, $matches)) {
                 $maxIndex = max($maxIndex, $matches[1]);
             }
         }
@@ -63,7 +63,7 @@ class SkuIncrementor implements SkuIncrementorInterface
      */
     protected function getRepository()
     {
-        return $this->objectManager->getRepository($this->productClass);
+        return $this->doctrineHelper->getEntityRepository($this->productClass);
     }
 
     /**
@@ -90,5 +90,14 @@ class SkuIncrementor implements SkuIncrementorInterface
         }
 
         return $sku;
+    }
+
+    /**
+     * @param string $sku
+     * @return string
+     */
+    protected function buildSkuIncrementPattern($sku)
+    {
+        return sprintf(self::SKU_INCREMENT_PATTERN, preg_quote($sku, '/'));
     }
 }

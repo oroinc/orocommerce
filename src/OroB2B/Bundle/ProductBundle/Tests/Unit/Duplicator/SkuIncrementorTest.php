@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -17,20 +17,20 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
     protected $service;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager
+     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
      */
-    protected $manager;
+    protected $doctrineHelper;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->service = new SkuIncrementor($this->manager, self::PRODUCT_CLASS);
+        $this->service = new SkuIncrementor($this->doctrineHelper, self::PRODUCT_CLASS);
     }
 
     /**
@@ -40,9 +40,9 @@ class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
      */
     public function testIncrementSku(array $existingSku, array $testCases)
     {
-        $this->manager
+        $this->doctrineHelper
             ->expects($this->any())
-            ->method('getRepository')
+            ->method('getEntityRepository')
             ->with(self::PRODUCT_CLASS)
             ->willReturn($this->getProductRepositoryMock($existingSku));
 
