@@ -80,6 +80,15 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_parent, acl_resource: orob2b_customer_view }
         lazy: true
 
+    orob2b_customer.form.autocomplete.account_user.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_customer.entity.account_user.class%
+            - ["email"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_account_user, acl_resource: orob2b_customer_account_user_view }
+        lazy: true
+
     orob2b_customer.account_user.manager.api:
         class: %orob2b_customer.account_user.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
