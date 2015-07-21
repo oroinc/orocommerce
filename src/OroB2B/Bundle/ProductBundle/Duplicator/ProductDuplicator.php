@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
 use Exception;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
