@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -145,7 +146,7 @@ class ShoppingListController extends Controller
             $this->getRequest(),
             $this->get('orob2b_shopping_list.shopping_list.manager')
         );
-        
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $shoppingList,
             $this->createForm(ShoppingListType::NAME, $shoppingList),
