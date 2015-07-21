@@ -19,7 +19,8 @@ class QuoteExtension extends \Twig_Extension
     /**
      * @param QuoteProductFormatter $quoteProductFormatter
      */
-    public function __construct(QuoteProductFormatter $quoteProductFormatter) {
+    public function __construct(QuoteProductFormatter $quoteProductFormatter)
+    {
         $this->quoteProductFormatter = $quoteProductFormatter;
     }
 
