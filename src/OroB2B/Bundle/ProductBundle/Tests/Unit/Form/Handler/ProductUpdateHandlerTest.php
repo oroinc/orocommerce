@@ -127,11 +127,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('POST'));
         $this->request->expects($this->at(1))
             ->method('get')
-            ->with('_wid')
-            ->will($this->returnValue(false));
-        $this->request->expects($this->at(1))
-            ->method('get')
-            ->with('_wid', false)
+            ->with($this->anything())
             ->will($this->returnValue(false));
         $this->request->expects($this->at(2))
             ->method('get')
