@@ -10,6 +10,7 @@ parameters:
     #Listeners
     orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.event_listener.datagrid.class: OroB2B\Bundle\SaleBundle\EventListener\DatagridListener
+
 services:
     orob2b_sale.event_listener.entity_subscriber:
         class: %orob2b_sale.event_listener.entity_subscriber.class%
