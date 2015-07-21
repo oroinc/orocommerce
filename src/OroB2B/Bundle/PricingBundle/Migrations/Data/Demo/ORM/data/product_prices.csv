@@ -1,30 +1,30 @@
 productCode,priceListName,unitCode,quantity,price,currency
-CAA,"Default price list",kg,0.1,4.5,EUR
-YJHLV82/ACWU90,"Default price list",kg,0.1,0.9,EUR
-YJV,"Default price list",kg,2.5,0.5,EUR
-COIA,"Default price list",kg,2.5,9.5,EUR
-"YJAV 5*10","Default price list",kg,0.5,0.8,EUR
-WDZ-YJV,"Default price list",kg,1.5,0.3,EUR
-ACS,"Default price list",kg,1.2,0.8,EUR
-YJHL82,"Default price list",kg,1,1.5,EUR
-"VV22 3*120+1*70 / VLV 22","Default price list",kg,0.2,1.2,EUR
-"Medium voltage XLPE","Default price list",kg,0.2,0.8,EUR
-"N2xS2Y cable 240mm2","Default price list",kg,1.5,1.2,EUR
-BVR/BV/RVV,"Default price list",kg,2.5,3.2,EUR
-H05VV-F,"Default price list",kg,1.2,0.5,EUR
-S10_1678,Default price list,item,1,48.81,USD
-S10_1949,Default price list,item,1,98.58,USD
-S10_2016,Default price list,item,1,68.99,USD
-S10_4698,Default price list,item,1,91.02,USD
-S10_4757,Default price list,item,1,85.68,USD
-S10_4962,Default price list,item,1,103.42,USD
-S12_1099,Default price list,item,1,95.34,USD
-S12_1108,Default price list,item,1,95.59,USD
-S12_1666,Default price list,item,1,77.9,USD
-S12_2823,Default price list,item,1,66.27,USD
-S12_3148,Default price list,item,1,89.14,USD
-S12_3380,Default price list,item,1,75.16,USD
-S12_3891,Default price list,item,1,83.05,USD
+CAA,"Default Price List",kg,0.1,4.5,EUR
+YJHLV82/ACWU90,"Default Price List",kg,0.1,0.9,EUR
+YJV,"Default Price List",kg,2.5,0.5,EUR
+COIA,"Default Price List",kg,2.5,9.5,EUR
+"YJAV 5*10","Default Price List",kg,0.5,0.8,EUR
+WDZ-YJV,"Default Price List",kg,1.5,0.3,EUR
+ACS,"Default Price List",kg,1.2,0.8,EUR
+YJHL82,"Default Price List",kg,1,1.5,EUR
+"VV22 3*120+1*70 / VLV 22","Default Price List",kg,0.2,1.2,EUR
+"Medium voltage XLPE","Default Price List",kg,0.2,0.8,EUR
+"N2xS2Y cable 240mm2","Default Price List",kg,1.5,1.2,EUR
+BVR/BV/RVV,"Default Price List",kg,2.5,3.2,EUR
+H05VV-F,"Default Price List",kg,1.2,0.5,EUR
+S10_1678,Default Price List,item,1,48.81,USD
+S10_1949,Default Price List,item,1,98.58,USD
+S10_2016,Default Price List,item,1,68.99,USD
+S10_4698,Default Price List,item,1,91.02,USD
+S10_4757,Default Price List,item,1,85.68,USD
+S10_4962,Default Price List,item,1,103.42,USD
+S12_1099,Default Price List,item,1,95.34,USD
+S12_1108,Default Price List,item,1,95.59,USD
+S12_1666,Default Price List,item,1,77.9,USD
+S12_2823,Default Price List,item,1,66.27,USD
+S12_3148,Default Price List,item,1,89.14,USD
+S12_3380,Default Price List,item,1,75.16,USD
+S12_3891,Default Price List,item,1,83.05,USD
 S12_3990,Wholesale price list,item,1,31.92,USD
 S12_4473,Wholesale price list,item,1,55.7,USD
 S12_4675,Wholesale price list,item,1,58.73,USD
@@ -111,14 +111,14 @@ S50_4713,Custom price list,item,1,34.17,USD
 S700_1138,Custom price list,item,1,34,USD
 S700_1691,Custom price list,item,1,51.15,USD
 S700_1938,Custom price list,item,1,43.3,USD
-S700_2047,Default price list,item,1,39.83,USD
-S700_2466,Default price list,item,1,68.8,USD
-S700_2610,Default price list,item,1,33.97,USD
-S700_2824,Default price list,item,1,46.53,USD
-S700_2834,Default price list,item,1,59.33,USD
-S700_3167,Default price list,item,1,54.4,USD
-S700_3505,Default price list,item,1,51.09,USD
-S700_3962,Default price list,item,1,53.63,USD
-S700_4002,Default price list,item,1,36.27,USD
-S72_1253,Default price list,item,1,32.77,USD
-S72_3212,Default price list,item,1,33.3,USD
+S700_2047,Default Price List,item,1,39.83,USD
+S700_2466,Default Price List,item,1,68.8,USD
+S700_2610,Default Price List,item,1,33.97,USD
+S700_2824,Default Price List,item,1,46.53,USD
+S700_2834,Default Price List,item,1,59.33,USD
+S700_3167,Default Price List,item,1,54.4,USD
+S700_3505,Default Price List,item,1,51.09,USD
+S700_3962,Default Price List,item,1,53.63,USD
+S700_4002,Default Price List,item,1,36.27,USD
+S72_1253,Default Price List,item,1,32.77,USD
+S72_3212,Default Price List,item,1,33.3,USD
