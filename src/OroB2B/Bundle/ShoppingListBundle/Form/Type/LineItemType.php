@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;

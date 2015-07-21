@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;

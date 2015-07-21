@@ -130,6 +130,9 @@ class LineItemTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
+    /**
+     * @return array
+     */
     public function submitDataProvider()
     {
         $shoppingList = new ShoppingList();
@@ -161,6 +164,12 @@ class LineItemTypeTest extends FormIntegrationTestCase
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes('note1');
 
+        $expectedLineItem3 = clone $existingLineItem;
+        $expectedLineItem3
+            ->setQuantity('15.1119')
+            ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
+            ->setNotes(null);
+
         return [
             'new line item'      => [
                 'defaultData'   => $defaultLineItem,
@@ -182,6 +191,15 @@ class LineItemTypeTest extends FormIntegrationTestCase
                     'notes'    => 'note1',
                 ],
                 'expectedData'  => $expectedLineItem2,
+                'isExisting'    => true,
+            ],
+            'missing product' => [
+                'defaultData'   => $existingLineItem,
+                'submittedData' => [
+                    'unit'     => 'kg',
+                    'quantity' => 15.1119,
+                ],
+                'expectedData'  => $expectedLineItem3,
                 'isExisting'    => true,
             ],
         ];
