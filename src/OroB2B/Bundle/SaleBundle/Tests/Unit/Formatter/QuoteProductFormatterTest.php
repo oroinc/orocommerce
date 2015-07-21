@@ -53,7 +53,7 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->numberFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
             ->disableOriginalConstructor()
@@ -71,7 +71,7 @@ class QuoteProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formatter    = new QuoteProductFormatter(
+        $this->formatter = new QuoteProductFormatter(
             $this->translator,
             $this->numberFormatter,
             $this->productUnitValueFormatter,
