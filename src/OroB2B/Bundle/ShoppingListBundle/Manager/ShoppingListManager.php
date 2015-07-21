@@ -48,8 +48,9 @@ class ShoppingListManager
     /**
      * @param AccountUser  $accountUser
      * @param ShoppingList $shoppingList
+     * @param boolean      $flush
      */
-    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
+    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList, $flush = true)
     {
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->manager->getRepository('OroB2BShoppingListBundle:ShoppingList');
@@ -60,6 +61,9 @@ class ShoppingListManager
         }
         $shoppingList->setCurrent(true);
         $this->manager->persist($shoppingList);
-        $this->manager->flush();
+
+        if ($flush) {
+            $this->manager->flush();
+        }
     }
 }

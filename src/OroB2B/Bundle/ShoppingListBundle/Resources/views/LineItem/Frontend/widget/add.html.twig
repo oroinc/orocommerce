@@ -1,10 +1,12 @@
+{% form_theme form '@OroB2BShoppingList/LineItem/Frontend/widget/shoppinglist_form_widget.html.twig' %}
+
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
     'savedId': savedId is defined and savedId ? savedId : null
 } %}
 <div class="widget-content"
      data-page-component-module="orob2bshoppinglist/js/app/components/widget-form-component"
-     data-page-component-options="{{ pageComponentOptions|json_encode }}"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.line_item_save.flash.success'})|json_encode }}"
 >
     {% if form.vars.errors|length > 0 %}
         <div class="alert alert-error">
@@ -20,7 +22,7 @@
             {{ form_row(form.quantity) }}
             {{ form_row(form.unit) }}
 
-            <div style="display: none;">
+            <div class="hidden">
                 {{ form_row(form.shoppingListLabel) }}
             </div>
         </fieldset>

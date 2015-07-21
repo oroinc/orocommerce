@@ -65,7 +65,11 @@ class LineItem extends ExtendLineItem
     /**
      * @var ShoppingList
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList", inversedBy="lineItems")
+     * @ORM\ManyToOne(
+     *      targetEntity="OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList",
+     *      cascade={"persist"},
+     *      inversedBy="lineItems"
+     * )
      * @ORM\JoinColumn(name="shopping_list_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
