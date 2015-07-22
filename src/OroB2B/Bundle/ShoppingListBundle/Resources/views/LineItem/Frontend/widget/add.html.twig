@@ -5,7 +5,7 @@
     'savedId': savedId is defined and savedId ? savedId : null
 } %}
 <div class="widget-content"
-     data-page-component-module="orob2bshoppinglist/js/app/components/widget-form-component"
+     data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
      data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.line_item_save.flash.success'})|json_encode }}"
 >
     {% if form.vars.errors|length > 0 %}
@@ -16,14 +16,18 @@
 
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
           method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-          data-page-component-module="orob2bpricing/js/app/components/product-price-product-unit-component">
+          data-page-component-module="orob2bshoppinglist/js/app/components/add-product-component">
         <fieldset class="form-horizontal">
-            {{ form_row(form.shoppingList) }}
+            {{ form_row(form.shoppingList, {attr: {class: 'orob2b-shoppinglist'} }) }}
             {{ form_row(form.quantity) }}
             {{ form_row(form.unit) }}
 
-            <div class="hidden">
-                {{ form_row(form.shoppingListLabel) }}
+            {% set showShoppingListLabel =
+                app.request.isMethod('POST') and form.shoppingList.vars.value is empty
+                or not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null
+            %}
+            <div style="display: {{ showShoppingListLabel ? 'block' : 'none' }};">
+                {{ form_row(form.shoppingListLabel, {attr: {class: 'orob2b-shoppinglist-label'} }) }}
             </div>
         </fieldset>
 
