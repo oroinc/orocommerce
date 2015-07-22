@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+
+use OroB2B\src\Oro\Component\Testing\WebTestCase;
 
 /**
  * @dbIsolation
@@ -51,11 +52,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        $this->markTestSkipped(
-            'Skipped because of requestGrid helper methods works now only for admin part. Test will be fixed in BB-750'
-        );
-
-        $response = $this->client->requestGrid(
+        $response = $this->requestFrontendGrid(
             'account-user-shopping-list-grid',
             ['account-user-shopping-list-grid[_filter][label][value]' => self::TEST_LABEL1]
         );
@@ -72,8 +69,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertShoppingListSave($crawler, self::TEST_LABEL2);
-
-        return $id;
     }
 
     public function testView()
