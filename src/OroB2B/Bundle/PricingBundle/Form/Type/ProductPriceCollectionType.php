@@ -41,14 +41,6 @@ class ProductPriceCollectionType extends AbstractType
     }
 
     /**
-     * @return string
-     */
-    public function getPriceListClass()
-    {
-        return $this->priceListClass;
-    }
-
-    /**
      * @param string $priceListClass
      */
     public function setPriceListClass($priceListClass)
