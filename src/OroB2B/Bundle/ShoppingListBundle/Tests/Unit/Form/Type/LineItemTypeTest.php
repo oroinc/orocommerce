@@ -14,10 +14,10 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
 class LineItemTypeTest extends FormIntegrationTestCase
@@ -42,19 +42,20 @@ class LineItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|RoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
+        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $roundingService->expects($this->any())
-            ->method('round')
+        $lineItemManager->expects($this->any())
+            ->method('roundProductQuantity')
             ->willReturnCallback(
-                function ($value, $precision) {
-                    return round($value, $precision);
+                function ($product, $unit, $quantity) {
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
+                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
                 }
             );
 
-        $this->type = new LineItemType($this->getRegistry(), $roundingService);
+        $this->type = new LineItemType($this->getRegistry(), $lineItemManager);
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setProductClass(self::PRODUCT_CLASS);
     }
