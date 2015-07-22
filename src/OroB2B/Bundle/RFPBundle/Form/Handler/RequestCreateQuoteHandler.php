@@ -118,7 +118,6 @@ class RequestCreateQuoteHandler
         }
 
         try {
-
             $this->manager->persist($quote);
             $this->manager->flush();
 
