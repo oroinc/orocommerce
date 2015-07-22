@@ -53,8 +53,8 @@ class ShoppingListControllerTest extends WebTestCase
     public function testUpdate()
     {
         $response = $this->requestFrontendGrid(
-            'account-user-shopping-list-grid',
-            ['account-user-shopping-list-grid[_filter][label][value]' => self::TEST_LABEL1]
+            'frontend-shopping-list-grid',
+            ['frontend-shopping-list-grid[_filter][label][value]' => self::TEST_LABEL1]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
