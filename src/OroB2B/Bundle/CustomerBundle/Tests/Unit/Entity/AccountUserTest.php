@@ -6,6 +6,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
@@ -18,6 +19,7 @@ use OroB2B\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 class AccountUserTest extends AbstractUserTest
 {
     use AddressEntityTestTrait;
+    use EntityTestCaseTrait;
 
     /**
      * @return AccountUser
