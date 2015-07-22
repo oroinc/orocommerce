@@ -144,7 +144,8 @@ class ShoppingListController extends Controller
         $handler = new ShoppingListHandler(
             $form,
             $this->getRequest(),
-            $this->get('orob2b_shopping_list.shopping_list.manager')
+            $this->get('orob2b_shopping_list.shopping_list.manager'),
+            $this->getDoctrine()
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
