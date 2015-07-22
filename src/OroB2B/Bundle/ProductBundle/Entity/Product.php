@@ -12,7 +12,6 @@ use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
@@ -35,6 +34,10 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
  *          },
  *          "form"={
  *              "form_type"="orob2b_product_select",

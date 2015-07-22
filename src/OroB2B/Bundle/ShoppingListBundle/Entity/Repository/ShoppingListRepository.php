@@ -24,20 +24,17 @@ class ShoppingListRepository extends EntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
-    /**
-     * @param string[] $labels
-     *
-     * @return ShoppingList[]|ArrayCollection
-     */
-    public function findInLabels(array $labels)
+    public function createFindForAccountUserQueryBuilder(AccountUser $accountUser)
     {
-        $qb = $this->createQueryBuilder('shopping_list');
+        $qb = $this->createQueryBuilder('sl');
 
-        return $qb
-            ->select('shopping_list')
-            ->where($qb->expr()->in('shopping_list.label', ':labels'))
-            ->setParameter('labels', $labels)
-            ->getQuery()
-            ->execute();
+        return $qb->where(
+            $qb->expr()->orX(
+                'sl.accountUser = :accountUser',
+                'sl.account = :account'
+            )
+        )
+        ->setParameter('accountUser', $accountUser)
+        ->setParameter('account', $accountUser->getCustomer());
     }
 }

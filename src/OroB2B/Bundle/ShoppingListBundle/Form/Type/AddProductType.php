@@ -1,6 +1,7 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\ExecutionContextInterface;
 use Symfony\Component\Form\FormEvents;
@@ -95,17 +96,8 @@ class AddProductType extends AbstractType
                     'required' => false,
                     'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
-                    'query_builder' => function (EntityRepository $repository) use ($accountUser) {
-                        $qb = $repository->createQueryBuilder('sl');
-
-                        return $qb->where(
-                            $qb->expr()->orX(
-                                'sl.accountUser = :accountUser',
-                                'sl.account = :account'
-                            )
-                        )
-                        ->setParameter('accountUser', $accountUser)
-                        ->setParameter('account', $accountUser->getCustomer());
+                    'query_builder' => function (ShoppingListRepository $repository) use ($accountUser) {
+                        return $repository->createFindForAccountUserQueryBuilder($accountUser);
                     },
                     'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
                 ]
