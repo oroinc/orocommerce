@@ -1,25 +1,29 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace OroB2B\Bundle\PaymentBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator;
 
 class DatagridListener
 {
-    const PRICE_COLUMN = 'price_list_name';
+    const PAYMENT_TERM_LABEL_ALIAS = 'payment_term_label';
+    const PAYMENT_TERM_ALIAS = 'payment_term';
+    const PAYMENT_TERM_GROUP_LABEL_ALIAS = 'payment_term_group_label';
+    const PAYMENT_TERM_GROUP_ALIAS = 'payment_term_group';
 
-    /**
-     * @var string
-     */
-    protected $priceListClass;
+    protected $paymentTermEntityClass;
 
-    /**
-     * @param string $priceListClass
-     */
-    public function setPriceListClass($priceListClass)
+    /** @var  DeleteMessageTextGenerator */
+    protected $deleteMessageGenerator;
+
+    public function setPaymentTermClass($paymentTermEntityClass)
     {
-        $this->priceListClass = $priceListClass;
+        $this->paymentTermEntityClass = $paymentTermEntityClass;
     }
 
     /**
@@ -27,7 +31,27 @@ class DatagridListener
      */
     public function onBuildBeforeCustomers(BuildBefore $event)
     {
-        $this->addPriceListRelation($event->getConfig(), 'customer MEMBER OF priceList.customers');
+        $this->addPaymentTermRelation(
+            $event->getConfig(),
+            'customer MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customers'
+        );
+
+        $this->addPaymentTermGroupToCustomer($event->getConfig());
+
+    }
+
+    public function onBuildBeforePaymentTerm(OrmResultAfter $event)
+    {
+        $test = 4;
+        $test = 4;
+
+//        $deleteMessage = $this->deleteMessageGenerator->getDeleteMessageText()
+//        $this->addConfigElement(, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
+    }
+
+    public function setDeleteMessageGenerator(DeleteMessageTextGenerator $deleteMessageGenerator)
+    {
+        $this->deleteMessageGenerator = $deleteMessageGenerator;
     }
 
     /**
@@ -35,49 +59,53 @@ class DatagridListener
      */
     public function onBuildBeforeCustomerGroups(BuildBefore $event)
     {
-        $this->addPriceListRelation($event->getConfig(), 'customer_group MEMBER OF priceList.customerGroups');
+        $this->addPaymentTermRelation(
+            $event->getConfig(),
+            'customer_group MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customerGroups'
+        );
     }
 
     /**
      * @param DatagridConfiguration $config
      * @param string $joinCondition
      */
-    protected function addPriceListRelation(DatagridConfiguration $config, $joinCondition)
+    protected function addPaymentTermRelation(DatagridConfiguration $config, $joinCondition)
     {
-        // select
-        $select = 'priceList.name as ' . self::PRICE_COLUMN;
+
+        $select = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
         $this->addConfigElement($config, '[source][query][select]', $select);
 
-        // left join
+
+
         $leftJoin = [
-            'join' => $this->priceListClass,
-            'alias' => 'priceList',
+            'join' => $this->paymentTermEntityClass,
+            'alias' => static::PAYMENT_TERM_ALIAS,
             'conditionType' => 'WITH',
             'condition' => $joinCondition
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
 
         // column
-        $column = ['label' => 'orob2b.pricing.pricelist.entity_label'];
-        $this->addConfigElement($config, '[columns]', $column, self::PRICE_COLUMN);
+        $column = ['label' => 'orob2b.payment.paymentterm.entity_label'];
+        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS);
 
         // sorter
-        $sorter = ['data_name' => self::PRICE_COLUMN];
-        $this->addConfigElement($config, '[sorters][columns]', $sorter, self::PRICE_COLUMN);
+        $sorter = ['data_name' => static::PAYMENT_TERM_LABEL_ALIAS];
+        $this->addConfigElement($config, '[sorters][columns]', $sorter, static::PAYMENT_TERM_LABEL_ALIAS);
 
         // filter
         $filter = [
             'type' => 'entity',
-            'data_name' => 'priceList.id',
+            'data_name' => static::PAYMENT_TERM_ALIAS . '.id',
             'options' => [
                 'field_type' => 'entity',
                 'field_options' => [
-                    'class' => $this->priceListClass,
-                    'property' => 'name',
+                    'class' => $this->paymentTermEntityClass,
+                    'property' => 'label',
                 ]
             ]
         ];
-        $this->addConfigElement($config, '[filters][columns]', $filter, self::PRICE_COLUMN);
+        $this->addConfigElement($config, '[filters][columns]', $filter, static::PAYMENT_TERM_LABEL_ALIAS);
     }
 
     /**
@@ -95,5 +123,36 @@ class DatagridListener
             $select[] = $element;
         }
         $config->offsetSetByPath($path, $select);
+    }
+
+    private function addPaymentTermGroupToCustomer($config)
+    {
+        $selectGroupPaymentTermLabel = static::PAYMENT_TERM_GROUP_ALIAS . '.label as ' . static::PAYMENT_TERM_GROUP_LABEL_ALIAS;
+        $this->addConfigElement($config, '[source][query][select]', $selectGroupPaymentTermLabel);
+
+
+//        if (isset($filters[static::PAYMENT_TERM_LABEL_ALIAS])) {
+//            $value = $filters[static::PAYMENT_TERM_LABEL_ALIAS]['value'];
+//
+//            $whereCondition = static::PAYMENT_TERM_GROUP_ALIAS . '.id IN (' . $value . ')';
+//            $this->addConfigElement($config, '[source][query][where][or]', $whereCondition, 5);
+//        }
+
+        $leftJoin = [
+            'join' => $this->paymentTermEntityClass,
+            'alias' => static::PAYMENT_TERM_GROUP_ALIAS,
+            'conditionType' => 'WITH',
+            'condition' => 'customer.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.customerGroups'
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        $column = [
+            'type' => 'twig',
+            'label' => 'orob2b.payment.paymentterm.entity_label',
+            'frontend_type' => 'html',
+            'template' => 'OroB2BPaymentBundle:Customer:Datagrid/Property/paymentTerm.html.twig'
+        ];
+
+        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
     }
 }

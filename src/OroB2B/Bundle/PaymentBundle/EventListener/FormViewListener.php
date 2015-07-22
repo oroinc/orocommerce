@@ -1,17 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\EventListener;
+namespace OroB2B\Bundle\PaymentBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
 class FormViewListener
 {
@@ -52,15 +51,23 @@ class FormViewListener
         $customerId = $this->request->get('id');
         /** @var Customer $customer */
         $customer = $this->doctrineHelper->getEntityReference('OroB2BCustomerBundle:Customer', $customerId);
-        $priceList = $this->getPriceListRepository()->getPriceListByCustomer($customer);
 
-        if ($priceList) {
+        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByCustomer($customer);
+        if ($paymentTerm) {
             $template = $event->getEnvironment()->render(
-                'OroB2BPricingBundle:Customer:price_list_view.html.twig',
-                ['priceList' => $priceList]
+                'OroB2BPaymentBundle:Customer:payment_term_view.html.twig',
+                ['paymentTerm' => $paymentTerm]
             );
-            $event->getScrollData()->addSubBlockData(0, 0, $template);
+        } else {
+            $customerGroupPaymentTerm =
+                $this->getPaymentRepository()->getOnePaymentTermByCustomerGroup($customer->getGroup());
+
+            $template = $event->getEnvironment()->render(
+                'OroB2BPaymentBundle:Customer:payment_term_for_customer_view.html.twig',
+                ['customerGroupPaymentTerm' => $customerGroupPaymentTerm]
+            );
         }
+        $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
 
     /**
@@ -75,15 +82,12 @@ class FormViewListener
         $groupId = $this->request->get('id');
         /** @var CustomerGroup $group */
         $group = $this->doctrineHelper->getEntityReference('OroB2BCustomerBundle:CustomerGroup', $groupId);
-        $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($group);
+        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByCustomerGroup($group);
 
-        if ($priceList) {
-            $template = $event->getEnvironment()->render(
-                'OroB2BPricingBundle:Customer:price_list_view.html.twig',
-                ['priceList' => $priceList]
-            );
-            $event->getScrollData()->addSubBlockData(0, 0, $template);
-        }
+        $template = $event->getEnvironment()->render(
+            'OroB2BPaymentBundle:Customer:payment_term_view.html.twig',
+            ['paymentTerm' => $paymentTerm]);
+        $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
 
     /**
@@ -92,43 +96,12 @@ class FormViewListener
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Customer:price_list_update.html.twig',
+            'OroB2BPaymentBundle:Customer:payment_term_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
 
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductView(BeforeListRenderEvent $event)
-    {
-        if (!$this->request) {
-            return;
-        }
-
-        $productId = $this->request->get('id');
-        /** @var Customer $customer */
-        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
-
-        $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Product:prices_view.html.twig',
-            ['entity' => $product]
-        );
-        $this->addProductPricesBlock($event->getScrollData(), $template);
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
-    public function onProductEdit(BeforeListRenderEvent $event)
-    {
-        $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Product:prices_update.html.twig',
-            ['form' => $event->getFormView()]
-        );
-        $this->addProductPricesBlock($event->getScrollData(), $template);
-    }
 
     /**
      * @param Request $request
@@ -139,22 +112,10 @@ class FormViewListener
     }
 
     /**
-     * @return PriceListRepository
+     * @return PaymentTermRepository
      */
-    protected function getPriceListRepository()
+    private function getPaymentRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:PriceList');
-    }
-
-    /**
-     * @param ScrollData $scrollData
-     * @param string $html
-     */
-    protected function addProductPricesBlock(ScrollData $scrollData, $html)
-    {
-        $blockLabel = $this->translator->trans('orob2b.pricing.productprice.entity_plural_label');
-        $blockId = $scrollData->addBlock($blockLabel);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
+        return $this->doctrineHelper->getEntityRepository('OroB2BPaymentBundle:PaymentTerm');
     }
 }

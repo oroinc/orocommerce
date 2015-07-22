@@ -4,26 +4,11 @@ namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
 
-class LoadCustomerGroupDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadCustomerGroupDemoData extends AbstractFixture
 {
-    /**
-     * This method must return an array of fixtures classes
-     * on which the implementing class depends on
-     *
-     * @return array
-     */
-    public function getDependencies()
-    {
-        return [
-            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData'
-        ];
-    }
-
     private function getData()
     {
         return [
@@ -44,7 +29,6 @@ class LoadCustomerGroupDemoData extends AbstractFixture implements DependentFixt
         foreach ($this->getData() as $groupName) {
             $customerGroup = new CustomerGroup();
             $customerGroup->setName($groupName);
-            $customerGroup->setPaymentTerm($paymentTerms[array_rand($paymentTerms)]);
             $manager->persist($customerGroup);
         }
 

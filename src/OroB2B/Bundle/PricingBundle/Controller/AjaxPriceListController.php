@@ -11,7 +11,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PaymentTermRepository;
 
 class AjaxPriceListController extends Controller
 {

@@ -2,67 +2,41 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Routing\RouterInterface;
 
-use Twig_Environment;
+use Oro\Bundle\UIBundle\Twig\Environment;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class DeleteMessageTextExtension extends \Twig_Extension
+class DeleteMessageTextGenerator
 {
     const CUSTOMER_GROUP_GRID_NAME = 'customer-groups-grid';
     const CUSTOMER_GRID_NAME = 'customer-customers-grid';
     const CUSTOMER_GROUP_GRID_ROUTE = 'orob2b_customer_group_index';
     const CUSTOMER_GRID_ROUTE = 'orob2b_customer_index';
 
+    /** @var RouterInterface  */
     protected $router;
 
-    /** @var  Twig_Environment */
-    protected $environment;
+    /** @var Environment  */
+    protected $twig;
 
-    public function __construct(RouterInterface $router)
+    public function __construct(RouterInterface $router, Environment $twig)
     {
         $this->router = $router;
+        $this->twig = $twig;
     }
 
     /**
-     * Initializes the runtime environment.
-     *
-     * This is where you can load some file that contains filter functions for instance.
-     *
-     * @param Twig_Environment $environment The current Twig_Environment instance
+     * @param PaymentTerm $paymentTerm
+     * @return string
      */
-    public function initRuntime(Twig_Environment $environment)
-    {
-        $this->environment = $environment;
-    }
-
-
-    /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
-     */
-    public function getName()
-    {
-        return 'orob2b_payment_term_delete_message';
-    }
-
-    public function getFunctions()
-    {
-        return [
-            new \Twig_SimpleFunction('getPaymentTermDeleteMessageText', [$this, 'getDeleteMessageText']),
-        ];
-    }
-
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
         $customerGroupFilterUrlHtml  = $this->generateCustomerGroupFilterUrl($paymentTerm);
         $customerFilterUrlHtml = $this->generateCustomerFilterUrl($paymentTerm);
 
-        $message = $this->environment->render('@OroB2BPayment/PaymentTerm/deleteMessage.html.twig', [
+        $message = $this->twig->render('@OroB2BPayment/PaymentTerm/deleteMessage.html.twig', [
             'customerFilterUrl' => $customerFilterUrlHtml,
             'customerGroupFilterUrl' => $customerGroupFilterUrlHtml
         ]);
@@ -82,7 +56,7 @@ class DeleteMessageTextExtension extends \Twig_Extension
 
         $groupUrlParameters = $this->getParameters(static::CUSTOMER_GROUP_GRID_NAME, $paymentTerm);
         $groupFilterUrl = $this->router->generate(static::CUSTOMER_GROUP_GRID_ROUTE, $groupUrlParameters, true);
-        $customerGroupFilterHtmlUrl = $this->environment->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
+        $customerGroupFilterHtmlUrl = $this->twig->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
             'urlPath' => $groupFilterUrl,
             'label' => 'orob2b.customer.customergroup.entity_label'
         ]);
@@ -102,7 +76,7 @@ class DeleteMessageTextExtension extends \Twig_Extension
 
         $customerUrlParameters = $this->getParameters(static::CUSTOMER_GRID_NAME, $paymentTerm);
         $customerFilterUrl = $this->router->generate(static::CUSTOMER_GRID_ROUTE, $customerUrlParameters, true);
-        $customerFilterHtmlUrl = $this->environment->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
+        $customerFilterHtmlUrl = $this->twig->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
             'urlPath' => $customerFilterUrl,
             'label' => 'orob2b.customer.entity_label'
         ]);

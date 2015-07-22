@@ -1,57 +1,33 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
+namespace OroB2B\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class PriceListRepository extends EntityRepository
+class PaymentTermRepository extends EntityRepository
 {
-    public function dropDefaults()
+    /**
+     * @param CustomerGroup $customerGroup
+     * @return PaymentTerm|null
+     */
+    public function getOnePaymentTermByCustomerGroup(CustomerGroup $customerGroup)
     {
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb
-            ->update()
-            ->set('pl.default', ':defaultValue')
-            ->setParameter('defaultValue', false)
-            ->where($qb->expr()->eq('pl.default', ':oldValue'))
-            ->setParameter('oldValue', true)
+        return $this->createQueryBuilder('paymentTerm')
+            ->innerJoin('paymentTerm.customerGroups', 'customerGroup')
+            ->andWhere('customerGroup = :customerGroup')
+            ->setParameter('customerGroup', $customerGroup)
             ->getQuery()
-            ->execute();
+            ->getOneOrNullResult();
     }
 
-    /**
-     * @param PriceList $priceList
-     */
-    public function setDefault(PriceList $priceList)
+    public function getOnePaymentTermByCustomer(Customer $customer)
     {
-        $this->dropDefaults();
-
-        $qb = $this->createQueryBuilder('pl');
-
-        $qb
-            ->update()
-            ->set('pl.default', ':newValue')
-            ->setParameter('newValue', true)
-            ->where($qb->expr()->eq('pl', ':entity'))
-            ->setParameter('entity', $priceList)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @param Customer $customer
-     * @return PriceList|null
-     */
-    public function getPriceListByCustomer(Customer $customer)
-    {
-        return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.customers', 'customer')
+        return $this->createQueryBuilder('paymentTerm')
+            ->innerJoin('paymentTerm.customers', 'customer')
             ->andWhere('customer = :customer')
             ->setParameter('customer', $customer)
             ->getQuery()
@@ -59,93 +35,52 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
-     * @param Customer $customer
-     * @param PriceList $priceList
+     * @param CustomerGroup    $customerGroup
+     * @param PaymentTerm|null $paymentTerm
      */
-    public function setPriceListToCustomer(Customer $customer, PriceList $priceList = null)
+    public function setPaymentTermToCustomerGroup(CustomerGroup $customerGroup, PaymentTerm $paymentTerm = null)
     {
-        $oldPriceList = $this->getPriceListByCustomer($customer);
+        $oldPaymentTermByCustomerGroup = $this->getOnePaymentTermByCustomerGroup($customerGroup);
 
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
+        if (
+            $oldPaymentTermByCustomerGroup &&
+            $paymentTerm &&
+            $oldPaymentTermByCustomerGroup->getId() === $paymentTerm->getId()
+        ) {
             return;
         }
 
-        if ($oldPriceList) {
-            $oldPriceList->removeCustomer($customer);
+        if ($oldPaymentTermByCustomerGroup) {
+            $oldPaymentTermByCustomerGroup->removeCustomerGroup($customerGroup);
         }
 
-        if ($priceList) {
-            $priceList->addCustomer($customer);
+        if ($paymentTerm) {
+            $paymentTerm->addCustomerGroup($customerGroup);
         }
     }
 
     /**
-     * @param CustomerGroup $customerGroup
-     * @return PriceList|null
+     * @param Customer         $customer
+     * @param PaymentTerm|null $paymentTerm
      */
-    public function getPriceListByCustomerGroup(CustomerGroup $customerGroup)
+    public function setPaymentTermToCustomer(Customer $customer, PaymentTerm $paymentTerm = null)
     {
-        return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.customerGroups', 'customerGroup')
-            ->andWhere('customerGroup = :customerGroup')
-            ->setParameter('customerGroup', $customerGroup)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
+        $oldPaymentTermByCustomer = $this->getOnePaymentTermByCustomer($customer);
 
-    /**
-     * @param CustomerGroup $customerGroup
-     * @param PriceList $priceList
-     */
-    public function setPriceListToCustomerGroup(CustomerGroup $customerGroup, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByCustomerGroup($customerGroup);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
+        if (
+            $oldPaymentTermByCustomer &&
+            $paymentTerm &&
+            $oldPaymentTermByCustomer->getId() === $paymentTerm->getId()
+        ) {
             return;
         }
 
-        if ($oldPriceList) {
-            $oldPriceList->removeCustomerGroup($customerGroup);
+        if ($oldPaymentTermByCustomer) {
+            $oldPaymentTermByCustomer->removeCustomer($customer);
         }
 
-        if ($priceList) {
-            $priceList->addCustomerGroup($customerGroup);
-        }
-    }
-
-    /**
-     * @param Website $website
-     * @return PriceList|null
-     */
-    public function getPriceListByWebsite(Website $website)
-    {
-        return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.websites', 'website')
-            ->andWhere('website = :website')
-            ->setParameter('website', $website)
-            ->getQuery()
-            ->getOneOrNullResult();
-    }
-
-    /**
-     * @param Website $website
-     * @param PriceList $priceList
-     */
-    public function setPriceListToWebsite(Website $website, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByWebsite($website);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeWebsite($website);
-        }
-
-        if ($priceList) {
-            $priceList->addWebsite($website);
+        if ($paymentTerm) {
+            $paymentTerm->addCustomer($customer);
         }
     }
 }

@@ -2,16 +2,20 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use OroB2B\src\OroB2B\Bundle\CustomerBundle\EventListener\CustomerTypeEventSubscriber;
 
 class CustomerType extends AbstractType
 {
     const NAME = 'orob2b_customer_type';
+
+    /** @var  Translator */
+    protected $translator;
 
     /**
      * {@inheritdoc}
@@ -47,28 +51,7 @@ class CustomerType extends AbstractType
                     ],
                     'required' => false
                 ]
-            )
-            ->add(
-                'paymentTerm',
-                PaymentTermSelectType::NAME,
-                [
-                    'label'     => 'orob2b.customer.payment_term.label',
-                    'configs' => [
-                        'placeholder' => $options['paymentTerm_placeholder']
-                    ]
-                ]
-            )
-        ;
-    }
-
-    /**
-     * @param OptionsResolverInterface $resolver
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults([
-            'paymentTerm_placeholder' => 'orob2b.customer.payment_term_non_defined_in_group'
-        ]);
+            );
     }
 
     /**
@@ -77,5 +60,13 @@ class CustomerType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param Translator $translator
+     */
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
     }
 }

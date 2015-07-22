@@ -6,8 +6,9 @@ use Symfony\Component\Form\FormEvent;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class CustomerGroupFormExtension extends AbstractPaymentTermListExtension
+class CustomerGroupFormExtension extends AbstractPaymentTermExtension
 {
     /**
      * {@inheritdoc}
@@ -20,9 +21,9 @@ class CustomerGroupFormExtension extends AbstractPaymentTermListExtension
             return;
         }
 
-        $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup);
+        $paymentTermByCustomerGroup = $this->getPaymentTermRepository()->getOnePaymentTermByCustomerGroup($customerGroup);
 
-        $event->getForm()->get('priceList')->setData($priceList);
+        $event->getForm()->get('paymentTerm')->setData($paymentTermByCustomerGroup);
     }
 
     /**
@@ -41,10 +42,10 @@ class CustomerGroupFormExtension extends AbstractPaymentTermListExtension
             return;
         }
 
-        /** @var PriceList|null $customer */
-        $priceList = $form->get('priceList')->getData();
+        /** @var PaymentTerm|null  */
+        $paymentTerm = $form->get('paymentTerm')->getData();
 
-        $this->getPriceListRepository()->setPriceListToCustomerGroup($customerGroup, $priceList);
+        $this->getPaymentTermRepository()->setPaymentTermToCustomerGroup($customerGroup, $paymentTerm);
     }
 
     /**

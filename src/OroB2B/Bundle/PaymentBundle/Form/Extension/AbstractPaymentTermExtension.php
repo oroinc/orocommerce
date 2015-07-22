@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Form\Extension;
 
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Translation\Translator;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -20,12 +20,16 @@ abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
      */
     protected $registry;
 
+    /** @var  Translator */
+    protected $translator;
+
     /**
      * @param ManagerRegistry $registry
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, Translator $translator)
     {
         $this->registry = $registry;
+        $this->translator = $translator;
     }
 
     /**

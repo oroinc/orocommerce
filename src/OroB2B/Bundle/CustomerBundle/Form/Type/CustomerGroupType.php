@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-
 class CustomerGroupType extends AbstractType
 {
     const NAME = 'orob2b_customer_group_type';
@@ -50,13 +48,6 @@ class CustomerGroupType extends AbstractType
                 [
                     'label' => 'orob2b.customer.customergroup.name.label',
                     'required' => true
-                ]
-            )
-            ->add(
-                'paymentTerm',
-                PaymentTermSelectType::NAME,
-                [
-                    'label' => 'orob2b.customer.customergroup.payment_term.label',
                 ]
             )
             ->add(

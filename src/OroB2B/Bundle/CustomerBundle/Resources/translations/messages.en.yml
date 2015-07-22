@@ -12,9 +12,6 @@ orob2b.customer:
     users.label: 'Users'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
-    payment_term.label: 'Payment term'
-    payment_term_defined_in_group: 'Defined for the group (%payment_term%)'
-    payment_term_non_defined_in_group: 'Defined for the group'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -23,7 +20,6 @@ orob2b.customer:
         id.label: 'Id'
         customers.label: 'Customers'
         form.choose: 'Choose a customer group...'
-        payment_term.label: 'Payment term'
 
     accountuser:
         entity_label:                'Account User'
