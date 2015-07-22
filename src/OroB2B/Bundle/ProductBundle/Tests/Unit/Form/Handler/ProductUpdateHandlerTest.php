@@ -199,6 +199,25 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(302, $result->getStatusCode());
     }
 
+    public function testBlankDataNoHandler()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $entity = $this->getProductMock(false);
+        $expected = $this->assertSaveData($form, $entity);
+
+        $result = $this->handler->handleUpdate(
+            $entity,
+            $form,
+            ['route' => 'test_update'],
+            ['route' => 'test_view'],
+            'Saved'
+        );
+        $this->assertEquals($expected, $result);
+    }
+
     public function testSaveHandler()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
