@@ -6,7 +6,6 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Doctrine\ORM\EntityManager;
-use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
@@ -136,7 +135,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'addresses' => $this->getCollection($this->getAddresses()[1]),
+                    'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
@@ -155,7 +154,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
-                    'addresses' => $this->getCollection($this->getAddresses()[1]),
+                    'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
@@ -174,7 +173,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'addresses' => $this->getCollection($this->getAddresses()[1]),
+                    'addresses' => [$this->getAddresses()[1]],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
@@ -193,7 +192,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'addresses' => $this->getCollection([]),
+                    'addresses' => [],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
@@ -212,7 +211,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
                     'internal_rating' => null,
-                    'addresses' => $this->getCollection([]),
+                    'addresses' => [],
                 ]
             ],
         ];
@@ -253,17 +252,5 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ];
         }
         return self::$addresses;
-    }
-
-    /**
-     * @param mixed $data
-     * @return ArrayCollection
-     */
-    protected function getCollection($data)
-    {
-        if (!is_array($data)) {
-            $data = [$data];
-        }
-        return new ArrayCollection($data);
     }
 }
