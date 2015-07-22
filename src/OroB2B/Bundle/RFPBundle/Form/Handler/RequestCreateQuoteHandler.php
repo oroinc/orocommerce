@@ -117,10 +117,15 @@ class RequestCreateQuoteHandler
             $quote->addQuoteProduct($quoteProduct);
         }
 
-        $this->manager->persist($quote);
-        $this->manager->flush();
+        try {
 
-        $this->quote = $quote;
+            $this->manager->persist($quote);
+            $this->manager->flush();
+
+            $this->quote = $quote;
+        } catch (\Exception $e) {
+            return false;
+        }
 
         return true;
     }

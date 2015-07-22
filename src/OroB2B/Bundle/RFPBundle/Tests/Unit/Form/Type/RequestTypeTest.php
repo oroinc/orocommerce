@@ -15,7 +15,6 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 /**

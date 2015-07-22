@@ -26,7 +26,7 @@ class RequestProductTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
      */
     protected $translator;
 
@@ -45,7 +45,7 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testSetDefaultOptions()
     {
-        /* @var $resolver PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -207,11 +207,11 @@ class RequestProductTypeTest extends AbstractTest
      * @param int $id
      * @param RequestProduct $product
      * @param string $productSku
-     * @return PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
      */
     protected function createRequestProduct($id, $product, $productSku)
     {
-        /* @var $requestProduct PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
         $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
         $requestProduct
             ->expects($this->any())

@@ -35,9 +35,9 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with([
                 'type' => QuoteProductOfferType::NAME,
-                'show_form_when_empty'  => false,
-                'error_bubbling'        => false,
-                'prototype_name'        => '__namequoteproductoffer__',
+                'show_form_when_empty' => false,
+                'error_bubbling' => false,
+                'prototype_name' => '__namequoteproductoffer__',
             ])
         ;
 

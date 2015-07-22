@@ -22,12 +22,12 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 class RequestCreateQuoteHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var RequestStatusHandler
+     * @var RequestCreateQuoteHandler
      */
     protected $handler;
 
     /**
-     * @var RFPRequest
+     * @var Request
      */
     protected $entity;
 

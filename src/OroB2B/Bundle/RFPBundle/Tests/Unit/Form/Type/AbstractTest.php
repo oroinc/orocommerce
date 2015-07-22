@@ -12,6 +12,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -202,6 +203,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getRequestProduct($productId = null, $comment = null, array $items = [])
     {
+        /* @var $product Product */
         $product = null;
 
         if ($productId) {
