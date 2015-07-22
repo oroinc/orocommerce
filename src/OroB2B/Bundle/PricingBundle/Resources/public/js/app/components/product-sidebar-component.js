@@ -96,7 +96,7 @@ define(function(require) {
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
             };
 
-            mediator.trigger('product_sidebar:changed', {widgetReload: Boolean(widgetReload), params: params});
+            mediator.trigger('grid-sidebar:changed:products-sidebar', {widgetReload: Boolean(widgetReload), params: params});
         },
 
         /**
