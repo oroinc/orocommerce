@@ -49,7 +49,7 @@ define(function(require) {
             this.$container = options._sourceElement;
             this.$widgetContainer = $(options.widgetContainer);
 
-            mediator.on(this.options.sidebarAlias + ':changed', this.onSidebarChange, this);
+            mediator.on('grid-sidebar:changed:' + this.options.sidebarAlias, this.onSidebarChange, this);
 
             this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
             this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
@@ -82,7 +82,7 @@ define(function(require) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
 
-            this.pushState(params);
+            this._pushState(params);
 
             this._patchGridCollectionUrl(params);
 
