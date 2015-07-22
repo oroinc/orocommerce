@@ -8,7 +8,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-use OroB2B\src\Oro\Component\Testing\WebTestCase;
+use Oro\Component\Testing\WebTestCase;
 
 /**
  * @dbIsolation
