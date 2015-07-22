@@ -3,19 +3,19 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {

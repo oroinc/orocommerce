@@ -78,7 +78,6 @@ class ShoppingListManager
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true)
     {
         $lineItem->setShoppingList($shoppingList);
-
         /** @var LineItemRepository $repository */
         $repository = $this->manager->getRepository('OroB2BShoppingListBundle:LineItem');
         if (
@@ -88,6 +87,7 @@ class ShoppingListManager
             $possibleDuplicate->setQuantity($possibleDuplicate->getQuantity() + $lineItem->getQuantity());
             $this->manager->persist($possibleDuplicate);
         } else {
+            $shoppingList->addLineItem($lineItem);
             $this->manager->persist($lineItem);
         }
 
