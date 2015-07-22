@@ -346,7 +346,7 @@ datagrid:
                 confirmed:
                     type:      boolean
                     data_name: accountUser.confirmed
-         action_configuration: [@orob2b_customer.datagrid.action_permission_provider, "getUserPermissions"]
+        action_configuration: [@orob2b_customer.datagrid.action_permission_provider, "getUserPermissions"]
 
     customer-account-user-grid:
         extends: customer-account-user-select-grid
@@ -365,26 +365,44 @@ datagrid:
                 type:   url
                 route:  orob2b_api_customer_delete_account_user
                 params: [ id ]
+            enable_link:
+                type:   url
+                route:  orob2b_customer_account_user_enable
+                params: [ id ]
+            disable_link:
+                type:   url
+                route:  orob2b_customer_account_user_disable
+                params: [ id ]
         actions:
+            enable:
+                type:         ajax
+                label:        orob2b.customer.action.account_user.enable
+                icon:         ok
+                link:         enable_link
+            disable:
+                type:         ajax
+                label:        orob2b.customer.action.account_user.disable
+                icon:         remove
+                link:         disable_link
             view:
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye-open
-                acl_resource:  orob2b_customer_account_user_view
-                rowAction:     true
+                type:         navigate
+                label:        oro.grid.action.view
+                link:         view_link
+                icon:         eye-open
+                acl_resource: orob2b_customer_account_user_view
+                rowAction:    true
             update:
-                type:          navigate
-                label:         oro.grid.action.update
-                link:          update_link
-                icon:          edit
-                acl_resource:  orob2b_customer_account_user_update
+                type:         navigate
+                label:        oro.grid.action.update
+                link:         update_link
+                icon:         edit
+                acl_resource: orob2b_customer_account_user_update
             delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  orob2b_customer_account_user_delete
+                type:         delete
+                label:        oro.grid.action.delete
+                link:         delete_link
+                icon:         trash
+                acl_resource: orob2b_customer_account_user_delete
 
     customer-account-user-roles-grid:
         options:
