@@ -17,7 +17,11 @@ trait EntityTestCaseTrait
      */
     public static function assertPropertyGetterReturnsDefaultValue($instance, $propertyName, $message = '')
     {
-        self::assertThat($instance, self::propertyGetterReturnsDefaultValue($propertyName), $message);
+        \PHPUnit_Framework_TestCase::assertThat(
+            $instance,
+            self::propertyGetterReturnsDefaultValue($propertyName),
+            $message
+        );
     }
 
     /**
@@ -41,7 +45,11 @@ trait EntityTestCaseTrait
      */
     public static function assertPropertyGetterReturnsSetValue($instance, $propertyName, $testValue, $message = '')
     {
-        self::assertThat($instance, self::propertyGetterReturnsSetValue($propertyName, $testValue), $message);
+        \PHPUnit_Framework_TestCase::assertThat(
+            $instance,
+            self::propertyGetterReturnsSetValue($propertyName, $testValue),
+            $message
+        );
     }
 
     /**
@@ -134,21 +142,21 @@ trait EntityTestCaseTrait
         $propertyAccess = new CollectionAccessor($instance, $propertyName);
 
         // Check default value
-        self::assertInstanceOf(
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
             'Doctrine\Common\Collections\Collection',
             $propertyAccess->getItems(),
             $propertyName . ': Default value must be instance of Collection'
         );
 
         // Check default size
-        self::assertCount(
+        \PHPUnit_Framework_TestCase::assertCount(
             0,
             $propertyAccess->getItems(),
             $propertyName . ': Default collection size must be 0'
         );
 
         // Add first item
-        self::assertSame(
+        \PHPUnit_Framework_TestCase::assertSame(
             $instance,
             $propertyAccess->addItem($testItem),
             sprintf(
@@ -160,19 +168,19 @@ trait EntityTestCaseTrait
         );
 
         // Check added item
-        self::assertCount(
+        \PHPUnit_Framework_TestCase::assertCount(
             1,
             $propertyAccess->getItems(),
             $propertyName . ': After add item - collection size must be 1'
         );
 
-        self::assertInstanceOf(
+        \PHPUnit_Framework_TestCase::assertInstanceOf(
             'Doctrine\Common\Collections\Collection',
             $propertyAccess->getItems(),
             $propertyName . ': After addition of a first item - property value must be instance of Collection'
         );
 
-        self::assertEquals(
+        \PHPUnit_Framework_TestCase::assertEquals(
             [$testItem],
             $propertyAccess->getItems()->toArray(),
             $propertyName . ': After addition of a first item - collections must be equals'
@@ -180,14 +188,14 @@ trait EntityTestCaseTrait
 
         // Add already added item
         $propertyAccess->addItem($testItem);
-        self::assertCount(
+        \PHPUnit_Framework_TestCase::assertCount(
             1,
             $propertyAccess->getItems(),
             $propertyName . ': After addition already added item - collection size must be same and equal 1'
         );
 
         // Remove item
-        self::assertSame(
+        \PHPUnit_Framework_TestCase::assertSame(
             $instance,
             $propertyAccess->removeItem($testItem),
             sprintf(
@@ -198,7 +206,7 @@ trait EntityTestCaseTrait
             )
         );
 
-        self::assertCount(
+        \PHPUnit_Framework_TestCase::assertCount(
             0,
             $propertyAccess->getItems(),
             $propertyName . ': After removal of a single item - collection size must be 0'
@@ -206,13 +214,13 @@ trait EntityTestCaseTrait
 
         // Remove already removed item
         $propertyAccess->removeItem($testItem);
-        self::assertCount(
+        \PHPUnit_Framework_TestCase::assertCount(
             0,
             $propertyAccess->getItems(),
             $propertyName . ': After removal already removed item - collection size must be same and equal 0'
         );
 
-        self::assertNotContains(
+        \PHPUnit_Framework_TestCase::assertNotContains(
             $testItem,
             $propertyAccess->getItems()->toArray(),
             $propertyName . ': After removal of a single item - collection must not contains test item'
