@@ -105,14 +105,18 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param bool $getIdShouldBeCalled
      * @return object
      */
-    protected function getProductMock()
+    protected function getProductMock($getIdShouldBeCalled = true)
     {
         $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
-        $product->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue(self::PRODUCT_ID));
+
+        if ($getIdShouldBeCalled) {
+            $product->expects($this->once())
+                ->method('getId')
+                ->will($this->returnValue(self::PRODUCT_ID));
+        }
 
         return $product;
     }
@@ -193,5 +197,64 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('generated_redirect_url', $result->headers->get('location'));
         $this->assertEquals(302, $result->getStatusCode());
+    }
+
+    public function testSaveHandler()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $entity = $this->getProductMock(false);
+
+        $handler = $this->getMockBuilder('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub')
+            ->getMock();
+        $handler->expects($this->once())
+            ->method('process')
+            ->with($entity)
+            ->will($this->returnValue(true));
+        $this->doctrineHelper->expects($this->once())
+            ->method('getSingleEntityIdentifier')
+            ->with($entity)
+            ->will($this->returnValue(1));
+
+        $expected = $this->assertSaveData($form, $entity);
+        $expected['savedId'] = 1;
+
+        $result = $this->handler->handleUpdate(
+            $entity,
+            $form,
+            ['route' => 'test_update'],
+            ['route' => 'test_view'],
+            'Saved',
+            $handler
+        );
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject|Form $form
+     * @param object $entity
+     * @param string $wid
+     * @return array
+     */
+    protected function assertSaveData($form, $entity, $wid = 'WID')
+    {
+        $this->request->expects($this->atLeastOnce())
+            ->method('get')
+            ->with('_wid', false)
+            ->will($this->returnValue($wid));
+        $formView = $this->getMockBuilder('Symfony\Component\Form\FormView')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $form->expects($this->any())
+            ->method('createView')
+            ->will($this->returnValue($formView));
+
+        return [
+            'entity' => $entity,
+            'form'   => $formView,
+            'isWidgetContext' => true
+        ];
     }
 }
