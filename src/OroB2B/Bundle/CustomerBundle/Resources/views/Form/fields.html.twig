@@ -48,7 +48,6 @@
 
     select2Config.ajax.data = function (query, page) {
         var getQueryString = function (searchString) {
-            console.log(searchString);
             return [searchString, {{ parent_id|json_encode|raw }}].join(';');
         };
 

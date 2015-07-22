@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Intl\Intl;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -63,7 +64,11 @@ class AjaxPriceListController extends Controller
      */
     public function getPriceListCurrencyList(PriceList $priceList)
     {
-        return new JsonResponse($priceList->getCurrencies());
+        $currencyNames = Intl::getCurrencyBundle()->getCurrencyNames($this->get('oro_locale.settings')->getLocale());
+
+        $currencies = array_intersect_key($currencyNames, array_fill_keys($priceList->getCurrencies(), null));
+
+        return new JsonResponse($currencies);
     }
 
     /**

@@ -21,3 +21,92 @@
     margin-left: 4px;
     width: 293px;
 }
+
+.product-container .product-index-content.product-sidebar-maximized {
+    margin-left: 320px;
+}
+
+.product-container .product-index-content.product-sidebar-minimized {
+    margin-left: 40px;
+}
+
+.product-container .product-sidebar {
+    position: absolute;
+    padding: 0;
+}
+
+.product-container .product-sidebar .control-maximize,
+.product-container .product-sidebar .control-minimize
+{
+    cursor: pointer;
+}
+
+.product-container .show-tier-prices-choice label {
+    float: left;
+}
+
+.product-container .show-tier-prices-choice label {
+    float: left;
+}
+
+.product-container .show-tier-prices-choice input {
+    margin: 0 10px !important;
+}
+
+.product-sidebar {
+    height: 100%;
+    background-color: #efefef;
+}
+
+.product-sidebar .sidebar-content,
+.product-sidebar .sidebar-maximized.sidebar-controls {
+    width: 293px;
+}
+
+.product-sidebar .sidebar-header {
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.product-sidebar .sidebar-header,
+.product-sidebar .sidebar-content {
+    padding: 5px 10px;
+}
+
+.product-sidebar .sidebar-controls,
+.product-sidebar .sidebar-controls i {
+    font-size: 8px;
+    line-height: 12px;
+}
+
+.product-sidebar .sidebar-item .control-label {
+    font-weight: bold;
+}
+
+.product-container .grid-container .product-price-unit-with-margin {
+    margin-top: 5px !important;
+}
+
+.product-container .grid-container .string-cell tbody td {
+    padding: 0 !important;
+    height: 10px !important;
+    border: 0 !important;
+}
+
+.product-price-filter .value-field-frame {
+    margin-right: 0 !important;
+}
+
+.product-price-filter .value-field-frame input[type=text]  {
+    width: 100px !important;
+    border-right-width: 1px !important;
+}
+
+.product-price-filter .product-price-unit-filter {
+    margin-bottom: 0;
+}
+
+.product-price-filter .product-price-unit-filter,
+.product-price-filter .choice-filter{
+    display: inline-block;
+    width: auto;
+}

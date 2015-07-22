@@ -8,9 +8,7 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
- * @dbReindex
  */
 class RequestControllerTest extends WebTestCase
 {
@@ -97,11 +95,8 @@ class RequestControllerTest extends WebTestCase
      */
     public function testChangeStatus($id)
     {
-        /** @var \Doctrine\Common\Persistence\ObjectManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManager();
-
         /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
-        $status = $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(
+        $status = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(
             ['deleted' => false],
             ['id' => 'DESC']
         );
@@ -109,7 +104,7 @@ class RequestControllerTest extends WebTestCase
         $this->assertNotNull($status);
 
         /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
-        $entity = $manager->getRepository('OroB2BRFPBundle:Request')->find($id);
+        $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
 
         $this->assertNotEquals($status->getId(), $entity->getStatus()->getId());
         $this->assertCount(0, $this->getNotesForRequest($entity));
@@ -135,7 +130,8 @@ class RequestControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Request For Proposal Status was successfully changed', $result->getContent());
 
-        $manager->refresh($entity);
+        /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
+        $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
 
         $this->assertNotNull($entity);
         $this->assertNotNull($entity->getStatus());

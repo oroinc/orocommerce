@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -12,7 +11,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture
 {
-
     /**
      * {@inheritdoc}
      */
@@ -46,12 +44,12 @@ class LoadShoppingLists extends AbstractFixture
     }
 
     /**
-     * @param EntityManager $manager
+     * @param ObjectManager $manager
      *
      * @return User
      * @throws \LogicException
      */
-    protected function getUser(EntityManager $manager)
+    protected function getUser(ObjectManager $manager)
     {
         $user = $manager->getRepository('OroUserBundle:User')
             ->createQueryBuilder('user')

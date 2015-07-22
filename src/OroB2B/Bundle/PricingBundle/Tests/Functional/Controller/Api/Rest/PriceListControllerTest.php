@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Api\Rest;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 /**
  * @dbIsolation
@@ -34,7 +35,7 @@ class PriceListControllerTest extends WebTestCase
     public function testDeleteDefault()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_3');
+        $priceList = $this->getRepository()->getDefault();
 
         $this->client->request(
             'DELETE',
@@ -42,5 +43,13 @@ class PriceListControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 403);
+    }
+
+    /**
+     * @return PriceListRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BPricingBundle:PriceList');
     }
 }
