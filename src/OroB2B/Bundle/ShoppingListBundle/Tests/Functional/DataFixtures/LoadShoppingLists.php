@@ -3,39 +3,61 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\UserBundle\Entity\User;
-
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class LoadShoppingLists extends AbstractFixture
+class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
+    const SHOPPING_LIST_1 = 'shopping_list_1';
+    const SHOPPING_LIST_2 = 'shopping_list_2';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            'Oro\Component\Testing\Fixtures\LoadAccountUserData'
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->getUser($manager);
-        $this->createShoppingList($manager, 'shopping_list', $user);
+        $accountUser = $this->getAccountUser($manager);
+        $lists = $this->getData();
+        foreach ($lists as $listLabel) {
+            $isCurrent = $listLabel === self::SHOPPING_LIST_2;
+            $this->createShoppingList($manager, $accountUser, $listLabel, $isCurrent);
+        }
 
         $manager->flush();
     }
 
     /**
      * @param ObjectManager $manager
-     * @param string $name
-     * @param User $user
-
+     * @param string        $name
+     * @param AccountUser   $accountUser
+     * @param bool          $isCurrent
+     *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, $name, User $user)
+    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name, $isCurrent = false)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($user);
-        $shoppingList->setOrganization($user->getOrganization());
+        $shoppingList->setOwner($accountUser);
+        $shoppingList->setOrganization($accountUser->getOrganization());
+        $shoppingList->setAccountUser($accountUser);
+        $shoppingList->setAccount($accountUser->getCustomer());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
+        $shoppingList->setCurrent($isCurrent);
 
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
@@ -46,22 +68,26 @@ class LoadShoppingLists extends AbstractFixture
     /**
      * @param ObjectManager $manager
      *
-     * @return User
+     * @return AccountUser
      * @throws \LogicException
      */
-    protected function getUser(ObjectManager $manager)
+    protected function getAccountUser(ObjectManager $manager)
     {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
+        $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')
+            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
-        if (!$user) {
-            throw new \LogicException('There are no users in system');
+        if (!$accountUser) {
+            throw new \LogicException('Test account user not loaded');
         }
 
-        return $user;
+        return $accountUser;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData()
+    {
+        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2];
     }
 }

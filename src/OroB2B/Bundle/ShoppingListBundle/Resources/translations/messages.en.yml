@@ -7,9 +7,16 @@ orob2b:
         label.label: Label
         notes.label: Notes
         owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
 
+        product:
+            add_to_shopping_list.label: Add To Shopping List
+
+        actions:
+            set_current: Set as current
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
@@ -21,6 +28,13 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        controller:
+            shopping_list.saved.message: Shopping List has been saved
+
+        security:
+            permission:
+                view_shopping_list: View Shopping List
 
         lineitem:
             entity_label: Line Item
