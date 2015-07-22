@@ -21,6 +21,7 @@ parameters:
     orob2b_pricing.event_listener.product_price_widget.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceWidgetListener
 
     orob2b_pricing.model.price_list_request_hanlder.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
+    orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
@@ -150,6 +151,13 @@ services:
             - %orob2b_pricing.entity.price_list.class%
         calls:
             - [setRequest, ["@?request="]]
+
+    orob2b_pricing.model.price_list_tree_handler:
+        class: %orob2b_pricing.model.price_list_tree_handler.class%
+        arguments:
+            - @doctrine
+            - @orob2b_website.manager
+            - %orob2b_pricing.entity.price_list.class%
 
     orob2b_pricing.filter.product_price:
             class: %orob2b_pricing.filter.product_price.class%
