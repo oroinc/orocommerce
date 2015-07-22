@@ -18,9 +18,42 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
         $this->loadExtension(new OroB2BShoppingListExtension());
 
         $expectedParameters = [
+            // Validators
+            'orob2b_shopping_list.validator.line_item.class',
+
+            // Entity
             'orob2b_shopping_list.entity.shopping_list.class',
+            'orob2b_shopping_list.entity.line_item.class',
+
+            // Managers
+            'orob2b_shopping_list.shopping_list.manager.api.class',
+            'orob2b_shopping_list.shopping_list.manager.class',
+            'orob2b_shopping_list.line_item.manager.class',
+
+            // Form types
+            'orob2b_shopping_list.form.type.shopping_list.class',
+            'orob2b_shopping_list.form.type.line_item.class',
+            'orob2b_shopping_list.form.type.add_product.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
+
+        $expectedDefinitions = [
+            // Services
+            'orob2b_shopping_list.validator.line_item',
+            'orob2b_shopping_list.line_item.manager.api',
+            'orob2b_shopping_list.shopping_list.manager.api',
+            'orob2b_shopping_list.shopping_list.manager',
+            'orob2b_shopping_list.line_item.manager',
+
+            // Listeners
+            'orob2b_shopping_list.event_listener.datagrid',
+
+            // Forms
+            'orob2b_shopping_list.form.type.shopping_list',
+            'orob2b_shopping_list.form.type.line_item',
+            'orob2b_shopping_list.form.type.add_product'
+        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
     }
 
     /**

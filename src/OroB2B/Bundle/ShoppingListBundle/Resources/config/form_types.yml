@@ -1,6 +1,7 @@
 parameters:
     orob2b_shopping_list.form.type.shopping_list.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType
     orob2b_shopping_list.form.type.line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType
+    orob2b_shopping_list.form.type.add_product.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType
 
 services:
     orob2b_shopping_list.form.type.shopping_list:
