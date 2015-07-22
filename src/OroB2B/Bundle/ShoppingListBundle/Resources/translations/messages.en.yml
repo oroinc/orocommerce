@@ -36,6 +36,10 @@ orob2b:
         controller:
             shopping_list.saved.message: Shopping List has been saved
 
+        security:
+            permission:
+                view_shopping_list: View Shopping List
+
         lineitem:
             entity_label: Line Item
             entity_plural_label: Line Items

@@ -1,0 +1,13 @@
+placeholders:
+    product_index_sidebar:
+        items:
+            product_sidebar_price_list_selector: ~
+    scripts_before:
+        items:
+            pricing_filter_templates: ~
+
+items:
+    product_sidebar_price_list_selector:
+        action: OroB2BPricingBundle:Product:sidebar
+    pricing_filter_templates:
+        template: OroB2BPricingBundle:Js:pricing_filter_templates.js.twig

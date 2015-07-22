@@ -38,12 +38,7 @@ class ShoppingListController extends Controller
     /**
      * @Route("/view/{id}", name="orob2b_shopping_list_frontend_view", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:view.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_view",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="VIEW"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *
@@ -100,12 +95,7 @@ class ShoppingListController extends Controller
      *
      * @Route("/update/{id}", name="orob2b_shopping_list_frontend_update", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_update",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="EDIT"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *

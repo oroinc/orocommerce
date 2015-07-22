@@ -4,6 +4,7 @@ orob2b:
             success: Shopping list was created successfuly
         line_item_save:
             flash:
+                success: Line Item has been saved
                 success: Line Item has been added
         menu:
             add_products:

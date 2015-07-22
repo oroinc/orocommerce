@@ -75,7 +75,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($handler->process($this->lineItem));
     }
 
-    public function testProcessExistingLineItem()
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject|LineItem $existingLineItem
+     * @param mixed $newNotes
+     *
+     * @dataProvider lineItemDataProvider
+     */
+    public function testProcessExistingLineItem($existingLineItem, $newNotes)
     {
         $this->request->expects($this->once())
             ->method('getMethod')
@@ -91,16 +97,9 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->lineItem->expects($this->once())
             ->method('getQuantity')
             ->will($this->returnValue(40));
-
-        $existingLineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
-        $existingLineItem->expects($this->once())
-            ->method('getQuantity')
-            ->will($this->returnValue(10));
-        $existingLineItem->expects($this->once())
-            ->method('setQuantity');
-        $existingLineItem->expects($this->once())
-            ->method('getId')
-            ->will($this->returnValue(123));
+        $this->lineItem->expects($this->once())
+            ->method('getNotes')
+            ->will($this->returnValue($newNotes));
 
         $repository = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
@@ -128,6 +127,53 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $handler = new LineItemHandler($this->form, $this->request, $this->registry);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals(['savedId' => 123], $handler->updateSavedId([]));
+    }
+
+    /**
+     * @return array
+     */
+    public function lineItemDataProvider()
+    {
+        return [
+            [$this->getLineItem(10, null, 123, null), null],
+            [$this->getLineItem(10, null, 123, null), ''],
+            [$this->getLineItem(10, null, 123, 'note1'), 'note1'],
+            [$this->getLineItem(10, '', 123, null), null],
+            [$this->getLineItem(10, '', 123, null), ''],
+            [$this->getLineItem(10, '', 123, 'note1'), 'note1'],
+            [$this->getLineItem(10, 'note1', 123, 'note1'), null],
+            [$this->getLineItem(10, 'note1', 123, 'note1'), ''],
+            [$this->getLineItem(10, 'note1', 123, 'note1 note1'), 'note1'],
+        ];
+    }
+
+    /**
+     * @param mixed $quantity
+     * @param mixed $notes
+     * @param int $id
+     * @param int $expectedNotes
+     *
+     * @return \PHPUnit_Framework_MockObject_MockObject|LineItem
+     */
+    protected function getLineItem($quantity, $notes, $id, $expectedNotes)
+    {
+        $existingLineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
+        $existingLineItem->expects($this->any())->method('getQuantity')->will($this->returnValue($quantity));
+        $existingLineItem->expects($this->any())->method('setQuantity');
+        $existingLineItem->expects($this->any())->method('getNotes')->will($this->returnValue($notes));
+        $existingLineItem->expects($this->any())->method('setNotes')->with(
+            $this->callback(
+                function ($actualNotes) use ($expectedNotes) {
+                    $this->assertNotEmpty($actualNotes);
+                    $this->assertEquals($expectedNotes, $actualNotes);
+
+                    return true;
+                }
+            )
+        );
+        $existingLineItem->expects($this->any())->method('getId')->will($this->returnValue($id));
+
+        return $existingLineItem;
     }
 
     public function testProcessNotExistingLineItem()

@@ -85,9 +85,7 @@ class OroB2BOrderBundle implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['identifier'], 'UNIQ_C036FF9096901F54');
-        $table->addIndex(['user_owner_id'], 'IDX_C036FF909EB185F9');
-        $table->addIndex(['organization_id'], 'IDX_C036FF9032C8A3DE');
+        $table->addUniqueIndex(['identifier']);
         $table->addIndex(['created_at'], 'created_at_index');
     }
 

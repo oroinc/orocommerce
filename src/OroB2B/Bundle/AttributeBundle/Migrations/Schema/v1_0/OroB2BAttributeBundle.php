@@ -46,7 +46,7 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('required', 'boolean', []);
         $table->addColumn('unique_flag', 'boolean', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['code'], 'UNIQ_E5EA3FED77153098');
+        $table->addUniqueIndex(['code']);
     }
 
     /**
@@ -68,9 +68,6 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('text_value', 'text', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['attribute_id'], 'IDX_488AC0BBB6E62EFA', []);
-        $table->addIndex(['locale_id'], 'IDX_488AC0BBE559DFD1', []);
-        $table->addIndex(['option_id'], 'IDX_488AC0BBA7C41D6F', []);
     }
 
     /**
@@ -87,8 +84,6 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('value', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['attribute_id'], 'IDX_587CF949B6E62EFA', []);
-        $table->addIndex(['locale_id'], 'IDX_587CF949E559DFD1', []);
         $table->addUniqueIndex(['attribute_id', 'locale_id'], 'attribute_label_unique_idx');
     }
 
@@ -108,9 +103,6 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('order_value', 'integer', []);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['master_option_id'], 'IDX_B72BFBE8D45BBE22', []);
-        $table->addIndex(['attribute_id'], 'IDX_B5688EBAB6E62EFA', []);
-        $table->addIndex(['locale_id'], 'IDX_B5688EBAE559DFD1', []);
     }
 
     /**
@@ -128,8 +120,6 @@ class OroB2BAttributeBundle implements Migration
         $table->addColumn('value', 'smallint', ['notnull' => false]);
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['attribute_id'], 'IDX_D3FF0DBBB6E62EFA', []);
-        $table->addIndex(['website_id'], 'IDX_D3FF0DBB18F45C82', []);
         $table->addUniqueIndex(['attribute_id', 'website_id', 'field'], 'attribute_property_unique_idx');
     }
 

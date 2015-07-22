@@ -32,8 +32,7 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'product_id']);
-        $table->addUniqueIndex(['product_id'], 'UNIQ_FB6D81664584665A');
-        $table->addIndex(['category_id'], 'IDX_FB6D816612469DE2', []);
+        $table->addUniqueIndex(['product_id']);
     }
 
     /**

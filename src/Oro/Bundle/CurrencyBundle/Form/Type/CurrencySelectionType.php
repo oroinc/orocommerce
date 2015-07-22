@@ -104,6 +104,8 @@ class CurrencySelectionType extends AbstractType
             $choices = array_intersect_key($currencyNames, array_fill_keys($currencies, null));
         }
 
+        ksort($choices);
+
         return $choices;
     }
 
@@ -123,7 +125,7 @@ class CurrencySelectionType extends AbstractType
             }
         }
 
-        if (!empty($invalidCurrencies)) {
+        if ($invalidCurrencies) {
             throw new LogicException(sprintf('Found unknown currencies: %s.', implode(', ', $invalidCurrencies)));
         }
     }

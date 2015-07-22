@@ -1,5 +1,4 @@
 name,default,currencies
-"Default price list",1,"USD, EUR, CAD, AUD"
 "Wholesale price list",0,"USD, CAD, MXN"
 "Partnership price list",0,"USD, EUR"
 "Purchase price list",0,USD

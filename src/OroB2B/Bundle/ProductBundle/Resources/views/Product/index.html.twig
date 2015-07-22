@@ -12,3 +12,23 @@
     {% endif %}
     {% set id = 'product-grid-view-btns' %}
 {% endblock %}
+
+{% block content_datagrid %}
+    <div class="product-container">
+        {% set componentOptions = {widgetAlias: 'products-grid-widget', widgetContent: '.product-index-content', widgetRouteParameters: widgetRouteParameters} %}
+        <div class="product-sidebar"
+             data-page-component-module="orob2bproduct/js/app/components/product-sidebar-grid-component"
+             data-page-component-options="{{ componentOptions|json_encode }}"
+        >
+            {% placeholder product_index_sidebar %}
+        </div>
+        <div class="product-index-content">
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                'title': '',
+                'alias': 'products-grid-widget'
+            }) }}
+        </div>
+    </div>
+{% endblock content_datagrid %}

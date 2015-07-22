@@ -12,6 +12,7 @@ services:
             - @doctrine
         tags:
             - { name: validator.constraint_validator, alias: orob2b_shopping_list_line_item_validator }
+
     orob2b_shopping_list.line_item.manager.api:
         class: %orob2b_shopping_list.shopping_list.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
