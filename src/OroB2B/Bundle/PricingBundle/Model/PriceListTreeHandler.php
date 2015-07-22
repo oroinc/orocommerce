@@ -109,10 +109,13 @@ class PriceListTreeHandler
             return null;
         }
 
-        while ($parentAccount && $parentGroup = $parentAccount->getGroup()) {
-            $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($parentGroup);
-            if ($priceList) {
-                return $priceList;
+        while ($parentAccount) {
+            $parentGroup = $parentAccount->getGroup();
+            if ($parentGroup) {
+                $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($parentGroup);
+                if ($priceList) {
+                    return $priceList;
+                }
             }
 
             $parentAccount = $parentAccount->getParent();

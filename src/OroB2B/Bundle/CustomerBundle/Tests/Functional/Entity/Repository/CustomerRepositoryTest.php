@@ -68,9 +68,22 @@ class CustomerRepositoryTest extends WebTestCase
     {
         return [
             'orphan' => ['customer.orphan', []],
-            'level_1' => ['customer.level_1', ['customer.level_1.1', 'customer.level_1.1.1', 'customer.level_1.2']],
+            'level_1' => [
+                'customer.level_1',
+                [
+                    'customer.level_1.1',
+                    'customer.level_1.1.1',
+                    'customer.level_1.2',
+                    'customer.level_1.2.1',
+                    'customer.level_1.2.1.1',
+                    'customer.level_1.3',
+                    'customer.level_1.3.1',
+                    'customer.level_1.3.1.1',
+                    'customer.level_1.4',
+                ],
+            ],
             'level_1.1' => ['customer.level_1.1', ['customer.level_1.1.1']],
-            'level_1.2' => ['customer.level_1.2', []]
+            'level_1.2' => ['customer.level_1.2', ['customer.level_1.2.1', 'customer.level_1.2.1.1']],
         ];
     }
 }
