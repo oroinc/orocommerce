@@ -38,7 +38,7 @@ class ShoppingListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_shopping_list_frontend_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals("Shopping Lists", $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals('Shopping Lists', $crawler->filter('h1.oro-subtitle')->html());
     }
 
     public function testCreate()
@@ -60,7 +60,6 @@ class ShoppingListControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
 
-        $id      = $result['id'];
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_shopping_list_frontend_update', ['id' => $result['id']])
