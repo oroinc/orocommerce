@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\Oro\Component\Testing;
+namespace Oro\Component\Testing;
 
 use Symfony\Component\HttpFoundation\Response;
 

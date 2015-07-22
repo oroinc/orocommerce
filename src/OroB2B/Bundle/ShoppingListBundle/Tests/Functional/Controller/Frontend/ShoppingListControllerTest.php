@@ -6,7 +6,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\src\Oro\Component\Testing\WebTestCase;
+use Oro\Component\Testing\WebTestCase;
 
 /**
  * @dbIsolation
