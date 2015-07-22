@@ -96,8 +96,6 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testSetCurrent()
     {
-        $this->markTestSkipped('Skipped because of bug in data audit. Test will be fixed in BB-748');
-
         /** @var ShoppingList $list */
         $list = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($list->isCurrent());
