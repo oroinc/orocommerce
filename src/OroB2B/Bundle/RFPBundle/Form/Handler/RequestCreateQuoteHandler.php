@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\DBALException;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,6 +44,11 @@ class RequestCreateQuoteHandler
     protected $quote;
 
     /**
+     * @var DBALException
+     */
+    protected $exception;
+
+    /**
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
@@ -62,6 +68,14 @@ class RequestCreateQuoteHandler
     public function getQuote()
     {
         return $this->quote;
+    }
+
+    /**
+     * @return DBALException
+     */
+    public function getException()
+    {
+        return $this->exception;
     }
 
     /**
@@ -122,7 +136,9 @@ class RequestCreateQuoteHandler
             $this->manager->flush();
 
             $this->quote = $quote;
-        } catch (\Exception $e) {
+        } catch (DBALException $e) {
+            $this->exception = $e;
+
             return false;
         }
 

@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -214,7 +215,7 @@ class RequestController extends Controller
                 },
                 $this->getTranslator()->trans('orob2b.rfp.message.request.create_quote.success'),
                 $handler,
-                function (Request $entity, FormInterface $form) {
+                function (Request $entity, FormInterface $form) use ($handler) {
                     /* @var $session Session */
                     $session = $this->get('session');
                     $session->getFlashBag()->add(
@@ -222,12 +223,24 @@ class RequestController extends Controller
                         $this->getTranslator()->trans('orob2b.rfp.message.request.create_quote.error')
                     );
 
+                    if ($handler->getException()) {
+                        $this->getLogger()->error($handler->getException()->getMessage());
+                    }
+
                     return [
                         'entity' => $entity,
                         'formCreateQuote' => $form->createView(),
                     ];
                 }
             );
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('logger');
     }
 
     /**
