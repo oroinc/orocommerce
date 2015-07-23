@@ -1,18 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Entity;
+namespace OroB2B\Bundle\SaleBundle\Model;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 /**
- * @ORM\Table(name="orob2b_sale_quote_product_item")
- * @ORM\Entity
+ * BaseQuoteProductItem
+ *
+ * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
@@ -26,7 +27,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *      }
  * )
  */
-class QuoteProductItem
+class BaseQuoteProductItem
 {
     /**
      * @var int
@@ -40,7 +41,7 @@ class QuoteProductItem
     /**
      * @var QuoteProduct
      *
-     * @ORM\ManyToOne(targetEntity="QuoteProduct", inversedBy="quoteProductItems")
+     * @ORM\ManyToOne(targetEntity="QuoteProduct")
      * @ORM\JoinColumn(name="quote_product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteProduct;
@@ -48,7 +49,7 @@ class QuoteProductItem
     /**
      * @var float
      *
-     * @ORM\Column(name="quantity", type="float")
+     * @ORM\Column(name="quantity", type="float", nullable=true)
      */
     protected $quantity;
 
@@ -91,7 +92,7 @@ class QuoteProductItem
      */
     public function postLoad()
     {
-        if ($this->value && $this->currency) {
+        if (null !== $this->value && null !==  $this->currency) {
             $this->price = Price::create($this->value, $this->currency);
         }
     }
@@ -100,12 +101,10 @@ class QuoteProductItem
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
-    public function preSave()
+    public function updatePrice()
     {
-        if ($this->price) {
-            $this->value    = $this->price->getValue();
-            $this->currency = $this->price->getCurrency();
-        }
+        $this->value = $this->price ? $this->price->getValue() : null;
+        $this->currency = $this->price ? $this->price->getCurrency() : null;
     }
 
     /**
@@ -122,7 +121,7 @@ class QuoteProductItem
      * Set quantity
      *
      * @param float $quantity
-     * @return QuoteProductItem
+     * @return $this
      */
     public function setQuantity($quantity)
     {
@@ -145,7 +144,7 @@ class QuoteProductItem
      * Set quoteProduct
      *
      * @param QuoteProduct $quoteProduct
-     * @return QuoteProductItem
+     * @return $this
      */
     public function setQuoteProduct(QuoteProduct $quoteProduct = null)
     {
@@ -168,7 +167,7 @@ class QuoteProductItem
      * Set productUnit
      *
      * @param ProductUnit $productUnit
-     * @return QuoteProductItem
+     * @return $this
      */
     public function setProductUnit(ProductUnit $productUnit = null)
     {
@@ -194,7 +193,7 @@ class QuoteProductItem
      * Set productUnitCode
      *
      * @param string $productUnitCode
-     * @return QuoteProductItem
+     * @return $this
      */
     public function setProductUnitCode($productUnitCode)
     {
@@ -214,19 +213,23 @@ class QuoteProductItem
     }
 
     /**
+     * Set price
+     *
      * @param Price $price
-     * @return QuoteProductItem
+     * @return $this
      */
-    public function setPrice(Price $price = null)
+    public function setPrice($price = null)
     {
         $this->price = $price;
 
-        $this->preSave();
+        $this->updatePrice();
 
         return $this;
     }
 
     /**
+     * Get price
+     *
      * @return Price|null
      */
     public function getPrice()

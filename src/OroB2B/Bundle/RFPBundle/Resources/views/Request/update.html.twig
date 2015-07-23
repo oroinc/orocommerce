@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
-{% oro_title_set({params : {"%title%": entity|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {'%title%': entity.__toString(), '%entityName%' : 'orob2b.rfp.request.entity_label'|trans} }) %}
 
 {% set formAction = path('orob2b_rfp_request_update', { 'id': entity.id }) %}
 
