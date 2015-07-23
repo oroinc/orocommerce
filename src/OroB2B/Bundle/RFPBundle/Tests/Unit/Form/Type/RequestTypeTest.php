@@ -15,7 +15,6 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 /**
@@ -34,6 +33,7 @@ class RequestTypeTest extends AbstractTest
     protected function setUp()
     {
         $this->formType = new RequestType();
+        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
 
         parent::setUp();
     }
@@ -208,21 +208,25 @@ class RequestTypeTest extends AbstractTest
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $productSelectType          = new ProductSelectTypeStub();
         $currencySelectionType      = new CurrencySelectionTypeStub();
+        $requestProductItemType     = $this->prepareRequestProductItemType($translator);
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+
+        $requestProductType = new RequestProductType($translator);
+        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
             new PreloadedExtension(
                 [
                     CollectionType::NAME                    => new CollectionType(),
-                    RequestProductType::NAME                => new RequestProductType($translator),
-                    RequestProductItemType::NAME            => new RequestProductItemType($translator),
                     RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $productSelectType->getName()           => $productSelectType,
+                    $requestProductType->getName()          => $requestProductType,
                     $currencySelectionType->getName()       => $currencySelectionType,
+                    $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
                 []

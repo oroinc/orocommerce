@@ -10,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -45,7 +46,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->formType = new QuoteProductOfferType($this->translator, $this->quoteProductOfferTypeFormatter);
+        $this->formType = new QuoteProductOfferType($this->translator, $this->quoteProductOfferFormatter);
+        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
     }
 
     public function testSetDefaultOptions()
@@ -271,7 +273,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     /**
      * @param int $id
-     * @param array $productUnits
+     * @param ProductUnit[] $productUnits
      * @param string $unitCode
      * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer
      */

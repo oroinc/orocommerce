@@ -76,16 +76,16 @@ class OroB2BSaleBundleInstaller implements
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BSaleQuoteTable($schema);
-        $this->createOrob2BSaleQuoteProductTable($schema);
-        $this->createOrob2BSaleQuoteProdOfferTable($schema);
-        $this->createOrob2BSaleQuoteProdRequestTable($schema);
+        $this->createOroB2BSaleQuoteTable($schema);
+        $this->createOroB2BSaleQuoteProductTable($schema);
+        $this->createOroB2BSaleQuoteProdOfferTable($schema);
+        $this->createOroB2BSaleQuoteProdRequestTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BSaleQuoteForeignKeys($schema);
-        $this->addOrob2BSaleQuoteProductForeignKeys($schema);
-        $this->addOrob2BSaleQuoteProdOfferForeignKeys($schema);
-        $this->addOrob2BSaleQuoteProdRequestForeignKeys($schema);
+        $this->addOroB2BSaleQuoteForeignKeys($schema);
+        $this->addOroB2BSaleQuoteProductForeignKeys($schema);
+        $this->addOroB2BSaleQuoteProdOfferForeignKeys($schema);
+        $this->addOroB2BSaleQuoteProdRequestForeignKeys($schema);
 
         $this->addNoteAssociations($schema, $this->noteExtension);
         $this->addAttachmentAssociations($schema, $this->attachmentExtension);
@@ -97,7 +97,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BSaleQuoteTable(Schema $schema)
+    protected function createOroB2BSaleQuoteTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -118,7 +118,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BSaleQuoteProdOfferTable(Schema $schema)
+    protected function createOroB2BSaleQuoteProdOfferTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote_prod_offer');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -143,7 +143,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BSaleQuoteProdRequestTable(Schema $schema)
+    protected function createOroB2BSaleQuoteProdRequestTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote_prod_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -167,7 +167,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BSaleQuoteProductTable(Schema $schema)
+    protected function createOroB2BSaleQuoteProductTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote_product');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -187,7 +187,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addForeignKeyConstraint(
@@ -227,7 +227,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteProdOfferForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteProdOfferForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_prod_offer');
         $table->addForeignKeyConstraint(
@@ -249,7 +249,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteProdRequestForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteProdRequestForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_prod_request');
         $table->addForeignKeyConstraint(
@@ -277,7 +277,7 @@ class OroB2BSaleBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteProductForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteProductForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_product');
         $table->addForeignKeyConstraint(

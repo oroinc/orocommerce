@@ -1,16 +1,16 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var RequestProductItemsComponent,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        $ = require('jquery'),
-        _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),
-        routing = require('routing'),
-        messenger = require('oroui/js/messenger');
+    var RequestProductItemsComponent;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
+    var routing = require('routing');
+    var messenger = require('oroui/js/messenger');
 
     RequestProductItemsComponent = BaseComponent.extend({
         /**
@@ -36,22 +36,22 @@ define(function (require) {
         /**
          * @property {Object}
          */
-        $container : null,
+        $container: null,
 
         /**
          * @property {Object}
          */
-        $productSelect : null,
+        $productSelect: null,
 
         /**
          * @property {Object}
          */
-        $addItemButton : null,
+        $addItemButton: null,
 
         /**
          * @property {Object}
          */
-        $itemsContainer : null,
+        $itemsContainer: null,
 
         /**
          * @property {LoadingMaskView|null}
@@ -61,7 +61,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options    = _.defaults(options || {}, this.options);
             this.units      = _.defaults(this.units, options.units);
 
@@ -83,11 +83,11 @@ define(function (require) {
             this.initSelects();
         },
 
-        checkAddButton: function () {
+        checkAddButton: function() {
             this.$addItemButton.toggle(Boolean(this.$productSelect.val()));
         },
 
-        initSelects: function () {
+        initSelects: function() {
             this.$container.find(this.options.unitsSelect).addClass(this.options.syncClass);
         },
 
@@ -96,7 +96,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onProductChanged: function (e) {
+        onProductChanged: function(e) {
             this.checkAddButton();
 
             if (this.$itemsContainer.children().length) {
@@ -109,14 +109,14 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onContentChanged: function (e) {
+        onContentChanged: function(e) {
             this.updateContent(false);
         },
 
         /**
          * @param {Boolean} force
          */
-        updateContent: function (force) {
+        updateContent: function(force) {
             var productId = this.$productSelect.val();
             var productUnits = this.units[productId];
 
@@ -127,17 +127,17 @@ define(function (require) {
                 $.ajax({
                     url: routing.generate(this.options.unitsRoute, {'id': productId}),
                     type: 'GET',
-                    beforeSend: function () {
+                    beforeSend: function() {
                         self.loadingMask.show();
                     },
-                    success: function (response) {
+                    success: function(response) {
                         self.units[productId] = response.units;
                         self.updateProductUnits(response.units, true);
                     },
-                    complete: function () {
+                    complete: function() {
                         self.loadingMask.hide();
                     },
-                    error: function (xhr) {
+                    error: function(xhr) {
                         self.loadingMask.hide();
                         messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
                     }
@@ -151,14 +151,14 @@ define(function (require) {
          * @param {Object} data
          * @param {Boolean} force
          */
-        updateProductUnits: function (data, force) {
+        updateProductUnits: function(data, force) {
             var self = this;
 
             var units = data || {};
 
             var widgets = self.$container.find(self.options.itemWidget);
 
-            $.each(widgets, function (index, widget) {
+            $.each(widgets, function(index, widget) {
                 var select = $(widget).find(self.options.unitsSelect);
 
                 if (!force && $(select).hasClass(self.options.syncClass)) {
@@ -167,7 +167,7 @@ define(function (require) {
 
                 var currentValue = $(select).val();
                 $(select).empty();
-                $.each(units, function (key, value) {
+                $.each(units, function(key, value) {
                     $(select)
                         .append($('<option/>').val(key).text(value))
                     ;
@@ -188,7 +188,7 @@ define(function (require) {
             }
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }

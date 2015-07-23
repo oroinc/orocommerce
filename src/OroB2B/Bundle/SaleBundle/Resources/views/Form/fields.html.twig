@@ -50,7 +50,7 @@
                 </div>
 
                 <div>
-                    <a class="btn sale-quoteproduct-add-notes-btn" href="javascript: void(0);">
+                    <a class="btn sale-quoteproduct-add-notes-btn" href="#">
                         {{ 'orob2b.sale.btn.add_seller_notes'|trans }}
                     </a>
                 </div>
@@ -61,7 +61,7 @@
                 {% endif %}
                 <div class="sale-quoteproduct-notes sale-quoteproduct-notes-seller ">
                     {{ form_row(form.comment) }}
-                    <a class="btn sale-quoteproduct-remove-notes-btn" href="javascript: void(0);">
+                    <a class="btn sale-quoteproduct-remove-notes-btn" href="#">
                         {{ 'orob2b.sale.btn.remove_seller_notes'|trans }}
                     </a>
                 </div>
@@ -92,6 +92,7 @@
             </td>
             <td class="sale-quoteproductitem-widget-price">
                 {{ form_widget(form.price) }}
+                {{ form_errors(form.price) }}
             </td>
         </tr>
     </table>

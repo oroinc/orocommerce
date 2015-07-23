@@ -13,8 +13,8 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferType extends AbstractType
 {
@@ -26,18 +26,31 @@ class QuoteProductOfferType extends AbstractType
     protected $translator;
 
     /**
-     * @var QuoteProductOfferTypeFormatter
+     * @var QuoteProductOfferFormatter
      */
-    protected $typeFormatter;
+    protected $formatter;
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
 
     /**
      * @param TranslatorInterface $translator
-     * @param QuoteProductOfferTypeFormatter $typeFormatter
+     * @param QuoteProductOfferFormatter $formatter
      */
-    public function __construct(TranslatorInterface $translator, QuoteProductOfferTypeFormatter $typeFormatter)
+    public function __construct(TranslatorInterface $translator, QuoteProductOfferFormatter $formatter)
     {
         $this->translator = $translator;
-        $this->typeFormatter = $typeFormatter;
+        $this->formatter = $formatter;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
     }
 
     /**
@@ -51,12 +64,13 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.quantity.label'
             ])
             ->add('price', PriceType::NAME, [
+                'error_bubbling' => false,
                 'required' => true,
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
             ])
             ->add('priceType', 'choice', [
                 'label' => 'orob2b.sale.quoteproductoffer.price_type.label',
-                'choices' => $this->typeFormatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),
+                'choices' => $this->formatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),
                 'required' => true,
                 'expanded' => true,
             ])
@@ -76,7 +90,7 @@ class QuoteProductOfferType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
+            'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product_offer',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

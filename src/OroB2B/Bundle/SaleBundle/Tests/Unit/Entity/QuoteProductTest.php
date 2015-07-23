@@ -89,4 +89,28 @@ class QuoteProductTest extends AbstractTest
             QuoteProduct::getTypes()
         );
     }
+
+    public function testIsTypeOffer()
+    {
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setType(QuoteProduct::TYPE_OFFER);
+
+        $this->assertTrue($quoteProduct->isTypeOffer());
+    }
+
+    public function testIsTypeRequested()
+    {
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setType(QuoteProduct::TYPE_REQUESTED);
+
+        $this->assertTrue($quoteProduct->isTypeRequested());
+    }
+
+    public function testIsTypeNotAvailable()
+    {
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct->setType(QuoteProduct::TYPE_NOT_AVAILABLE);
+
+        $this->assertTrue($quoteProduct->isTypeNotAvailable());
+    }
 }

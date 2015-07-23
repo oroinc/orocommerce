@@ -23,6 +23,14 @@
                 {{ UI.renderHtmlProperty('orob2b.sale.quote.account.label'|trans, accountView) }}
             {% endif %}
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
+            {% if entity.request %}
+                {%  if resource_granted('VIEW', entity.request) %}
+                    {% set request = UI.renderUrl(path('orob2b_rfp_request_view', {id: entity.request.id}), entity.request) %}
+                {% else %}
+                    {% set request = entity.request %}
+                {%  endif %}
+                {{ UI.renderHtmlProperty('orob2b.sale.quote.request.label'|trans, request) }}
+            {% endif %}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
