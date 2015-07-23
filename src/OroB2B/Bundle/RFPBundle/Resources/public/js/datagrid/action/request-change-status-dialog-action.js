@@ -2,7 +2,7 @@
 /*global define*/
 define([
     'oro/datagrid/action/dialog-action'
-], function (DialogAction) {
+], function(DialogAction) {
     'use strict';
 
     var RequestChangeStatusDialogAction;

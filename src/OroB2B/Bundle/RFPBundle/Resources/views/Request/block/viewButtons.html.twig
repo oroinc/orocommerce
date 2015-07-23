@@ -9,11 +9,7 @@
         {% for widget in group.widgets -%}
             {% set items = items|merge(['<li>' ~ include(widget.link.template, { data: widget.button.data|default([]) }) ~ '</li>']) -%}
         {% endfor -%}
-        {% set items = items|merge([
-            '<li>'
-                ~ include('OroB2BRFPBundle:Request:block/createQuoteButton.html.twig', { formCreateQuote: formCreateQuote })
-                ~ '</li>'
-        ]) -%}
+        {% set items = items|merge(['<li>' ~ include('OroB2BRFPBundle:Request:block/createQuoteButton.html.twig', { formCreateQuote: formCreateQuote }) ~ '</li>']) -%}
         {{ UI.dropdownButton({
             'label': group.label,
             'aCss': 'pull-left',

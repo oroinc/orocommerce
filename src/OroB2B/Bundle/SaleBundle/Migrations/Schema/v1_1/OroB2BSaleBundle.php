@@ -15,15 +15,15 @@ class OroB2BSaleBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables changes **/
-        $this->changeOrob2BSaleQuoteTable($schema);
-        $this->changeOrob2BSaleQuoteProductTable($schema);
-        $this->createOrob2BSaleQuoteProdOfferTable($schema);
-        $this->createOrob2BSaleQuoteProdRequestTable($schema);
-        $this->dropOrob2BSaleQuoteProductItemTable($schema);
+        $this->changeOroB2BSaleQuoteTable($schema);
+        $this->changeOroB2BSaleQuoteProductTable($schema);
+        $this->createOroB2BSaleQuoteProdOfferTable($schema);
+        $this->createOroB2BSaleQuoteProdRequestTable($schema);
+        $this->dropOroB2BSaleQuoteProductItemTable($schema);
 
         /** Foreign keys changes **/
-        $this->addOrob2BSaleQuoteForeignKeys($schema);
-        $this->addOrob2BSaleQuoteProdRequestForeignKeys($schema);
+        $this->addOroB2BSaleQuoteForeignKeys($schema);
+        $this->addOroB2BSaleQuoteProdRequestForeignKeys($schema);
     }
 
     /**
@@ -31,7 +31,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function changeOrob2BSaleQuoteTable(Schema $schema)
+    protected function changeOroB2BSaleQuoteTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
@@ -42,7 +42,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function changeOrob2BSaleQuoteProductTable(Schema $schema)
+    protected function changeOroB2BSaleQuoteProductTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_product');
         $table->addColumn('product_replacement_id', 'integer', ['notnull' => false]);
@@ -57,7 +57,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BSaleQuoteProdOfferTable(Schema $schema)
+    protected function createOroB2BSaleQuoteProdOfferTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote_prod_offer');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -82,7 +82,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BSaleQuoteProdRequestTable(Schema $schema)
+    protected function createOroB2BSaleQuoteProdRequestTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_sale_quote_prod_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -106,7 +106,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function dropOrob2BSaleQuoteProductItemTable(Schema $schema)
+    protected function dropOroB2BSaleQuoteProductItemTable(Schema $schema)
     {
         $schema->dropTable('orob2b_sale_quote_product_item');
     }
@@ -116,7 +116,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteProductForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteProductForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_product');
         $table->addForeignKeyConstraint(
@@ -132,7 +132,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addForeignKeyConstraint(
@@ -148,7 +148,7 @@ class OroB2BSaleBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BSaleQuoteProdRequestForeignKeys(Schema $schema)
+    protected function addOroB2BSaleQuoteProdRequestForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote_prod_request');
         $table->addForeignKeyConstraint(

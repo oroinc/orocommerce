@@ -16,7 +16,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 class RequestProductTypeTest extends AbstractTest
@@ -39,6 +38,7 @@ class RequestProductTypeTest extends AbstractTest
         $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType     = new RequestProductType($this->translator);
+        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
     }
@@ -242,18 +242,19 @@ class RequestProductTypeTest extends AbstractTest
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $productSelectType          = new ProductSelectTypeStub();
         $currencySelectionType      = new CurrencySelectionTypeStub();
+        $requestProductItemType     = $this->prepareRequestProductItemType($this->translator);
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
                     CollectionType::NAME                    => new CollectionType(),
-                    RequestProductItemType::NAME            => new RequestProductItemType($this->translator),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $productSelectType->getName()           => $productSelectType,
+                    $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],

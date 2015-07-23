@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferTypeFormatter;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
-class QuoteProductOfferTypeFormatterTest extends \PHPUnit_Framework_TestCase
+class QuoteProductOfferFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QuoteProductTypeFormatter
+     * @var QuoteProductOfferFormatter
      */
     protected $formatter;
 
@@ -25,7 +25,7 @@ class QuoteProductOfferTypeFormatterTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->formatter    = new QuoteProductOfferTypeFormatter($this->translator);
+        $this->formatter    = new QuoteProductOfferFormatter($this->translator);
     }
 
     public function testFormatPriceTypeLabel()
@@ -39,9 +39,12 @@ class QuoteProductOfferTypeFormatterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
      * @dataProvider formatPriceTypeLabelsProvider
      */
-    public function testFormatPriceTypeLabels($inputData, $expectedData)
+    public function testFormatPriceTypeLabels(array $inputData, array $expectedData)
     {
         $this->translator->expects($this->any())
             ->method('trans')

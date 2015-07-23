@@ -34,10 +34,10 @@ class QuoteProductOfferCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type'  => QuoteProductOfferType::NAME,
-                'show_form_when_empty'  => false,
-                'error_bubbling'        => false,
-                'prototype_name'        => '__namequoteproductoffer__',
+                'type' => QuoteProductOfferType::NAME,
+                'show_form_when_empty' => false,
+                'error_bubbling' => false,
+                'prototype_name' => '__namequoteproductoffer__',
             ])
         ;
 
