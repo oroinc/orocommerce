@@ -3,16 +3,24 @@
 namespace OroB2B\Bundle\RFPBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use Psr\Log\LoggerInterface;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestCreateQuoteHandler;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Handler\RequestChangeStatusHandler;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType;
@@ -36,7 +44,8 @@ class RequestController extends Controller
     public function viewAction(Request $request)
     {
         return [
-            'entity' => $request
+            'entity' => $request,
+            'formCreateQuote' => $this->getCreateQuoteForm($request)->createView()
         ];
     }
 
@@ -86,6 +95,24 @@ class RequestController extends Controller
     public function updateAction(Request $request)
     {
         return $this->update($request);
+    }
+
+    /**
+     * @Route("/create_quote/{id}", name="orob2b_rfp_request_create_quote", requirements={"id"="\d+"})
+     * @Template("OroB2BRFPBundle:Request:view.html.twig")
+     * @Acl(
+     *      id="orob2b_rfp_request_create_quote",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function createQuoteAction(Request $request)
+    {
+        return $this->createQuote($request);
     }
 
     /**
@@ -155,5 +182,82 @@ class RequestController extends Controller
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
         );
+    }
+
+    /**
+     * @param Request $request
+     * @return array|RedirectResponse
+     */
+    protected function createQuote(Request $request)
+    {
+        $form = $this->getCreateQuoteForm($request);
+        $handler = new RequestCreateQuoteHandler(
+            $form,
+            $this->getRequest(),
+            $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList'),
+            $this->getUser()
+        );
+
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate(
+                $request,
+                $form,
+                function (Request $request) {
+                    return [
+                        'route'         => 'orob2b_rfp_request_view',
+                        'parameters'    => ['id' => $request->getId()]
+                    ];
+                },
+                function () use ($handler) {
+                    return [
+                        'route'         => 'orob2b_sale_quote_update',
+                        'parameters'    => ['id' => $handler->getQuote()->getId()]
+                    ];
+                },
+                $this->getTranslator()->trans('orob2b.rfp.message.request.create_quote.success'),
+                $handler,
+                function (Request $entity, FormInterface $form) use ($handler) {
+                    /* @var $session Session */
+                    $session = $this->get('session');
+                    $session->getFlashBag()->add(
+                        'error',
+                        $this->getTranslator()->trans('orob2b.rfp.message.request.create_quote.error')
+                    );
+
+                    if ($handler->getException()) {
+                        $this->getLogger()->error($handler->getException());
+                    }
+
+                    return [
+                        'entity' => $entity,
+                        'formCreateQuote' => $form->createView(),
+                    ];
+                }
+            );
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('logger');
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->get('translator');
+    }
+
+    /**
+     * @param Request $request
+     * @return Form
+     */
+    protected function getCreateQuoteForm(Request $request = null)
+    {
+        return $this->createFormBuilder($request)->getForm();
     }
 }

@@ -2,46 +2,26 @@
 
 namespace OroB2B\Bundle\SaleBundle\Twig;
 
-use Symfony\Component\Translation\TranslatorInterface;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_sale_quote';
 
     /**
-     * @var TranslatorInterface
+     * @var QuoteProductFormatter
      */
-    protected $translator;
+    protected $quoteProductFormatter;
 
     /**
-     * @var ProductUnitValueFormatter
+     * @param QuoteProductFormatter $quoteProductFormatter
      */
-    protected $productUnitValueFormatter;
-
-    /**
-     * @var NumberFormatter
-     */
-    protected $numberFormatter;
-
-    /**
-     * @param TranslatorInterface $translator
-     * @param NumberFormatter $numberFormatter
-     * @param ProductUnitValueFormatter $productUnitValueFormatter
-     */
-    public function __construct(
-        TranslatorInterface $translator,
-        NumberFormatter $numberFormatter,
-        ProductUnitValueFormatter $productUnitValueFormatter
-    ) {
-        $this->translator                   = $translator;
-        $this->numberFormatter              = $numberFormatter;
-        $this->productUnitValueFormatter    = $productUnitValueFormatter;
+    public function __construct(QuoteProductFormatter $quoteProductFormatter)
+    {
+        $this->quoteProductFormatter = $quoteProductFormatter;
     }
 
     /**
@@ -51,42 +31,48 @@ class QuoteExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_sale_quote_product_item',
-                [$this, 'formatProductItem'],
+                'orob2b_format_sale_quote_product_offer',
+                [$this, 'formatProductOffer'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFilter(
+                'orob2b_format_sale_quote_product_type',
+                [$this, 'formatProductType'],
+                ['is_safe' => ['html']]
+            ),
+            new \Twig_SimpleFilter(
+                'orob2b_format_sale_quote_product_request',
+                [$this, 'formatProductRequest'],
                 ['is_safe' => ['html']]
             ),
         ];
     }
 
     /**
-     * @param QuoteProductItem $item
+     * @param int $type
      * @return string
      */
-    public function formatProductItem(QuoteProductItem $item)
+    public function formatProductType($type)
     {
-        $units = $item->getProductUnit()
-            ? $this->productUnitValueFormatter->format($item->getQuantity(), $item->getProductUnit())
-            : sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode())
-        ;
+        return $this->quoteProductFormatter->formatType($type);
+    }
 
-        $price = $this->numberFormatter->formatCurrency(
-            $item->getPrice()->getValue(),
-            $item->getPrice()->getCurrency()
-        );
-        $unit = $this->translator->trans(
-            sprintf('orob2b.product_unit.%s.label.full', $item->getProductUnitCode())
-        );
+    /**
+     * @param QuoteProductOffer $item
+     * @return string
+     */
+    public function formatProductOffer(QuoteProductOffer $item)
+    {
+        return $this->quoteProductFormatter->formatOffer($item);
+    }
 
-        $str = $this->translator->trans(
-            'orob2b.sale.quoteproductitem.item',
-            [
-                '{units}'   => $units,
-                '{price}'   => $price,
-                '{unit}'    => $unit,
-            ]
-        );
-
-        return $str;
+    /**
+     * @param QuoteProductRequest $item
+     * @return string
+     */
+    public function formatProductRequest(QuoteProductRequest $item)
+    {
+        return $this->quoteProductFormatter->formatRequest($item);
     }
 
     /**
