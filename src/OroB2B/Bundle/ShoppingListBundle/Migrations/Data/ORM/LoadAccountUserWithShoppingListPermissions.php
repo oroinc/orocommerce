@@ -72,7 +72,9 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
                 if ($extension instanceof EntityAclExtension) {
                     $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-                    $oid = $aclManager->getOid('entity:' . self::SHOPPING_LIST_CLASS);
+                    $oid = $aclManager->getOid(
+                        'entity:' . $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class')
+                    );
                     $builder = $aclManager->getMaskBuilder($oid);
                     $mask = $builder->reset()->get();
                     foreach ($allowedAcls as $acl) {
