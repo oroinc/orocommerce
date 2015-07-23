@@ -13,9 +13,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
- * @dbReindex
  */
 class RequestControllerTest extends WebTestCase
 {
@@ -102,19 +100,16 @@ class RequestControllerTest extends WebTestCase
      */
     public function testChangeStatus($id)
     {
-        /* @var $manager ObjectManager */
-        $manager = $this->getContainer()->get('doctrine')->getManager();
-
-        /* @var $status RequestStatus */
-        $status = $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(
+        /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
+        $status = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(
             ['deleted' => false],
             ['id' => 'DESC']
         );
 
         $this->assertNotNull($status);
 
-        /* @var $entity Request */
-        $entity = $manager->getRepository('OroB2BRFPBundle:Request')->find($id);
+        /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
+        $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
 
         $this->assertNotEquals($status->getId(), $entity->getStatus()->getId());
         $this->assertCount(0, $this->getNotesForRequest($entity));

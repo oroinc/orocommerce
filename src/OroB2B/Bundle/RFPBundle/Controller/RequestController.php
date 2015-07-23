@@ -150,7 +150,7 @@ class RequestController extends Controller
 
         return [
             'entity'     => $request,
-            'saved'      => $handler->process($request) ? true : false,
+            'saved'      => $handler->process($request),
             'form'       => $form->createView(),
             'formAction' => $formAction
         ];

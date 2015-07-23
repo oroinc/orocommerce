@@ -17,7 +17,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                sales_tab:
+                sale_tab:
                     children:
                         shopping_list: ~
         shortcuts:
