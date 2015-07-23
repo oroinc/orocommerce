@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;

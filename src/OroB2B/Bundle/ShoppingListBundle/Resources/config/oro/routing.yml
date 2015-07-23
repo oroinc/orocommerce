@@ -21,6 +21,6 @@ orob2b_shopping_list_line_item:
 orob2b_shopping_list_line_item_frontend:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/AjaxLineItemController.php"
     type:     annotation
-    prefix:   /account/shoppinglist
+    prefix:   /shoppinglist
     options:
         frontend: true

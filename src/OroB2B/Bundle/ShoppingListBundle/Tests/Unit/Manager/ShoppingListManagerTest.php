@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;

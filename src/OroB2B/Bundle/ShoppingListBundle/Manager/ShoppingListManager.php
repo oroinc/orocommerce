@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
@@ -27,10 +28,11 @@ class ShoppingListManager
     /**
      * @param AccountUser $accountUser
      * @param string      $label
+     * @param boolean     $flush
      *
      * @return ShoppingList
      */
-    public function createCurrent(AccountUser $accountUser, $label = 'Default')
+    public function createCurrent(AccountUser $accountUser, $label = 'Default', $flush = true)
     {
         $shoppingList = new ShoppingList();
         $shoppingList
@@ -40,7 +42,7 @@ class ShoppingListManager
             ->setAccountUser($accountUser)
             ->setLabel($label);
 
-        $this->setCurrent($accountUser, $shoppingList);
+        $this->setCurrent($accountUser, $shoppingList, $flush);
 
         return $shoppingList;
     }

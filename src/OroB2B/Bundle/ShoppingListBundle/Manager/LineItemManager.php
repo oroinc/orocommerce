@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;

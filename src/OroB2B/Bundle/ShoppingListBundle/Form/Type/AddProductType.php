@@ -1,7 +1,6 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\ExecutionContextInterface;
 use Symfony\Component\Form\FormEvents;
@@ -14,14 +13,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Doctrine\ORM\EntityRepository;
-
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AddProductType extends AbstractType
 {
@@ -138,9 +136,9 @@ class AddProductType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $currentShoppingList = $this->registry
-            ->getRepository($this->shoppingListClass)
-            ->findCurrentForAccountUser($this->accountUser);
+        /** @var ShoppingListRepository $shoppingListRepository */
+        $shoppingListRepository = $currentShoppingList = $this->registry->getRepository($this->shoppingListClass);
+        $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->accountUser);
 
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
     }
@@ -202,7 +200,7 @@ class AddProductType extends AbstractType
         /** @var Product $product */
         $product = $this->registry
             ->getRepository($this->productClass)
-        ->find($formData->getProduct());
+            ->find($formData->getProduct());
 
         if ($product) {
             $data['quantity'] = $this->lineItemManager
