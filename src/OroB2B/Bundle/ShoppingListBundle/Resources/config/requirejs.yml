@@ -1,3 +1,4 @@
 config:
     paths:
+        'orob2bshoppinglist/js/app/components/add-product-component': 'bundles/orob2bshoppinglist/js/app/components/add-product-component.js'
         'orob2bshoppinglist/js/app/views/frontend-product-view': 'bundles/orob2bshoppinglist/js/app/views/frontend-product-view.js'

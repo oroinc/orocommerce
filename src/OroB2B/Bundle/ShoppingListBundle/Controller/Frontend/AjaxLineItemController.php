@@ -1,10 +1,7 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,10 +11,15 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
 class AjaxLineItemController extends Controller
 {
@@ -30,12 +32,7 @@ class AjaxLineItemController extends Controller
      *      requirements={"productId"="\d+"}
      * )
      * @Template("OroB2BShoppingListBundle:LineItem/Frontend/widget:add.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_add",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
-     *      permission="CREATE"
-     * )
+     * @AclAncestor("orob2b_shoppinglist_add_product")
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
      * @param Product $product
@@ -44,9 +41,21 @@ class AjaxLineItemController extends Controller
      */
     public function addProductAction(Product $product)
     {
-        return [
-            //'form' => $this->createForm(AddProductType::NAME)->createView()
-        ];
+        $lineItem = new LineItem();
+        $lineItem->setProduct($product);
+
+        $form = $this->createForm(AddProductType::NAME, $lineItem);
+        $request = $this->getRequest();
+
+        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+        $result = $this->get('oro_form.model.update_handler')
+            ->handleUpdate($lineItem, $form, null, null, null, $handler);
+
+        if ($request->get('_wid')) {
+            $result = $handler->updateSavedId($result);
+        }
+
+        return $result;
     }
 
     /**

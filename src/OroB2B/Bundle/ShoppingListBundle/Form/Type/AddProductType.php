@@ -1,7 +1,11 @@
 <?php
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use Doctrine\ORM\EntityRepository;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
@@ -9,11 +13,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AddProductType extends AbstractType
 {
@@ -86,20 +92,12 @@ class AddProductType extends AbstractType
                 'entity',
                 [
                     'required' => false,
-                    'label' => 'orob2b.pricing.productprice.product.label',
+                    'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
-                    'query_builder' => function (EntityRepository $repository) use ($accountUser) {
-                        $qb = $repository->createQueryBuilder('sl');
-
-                        return $qb->where(
-                            $qb->expr()->orX(
-                                'sl.accountUser = :accountUser',
-                                'sl.account = :account'
-                            )
-                        )
-                        ->setParameter('accountUser', $accountUser)
-                        ->setParameter('account', $accountUser->getCustomer());
-                    }
+                    'query_builder' => function (ShoppingListRepository $repository) use ($accountUser) {
+                        return $repository->createFindForAccountUserQueryBuilder($accountUser);
+                    },
+                    'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
                 ]
             )
             ->add(
@@ -129,6 +127,20 @@ class AddProductType extends AbstractType
                     'label' => 'orob2b.shoppinglist.lineitem.new_shopping_list_label'
                 ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        /** @var ShoppingListRepository $shoppingListRepository */
+        $shoppingListRepository = $currentShoppingList = $this->registry->getRepository($this->shoppingListClass);
+        $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->accountUser);
+
+        $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
     }
 
     /**
@@ -138,9 +150,27 @@ class AddProductType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => $this->dataClass
+                'data_class' => $this->dataClass,
+                'constraints' => [
+                    new Callback([
+                        'groups' => ['add_product'],
+                        'methods' => [[$this, 'checkShoppingListLabel']]
+                    ])
+                ],
+                'validation_groups' => ['add_product']
             ]
         );
+    }
+
+    /**
+     * @param LineItem $data
+     * @param ExecutionContextInterface $context
+     */
+    public function checkShoppingListLabel($data, ExecutionContextInterface $context)
+    {
+        if (!$data->getShoppingList()) {
+            $context->addViolationAt('shoppingListLabel', 'Shopping List label must not be empty');
+        }
     }
 
     /**
@@ -150,11 +180,15 @@ class AddProductType extends AbstractType
     {
         $data = $event->getData();
 
-        // Create new current shopping list
-        if (!$event->getForm()->get('shoppingList') && $data['shoppingListLabel']) {
-            $shoppingList = $this->shoppingListManager->createCurrent($this->accountUser, $data['shoppingListLabel']);
-            $data['shoppingList'] = $shoppingList->getId();
+        /** @var LineItem $formData */
+        $formData = $event->getForm()->getData();
 
+        // Create new current shopping list
+        if (!$data['shoppingList'] && $data['shoppingListLabel']) {
+            $shoppingList = $this->shoppingListManager
+                ->createCurrent($this->accountUser, $data['shoppingListLabel'], false);
+
+            $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
         }
 
@@ -166,7 +200,7 @@ class AddProductType extends AbstractType
         /** @var Product $product */
         $product = $this->registry
             ->getRepository($this->productClass)
-            ->find($data['product']);
+            ->find($formData->getProduct());
 
         if ($product) {
             $data['quantity'] = $this->lineItemManager

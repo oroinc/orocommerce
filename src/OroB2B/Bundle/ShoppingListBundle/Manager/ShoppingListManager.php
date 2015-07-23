@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\ORM\EntityManager;
@@ -27,10 +28,11 @@ class ShoppingListManager
     /**
      * @param AccountUser $accountUser
      * @param string      $label
+     * @param boolean     $flush
      *
      * @return ShoppingList
      */
-    public function createCurrent(AccountUser $accountUser, $label = 'Default')
+    public function createCurrent(AccountUser $accountUser, $label = 'Default', $flush = true)
     {
         $shoppingList = new ShoppingList();
         $shoppingList
@@ -40,7 +42,7 @@ class ShoppingListManager
             ->setAccountUser($accountUser)
             ->setLabel($label);
 
-        $this->setCurrent($accountUser, $shoppingList);
+        $this->setCurrent($accountUser, $shoppingList, $flush);
 
         return $shoppingList;
     }
@@ -48,8 +50,9 @@ class ShoppingListManager
     /**
      * @param AccountUser  $accountUser
      * @param ShoppingList $shoppingList
+     * @param boolean      $flush
      */
-    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
+    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList, $flush = true)
     {
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->manager->getRepository('OroB2BShoppingListBundle:ShoppingList');
@@ -60,6 +63,9 @@ class ShoppingListManager
         }
         $shoppingList->setCurrent(true);
         $this->manager->persist($shoppingList);
-        $this->manager->flush();
+
+        if ($flush) {
+            $this->manager->flush();
+        }
     }
 }

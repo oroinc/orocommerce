@@ -5,7 +5,6 @@ parameters:
     orob2b_shopping_list.validator.line_item.class: OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator
     orob2b_shopping_list.shopping_list.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager
     orob2b_shopping_list.line_item.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager
-    orob2b_shopping_list.form.type.add_product.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -33,6 +32,7 @@ services:
         class: %orob2b_shopping_list.shopping_list.manager.class%
         arguments:
             - @doctrine
+
     orob2b_shopping_list.line_item.manager:
         class: %orob2b_shopping_list.line_item.manager.class%
         arguments:
