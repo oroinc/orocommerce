@@ -58,14 +58,6 @@ class CustomerGroup
     protected $customers;
 
     /**
-     * @var PaymentTerm
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
-     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
-     **/
-    protected $paymentTerm;
-
-    /**
      * Constructor
      */
     public function __construct()
@@ -141,28 +133,5 @@ class CustomerGroup
     public function getCustomers()
     {
         return $this->customers;
-    }
-
-    /**
-     * Set payment term
-     *
-     * @param PaymentTerm $paymentTerm
-     * @return CustomerGroup
-     */
-    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
-    {
-        $this->paymentTerm = $paymentTerm;
-
-        return $this;
-    }
-
-    /**
-     * Get payment term
-     *
-     * @return PaymentTerm
-     */
-    public function getPaymentTerm()
-    {
-        return $this->paymentTerm;
     }
 }

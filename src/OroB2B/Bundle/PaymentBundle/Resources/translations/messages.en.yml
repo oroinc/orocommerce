@@ -14,6 +14,9 @@ orob2b:
             label.label: Label
             form.choose: 'Choose a payment term...'
 
+            customer_groups.label: 'Customer Group'
+            customers.label: 'Customer'
+
         customer:
             payment_term_defined_in_group: 'Defined for the group (%payment_term%)'
             payment_term_non_defined_in_group: 'Defined for the group'

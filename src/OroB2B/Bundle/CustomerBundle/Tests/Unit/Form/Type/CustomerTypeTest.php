@@ -84,6 +84,8 @@ class CustomerTypeTest extends FormIntegrationTestCase
                 [
                     CustomerGroupSelectType::NAME  => $customerGroupSelectType,
                     ParentCustomerSelectType::NAME => $parentCustomerSelectType,
+                    'oro_address_collection'  => new AddressCollectionTypeStub(),
+                    $addressEntityType->getName()  => $addressEntityType,
                     EnumSelectType::NAME => $internalRatingEnumSelect,
                 ],
                 []
@@ -213,7 +215,8 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'internal_rating' => null
+                    'internal_rating' => null,
+                    'addresses' => null,
                 ]
             ]
         ];

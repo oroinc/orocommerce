@@ -23,9 +23,6 @@ class LoadCustomerGroupDemoData extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
-        $paymentTermRepository = $manager->getRepository('OroB2BPaymentBundle:PaymentTerm');
-        $paymentTerms = $paymentTermRepository->findAll();
-
         foreach ($this->getData() as $groupName) {
             $customerGroup = new CustomerGroup();
             $customerGroup->setName($groupName);

@@ -59,8 +59,11 @@ class FormViewListener
                 ['paymentTerm' => $paymentTerm]
             );
         } else {
-            $customerGroupPaymentTerm =
-                $this->getPaymentRepository()->getOnePaymentTermByCustomerGroup($customer->getGroup());
+            $customerGroupPaymentTerm = null;
+            if ($customer->getGroup()) {
+                $customerGroupPaymentTerm =
+                    $this->getPaymentRepository()->getOnePaymentTermByCustomerGroup($customer->getGroup());
+            }
 
             $template = $event->getEnvironment()->render(
                 'OroB2BPaymentBundle:Customer:payment_term_for_customer_view.html.twig',
