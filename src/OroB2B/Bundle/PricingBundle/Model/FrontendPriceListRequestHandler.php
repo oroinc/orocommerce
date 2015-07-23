@@ -29,11 +29,6 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     protected $priceListTreeHandler;
 
     /**
-     * @var array|PriceList[]
-     */
-    protected $priceLists = [];
-
-    /**
      * @param SessionInterface $session
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
@@ -72,7 +67,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         if ($this->request) {
             $currency = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
 
-            if ($currency !== null && in_array($currency, $priceListCurrencies)) {
+            if ($currency !== null && in_array($currency, $priceListCurrencies, true)) {
                 return [$currency];
             }
         }
@@ -80,7 +75,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         if ($this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
             $currency = $this->session->get(self::PRICE_LIST_CURRENCY_KEY);
 
-            if ($currency !== null && in_array($currency, $priceListCurrencies)) {
+            if ($currency !== null && in_array($currency, $priceListCurrencies, true)) {
                 return [$currency];
             }
         }
