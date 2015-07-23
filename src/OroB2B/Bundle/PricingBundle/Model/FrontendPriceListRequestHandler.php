@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
 {
