@@ -15,6 +15,6 @@ orob2b_sale_bundle_api:
 orob2b_sale_frontend_quote:
     resource: "@OroB2BSaleBundle/Controller/Frontend/QuoteController.php"
     type: annotation
-    prefix: /quote
+    prefix: /account/quote
     options:
         frontend: true

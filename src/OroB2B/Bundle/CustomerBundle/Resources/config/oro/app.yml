@@ -9,7 +9,7 @@ security:
     firewalls:
         frontend_secure:
             # secure everything started with /account/ except basic user operations
-            pattern:                        ^/(account|quote)/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
+            pattern:                        ^/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
             provider:                       b2b_frontend_user
             context:                        customer_identity
             organization-form-login:
