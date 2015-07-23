@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,7 +11,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductController extends Controller
 {
-
     /**
      * View list of products
      *
@@ -21,8 +21,21 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
+        $widgetRouteParameters = [
+            'gridName' => 'frontend-products-grid',
+            'renderParams' => [
+                'enableFullScreenLayout' => 1,
+                'enableViews' => 0
+            ],
+            'renderParamsTypes' => [
+                'enableFullScreenLayout' => 'int',
+                'enableViews' => 'int'
+            ]
+        ];
+
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.product.class')
+            'entity_class' => $this->container->getParameter('orob2b_product.product.class'),
+            'widgetRouteParameters' => $widgetRouteParameters,
         ];
     }
 

@@ -121,6 +121,7 @@ datagrid:
         options:
             entityHint:        product
             entity_pagination: true
+            skip_acl_check:    true
         source:
             type:         orm
             query:
