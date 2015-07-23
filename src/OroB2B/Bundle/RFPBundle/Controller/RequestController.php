@@ -224,7 +224,7 @@ class RequestController extends Controller
                     );
 
                     if ($handler->getException()) {
-                        $this->getLogger()->error($handler->getException()->getMessage());
+                        $this->getLogger()->error($handler->getException());
                     }
 
                     return [
