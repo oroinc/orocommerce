@@ -46,7 +46,7 @@ class OroB2BShoppingListBundleInstaller implements Installation
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
         $table->addColumn('notes', 'text', ['notnull' => false]);
-        $table->addColumn('created_at', 'datetime', ['notnull' => false]);
+        $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'orob2b_shop_lst_created_at_idx', []);
