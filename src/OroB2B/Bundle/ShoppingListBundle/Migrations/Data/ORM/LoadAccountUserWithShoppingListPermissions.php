@@ -19,7 +19,6 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    const SHOPPING_LIST_CLASS = 'OroB2BShoppingListBundle:ShoppingList';
     const ROLE_FRONTEND_BUYER = 'ROLE_FRONTEND_BUYER';
 
     /**
