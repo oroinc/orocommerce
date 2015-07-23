@@ -77,11 +77,18 @@ class PriceListTreeHandlerTest extends WebTestCase
         ];
     }
 
+    public function testDefaultWithoutAccountUser()
+    {
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
+
+        $this->assertTrue($this->handler->getPriceList()->isDefault());
+    }
+
     public function testDefaultWithoutAccount()
     {
         $accountUser = new AccountUser();
 
-        $this->websiteManager->expects($this->never())->method('getCurrentWebsite');
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite');
 
         $this->assertTrue($this->handler->getPriceList($accountUser)->isDefault());
     }
@@ -91,7 +98,7 @@ class PriceListTreeHandlerTest extends WebTestCase
         $accountUser = new AccountUser();
         $accountUser->setCustomer($this->getCustomer('customer.level_1'));
 
-        $this->websiteManager->expects($this->any())->method('getCurrentWebsite')->willReturn(null);
+        $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
 
         $this->assertTrue($this->handler->getPriceList($accountUser)->isDefault());
     }

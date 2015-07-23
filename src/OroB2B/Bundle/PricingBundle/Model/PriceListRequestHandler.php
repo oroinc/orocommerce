@@ -4,22 +4,16 @@ namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Component\HttpFoundation\Request;
-
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
 /**
  * Get price list by id from request or return default if not found
  */
-class PriceListRequestHandler
+class PriceListRequestHandler extends AbstractPriceListRequestHandler
 {
     const PRICE_LIST_KEY = 'priceListId';
     const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
-    const TIER_PRICES_KEY = 'showTierPrices';
-
-    /** @var Request */
-    protected $request;
 
     /** @var ManagerRegistry */
     protected $registry;
@@ -44,7 +38,7 @@ class PriceListRequestHandler
     }
 
     /**
-     * @return PriceList
+     * {@inheritDoc}
      */
     public function getPriceList()
     {
@@ -70,7 +64,7 @@ class PriceListRequestHandler
     }
 
     /**
-     * @return string[]
+     * {@inheritDoc}
      */
     public function getPriceListSelectedCurrencies()
     {
@@ -97,24 +91,6 @@ class PriceListRequestHandler
     }
 
     /**
-     * @return bool
-     */
-    public function getShowTierPrices()
-    {
-        if (!$this->request) {
-            return false;
-        }
-
-        $value = $this->request->get(self::TIER_PRICES_KEY);
-
-        if (is_string($value)) {
-            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
-        }
-
-        return (bool) $value;
-    }
-
-    /**
      * @return PriceList
      */
     protected function getDefaultPriceList()
@@ -136,13 +112,5 @@ class PriceListRequestHandler
     protected function getPriceListRepository()
     {
         return $this->registry->getManagerForClass($this->priceListClass)->getRepository($this->priceListClass);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 }
