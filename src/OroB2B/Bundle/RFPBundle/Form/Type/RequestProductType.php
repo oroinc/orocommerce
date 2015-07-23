@@ -22,11 +22,24 @@ class RequestProductType extends AbstractType
     protected $translator;
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
      * @param TranslatorInterface $translator
      */
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
     }
 
     /**
@@ -58,7 +71,7 @@ class RequestProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct',
+            'data_class' => $this->dataClass,
             'intention'  => 'rfp_request_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
