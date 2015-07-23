@@ -67,7 +67,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         if ($this->request) {
             $currency = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
 
-            if ($currency !== null && in_array($currency, $priceListCurrencies, true)) {
+            if (in_array($currency, $priceListCurrencies, true)) {
                 return [$currency];
             }
         }
@@ -75,7 +75,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         if ($this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
             $currency = $this->session->get(self::PRICE_LIST_CURRENCY_KEY);
 
-            if ($currency !== null && in_array($currency, $priceListCurrencies, true)) {
+            if (in_array($currency, $priceListCurrencies, true)) {
                 return [$currency];
             }
         }
