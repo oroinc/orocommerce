@@ -37,34 +37,35 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param AccountUser|null $accountUser
      * @return PriceList
      */
-    public function getPriceList(AccountUser $accountUser)
+    public function getPriceList(AccountUser $accountUser = null)
     {
-        $account = $accountUser->getCustomer();
-        if (!$account) {
-            return $this->getPriceListRepository()->getDefault();
-        }
+        if ($accountUser) {
+            $account = $accountUser->getCustomer();
 
-        $priceList = $this->getPriceListRepository()->getPriceListByCustomer($account);
-        if ($priceList) {
-            return $priceList;
-        }
+            if ($account) {
+                $priceList = $this->getPriceListRepository()->getPriceListByCustomer($account);
+                if ($priceList) {
+                    return $priceList;
+                }
 
-        $priceList = $this->getPriceListFromAccountTree($account);
-        if ($priceList) {
-            return $priceList;
-        }
+                $priceList = $this->getPriceListFromAccountTree($account);
+                if ($priceList) {
+                    return $priceList;
+                }
 
-        $priceList = $this->getPriceListFromAccountGroup($account);
-        if ($priceList) {
-            return $priceList;
-        }
+                $priceList = $this->getPriceListFromAccountGroup($account);
+                if ($priceList) {
+                    return $priceList;
+                }
 
-        $priceList = $this->getPriceListFromAccountGroupTree($account);
-        if ($priceList) {
-            return $priceList;
+                $priceList = $this->getPriceListFromAccountGroupTree($account);
+                if ($priceList) {
+                    return $priceList;
+                }
+            }
         }
 
         $priceList = $this->getPriceListFromWebsite();

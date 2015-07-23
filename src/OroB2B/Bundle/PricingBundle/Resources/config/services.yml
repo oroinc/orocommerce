@@ -18,9 +18,12 @@ parameters:
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
+    orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_price_widget.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceWidgetListener
 
+    orob2b_pricing.model.price_list_request_hanlder.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_hanlder.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
+    orob2b_pricing.model.frontend.price_list_request_hanlder.class: OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
@@ -127,6 +130,16 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
 
+    orob2b_pricing.event_listener.frontend.product_price_datagrid:
+        class: %orob2b_pricing.event_listener.frontend.product_price_datagrid.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+            - @orob2b_pricing.model.frontend.price_list_request_hanlder
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
+
     orob2b_pricing.event_listener.product_price_widget:
         class: %orob2b_pricing.event_listener.product_price_widget.class%
         arguments:
@@ -144,13 +157,26 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_currency_validator }
 
+    orob2b_pricing.model.price_list_request_hanlder.abstract:
+        class: %orob2b_pricing.model.price_list_request_hanlder.abstract.class%
+        abstract: true
+        calls:
+            - [setRequest, ["@?request="]]
+
     orob2b_pricing.model.price_list_request_hanlder:
         class: %orob2b_pricing.model.price_list_request_hanlder.class%
+        parent: orob2b_pricing.model.price_list_request_hanlder.abstract
         arguments:
             - @doctrine
             - %orob2b_pricing.entity.price_list.class%
-        calls:
-            - [setRequest, ["@?request="]]
+
+    orob2b_pricing.model.frontend.price_list_request_hanlder:
+        class: %orob2b_pricing.model.frontend.price_list_request_hanlder.class%
+        parent: orob2b_pricing.model.price_list_request_hanlder.abstract
+        arguments:
+            - @session
+            - @oro_security.security_facade
+            - @orob2b_pricing.model.price_list_tree_handler
 
     orob2b_pricing.model.price_list_tree_handler:
         class: %orob2b_pricing.model.price_list_tree_handler.class%
