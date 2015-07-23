@@ -13,30 +13,56 @@ class LineItemManagerTest extends \PHPUnit_Framework_TestCase
     /** @var  \PHPUnit_Framework_MockObject_MockObject|RoundingService */
     protected $roundingService;
 
+    /**
+     * @var Callable
+     */
+    protected $roundCallback = null;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $roundingService
-            ->expects($this->once())
-            ->method('round')
-            ->willReturnCallback(
-                function ($quantity, $precision) {
-                    return round($quantity, $precision);
-                }
-            );
-
-        $this->roundingService = $roundingService;
+        $this->roundCallback = function ($quantity, $precision) {
+            return round($quantity, $precision);
+        };
     }
 
+    /**
+     * Method testRoundProductQuantity
+     */
     public function testRoundProductQuantity()
     {
+        $this->roundingService
+            ->expects($this->once())
+            ->method('round')
+            ->willReturnCallback($this->roundCallback);
+
         $lineItemManager = new LineItemManager($this->roundingService);
         $product = $this->getProductEntityWithPrecision('kg', 3);
 
-        $lineItemManager->roundProductQuantity($product, 'kg', round(1, 15));
+        $lineItemManager->roundProductQuantity($product, 'kg', $this->getRandomQuantity());
+    }
+
+    /**
+     * Method testNoPrecision
+     */
+    public function testNoPrecision()
+    {
+        $this->roundingService
+            ->expects($this->never())
+            ->method('round');
+
+        $lineItemManager = new LineItemManager($this->roundingService);
+        $product = $this->getProductEntityWithPrecision('kg', 3);
+
+        $quantity = $this->getRandomQuantity();
+        $roundedQuantity = $lineItemManager->roundProductQuantity($product, 'unit', $quantity);
+        $this->assertEquals($quantity, $roundedQuantity);
     }
 
     /**
@@ -58,5 +84,16 @@ class LineItemManagerTest extends \PHPUnit_Framework_TestCase
             ->setProduct($product);
 
         return $product->addUnitPrecision($unitPrecision);
+    }
+
+    /*
+     * @return float
+     */
+    protected function getRandomQuantity()
+    {
+        $quantity = mt_rand(1000, 15000);
+        $quantity = $quantity / 1000;
+
+        return $quantity;
     }
 }
