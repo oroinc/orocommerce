@@ -18,6 +18,7 @@ define(function(require) {
             sidebarAlias: '',
             widgetAlias: '',
             widgetContainer: '',
+            widgetRoute: 'oro_datagrid_widget',
             widgetRouteParameters: {
                 gridName: ''
             }
@@ -49,7 +50,7 @@ define(function(require) {
             this.$container = options._sourceElement;
             this.$widgetContainer = $(options.widgetContainer);
 
-            mediator.on('grid-sidebar:changed:' + this.options.sidebarAlias, this.onSidebarChange, this);
+            mediator.on('grid-sidebar:change:' + this.options.sidebarAlias, this.onSidebarChange, this);
 
             this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
             this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
@@ -81,6 +82,7 @@ define(function(require) {
         onSidebarChange: function(data) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
+            var self = this;
 
             this._pushState(params);
 
@@ -89,7 +91,7 @@ define(function(require) {
             widgetManager.getWidgetInstanceByAlias(
                 this.options.widgetAlias,
                 function(widget) {
-                    widget.setUrl(routing.generate('oro_datagrid_widget', widgetParams));
+                    widget.setUrl(routing.generate(self.options.widgetRoute, widgetParams));
 
                     if (data.widgetReload) {
                         widget.render();
@@ -131,7 +133,7 @@ define(function(require) {
          */
         _pushState: function(params) {
             var paramsString = this._urlParamsToString(params);
-            if (paramsString.length > 0) {
+            if (paramsString.length) {
                 paramsString = '?' + paramsString;
             }
 

@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+
 class ProductController extends Controller
 {
     /**
@@ -35,6 +37,8 @@ class ProductController extends Controller
             ->getPriceList($this->getUser())
             ->getCurrencies();
 
+        $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies();
+
         return $this->createForm(
             CurrencySelectionType::NAME,
             null,
@@ -44,7 +48,7 @@ class ProductController extends Controller
                 'required' => false,
                 'empty_value' => false,
                 'currencies_list' => $currenciesList,
-                'data' => null,
+                'data' => reset($selectedCurrencies),
             ]
         );
     }
@@ -60,8 +64,16 @@ class ProductController extends Controller
             [
                 'label' => 'orob2b.pricing.productprice.show_tier_prices.label',
                 'required' => false,
-                'data' => false,
+                'data' => $this->getHandler()->getShowTierPrices(),
             ]
         );
+    }
+
+    /**
+     * @return FrontendPriceListRequestHandler
+     */
+    protected function getHandler()
+    {
+        return $this->get('orob2b_pricing.model.frontend.price_list_request_handler');
     }
 }

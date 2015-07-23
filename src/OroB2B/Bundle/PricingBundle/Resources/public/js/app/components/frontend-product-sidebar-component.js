@@ -44,11 +44,12 @@ define(function(require) {
 
             var params = {
                 priceCurrency: currency,
-                showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
+                showTierPrices: $(this.options.showTierPricesSelector).prop('checked'),
+                saveState: true
             };
 
             mediator.trigger(
-                'grid-sidebar:changed:' + this.options.sidebarAlias,
+                'grid-sidebar:change:' + this.options.sidebarAlias,
                 {widgetReload: Boolean(widgetReload), params: params}
             );
         },

@@ -70,3 +70,11 @@ orob2b_customer_frontend_account_user_datagrid_index:
         gridName: '[\w\:-]+'
     options:
         frontend: true
+
+orob2b_customer_frontend_account_user_datagrid_widget:
+    path: /datagrid/widget/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:widget }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true

@@ -8,6 +8,7 @@
             sidebarAlias: 'frontend-products-sidebar',
             widgetAlias: 'frontend-products-grid-widget',
             widgetContainer: '.product-index-content',
+            widgetRoute: 'orob2b_customer_frontend_account_user_datagrid_widget',
             widgetRouteParameters: widgetRouteParameters
         } %}
         <div class="grid-sidebar"
@@ -19,7 +20,7 @@
         <div class="product-index-content">
             {{ oro_widget_render({
                 'widgetType': 'block',
-                'url': path('oro_datagrid_widget', widgetRouteParameters),
+                'url': path('orob2b_customer_frontend_account_user_datagrid_widget', widgetRouteParameters),
                 'title': '',
                 'alias': componentOptions.widgetAlias
             }) }}
