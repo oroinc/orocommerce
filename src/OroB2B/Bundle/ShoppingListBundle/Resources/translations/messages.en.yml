@@ -11,6 +11,7 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
+        is_current.label: Current
 
         product:
             add_to_shopping_list.label: Add To Shopping List
