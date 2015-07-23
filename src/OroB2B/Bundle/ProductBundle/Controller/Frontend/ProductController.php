@@ -21,8 +21,21 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
+        $widgetRouteParameters = [
+            'gridName' => 'frontend-products-grid',
+            'renderParams' => [
+                'enableFullScreenLayout' => 1,
+                'enableViews' => 0
+            ],
+            'renderParamsTypes' => [
+                'enableFullScreenLayout' => 'int',
+                'enableViews' => 'int'
+            ]
+        ];
+
         return [
-            'entity_class' => $this->container->getParameter('orob2b_product.product.class')
+            'entity_class' => $this->container->getParameter('orob2b_product.product.class'),
+            'widgetRouteParameters' => $widgetRouteParameters,
         ];
     }
 
