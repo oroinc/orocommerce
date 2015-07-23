@@ -16,6 +16,7 @@ class LoadProducts extends AbstractFixture
     {
         $this->createProduct($manager, 'product.1');
         $this->createProduct($manager, 'product.2');
+        $this->createProduct($manager, 'product.3');
 
         $manager->flush();
     }

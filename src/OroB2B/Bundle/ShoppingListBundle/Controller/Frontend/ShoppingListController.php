@@ -35,12 +35,7 @@ class ShoppingListController extends Controller
     /**
      * @Route("/view/{id}", name="orob2b_shopping_list_frontend_view", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:view.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_view",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="VIEW"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *
@@ -74,12 +69,7 @@ class ShoppingListController extends Controller
      *
      * @Route("/create", name="orob2b_shopping_list_frontend_create")
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_create",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="CREATE"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @return array|RedirectResponse
      */
@@ -102,12 +92,7 @@ class ShoppingListController extends Controller
      *
      * @Route("/update/{id}", name="orob2b_shopping_list_frontend_update", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_update",
-     *      type="entity",
-     *      class="OroB2BCustomerBundle:AccountUser",
-     *      permission="EDIT"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *
@@ -159,7 +144,8 @@ class ShoppingListController extends Controller
         $handler = new ShoppingListHandler(
             $form,
             $this->getRequest(),
-            $this->get('orob2b_shopping_list.shopping_list.manager')
+            $this->get('orob2b_shopping_list.shopping_list.manager'),
+            $this->getDoctrine()
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

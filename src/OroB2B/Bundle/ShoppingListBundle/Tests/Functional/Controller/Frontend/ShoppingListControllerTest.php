@@ -4,8 +4,9 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -39,7 +40,7 @@ class ShoppingListControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_shopping_list_frontend_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals("Shopping Lists", $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals('Shopping Lists', $crawler->filter('h1.oro-subtitle')->html());
     }
 
     public function testCreate()
@@ -53,19 +54,14 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        $this->markTestSkipped(
-            'Skipped because of requestGrid helper methods works now only for admin part. Test will be fixed in BB-750'
-        );
-
-        $response = $this->client->requestGrid(
-            'account-user-shopping-list-grid',
-            ['account-user-shopping-list-grid[_filter][label][value]' => self::TEST_LABEL1]
+        $response = $this->requestFrontendGrid(
+            'frontend-shopping-list-grid',
+            ['frontend-shopping-list-grid[_filter][label][value]' => self::TEST_LABEL1]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
 
-        $id      = $result['id'];
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_shopping_list_frontend_update', ['id' => $result['id']])
@@ -74,8 +70,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertShoppingListSave($crawler, self::TEST_LABEL2);
-
-        return $id;
     }
 
     public function testView()

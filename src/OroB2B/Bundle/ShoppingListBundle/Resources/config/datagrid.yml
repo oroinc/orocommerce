@@ -2,7 +2,7 @@ datagrid:
     shopping-list-grid:
         extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
         options:
-            entityHint:        shopping_list
+            entityHint:        shopping list
             entity_pagination: true
         source:
             acl_resource: orob2b_shopping_list_view
@@ -98,10 +98,10 @@ datagrid:
                 acl_resource:  orob2b_shopping_list_view
                 rowAction:     true
 
-    account-user-shopping-list-grid:
+    frontend-shopping-list-grid:
         extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
         options:
-            entityHint:        shopping_list
+            entityHint:        shopping list
             entity_pagination: true
         source:
             acl_resource: orob2b_shopping_list_frontend_view
@@ -114,11 +114,6 @@ datagrid:
                     - shopping_list.updatedAt
                 from:
                     - { table: %orob2b_shopping_list.entity.shopping_list.class%, alias: shopping_list }
-                where:
-                    and:
-                        - shopping_list.owner = :account_user_id
-            bind_parameters:
-                - account_user_id
         columns:
             label:
                 label:         orob2b.shoppinglist.label.label

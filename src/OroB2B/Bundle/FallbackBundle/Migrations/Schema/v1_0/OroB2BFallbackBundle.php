@@ -33,7 +33,6 @@ class OroB2BFallbackBundle implements Migration
         $table->addColumn('fallback', 'string', ['notnull' => false, 'length' => 64]);
         $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('text', 'text', ['notnull' => false]);
-        $table->addIndex(['locale_id'], 'idx_d60d092fe559dfd1', []);
         $table->setPrimaryKey(['id']);
     }
 

@@ -1,8 +1,10 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -25,8 +27,8 @@ class LineItemHandler
 
     /**
      * @param FormInterface $form
-     * @param Request $request
-     * @param Registry $registry
+     * @param Request       $request
+     * @param Registry      $registry
      */
     public function __construct(
         FormInterface $form,
@@ -54,12 +56,19 @@ class LineItemHandler
 
                 if ($existingLineItem) {
                     $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
+                    $existingLineItemNote = $existingLineItem->getNotes();
+                    $newNotes = $lineItem->getNotes();
+                    $notes = trim(implode(' ', [$existingLineItemNote, $newNotes]));
+                    if ($notes) {
+                        $existingLineItem->setNotes($notes);
+                    }
                     $this->savedId = $existingLineItem->getId();
                 } else {
                     $this->manager->persist($lineItem);
                 }
 
                 $this->manager->flush();
+
                 return true;
             }
         }

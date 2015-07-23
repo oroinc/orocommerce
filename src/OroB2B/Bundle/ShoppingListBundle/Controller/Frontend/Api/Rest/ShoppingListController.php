@@ -10,7 +10,7 @@ use FOS\RestBundle\Controller\Annotations\RouteResource;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
@@ -24,12 +24,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
      *      description="Delete Shopping List",
      *      resource=true
      * )
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_delete",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="DELETE"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param int $id
      * @return Response

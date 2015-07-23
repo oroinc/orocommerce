@@ -14,7 +14,7 @@ class OwnerTreeListenerPass implements CompilerPassInterface
      */
     protected static $supportedEntities = [
         'orob2b_customer.entity.account_user.class',
-        'orob2b_customer.entity.customer.class'
+        'orob2b_customer.entity.customer.class',
     ];
 
     /**
@@ -22,6 +22,10 @@ class OwnerTreeListenerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
+        if (!$container->hasDefinition(self::LISTENER_SERVICE)) {
+            return;
+        }
+
         $listenerDefinition = $container->getDefinition(self::LISTENER_SERVICE);
 
         foreach (static::$supportedEntities as $entity) {
