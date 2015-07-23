@@ -13,7 +13,8 @@ define(function(require) {
          */
         options: {
             currenciesSelector: '',
-            showTierPricesSelector: ''
+            showTierPricesSelector: '',
+            sidebarAlias: 'frontend-products-sidebar'
         },
 
         /**
@@ -46,7 +47,10 @@ define(function(require) {
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
             };
 
-            mediator.trigger('grid-sidebar:changed:products-sidebar', {widgetReload: Boolean(widgetReload), params: params});
+            mediator.trigger(
+                'grid-sidebar:changed:' + this.options.sidebarAlias,
+                {widgetReload: Boolean(widgetReload), params: params}
+            );
         },
 
         dispose: function() {

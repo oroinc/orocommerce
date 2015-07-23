@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,7 +11,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductController extends Controller
 {
-
     /**
      * View list of products
      *

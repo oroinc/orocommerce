@@ -31,6 +31,10 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
+        $currenciesList = $this->get('orob2b_pricing.model.price_list_tree_handler')
+            ->getPriceList($this->getUser())
+            ->getCurrencies();
+
         return $this->createForm(
             CurrencySelectionType::NAME,
             null,
@@ -39,7 +43,7 @@ class ProductController extends Controller
                 'compact' => true,
                 'required' => false,
                 'empty_value' => false,
-                'currencies_list' => $this->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($this->getUser())->getCurrencies(),
+                'currencies_list' => $currenciesList,
                 'data' => null,
             ]
         );

@@ -1,11 +1,12 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
+
 {% set pageTitle = 'orob2b.product.entity_plural_label'|trans %}
 
 {% block content_datagrid %}
     <div class="product-container">
         {% set componentOptions = {
-            sidebarAlias: 'products-sidebar',
-            widgetAlias: 'products-grid-widget',
+            sidebarAlias: 'frontend-products-sidebar',
+            widgetAlias: 'frontend-products-grid-widget',
             widgetContainer: '.product-index-content',
             widgetRouteParameters: widgetRouteParameters
         } %}
