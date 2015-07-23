@@ -32,13 +32,3 @@ services:
         arguments:
             - @doctrine.orm.entity_manager
             - @security.context
-
-    orob2b_pricing.event_listener.form_view:
-        class: OroB2B\Bundle\ShoppingListBundle\EventListener\AddProductsBtnListener
-        arguments:
-            - @translator
-            - @oro_entity.doctrine_helper
-        calls:
-            - [setRequest, ["@?request="]]
-        tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-grid-btns, method: onFrontendProductGridBtns }

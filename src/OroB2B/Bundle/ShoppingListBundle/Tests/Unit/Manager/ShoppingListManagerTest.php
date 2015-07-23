@@ -38,10 +38,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingListRepository->expects($this->any())
             ->method('findCurrentForAccountUser')
             ->willReturnCallback(function (AccountUser $accountUser) {
-                if (
-                    $accountUser->getFirstName() === 'setCurrent'
-                    && $accountUser->getFirstName() !== 'skip'
-                ) {
+                if ($accountUser->getFirstName() === 'setCurrent'
+                    && $accountUser->getFirstName() !== 'skip') {
                     return $this->shoppingListOne;
                 }
 
@@ -60,8 +58,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(function (LineItem $lineItem) {
                 /** @var ArrayCollection $shoppingListLineItems */
                 $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
-                if (
-                    $lineItem->getShoppingList()->getId() === 1
+                if ($lineItem->getShoppingList()->getId() === 1
                     && $shoppingListLineItems->count() > 0
                     && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
                 ) {

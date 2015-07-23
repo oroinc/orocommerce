@@ -34,11 +34,11 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     protected $securityFacadeLink;
 
     /**
-     * @param EntityManager $entityManager
+     * @param EntityManager       $entityManager
      * @param ShoppingListManager $shoppingListManager
      * @param TranslatorInterface $translator
-     * @param SecurityContext $securityContext
-     * @param ServiceLink $securityFacadeLink
+     * @param SecurityContext     $securityContext
+     * @param ServiceLink         $securityFacadeLink
      */
     public function __construct(
         EntityManager $entityManager,
@@ -46,8 +46,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         TranslatorInterface $translator,
         SecurityContext $securityContext,
         ServiceLink $securityFacadeLink
-    )
-    {
+    ) {
         $this->entityManager = $entityManager;
         $this->shoppingListManager = $shoppingListManager;
         $this->translator = $translator;
@@ -87,6 +86,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
 
     /**
      * @param array $productIds
+     *
      * @return \Doctrine\ORM\QueryBuilder
      */
     protected function getProductsQueryBuilder($productIds = [])
@@ -106,6 +106,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
 
     /**
      * @param array $data
+     *
      * @return bool
      */
     protected function isAllSelected($data)
@@ -137,7 +138,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
 
     /**
      * @param MassActionHandlerArgs $args
-     * @param int $entitiesCount
+     * @param int                   $entitiesCount
      *
      * @return MassActionResponse
      */
