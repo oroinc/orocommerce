@@ -1,6 +1,9 @@
 parameters:
     orob2b_payment.form.type.payment_term.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermType
     orob2b_payment.form.type.payment_term_select.class: OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType
+    orob2b_payment.form.extension.customer_type.class: OroB2B\Bundle\PaymentBundle\Form\Extension\CustomerFormExtension
+    orob2b_payment.form.extension.customer_group_type.class: OroB2B\Bundle\PaymentBundle\Form\Extension\CustomerGroupFormExtension
+    orob2b_payment.form.extension.abstract.class: OroB2B\Bundle\PaymentBundle\Form\Extension\AbstractPaymentTermExtension
 
 services:
     orob2b_payment.form.type.payment_term:
@@ -13,3 +16,22 @@ services:
         class: %orob2b_payment.form.type.payment_term_select.class%
         tags:
             - { name: form.type, alias: orob2b_payment_term_select }
+
+    orob2b_payment.form.extension.abstract:
+        class: %orob2b_payment.form.extension.abstract.class%
+        arguments:
+            - @doctrine
+            - @translator
+        abstract: true
+
+    orob2b_payment.form.extension.customer_type:
+        class: %orob2b_payment.form.extension.customer_type.class%
+        parent: orob2b_payment.form.extension.abstract
+        tags:
+            - { name: form.type_extension, alias: orob2b_customer_type }
+
+    orob2b_payment.form.extension.customer_group_type:
+        class: %orob2b_payment.form.extension.customer_group_type.class%
+        parent: orob2b_payment.form.extension.abstract
+        tags:
+            - { name: form.type_extension, alias: orob2b_customer_group_type }

@@ -3,16 +3,20 @@
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTermManager;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {
-    /** @var PaymentTermManager  */
-    protected $paymentTermManager;
+    const CUSTOMER_GROUP_GRID_NAME = 'customer-groups-grid';
+    const CUSTOMER_GRID_NAME = 'customer-customers-grid';
+    const CUSTOMER_GROUP_GRID_ROUTE = 'orob2b_customer_group_index';
+    const CUSTOMER_GRID_ROUTE = 'orob2b_customer_index';
 
-    public function __construct(PaymentTermManager $paymentTermManager)
+    /** @var  DeleteMessageTextGenerator */
+    protected $deleteMessageGenerator;
+
+    public function __construct(DeleteMessageTextGenerator $deleteMessageGenerator)
     {
-        $this->paymentTermManager = $paymentTermManager;
+        $this->deleteMessageGenerator = $deleteMessageGenerator;
     }
 
     /**
@@ -22,9 +26,12 @@ class DeleteMessageTextExtension extends \Twig_Extension
      */
     public function getName()
     {
-        'orob2b_payment_term_delete_message';
+        return 'orob2b_payment_term_delete_message';
     }
 
+    /**
+     * @return array
+     */
     public function getFunctions()
     {
         return [
@@ -32,8 +39,12 @@ class DeleteMessageTextExtension extends \Twig_Extension
         ];
     }
 
+    /**
+     * @param PaymentTerm $paymentTerm
+     * @return string
+     */
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
-        return $this->paymentTermManager->getDeleteMessageText($paymentTerm);
+        return $this->deleteMessageGenerator->getDeleteMessageText($paymentTerm);
     }
 }

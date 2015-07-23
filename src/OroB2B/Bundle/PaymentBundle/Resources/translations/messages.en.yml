@@ -14,6 +14,10 @@ orob2b:
             label.label: Label
             form.choose: 'Choose a payment term...'
 
+        customer:
+            payment_term_defined_in_group: 'Defined for the group (%payment_term%)'
+            payment_term_non_defined_in_group: 'Defined for the group'
+
         controller:
             paymentterm.saved.message: Payment term has been saved
             paymentterm.delete.with_two_url.message: It is currently being used by some %accounts% and %account_groups%.

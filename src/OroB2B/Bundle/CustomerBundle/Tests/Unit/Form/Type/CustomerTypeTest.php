@@ -15,8 +15,6 @@ use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionType
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
-use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\PaymentTermEntityType;
 
 class CustomerTypeTest extends FormIntegrationTestCase
 {
@@ -81,24 +79,12 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $paymentTermSelectType = new PaymentTermEntityType(
-            [
-                1 => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1),
-                2 => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 2)
-            ],
-            PaymentTermSelectType::NAME
-        );
-
         return [
             new PreloadedExtension(
                 [
                     CustomerGroupSelectType::NAME  => $customerGroupSelectType,
                     ParentCustomerSelectType::NAME => $parentCustomerSelectType,
                     EnumSelectType::NAME => $internalRatingEnumSelect,
-                    PaymentTermSelectType::NAME => $paymentTermSelectType,
-                    'oro_address_collection'  => new AddressCollectionTypeStub(),
-                    $addressEntityType->getName()  => $addressEntityType,
-                    EnumSelectType::NAME => $internalRatingEnumSelect
                 ],
                 []
             )
@@ -145,7 +131,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => 2,
                     'internal_rating' => '2_of_5',
-                    'paymentTerm' => 1,
                     'addresses' => 1,
                 ],
                 'expectedData' => [
@@ -153,7 +138,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'paymentTerm' => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1),
                     'addresses' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                 ]
             ],
@@ -166,7 +150,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => null,
                     'internal_rating' => '2_of_5',
-                    'paymentTerm' => 1,
                     'addresses' => 1,
                 ],
                 'expectedData' => [
@@ -174,7 +157,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'paymentTerm' => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1),
                     'addresses' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                 ]
             ],
@@ -187,7 +169,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => null,
                     'parent' => 2,
                     'internal_rating' => '2_of_5',
-                    'paymentTerm' => 1,
                     'addresses' => 1,
                 ],
                 'expectedData' => [
@@ -195,7 +176,6 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'paymentTerm' => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1),
                     'addresses' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                 ]
             ],
@@ -227,37 +207,15 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'group' => 1,
                     'parent' => 2,
                     'internal_rating' => null,
-                    'paymentTerm' => 1,
                     'addresses' => null,
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'internal_rating' => null,
-                    'paymentTerm' => $this->getEntity('OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm', 1)
+                    'internal_rating' => null
                 ]
-            ],
-            'empty payment term' => [
-                'options' => [],
-                'defaultData' => [],
-                'viewData' => [],
-                'submittedData' => [
-                    'name' => 'customer_name',
-                    'group' => 1,
-                    'parent' => 2,
-                    'internal_rating' => '2_of_5',
-                    'paymentTerm' => null
-                ],
-                'expectedData' => [
-                    'name' => 'customer_name',
-                    'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
-                    'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'paymentTerm' => null,
-                    'addresses' => null,
-                ]
-            ],
+            ]
         ];
     }
 

@@ -10,8 +10,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\CustomerBundle\Entity\Repository\CustomerRepository")
  * @ORM\Table(
@@ -107,14 +105,6 @@ class Customer extends ExtendCustomer
      * )
      **/
     protected $users;
-
-    /**
-     * @var PaymentTerm
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
-     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
-     **/
-    protected $paymentTerm;
 
     /**
      * @var Organization
@@ -414,28 +404,5 @@ class Customer extends ExtendCustomer
     protected function hasUser(AccountUser $accountUser)
     {
         return $this->users->contains($accountUser);
-    }
-
-    /**
-     * Set payment term
-     *
-     * @param PaymentTerm $paymentTerm
-     * @return CustomerGroup
-     */
-    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
-    {
-        $this->paymentTerm = $paymentTerm;
-
-        return $this;
-    }
-
-    /**
-     * Get payment term
-     *
-     * @return PaymentTerm
-     */
-    public function getPaymentTerm()
-    {
-        return $this->paymentTerm;
     }
 }

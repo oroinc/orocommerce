@@ -23,8 +23,6 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
             'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerInternalRatingDemoData',
             'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
-            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData'
-
         ];
     }
 
@@ -46,8 +44,9 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
         $firstLevelGroup = $customerGroupRepository->findOneBy(['name' => 'First']);
         $secondLevelGroup = $customerGroupRepository->findOneBy(['name' => 'Second']);
 
-        $paymentTermRepository = $manager->getRepository('OroB2BPaymentBundle:PaymentTerm');
-        $paymentTerms = $paymentTermRepository->findAll();
+        $manager->persist($rootGroup);
+        $manager->persist($firstLevelGroup);
+        $manager->persist($secondLevelGroup);
 
         // create customers
         foreach ($accountUsers as $index => $accountUser) {
@@ -60,15 +59,13 @@ class LoadCustomerDemoData extends AbstractFixture implements DependentFixtureIn
                 case 1:
                     $customer
                         ->setGroup($firstLevelGroup)
-                        ->setParent($rootCustomer)
-                        ->setPaymentTerm($paymentTerms[array_rand($paymentTerms)]);
+                        ->setParent($rootCustomer);
                     $firstLevelCustomer = $customer;
                     break;
                 case 2:
                     $customer
                         ->setGroup($secondLevelGroup)
-                        ->setParent($firstLevelCustomer)
-                        ->setPaymentTerm($paymentTerms[array_rand($paymentTerms)]);
+                        ->setParent($firstLevelCustomer);
                     break;
             }
             $customer->setInternalRating($internalRatings[array_rand($internalRatings)]);

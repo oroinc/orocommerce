@@ -24,6 +24,7 @@ services:
     orob2b_customer.form.type.customer:
         class: %orob2b_customer.form.type.customer.class%
         calls:
+            - ['setTranslator', [@translator]]
             - [setAddressClass, [%orob2b_customer.entity.customer_address.class%]]
         tags:
             - { name: form.type, alias: orob2b_customer_type }
