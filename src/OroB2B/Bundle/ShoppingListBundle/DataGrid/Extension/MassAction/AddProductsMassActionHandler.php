@@ -66,7 +66,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
 
         $iterableResult = $this->getProductsQueryBuilder($productIds)->getQuery()->iterate();
 
-        $iteration = 0;
+        $added = 0;
         /** @var Product $entity */
         foreach ($iterableResult as $iteration => $entity) {
             $entity = $entity[0];
@@ -78,10 +78,11 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
                 ->setUnit($unitPrecision->getUnit());
             $flush = ($iteration % self::FLUSH_BATCH_SIZE) === 0;
             $this->shoppingListManager->addLineItem($lineItem, $shoppingList, $flush);
+            $added++;
         }
         $this->entityManager->flush();
 
-        return $this->getResponse($args, $iteration > 0 ? ++$iteration : $iteration);
+        return $this->getResponse($args, $added);
     }
 
     /**
