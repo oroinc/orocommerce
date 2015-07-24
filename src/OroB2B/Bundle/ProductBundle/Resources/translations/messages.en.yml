@@ -7,6 +7,7 @@ orob2b:
         sku.label: SKU
         inventory_status.label: Inventory Status
         visibility.label: Visible to Customers
+        status.label: Status
         owner.label: Owner
         organization.label: Organization
         unit_precisions.label: Unit Precisions
@@ -59,6 +60,8 @@ orob2b:
 
         controller:
             product.saved.message: Product has been saved
+            product.duplicated.message: Product has been duplicated
+            product.saved_and_duplicated.message: Product has been saved and duplicated
 
         system_configuration:
             groups:
@@ -68,6 +71,14 @@ orob2b:
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
                 visibility.label: Visible to Customers
+
+        grid:
+            action:
+                duplicate: Duplicate
+
+        ui:
+            duplicate: Duplicate
+            save_and_duplicate: Save And Duplicate
 
     product_unit.kg:
         label:

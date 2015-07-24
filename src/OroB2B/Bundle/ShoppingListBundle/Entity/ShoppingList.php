@@ -10,8 +10,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
@@ -30,9 +31,9 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *              "icon"="icon-shopping-cart"
  *          },
  *          "ownership"={
- *              "owner_type"="USER",
- *              "owner_field_name"="owner",
- *              "owner_column_name"="user_owner_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="owner",
+ *              "frontend_owner_column_name"="account_user_owner_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -115,10 +116,10 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $updatedAt;
 
     /**
-     * @var User
+     * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -136,6 +137,22 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountUser;
+
+    /**
+     * @var Customer
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $account;
 
     /**
      * @var ArrayCollection|LineItem[]
@@ -270,7 +287,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @return User
+     * @return AccountUser
      */
     public function getOwner()
     {
@@ -278,11 +295,11 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @param User $owningUser
+     * @param AccountUser $owningUser
      *
      * @return $this
      */
-    public function setOwner(User $owningUser)
+    public function setOwner(AccountUser $owningUser)
     {
         $this->owner = $owningUser;
 
@@ -345,5 +362,45 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return Customer
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Customer $account
+     *
+     * @return $this
+     */
+    public function setAccount(Customer $account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return $this
+     */
+    public function setAccountUser(AccountUser $accountUser)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
     }
 }
