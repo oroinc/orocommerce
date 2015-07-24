@@ -98,7 +98,7 @@ define(function(require) {
             };
 
             mediator.trigger(
-                'grid-sidebar:changed:' + this.options.sidebarAlias,
+                'grid-sidebar:change:' + this.options.sidebarAlias,
                 {widgetReload: Boolean(widgetReload), params: params}
             );
         },

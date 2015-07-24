@@ -11,6 +11,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
 {
     const PRICE_LIST_CURRENCY_KEY = 'priceCurrency';
+    const SAVE_STATE_KEY = 'saveState';
 
     /**
      * @var SessionInterface
@@ -62,24 +63,51 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     public function getPriceListSelectedCurrencies()
     {
         $priceListCurrencies = $this->getPriceList()->getCurrencies();
+        $currency = null;
 
         if ($this->request) {
             $currency = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
-
-            if (in_array($currency, $priceListCurrencies, true)) {
-                return [$currency];
-            }
         }
 
-        if ($this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
+        if (!$currency && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
             $currency = $this->session->get(self::PRICE_LIST_CURRENCY_KEY);
-
-            if (in_array($currency, $priceListCurrencies, true)) {
-                return [$currency];
-            }
         }
 
-        return (array) reset($priceListCurrencies);
+        if (in_array($currency, $priceListCurrencies, true)) {
+            if ($this->request && $this->request->get(self::SAVE_STATE_KEY)) {
+                $this->session->set(self::PRICE_LIST_CURRENCY_KEY, $currency);
+            }
+
+            return [$currency];
+        }
+
+        return (array)reset($priceListCurrencies);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getShowTierPrices()
+    {
+        $showTierPrices = parent::getShowTierPrices();
+
+        if ((!$this->request || ($this->request && !$this->request->get(self::TIER_PRICES_KEY)))
+            && $this->session->has(self::TIER_PRICES_KEY)
+        ) {
+            $showTierPrices = $this->session->get(self::TIER_PRICES_KEY);
+        }
+
+        if (is_string($showTierPrices)) {
+            $showTierPrices = filter_var($showTierPrices, FILTER_VALIDATE_BOOLEAN);
+        } else {
+            $showTierPrices = (bool) $showTierPrices;
+        }
+
+        if ($this->request && $this->request->get(self::SAVE_STATE_KEY)) {
+            $this->session->set(self::TIER_PRICES_KEY, $showTierPrices);
+        }
+
+        return $showTierPrices;
     }
 
     /**
