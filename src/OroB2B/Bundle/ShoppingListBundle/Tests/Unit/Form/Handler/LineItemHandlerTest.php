@@ -34,6 +34,14 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected $lineItem;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\PDO
+     */
+    protected $connection;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->form = $this->getMockBuilder('Symfony\Component\Form\FormInterface')
@@ -42,14 +50,27 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->connection = $this->getMockBuilder('\PDO')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->registry
+            ->expects($this->once())
+            ->method('getConnection')
+            ->willReturn($this->connection);
+
         $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
     }
 
     public function testProcessWrongMethod()
     {
+        $this->connection
+            ->expects($this->never())
+            ->method('beginTransaction');
+
         $this->request->expects($this->once())
             ->method('getMethod')
             ->will($this->returnValue('GET'));
@@ -60,6 +81,16 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessFormNotValid()
     {
+        $this->connection
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $this->connection
+            ->expects($this->never())
+            ->method('commit');
+        $this->connection
+            ->expects($this->once())
+            ->method('rollBack');
+
         $this->request->expects($this->once())
             ->method('getMethod')
             ->will($this->returnValue('POST'));
@@ -83,6 +114,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessExistingLineItem($existingLineItem, $newNotes)
     {
+        $this->connection
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $this->connection
+            ->expects($this->once())
+            ->method('commit');
+
         $this->request->expects($this->once())
             ->method('getMethod')
             ->will($this->returnValue('PUT'));
@@ -178,6 +216,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessNotExistingLineItem()
     {
+        $this->connection
+            ->expects($this->once())
+            ->method('beginTransaction');
+        $this->connection
+            ->expects($this->once())
+            ->method('commit');
+
         $this->request->expects($this->once())
             ->method('getMethod')
             ->will($this->returnValue('PUT'));
