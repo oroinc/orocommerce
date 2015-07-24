@@ -11,8 +11,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
 
 class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -105,9 +107,10 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
      */
     public function load(ObjectManager $manager)
     {
-        /** @var BaseUserManager $userManager */
+        /* @var $userManager BaseUserManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        /* @var $accountUserRoleRepository AccountUserRoleRepository */
         $accountUserRoleRepository =  $this->container
             ->get('doctrine')
             ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
@@ -118,8 +121,10 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
                 continue;
             }
 
-            /** @var AccountUser $entity */
+            /* @var $entity AccountUser  */
             $entity = $userManager->createUser();
+
+            /** @var AccountUserRole $role */
             $role = $accountUserRoleRepository->findOneBy(['role' => $user['role']]);
 
             /** @var Customer $customer */
@@ -129,14 +134,15 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
                 ->setFirstName($user['first_name'])
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])
-                ->setEnabled($user['enabled'])
+                ->setCustomer($customer)
                 ->setConfirmed($user['confirmed'])
+                ->setEnabled($user['enabled'])
                 ->setSalt('')
                 ->setPlainPassword($user['password'])
                 ->setOrganization($organization)
                 ->addOrganization($organization)
                 ->addRole($role)
-                ->setCustomer($customer);
+            ;
 
             $this->setReference($entity->getEmail(), $entity);
 

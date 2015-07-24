@@ -19,9 +19,9 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.validator.quote_product_unit.class',
             // form types
             'orob2b_sale.form.type.quote_product.class',
-            'orob2b_sale.form.type.quote_product_item.class',
+            'orob2b_sale.form.type.quote_product_offer.class',
             'orob2b_sale.form.type.quote_product_collection.class',
-            'orob2b_sale.form.type.quote_product_item_collection.class',
+            'orob2b_sale.form.type.quote_product_offer_collection.class',
             // twig extensions
             'orob2b_sale.twig.quote.class',
         ];
@@ -34,9 +34,9 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.validator.quote_product_unit',
             // form types
             'orob2b_sale.form.type.quote_product',
-            'orob2b_sale.form.type.quote_product_item',
+            'orob2b_sale.form.type.quote_product_offer',
             'orob2b_sale.form.type.quote_product_collection',
-            'orob2b_sale.form.type.quote_product_item_collection',
+            'orob2b_sale.form.type.quote_product_offer_collection',
             // twig extensions
             'orob2b_sale.twig.quote',
         ];
