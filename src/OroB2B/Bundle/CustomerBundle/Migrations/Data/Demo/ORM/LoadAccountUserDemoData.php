@@ -5,32 +5,18 @@ namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface
 {
+    const ACCOUNT_USERS_REFERENCE_PREFIX = 'account_user_demo_data_';
+
     /** @var ContainerInterface */
     protected $container;
-
-    /** @var ObjectRepository|EntityRepository */
-    protected $countryRepository;
-
-    /** @var ObjectRepository|EntityRepository */
-    protected $regionRepository;
-    
-    /** @var ObjectRepository|EntityRepository */
-    protected $addressTypeRepository;
 
     /**
      * {@inheritdoc}
@@ -46,9 +32,6 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
     public function load(ObjectManager $manager)
     {
         $userManager = $this->container->get('orob2b_account_user.manager');
-        $this->countryRepository = $manager->getRepository('OroAddressBundle:Country');
-        $this->regionRepository = $manager->getRepository('OroAddressBundle:Region');
-        $this->addressTypeRepository = $manager->getRepository('OroAddressBundle:AddressType');
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BCustomerBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
@@ -96,57 +79,14 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
                 ->setOrganization($organization)
                 ->addOrganization($organization)
                 ->setLoginCount(0)
-                ->addRole($role)
-                ->addAddress($this->createAccountUserAddress($row));
+                ->addRole($role);
 
             $userManager->updateUser($accountUser, false);
+
+            $this->addReference(self::ACCOUNT_USERS_REFERENCE_PREFIX . $row['email'], $accountUser);
         }
 
         fclose($handler);
-
         $storageManager->flush();
-    }
-
-    private function createAccountUserAddress($data)
-    {
-        /** @var Country $country */
-        $country = $this->countryRepository->findOneBy(['iso2Code' => $data['country']]);
-        if (!$country) {
-            throw new \RuntimeException('Can\'t find country with ISO ' . $data['country']);
-        }
-
-        /** @var Region $region */
-        $region = $this->regionRepository->findOneBy(['country' => $country, 'code' => $data['state']]);
-        if (!$region) {
-            throw new \RuntimeException(
-                printf('Can\'t find region with country ISO %s and code %s', $data['country'], $data['state'])
-            );
-        }
-
-        $types = [];
-        $typesFromData = explode(',', $data['types']);
-        foreach ($typesFromData as $type) {
-            $types[] = $this->addressTypeRepository->find($type);
-        }
-
-        $defaultTypes = [];
-        $defaultTypesFromData = explode(',', $data['defaultTypes']);
-        foreach ($defaultTypesFromData as $defaultType) {
-            $defaultTypes[] = $this->addressTypeRepository->find($defaultType);
-        }
-
-        $address = new AccountUserAddress();
-        $address
-            ->setPrimary(true)
-            ->setLabel('Primary address')
-            ->setCountry($country)
-            ->setStreet($data['street'])
-            ->setCity($data['city'])
-            ->setRegion($region)
-            ->setPostalCode($data['zipCode'])
-            ->setTypes(new ArrayCollection($types))
-            ->setDefaults(new ArrayCollection($defaultTypes));
-
-        return $address;
     }
 }

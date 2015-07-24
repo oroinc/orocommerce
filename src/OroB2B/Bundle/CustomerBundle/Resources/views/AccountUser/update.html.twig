@@ -84,16 +84,17 @@
     {% set dataBlocks = [{
             'title': 'orob2b.customer.sections.general'|trans,
             'class': 'active',
-            'subblocks': [{
-                'title': '',
-                'data': formRows
-            },
-            {
-                'title': 'orob2b.customer.sections.addresses'|trans,
-                'data': [
-                    form_widget(form.addresses),
-                ]
-            },
+            'subblocks': [
+                {
+                    'title': '',
+                    'data': formRows
+                },
+                {
+                    'title': 'orob2b.customer.sections.addresses'|trans,
+                    'data': [
+                        form_widget(form.addresses),
+                    ]
+                }
             ]
         }]
     %}

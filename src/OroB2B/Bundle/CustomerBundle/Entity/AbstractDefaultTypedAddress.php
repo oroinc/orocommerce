@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -29,7 +30,6 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
         $this->addressesToTypes = new ArrayCollection();
         parent::__construct();
     }
-
 
     /**
      * Get address types
@@ -173,7 +173,7 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     /**
      * Get addressesToTypes
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Collection
      */
     public function getAddressesToTypes()
     {

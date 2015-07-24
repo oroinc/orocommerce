@@ -410,9 +410,6 @@ class OroB2BCustomerBundleInstaller implements
         $table->addColumn('updated', 'datetime', []);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['owner_id'], 'IDX_DEDF1E3D7E3C61F9', []);
-        $table->addIndex(['country_code'], 'IDX_DEDF1E3DF026BB7C', []);
-        $table->addIndex(['region_code'], 'IDX_DEDF1E3DAEB327AF', []);
     }
 
     /**
@@ -429,8 +426,6 @@ class OroB2BCustomerBundleInstaller implements
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['customer_address_id', 'type_name'], 'orob2b_customer_adr_id_type_name_idx');
-        $table->addIndex(['customer_address_id'], 'IDX_15830A7187EABF7', []);
-        $table->addIndex(['type_name'], 'IDX_15830A71892CBB0E', []);
     }
 
     /**
@@ -666,9 +661,6 @@ class OroB2BCustomerBundleInstaller implements
         $table->addColumn('created', 'datetime', []);
         $table->addColumn('updated', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['owner_id'], 'IDX_BAC787B57E3C61F9', []);
-        $table->addIndex(['country_code'], 'IDX_BAC787B5F026BB7C', []);
-        $table->addIndex(['region_code'], 'IDX_BAC787B5AEB327AF', []);
     }
 
     /**
@@ -712,8 +704,7 @@ class OroB2BCustomerBundleInstaller implements
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['account_user_address_id'], 'IDX_5A911C06B2577743', []);
-        $table->addIndex(['type_name'], 'IDX_5A911C06892CBB0E', []);
+        $table->addUniqueIndex(['account_user_address_id', 'type_name'], 'orob2b_account_adr_id_type_name_idx');
     }
 
     /**

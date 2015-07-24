@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
+
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 class CustomerType extends AbstractType
@@ -39,11 +41,11 @@ class CustomerType extends AbstractType
             )
             ->add(
                 'addresses',
-                'oro_address_collection',
+                AddressCollectionType::NAME,
                 [
                     'label'    => 'orob2b.customer.addresses.label',
                     'type'     => CustomerTypedAddressType::NAME,
-                    'required' => false,
+                    'required' => true,
                     'options'  => [
                         'data_class'  => $this->addressClass,
                         'single_form' => false

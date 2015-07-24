@@ -13,6 +13,12 @@ orob2b.customer:
     addresses.label: 'Addresses'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
+    address_book.label: 'Address Book'
+
+    address:
+        add: 'Add Address'
+        cancel: 'Cancel'
+        save: 'Save'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -56,6 +62,7 @@ orob2b.customer:
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
         addresses.label:             'Addresses'
+        address_book.label:          'Address Book'
 
         profile:
             registration.title: 'Registration'

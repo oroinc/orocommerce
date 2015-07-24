@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -24,6 +25,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
     /** @var EntityManager */
     protected $entityManager;
 
+    /** @var CustomerAddress[] */
     protected static $addresses;
 
     /**
@@ -241,7 +243,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return array
+     * @return CustomerAddress[]
      */
     protected function getAddresses()
     {

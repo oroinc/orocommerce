@@ -22,6 +22,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser';
     const ROLE_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole';
+    const ADDRESS_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress';
 
     /**
      * @var AccountUserType
@@ -54,6 +55,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $this->formType = new AccountUserType($this->securityFacade);
         $this->formType->setDataClass(self::DATA_CLASS);
         $this->formType->setRoleClass(self::ROLE_CLASS);
+        $this->formType->setAddressClass(self::ADDRESS_CLASS);
     }
 
     /**
@@ -191,6 +193,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $this->assertEquals(AccountUserType::NAME, $this->formType->getName());
     }
 
+    /**
+     * @return AccountUserAddress[]
+     */
     protected function getAddresses()
     {
         if (!self::$addresses) {

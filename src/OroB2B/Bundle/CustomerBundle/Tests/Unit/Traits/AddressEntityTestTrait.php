@@ -3,12 +3,16 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Traits;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
-use OroB2B\Bundle\CustomerBundle\Entity\Traits\AddressEntityTrait;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 trait AddressEntityTestTrait
 {
+    use EntityTestCaseTrait;
+
     public function testAddressesCollection()
     {
         $customer = $this->createTestedEntity();
@@ -29,7 +33,7 @@ trait AddressEntityTestTrait
         }
 
         $actualAddress = $customer->getAddressByTypeName($searchName);
-        $this->assertEquals($expectedAddress, $actualAddress);
+        \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $actualAddress);
     }
 
     /**
@@ -86,7 +90,7 @@ trait AddressEntityTestTrait
             $customer->addAddress($address);
         }
 
-        $this->assertEquals($expectedAddress, $customer->getPrimaryAddress());
+        \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $customer->getPrimaryAddress());
     }
 
     public function getPrimaryAddressProvider()
@@ -115,7 +119,7 @@ trait AddressEntityTestTrait
     /**
      * Return tested entity
      *
-     * @return AddressEntityTrait
+     * @return AccountUser|Customer
      */
     abstract protected function createTestedEntity();
 

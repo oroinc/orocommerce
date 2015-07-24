@@ -27,7 +27,7 @@ class AccountUserAddressController extends RestController implements ClassResour
     /**
      * REST GET address
      *
-     * @param string $accountUserId
+     * @param int $entityId
      * @param string $addressId
      *
      * @ApiDoc(
@@ -37,10 +37,10 @@ class AccountUserAddressController extends RestController implements ClassResour
      * @AclAncestor("orob2b_customer_account_user_view")
      * @return Response
      */
-    public function getAction($accountUserId, $addressId)
+    public function getAction($entityId, $addressId)
     {
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserManager()->find($accountUserId);
+        $accountUser = $this->getAccountUserManager()->find($entityId);
 
         /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
@@ -61,14 +61,14 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      resource=true
      * )
      * @AclAncestor("orob2b_customer_account_user_view")
-     * @param int $accountUserId
+     * @param int $entityId
      *
      * @return JsonResponse
      */
-    public function cgetAction($accountUserId)
+    public function cgetAction($entityId)
     {
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserManager()->find($accountUserId);
+        $accountUser = $this->getAccountUserManager()->find($entityId);
         $result  = [];
 
         if (!empty($accountUser)) {
@@ -93,17 +93,17 @@ class AccountUserAddressController extends RestController implements ClassResour
      *      resource=true
      * )
      * @AclAncestor("orob2b_customer_account_user_delete")
-     * @param     $accountUserId
+     * @param int $entityId
      * @param int $addressId
      *
      * @return Response
      */
-    public function deleteAction($accountUserId, $addressId)
+    public function deleteAction($entityId, $addressId)
     {
         /** @var AccountUserAddress $address */
         $address = $this->getManager()->find($addressId);
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserManager()->find($accountUserId);
+        $accountUser = $this->getAccountUserManager()->find($entityId);
         if ($accountUser->getAddresses()->contains($address)) {
             $accountUser->removeAddress($address);
             return $this->handleDeleteRequest($addressId);
@@ -115,7 +115,7 @@ class AccountUserAddressController extends RestController implements ClassResour
     /**
      * REST GET address by type
      *
-     * @param string $accountUserId
+     * @param int $entityId
      * @param string $typeName
      *
      * @ApiDoc(
@@ -125,10 +125,10 @@ class AccountUserAddressController extends RestController implements ClassResour
      * @AclAncestor("orob2b_customer_account_user_view")
      * @return Response
      */
-    public function getByTypeAction($accountUserId, $typeName)
+    public function getByTypeAction($entityId, $typeName)
     {
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserManager()->find($accountUserId);
+        $accountUser = $this->getAccountUserManager()->find($entityId);
 
         if ($accountUser) {
             $address = $accountUser->getAddressByTypeName($typeName);
@@ -144,7 +144,7 @@ class AccountUserAddressController extends RestController implements ClassResour
     /**
      * REST GET primary address
      *
-     * @param string $accountUserId
+     * @param int $entityId
      *
      * @ApiDoc(
      *      description="Get account user primary address",
@@ -153,10 +153,10 @@ class AccountUserAddressController extends RestController implements ClassResour
      * @AclAncestor("orob2b_customer_account_user_view")
      * @return Response
      */
-    public function getPrimaryAction($accountUserId)
+    public function getPrimaryAction($entityId)
     {
         /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserManager()->find($accountUserId);
+        $accountUser = $this->getAccountUserManager()->find($entityId);
 
         if ($accountUser) {
             $address = $accountUser->getPrimaryAddress();
@@ -174,7 +174,7 @@ class AccountUserAddressController extends RestController implements ClassResour
      */
     protected function getAccountUserManager()
     {
-        return $this->get('orob2b_customer.manager.account_user.api.attribute');
+        return $this->get('orob2b_customer.account_user.manager.api');
     }
 
     /**

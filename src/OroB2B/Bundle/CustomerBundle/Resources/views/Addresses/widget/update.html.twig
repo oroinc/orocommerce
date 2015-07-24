@@ -20,15 +20,15 @@
 
         <form id="{{ form.vars.name }}"
               action="{{ form.vars.value and form.vars.value.id > 0
-                  ? path('orob2b_customer_account_user_address_update', { id: form.vars.value.id, accountUserId: accountUser.id })
-                  : path('orob2b_customer_account_user_address_create', { accountUserId: accountUser.id })
+                  ? path(routes.update, { id: form.vars.value.id, entityId: entity.id })
+                  : path(routes.create, { entityId: entity.id })
               }}"
               method="post" class="form-register form-dialog">
             <fieldset class="form-horizontal">
                 {{ form_widget(form) }}
                 <div class="widget-actions form-actions" style="display: none;">
-                    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
-                    <button class="btn btn-primary" type="submit">{{ 'Save'|trans }}</button>
+                    <button class="btn" type="reset">{{ 'orob2b.customer.address.cancel'|trans }}</button>
+                    <button class="btn btn-primary" type="submit">{{ 'orob2b.customer.address.save'|trans }}</button>
                 </div>
             </fieldset>
         </form>

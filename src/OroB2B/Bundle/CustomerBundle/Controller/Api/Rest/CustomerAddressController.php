@@ -26,7 +26,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
     /**
      * REST GET address
      *
-     * @param string $customerId
+     * @param int $entityId
      * @param string $addressId
      *
      * @ApiDoc(
@@ -36,10 +36,10 @@ class CustomerAddressController extends RestController implements ClassResourceI
      * @AclAncestor("orob2b_customer_view")
      * @return Response
      */
-    public function getAction($customerId, $addressId)
+    public function getAction($entityId, $addressId)
     {
         /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($customerId);
+        $customer = $this->getCustomerManager()->find($entityId);
 
         /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
@@ -60,14 +60,14 @@ class CustomerAddressController extends RestController implements ClassResourceI
      *      resource=true
      * )
      * @AclAncestor("orob2b_customer_view")
-     * @param int $customerId
+     * @param int $entityId
      *
      * @return JsonResponse
      */
-    public function cgetAction($customerId)
+    public function cgetAction($entityId)
     {
         /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($customerId);
+        $customer = $this->getCustomerManager()->find($entityId);
         $result = [];
 
         if (!empty($customer)) {
@@ -92,17 +92,17 @@ class CustomerAddressController extends RestController implements ClassResourceI
      *      resource=true
      * )
      * @AclAncestor("orob2b_customer_delete")
-     * @param     $customerId
+     * @param     $entityId
      * @param int $addressId
      *
      * @return Response
      */
-    public function deleteAction($customerId, $addressId)
+    public function deleteAction($entityId, $addressId)
     {
         /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
         /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($customerId);
+        $customer = $this->getCustomerManager()->find($entityId);
         if ($customer->getAddresses()->contains($address)) {
             $customer->removeAddress($address);
             return $this->handleDeleteRequest($addressId);
@@ -114,7 +114,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
     /**
      * REST GET address by type
      *
-     * @param string $customerId
+     * @param int $entityId
      * @param string $typeName
      *
      * @ApiDoc(
@@ -124,10 +124,10 @@ class CustomerAddressController extends RestController implements ClassResourceI
      * @AclAncestor("orob2b_customer_view")
      * @return Response
      */
-    public function getByTypeAction($customerId, $typeName)
+    public function getByTypeAction($entityId, $typeName)
     {
         /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($customerId);
+        $customer = $this->getCustomerManager()->find($entityId);
 
         if ($customer) {
             $address = $customer->getAddressByTypeName($typeName);
@@ -143,7 +143,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
     /**
      * REST GET primary address
      *
-     * @param string $customerId
+     * @param int $entityId
      *
      * @ApiDoc(
      *      description="Get customer primary address",
@@ -152,10 +152,10 @@ class CustomerAddressController extends RestController implements ClassResourceI
      * @AclAncestor("orob2b_customer_view")
      * @return Response
      */
-    public function getPrimaryAction($customerId)
+    public function getPrimaryAction($entityId)
     {
         /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($customerId);
+        $customer = $this->getCustomerManager()->find($entityId);
 
         if ($customer) {
             $address = $customer->getPrimaryAddress();

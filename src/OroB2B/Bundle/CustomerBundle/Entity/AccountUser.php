@@ -12,8 +12,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Traits\AddressEntityTrait;
-
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_account_user")
@@ -64,8 +62,6 @@ use OroB2B\Bundle\CustomerBundle\Entity\Traits\AddressEntityTrait;
  */
 class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
 {
-    use AddressEntityTrait;
-
     const SECURITY_GROUP = 'commerce';
 
     /**
@@ -432,12 +428,92 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         return $this;
     }
 
+
     /**
-     * {@inheritdoc}
+     * Add addresses
+     *
+     * @param AbstractDefaultTypedAddress $address
+     * @return $this
+     */
+    public function addAddress(AbstractDefaultTypedAddress $address)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        if (!$this->getAddresses()->contains($address)) {
+            $this->getAddresses()->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove addresses
+     *
+     * @param AbstractDefaultTypedAddress $addresses
+     * @return $this
+     */
+    public function removeAddress(AbstractDefaultTypedAddress $addresses)
+    {
+        if ($this->hasAddress($addresses)) {
+            $this->getAddresses()->removeElement($addresses);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Collection
      */
     public function getAddresses()
     {
         return $this->addresses;
+    }
+
+    /**
+     * @param AbstractDefaultTypedAddress $address
+     * @return bool
+     */
+    protected function hasAddress(AbstractDefaultTypedAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
+    }
+
+    /**
+     * Gets one address that has specified type name.
+     *
+     * @param string $typeName
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getAddressByTypeName($typeName)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->hasTypeWithName($typeName)) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                return $address;
+            }
+        }
+
+        return null;
     }
 
     /**

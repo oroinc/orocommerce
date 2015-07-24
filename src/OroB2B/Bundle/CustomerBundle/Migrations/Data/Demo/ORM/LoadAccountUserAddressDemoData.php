@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 
-class LoadCustomerAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
+class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
 {
     /**
      * {@inheritdoc}
@@ -25,6 +25,8 @@ class LoadCustomerAddressDemoData extends AbstractLoadAddressDemoData implements
     {
         parent::load($manager);
 
+        $userManager = $this->container->get('orob2b_account_user.manager');
+
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BCustomerBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
         if (is_array($filePath)) {
@@ -34,24 +36,23 @@ class LoadCustomerAddressDemoData extends AbstractLoadAddressDemoData implements
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
-        /** @var AccountUser[] $accountUsers */
-        $accountUsers = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findAll();
-        /** @var AccountUser[] $accountUserByEmail */
-        $accountUserByEmail = [];
-        foreach ($accountUsers as $accountUser) {
-            $accountUserByEmail[$accountUser->getEmail()] = $accountUser;
-        }
-
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $accountUser = $accountUserByEmail[$row['email']];
+
+            $referenceName = LoadAccountUserDemoData::ACCOUNT_USERS_REFERENCE_PREFIX . $row['email'];
+            if (!$this->hasReference($referenceName)) {
+                continue;
+            }
+
+            /** @var AccountUser $accountUser */
+            $accountUser = $this->getReference($referenceName);
             $accountUser
-                ->getCustomer()
                 ->addAddress($this->createAddress($row));
+
+            $userManager->updateUser($accountUser, false);
         }
 
         fclose($handler);
-        $manager->flush();
     }
 
     /**
@@ -59,6 +60,6 @@ class LoadCustomerAddressDemoData extends AbstractLoadAddressDemoData implements
      */
     protected function getNewAddressEntity()
     {
-        return new CustomerAddress();
+        return new AccountUserAddress();
     }
 }

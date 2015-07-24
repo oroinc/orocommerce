@@ -14,13 +14,13 @@ use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
+use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType;
 
 class AccountUserAddressController extends Controller
 {
     /**
      * @Route("/address-book/{id}", name="orob2b_customer_account_user_address_book", requirements={"id"="\d+"})
-     * @Template
+     * @Template("OroB2BCustomerBundle:Addresses/widget:addressBook.html.twig")
      * @AclAncestor("orob2b_customer_account_user_view")
      *
      * @param AccountUser $accountUser
@@ -30,19 +30,20 @@ class AccountUserAddressController extends Controller
     {
         return [
             'entity' => $accountUser,
-            'address_edit_acl_resource' => 'orob2b_customer_account_user_update'
+            'address_edit_acl_resource' => 'orob2b_customer_account_user_update',
+            'options' => $this->getAddressBookOptions($accountUser)
         ];
     }
 
     /**
      * @Route(
-     *      "/{accountUserId}/address-create",
+     *      "/{entityId}/address-create",
      *      name="orob2b_customer_account_user_address_create",
      *      requirements={"accountUserId"="\d+"}
      * )
-     * @Template("OroB2BCustomerBundle:AccountUserAddress:update.html.twig")
+     * @Template("OroB2BCustomerBundle:Addresses/widget:update.html.twig")
      * @AclAncestor("orob2b_customer_account_user_create")
-     * @ParamConverter("accountUser", options={"id" = "accountUserId"})
+     * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
      * @param AccountUser $accountUser
      * @return array
@@ -54,13 +55,13 @@ class AccountUserAddressController extends Controller
 
     /**
      * @Route(
-     *      "/{accountUserId}/address-update/{id}",
+     *      "/{entityId}/address-update/{id}",
      *      name="orob2b_customer_account_user_address_update",
      *      requirements={"accountUserId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
-     * @Template
+     * @Template("OroB2BCustomerBundle:Addresses/widget:update.html.twig")
      * @AclAncestor("orob2b_customer_account_user_update")
-     * @ParamConverter("accountUser", options={"id" = "accountUserId"})
+     * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
      * @param AccountUser        $accountUser
      * @param AccountUserAddress $address
@@ -81,7 +82,7 @@ class AccountUserAddressController extends Controller
     {
         $responseData = [
             'saved' => false,
-            'accountUser' => $accountUser
+            'entity' => $accountUser
         ];
 
         if ($this->getRequest()->getMethod() == 'GET' && !$address->getId()) {
@@ -98,14 +99,14 @@ class AccountUserAddressController extends Controller
             $accountUser->addAddress($address);
         }
 
-        $form = $this->createForm(CustomerTypedAddressType::NAME, $address, [
-            'data_class' => 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress'
-        ]);
+        $form = $this->createForm(AccountUserTypedAddressType::NAME, $address);
 
         $handler = new AddressHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCustomerBundle:AccountUserAddress')
+            $this->getDoctrine()->getManagerForClass(
+                $this->container->getParameter('orob2b_customer.entity.account_user_address.class')
+            )
         );
 
         if ($handler->process($address)) {
@@ -115,6 +116,36 @@ class AccountUserAddressController extends Controller
         }
 
         $responseData['form'] = $form->createView();
+        $responseData['routes'] = [
+            'create' => 'orob2b_customer_account_user_address_create',
+            'update' => 'orob2b_customer_account_user_address_update'
+        ];
         return $responseData;
+    }
+
+    /**
+     * @param AccountUser $entity
+     * @return array
+     */
+    protected function getAddressBookOptions($entity)
+    {
+        $addressListUrl = $this->generateUrl('orob2b_api_customer_account_user_get_accountuser_addresses', [
+            'entityId' => $entity->getId()
+        ]);
+
+        $addressCreateUrl = $this->generateUrl('orob2b_customer_account_user_address_create', [
+                'entityId' => $entity->getId()
+        ]);
+
+        $currentAddresses = $this->get('fragment.handler')->render($addressListUrl);
+
+        return [
+            'wid'                    => $this->getRequest()->get('_wid'),
+            'entityId'               => $entity->getId(),
+            'addressListUrl'         => $addressListUrl,
+            'addressCreateUrl'       => $addressCreateUrl,
+            'addressUpdateRouteName' => 'orob2b_customer_account_user_address_update',
+            'currentAddresses'       => $currentAddresses
+        ];
     }
 }

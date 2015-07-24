@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Tests\Functional\Traits\AddressTestTrait;
 
 /**
  * @outputBuffering enabled
@@ -16,8 +16,6 @@ use OroB2B\Bundle\CustomerBundle\Tests\Functional\Traits\AddressTestTrait;
  */
 class CustomerAddressControllerTest extends WebTestCase
 {
-    use AddressTestTrait;
-
     /** @var Customer $customer */
     protected $customer;
 
@@ -54,7 +52,7 @@ class CustomerAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'orob2b_customer_address_create',
-                ['customerId' => $customer->getId(), '_widgetContainer' => 'dialog']
+                ['entityId' => $customer->getId(), '_widgetContainer' => 'dialog']
             )
         );
 
@@ -73,7 +71,7 @@ class CustomerAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['customerId' => $customer->getId()])
+            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $customer->getId()])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -103,7 +101,7 @@ class CustomerAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['customerId' => $id])
+            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $id])
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -112,7 +110,7 @@ class CustomerAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'orob2b_customer_address_update',
-                ['customerId' => $id, 'id' => $address['id'], '_widgetContainer' => 'dialog']
+                ['entityId' => $id, 'id' => $address['id'], '_widgetContainer' => 'dialog']
             )
         );
 
@@ -131,7 +129,7 @@ class CustomerAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['customerId' => $id])
+            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $id])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -168,7 +166,7 @@ class CustomerAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'orob2b_api_customer_get_customer_address_primary',
-                ['customerId' => $customerId]
+                ['entityId' => $customerId]
             )
         );
 
@@ -178,11 +176,91 @@ class CustomerAddressControllerTest extends WebTestCase
             'DELETE',
             $this->getUrl(
                 'orob2b_api_customer_delete_customer_address',
-                ['customerId' => $customerId, 'addressId' => $address['id']]
+                ['entityId' => $customerId, 'addressId' => $address['id']]
             )
         );
 
         $result = $this->client->getResponse();
         $this->assertEquals(204, $result->getStatusCode());
+    }
+
+    /**
+     * Fill form for address tests (create test)
+     *
+     * @param Form $form
+     * @return \Symfony\Component\DomCrawler\Form
+     */
+    protected function fillFormForCreateTest(Form $form)
+    {
+        $formNode = $form->getNode();
+        $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
+
+        $form['orob2b_customer_typed_address[street]']            = 'Street';
+        $form['orob2b_customer_typed_address[city]']              = 'City';
+        $form['orob2b_customer_typed_address[postalCode]']        = 'Zip code';
+        $form['orob2b_customer_typed_address[types]']             = [AddressType::TYPE_BILLING];
+        $form['orob2b_customer_typed_address[defaults][default]'] = [AddressType::TYPE_BILLING];
+
+        $doc = new \DOMDocument("1.0");
+        $doc->loadHTML(
+            '<select name="orob2b_customer_typed_address[country]" id="orob2b_customer_typed_address_country" ' .
+            'tabindex="-1" class="select2-offscreen"> ' .
+            '<option value="" selected="selected"></option> ' .
+            '<option value="AF">Afghanistan</option> </select>'
+        );
+        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
+        $form->set($field);
+        $form['orob2b_customer_typed_address[country]'] = 'AF';
+
+        $doc->loadHTML(
+            '<select name="orob2b_customer_typed_address[region]" id="orob2b_customer_typed_address_region" ' .
+            'tabindex="-1" class="select2-offscreen"> ' .
+            '<option value="" selected="selected"></option> ' .
+            '<option value="AF-BDS">Badakhshān</option> </select>'
+        );
+        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
+        $form->set($field);
+        $form['orob2b_customer_typed_address[region]'] = 'AF-BDS';
+
+        return $form;
+    }
+
+    /**
+     * Fill form for address tests (update test)
+     *
+     * @param Form $form
+     * @return Form
+     */
+    protected function fillFormForUpdateTest(Form $form)
+    {
+        $formNode = $form->getNode();
+        $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
+
+        $form['orob2b_customer_typed_address[types]'] = [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING];
+        $form['orob2b_customer_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
+
+
+        $doc = new \DOMDocument("1.0");
+        $doc->loadHTML(
+            '<select name="orob2b_customer_typed_address[country]" id="orob2b_customer_typed_address_country" ' .
+            'tabindex="-1" class="select2-offscreen"> ' .
+            '<option value="" selected="selected"></option> ' .
+            '<option value="ZW">Zimbabwe</option> </select>'
+        );
+        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
+        $form->set($field);
+        $form['orob2b_customer_typed_address[country]'] = 'ZW';
+
+        $doc->loadHTML(
+            '<select name="orob2b_customer_typed_address[region]" id="orob2b_customer_typed_address_region" ' .
+            'tabindex="-1" class="select2-offscreen"> ' .
+            '<option value="" selected="selected"></option> ' .
+            '<option value="ZW-MA">Manicaland</option> </select>'
+        );
+        $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
+        $form->set($field);
+        $form['orob2b_customer_typed_address[region]'] = 'ZW-MA';
+
+        return $form;
     }
 }
