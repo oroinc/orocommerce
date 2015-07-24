@@ -82,46 +82,92 @@ class QuoteProductOfferValidatorTest extends \PHPUnit_Framework_TestCase
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit2')))
             ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('unit3')))
         ;
+        $replacement = (new Product())
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item1')))
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item2')))
+            ->addUnitPrecision((new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item3')))
+        ;
         $item1 = new QuoteProductOffer();
+
         $item2 = (new QuoteProductOffer())
-            ->setQuoteProduct(new QuoteProduct());
+            ->setQuoteProduct($this->createQuoteProduct())
+        ;
         $item3 = (new QuoteProductOffer())
-            ->setQuoteProduct((new QuoteProduct())->setProduct(new Product()));
+            ->setQuoteProduct($this->createQuoteProduct(new Product()))
+        ;
         $item4 = (new QuoteProductOffer())
-            ->setQuoteProduct((new QuoteProduct())->setProduct($product));
+            ->setQuoteProduct($this->createQuoteProduct($product));
+
         $item5 = (new QuoteProductOffer())
-            ->setQuoteProduct((new QuoteProduct())->setProduct($product))
+            ->setQuoteProduct($this->createQuoteProduct($product))
             ->setProductUnit((new ProductUnit())->setCode('unit5'))
         ;
         $item6 = (new QuoteProductOffer())
-            ->setQuoteProduct((new QuoteProduct())->setProduct($product))
+            ->setQuoteProduct($this->createQuoteProduct($product))
             ->setProductUnit((new ProductUnit())->setCode('unit1'))
         ;
+        $item7 = (new QuoteProductOffer())
+            ->setQuoteProduct($this->createQuoteProduct($product, $replacement, QuoteProduct::TYPE_NOT_AVAILABLE))
+            ->setProductUnit((new ProductUnit())->setCode('unit1'))
+        ;
+        $item8 = (new QuoteProductOffer())
+            ->setQuoteProduct($this->createQuoteProduct($product, $replacement, QuoteProduct::TYPE_NOT_AVAILABLE))
+            ->setProductUnit((new ProductUnit())->setCode('item1'))
+        ;
         return [
-            'empty request product' => [
+            'offer: empty request product' => [
                 'data'  => $item1,
                 'valid' => false,
             ],
-            'empty product' => [
+            'offer: empty product' => [
                 'data'  => $item2,
                 'valid' => false,
             ],
-            'empty allowed units' => [
+            'offer: empty allowed units' => [
                 'data'  => $item3,
                 'valid' => false,
             ],
-            'empty product unit' => [
+            'offer: empty product unit' => [
                 'data'  => $item4,
                 'valid' => false,
             ],
-            'ivalid unit code' => [
+            'offer: ivalid unit code' => [
                 'data'  => $item5,
                 'valid' => false,
             ],
-            'valid unit code' => [
+            'offer: valid unit code' => [
                 'data'  => $item6,
                 'valid' => true,
             ],
+            'replacement: invalid unit code' => [
+                'data'  => $item7,
+                'valid' => false,
+            ],
+            'replacement: valid unit code' => [
+                'data'  => $item8,
+                'valid' => true,
+            ],
         ];
+    }
+
+    /**
+     * @param Product $product
+     * @param Product $replacement
+     * @param int $type
+     * @return QuoteProduct
+     */
+    protected function createQuoteProduct(
+        Product $product = null,
+        Product $replacement = null,
+        $type = QuoteProduct::TYPE_OFFER
+    ) {
+        $quoteProduct = new QuoteProduct();
+        $quoteProduct
+            ->setType($type)
+            ->setProduct($product)
+            ->setProductReplacement($replacement)
+        ;
+
+        return $quoteProduct;
     }
 }

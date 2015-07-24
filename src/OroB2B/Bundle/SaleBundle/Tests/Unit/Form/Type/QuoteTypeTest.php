@@ -42,6 +42,7 @@ class QuoteTypeTest extends AbstractTest
         parent::setUp();
 
         $this->formType = new QuoteType();
+        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\Quote');
     }
 
     public function testSetDefaultOptions()
@@ -187,19 +188,24 @@ class QuoteTypeTest extends AbstractTest
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($translator);
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($translator);
+
+        $quoteProductType = new QuoteProductType(
+            $translator,
+            $productUnitLabelFormatter,
+            $this->quoteProductFormatter
+        );
+        $quoteProductType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
+
         return [
             new PreloadedExtension(
                 [
                     OroDateTimeType::NAME                       => new OroDateTimeType(),
-                    QuoteProductType::NAME                      => new QuoteProductType(
-                        $translator,
-                        $productUnitLabelFormatter,
-                        $this->quoteProductTypeFormatter
-                    ),
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
                         $translator,
-                        $this->quoteProductOfferTypeFormatter
+                        $this->quoteProductOfferFormatter
                     ),
                     QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
@@ -207,8 +213,11 @@ class QuoteTypeTest extends AbstractTest
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $userSelectType->getName()                  => $userSelectType,
+                    $quoteProductType->getName()                => $quoteProductType,
                     $productSelectType->getName()               => $productSelectType,
                     $currencySelectionType->getName()           => $currencySelectionType,
+                    $quoteProductOfferType->getName()           => $quoteProductOfferType,
+                    $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
                     $customerSelectType->getName()              => $customerSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,

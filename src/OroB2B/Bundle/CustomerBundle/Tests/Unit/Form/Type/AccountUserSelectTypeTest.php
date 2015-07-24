@@ -3,29 +3,33 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 
-class AccountUserSelectTypeTest extends \PHPUnit_Framework_TestCase
+class AccountUserSelectTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var AccountUserSelectType
      */
-    protected $type;
+    protected $formType;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->type = new AccountUserSelectType();
+        $this->formType = new AccountUserSelectType();
     }
 
     public function testGetName()
     {
-        $this->assertEquals(AccountUserSelectType::NAME, $this->type->getName());
+        $this->assertEquals(AccountUserSelectType::NAME, $this->formType->getName());
     }
 
     public function testGetParent()
     {
-        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
+        $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->formType->getParent());
     }
 
     public function testSetDefaultOptions()
@@ -45,6 +49,6 @@ class AccountUserSelectTypeTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->formType->setDefaultOptions($resolver);
     }
 }

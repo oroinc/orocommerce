@@ -72,9 +72,6 @@ class OroB2BPricingBundle implements Migration
             ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'],
             'orob2b_pricing_price_list_uidx'
         );
-        $table->addIndex(['price_list_id'], 'idx_bcde766d5688ded7', []);
-        $table->addIndex(['product_id'], 'idx_bcde766d4584665a', []);
-        $table->addIndex(['unit_code'], 'idx_bcde766dfbd3d1c2', []);
         $table->setPrimaryKey(['id']);
     }
 
@@ -87,19 +84,19 @@ class OroB2BPricingBundle implements Migration
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'website_id']);
-        $table->addUniqueIndex(['website_id'], 'uniq_8f1e263218f45c82');
+        $table->addUniqueIndex(['website_id']);
 
         $table = $schema->createTable('orob2b_price_list_to_customer');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('customer_id', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'customer_id']);
-        $table->addUniqueIndex(['customer_id'], 'uniq_7748d9299395c3f3');
+        $table->addUniqueIndex(['customer_id']);
 
         $table = $schema->createTable('orob2b_price_list_to_c_group');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('customer_group_id', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'customer_group_id']);
-        $table->addUniqueIndex(['customer_group_id'], 'uniq_4ca0ef88d2919a68');
+        $table->addUniqueIndex(['customer_group_id']);
     }
 
     /**

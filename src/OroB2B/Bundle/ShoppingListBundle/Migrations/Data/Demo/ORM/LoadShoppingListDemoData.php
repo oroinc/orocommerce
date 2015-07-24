@@ -2,16 +2,31 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
+
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    /** @var ContainerInterface */
+    protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -25,18 +40,30 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->getAdminUser($manager);
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
-        $this->createShoppingList($manager, $user, 'Shopping List 1');
-        $this->createShoppingList($manager, $user, 'Shopping List 2');
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $user = $this->getAdminUser($manager);
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+            $this->createShoppingList($manager, $user, $row['label']);
+        }
+
+        fclose($handler);
 
         $manager->flush();
     }
 
     /**
      * @param ObjectManager $manager
-     * @param User $user
-     * @param string $label
+     * @param User          $user
+     * @param string        $label
      *
      * @return ShoppingList
      */
@@ -50,6 +77,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
 
         $manager->persist($shoppingList);
     }
+
 
     /**
      * @param ObjectManager $manager

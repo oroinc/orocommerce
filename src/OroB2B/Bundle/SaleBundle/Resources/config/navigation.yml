@@ -2,7 +2,7 @@ oro_menu_config:
     items:
         sale_tab:
             label: 'orob2b.sale.menu.label'
-            uri:   'javascript: void(0);'
+            uri:   '#'
             extras:
                 position: 60
 
@@ -16,7 +16,7 @@ oro_menu_config:
         sale_frontend_quote_list:
             label: 'orob2b.sale.quote.entity_plural_label'
             route: 'orob2b_sale_frontend_quote_index'
-                
+
     tree:
         application_menu:
             children:

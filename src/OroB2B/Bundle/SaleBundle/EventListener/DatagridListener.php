@@ -73,6 +73,9 @@ class DatagridListener
         ;
     }
 
+    /**
+     * @return boolean
+     */
     protected function permissionShowUserColumn()
     {
         if (!$this->securityFacade->isGranted(

@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductTypeFormatter;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteProductType extends AbstractType
@@ -28,9 +28,9 @@ class QuoteProductType extends AbstractType
     protected $labelFormatter;
 
     /**
-     * @var QuoteProductTypeFormatter
+     * @var QuoteProductFormatter
      */
-    protected $typeFormatter;
+    protected $formatter;
 
     /**
      * @var TranslatorInterface
@@ -38,18 +38,31 @@ class QuoteProductType extends AbstractType
     protected $translator;
 
     /**
+     * @var string
+     */
+    protected $dataClass;
+
+    /**
      * @param TranslatorInterface $translator
      * @param ProductUnitLabelFormatter $labelFormatter
-     * @param QuoteProductTypeFormatter $typeFormatter
+     * @param QuoteProductFormatter $formatter
      */
     public function __construct(
         TranslatorInterface $translator,
         ProductUnitLabelFormatter $labelFormatter,
-        QuoteProductTypeFormatter $typeFormatter
+        QuoteProductFormatter $formatter
     ) {
         $this->translator = $translator;
         $this->labelFormatter = $labelFormatter;
-        $this->typeFormatter= $typeFormatter;
+        $this->formatter = $formatter;
+    }
+
+    /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
     }
 
     /**
@@ -117,7 +130,7 @@ class QuoteProductType extends AbstractType
             ])
             ->add('type', 'choice', [
                 'label' => 'orob2b.sale.quoteproduct.type.label',
-                'choices' => $this->typeFormatter->formatTypeLabels(QuoteProduct::getTypes()),
+                'choices' => $this->formatter->formatTypeLabels(QuoteProduct::getTypes()),
                 'required' => true,
                 'expanded' => false,
             ])
@@ -141,7 +154,7 @@ class QuoteProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
+            'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
@@ -171,9 +184,10 @@ class QuoteProductType extends AbstractType
 
         if (!$quoteProduct->getProduct()) {
             $this->replaceProductField(
-                $quoteProduct,
                 $form,
                 'product',
+                true,
+                $quoteProduct->getProductSku(),
                 'orob2b.product.entity_label',
                 'orob2b.sale.quoteproduct.product.removed'
             );
@@ -181,9 +195,10 @@ class QuoteProductType extends AbstractType
 
         if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
             $this->replaceProductField(
-                $quoteProduct,
                 $form,
                 'productReplacement',
+                false,
+                $quoteProduct->getProductReplacementSku(),
                 'orob2b.sale.quoteproduct.product_replacement.label',
                 'orob2b.sale.quoteproduct.product_replacement.removed'
             );
@@ -191,28 +206,30 @@ class QuoteProductType extends AbstractType
     }
 
     /**
-     * @param QuoteProduct $quoteProduct
      * @param FormInterface $form
      * @param string $field
+     * @param bool $required
+     * @param string $productSku
      * @param string $label
      * @param string $emptyLabel
      */
     protected function replaceProductField(
-        QuoteProduct $quoteProduct,
         FormInterface $form,
         $field,
+        $required,
+        $productSku,
         $label,
         $emptyLabel = null
     ) {
         $options = [
             'create_enabled' => false,
-            'required' => true,
+            'required' => $required,
             'label' => $label,
         ];
 
         if ($emptyLabel) {
             $emptyValueTitle = $this->translator->trans($emptyLabel, [
-                '{title}' => $quoteProduct->getProductSku(),
+                '{title}' => $productSku,
             ]);
 
             $options['configs'] = [
