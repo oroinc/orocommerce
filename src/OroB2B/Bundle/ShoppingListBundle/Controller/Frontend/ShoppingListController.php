@@ -85,7 +85,6 @@ class ShoppingListController extends Controller
      *      permission="CREATE",
      *      group_name="commerce"
      * )
-     * @AclAncestor("orob2b_shopping_list_frontend_create")
      *
      * @return array|RedirectResponse
      */
