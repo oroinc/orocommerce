@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
