@@ -2,9 +2,14 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
+use Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
@@ -130,7 +135,7 @@ class RequestControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Request For Proposal Status was successfully changed', $result->getContent());
 
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
+        /* @var $entity Request */
         $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
 
         $this->assertNotNull($entity);
@@ -145,12 +150,48 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
+     * @depends testView
+     * @param integer $id
+     */
+    public function testUpdate($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_update', ['id' => $id]));
+
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Request has been saved', $crawler->html());
+    }
+
+    /**
+     * @depends testView
+     * @param integer $id
+     */
+    public function testCreateQuote($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_view', ['id' => $id]));
+
+        $form = $crawler->selectButton('Create Quote')->form();
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('New Quote created', $crawler->html());
+    }
+
+    /**
      * @param Request $entity
-     * @return \Oro\Bundle\ActivityListBundle\Entity\ActivityList[]
+     * @return ActivityList[]
      */
     private function getNotesForRequest(Request $entity)
     {
-        /** @var \Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager $ActivityManager */
+        /* @var $activityManager ActivityListManager */
         $activityManager = $this->getContainer()->get('oro_activity_list.manager');
 
         return $activityManager->getList(

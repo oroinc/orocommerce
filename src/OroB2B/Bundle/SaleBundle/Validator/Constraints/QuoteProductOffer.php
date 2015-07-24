@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class QuoteProductItem extends Constraint
+class QuoteProductOffer extends Constraint
 {
     /**
      * @var string
      */
-    public $message = 'orob2b.sale.quoteproductitem.product_unit.blank';
+    public $message = 'orob2b.sale.quoteproductoffer.product_unit.blank';
 
     /**
      * @var string

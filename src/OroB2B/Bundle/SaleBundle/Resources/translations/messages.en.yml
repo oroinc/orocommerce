@@ -5,37 +5,54 @@ orob2b:
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
-            
+
             id.label: 'Numeric ID'
             qid.label: 'ID'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
-            
+            request.label: 'Request'
+
             sections:
                 general: 'General'
                 quote_products: 'Line Items'
-            
+
             widgets:
                 quote_information: 'Quote Information'
 
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
-            add_label: 'Add Line Item'
+            add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
+            product_replacement.label: 'Suggested Replacement:'
             product_sku.label: 'Product SKU'
+            product_replacement_sku.label: 'Suggested Replacement SKU'
             quote.label: 'Quote'
-            quote_product_items.label: 'Quote Product Lines'
-            
+            quote_product_offers.label: 'Quote Product Offers'
+            quote_product_requests.label: 'Quote Product Requests'
+            request_product_item.label: 'Requested Item'
+            comment.label: 'Seller Notes'
+            comment_customer.label: 'Customer Notes'
             product.removed: '{title} - removed'
+            product_replacement.removed: '{title} - removed'
+            type:
+                label: 'Type'
+                requested: 'Requested'
+                offer: 'Offer'
+                not_available: 'Not Available'
+            column:
+                product: 'Product'
+                type: 'Type'
+                quote_product_items: 'Offers'
 
-        quoteproductitem:
-            item: '{units}, {price} per {unit}'
-            entity_label: 'Quote Product Line'
-            entity_plural_label: 'Quote Product Lines'
+        quoteproductoffer:
+            item: '{0}{units}, {price} per {unit}|{1}{units} or more, {price} per {unit}'
+            item_bundled: '{0}{units}, {price} for every {units}|{1}{units} or more, {price} for every {units}'
+            entity_label: 'Quote Product Offer'
+            entity_plural_label: 'Quote Product Offers'
             add_label: 'Add Offer'
             id.label: 'ID'
             quantity.label: 'Quantity'
@@ -45,9 +62,38 @@ orob2b:
             value.label: 'Price Value'
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
-            
+            allow_increments.label: 'or more'
+            price_type:
+                label: 'Price Type'
+                bundled: 'bundled offer'
+                unit: 'at unit price of'
+
             product_unit.removed: '{title} - removed'
-                    
+            product_unit.empty: 'Choose Unit...'
+            column_summary: 'Summary'
+
+        quoteproductrequest:
+            item: '{units}, {price} per {unit}'
+            entity_label: 'Quote Product Request'
+            entity_plural_label: 'Quote Product Requests'
+            add_label: 'Add Request'
+            id.label: 'ID'
+            quantity.label: 'Requested Qty'
+            product_unit.label: 'Product Unit'
+            product_unit_code.label: 'Product Unit Code'
+            price.label: 'Requested Price'
+            value.label: 'Price Value'
+            currency.label: 'Price Currency'
+            quote_product.label: 'Quote Product'
+            request_product_item.label: 'Request Product Item'
+            product_unit.removed: '{title} - removed'
+            product_unit.empty: 'Choose Unit...'
+            column_summary: 'Summary'
+
         controller:
             quote:
                 saved.message: 'Quote has been saved'
+
+        btn:
+            add_seller_notes: 'Add Notes'
+            remove_seller_notes: 'Remove Seller Notes'

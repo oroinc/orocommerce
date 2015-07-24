@@ -7,9 +7,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-class QuoteProductItemCollectionType extends AbstractType
+class QuoteProductRequestCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_item_collection';
+    const NAME = 'orob2b_sale_quote_product_request_collection';
 
     /**
      * {@inheritdoc}
@@ -25,10 +25,11 @@ class QuoteProductItemCollectionType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'type'                  => QuoteProductItemType::NAME,
+            'type'                  => QuoteProductRequestType::NAME,
             'show_form_when_empty'  => false,
-            'error_bubbling'        => false,
-            'prototype_name'        => '__namequoteproductitem__'
+            'prototype_name'        => '__namequoteproductrequest__',
+            'allow_add'             => false,
+            'allow_delete'          => false,
         ]);
     }
 

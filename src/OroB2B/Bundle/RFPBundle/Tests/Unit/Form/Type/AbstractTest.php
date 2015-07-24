@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -11,12 +12,14 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 use OroB2B\Bundle\RFPBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
@@ -52,7 +55,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     abstract public function submitProvider();
 
-
     /**
      * {@inheritdoc}
      */
@@ -62,6 +64,18 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return [
             $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
         ];
+    }
+
+    /**
+     * @param TranslatorInterface $translator
+     * @return RequestProductItemType
+     */
+    protected function prepareRequestProductItemType(TranslatorInterface $translator)
+    {
+        $requestProductItemType = new RequestProductItemType($translator);
+        $requestProductItemType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
+
+        return $requestProductItemType;
     }
 
     /**
@@ -171,7 +185,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = new $className;
+            $entities[$className][$id] = new $className();
             $reflectionClass = new \ReflectionClass($className);
             $method = $reflectionClass->getProperty($primaryKey);
             $method->setAccessible(true);
@@ -189,6 +203,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getRequestProduct($productId = null, $comment = null, array $items = [])
     {
+        /* @var $product Product */
         $product = null;
 
         if ($productId) {
