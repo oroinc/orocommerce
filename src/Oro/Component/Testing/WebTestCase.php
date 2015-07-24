@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase as OroWebTestCase;
 
 /**
- * @inheritdoc
+ * {@inheritdoc}
  */
 abstract class WebTestCase extends OroWebTestCase
 {

@@ -14,6 +14,12 @@ oro_menu_config:
             extras:
                 description: 'orob2b.shoppinglist.menu.shortcut_shopping_list.description'
 
+        frontend_shopping_list:
+            label:           'orob2b.shoppinglist.entity_plural_label'
+            route:           'orob2b_shopping_list_frontend_index'
+            extras:
+                position:    20
+
     tree:
         application_menu:
             children:
@@ -23,7 +29,13 @@ oro_menu_config:
         shortcuts:
             children:
                 shortcut_shopping_list: ~
+        frontend_menu:
+            children:
+                frontend_shopping_list: ~
 
 oro_titles:
     orob2b_shopping_list_index: ~
     orob2b_shopping_list_view:  '%%label%%'
+    orob2b_shopping_list_frontend_index: orob2b.shoppinglist.entity_plural_label
+    orob2b_shopping_list_frontend_view:  '%%label%% - orob2b.shoppinglist.entity_plural_label'
+    orob2b_shopping_list_frontend_update:  '%%label%% - oro.ui.edit'

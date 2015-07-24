@@ -47,6 +47,7 @@ orob2b.rfp:
         add_label: 'Add Request Item'
         id.label: 'ID'
         quantity.label: 'Quantity'
+        request_product.label: 'Request Product'
         product_unit.label: 'Product Unit'
         product_unit_code.label: 'Product Unit Code'
         price.label: 'Price'
@@ -61,6 +62,7 @@ orob2b.rfp:
         label.label: 'Label'
         sort_order.label: 'Sort Order'
         deleted.label: 'Deleted'
+        translations.label: 'Translations'
 
     menu:
         rfp_tab.label: 'RFP'
@@ -89,6 +91,8 @@ orob2b.rfp:
         request_status_not_deletable: 'Request Status is not deletable'
         requestproduct.product.removed: '{title} - removed'
         requestproductitem.unit.removed: '{title} - removed'
+        request.create_quote.success: 'New Quote created'
+        request.create_quote.error: 'Can not create new Quote'
 
     datagrid:
         action_restore: 'Restore'
@@ -97,6 +101,7 @@ orob2b.rfp:
         delete: 'Delete'
         restore: 'Restore'
         change_status: 'Change Status'
+        create_quote: 'Create Quote'
 
     widget:
         change_status_title: 'Change Request For Proposal Status'
