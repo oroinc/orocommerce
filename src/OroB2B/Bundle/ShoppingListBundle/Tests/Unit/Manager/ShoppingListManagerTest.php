@@ -1,7 +1,9 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -30,74 +32,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->shoppingListTwo = new ShoppingList();
         $this->shoppingListTwo->setCurrent(false);
 
-        $shoppingListRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $shoppingListRepository->expects($this->any())
-            ->method('findCurrentForAccountUser')
-            ->willReturnCallback(function (AccountUser $accountUser) {
-                if ($accountUser->getFirstName() === 'setCurrent'
-                    && $accountUser->getFirstName() !== 'skip') {
-                    return $this->shoppingListOne;
-                }
-
-                return null;
-            });
-
-
-        $lineItemRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $lineItemRepository
-            ->expects($this->any())
-            ->method('findDuplicate')
-            ->willReturnCallback(function (LineItem $lineItem) {
-                /** @var ArrayCollection $shoppingListLineItems */
-                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
-                if ($lineItem->getShoppingList()->getId() === 1
-                    && $shoppingListLineItems->count() > 0
-                    && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
-                ) {
-                    return $lineItem->getShoppingList()->getLineItems()->current();
-                }
-
-                return null;
-            });
-
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager->expects($this->any())
-            ->method('getRepository')
-            ->willReturnCallback(function ($entityName) use ($shoppingListRepository, $lineItemRepository) {
-                $repository = null;
-                switch ($entityName) {
-                    case 'OroB2BShoppingListBundle:ShoppingList':
-                        $repository = $shoppingListRepository;
-                        break;
-                    case 'OroB2BShoppingListBundle:LineItem':
-                        $repository = $lineItemRepository;
-                        break;
-                }
-
-                return $repository;
-            });
-
-        $entityManager->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function ($obj) {
-                if ($obj instanceof ShoppingList) {
-                    $this->shoppingLists[] = $obj;
-                }
-                if ($obj instanceof LineItem) {
-                    $this->lineItems[] = $obj;
-                }
-            });
 
         $securityToken = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')
             ->disableOriginalConstructor()
@@ -118,6 +52,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $securityContext->expects($this->any())
             ->method('getToken')
             ->willReturn($securityToken);
+
+        $entityManager = $this->getEntityManager();
 
         $this->manager = new ShoppingListManager(
             $entityManager,
@@ -179,5 +115,83 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         /** @var LineItem $resultingItem */
         $resultingItem = array_shift($this->lineItems);
         $this->assertEquals(15, $resultingItem->getQuantity());
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getEntityManager()
+    {
+        $shoppingListRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $shoppingListRepository->expects($this->any())
+            ->method('findCurrentForAccountUser')
+            ->willReturnCallback(function (AccountUser $accountUser) {
+                if ($accountUser->getFirstName() === 'setCurrent'
+                    && $accountUser->getFirstName() !== 'skip'
+                ) {
+                    return $this->shoppingListOne;
+                }
+
+                return null;
+            });
+
+
+        $lineItemRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $lineItemRepository
+            ->expects($this->any())
+            ->method('findDuplicate')
+            ->willReturnCallback(function (LineItem $lineItem) {
+                /** @var ArrayCollection $shoppingListLineItems */
+                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
+                if ($lineItem->getShoppingList()->getId() === 1
+                    && $shoppingListLineItems->count() > 0
+                    && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
+                ) {
+                    return $lineItem->getShoppingList()->getLineItems()->current();
+                }
+
+                return null;
+            });
+
+        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects($this->any())
+            ->method('getRepository')
+            ->willReturnCallback(function ($entityName) use ($shoppingListRepository, $lineItemRepository) {
+                $repository = null;
+                switch ($entityName) {
+                    case 'OroB2BShoppingListBundle:ShoppingList':
+                        $repository = $shoppingListRepository;
+                        break;
+                    case 'OroB2BShoppingListBundle:LineItem':
+                        $repository = $lineItemRepository;
+                        break;
+                }
+
+                return $repository;
+            });
+
+        $entityManager->expects($this->any())
+            ->method('persist')
+            ->willReturnCallback(function ($obj) {
+                if ($obj instanceof ShoppingList) {
+                    $this->shoppingLists[] = $obj;
+                }
+                if ($obj instanceof LineItem) {
+                    $this->lineItems[] = $obj;
+                }
+            });
+
+        return $entityManager;
     }
 }
