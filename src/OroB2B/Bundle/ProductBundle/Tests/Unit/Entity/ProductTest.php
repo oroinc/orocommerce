@@ -32,11 +32,11 @@ class ProductTest extends EntityTestCase
     {
         $product = new Product();
 
-        $this->assertSame('', $product->__toString());
+        $this->assertSame('', (string)$product);
 
         $product->setSku(123);
 
-        $this->assertSame('123', $product->__toString());
+        $this->assertSame('123', (string)$product);
     }
 
     public function testPrePersist()
