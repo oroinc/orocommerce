@@ -103,6 +103,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
+            - @orob2b_pricing.model.frontend.price_list_request_hanlder
         calls:
             - [setRequest, ["@?request="]]
         tags:
@@ -111,6 +112,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.datagrid:
