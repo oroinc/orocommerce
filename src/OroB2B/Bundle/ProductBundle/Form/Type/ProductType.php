@@ -32,12 +32,23 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add(
+                'status',
+                'oro_enum_select',
+                [
+                    'label'     => 'orob2b.product.status.label',
+                    'enum_code' => 'prod_status',
+                    'configs'   => [
+                        'allowClear' => false,
+                    ]
+                ]
+            )
+            ->add(
                 'inventoryStatus',
                 'oro_enum_select',
                 [
                     'label'     => 'orob2b.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
-                    'configs' => [
+                    'configs'   => [
                         'allowClear' => false,
                     ]
                 ]
@@ -56,7 +67,7 @@ class ProductType extends AbstractType
                 [
                     'label'     => 'orob2b.product.visibility.label',
                     'enum_code' => 'prod_visibility',
-                    'configs' => [
+                    'configs'   => [
                         'allowClear' => false,
                     ]
                 ]
@@ -65,8 +76,8 @@ class ProductType extends AbstractType
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [
-                    'label' => 'orob2b.product.unit_precisions.label',
-                    'tooltip' => 'orob2b.product.form.tooltip.unit_precision',
+                    'label'    => 'orob2b.product.unit_precisions.label',
+                    'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
                     'required' => false
                 ]
             );
@@ -78,8 +89,8 @@ class ProductType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-            'intention' => 'product',
+            'data_class'           => $this->dataClass,
+            'intention'            => 'product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }

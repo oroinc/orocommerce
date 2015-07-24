@@ -1,4 +1,0 @@
-orob2b_shopping_list_frontend_view:
-    label: orob2b.shoppinglist.security.permission.view_shopping_list
-    type: action
-    group_name: "commerce"

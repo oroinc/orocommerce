@@ -12,7 +12,6 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductTest extends EntityTestCase
 {
-
     public function testProperties()
     {
         $now = new \DateTime('now');
@@ -32,11 +31,11 @@ class ProductTest extends EntityTestCase
     {
         $product = new Product();
 
-        $this->assertSame('', $product->__toString());
+        $this->assertSame('', (string)$product);
 
         $product->setSku(123);
 
-        $this->assertSame('123', $product->__toString());
+        $this->assertSame('123', (string)$product);
     }
 
     public function testPrePersist()
@@ -120,5 +119,26 @@ class ProductTest extends EntityTestCase
         $product->addUnitPrecision($unitPrecision);
 
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
+    }
+
+    public function testClone()
+    {
+        $id = 123;
+        $product = new Product();
+        $product->getUnitPrecisions()->add(new ProductUnitPrecision());
+
+        $refProduct = new \ReflectionObject($product);
+        $refId = $refProduct->getProperty('id');
+        $refId->setAccessible(true);
+        $refId->setValue($product, $id);
+
+        $this->assertEquals($id, $product->getId());
+        $this->assertCount(1, $product->getUnitPrecisions());
+
+        $productCopy = clone $product;
+
+        $this->assertNull($productCopy->getId());
+        $this->assertCount(0, $productCopy->getUnitPrecisions());
+
     }
 }

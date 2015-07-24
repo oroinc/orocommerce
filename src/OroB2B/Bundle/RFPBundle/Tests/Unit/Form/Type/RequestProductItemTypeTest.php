@@ -40,6 +40,7 @@ class RequestProductItemTypeTest extends AbstractTest
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->formType = new RequestProductItemType($this->translator);
+        $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
     }
 
     public function testGetName()

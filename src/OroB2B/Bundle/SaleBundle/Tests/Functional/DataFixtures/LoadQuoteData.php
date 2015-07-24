@@ -10,7 +10,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
@@ -24,8 +24,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const UNIT2     = 'product_unit.bottle';
     const UNIT3     = 'product_unit.box';
 
-    const CURRENCY1 = 'sale.currency.USD';
-    const CURRENCY2 = 'sale.currency.EUR';
+    const CURRENCY1 = 'USD';
+    const CURRENCY2 = 'EUR';
 
     /**
      * @var array
@@ -119,21 +119,21 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         }
 
         foreach ($items as $item) {
-            $productItem = new QuoteProductItem();
-            $productItem
+            $productOffer = new QuoteProductOffer();
+            $productOffer
                 ->setQuantity($item['quantity'])
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
             ;
 
             if ($this->hasReference($item['unit'])) {
-                $productItem->setProductUnit($this->getReference($item['unit']));
+                $productOffer->setProductUnit($this->getReference($item['unit']));
             } else {
-                $productItem->setProductUnitCode($item['unit']);
+                $productOffer->setProductUnitCode($item['unit']);
             }
 
-            $manager->persist($productItem);
+            $manager->persist($productOffer);
 
-            $product->addQuoteProductItem($productItem);
+            $product->addQuoteProductOffer($productOffer);
         }
 
         $manager->persist($product);

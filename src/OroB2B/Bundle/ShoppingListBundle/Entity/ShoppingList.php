@@ -423,7 +423,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @param AccountUser $accountUser
      *
-     * @return self
+     * @return $this
      */
     public function setAccountUser(AccountUser $accountUser)
     {

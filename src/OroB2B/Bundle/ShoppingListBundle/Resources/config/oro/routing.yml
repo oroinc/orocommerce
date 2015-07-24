@@ -6,7 +6,7 @@ orob2b_shopping_list:
 orob2b_shopping_list_frontend:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/ShoppingListController.php"
     type:     annotation
-    prefix:   /shoppinglist
+    prefix:   /account/shoppinglist
     options:
         frontend: true
 
