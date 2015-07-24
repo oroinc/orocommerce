@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +18,10 @@ class LineItemHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $manager;
+    /** @var Registry */
+    protected $registry;
 
-    /** @var ObjectManager */
+    /** @var int */
     protected $savedId;
 
     /**
@@ -37,7 +36,7 @@ class LineItemHandler
     ) {
         $this->form = $form;
         $this->request = $request;
-        $this->manager = $registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $this->registry = $registry;
     }
 
     /**
@@ -47,11 +46,16 @@ class LineItemHandler
      */
     public function process(LineItem $lineItem)
     {
+        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        /** @var \PDO $connection */
+        $connection = $this->registry->getConnection();
+
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
+            $connection->beginTransaction();
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 /** @var LineItemRepository $lineItemRepository */
-                $lineItemRepository = $this->manager->getRepository('OroB2BShoppingListBundle:LineItem');
+                $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
                 $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
                 if ($existingLineItem) {
@@ -64,12 +68,15 @@ class LineItemHandler
                     }
                     $this->savedId = $existingLineItem->getId();
                 } else {
-                    $this->manager->persist($lineItem);
+                    $manager->persist($lineItem);
                 }
 
-                $this->manager->flush();
+                $manager->flush();
+                $connection->commit();
 
                 return true;
+            } else {
+                $connection->rollBack();
             }
         }
 

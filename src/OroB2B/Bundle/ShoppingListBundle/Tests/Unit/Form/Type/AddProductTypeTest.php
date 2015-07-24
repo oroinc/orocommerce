@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -14,7 +11,9 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\EntityType;
-
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType;
@@ -28,6 +27,8 @@ class AddProductTypeTest extends FormIntegrationTestCase
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
     const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
+
+    const NEW_SHOPPING_LIST_ID = 10;
 
     /**
      * @var AddProductType
@@ -66,6 +67,11 @@ class AddProductTypeTest extends FormIntegrationTestCase
         $shoppingListManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $shoppingListManager
+            ->expects($this->any())
+            ->method('createCurrent')
+            ->willReturn($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
 
         $this->type = new AddProductType(
             $this->getRegistry(),
@@ -132,6 +138,18 @@ class AddProductTypeTest extends FormIntegrationTestCase
         $this->assertEquals(['add_product'], $resolvedOptions['validation_groups']);
     }
 
+    public function testCheckShoppingListLabel()
+    {
+        $context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
+        $context
+            ->expects($this->once())
+            ->method('addViolationAt');
+
+        $lineItem = new LineItem();
+
+        $this->type->checkShoppingListLabel($lineItem, $context);
+    }
+
     /**
      * @dataProvider submitDataProvider
      *
@@ -166,20 +184,37 @@ class AddProductTypeTest extends FormIntegrationTestCase
 
         $expectedLineItem = clone $defaultLineItem;
         $expectedLineItem
-            ->setQuantity(10)
+            ->setQuantity(15.112)
             ->setUnit($product->getUnitPrecision('kg')->getUnit())
             ->setShoppingList($expectedShoppingList);
+
+        $expectedLineItem2 = clone $defaultLineItem;
+        $expectedLineItem2
+            ->setQuantity(10)
+            ->setUnit($product->getUnitPrecision('kg')->getUnit())
+            ->setShoppingList($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
 
         return [
             'New line item with existing shopping list' => [
                 'defaultData'   => $defaultLineItem,
                 'submittedData' => [
                     'shoppingList'  => 1,
-                    'quantity' => 10,
-                    'unit'     => 'kg'
+                    'quantity' => 15.1119,
+                    'unit'     => 'kg',
+                    'shoppingListLabel' => null
                 ],
                 'expectedData'  => $expectedLineItem
             ],
+            'New line item with new shopping list' => [
+                'defaultData'   => $defaultLineItem,
+                'submittedData' => [
+                    'shoppingList'  => null,
+                    'quantity' => 10,
+                    'unit'     => 'kg',
+                    'shoppingListLabel' => 'New Shopping List'
+                ],
+                'expectedData'  => $expectedLineItem2,
+            ]
         ];
     }
 
@@ -235,7 +270,7 @@ class AddProductTypeTest extends FormIntegrationTestCase
      * @param integer $id
      * @param string  $label
      *
-     * @return Product
+     * @return ShoppingList
      */
     protected function getShoppingList($id, $label)
     {
@@ -288,7 +323,7 @@ class AddProductTypeTest extends FormIntegrationTestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\AbstractToken');
         $token
             ->expects($this->any())
-            ->method('getUsers')
+            ->method('getUser')
             ->willReturn(new AccountUser());
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityContext $securityContext */

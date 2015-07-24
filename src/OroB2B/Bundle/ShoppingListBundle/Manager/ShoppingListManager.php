@@ -28,11 +28,10 @@ class ShoppingListManager
     /**
      * @param AccountUser $accountUser
      * @param string      $label
-     * @param boolean     $flush
      *
      * @return ShoppingList
      */
-    public function createCurrent(AccountUser $accountUser, $label = 'Default', $flush = true)
+    public function createCurrent(AccountUser $accountUser, $label = 'Default')
     {
         $shoppingList = new ShoppingList();
         $shoppingList
@@ -42,7 +41,7 @@ class ShoppingListManager
             ->setAccountUser($accountUser)
             ->setLabel($label);
 
-        $this->setCurrent($accountUser, $shoppingList, $flush);
+        $this->setCurrent($accountUser, $shoppingList);
 
         return $shoppingList;
     }
@@ -50,9 +49,8 @@ class ShoppingListManager
     /**
      * @param AccountUser  $accountUser
      * @param ShoppingList $shoppingList
-     * @param boolean      $flush
      */
-    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList, $flush = true)
+    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
     {
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->manager->getRepository('OroB2BShoppingListBundle:ShoppingList');
@@ -64,8 +62,6 @@ class ShoppingListManager
         $shoppingList->setCurrent(true);
         $this->manager->persist($shoppingList);
 
-        if ($flush) {
-            $this->manager->flush();
-        }
+        $this->manager->flush();
     }
 }
