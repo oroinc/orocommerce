@@ -3,9 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 
 class ShoppingListRepository extends EntityRepository
@@ -25,6 +23,11 @@ class ShoppingListRepository extends EntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
     public function createFindForAccountUserQueryBuilder(AccountUser $accountUser)
     {
         $qb = $this->createQueryBuilder('sl');

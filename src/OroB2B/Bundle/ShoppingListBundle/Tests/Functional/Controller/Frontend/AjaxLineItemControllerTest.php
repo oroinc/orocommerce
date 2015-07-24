@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Frontend\Controller;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
