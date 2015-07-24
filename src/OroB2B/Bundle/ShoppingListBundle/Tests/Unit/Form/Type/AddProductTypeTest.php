@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
+use BeSimple\SoapBundle\ServiceDefinition\Annotation\Method;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -113,6 +114,9 @@ class AddProductTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    /**
+     * Method testBuildForm
+     */
     public function testBuildForm()
     {
         $form = $this->factory->create($this->type);
@@ -123,11 +127,17 @@ class AddProductTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('shoppingListLabel'));
     }
 
+    /**
+     * mMethod testBuildForm
+     */
     public function testGetName()
     {
         $this->assertEquals(AddProductType::NAME, $this->type->getName());
     }
 
+    /**
+     * Method testSetDefaultOptions
+     */
     public function testSetDefaultOptions()
     {
         $resolver = new OptionsResolver();
@@ -138,6 +148,9 @@ class AddProductTypeTest extends FormIntegrationTestCase
         $this->assertEquals(['add_product'], $resolvedOptions['validation_groups']);
     }
 
+    /**
+     * Method testSetDefaultOptions
+     */
     public function testCheckShoppingListLabel()
     {
         $context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
