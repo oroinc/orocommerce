@@ -11,6 +11,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+
 use OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
@@ -64,7 +66,7 @@ class RequestController extends Controller
                 $rfpRequest->setFrontendOwner($user);
             } else {
                 $rfpRequest->setOrganization(
-                    $this->get('orob2b_website.manager')->getCurrentWebsite()->getOrganization()
+                    $this->getWebsiteManager()->getCurrentWebsite()->getOrganization()
                 );
             }
 
@@ -133,5 +135,13 @@ class RequestController extends Controller
         $purifierConfig->set('HTML.Allowed', '');
 
         return new \HTMLPurifier($purifierConfig);
+    }
+
+    /**
+     * @return WebsiteManager
+     */
+    protected function getWebsiteManager()
+    {
+        return $this->get('orob2b_website.manager');
     }
 }

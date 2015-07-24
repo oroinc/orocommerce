@@ -19,7 +19,6 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    const SHOPPING_LIST_CLASS = 'OroB2BShoppingListBundle:ShoppingList';
     const ROLE_FRONTEND_BUYER = 'ROLE_FRONTEND_BUYER';
 
     /**
@@ -68,11 +67,11 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
 
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
+            $className = $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class');
             foreach ($aclManager->getAllExtensions() as $extension) {
                 if ($extension instanceof EntityAclExtension) {
                     $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-
-                    $oid = $aclManager->getOid('entity:' . self::SHOPPING_LIST_CLASS);
+                    $oid = $aclManager->getOid('entity:' . $className);
                     $builder = $aclManager->getMaskBuilder($oid);
                     $mask = $builder->reset()->get();
                     foreach ($allowedAcls as $acl) {
@@ -93,7 +92,8 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
      */
     protected function getBuyerRole(ObjectManager $manager)
     {
-        return $manager->getRepository('OroB2BCustomerBundle:AccountUserRole')
+        return $manager
+            ->getRepository($this->container->getParameter('orob2b_customer.entity.account_user_role.class'))
             ->findOneBy(['role' => self::ROLE_FRONTEND_BUYER]);
     }
 }
