@@ -91,11 +91,16 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     {
         $showTierPrices = parent::getShowTierPrices();
 
-        if ($this->request
-            && !$this->request->get(self::TIER_PRICES_KEY)
+        if ((!$this->request || ($this->request && !$this->request->get(self::TIER_PRICES_KEY)))
             && $this->session->has(self::TIER_PRICES_KEY)
         ) {
             $showTierPrices = $this->session->get(self::TIER_PRICES_KEY);
+        }
+
+        if (is_string($showTierPrices)) {
+            $showTierPrices = filter_var($showTierPrices, FILTER_VALIDATE_BOOLEAN);
+        } else {
+            $showTierPrices = (bool) $showTierPrices;
         }
 
         if ($this->request && $this->request->get(self::SAVE_STATE_KEY)) {

@@ -132,7 +132,7 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            var paramsString = this._urlParamsToString(params);
+            var paramsString = this._urlParamsToString(_.omit(params, 'saveState'));
             if (paramsString.length) {
                 paramsString = '?' + paramsString;
             }
