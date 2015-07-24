@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Duplicator;
 
-use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
@@ -62,7 +61,7 @@ class ProductDuplicator
     /**
      * @param Product $product
      * @return Product
-     * @throws Exception
+     * @throws \Exception
      */
     public function duplicate(Product $product)
     {
@@ -81,7 +80,7 @@ class ProductDuplicator
             );
 
             $objectManager->getConnection()->commit();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $objectManager->getConnection()->rollBack();
             throw $e;
         }

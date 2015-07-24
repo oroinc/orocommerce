@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
-use ReflectionObject;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCase;
@@ -130,7 +128,7 @@ class ProductTest extends EntityTestCase
         $product = new Product();
         $product->getUnitPrecisions()->add(new ProductUnitPrecision());
 
-        $refProduct = new ReflectionObject($product);
+        $refProduct = new \ReflectionObject($product);
         $refId = $refProduct->getProperty('id');
         $refId->setAccessible(true);
         $refId->setValue($product, $id);

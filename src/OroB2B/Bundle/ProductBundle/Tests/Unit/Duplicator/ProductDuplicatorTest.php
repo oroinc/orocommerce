@@ -194,6 +194,11 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             ->with($attachmentFile2)
             ->will($this->returnValue($attachmentFileCopy2));
 
+        $this->connection->expects($this->once())
+            ->method('beginTransaction');
+        $this->connection->expects($this->once())
+            ->method('commit');
+
         $productCopy = $this->duplicator->duplicate($product);
         $productCopyUnitPrecisions = $productCopy->getUnitPrecisions();
 
@@ -211,6 +216,34 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             $productCopyUnitPrecisions[1]->getUnit()->getDefaultPrecision()
         );
         $this->assertEquals($imageCopy, $productCopy->getImage());
+    }
+
+    public function testDuplicateFailed()
+    {
+        $product = (new StubProduct())
+            ->setSku(self::PRODUCT_SKU);
+
+        $this->skuIncrementor->expects($this->once())
+            ->method('increment')
+            ->with(self::PRODUCT_SKU)
+            ->will($this->returnValue(self::PRODUCT_COPY_SKU));
+
+        $this->attachmentProvider->expects($this->once())
+            ->method('getEntityAttachments')
+            ->with($product)
+            ->will($this->returnValue([]));
+
+        $this->connection->expects($this->once())
+            ->method('beginTransaction');
+        $this->connection->expects($this->once())
+            ->method('commit')
+            ->will($this->throwException(new \Exception()));
+        $this->connection->expects($this->once())
+            ->method('rollback');
+
+        $this->setExpectedException('Exception');
+
+        $this->duplicator->duplicate($product);
     }
 
     /**

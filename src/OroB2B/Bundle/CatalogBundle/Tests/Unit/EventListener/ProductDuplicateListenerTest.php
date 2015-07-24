@@ -71,18 +71,16 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->categoryRepository->expects($this->once())
             ->method('findOneByProduct')
-            ->will($this->returnCallback(
-                function () {
-                    $args = func_get_args();
-                    $product = $args[0];
+            ->will($this->returnCallback(function () {
+                $args = func_get_args();
+                $product = $args[0];
 
-                    if ($this->category->getProducts()->contains($product)) {
-                        return $this->category;
-                    } else {
-                        return null;
-                    }
-                })
-            );
+                if ($this->category->getProducts()->contains($product)) {
+                    return $this->category;
+                } else {
+                    return null;
+                }
+            }));
 
         $this->objectManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
