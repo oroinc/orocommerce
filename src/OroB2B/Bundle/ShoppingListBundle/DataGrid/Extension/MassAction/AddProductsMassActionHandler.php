@@ -81,7 +81,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         }
         $this->entityManager->flush();
 
-        return $this->getResponse($args, ++$iteration);
+        return $this->getResponse($args, $iteration > 0 ? ++$iteration : $iteration);
     }
 
     /**
@@ -93,8 +93,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     {
         $productsQueryBuilder = $this->entityManager
             ->getRepository('OroB2BProductBundle:Product')
-            ->createQueryBuilder('p')
-            ->select('p');
+            ->createQueryBuilder('p');
+
+        $productsQueryBuilder->select('p');
         if (count($productIds) > 0) {
             $productsQueryBuilder
                 ->where('p IN (:product_ids)')
@@ -109,7 +110,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
      *
      * @return bool
      */
-    protected function isAllSelected($data)
+    protected function isAllSelected(array $data)
     {
         return array_key_exists('inset', $data) && $data['inset'] === '0';
     }
