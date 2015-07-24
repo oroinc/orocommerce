@@ -12,7 +12,6 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductTest extends EntityTestCase
 {
-
     public function testProperties()
     {
         $now = new \DateTime('now');
