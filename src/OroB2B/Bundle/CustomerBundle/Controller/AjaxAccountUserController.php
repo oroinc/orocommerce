@@ -111,6 +111,22 @@ class AjaxAccountUserController extends Controller
     }
 
     /**
+     * @Route("/get-customer/{id}",
+     *      name="orob2b_customer_account_user_get_customer",
+     *      requirements={"id"="\d+"})
+     * @AclAncestor("orob2b_customer_account_user_view")
+     *
+     * @param AccountUser $accountUser
+     * @return JsonResponse
+     */
+    public function getCustomerIdAction(AccountUser $accountUser)
+    {
+        return new JsonResponse([
+            'customerId' => $accountUser->getCustomer() ? $accountUser->getCustomer()->getId() : null
+        ]);
+    }
+
+    /**
      * @param AccountUser $accountUser
      * @param boolean $enabled
      * @param string $successMessage
@@ -125,22 +141,6 @@ class AjaxAccountUserController extends Controller
         return new JsonResponse([
             'successful' => true,
             'message' => $successMessage
-        ]);
-    }
-
-    /**
-     * @Route("/get-customer/{id}",
-     *      name="orob2b_customer_account_user_get_customer",
-     *      requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_customer_account_user_view")
-     *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
-     */
-    public function getPriceListCurrencyList(AccountUser $accountUser)
-    {
-        return new JsonResponse([
-            'customerId' => $accountUser->getCustomer() ? $accountUser->getCustomer()->getId() : null
         ]);
     }
 }
