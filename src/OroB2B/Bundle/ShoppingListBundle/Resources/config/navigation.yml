@@ -17,6 +17,8 @@ oro_menu_config:
         frontend_shopping_list:
             label:           'orob2b.shoppinglist.entity_plural_label'
             route:           'orob2b_shopping_list_frontend_index'
+            extras:
+                position:    20
 
     tree:
         application_menu:
