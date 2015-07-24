@@ -61,7 +61,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     public function handle(MassActionHandlerArgs $args)
     {
         $data = $args->getData();
-        $isAllSelected = $this->isAllSelected($args->getData());
+        $isAllSelected = $this->isAllSelected($data);
         $shoppingList = $this->getShoppingList($data['shoppingList']);
         $productIds = !$isAllSelected && array_key_exists('values', $data) ? explode(',', $data['values']) : [];
 
