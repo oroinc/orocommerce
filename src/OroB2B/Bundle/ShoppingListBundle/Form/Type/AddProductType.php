@@ -193,6 +193,9 @@ class AddProductType extends AbstractType
 
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
+
+            // TODO: check why this value isn't submitted via FormEvent::setData
+            $formData->setShoppingList($shoppingList);
         }
 
         // Round quantity
