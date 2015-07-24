@@ -9,19 +9,24 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
+use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
-class QuoteProductItemType extends AbstractType
+class QuoteProductRequestType extends AbstractType
 {
-    const NAME = 'orob2b_sale_quote_product_item';
+    const NAME = 'orob2b_sale_quote_product_request';
 
     /**
      * @var TranslatorInterface
      */
     protected $translator;
+
+    /**
+     * @var string
+     */
+    protected $dataClass;
 
     /**
      * @param TranslatorInterface $translator
@@ -32,18 +37,26 @@ class QuoteProductItemType extends AbstractType
     }
 
     /**
+     * @param string $dataClass
+     */
+    public function setDataClass($dataClass)
+    {
+        $this->dataClass = $dataClass;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('quantity', 'integer', [
-                'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.quantity.label',
+                'required'  => false,
+                'label'     => 'orob2b.sale.quoteproductrequest.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
-                'required'  => true,
-                'label'     => 'orob2b.sale.quoteproductitem.price.label',
+                'required'  => false,
+                'label'     => 'orob2b.sale.quoteproductrequest.price.label',
             ])
         ;
 
@@ -57,8 +70,8 @@ class QuoteProductItemType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem',
-            'intention'     => 'sale_quote_product_item',
+            'data_class'    => $this->dataClass,
+            'intention'     => 'sale_quote_product_request',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
@@ -76,8 +89,8 @@ class QuoteProductItemType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
-        /* @var $quoteProductItem QuoteProductItem */
-        $quoteProductItem = $event->getData();
+        /* @var $quoteProductRequest QuoteProductRequest */
+        $quoteProductRequest = $event->getData();
         $form = $event->getForm();
         $choices = [];
 
@@ -86,20 +99,20 @@ class QuoteProductItemType extends AbstractType
             'label'     => 'orob2b.product.productunit.entity_label',
         ];
 
-        if ($quoteProductItem && null !== $quoteProductItem->getId()) {
-            $product = $quoteProductItem->getQuoteProduct()->getProduct();
+        if ($quoteProductRequest && null !== $quoteProductRequest->getId()) {
+            $product = $quoteProductRequest->getQuoteProduct()->getProduct();
             if ($product) {
                 foreach ($product->getUnitPrecisions() as $unitPrecision) {
                     $choices[] = $unitPrecision->getUnit();
                 }
             }
-            $productUnit = $quoteProductItem->getProductUnit();
+            $productUnit = $quoteProductRequest->getProductUnit();
             if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
                 // ProductUnit was removed
                 $productUnitOptions['empty_value']  = $this->translator->trans(
                     'orob2b.sale.quoteproduct.product.removed',
                     [
-                        '{title}' => $quoteProductItem->getProductUnitCode(),
+                        '{title}' => $quoteProductRequest->getProductUnitCode(),
                     ]
                 );
             }

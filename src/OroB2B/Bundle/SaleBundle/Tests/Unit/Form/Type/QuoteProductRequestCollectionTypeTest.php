@@ -7,13 +7,13 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemType;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductItemCollectionType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
-class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
+class QuoteProductRequestCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var QuoteProductItemCollectionType
+     * @var QuoteProductRequestCollectionType
      */
     protected $formType;
 
@@ -24,7 +24,7 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new QuoteProductItemCollectionType();
+        $this->formType = new QuoteProductRequestCollectionType();
     }
 
     public function testSetDefaultOptions()
@@ -34,10 +34,11 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'type'  => QuoteProductItemType::NAME,
-                'show_form_when_empty'  => false,
-                'error_bubbling'        => false,
-                'prototype_name'        => '__namequoteproductitem__',
+                'type' => QuoteProductRequestType::NAME,
+                'show_form_when_empty' => false,
+                'prototype_name' => '__namequoteproductrequest__',
+                'allow_add' => false,
+                'allow_delete' => false,
             ])
         ;
 
@@ -51,6 +52,6 @@ class QuoteProductItemCollectionTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals(QuoteProductItemCollectionType::NAME, $this->formType->getName());
+        $this->assertEquals(QuoteProductRequestCollectionType::NAME, $this->formType->getName());
     }
 }
