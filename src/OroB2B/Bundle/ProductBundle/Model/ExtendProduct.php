@@ -12,6 +12,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  * @method Product setInventoryStatus(AbstractEnumValue $enumId)
  * @method AbstractEnumValue getVisibility()
  * @method Product setVisibility(AbstractEnumValue $enumId)
+ * @method AbstractEnumValue getStatus()
+ * @method Product setStatus(AbstractEnumValue $status)
  * @method File getImage()
  * @method Product setImage(File $image)
  */
