@@ -24,7 +24,22 @@ class ShoppingListRepository extends EntityRepository
 
     /**
      * @param AccountUser $accountUser
-     * @param $id
+     *
+     * @return array
+     */
+    public function findByUser(AccountUser $accountUser)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list')
+            ->where('list.accountUser = :accountUser')
+            ->setParameter('accountUser', $accountUser)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param             $id
      *
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException

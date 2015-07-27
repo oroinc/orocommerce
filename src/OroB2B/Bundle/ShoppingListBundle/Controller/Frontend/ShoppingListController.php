@@ -216,10 +216,12 @@ class ShoppingListController extends Controller
      */
     public function getProductsAddBtnAction()
     {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
         $shoppingLists = $this
             ->getDoctrine()
             ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->findAll();
+            ->findByUser($accountUser);
 
         return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
             'shoppingLists' => $shoppingLists
