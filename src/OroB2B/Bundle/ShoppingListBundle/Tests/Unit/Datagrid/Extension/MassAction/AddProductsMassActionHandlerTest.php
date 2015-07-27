@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
+use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
 class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,25 +29,11 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->args = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $entityManager = $this->getEntityManager();
-        $shoppingListManager = $this->getShoppingListManager();
-
-        $translator = $this->getTranslator();
-        $securityContext = $this->getSecurityContext();
-        $serviceLink = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->handler = new AddProductsMassActionHandler(
-            $entityManager,
-            $shoppingListManager,
-            $translator,
-            $securityContext,
-            $serviceLink
+            $this->getManagerRegistry(),
+            $this->getShoppingListManager(),
+            $this->getTranslator(),
+            $this->getSecurityContext()
         );
     }
 
@@ -55,62 +42,11 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => AddProductsMassActionHandler::CURRENT_SHOPPING_LIST_KEY]);
+            ->willReturn(['shoppingList' => ArgsParser::CURRENT_SHOPPING_LIST_KEY]);
 
-        $method = $this->getHandlerMethod('handle');
-        /** @var MassActionResponse $response */
-        $response = $method->invokeArgs($this->handler, [$args]);
+        $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals(2, $response->getOptions()['count']);
-    }
-
-    public function testGetProductsQueryBuilder()
-    {
-        $method = $this->getHandlerMethod('getProductsQueryBuilder');
-        /** @var QueryBuilder $builder */
-        $builder = $method->invokeArgs($this->handler, []);
-        $this->assertInstanceOf('Doctrine\ORM\QueryBuilder', $builder);
-    }
-
-    public function testIsAllSelected()
-    {
-        $method = $this->getHandlerMethod('isAllSelected');
-        $result = $method->invokeArgs(
-            $this->handler,
-            [['inset' => '0']]
-        );
-        $this->assertTrue($result);
-    }
-
-    public function testGetShoppingList()
-    {
-        $method = $this->getHandlerMethod('getShoppingList');
-        $shoppingList = $method->invokeArgs($this->handler, [AddProductsMassActionHandler::CURRENT_SHOPPING_LIST_KEY]);
-        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingList);
-    }
-
-    public function testGetResponse()
-    {
-        $args = $this->getMassActionArgs();
-        $method = $this->getHandlerMethod('getResponse');
-        /** @var MassActionResponse $result */
-        $result = $method->invokeArgs($this->handler, [$args, 1]);
-        $this->assertTrue($result->isSuccessful());
-        $this->assertEquals($result->getMessage(), 'orob2b.shoppinglist.actions.add_success_message');
-    }
-
-    /**
-     * @param string $methodName
-     *
-     * @return \ReflectionMethod
-     */
-    protected function getHandlerMethod($methodName)
-    {
-        $class = new \ReflectionClass(get_class($this->handler));
-        $method = $class->getMethod($methodName);
-        $method->setAccessible(true);
-
-        return $method;
     }
 
     /**
@@ -157,6 +93,16 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('createCurrent')
             ->willReturn(new ShoppingList());
 
+        $shoppingListManager->expects($this->any())
+            ->method('getForCurrentUser')
+            ->willReturn(new ShoppingList());
+
+        $shoppingListManager->expects($this->once())
+            ->method('bulkAddLineItems')
+            ->willReturnCallback(function (array $lineItems) {
+                return count($lineItems);
+            });
+
         return $shoppingListManager;
     }
 
@@ -165,7 +111,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getSecurityContext()
     {
-        $context = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
+        $context = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContextInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -183,13 +129,17 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($token);
 
+        $context->expects($this->any())
+            ->method('isGranted')
+            ->willReturn(true);
+
         return $context;
     }
 
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getEntityManager()
+    protected function getManagerRegistry()
     {
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
 
@@ -218,10 +168,11 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
         $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
+            ->setMethods(['getProductsQueryBuilder'])
             ->getMock();
 
         $productRepository->expects($this->any())
-            ->method('createQueryBuilder')
+            ->method('getProductsQueryBuilder')
             ->willReturn($queryBuilder);
 
         $shoppingListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -230,19 +181,18 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->any())
             ->method('getRepository')
-            ->willReturnCallback(function ($entityName) use ($productRepository, $shoppingListRepository) {
-                $repo = null;
-                if ($entityName == 'OroB2BProductBundle:Product') {
-                    $repo = $productRepository;
-                }
+            ->will($this->returnValueMap([
+                ['OroB2BShoppingListBundle:ShoppingList', $shoppingListRepository],
+                ['OroB2BProductBundle:Product', $productRepository]
+            ]));
 
-                if ($entityName == 'OroB2BShoppingListBundle:ShoppingList') {
-                    $repo = $shoppingListRepository;
-                }
+        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()->getMock();
 
-                return $repo;
-            });
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
 
-        return $em;
+        return $managerRegistry;
     }
 }

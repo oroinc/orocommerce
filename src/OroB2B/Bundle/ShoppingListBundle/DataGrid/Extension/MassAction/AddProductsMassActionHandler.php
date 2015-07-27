@@ -4,55 +4,50 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
-use Oro\Bundle\EntityConfigBundle\DependencyInjection\Utils\ServiceLink;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {
-    const CURRENT_SHOPPING_LIST_KEY = 'current';
     const FLUSH_BATCH_SIZE = 100;
 
-    /** @var  EntityManager */
-    protected $entityManager;
     /** @var ShoppingListManager */
     protected $shoppingListManager;
     /** @var TranslatorInterface */
     protected $translator;
-    /** @var SecurityContext */
+    /** @var SecurityContextInterface */
     protected $securityContext;
-    /** @var ServiceLink */
-    protected $securityFacadeLink;
+    /** @var  EntityManager */
+    protected $productEm;
 
     /**
-     * @param EntityManager       $entityManager
+     * @param ManagerRegistry     $managerRegistry
      * @param ShoppingListManager $shoppingListManager
      * @param TranslatorInterface $translator
-     * @param SecurityContext     $securityContext
-     * @param ServiceLink         $securityFacadeLink
+     * @param SecurityContextInterface     $securityContext
      */
     public function __construct(
-        EntityManager $entityManager,
+        ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
         TranslatorInterface $translator,
-        SecurityContext $securityContext,
-        ServiceLink $securityFacadeLink
+        SecurityContextInterface $securityContext
     ) {
-        $this->entityManager = $entityManager;
         $this->shoppingListManager = $shoppingListManager;
         $this->translator = $translator;
         $this->securityContext = $securityContext;
-        $this->securityFacadeLink = $securityFacadeLink;
+        $this->productEm = $managerRegistry->getManagerForClass('OroB2BProductBundle:Product');
     }
 
     /**
@@ -60,16 +55,24 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
      */
     public function handle(MassActionHandlerArgs $args)
     {
-        $data = $args->getData();
-        $isAllSelected = $this->isAllSelected($data);
-        $shoppingList = $this->getShoppingList($data['shoppingList']);
-        $productIds = !$isAllSelected && array_key_exists('values', $data) ? explode(',', $data['values']) : [];
+        $argsParser = new ArgsParser($args);
+        $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
-        $iterableResult = $this->getProductsQueryBuilder($productIds)->getQuery()->iterate();
+        if (!$this->securityContext->isGranted('EDIT', $shoppingList)) {
+            $this->generateResponse($args);
+        }
 
-        $added = 0;
-        /** @var Product $entity */
-        foreach ($iterableResult as $iteration => $entity) {
+        /** @var ProductRepository $productsRepo */
+        $productsRepo = $this->productEm->getRepository('OroB2BProductBundle:Product');
+
+        $iterableResult = $productsRepo
+            ->getProductsQueryBuilder($argsParser->getProductIds())
+            ->getQuery()
+            ->iterate();
+
+        $lineItems = [];
+        foreach ($iterableResult as $entity) {
+            /** @var Product $entity */
             $entity = $entity[0];
             /** @var ProductUnitPrecision $unitPrecision */
             $unitPrecision = $entity->getUnitPrecisions()->first();
@@ -77,66 +80,13 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
                 ->setProduct($entity)
                 ->setQuantity(1)
                 ->setUnit($unitPrecision->getUnit());
-            $flush = ($iteration % self::FLUSH_BATCH_SIZE) === 0;
-            $this->shoppingListManager->addLineItem($lineItem, $shoppingList, $flush);
-            $added++;
-        }
-        $this->entityManager->flush();
-
-        return $this->getResponse($args, $added);
-    }
-
-    /**
-     * @param array $productIds
-     *
-     * @return \Doctrine\ORM\QueryBuilder
-     */
-    protected function getProductsQueryBuilder($productIds = [])
-    {
-        $productsQueryBuilder = $this->entityManager
-            ->getRepository('OroB2BProductBundle:Product')
-            ->createQueryBuilder('p');
-
-        $productsQueryBuilder->select('p');
-        if (count($productIds) > 0) {
-            $productsQueryBuilder
-                ->where('p IN (:product_ids)')
-                ->setParameter('product_ids', $productIds);
+            array_push($lineItems, $lineItem);
         }
 
-        return $productsQueryBuilder;
-    }
+        $addedCnt = $this->shoppingListManager
+            ->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
 
-    /**
-     * @param array $data
-     *
-     * @return bool
-     */
-    protected function isAllSelected(array $data)
-    {
-        return array_key_exists('inset', $data) && $data['inset'] === '0';
-    }
-
-    /**
-     * @param int|string $shoppingList
-     *
-     * @return ShoppingList|null
-     */
-    protected function getShoppingList($shoppingList)
-    {
-        $user = $this->securityContext->getToken()->getUser();
-        $isCurrent = $shoppingList === self::CURRENT_SHOPPING_LIST_KEY;
-        $repository = $this->entityManager->getRepository('OroB2BShoppingListBundle:ShoppingList');
-
-        $shoppingList = !$isCurrent
-            ? $repository->findByUserAndId($user, $shoppingList)
-            : $repository->findCurrentForAccountUser($user);
-
-        if (!$shoppingList instanceof ShoppingList) {
-            $shoppingList = $this->shoppingListManager->createCurrent();
-        }
-
-        return $shoppingList;
+        return $this->generateResponse($args, $addedCnt);
     }
 
     /**
@@ -145,25 +95,19 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
      *
      * @return MassActionResponse
      */
-    protected function getResponse(MassActionHandlerArgs $args, $entitiesCount = 0)
+    protected function generateResponse(MassActionHandlerArgs $args, $entitiesCount = 0)
     {
-        $massAction = $args->getMassAction();
-        $responseMessage = $massAction->getOptions()->offsetGetByPath(
-            '[messages][success]',
-            'orob2b.shoppinglist.actions.add_success_message'
-        );
-
-        $successful = $entitiesCount > 0;
-        $options = ['count' => $entitiesCount];
-
         return new MassActionResponse(
-            $successful,
+            $entitiesCount > 0,
             $this->translator->transChoice(
-                $responseMessage,
+                $args->getMassAction()->getOptions()->offsetGetByPath(
+                    '[messages][success]',
+                    'orob2b.shoppinglist.actions.add_success_message'
+                ),
                 $entitiesCount,
                 ['%count%' => $entitiesCount]
             ),
-            $options
+            ['count' => $entitiesCount]
         );
     }
 }

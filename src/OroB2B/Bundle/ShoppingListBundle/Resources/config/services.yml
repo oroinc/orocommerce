@@ -30,5 +30,5 @@ services:
     orob2b_shopping_list.shopping_list.manager:
         class: %orob2b_shopping_list.shopping_list.manager.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @doctrine
             - @security.context

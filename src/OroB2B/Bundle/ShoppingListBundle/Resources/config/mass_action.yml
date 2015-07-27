@@ -14,8 +14,7 @@ services:
     orob2b_shopping_list.mass_action.add_products_handler:
         class: %orob2b_shopping_list.mass_action.add_products_handler.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @doctrine
             - @orob2b_shopping_list.shopping_list.manager
             - @translator
             - @security.context
-            - @oro_security.security_facade.link

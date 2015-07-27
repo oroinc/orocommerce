@@ -53,7 +53,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->willReturn($securityToken);
 
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->getManagerRegistry();
 
         $this->manager = new ShoppingListManager(
             $entityManager,
@@ -117,10 +117,31 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(15, $resultingItem->getQuantity());
     }
 
+    public function testGetForCurrentUser()
+    {
+        $shoppingList = $this->manager->getForCurrentUser();
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            $shoppingList
+        );
+    }
+
+    public function testBulkAddLineItems()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItems = [];
+        for ($i = 0; $i < 10; $i++) {
+            $lineItems[] = new LineItem();
+        }
+
+        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 10);
+        $this->assertEquals(10, $shoppingList->getLineItems()->count());
+    }
+
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getEntityManager()
+    protected function getManagerRegistry()
     {
         $shoppingListRepository = $this
             ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
@@ -130,9 +151,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingListRepository->expects($this->any())
             ->method('findCurrentForAccountUser')
             ->willReturnCallback(function (AccountUser $accountUser) {
-                if ($accountUser->getFirstName() === 'setCurrent'
-                    && $accountUser->getFirstName() !== 'skip'
-                ) {
+                if ($accountUser->getFirstName() === 'setCurrent') {
                     return $this->shoppingListOne;
                 }
 
@@ -167,19 +186,10 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $entityManager->expects($this->any())
             ->method('getRepository')
-            ->willReturnCallback(function ($entityName) use ($shoppingListRepository, $lineItemRepository) {
-                $repository = null;
-                switch ($entityName) {
-                    case 'OroB2BShoppingListBundle:ShoppingList':
-                        $repository = $shoppingListRepository;
-                        break;
-                    case 'OroB2BShoppingListBundle:LineItem':
-                        $repository = $lineItemRepository;
-                        break;
-                }
-
-                return $repository;
-            });
+            ->will($this->returnValueMap([
+                ['OroB2BShoppingListBundle:ShoppingList', $shoppingListRepository],
+                ['OroB2BShoppingListBundle:LineItem', $lineItemRepository]
+            ]));
 
         $entityManager->expects($this->any())
             ->method('persist')
@@ -192,6 +202,12 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
                 }
             });
 
-        return $entityManager;
+        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()->getMock();
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        return $managerRegistry;
     }
 }

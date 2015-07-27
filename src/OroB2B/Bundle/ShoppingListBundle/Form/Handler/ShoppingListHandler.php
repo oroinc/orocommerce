@@ -40,7 +40,7 @@ class ShoppingListHandler
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
-        $this->em = $doctrine->getManagerForClass('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $this->em = $doctrine->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
     }
 
     /**
