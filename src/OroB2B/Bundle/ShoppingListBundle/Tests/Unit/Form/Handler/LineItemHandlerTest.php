@@ -35,7 +35,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\PDO
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Doctrine\DBAL\Connection
      */
     protected $connection;
 
@@ -50,7 +50,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connection = $this->getMockBuilder('\PDO')
+        $this->connection = $this->getMockBuilder('\Doctrine\DBAL\Connection')
             ->disableOriginalConstructor()
             ->getMock();
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')

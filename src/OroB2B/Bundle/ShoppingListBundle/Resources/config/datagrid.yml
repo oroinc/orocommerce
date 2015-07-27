@@ -103,7 +103,6 @@ datagrid:
             entityHint:        shopping list
             entity_pagination: true
         source:
-            acl_resource: orob2b_shopping_list_frontend_view
             type:         orm
             query:
                 select:
@@ -163,7 +162,6 @@ datagrid:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_shopping_list_frontend_view
                 rowAction:     true
             update:
                 type:          navigate
