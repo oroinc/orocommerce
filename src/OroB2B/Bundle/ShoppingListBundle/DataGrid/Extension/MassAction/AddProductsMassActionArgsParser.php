@@ -27,10 +27,7 @@ class AddProductsMassActionArgsParser
     public function getProductIds()
     {
         $productIds = [];
-        if (!(array_key_exists('inset', $this->args)
-                && (int)$this->args['inset'] === 0)
-            && array_key_exists('values', $this->args)
-        ) {
+        if (!$this->isAllSelected() && array_key_exists('values', $this->args)) {
             $productIds = explode(',', $this->args['values']);
         }
 
@@ -51,5 +48,13 @@ class AddProductsMassActionArgsParser
         }
 
         return $shoppingListId;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isAllSelected()
+    {
+        return (array_key_exists('inset', $this->args) && (int)$this->args['inset'] === 0);
     }
 }
