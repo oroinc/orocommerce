@@ -15,6 +15,7 @@ class DatagridListener
     const PAYMENT_TERM_ALIAS = 'payment_term';
     const PAYMENT_TERM_GROUP_LABEL_ALIAS = 'payment_term_group_label';
     const PAYMENT_TERM_GROUP_ALIAS = 'payment_term_group';
+    const PAYMENT_TERM_FOR_FILTER = 'payment_term_for_filter';
 
     /** @var $paymentTermEntityClass */
     protected $paymentTermEntityClass;
@@ -32,13 +33,7 @@ class DatagridListener
      */
     public function onBuildBeforeCustomers(BuildBefore $event)
     {
-        $this->addPaymentTermRelation(
-            $event->getConfig(),
-            'customer MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customers'
-        );
-
-        $this->addPaymentTermGroupToCustomer($event->getConfig(), $event->getDatagrid()->getParameters()->get('_filter'));
-
+        $this->addPaymentTermRelationForCustomer($event->getConfig());
     }
 
     /**
@@ -46,29 +41,86 @@ class DatagridListener
      */
     public function onBuildBeforeCustomerGroups(BuildBefore $event)
     {
-        $this->addPaymentTermRelation(
-            $event->getConfig(),
-            'customer_group MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customerGroups'
-        );
+        $this->addPaymentTermRelationForCustomerGroup($event->getConfig());
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    private function addPaymentTermRelationForCustomer(DatagridConfiguration $config)
+    {
+
+        $selectCustomerPaymentTerm = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
+        $this->addConfigElement($config, '[source][query][select]', $selectCustomerPaymentTerm);
+
+        $selectGroupPaymentTermLabel =
+            static::PAYMENT_TERM_GROUP_ALIAS . '.label as ' . static::PAYMENT_TERM_GROUP_LABEL_ALIAS;
+        $this->addConfigElement($config, '[source][query][select]', $selectGroupPaymentTermLabel);
+
+        $selectPaymentTermForFilter = "CONCAT(CASE WHEN " .
+            static::PAYMENT_TERM_ALIAS . ".id IS NOT NULL THEN " .
+            static::PAYMENT_TERM_ALIAS . ".id ELSE CASE WHEN " .
+            static::PAYMENT_TERM_GROUP_ALIAS . ".id IS NOT NULL THEN " .
+            static::PAYMENT_TERM_GROUP_ALIAS . ".id ELSE '' END END, '') as " . static::PAYMENT_TERM_FOR_FILTER;
+        $this->addConfigElement($config, '[source][query][select]', $selectPaymentTermForFilter);
+
+        $leftJoinPaymentTerm = [
+            'join' => $this->paymentTermEntityClass,
+            'alias' => static::PAYMENT_TERM_ALIAS,
+            'conditionType' => 'WITH',
+            'condition' => 'customer MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customers'
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoinPaymentTerm);
+
+
+        $leftJoinCustomerGroupPaymentTerm = [
+            'join' => $this->paymentTermEntityClass,
+            'alias' => static::PAYMENT_TERM_GROUP_ALIAS,
+            'conditionType' => 'WITH',
+            'condition' => 'customer.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.customerGroups'
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoinCustomerGroupPaymentTerm);
+
+        $column = [
+            'type' => 'twig',
+            'label' => 'orob2b.payment.paymentterm.entity_label',
+            'frontend_type' => 'html',
+            'template' => 'OroB2BPaymentBundle:Customer:Datagrid/Property/paymentTerm.html.twig'
+        ];
+        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
+
+        $sorter = ['data_name' => static::PAYMENT_TERM_FOR_FILTER];
+        $this->addConfigElement($config, '[sorters][columns]', $sorter, static::PAYMENT_TERM_LABEL_ALIAS);
+
+        $filter = [
+            'type' => 'entity',
+            'data_name' => static::PAYMENT_TERM_FOR_FILTER,
+            'options' => [
+                'field_type' => 'entity',
+                'field_options' => [
+                    'class' => $this->paymentTermEntityClass,
+                    'property' => 'label',
+                ]
+            ]
+        ];
+        $this->addConfigElement($config, '[filters][columns]', $filter, static::PAYMENT_TERM_LABEL_ALIAS);
     }
 
     /**
      * @param DatagridConfiguration $config
      * @param string $joinCondition
      */
-    protected function addPaymentTermRelation(DatagridConfiguration $config, $joinCondition)
+    protected function addPaymentTermRelationForCustomerGroup(DatagridConfiguration $config)
     {
 
         $select = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
         $this->addConfigElement($config, '[source][query][select]', $select);
 
-
-
         $leftJoin = [
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_ALIAS,
             'conditionType' => 'WITH',
-            'condition' => $joinCondition
+            'condition' => 'customer_group MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customerGroups'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
 
@@ -112,37 +164,5 @@ class DatagridListener
         $config->offsetSetByPath($path, $select);
     }
 
-    /**
-     * @param DatagridConfiguration $config
-     * @param array $filters
-     */
-    private function addPaymentTermGroupToCustomer(DatagridConfiguration $config, $filters)
-    {
-        $selectGroupPaymentTermLabel = static::PAYMENT_TERM_GROUP_ALIAS . '.label as ' . static::PAYMENT_TERM_GROUP_LABEL_ALIAS;
-        $this->addConfigElement($config, '[source][query][select]', $selectGroupPaymentTermLabel);
 
-        $leftJoin = [
-            'join' => $this->paymentTermEntityClass,
-            'alias' => static::PAYMENT_TERM_GROUP_ALIAS,
-            'conditionType' => 'WITH',
-            'condition' => 'customer.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.customerGroups'
-        ];
-        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
-
-        if (isset($filters[static::PAYMENT_TERM_LABEL_ALIAS])) {
-            $value = $filters[static::PAYMENT_TERM_LABEL_ALIAS]['value'];
-
-            $whereCondition = static::PAYMENT_TERM_GROUP_ALIAS . '.id IN (' . $value . ')';
-            $this->addConfigElement($config, '[source][query][where][or]', $whereCondition);
-        }
-
-        $column = [
-            'type' => 'twig',
-            'label' => 'orob2b.payment.paymentterm.entity_label',
-            'frontend_type' => 'html',
-            'template' => 'OroB2BPaymentBundle:Customer:Datagrid/Property/paymentTerm.html.twig'
-        ];
-
-        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
-    }
 }
