@@ -33,7 +33,7 @@ define(function (require) {
         }
         var dialog = new DialogWidget({
             'url': routing.generate('orob2b_shopping_list_frontend_create'),
-            'title': 'Create new shopping list',
+            'title': 'Create new Shopping List',
             'regionEnabled': false,
             'incrementalPosition': false,
             'dialogOptions': {

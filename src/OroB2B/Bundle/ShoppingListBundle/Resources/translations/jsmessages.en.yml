@@ -11,4 +11,4 @@ orob2b:
                 success.message: Successfully added to shopping list
                 error.message: Failed to add to shopping list
         widget:
-            add_to_new_shopping_list: Create new
+            add_to_new_shopping_list: Create New Shopping List

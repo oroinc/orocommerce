@@ -13,13 +13,18 @@ orob2b:
         line_items.label: Line Items
         is_current.label: Current
 
+        create_new_form:
+            input_label: Shopping List Label
+            comment: Selected products will be added to this new shopping list.<br/>Click "Cancel" to select a different list.
+            submit_label: Create and Add
+
         product:
             add_to_shopping_list.label: Add To Shopping List
 
         actions:
             set_current: Set as current
             add_to_shopping_list: Add to
-            add_to_new_shopping_list: Create new
+            add_to_new_shopping_list: Create New Shopping List
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
 
         menu:
