@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
+use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\UIBundle\Twig\Environment;
@@ -21,10 +23,11 @@ class DeleteMessageTextGenerator
     /** @var Environment  */
     protected $twig;
 
-    public function __construct(RouterInterface $router, Environment $twig)
+    public function __construct(RouterInterface $router, Environment $twig, ManagerRegistry $managerRegistry)
     {
         $this->router = $router;
         $this->twig = $twig;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -44,6 +47,17 @@ class DeleteMessageTextGenerator
         return $message;
     }
 
+    public function getDeleteMessageTextForDataGrid($paymentTermId) {
+
+        $paymentRepository = $this->managerRegistry
+            ->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
+            ->getRepository('OroB2BPaymentBundle:PaymentTerm');
+        $paymentTerm = $paymentRepository->find($paymentTermId);
+
+        $message = $this->getDeleteMessageText($paymentTerm);
+        return $message;
+    }
+
     /**
      * @param PaymentTerm $paymentTerm
      * @return string
@@ -54,12 +68,13 @@ class DeleteMessageTextGenerator
             return null;
         }
 
-        $groupUrlParameters = $this->getParameters(static::CUSTOMER_GROUP_GRID_NAME, $paymentTerm);
-        $groupFilterUrl = $this->router->generate(static::CUSTOMER_GROUP_GRID_ROUTE, $groupUrlParameters, true);
-        $customerGroupFilterHtmlUrl = $this->twig->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
-            'urlPath' => $groupFilterUrl,
-            'label' => 'orob2b.customer.customergroup.entity_label'
-        ]);
+        $customerGroupFilterHtmlUrl =
+            $this->generateHtmFilterUrl(
+                $paymentTerm->getId(),
+                static::CUSTOMER_GROUP_GRID_NAME,
+                static::CUSTOMER_GROUP_GRID_ROUTE,
+                'orob2b.customer.customergroup.entity_label'
+            );
 
         return $customerGroupFilterHtmlUrl;
     }
@@ -74,33 +89,46 @@ class DeleteMessageTextGenerator
             return null;
         }
 
-        $customerUrlParameters = $this->getParameters(static::CUSTOMER_GRID_NAME, $paymentTerm);
-        $customerFilterUrl = $this->router->generate(static::CUSTOMER_GRID_ROUTE, $customerUrlParameters, true);
-        $customerFilterHtmlUrl = $this->twig->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
-            'urlPath' => $customerFilterUrl,
-            'label' => 'orob2b.customer.entity_label'
-        ]);
+        $customerFilterHtmlUrl = $this->generateHtmFilterUrl(
+            $paymentTerm->getId(),
+            static::CUSTOMER_GRID_NAME,
+            static::CUSTOMER_GRID_ROUTE,
+            'orob2b.customer.entity_label'
+        );
 
         return $customerFilterHtmlUrl;
+
     }
 
     /**
-     * @param             $gridName
-     * @param PaymentTerm $paymentTerm
+     * @param $gridName
+     * @param $paymentTermId
      * @return array
      */
-    private function getParameters($gridName, PaymentTerm $paymentTerm)
+    private function getParameters($gridName, $paymentTermId)
     {
         $parameters = [
             $gridName => [
-                '_filter' => [
+                OrmFilterExtension::FILTER_ROOT_PARAM => [
                     'payment_term_label' => [
-                        'value' => $paymentTerm->getId()
+                        'value' => $paymentTermId
                     ]
                 ]
             ]
         ];
 
         return $parameters;
+    }
+
+    private function generateHtmFilterUrl($paymentTermId, $gridName, $gridRoute, $label)
+    {
+        $urlParameters = $this->getParameters($gridName, $paymentTermId);
+        $url = $this->router->generate($gridRoute, $urlParameters, true);
+        $htmlFilterUrl = $this->twig->render('@OroB2BPayment/PaymentTerm/linkWithTarget.html.twig', [
+            'urlPath' => $url,
+            'label' => $label
+        ]);
+
+        return $htmlFilterUrl;
     }
 }

@@ -16,11 +16,12 @@ class DatagridListener
     const PAYMENT_TERM_GROUP_LABEL_ALIAS = 'payment_term_group_label';
     const PAYMENT_TERM_GROUP_ALIAS = 'payment_term_group';
 
+    /** @var $paymentTermEntityClass */
     protected $paymentTermEntityClass;
 
-    /** @var  DeleteMessageTextGenerator */
-    protected $deleteMessageGenerator;
-
+    /**
+     * @param $paymentTermEntityClass
+     */
     public function setPaymentTermClass($paymentTermEntityClass)
     {
         $this->paymentTermEntityClass = $paymentTermEntityClass;
@@ -36,22 +37,8 @@ class DatagridListener
             'customer MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customers'
         );
 
-        $this->addPaymentTermGroupToCustomer($event->getConfig());
+        $this->addPaymentTermGroupToCustomer($event->getConfig(), $event->getDatagrid()->getParameters()->get('_filter'));
 
-    }
-
-    public function onBuildBeforePaymentTerm(OrmResultAfter $event)
-    {
-        $test = 4;
-        $test = 4;
-
-//        $deleteMessage = $this->deleteMessageGenerator->getDeleteMessageText()
-//        $this->addConfigElement(, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
-    }
-
-    public function setDeleteMessageGenerator(DeleteMessageTextGenerator $deleteMessageGenerator)
-    {
-        $this->deleteMessageGenerator = $deleteMessageGenerator;
     }
 
     /**
@@ -125,18 +112,14 @@ class DatagridListener
         $config->offsetSetByPath($path, $select);
     }
 
-    private function addPaymentTermGroupToCustomer($config)
+    /**
+     * @param DatagridConfiguration $config
+     * @param array $filters
+     */
+    private function addPaymentTermGroupToCustomer(DatagridConfiguration $config, $filters)
     {
         $selectGroupPaymentTermLabel = static::PAYMENT_TERM_GROUP_ALIAS . '.label as ' . static::PAYMENT_TERM_GROUP_LABEL_ALIAS;
         $this->addConfigElement($config, '[source][query][select]', $selectGroupPaymentTermLabel);
-
-
-//        if (isset($filters[static::PAYMENT_TERM_LABEL_ALIAS])) {
-//            $value = $filters[static::PAYMENT_TERM_LABEL_ALIAS]['value'];
-//
-//            $whereCondition = static::PAYMENT_TERM_GROUP_ALIAS . '.id IN (' . $value . ')';
-//            $this->addConfigElement($config, '[source][query][where][or]', $whereCondition, 5);
-//        }
 
         $leftJoin = [
             'join' => $this->paymentTermEntityClass,
@@ -145,6 +128,13 @@ class DatagridListener
             'condition' => 'customer.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.customerGroups'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        if (isset($filters[static::PAYMENT_TERM_LABEL_ALIAS])) {
+            $value = $filters[static::PAYMENT_TERM_LABEL_ALIAS]['value'];
+
+            $whereCondition = static::PAYMENT_TERM_GROUP_ALIAS . '.id IN (' . $value . ')';
+            $this->addConfigElement($config, '[source][query][where][or]', $whereCondition);
+        }
 
         $column = [
             'type' => 'twig',

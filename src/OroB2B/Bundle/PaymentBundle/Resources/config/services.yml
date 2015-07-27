@@ -5,6 +5,7 @@ parameters:
     orob2b_payment.event_listener.form_view.class: OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener
     orob2b_payment.event_listener.datagrid.class: OroB2B\Bundle\PaymentBundle\EventListener\DatagridListener
     orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
+    orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -28,6 +29,7 @@ services:
         arguments:
             - @router
             - @twig
+            - @doctrine
 
     orob2b_payment.twig.delete_message_text_extension:
         class: %orob2b_payment.twig.delete_message_text_extension.class%
@@ -53,8 +55,12 @@ services:
         class: %orob2b_payment.event_listener.datagrid.class%
         calls:
             - [setPaymentTermClass, [%orob2b_payment.entity.payment_term.class%]]
-            - [setDeleteMessageGenerator, [@orob2b_payment.payment_term.delete_message_generator]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.payment-terms-grid, method: onBuildBeforePaymentTerm }
+
+    orob2b_payment.extension.action.type.payment_delete:
+        class: %orob2b_payment.extension.action.type.payment_delete.class%
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: payment-delete }

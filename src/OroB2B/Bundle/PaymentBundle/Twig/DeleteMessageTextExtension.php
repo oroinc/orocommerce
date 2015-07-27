@@ -36,6 +36,7 @@ class DeleteMessageTextExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('getPaymentTermDeleteMessageText', [$this, 'getDeleteMessageText']),
+            new \Twig_SimpleFunction('getPaymentTermDeleteMessageDatagrid', [$this, 'getDeleteMessageDatagrid']),
         ];
     }
 
@@ -46,5 +47,10 @@ class DeleteMessageTextExtension extends \Twig_Extension
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
         return $this->deleteMessageGenerator->getDeleteMessageText($paymentTerm);
+    }
+
+    public function getDeleteMessageDatagrid($paymentTermId)
+    {
+        return $this->deleteMessageGenerator->getDeleteMessageTextForDataGrid($paymentTermId);
     }
 }
