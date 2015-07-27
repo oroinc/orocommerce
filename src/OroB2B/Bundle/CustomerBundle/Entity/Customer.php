@@ -128,6 +128,14 @@ class Customer extends ExtendCustomer
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getName();
+    }
+
+    /**
      * Get id
      *
      * @return int

@@ -30,6 +30,17 @@ class CustomerTest extends EntityTestCase
         ]);
     }
 
+    public function testToString()
+    {
+        $customer = new Customer();
+
+        $this->assertSame('', (string)$customer);
+
+        $customer->setName(123);
+
+        $this->assertSame('123', (string)$customer);
+    }
+
     /**
      * Test children
      */

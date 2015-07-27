@@ -78,21 +78,15 @@ class DatagridListener
      */
     protected function permissionShowUserColumn()
     {
-        if (!$this->securityFacade->isGranted(
-            sprintf('%s;entity:%s', BasicPermissionMap::PERMISSION_VIEW, $this->accountUserClass)
+        if (!$this->securityFacade->isGrantedClassPermission(
+            BasicPermissionMap::PERMISSION_VIEW,
+            $this->accountUserClass
         )) {
             return false;
         }
-        $user = $this->securityFacade->getLoggedUser();
 
-        foreach ($user->getRoles() as $role) {
-            $acl = new ObjectIdentity('entity', $this->quoteClass);
-            $aces = $this->aclManager->getAces($this->aclManager->getSid($role), $acl);
-            foreach ($aces as $ace) {
-                if ($ace->getMask() & EntityMaskBuilder::MASK_VIEW_LOCAL) {
-                    return true;
-                }
-            }
+        if ($this->securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $this->quoteClass)) {
+            return true;
         }
 
         return false;

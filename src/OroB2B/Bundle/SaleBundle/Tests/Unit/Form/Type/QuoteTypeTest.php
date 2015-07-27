@@ -14,7 +14,9 @@ use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;

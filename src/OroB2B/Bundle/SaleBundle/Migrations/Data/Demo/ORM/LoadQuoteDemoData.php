@@ -96,7 +96,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
     /**
      * @param ObjectManager $manager
      * @return Collection|AccountUser[]
-     * @throws \LogicException
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
@@ -106,7 +105,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
     /**
      * @param ObjectManager $manager
      * @return Collection|Customer[]
-     * @throws \LogicException
      */
     protected function getAccounts(ObjectManager $manager)
     {
@@ -274,7 +272,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
     /**
      * @param ObjectManager $manager
      * @return User
-     * @throws \RuntimeException
      */
     protected function getUser(ObjectManager $manager)
     {
