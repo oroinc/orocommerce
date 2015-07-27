@@ -1,9 +1,0 @@
-orob2b_shopping_list_frontend_view:
-    label: orob2b.shoppinglist.security.permission.view_shopping_list
-    type: action
-    group_name: "commerce"
-orob2b_product_view_products:
-    label: Create shopping list
-    type: action
-    group_name: "commerce"
-    bindings: ~

@@ -66,7 +66,6 @@ class ShoppingListManager
         $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
         if ($currentList instanceof ShoppingList && $currentList !== $shoppingList) {
             $currentList->setCurrent(false);
-            $this->shoppingListEm->persist($currentList);
         }
         $shoppingList->setCurrent(true);
         $this->shoppingListEm->persist($shoppingList);
@@ -85,11 +84,9 @@ class ShoppingListManager
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
         $repository = $this->lineItemEm->getRepository('OroB2BShoppingListBundle:LineItem');
-        if ($shoppingList->getId()
-            && ($possibleDuplicate = $repository->findDuplicate($lineItem)) instanceof LineItem
-        ) {
+        $possibleDuplicate = $repository->findDuplicate($lineItem);
+        if ($shoppingList->getId() && $possibleDuplicate instanceof LineItem) {
             $possibleDuplicate->setQuantity($possibleDuplicate->getQuantity() + $lineItem->getQuantity());
-            $this->lineItemEm->persist($possibleDuplicate);
         } else {
             $shoppingList->addLineItem($lineItem);
             $this->lineItemEm->persist($lineItem);
