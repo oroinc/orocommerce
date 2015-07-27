@@ -103,7 +103,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-            - @orob2b_pricing.model.frontend.price_list_request_hanlder
+            - @orob2b_pricing.model.frontend.price_list_request_handler
         calls:
             - [setRequest, ["@?request="]]
         tags:
