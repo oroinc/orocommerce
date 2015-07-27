@@ -4,6 +4,7 @@ parameters:
     orob2b_sale.entity.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer
     orob2b_sale.entity.quote_product_request.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
     #Validators
@@ -13,6 +14,8 @@ parameters:
     #Listeners
     orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.event_listener.datagrid.class: OroB2B\Bundle\SaleBundle\EventListener\DatagridListener
+    #Handlers
+    oro_form.autocomplete.account_user.search_handler.class: OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler
 
 services:
     orob2b_sale.event_listener.entity_subscriber:
@@ -61,3 +64,11 @@ services:
         class: %orob2b_sale.formatter.quote_product_offer.class%
         arguments:
             - @translator
+
+    oro_form.autocomplete.account_user.search_handler:
+        class: %oro_form.autocomplete.account_user.search_handler.class%
+        abstract: true
+        calls:
+            - [initSearchIndexer, ["@oro_search.index", %oro_search.entities_config%]]
+            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
+            - [setAclHelper,["@oro_security.acl_helper"]]

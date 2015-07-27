@@ -83,7 +83,7 @@ services:
         lazy: true
 
     orob2b_customer.form.autocomplete.account_user.search_handler:
-        parent: oro_form.autocomplete.search_handler
+        parent: oro_form.autocomplete.account_user.search_handler
         arguments:
             - %orob2b_customer.entity.account_user.class%
             - ["email"]

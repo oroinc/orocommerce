@@ -51,8 +51,14 @@
                 'title': '',
                 'data': [
                     form_row(form.owner),
-                    form_row(form.accountUser),
-                    form_row(form.account),
+                    form_row(
+                        form.accountUser,
+                        {attr: (attr is defined ? attr : [])|merge({class: 'sale-quote-accountuser-select'})}
+                    ),
+                    form_row(
+                        form.account,
+                        {attr: (attr is defined ? attr : [])|merge({class: 'sale-quote-account-select'})}
+                    ),
                     form_row(form.validUntil),
                 ]
             }]
@@ -79,5 +85,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    <div class="sale-quote-form" data-page-component-module="orob2bsale/js/app/components/sale-quote-selection-component">
+        {{ parent() }}
+    </div>
 {% endblock content_data %}

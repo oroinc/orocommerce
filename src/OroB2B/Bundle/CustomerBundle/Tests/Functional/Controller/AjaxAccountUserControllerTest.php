@@ -156,6 +156,33 @@ class AjaxAccountUserControllerTest extends WebTestCase
         );
     }
 
+    public function testGetCustomerIdAction()
+    {
+        /** @var AccountUser $user */
+        $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+
+        $this->assertNotNull($user);
+
+        $id = $user->getId();
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_customer_account_user_get_customer', ['id' => $id])
+        );
+
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+
+        $this->assertArrayHasKey('customerId', $data);
+
+        $customerId = $user->getCustomer() ? $user->getCustomer()->getId() : null;
+
+        $this->assertEquals($data['customerId'], $customerId);
+    }
+
     /**
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
