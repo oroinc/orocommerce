@@ -165,7 +165,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $page = 1;
         $perPage = 15;
-        $queryString = sprintf('%d%s%s', $customerId,  self::DELIMITER, $search);
+        $queryString = sprintf('%d%s%s', $customerId, self::DELIMITER, $search);
 
         $foundElements = [
             $this->getSearchItem($customerId)

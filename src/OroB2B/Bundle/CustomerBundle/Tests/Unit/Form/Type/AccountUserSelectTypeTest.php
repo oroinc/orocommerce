@@ -45,7 +45,10 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('configs', $options);
                     $this->assertEquals('orob2b_customer_account_user', $options['autocomplete_alias']);
                     $this->assertEquals('orob2b_customer_account_user_create', $options['create_form_route']);
-                    $this->assertEquals(['placeholder' => 'orob2b.customer.accountuser.form.choose'], $options['configs']);
+                    $this->assertEquals(
+                        ['placeholder' => 'orob2b.customer.accountuser.form.choose'],
+                        $options['configs']
+                    );
                 }
             );
 
