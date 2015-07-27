@@ -7,6 +7,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
+/**
+ * @dbIsolation
+ */
 class ProductRepositoryTest extends WebTestCase
 {
     protected function setUp()
