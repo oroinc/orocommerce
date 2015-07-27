@@ -1,5 +1,6 @@
 parameters:
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
+    orob2b_frontend.listener.ormdatasource_acl.class: OroB2B\Bundle\FrontendBundle\EventListener\OrmDatasourceAclListener
 
 services:
     orob2b_frontend.listener.route_collection:
@@ -9,3 +10,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true
+
+    orob2b_frontend.listener.ormdatasource_acl:
+        class: %orob2b_frontend.listener.ormdatasource_acl.class%
+        arguments:
+            - @oro_security.owner.metadata_provider.chain
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before, method: onResultBefore, priority: 100 }
