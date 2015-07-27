@@ -8,8 +8,7 @@ use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 class AddProductsMassAction extends AjaxMassAction
 {
     /**
-     * @param ActionConfiguration $options
-     * @return $this
+     * {@inheritdoc}
      */
     public function setOptions(ActionConfiguration $options)
     {
