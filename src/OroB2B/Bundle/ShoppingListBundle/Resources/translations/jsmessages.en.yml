@@ -1,11 +1,10 @@
 orob2b:
     shoppinglist:
         flash:
-            success: Shopping list was created successfuly
+            success: Shopping list was created successfully
         line_item_save:
             flash:
                 success: Line Item has been saved
-                success: Line Item has been added
         menu:
             add_products:
                 success.message: Successfully added to shopping list

@@ -39,7 +39,7 @@ class ShoppingListRepository extends EntityRepository
 
     /**
      * @param AccountUser $accountUser
-     * @param             $id
+     * @param int         $id
      *
      * @return mixed
      * @throws \Doctrine\ORM\NonUniqueResultException

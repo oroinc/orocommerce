@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
-
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
 class AddProductsMassActionHandlerArgsParserTest extends \PHPUnit_Framework_TestCase
