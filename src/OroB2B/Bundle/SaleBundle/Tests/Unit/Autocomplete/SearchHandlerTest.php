@@ -13,6 +13,8 @@ use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
 
 class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const DELIMITER = ';';
+
     const TEST_ENTITY_CLASS = 'TestAccountUserEntity';
 
     /**
@@ -128,7 +130,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $page = 1;
         $perPage = 15;
-        $queryString = ';' . $search;
+        $queryString = self::DELIMITER . $search;
 
         $foundElements = [
             $this->getSearchItem(1),
@@ -163,7 +165,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $page = 1;
         $perPage = 15;
-        $queryString = $customerId . ';' . $search;
+        $queryString = sprintf('%d%s%s', $customerId,  self::DELIMITER, $search);
 
         $foundElements = [
             $this->getSearchItem($customerId)
