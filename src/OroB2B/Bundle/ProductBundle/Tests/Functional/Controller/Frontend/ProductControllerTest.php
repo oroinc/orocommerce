@@ -9,8 +9,6 @@ class ProductControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->markTestSkipped('Acl for AccountUser');
-
         $this->initClient(
             [],
             array_merge(
