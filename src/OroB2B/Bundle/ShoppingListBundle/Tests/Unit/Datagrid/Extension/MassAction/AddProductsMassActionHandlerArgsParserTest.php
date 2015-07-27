@@ -14,12 +14,12 @@ class AddProductsMassActionHandlerArgsParserTest extends \PHPUnit_Framework_Test
         $this->assertCount(2, $parser->getProductIds());
     }
 
-    public function getShoppingListId()
+    public function testGetShoppingListId()
     {
         $parser = new ArgsParser($this->getArgs(1, '1,2', '1'));
         $this->assertEquals(1, $parser->getShoppingListId());
         $parser = new ArgsParser($this->getArgs(1, '1,2', 'current'));
-        $this->assertNull('current', $parser->getShoppingListId());
+        $this->assertNull($parser->getShoppingListId());
     }
 
     /**

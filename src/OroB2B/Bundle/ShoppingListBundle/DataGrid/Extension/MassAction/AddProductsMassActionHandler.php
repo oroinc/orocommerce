@@ -59,7 +59,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
         if (!$this->securityContext->isGranted('EDIT', $shoppingList)) {
-            $this->generateResponse($args);
+            return $this->generateResponse($args);
         }
 
         /** @var ProductRepository $productsRepo */
