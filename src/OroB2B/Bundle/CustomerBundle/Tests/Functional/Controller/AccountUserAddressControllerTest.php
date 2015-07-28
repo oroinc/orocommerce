@@ -102,7 +102,8 @@ class AccountUserAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAddress
-     * @param $accountUserId
+     *
+     * @param int $accountUserId
      * @return int
      */
     public function testUpdateAddress($accountUserId)
@@ -170,7 +171,8 @@ class AccountUserAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAddress
-     * @param $accountUserId
+     *
+     * @param int $accountUserId
      */
     public function testDeleteAddress($accountUserId)
     {
@@ -200,7 +202,7 @@ class AccountUserAddressControllerTest extends WebTestCase
      * Fill form for address tests (create test)
      *
      * @param Form $form
-     * @return \Symfony\Component\DomCrawler\Form
+     * @return Form
      */
     protected function fillFormForCreateTest(Form $form)
     {

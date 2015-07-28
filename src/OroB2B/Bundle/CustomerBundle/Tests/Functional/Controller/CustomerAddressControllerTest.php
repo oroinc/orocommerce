@@ -44,6 +44,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCustomerView
+     *
+     * @return int
      */
     public function testCreateAddress()
     {
@@ -96,6 +98,9 @@ class CustomerAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAddress
+     *
+     * @param int $id
+     * @return int
      */
     public function testUpdateAddress($id)
     {
@@ -158,7 +163,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCreateAddress
-     * @param $customerId
+     *
+     * @param int $customerId
      */
     public function testDeleteAddress($customerId)
     {
@@ -188,7 +194,7 @@ class CustomerAddressControllerTest extends WebTestCase
      * Fill form for address tests (create test)
      *
      * @param Form $form
-     * @return \Symfony\Component\DomCrawler\Form
+     * @return Form
      */
     protected function fillFormForCreateTest(Form $form)
     {

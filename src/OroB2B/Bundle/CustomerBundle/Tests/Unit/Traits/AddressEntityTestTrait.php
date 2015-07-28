@@ -21,7 +21,7 @@ trait AddressEntityTestTrait
 
     /**
      * @param AbstractDefaultTypedAddress[] $addresses
-     * @param string            $searchName
+     * @param string                        $searchName
      * @param AbstractDefaultTypedAddress   $expectedAddress
      * @dataProvider getAddressByTypeNameProvider
      */

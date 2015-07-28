@@ -70,7 +70,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
         $customer = $this->getCustomerManager()->find($entityId);
         $result = [];
 
-        if (!empty($customer)) {
+        if ($customer) {
             $items = $customer->getAddresses();
 
             foreach ($items as $item) {
@@ -78,10 +78,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
             }
         }
 
-        return new JsonResponse(
-            $result,
-            empty($customer) ? Codes::HTTP_NOT_FOUND : Codes::HTTP_OK
-        );
+        return new JsonResponse($result, $customer ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
     }
 
     /**
@@ -92,7 +89,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
      *      resource=true
      * )
      * @AclAncestor("orob2b_customer_delete")
-     * @param     $entityId
+     * @param int $entityId
      * @param int $addressId
      *
      * @return Response

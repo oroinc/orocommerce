@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub;
 
-use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
-
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
+
+use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 
 class AddressCollectionTypeStub extends AddressCollectionType
 {

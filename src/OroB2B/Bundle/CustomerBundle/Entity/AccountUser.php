@@ -161,8 +161,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @var Collection
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress",
-     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress",
+     *      mappedBy="owner",
+     *      cascade={"all"},
+     *      orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
      */
@@ -428,12 +431,11 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         return $this;
     }
 
-
     /**
      * Add addresses
      *
      * @param AbstractDefaultTypedAddress $address
-     * @return $this
+     * @return AccountUser
      */
     public function addAddress(AbstractDefaultTypedAddress $address)
     {
@@ -450,7 +452,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * Remove addresses
      *
      * @param AbstractDefaultTypedAddress $addresses
-     * @return $this
+     * @return AccountUser
      */
     public function removeAddress(AbstractDefaultTypedAddress $addresses)
     {

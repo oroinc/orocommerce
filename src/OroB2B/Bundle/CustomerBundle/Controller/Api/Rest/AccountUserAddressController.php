@@ -71,7 +71,7 @@ class AccountUserAddressController extends RestController implements ClassResour
         $accountUser = $this->getAccountUserManager()->find($entityId);
         $result  = [];
 
-        if (!empty($accountUser)) {
+        if ($accountUser) {
             $items = $accountUser->getAddresses();
 
             foreach ($items as $item) {
@@ -79,10 +79,7 @@ class AccountUserAddressController extends RestController implements ClassResour
             }
         }
 
-        return new JsonResponse(
-            $result,
-            empty($accountUser) ? Codes::HTTP_NOT_FOUND : Codes::HTTP_OK
-        );
+        return new JsonResponse($result, $accountUser ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
     }
 
     /**

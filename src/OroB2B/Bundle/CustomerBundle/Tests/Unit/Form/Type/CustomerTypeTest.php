@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
@@ -12,10 +11,11 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
 
-use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class CustomerTypeTest extends FormIntegrationTestCase
 {
@@ -92,15 +92,21 @@ class CustomerTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $options
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProvider
+     *
+     * @param array $options
+     * @param array $defaultData
+     * @param array $viewData
+     * @param array $submittedData
+     * @param array $expectedData
      */
-    public function testSubmit(array $options, $defaultData, $viewData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        array $options,
+        array $defaultData,
+        array $viewData,
+        array $submittedData,
+        array $expectedData
+    ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $formConfig = $form->getConfig();

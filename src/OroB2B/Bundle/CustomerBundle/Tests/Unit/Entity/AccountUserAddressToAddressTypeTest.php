@@ -3,13 +3,15 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType;
 
-class AccountUserAddressToAddressTypeTest extends EntityTestCase
+class AccountUserAddressToAddressTypeTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     /**
      * Test setters getters
      */

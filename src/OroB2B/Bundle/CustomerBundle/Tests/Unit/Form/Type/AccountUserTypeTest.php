@@ -29,7 +29,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $securityFacade;
 
     /**
@@ -79,8 +81,8 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     OroDateType::NAME => new OroDateType(),
                     'entity' => $rolesEntity,
                     $customerSelectType->getName() => $customerSelectType,
-                    'oro_address_collection'  => new AddressCollectionTypeStub(),
-                    $addressEntityType->getName()  => $addressEntityType,
+                    AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
+                    $addressEntityType->getName() => $addressEntityType,
                 ],
                 []
             ),
@@ -89,14 +91,19 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $defaultData
-     * @param $submittedData
-     * @param $expectedData
-     * @param bool $rolesGranted
      * @dataProvider submitProvider
+     *
+     * @param AccountUser $defaultData
+     * @param array $submittedData
+     * @param AccountUser $expectedData
+     * @param bool|true $rolesGranted
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData, $rolesGranted = true)
-    {
+    public function testSubmit(
+        AccountUser $defaultData,
+        array $submittedData,
+        AccountUser $expectedData,
+        $rolesGranted = true
+    ) {
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')
@@ -255,7 +262,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $label
-     * @return object
+     * @return AccountUserRole
      */
     protected function getRole($id, $label)
     {

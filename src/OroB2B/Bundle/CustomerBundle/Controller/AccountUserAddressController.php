@@ -20,7 +20,7 @@ class AccountUserAddressController extends Controller
 {
     /**
      * @Route("/address-book/{id}", name="orob2b_customer_account_user_address_book", requirements={"id"="\d+"})
-     * @Template("OroB2BCustomerBundle:Addresses/widget:addressBook.html.twig")
+     * @Template("OroB2BCustomerBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("orob2b_customer_account_user_view")
      *
      * @param AccountUser $accountUser
@@ -41,7 +41,7 @@ class AccountUserAddressController extends Controller
      *      name="orob2b_customer_account_user_address_create",
      *      requirements={"accountUserId"="\d+"}
      * )
-     * @Template("OroB2BCustomerBundle:Addresses/widget:update.html.twig")
+     * @Template("OroB2BCustomerBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_customer_account_user_create")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
@@ -59,7 +59,7 @@ class AccountUserAddressController extends Controller
      *      name="orob2b_customer_account_user_address_update",
      *      requirements={"accountUserId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
-     * @Template("OroB2BCustomerBundle:Addresses/widget:update.html.twig")
+     * @Template("OroB2BCustomerBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_customer_account_user_update")
      * @ParamConverter("accountUser", options={"id" = "entityId"})
      *
@@ -95,19 +95,17 @@ class AccountUserAddressController extends Controller
 
         if (!$address->getOwner()) {
             $accountUser->addAddress($address);
-        } elseif ($address->getOwner()->getId() != $accountUser->getId()) {
+        } elseif ($address->getOwner()->getId() !== $accountUser->getId()) {
             throw new BadRequestHttpException('Address must belong to AccountUser');
         }
 
         $form = $this->createForm(AccountUserTypedAddressType::NAME, $address);
 
-        $handler = new AddressHandler(
-            $form,
-            $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass(
-                $this->container->getParameter('orob2b_customer.entity.account_user_address.class')
-            )
+        $manager = $this->getDoctrine()->getManagerForClass(
+            $this->container->getParameter('orob2b_customer.entity.account_user_address.class')
         );
+
+        $handler = new AddressHandler($form, $this->getRequest(), $manager);
 
         if ($handler->process($address)) {
             $this->getDoctrine()->getManager()->flush();
