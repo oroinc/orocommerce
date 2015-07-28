@@ -47,9 +47,10 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('frontend-quotes-grid', $crawler->html());
 
-        $response = $this->requestFrontendGrid(
-            'frontend-quotes-grid'
-        );
+        $response = $this->requestFrontendGrid([
+            'gridName' => 'frontend-quotes-grid',
+            'frontend-quotes-grid[_sort_by][qid]' => 'ASC',
+        ]);
 
         $result = static::getJsonResponseContent($response, 200);
 
