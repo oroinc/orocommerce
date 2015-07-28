@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
@@ -35,10 +36,13 @@ class LocalizedPropertyTypeTest extends AbstractLocalizedType
         $localeCollection = new LocaleCollectionType($this->registry);
         $localeCollection->setLocaleClass(self::LOCALE_CLASS);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         return [
             new PreloadedExtension(
                 [
-                    FallbackPropertyType::NAME => new FallbackPropertyType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType($translator),
                     FallbackValueType::NAME => new FallbackValueType(),
                     LocaleCollectionType::NAME => $localeCollection,
                     PercentTypeStub::NAME => new PercentTypeStub(),

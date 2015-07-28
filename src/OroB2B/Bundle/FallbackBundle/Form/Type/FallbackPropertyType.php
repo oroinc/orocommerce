@@ -3,14 +3,30 @@
 namespace OroB2B\Bundle\FallbackBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 
 class FallbackPropertyType extends AbstractType
 {
     const NAME = 'orob2b_fallback_property';
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * {@inheritDoc}
@@ -42,6 +58,7 @@ class FallbackPropertyType extends AbstractType
                     FallbackType::SYSTEM        => 'orob2b.fallback.type.default',
                     FallbackType::PARENT_LOCALE => 'orob2b.fallback.type.parent_locale',
                 ],
+                'parent_locale' => null,
             ]
         );
 
@@ -57,14 +74,32 @@ class FallbackPropertyType extends AbstractType
 
                     $choices = $options['existing_fallbacks'];
                     foreach (array_keys($choices) as $fallback) {
-                        if (!in_array($fallback, $enabledFallbacks)) {
+                        if (!in_array($fallback, $enabledFallbacks, true)) {
                             unset($choices[$fallback]);
                         }
+                    }
+
+                    if (array_key_exists(FallbackType::PARENT_LOCALE, $choices) && $options['parent_locale']) {
+                        $choices[FallbackType::PARENT_LOCALE] = sprintf(
+                            '%s (%s)',
+                            $this->translator->trans($choices[FallbackType::PARENT_LOCALE]),
+                            $options['parent_locale']
+                        );
                     }
 
                     return $choices;
                 }
             ]
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if ($options['parent_locale']) {
+            $view->vars['attr']['data-parent-locale'] = $options['parent_locale'];
+        }
     }
 }
