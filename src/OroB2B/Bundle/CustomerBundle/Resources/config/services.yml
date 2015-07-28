@@ -28,6 +28,7 @@ parameters:
 
     orob2b_customer.event_listener.datagrid.class: OroB2B\Bundle\CustomerBundle\EventListener\DatagridListener
     orob2b_customer.event_listener.login.class: OroB2B\Bundle\CustomerBundle\EventListener\LoginListener
+    orob2b_customer.event_listener.ormdatasource_acl.class: OroB2B\Bundle\CustomerBundle\EventListener\OrmDatasourceAclListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_customer.acl.group_provider.class: OroB2B\Bundle\CustomerBundle\Acl\Group\AclGroupProvider
@@ -195,3 +196,11 @@ services:
             - @service_container
         tags:
             - { name: oro_security.acl.group_provider, alias: frontend_group }
+
+    orob2b_frontend.listener.ormdatasource_acl:
+        class: %orob2b_customer.event_listener.ormdatasource_acl.class%
+        arguments:
+            - @oro_security.security_facade
+            - @orob2b_customer.owner.frontend_ownership_metadata_provider
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before, method: onResultBefore, priority: 100 }

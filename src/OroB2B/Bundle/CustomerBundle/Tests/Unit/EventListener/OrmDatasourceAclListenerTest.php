@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\AST\FromClause;
@@ -14,11 +14,19 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\FrontendBundle\EventListener\OrmDatasourceAclListener;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\EventListener\OrmDatasourceAclListener;
 
 class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
+    protected $securityfacade;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|MetadataProviderInterface
      */
@@ -36,9 +44,13 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->securityfacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->metadataProvider = $this->getMock('Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface');
 
-        $this->listener = new OrmDatasourceAclListener($this->metadataProvider);
+        $this->listener = new OrmDatasourceAclListener($this->securityfacade, $this->metadataProvider);
 
         $this->event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\OrmResultBefore')
             ->disableOriginalConstructor()
@@ -47,7 +59,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->metadataProvider, $this->listener, $this->event);
+        unset($this->securityfacade, $this->metadataProvider, $this->listener, $this->event);
     }
 
     /**
@@ -58,6 +70,10 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnResultBefore($entities = [], $expectedSkipAclCheck = true)
     {
+        $this->securityfacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn(new AccountUser());
+
         /** @var FromClause $from */
         $from = $this->getMockBuilder('Doctrine\ORM\Query\AST\FromClause')->disableOriginalConstructor()->getMock();
 
@@ -131,6 +147,19 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
                 'expectedSkipAclCheck' => false
             ]
         ];
+    }
+
+    public function testOnResultBeforeSkipForBackendUser()
+    {
+        $this->securityfacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn(new User());
+
+        $this->event->expects($this->never())->method('getQuery');
+        $this->event->expects($this->never())->method('getDatagrid');
+        $this->metadataProvider->expects($this->never())->method('getMetadata');
+
+        $this->listener->onResultBefore($this->event);
     }
 
     /**
