@@ -40,6 +40,7 @@ class HiddenFallbackValueType extends AbstractType
                     'type' => $options['type'],
                     'options' => $options['options'],
                     'fallback_type' => $options['fallback_type'],
+                    'fallback_type_parent_locale' => $options['fallback_type_parent_locale'],
                     'enabled_fallbacks' => $options['enabled_fallbacks'],
                 ]
             );
@@ -57,7 +58,8 @@ class HiddenFallbackValueType extends AbstractType
         $resolver->setDefaults([
             'data_class' => null,
             'options' => [],
-            'fallback_type'     => FallbackPropertyType::NAME,
+            'fallback_type' => FallbackPropertyType::NAME,
+            'fallback_type_parent_locale' => null,
             'enabled_fallbacks' => [],
             'extend_value_type' => 'hidden',
             'default_callback' => function (FallbackType $fallbackType) {
