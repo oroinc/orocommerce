@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts as ProductFixture;
 
 /**
  * @dbIsolation
@@ -19,6 +20,47 @@ class ProductRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts']);
     }
 
+    public function testFindOneBySku()
+    {
+        $this->assertNull($this->getRepository()->findOneBySku(uniqid()));
+
+        $product = $this->getProduct(ProductFixture::PRODUCT_1);
+        $expectedProduct = $this->getRepository()->findOneBySku(ProductFixture::PRODUCT_1);
+
+        $this->assertEquals($product->getSku(), $expectedProduct->getSku());
+    }
+
+    /**
+     * @param string $pattern
+     * @param array $expectedSkuList
+     *
+     * @dataProvider patternsAndSkuListProvider
+     */
+    public function testFindAllSkuByPattern($pattern, $expectedSkuList)
+    {
+        $actualSkuList = $this->getRepository()->findAllSkuByPattern($pattern);
+
+        $this->assertEquals($expectedSkuList, $actualSkuList);
+    }
+
+    /**
+     * @return array
+     */
+    public function patternsAndSkuListProvider()
+    {
+        $allProducts = [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2, ProductFixture::PRODUCT_3];
+
+        return [
+            'exact search 1' => [ProductFixture::PRODUCT_1, [ProductFixture::PRODUCT_1]],
+            'exact search 2' => [ProductFixture::PRODUCT_2, [ProductFixture::PRODUCT_2]],
+            'not found' => [uniqid(), []],
+            'mask all products 1' => ['product.%', $allProducts],
+            'mask all products 2' => ['pro%', $allProducts],
+            'product suffixed with 1' => ['%.1', [ProductFixture::PRODUCT_1]],
+            'product suffixed with 2' => ['%2', [ProductFixture::PRODUCT_2]],
+        ];
+    }
+
     public function testGetProductsQueryBuilder()
     {
         /** @var Product $product */
@@ -27,6 +69,15 @@ class ProductRepositoryTest extends WebTestCase
         $result = $builder->getQuery()->getResult();
         $this->assertCount(1, $result);
         $this->assertEquals($product, $result[0]);
+    }
+
+    /**
+     * @param string $reference
+     * @return Product
+     */
+    protected function getProduct($reference)
+    {
+        return $this->getReference($reference);
     }
 
     /**

@@ -22,18 +22,18 @@ class DatagridListener
     {
         // properties
         $addToShoppingListLink = [
-            'type' => 'url',
-            'route' => 'orob2b_product_frontend_product_view',
-            'params' => ['id'],
+            'type'   => 'url',
+            'route'  => 'orob2b_shopping_list_line_item_frontend_add_widget',
+            'params' => ['productId' => 'id'],
         ];
         $this->addConfigElement($config, '[properties]', $addToShoppingListLink, 'add_to_shopping_list_link');
 
         // actions
         $addToShoppingList = [
-            'type' => 'navigate',
+            'type'  => 'dialog',
             'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
-            'link' => 'add_to_shopping_list_link',
-            'icon' => 'shopping-cart',
+            'link'  => 'add_to_shopping_list_link',
+            'icon'  => 'shopping-cart',
         ];
         $this->addConfigElement($config, '[actions]', $addToShoppingList, 'add_to_shopping_list');
 
@@ -49,9 +49,9 @@ class DatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @param string $path
-     * @param mixed $element
-     * @param mixed $key
+     * @param string                $path
+     * @param mixed                 $element
+     * @param mixed                 $key
      */
     protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key = null)
     {

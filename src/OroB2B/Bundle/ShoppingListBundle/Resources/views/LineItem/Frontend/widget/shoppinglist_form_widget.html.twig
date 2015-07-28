@@ -1,0 +1,16 @@
+{% block _orob2b_shopping_list_add_product_shoppingList_widget %}
+    {% set currentShoppingList = currentShoppingList is not defined ? null : currentShoppingList %}
+    {% spaceless %}
+        <select {{ block('widget_attributes') }}>
+            {% for group_label, choice in choices %}
+                {% set isCurrent = currentShoppingList is not null and choice.value == currentShoppingList.id %}
+                {% set label = choice.label ~ (isCurrent ? ' (current)') %}
+                <option value="{{ choice.value }}"
+                        {% if not app.request.isMethod('POST') and value is empty and isCurrent or app.request.isMethod('POST') and value is not empty and choice is selectedchoice(value) %} selected="selected"{% endif %}>
+                    {{ label }}
+                </option>
+            {% endfor %}
+            <option value=""{% if value is empty and (currentShoppingList is null or app.request.isMethod('POST')) %} selected="selected"{% endif %}>{{  empty_value|trans({},translation_domain) }}</option>
+        </select>
+    {% endspaceless %}
+{% endblock %}

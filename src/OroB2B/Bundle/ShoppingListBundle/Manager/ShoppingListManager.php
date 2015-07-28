@@ -15,11 +15,19 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class ShoppingListManager
 {
-    /** @var EntityManager */
+    /**
+     * @var EntityManager
+     */
     protected $shoppingListEm;
-    /** @var  EntityManager */
+
+    /**
+     * @var EntityManager
+     */
     protected $lineItemEm;
-    /** @var SecurityContext */
+
+    /**
+     * @var SecurityContext
+     */
     protected $securityContext;
 
     /**
@@ -50,28 +58,28 @@ class ShoppingListManager
             ->setAccountUser($accountUser)
             ->setLabel('Default');
 
-        return $this->setCurrent($accountUser, $shoppingList);
+        $this->setCurrent($accountUser, $shoppingList);
+
+        return $shoppingList;
     }
 
     /**
      * @param AccountUser  $accountUser
      * @param ShoppingList $shoppingList
-     *
-     * @return ShoppingList
      */
     public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
     {
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
+
         if ($currentList instanceof ShoppingList && $currentList !== $shoppingList) {
             $currentList->setCurrent(false);
         }
         $shoppingList->setCurrent(true);
+
         $this->shoppingListEm->persist($shoppingList);
         $this->shoppingListEm->flush();
-
-        return $shoppingList;
     }
 
     /**

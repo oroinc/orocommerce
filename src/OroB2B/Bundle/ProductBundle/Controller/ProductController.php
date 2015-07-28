@@ -122,12 +122,39 @@ class ProductController extends Controller
     }
 
     /**
+     * Duplicate product
+     *
+     * @Route("/duplicate/{id}", name="orob2b_product_duplicate", requirements={"id"="\d+"})
+     * @Acl(
+     *      id="orob2b_product_duplicate",
+     *      type="entity",
+     *      class="OroB2BProductBundle:Product",
+     *      permission="CREATE"
+     * )
+     * @param Product $product
+     * @return RedirectResponse
+     */
+    public function duplicateAction(Product $product)
+    {
+        $productCopy = $this->get('orob2b_product.service.duplicator')->duplicate($product);
+
+        $this->ensureSuccessMessage('orob2b.product.controller.product.duplicated.message');
+
+        return $this->redirect(
+            $this->generateUrl(
+                'orob2b_product_view',
+                ['id' => $productCopy->getId()]
+            )
+        );
+    }
+
+    /**
      * @param Product $product
      * @return array|RedirectResponse
      */
     protected function update(Product $product)
     {
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
             $product,
             $this->get('orob2b_product.form.product'),
             function (Product $product) {
@@ -144,5 +171,17 @@ class ProductController extends Controller
             },
             $this->get('translator')->trans('orob2b.product.controller.product.saved.message')
         );
+    }
+
+    /**
+     * @param $messageKey
+     */
+    protected function ensureSuccessMessage($messageKey)
+    {
+        $flashBag = $this->get('session')->getFlashBag();
+        if (!$flashBag->has('success')) {
+            $message = $this->get('translator')->trans($messageKey);
+            $flashBag->set('success', $message);
+        }
     }
 }

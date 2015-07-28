@@ -5,15 +5,20 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
     properties:
         product:
             - NotNull:
-                groups: [create, update]
+                groups: [create, update, add_product]
         quantity:
+            - NotNull:
+                groups: [create, update, add_product]
             - Type:
                 type: numeric
-                groups: [create, update]
-            - Range:
-                min: 1
-                groups: [create, update]
+                groups: [create, update, add_product]
+            - GreaterThan:
+                value: 0
+                groups: [create, update, add_product]
         unit:
+            - NotNull:
+                groups: [create, update, add_product]
+        shoppingList:
             - NotNull:
                 groups: [create, update]
 

@@ -24,7 +24,6 @@ class ShoppingListController extends Controller
     /**
      * @Route("/", name="orob2b_shopping_list_frontend_index")
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:index.html.twig")
-     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @return array
      */
@@ -60,7 +59,6 @@ class ShoppingListController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_shopping_list_frontend_info", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *

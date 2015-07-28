@@ -15,6 +15,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 {
     const SHOPPING_LIST_1 = 'shopping_list_1';
     const SHOPPING_LIST_2 = 'shopping_list_2';
+    const SHOPPING_LIST_3 = 'shopping_list_3';
 
     /**
      * {@inheritdoc}
@@ -89,6 +90,6 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getData()
     {
-        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2];
+        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2, self::SHOPPING_LIST_3];
     }
 }

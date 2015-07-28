@@ -10,11 +10,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemType extends AbstractType
@@ -32,23 +32,23 @@ class LineItemType extends AbstractType
     protected $registry;
 
     /**
-     * @var RoundingService
-     */
-    protected $roundingService;
-
-    /**
      * @var string
      */
     protected $productClass;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param RoundingService $roundingService
+     * @var LineItemManager
      */
-    public function __construct(ManagerRegistry $registry, RoundingService $roundingService)
+    private $lineItemManager;
+    
+    /**
+     * @param ManagerRegistry $registry
+     * @param LineItemManager $lineItemManager
+     */
+    public function __construct(ManagerRegistry $registry, LineItemManager $lineItemManager)
     {
         $this->registry = $registry;
-        $this->roundingService = $roundingService;
+        $this->lineItemManager = $lineItemManager;
     }
 
     /**
@@ -148,13 +148,10 @@ class LineItemType extends AbstractType
             ->find($data['product']);
 
         if ($product) {
-            $unitPrecision = $product->getUnitPrecision($data['unit']);
+            $data['quantity'] = $this->lineItemManager
+                ->roundProductQuantity($product, $data['unit'], $data['quantity']);
 
-            if ($unitPrecision) {
-                $data['quantity'] = $this->roundingService->round($data['quantity'], $unitPrecision->getPrecision());
-
-                $event->setData($data);
-            }
+            $event->setData($data);
         }
     }
 
