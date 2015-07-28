@@ -247,9 +247,11 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $searchResult = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')
             ->disableOriginalConstructor()
             ->getMock();
+
         $searchResult->expects($this->once())
             ->method('getElements')
             ->will($this->returnValue($foundElements));
+
         $this->indexer->expects($this->once())
             ->method('simpleSearch')
             ->with($search, $page - 1, $perPage + 1, 'alias')
@@ -263,6 +265,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getResult'])
             ->getMockForAbstractClass();
+
         $query->expects($this->once())
             ->method('getResult')
             ->will($this->returnValue($resultData));
@@ -270,25 +273,31 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $expr = $this->getMockBuilder('Doctrine\ORM\Query\Expr')
             ->disableOriginalConstructor()
             ->getMock();
+
         $expr->expects($this->once())
             ->method('in')
             ->with('e.id', $expectedIds)
             ->will($this->returnSelf());
+
         $queryBuilder->expects($this->once())
             ->method('expr')
             ->will($this->returnValue($expr));
+
         $queryBuilder->expects($this->once())
             ->method('where')
             ->with($expr)
             ->will($this->returnSelf());
+
         $queryBuilder->expects($this->any())
             ->method('andWhere')
             ->with('e.customer = :account')
             ->will($this->returnSelf());
+
         $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder, 'VIEW')
             ->will($this->returnValue($query));
+        
         $this->entityRepository
             ->expects($this->any())
             ->method('createQueryBuilder')
@@ -296,7 +305,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         return $searchResult;
     }
-    
+
     /**
      * @param int $id
      * @param string $email
