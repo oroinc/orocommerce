@@ -5,18 +5,17 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
+use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
-use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
-
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer as Account;
+use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadUserData extends AbstractFixture implements FixtureInterface
 {
@@ -42,31 +41,31 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         self::ROLE1 => [
             [
                 'class' => 'orob2b_sale.entity.quote.class',
-                'acls'=> ['VIEW_BASIC'],
+                'acls'  => ['VIEW_BASIC'],
             ],
             [
                 'class' => 'orob2b_customer.entity.account_user.class',
-                'acls'=> [],
+                'acls'  => [],
             ],
         ],
         self::ROLE2 => [
             [
                 'class' => 'orob2b_sale.entity.quote.class',
-                'acls'=> ['VIEW_LOCAL'],
+                'acls'  => ['VIEW_LOCAL'],
             ],
             [
                 'class' => 'orob2b_customer.entity.account_user.class',
-                'acls'=> [],
+                'acls'  => [],
             ],
         ],
         self::ROLE3 => [
             [
                 'class' => 'orob2b_sale.entity.quote.class',
-                'acls'=> ['VIEW_LOCAL'],
+                'acls'  => ['VIEW_LOCAL'],
             ],
             [
                 'class' => 'orob2b_customer.entity.account_user.class',
-                'acls'=> ['VIEW_LOCAL'],
+                'acls'  => ['VIEW_LOCAL'],
             ],
         ],
     ];
@@ -93,7 +92,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT1_USER1,
             'account'   => self::ACCOUNT1,
-            'role'     => self::ROLE1,
+            'role'      => self::ROLE1,
         ],
         [
             'email'     => self::ACCOUNT1_USER2,
@@ -101,7 +100,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
             'account'   => self::ACCOUNT1,
-            'role'     => self::ROLE2,
+            'role'      => self::ROLE2,
         ],
         [
             'email'     => self::ACCOUNT1_USER3,
@@ -117,7 +116,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT2_USER1,
             'account'   => self::ACCOUNT2,
-            'role'     => self::ROLE1,
+            'role'      => self::ROLE1,
         ],
     ];
 

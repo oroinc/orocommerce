@@ -8,8 +8,6 @@
             {% if class_granted_mask('VIEW_LOCAL', entity) and class_granted_permission('VIEW', entity.accountUser) %}
                 {{ UI.renderHtmlProperty('orob2b.frontend.sale.quote.account_user.label'|trans, entity.accountUser) }}
             {% endif %}
-            {% if entity.accountUser %}
-            {% endif %}
             {{ UI.renderProperty('orob2b.frontend.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
         </div>
         <div class="responsive-block">
