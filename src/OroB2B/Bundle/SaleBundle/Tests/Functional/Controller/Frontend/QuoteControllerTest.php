@@ -92,7 +92,9 @@ class QuoteControllerTest extends WebTestCase
         $quote = $this->getReference($inputData['qid']);
 
         $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_frontend_quote_view', ['id' => $quote->getId()]));
+            'orob2b_sale_frontend_quote_view',
+            ['id' => $quote->getId()]
+        ));
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
