@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
@@ -29,10 +30,13 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         return [
             new PreloadedExtension(
                 [
-                    FallbackPropertyType::NAME => new FallbackPropertyType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType($translator),
                     TextTypeStub::NAME => new TextTypeStub(),
                 ],
                 []

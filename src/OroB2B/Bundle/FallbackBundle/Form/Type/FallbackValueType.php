@@ -32,10 +32,11 @@ class FallbackValueType extends AbstractType
         ]);
 
         $resolver->setDefaults([
-            'data_class'        => null,
-            'options'           => [],
-            'fallback_type'     => FallbackPropertyType::NAME,
-            'enabled_fallbacks' => [],
+            'data_class'                  => null,
+            'options'                     => [],
+            'fallback_type'               => FallbackPropertyType::NAME,
+            'fallback_type_parent_locale' => null,
+            'enabled_fallbacks'           => [],
         ]);
     }
 
@@ -51,7 +52,11 @@ class FallbackValueType extends AbstractType
             ->add(
                 'fallback',
                 $options['fallback_type'],
-                ['enabled_fallbacks' => $options['enabled_fallbacks'], 'required' => false]
+                [
+                    'enabled_fallbacks' => $options['enabled_fallbacks'],
+                    'parent_locale' => $options['fallback_type_parent_locale'],
+                    'required' => false
+                ]
             );
 
         $builder->addViewTransformer(new FallbackValueTransformer());

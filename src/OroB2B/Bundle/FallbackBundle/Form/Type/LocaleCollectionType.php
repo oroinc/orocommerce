@@ -82,19 +82,22 @@ class LocaleCollectionType extends AbstractType
         foreach ($this->getLocales() as $locale) {
             // calculate enabled fallbacks for the specific locale
             $enabledFallbacks = $options['enabled_fallbacks'];
+            $parentLocaleCode = null;
             if ($locale->getParentLocale()) {
                 $enabledFallbacks = array_merge($enabledFallbacks, [FallbackType::PARENT_LOCALE]);
+                $parentLocaleCode = $locale->getParentLocale()->getCode();
             }
 
             $builder->add(
                 $locale->getId(),
                 $options['value_type'],
                 [
-                    'label'             => $locale->getCode(),
-                    'type'              => $options['type'],
-                    'options'           => $options['options'],
-                    'fallback_type'     => $options['fallback_type'],
-                    'enabled_fallbacks' => $enabledFallbacks,
+                    'label'                       => $locale->getCode(),
+                    'type'                        => $options['type'],
+                    'options'                     => $options['options'],
+                    'fallback_type'               => $options['fallback_type'],
+                    'fallback_type_parent_locale' => $parentLocaleCode,
+                    'enabled_fallbacks'           => $enabledFallbacks,
                 ]
             );
         }
