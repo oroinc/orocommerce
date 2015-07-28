@@ -1,5 +1,9 @@
 {% extends 'OroUIBundle:actions:index.html.twig' %}
-
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% block navButtons %}
+    {% placeholder frontend_products_navButtons %}
+{% endblock %}
+
 {% set gridName = 'frontend-products-grid' %}
 {% set pageTitle = 'orob2b.product.entity_plural_label'|trans %}

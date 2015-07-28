@@ -1,0 +1,33 @@
+{% set pageComponentOptions = {
+'_wid': app.request.get('_wid'),
+'savedId': savedId is defined and savedId ? savedId : null
+} %}
+<div class="widget-content"
+     data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.flash.success'})|json_encode }}"
+        >
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-error">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
+        <fieldset class="form-horizontal">
+            {{ form_row(form.label, {label: 'orob2b.shoppinglist.create_new_form.input_label'|trans }) }}
+            <i>{{ 'orob2b.shoppinglist.create_new_form.comment'|trans|raw }}</i>
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+            <button type="submit"
+                    class="btn btn-success">{{ 'orob2b.shoppinglist.create_new_form.submit_label'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+</div>

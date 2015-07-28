@@ -39,4 +39,24 @@ class ProductRepository extends EntityRepository
 
         return $matchedSku;
     }
+
+    /**
+     * @param array $productIds
+     *
+     * @return \Doctrine\ORM\QueryBuilder
+     */
+    public function getProductsQueryBuilder(array $productIds = [])
+    {
+        $productsQueryBuilder = $this
+            ->createQueryBuilder('p')
+            ->select('p');
+
+        if (count($productIds) > 0) {
+            $productsQueryBuilder
+                ->where('p IN (:product_ids)')
+                ->setParameter('product_ids', $productIds);
+        }
+
+        return $productsQueryBuilder;
+    }
 }

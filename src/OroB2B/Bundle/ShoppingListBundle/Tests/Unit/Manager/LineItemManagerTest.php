@@ -16,7 +16,7 @@ class LineItemManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var Callable
      */
-    protected $roundCallback = null;
+    protected $roundCallback;
 
     /**
      * {@inheritdoc}
@@ -92,7 +92,7 @@ class LineItemManagerTest extends \PHPUnit_Framework_TestCase
     protected function getRandomQuantity()
     {
         $quantity = mt_rand(1000, 15000);
-        $quantity = $quantity / 1000;
+        $quantity /= 1000;
 
         return $quantity;
     }
