@@ -37,21 +37,20 @@ class OrmDatasourceAclListener
         $select = $query->getAST();
         $fromClause = $select instanceof SelectStatement ? $select->fromClause : $select->subselectFromClause;
 
-        $entitiesWithoutOwnership = [];
+        $skipAclCheck = true;
 
         /** @var IdentificationVariableDeclaration $identificationVariableDeclaration */
         foreach ($fromClause->identificationVariableDeclarations as $identificationVariableDeclaration) {
             $entityName = $identificationVariableDeclaration->rangeVariableDeclaration->abstractSchemaName;
             $metadata = $this->metadataProvider->getMetadata($entityName);
 
-            if (!$metadata->hasOwner()) {
-                $entitiesWithoutOwnership[] = $entityName;
+            if ($metadata->hasOwner()) {
+                $skipAclCheck = false;
+                break;
             }
         }
 
-        if (count($entitiesWithoutOwnership) &&
-            count($entitiesWithoutOwnership) === count($fromClause->identificationVariableDeclarations)
-        ) {
+        if ($skipAclCheck) {
             $config->offsetSetByPath(Builder::DATASOURCE_SKIP_ACL_CHECK, true);
         }
     }

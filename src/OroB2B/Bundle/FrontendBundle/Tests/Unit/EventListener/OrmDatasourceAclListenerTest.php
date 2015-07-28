@@ -69,7 +69,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getQuery')
             ->willReturn($this->createQueryMock($from));
 
-        $this->metadataProvider->expects($this->exactly(count($entities)))
+        $this->metadataProvider->expects($this->atLeastOnce())
             ->method('getMetadata')
             ->willReturnCallback(
                 function ($className) use ($entities) {
