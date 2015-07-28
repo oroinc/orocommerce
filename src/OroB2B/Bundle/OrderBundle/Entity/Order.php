@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -10,7 +12,10 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -27,7 +32,10 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "organization_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -107,12 +115,74 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $owner;
 
     /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountUser;
+
+    /**
+     * @var Customer
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer"),
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $account;
+
+    /**
      * @var OrganizationInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+
+    /**
+     * @var Quote
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\Quote")
+     * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $quote;
+
+    /**
+     * @var Collection|OrderProduct[]
+     *
+     * @ORM\OneToMany(targetEntity="OrderProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $orderProducts;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->orderProducts = new ArrayCollection();
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
 
     /**
      * @return int
@@ -203,6 +273,44 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return Order
+     */
+    public function setAccountUser(AccountUser $accountUser = null)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
+    }
+
+    /**
+     * @return Customer
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Customer $account
+     * @return Order
+     */
+    public function setAccount(Customer $account = null)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+    
+    /**
      * @param OrganizationInterface $organization
      *
      * @return Order
@@ -221,25 +329,68 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     {
         return $this->organization;
     }
-
+    
     /**
-     * Pre persist event handler
+     * Add orderProducts
      *
-     * @ORM\PrePersist
+     * @param OrderProduct $orderProduct
+     * @return Order
      */
-    public function prePersist()
+    public function addOrderProduct(OrderProduct $orderProduct)
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (!$this->orderProducts->contains($orderProduct)) {
+            $this->orderProducts[] = $orderProduct;
+            $orderProduct->setOrder($this);
+        }
+
+        return $this;
     }
 
     /**
-     * Pre update event handler
+     * Remove orderProducts
      *
-     * @ORM\PreUpdate
+     * @param OrderProduct $orderProduct
+     * @return Order
      */
-    public function preUpdate()
+    public function removeOrderProduct(OrderProduct $orderProduct)
     {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if ($this->orderProducts->contains($orderProduct)) {
+            $this->orderProducts->removeElement($orderProduct);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get orderProducts
+     *
+     * @return Collection|OrderProduct[]
+     */
+    public function getOrderProducts()
+    {
+        return $this->orderProducts;
+    }
+    
+    /**
+     * Set quote
+     *
+     * @param Quote $quote
+     * @return Order
+     */
+    public function setQuote(Quote $quote = null)
+    {
+        $this->quote = $quote;
+
+        return $this;
+    }
+
+    /**
+     * Get quote
+     *
+     * @return Quote
+     */
+    public function getQuote()
+    {
+        return $this->quote;
     }
 }
