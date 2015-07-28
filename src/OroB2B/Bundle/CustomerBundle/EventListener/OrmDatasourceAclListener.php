@@ -39,6 +39,7 @@ class OrmDatasourceAclListener
      */
     public function onResultBefore(OrmResultBefore $event)
     {
+        // listener logic is applied only to frontend part of application
         if ($this->securityFacade->getLoggedUser() instanceof User) {
             return;
         }
