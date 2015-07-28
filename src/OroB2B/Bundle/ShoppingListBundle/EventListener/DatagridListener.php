@@ -34,6 +34,13 @@ class DatagridListener
             'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
             'link'  => 'add_to_shopping_list_link',
             'icon'  => 'shopping-cart',
+            'widgetOptions' => [
+                'options' => [
+                    'dialogOptions' => [
+                        'title' => 'Add To Shopping List'
+                    ]
+                ]
+            ]
         ];
         $this->addConfigElement($config, '[actions]', $addToShoppingList, 'add_to_shopping_list');
     }

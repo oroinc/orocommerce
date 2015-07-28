@@ -29,6 +29,13 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
                 'link' => 'add_to_shopping_list_link',
                 'icon' => 'shopping-cart',
+                'widgetOptions' => [
+                    'options' => [
+                        'dialogOptions' => [
+                            'title' => 'Add To Shopping List'
+                        ]
+                    ]
+                ]
             ],
         ],
     ];
