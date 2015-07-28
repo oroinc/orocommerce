@@ -8,8 +8,12 @@
 
     {{ form_widget(form.master_option_id) }}
     {{ form_errors(form.master_option_id) }}
-    <table>
-        <tr>
+    <table class="fallback-container"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {view: 'orob2bfallback/js/app/views/fallback-view'}|json_encode }}"
+            data-layout="separate"
+            >
+        <tr class="fallback-default-item">
             <td>{{ form.default.vars.label|trans }}</td>
             <td>
                 {% set attr = {} %}
@@ -26,13 +30,13 @@
                 {{ form_widget(form.is_default, { 'attr' : attr }) }}
                 {{ form_errors(form.is_default) }}
             </td>
-            <td>
+            <td class="fallback-item-value">
                 {{ form_widget(form.default) }}
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for localeId, locale in form.locales %}
-            <tr>
+            <tr class="fallback-item">
                 <td>{{ locale.vars.label|trans }}</td>
                 <td>
                     {% if locale.extend_value is defined %}

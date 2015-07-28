@@ -1,12 +1,14 @@
 orob2b:
     fallback:
         type:
-            empty:         'Custom value'
             parent_locale: 'Parent locale value'
             default:       'Default value'
 
         value:
             default:       'Default'
+
+        use_fallback:
+            label:         'Use'
 
         localizedfallbackvalue:
             entity_label:           'Localized fallback value'
