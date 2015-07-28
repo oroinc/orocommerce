@@ -64,6 +64,7 @@ class LoadQuotePermissions extends AbstractFixture implements
     protected function setBuyerQuotePermissions(ObjectManager $manager, AclManager $aclManager)
     {
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
+        $allowedAcls = ['VIEW_BASIC'];
         $role = $this->getBuyerRole($manager, 'ROLE_FRONTEND_BUYER');
 
         if ($aclManager->isAclEnabled()) {

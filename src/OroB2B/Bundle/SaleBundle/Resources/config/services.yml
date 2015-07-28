@@ -28,7 +28,6 @@ services:
         arguments:
             - %orob2b_sale.entity.quote.class%
             - %orob2b_customer.entity.account_user.class%
-            - @oro_security.acl.manager
             - @oro_security.security_facade
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-quotes-grid, method: onBuildBeforeFrontendQuotes }
