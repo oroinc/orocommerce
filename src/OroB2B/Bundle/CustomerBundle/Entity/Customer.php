@@ -44,6 +44,8 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Customer extends ExtendCustomer
 {
