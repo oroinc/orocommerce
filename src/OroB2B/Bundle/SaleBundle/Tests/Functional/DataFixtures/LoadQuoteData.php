@@ -168,6 +168,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         foreach ($items as $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
+                ->setAllowIncrements(false)
                 ->setQuantity($item['quantity'])
                 ->setPriceType($item['priceType'])
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
