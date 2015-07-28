@@ -44,6 +44,8 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomer;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Customer extends ExtendCustomer
 {
@@ -125,6 +127,14 @@ class Customer extends ExtendCustomer
         $this->children = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->users = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getName();
     }
 
     /**

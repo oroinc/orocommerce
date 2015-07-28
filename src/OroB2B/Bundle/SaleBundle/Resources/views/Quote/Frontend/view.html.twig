@@ -6,7 +6,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_sale_frontend_quote_index'),
-        'indexLabel': 'orob2b.sale.quote.entity_plural_label'|trans,
+        'indexLabel': 'orob2b.frontend.sale.quote.entity_plural_label'|trans,
         'entityTitle': entity.qid|default('N/A'|trans)
     } %}
     {{ parent() }}
@@ -16,7 +16,7 @@
     {% set quoteInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.sale.quote.widgets.quote_information'|trans,
+            'title': 'orob2b.frontend.sale.quote.widgets.quote_information'|trans,
             'url': path('orob2b_sale_frontend_quote_info', {'id': entity.id})
         }) }}
     {% endset %}
@@ -25,9 +25,9 @@
             <table class="sale-quoteproduct-collection-table sale-quoteproduct-collection-table-view">
                 <thead>
                     <tr>
-                        <th>{{ 'orob2b.sale.quoteproduct.column.product'|trans }}</th>
-                        <th>{{ 'orob2b.sale.quoteproduct.column.type'|trans }}</th>
-                        <th>{{ 'orob2b.sale.quoteproduct.column.quote_product_items'|trans }}</th>
+                        <th>{{ 'orob2b.frontend.sale.quoteproduct.column.product'|trans }}</th>
+                        <th>{{ 'orob2b.frontend.sale.quoteproduct.column.type'|trans }}</th>
+                        <th>{{ 'orob2b.frontend.sale.quoteproduct.column.quote_product_items'|trans }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,7 +39,7 @@
                             </div>
                             {% if quoteProduct.isTypeNotAvailable %}
                                 <div>
-                                    <div>{{ 'orob2b.sale.quoteproduct.product_replacement.label'|trans }}</div>
+                                    <div>{{ 'orob2b.frontend.sale.quoteproduct.product_replacement.label'|trans }}</div>
                                     {{ quoteProduct.productReplacementSku|raw }}
                                 </div>
                             {% endif %}
@@ -51,9 +51,9 @@
                             {% if quoteProduct.quoteProductRequests|length and not quoteProduct.isTypeOffer %}
                                 <table>
                                     <tr>
-                                        <th>{{ 'orob2b.sale.quoteproductrequest.quantity.label'|trans }}</th>
-                                        <th>{{ 'orob2b.sale.quoteproductrequest.price.label'|trans }}</th>
-                                        <th>{{ 'orob2b.sale.quoteproductrequest.column_summary'|trans }}</th>
+                                        <th>{{ 'orob2b.frontend.sale.quoteproductrequest.quantity.label'|trans }}</th>
+                                        <th>{{ 'orob2b.frontend.sale.quoteproductrequest.price.label'|trans }}</th>
+                                        <th>{{ 'orob2b.frontend.sale.quoteproductrequest.column_summary'|trans }}</th>
                                     </tr>
                                     {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
                                         {% set quantity = quoteProductRequest.quantity %}
@@ -67,7 +67,7 @@
                                     {% if quoteProduct.commentCustomer %}
                                         <tr>
                                             <td colspan="3">
-                                                {{ UI.renderProperty('orob2b.sale.quoteproduct.comment_customer.label'|trans, quoteProduct.commentCustomer) }}
+                                                {{ UI.renderProperty('orob2b.frontend.sale.quoteproduct.comment_customer.label'|trans, quoteProduct.commentCustomer) }}
                                             </td>
                                         </tr>
                                     {% endif %}
@@ -77,9 +77,9 @@
                             {% if quoteProduct.quoteProductOffers|length %}
                                 <table>
                                     <tr>
-                                        <th>{{ 'orob2b.sale.quoteproductoffer.quantity.label'|trans }}</th>
-                                        <th>{{ 'orob2b.sale.quoteproductoffer.price.label'|trans }}</th>
-                                        <th>{{ 'orob2b.sale.quoteproductoffer.column_summary'|trans }}</th>
+                                        <th>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity.label'|trans }}</th>
+                                        <th>{{ 'orob2b.frontend.sale.quoteproductoffer.price.label'|trans }}</th>
+                                        <th>{{ 'orob2b.frontend.sale.quoteproductoffer.column_summary'|trans }}</th>
                                     </tr>
 
                                     {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
@@ -92,7 +92,7 @@
                                     {% if quoteProduct.comment %}
                                         <tr>
                                             <td colspan="3">
-                                                {{ UI.renderProperty('orob2b.sale.quoteproduct.comment.label'|trans, quoteProduct.comment) }}
+                                                {{ UI.renderProperty('orob2b.frontend.sale.quoteproduct.comment.label'|trans, quoteProduct.comment) }}
                                             </td>
                                         </tr>
                                     {% endif %}
@@ -109,13 +109,13 @@
     {% set id = 'frontend-quote-view' %}
 
     {% set generalBlock = {
-        'title': 'orob2b.sale.quote.sections.general'|trans,
+        'title': 'orob2b.frontend.sale.quote.sections.general'|trans,
         'class': 'active',
         'subblocks': [{'data' : [quoteInformationWidget]}]
     } %}
 
     {% set lineItemsBlock = {
-        'title': 'orob2b.sale.quote.sections.quote_products'|trans,
+        'title': 'orob2b.frontend.sale.quote.sections.quote_products'|trans,
         'subblocks': [{'data' : [quoteProducts]}]
     } %}
 

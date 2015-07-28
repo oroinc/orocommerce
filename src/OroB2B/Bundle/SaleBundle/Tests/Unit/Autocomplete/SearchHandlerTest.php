@@ -49,10 +49,6 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->entityRepository = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -61,6 +57,10 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entityManager->expects($this->once())
             ->method('getMetadataFactory')
             ->will($this->returnValue($metadataFactory));
+        $this->entityRepository = $this
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->entityManager->expects($this->once())
             ->method('getRepository')
             ->with(self::TEST_ENTITY_CLASS)
@@ -188,6 +188,22 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param int $id
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getSearchItem($id)
+    {
+        $element = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result\Item')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $element->expects($this->once())
+            ->method('getRecordId')
+            ->will($this->returnValue($id));
+
+        return $element;
+    }
+
+    /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
     protected function getMetaMocks()
@@ -212,36 +228,6 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $id
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getSearchItem($id)
-    {
-        $element = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result\Item')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $element->expects($this->once())
-            ->method('getRecordId')
-            ->will($this->returnValue($id));
-
-        return $element;
-    }
-
-    /**
-     * @param int $id
-     * @param string $email
-     * @return \stdClass
-     */
-    protected function getResultStub($id, $email)
-    {
-        $result = new \stdClass();
-        $result->id = $id;
-        $result->email = $email;
-
-        return $result;
-    }
-
-    /**
      * @param string $search
      * @param int $page
      * @param int $perPage
@@ -261,13 +247,15 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $searchResult = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')
             ->disableOriginalConstructor()
             ->getMock();
+
         $searchResult->expects($this->once())
             ->method('getElements')
-            ->will($this->returnValue($foundElements));
+            ->willReturn($foundElements);
+
         $this->indexer->expects($this->once())
             ->method('simpleSearch')
             ->with($search, $page - 1, $perPage + 1, 'alias')
-            ->will($this->returnValue($searchResult));
+            ->willReturn($searchResult);
 
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
@@ -277,37 +265,58 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(['getResult'])
             ->getMockForAbstractClass();
+
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($resultData));
+            ->willReturn($resultData);
 
         $expr = $this->getMockBuilder('Doctrine\ORM\Query\Expr')
             ->disableOriginalConstructor()
             ->getMock();
+
         $expr->expects($this->once())
             ->method('in')
             ->with('e.id', $expectedIds)
             ->will($this->returnSelf());
+
         $queryBuilder->expects($this->once())
             ->method('expr')
-            ->will($this->returnValue($expr));
+            ->willReturn($expr);
+
         $queryBuilder->expects($this->once())
             ->method('where')
             ->with($expr)
             ->will($this->returnSelf());
+
         $queryBuilder->expects($this->any())
             ->method('andWhere')
             ->with('e.customer = :account')
             ->will($this->returnSelf());
+
         $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder, 'VIEW')
-            ->will($this->returnValue($query));
+            ->willReturn($query);
+
         $this->entityRepository
             ->expects($this->any())
             ->method('createQueryBuilder')
-            ->will($this->returnValue($queryBuilder));
+            ->willReturn($queryBuilder);
 
         return $searchResult;
+    }
+
+    /**
+     * @param int $id
+     * @param string $email
+     * @return \stdClass
+     */
+    protected function getResultStub($id, $email)
+    {
+        $result = new \stdClass();
+        $result->id = $id;
+        $result->email = $email;
+
+        return $result;
     }
 }

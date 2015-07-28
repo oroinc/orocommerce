@@ -4,15 +4,11 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {{ UI.renderProperty('orob2b.sale.quote.id.label'|trans, entity.id) }}
-            {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
-            {% if entity.accountUser %}
-                {{ UI.renderHtmlProperty('orob2b.sale.quote.account_user.label'|trans, entity.accountUser|escape) }}
+            {{ UI.renderProperty('orob2b.frontend.sale.quote.qid.label'|trans, entity.qid) }}
+            {% if class_granted_mask('VIEW_LOCAL', entity) and class_granted_permission('VIEW', entity.accountUser) %}
+                {{ UI.renderHtmlProperty('orob2b.frontend.sale.quote.account_user.label'|trans, entity.accountUser) }}
             {% endif %}
-            {% if entity.account %}
-                {{ UI.renderHtmlProperty('orob2b.sale.quote.account.label'|trans, entity.account.name|escape) }}
-            {% endif %}
-            {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
+            {{ UI.renderProperty('orob2b.frontend.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
