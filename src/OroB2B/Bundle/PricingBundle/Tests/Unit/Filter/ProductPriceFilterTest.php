@@ -11,6 +11,7 @@ use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 
 use OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,6 +40,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
      */
     protected $formatter;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     */
+    protected $requestHandler;
+
     public function setUp()
     {
         $this->form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
@@ -58,12 +64,28 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->productPriceFilter = new ProductPriceFilter($this->formFactory, $this->filterUtility, $this->formatter);
+        $this->requestHandler = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productPriceFilter = new ProductPriceFilter(
+            $this->formFactory,
+            $this->filterUtility,
+            $this->formatter,
+            $this->requestHandler
+        );
     }
 
     public function tearDown()
     {
-        unset($this->formFactory, $this->form, $this->filterUtility, $this->productPriceFilter, $this->formatter);
+        unset(
+            $this->formFactory,
+            $this->form,
+            $this->filterUtility,
+            $this->productPriceFilter,
+            $this->formatter,
+            $this->requestHandler
+        );
     }
 
     /**
