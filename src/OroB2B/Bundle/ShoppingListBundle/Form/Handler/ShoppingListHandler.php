@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,16 +13,24 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ShoppingListHandler
 {
-    /** @var FormInterface */
+    /**
+     * @var FormInterface
+     */
     protected $form;
 
-    /** @var Request */
+    /**
+     * @var Request
+     */
     protected $request;
 
-    /** @var ShoppingListManager */
+    /**
+     * @var ShoppingListManager
+     */
     protected $manager;
 
-    /** @var  EntityManager */
+    /**
+     * @var ObjectManager
+     */
     protected $em;
 
     /**
@@ -52,7 +60,7 @@ class ShoppingListHandler
     {
         $this->form->setData($shoppingList);
 
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {

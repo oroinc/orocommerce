@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -14,22 +14,33 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
 class AddProductsMassActionHandler implements MassActionHandlerInterface
 {
     const FLUSH_BATCH_SIZE = 100;
 
-    /** @var ShoppingListManager */
+    /**
+     * @var ShoppingListManager
+     */
     protected $shoppingListManager;
-    /** @var TranslatorInterface */
+
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
-    /** @var SecurityContextInterface */
+
+    /**
+     * @var SecurityContextInterface
+     */
     protected $securityContext;
-    /** @var  EntityManager */
+
+    /**
+     * @var ObjectManager
+     */
     protected $productEm;
 
     /**
@@ -80,7 +91,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
                 ->setProduct($entity)
                 ->setQuantity(1)
                 ->setUnit($unitPrecision->getUnit());
-            array_push($lineItems, $lineItem);
+            $lineItems[] = $lineItem;
         }
 
         $addedCnt = $this->shoppingListManager

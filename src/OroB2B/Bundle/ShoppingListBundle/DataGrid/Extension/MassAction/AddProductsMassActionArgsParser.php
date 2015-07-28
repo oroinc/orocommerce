@@ -39,12 +39,10 @@ class AddProductsMassActionArgsParser
      */
     public function getShoppingListId()
     {
-        switch ($this->args['shoppingList']) {
-            case self::CURRENT_SHOPPING_LIST_KEY:
-                $shoppingListId = null;
-                break;
-            default:
-                $shoppingListId = $this->args['shoppingList'];
+        $shoppingListId = $this->args['shoppingList'];
+
+        if ($shoppingListId === self::CURRENT_SHOPPING_LIST_KEY) {
+            $shoppingListId = null;
         }
 
         return $shoppingListId;

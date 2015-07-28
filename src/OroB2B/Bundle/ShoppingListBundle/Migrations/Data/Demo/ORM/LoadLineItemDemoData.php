@@ -61,7 +61,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
         }
         fclose($handler);
 
-        if (count($labels) == 0) {
+        if (count($labels) === 0) {
             return;
         }
 

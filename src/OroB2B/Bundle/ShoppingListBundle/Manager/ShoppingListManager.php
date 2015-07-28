@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Security\Core\SecurityContext;
@@ -16,12 +16,12 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 class ShoppingListManager
 {
     /**
-     * @var EntityManager
+     * @var ObjectManager
      */
     protected $shoppingListEm;
 
     /**
-     * @var EntityManager
+     * @var ObjectManager
      */
     protected $lineItemEm;
 
@@ -95,7 +95,7 @@ class ShoppingListManager
         /** @var LineItemRepository $repository */
         $repository = $this->lineItemEm->getRepository('OroB2BShoppingListBundle:LineItem');
         $possibleDuplicate = $repository->findDuplicate($lineItem);
-        if ($shoppingList->getId() && $possibleDuplicate instanceof LineItem) {
+        if ($possibleDuplicate instanceof LineItem && $shoppingList->getId()) {
             $possibleDuplicate->setQuantity($possibleDuplicate->getQuantity() + $lineItem->getQuantity());
         } else {
             $shoppingList->addLineItem($lineItem);
@@ -135,7 +135,7 @@ class ShoppingListManager
         $user = $this->securityContext->getToken()->getUser();
         /** @var ShoppingListRepository $repository */
         $repository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
-        $shoppingList = is_null($shoppingListId)
+        $shoppingList = null === $shoppingListId
             ? $repository->findCurrentForAccountUser($user)
             : $repository->findByUserAndId($user, $shoppingListId);
 
