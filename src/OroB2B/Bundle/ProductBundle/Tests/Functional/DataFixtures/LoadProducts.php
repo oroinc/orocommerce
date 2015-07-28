@@ -9,14 +9,18 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProducts extends AbstractFixture
 {
+    const PRODUCT_1 = 'product.1';
+    const PRODUCT_2 = 'product.2';
+    const PRODUCT_3 = 'product.3';
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $this->createProduct($manager, 'product.1');
-        $this->createProduct($manager, 'product.2');
-        $this->createProduct($manager, 'product.3');
+        $this->createProduct($manager, self::PRODUCT_1);
+        $this->createProduct($manager, self::PRODUCT_2);
+        $this->createProduct($manager, self::PRODUCT_3);
 
         $manager->flush();
     }

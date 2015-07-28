@@ -64,7 +64,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -193,6 +193,13 @@ class OroB2BProductBundleInstaller implements
             self::PRODUCT_TABLE_NAME,
             'visibility',
             'prod_visibility'
+        );
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            self::PRODUCT_TABLE_NAME,
+            'status',
+            'prod_status'
         );
     }
 

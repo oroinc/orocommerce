@@ -9,6 +9,9 @@ parameters:
     orob2b_product.formatter.product_unit_label.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
     orob2b_product.twig.product_unit_label.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension
+    orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
+    orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
+    orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
 
 services:
     orob2b_product.form.product:
@@ -66,3 +69,27 @@ services:
         class: %orob2b_product.service.visibility_checker.class%
         arguments:
             - @oro_config.manager
+
+    orob2b_product.service.sku_incrementor:
+        class: %orob2b_product.service.sku_incrementor.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - %orob2b_product.product.class%
+
+    orob2b_product.service.duplicator:
+        class: %orob2b_product.service.duplicator.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @event_dispatcher
+            - @oro_attachment.manager
+            - @oro_attachment.provider.attachment
+        calls:
+            - [setSkuIncrementor, [@orob2b_product.service.sku_incrementor]]
+
+    orob2b_product.service.product_update_handler:
+        class: %orob2b_product.service.product_update_handler.class%
+        parent: oro_form.model.update_handler
+        scope: request
+        calls:
+            - [setUrlGenerator, [@router]]
+            - [setTranslator, [@translator]]

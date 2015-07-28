@@ -19,6 +19,7 @@ parameters:
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_price_widget.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceWidgetListener
+    orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
 
     orob2b_pricing.model.price_list_request_hanlder.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
 
@@ -159,3 +160,11 @@ services:
                 - @orob2b_product.formatter.product_unit_label
             tags:
                 - { name: oro_filter.extension.orm_filter.filter, type: product-price }
+
+    orob2b_pricing.event_listener.product_duplicate:
+        class: %orob2b_pricing.event_listener.product_duplicate.class%
+        calls:
+            - [setProductPriceClass, [%orob2b_pricing.entity.product_price.class%]]
+            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
