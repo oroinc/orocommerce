@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 
+use Symfony\Component\Security\Core\SecurityContextInterface;
+
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -27,18 +29,26 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var  MassActionHandlerArgs */
     protected $args;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityContextInterface */
+    protected $securityContext;
+
     protected function setUp()
     {
+        $this->securityContext = $this->getSecurityContext();
         $this->handler = new AddProductsMassActionHandler(
             $this->getManagerRegistry(),
             $this->getShoppingListManager(),
             $this->getTranslator(),
-            $this->getSecurityContext()
+            $this->securityContext
         );
     }
 
     public function testHandle()
     {
+        $this->securityContext->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(true);
+
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
@@ -47,6 +57,22 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals(2, $response->getOptions()['count']);
+    }
+
+    public function testHandleNoPermissions()
+    {
+        $this->securityContext->expects($this->once())
+            ->method('isGranted')
+            ->willReturn(false);
+
+        $args = $this->getMassActionArgs();
+        $args->expects($this->any())
+            ->method('getData')
+            ->willReturn(['shoppingList' => 1]);
+
+        $response = $this->handler->handle($args);
+        $this->assertFalse($response->isSuccessful());
+        $this->assertEquals(0, $response->getOptions()['count']);
     }
 
     /**
@@ -97,7 +123,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getForCurrentUser')
             ->willReturn(new ShoppingList());
 
-        $shoppingListManager->expects($this->once())
+        $shoppingListManager->expects($this->any())
             ->method('bulkAddLineItems')
             ->willReturnCallback(function (array $lineItems) {
                 return count($lineItems);
@@ -128,10 +154,6 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $context->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
-
-        $context->expects($this->any())
-            ->method('isGranted')
-            ->willReturn(true);
 
         return $context;
     }
