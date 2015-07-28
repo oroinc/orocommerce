@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class CustomerType extends AbstractType
 {
@@ -65,6 +66,17 @@ class CustomerType extends AbstractType
                 ]
             )
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'cascade_validation' => true,
+            'intention'          => 'customer',
+        ]);
     }
 
     /**

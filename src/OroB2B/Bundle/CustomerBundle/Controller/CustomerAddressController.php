@@ -85,16 +85,16 @@ class CustomerAddressController extends Controller
             'entity' => $customer
         ];
 
-        if ($this->getRequest()->getMethod() == 'GET' && !$address->getId()) {
+        if ($this->getRequest()->getMethod() === 'GET' && !$address->getId()) {
             if (!$customer->getAddresses()->count()) {
                 $address->setPrimary(true);
             }
         }
 
-        if ($address->getOwner() && $address->getOwner()->getId() != $customer->getId()) {
-            throw new BadRequestHttpException('Address must belong to customer');
-        } elseif (!$address->getOwner()) {
+        if (!$address->getOwner()) {
             $customer->addAddress($address);
+        } elseif ($address->getOwner()->getId() != $customer->getId()) {
+            throw new BadRequestHttpException('Address must belong to Customer');
         }
 
         $form = $this->createForm(CustomerTypedAddressType::NAME, $address);

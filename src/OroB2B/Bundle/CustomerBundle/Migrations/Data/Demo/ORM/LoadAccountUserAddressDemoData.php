@@ -52,6 +52,8 @@ class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData impleme
             $userManager->updateUser($accountUser, false);
         }
 
+        $userManager->getStorageManager()->flush();
+
         fclose($handler);
     }
 

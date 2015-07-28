@@ -46,6 +46,10 @@ abstract class AbstractLoadAddressDemoData extends AbstractFixture implements Co
         $this->initRepositories();
     }
 
+    /**
+     * @param $data
+     * @return AbstractDefaultTypedAddress
+     */
     protected function createAddress($data)
     {
         /** @var Country $country */

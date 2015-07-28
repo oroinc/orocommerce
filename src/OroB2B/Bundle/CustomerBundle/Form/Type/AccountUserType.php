@@ -175,7 +175,7 @@ class AccountUserType extends AbstractType
                 AddressCollectionType::NAME,
                 [
                     'label'    => 'orob2b.customer.accountuser.addresses.label',
-                    'type'     => CustomerTypedAddressType::NAME,
+                    'type'     => AccountUserTypedAddressType::NAME,
                     'required' => false,
                     'options'  => [
                         'data_class'  => $this->addressClass,
@@ -236,6 +236,7 @@ class AccountUserType extends AbstractType
         $resolver->setRequired(['data']);
 
         $resolver->setDefaults([
+            'cascade_validation'   => true,
             'data_class'           => $this->dataClass,
             'intention'            => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'

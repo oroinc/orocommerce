@@ -85,7 +85,7 @@ class AccountUserAddressController extends Controller
             'entity' => $accountUser
         ];
 
-        if ($this->getRequest()->getMethod() == 'GET' && !$address->getId()) {
+        if ($this->getRequest()->getMethod() === 'GET' && !$address->getId()) {
             $address->setFirstName($accountUser->getFirstName());
             $address->setLastName($accountUser->getLastName());
             if (!$accountUser->getAddresses()->count()) {
@@ -93,10 +93,10 @@ class AccountUserAddressController extends Controller
             }
         }
 
-        if ($address->getOwner() && $address->getOwner()->getId() != $accountUser->getId()) {
-            throw new BadRequestHttpException('Address must belong to AccountUser');
-        } elseif (!$address->getOwner()) {
+        if (!$address->getOwner()) {
             $accountUser->addAddress($address);
+        } elseif ($address->getOwner()->getId() != $accountUser->getId()) {
+            throw new BadRequestHttpException('Address must belong to AccountUser');
         }
 
         $form = $this->createForm(AccountUserTypedAddressType::NAME, $address);
@@ -134,7 +134,7 @@ class AccountUserAddressController extends Controller
         ]);
 
         $addressCreateUrl = $this->generateUrl('orob2b_customer_account_user_address_create', [
-                'entityId' => $entity->getId()
+            'entityId' => $entity->getId()
         ]);
 
         $currentAddresses = $this->get('fragment.handler')->render($addressListUrl);
