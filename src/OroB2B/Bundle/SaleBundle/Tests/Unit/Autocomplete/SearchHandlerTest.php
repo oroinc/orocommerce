@@ -250,12 +250,12 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $searchResult->expects($this->once())
             ->method('getElements')
-            ->will($this->returnValue($foundElements));
+            ->willReturn($foundElements);
 
         $this->indexer->expects($this->once())
             ->method('simpleSearch')
             ->with($search, $page - 1, $perPage + 1, 'alias')
-            ->will($this->returnValue($searchResult));
+            ->willReturn($searchResult);
 
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
@@ -268,7 +268,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $query->expects($this->once())
             ->method('getResult')
-            ->will($this->returnValue($resultData));
+            ->willReturn($resultData);
 
         $expr = $this->getMockBuilder('Doctrine\ORM\Query\Expr')
             ->disableOriginalConstructor()
@@ -281,7 +281,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $queryBuilder->expects($this->once())
             ->method('expr')
-            ->will($this->returnValue($expr));
+            ->willReturn($expr);
 
         $queryBuilder->expects($this->once())
             ->method('where')
@@ -296,12 +296,12 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $this->aclHelper->expects($this->once())
             ->method('apply')
             ->with($queryBuilder, 'VIEW')
-            ->will($this->returnValue($query));
-        
+            ->willReturn($query);
+
         $this->entityRepository
             ->expects($this->any())
             ->method('createQueryBuilder')
-            ->will($this->returnValue($queryBuilder));
+            ->willReturn($queryBuilder);
 
         return $searchResult;
     }
