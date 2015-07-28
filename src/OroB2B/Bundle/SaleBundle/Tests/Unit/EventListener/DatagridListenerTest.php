@@ -74,7 +74,6 @@ class DatagridListenerTest extends WebTestCase
     /**
      * @param array $inputData
      * @param array $expectedData
-     * 
      * @dataProvider buildBeforeFrontendQuotesProvider
      */
     public function testBuildBeforeFrontendQuotes(array $inputData, array $expectedData)
