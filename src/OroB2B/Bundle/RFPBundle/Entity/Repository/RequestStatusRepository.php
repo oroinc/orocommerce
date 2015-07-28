@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Entity\Repository;
 
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
@@ -26,9 +27,9 @@ class RequestStatusRepository extends EntityRepository
     /**
      * Returns all statuses that are not deleted and deleted statuse that have requests
      *
-     * @return RequestStatus[]
+     * @return QueryBuilder
      */
-    public function getNotDeletedAndDeletedWithRequestsStatuses()
+    public function getNotDeletedAndDeletedWithRequestsStatusesQueryBuilder()
     {
         $qb = $this->getNotDeletedRequestStatusesQueryBuilder();
 
@@ -46,17 +47,15 @@ class RequestStatusRepository extends EntityRepository
                 )
             )
             ->setParameter('deleted_param', true, \PDO::PARAM_BOOL)
-            ->getQuery()
-            ->getResult()
         ;
     }
 
     /**
      * Returns QB
      *
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return QueryBuilder
      */
-    protected function getNotDeletedRequestStatusesQueryBuilder()
+    public function getNotDeletedRequestStatusesQueryBuilder()
     {
         $qb = $this->createQueryBuilder('requestStatus');
 

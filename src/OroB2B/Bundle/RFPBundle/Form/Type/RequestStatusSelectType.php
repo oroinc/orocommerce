@@ -42,23 +42,14 @@ class RequestStatusSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    protected function getChoices()
-    {
-        /** @var RequestStatusRepository $repository */
-        $repository = $this->registry->getRepository($this->entityClass);
-
-        return $repository->getNotDeletedStatuses();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(
             [
                 'class'   => $this->entityClass,
-                'choices' => $this->getChoices()
+                'query_builder' => function (RequestStatusRepository $repository) {
+                    return $repository->getNotDeletedRequestStatusesQueryBuilder();
+                },
             ]
         );
     }
