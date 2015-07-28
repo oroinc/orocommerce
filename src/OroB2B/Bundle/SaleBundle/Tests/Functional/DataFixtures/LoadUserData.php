@@ -179,31 +179,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $aclManager->flush();
     }
 
-    protected function setRolePermissions(AclManager $aclManager, AccountUserRole $role, $className, array $allowedAcls)
-    {
-        /* @var $chainMetadataProvider ChainMetadataProvider */
-        $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
-
-        if ($aclManager->isAclEnabled()) {
-            $sid = $aclManager->getSid($role);
-
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
-
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
-            }
-        }
-    }
-
     /**
      * @param ObjectManager $manager
      */
@@ -293,6 +268,37 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $userManager->updateUser($user);
 
             $this->setReference($user->getUsername(), $user);
+        }
+    }
+
+    /**
+     * @param AclManager $aclManager
+     * @param AccountUserRole $role
+     * @param string $className
+     * @param array $allowedAcls
+     */
+    protected function setRolePermissions(AclManager $aclManager, AccountUserRole $role, $className, array $allowedAcls)
+    {
+        /* @var $chainMetadataProvider ChainMetadataProvider */
+        $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
+
+        if ($aclManager->isAclEnabled()) {
+            $sid = $aclManager->getSid($role);
+
+            foreach ($aclManager->getAllExtensions() as $extension) {
+                if ($extension instanceof EntityAclExtension) {
+                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+                    $oid = $aclManager->getOid('entity:' . $className);
+                    $builder = $aclManager->getMaskBuilder($oid);
+                    $mask = $builder->reset()->get();
+                    foreach ($allowedAcls as $acl) {
+                        $mask = $builder->add($acl)->get();
+                    }
+                    $aclManager->setPermission($sid, $oid, $mask);
+
+                    $chainMetadataProvider->stopProviderEmulation();
+                }
+            }
         }
     }
 }
