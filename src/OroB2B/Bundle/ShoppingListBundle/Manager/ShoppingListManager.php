@@ -44,9 +44,11 @@ class ShoppingListManager
     /**
      * Creates current shopping list
      *
+     * @param string $label
+     *
      * @return ShoppingList
      */
-    public function createCurrent()
+    public function createCurrent($label = 'Default')
     {
         /** @var AccountUser $accountUser */
         $accountUser = $this->securityContext->getToken()->getUser();
@@ -56,7 +58,7 @@ class ShoppingListManager
             ->setOrganization($accountUser->getOrganization())
             ->setAccount($accountUser->getCustomer())
             ->setAccountUser($accountUser)
-            ->setLabel('Default');
+            ->setLabel($label);
 
         $this->setCurrent($accountUser, $shoppingList);
 

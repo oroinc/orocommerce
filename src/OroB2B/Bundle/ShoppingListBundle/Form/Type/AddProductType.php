@@ -188,8 +188,7 @@ class AddProductType extends AbstractType
 
         // Create new current shopping list
         if (!$data['shoppingList'] && $data['shoppingListLabel']) {
-            $shoppingList = $this->shoppingListManager
-                ->createCurrent($this->accountUser, $data['shoppingListLabel']);
+            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
 
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
