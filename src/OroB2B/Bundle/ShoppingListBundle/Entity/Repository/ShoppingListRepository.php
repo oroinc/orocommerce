@@ -1,16 +1,18 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
 {
     /**
      * @param AccountUser $accountUser
      *
-     * @return array
+     * @return ShoppingList|null
      */
     public function findCurrentForAccountUser(AccountUser $accountUser)
     {
