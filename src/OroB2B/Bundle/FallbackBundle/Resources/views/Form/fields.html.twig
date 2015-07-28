@@ -1,13 +1,12 @@
 {% block orob2b_fallback_value_widget %}
-    {% set valueContainer = form.value.vars.id ~ '_value_container' %}
-
     <table>
         <tr>
-            <td><div id="{{ valueContainer }}">{{ form_widget(form.value) }}</div></td>
-            <td>
+            <td class="fallback-item-value">{{ form_widget(form.value) }}</td>
+            <td nowrap="true" class="fallback-item-use-fallback">
+                {{ form_widget(form.use_fallback) }} {{ form.use_fallback.vars.label|trans }}
+            </td>
+            <td class="fallback-item-fallback">
                 {{ form_widget(form.fallback, {'attr': {
-                    'data-page-component-module': 'orob2bfallback/js/app/components/fallback-value-component',
-                    'data-page-component-options': {'value-container': '#' ~ valueContainer}|json_encode,
                     'class': 'fallback'
                 }}) }}
             </td>
@@ -19,16 +18,20 @@
 {% endblock %}
 
 {% block orob2b_fallback_localized_property_widget %}
-    <table>
-        <tr>
+    <table class="fallback-container"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {view: 'orob2bfallback/js/app/views/fallback-view'}|json_encode }}"
+            data-layout="separate"
+            >
+        <tr class="fallback-default-item">
             <td>{{ form.default.vars.label|trans }}</td>
-            <td>
+            <td class="fallback-item-value">
                 {{ form_widget(form.default) }}
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for locale in form.locales %}
-            <tr>
+            <tr class="fallback-item">
                 <td>{{ locale.vars.label|trans }}</td>
                 <td>
                     {{ form_widget(locale) }}
@@ -40,16 +43,20 @@
 {% endblock %}
 
 {% block orob2b_fallback_website_property_widget %}
-    <table>
-        <tr>
+    <table class="fallback-container"
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {view: 'orob2bfallback/js/app/views/fallback-view'}|json_encode }}"
+            data-layout="separate"
+            >
+        <tr class="fallback-default-item">
             <td>{{ form.default.vars.label|trans }}</td>
-            <td>
+            <td class="fallback-item-value">
                 {{ form_widget(form.default) }}
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for website in form.websites %}
-            <tr>
+            <tr class="fallback-item">
                 <td>{{ website.vars.label|trans }}</td>
                 <td>
                     {{ form_widget(website) }}

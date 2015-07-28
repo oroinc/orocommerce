@@ -77,8 +77,8 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
                     'options' => ['type' => 'integer'],
                 ],
                 'defaultData'   => 25,
-                'viewData'      => ['value' => 25, 'fallback' => null],
-                'submittedData' => ['value' => '55', 'fallback' => ''],
+                'viewData'      => ['value' => 25, 'use_fallback' => false, 'fallback' => null],
+                'submittedData' => ['value' => '55', 'use_fallback' => false, 'fallback' => ''],
                 'expectedData'  => 55
             ],
             'text with fallback' => [
@@ -87,8 +87,8 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
                     'enabled_fallbacks' => [FallbackType::PARENT_LOCALE]
                 ],
                 'defaultData'   => new FallbackType(FallbackType::SYSTEM),
-                'viewData'      => ['value' => null, 'fallback' => FallbackType::SYSTEM],
-                'submittedData' => ['value' => '', 'fallback' => FallbackType::PARENT_LOCALE],
+                'viewData'      => ['value' => null, 'use_fallback' => true, 'fallback' => FallbackType::SYSTEM],
+                'submittedData' => ['value' => '', 'use_fallback' => true, 'fallback' => FallbackType::PARENT_LOCALE],
                 'expectedData'  => new FallbackType(FallbackType::PARENT_LOCALE),
             ],
             'integer as null' => [
@@ -96,7 +96,7 @@ class FallbackValueTypeTest extends FormIntegrationTestCase
                     'type' => 'integer',
                 ],
                 'defaultData'   => null,
-                'viewData'      => ['value' => null, 'fallback' => null],
+                'viewData'      => ['value' => null, 'use_fallback' => false, 'fallback' => null],
                 'submittedData' => null,
                 'expectedData'  => null
             ],
