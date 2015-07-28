@@ -49,6 +49,11 @@ class FallbackValueType extends AbstractType
         $builder
             ->add('value', $options['type'], $valueOptions)
             ->add(
+                'use_fallback',
+                'checkbox',
+                ['label' => 'orob2b.fallback.use_fallback.label']
+            )
+            ->add(
                 'fallback',
                 $options['fallback_type'],
                 ['enabled_fallbacks' => $options['enabled_fallbacks'], 'required' => false]
