@@ -13,6 +13,7 @@ use Oro\Bundle\FilterBundle\Filter\NumberFilter;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class ProductPriceFilter extends NumberFilter
 {
@@ -22,17 +23,25 @@ class ProductPriceFilter extends NumberFilter
     protected $formatter;
 
     /**
+     * @var PriceListRequestHandler
+     */
+    protected $priceListRequestHandler;
+
+    /**
      * @param FormFactoryInterface $factory
      * @param FilterUtility $util
      * @param ProductUnitLabelFormatter $formatter
+     * @param PriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         FormFactoryInterface $factory,
         FilterUtility $util,
-        ProductUnitLabelFormatter $formatter
+        ProductUnitLabelFormatter $formatter,
+        PriceListRequestHandler $priceListRequestHandler
     ) {
         parent::__construct($factory, $util);
         $this->formatter = $formatter;
+        $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
     /**
@@ -71,7 +80,7 @@ class ProductPriceFilter extends NumberFilter
             )
         );
 
-        if (!in_array($type, [FilterUtility::TYPE_EMPTY, FilterUtility::TYPE_NOT_EMPTY])) {
+        if (!in_array($type, [FilterUtility::TYPE_EMPTY, FilterUtility::TYPE_NOT_EMPTY], true)) {
             $ds->setParameter($parameterName, $price);
         }
 
@@ -107,6 +116,12 @@ class ProductPriceFilter extends NumberFilter
             $rootAlias . '.id = IDENTITY(' . $joinAlias . '.product)'
         );
 
+        $this->addEqExpr(
+            $ds,
+            $joinAlias . '.priceList',
+            $ds->generateParameterName('priceList'),
+            $this->priceListRequestHandler->getPriceList()
+        );
         $this->addEqExpr($ds, $joinAlias . '.currency', $ds->generateParameterName('currency'), $currency);
         $this->addEqExpr($ds, $joinAlias . '.quantity', $ds->generateParameterName('quantity'), 1);
         $this->addEqExpr($ds, 'IDENTITY(' . $joinAlias . '.unit)', $ds->generateParameterName('unit'), $unit);
