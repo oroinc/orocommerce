@@ -1,0 +1,9 @@
+.mce-tinymce.disabled button {
+    cursor: default;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    opacity: .4;
+    filter: alpha(opacity=40);
+    zoom: 1
+}

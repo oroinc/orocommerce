@@ -52,7 +52,6 @@ class FallbackPropertyType extends AbstractType
         $resolver->setDefaults(
             [
                 'required'           => false,
-                'empty_value'        => 'orob2b.fallback.type.empty',
                 'enabled_fallbacks'  => [],
                 'existing_fallbacks' => [
                     FallbackType::SYSTEM        => 'orob2b.fallback.type.default',

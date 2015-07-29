@@ -19,6 +19,10 @@
     text-decoration: none;
 }
 
+.oro-options-collection.oro-item-collection {
+    width: 580px !important;
+}
+
 .oro-options-collection.oro-item-collection :after {
      color: #bbb;
  }
