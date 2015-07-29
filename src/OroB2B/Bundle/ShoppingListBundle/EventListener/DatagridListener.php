@@ -36,6 +36,15 @@ class DatagridListener
             'icon'  => 'shopping-cart',
         ];
         $this->addConfigElement($config, '[actions]', $addToShoppingList, 'add_to_shopping_list');
+
+        //mass actions
+        $addToShoppingListMassAction = [
+            'type' => 'addproducts',
+            'entity_name' => '%orob2b_product.product.class%',
+            'data_identifier' => 'product.id',
+            'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label'
+        ];
+        $this->addConfigElement($config, '[mass_actions]', $addToShoppingListMassAction, 'addproducts');
     }
 
     /**

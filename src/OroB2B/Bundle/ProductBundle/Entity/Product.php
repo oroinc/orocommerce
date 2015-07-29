@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
  * @ORM\Table(name="orob2b_product")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository")
  * @Config(
  *      routeName="orob2b_product_index",
  *      routeView="orob2b_product_view",
@@ -49,6 +49,9 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface
 {
+    const STATUS_DISABLED = 'disabled';
+    const STATUS_ENABLED = 'enabled';
+
     const INVENTORY_STATUS_IN_STOCK = 'in_stock';
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
@@ -375,5 +378,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    public function __clone()
+    {
+        if ($this->id) {
+            $this->id = null;
+            $this->unitPrecisions = new ArrayCollection();
+        }
     }
 }

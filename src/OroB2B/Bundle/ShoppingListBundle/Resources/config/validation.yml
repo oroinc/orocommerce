@@ -12,8 +12,8 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
             - Type:
                 type: numeric
                 groups: [create, update, add_product]
-            - Range:
-                min: 1
+            - GreaterThan:
+                value: 0
                 groups: [create, update, add_product]
         unit:
             - NotNull:

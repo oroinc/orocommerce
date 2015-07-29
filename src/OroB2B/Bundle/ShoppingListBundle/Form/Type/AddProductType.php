@@ -1,25 +1,27 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\ExecutionContextInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Security\Core\SecurityContext;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AddProductType extends AbstractType
 {
@@ -76,7 +78,9 @@ class AddProductType extends AbstractType
         $this->lineItemManager = $lineItemManager;
         $this->shoppingListManager = $shoppingListManager;
 
-        $this->accountUser = $securityContext->getToken()->getUser();
+        /** @var TokenInterface $token */
+        $token = $securityContext->getToken();
+        $this->accountUser = $token->getUser();
     }
 
     /**
@@ -185,11 +189,13 @@ class AddProductType extends AbstractType
 
         // Create new current shopping list
         if (!$data['shoppingList'] && $data['shoppingListLabel']) {
-            $shoppingList = $this->shoppingListManager
-                ->createCurrent($this->accountUser, $data['shoppingListLabel'], false);
+            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
 
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
+
+            // TODO: check why this value isn't submitted via FormEvent::setData
+            $formData->setShoppingList($shoppingList);
         }
 
         // Round quantity

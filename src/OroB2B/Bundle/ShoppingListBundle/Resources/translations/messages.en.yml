@@ -13,6 +13,11 @@ orob2b:
         line_items.label: Line Items
         is_current.label: Current
 
+        create_new_form:
+            input_label: Shopping List Label
+            comment: Selected products will be added to this new shopping list.<br/>Click "Cancel" to select a different list.
+            submit_label: Create and Add
+
         product:
             add_to_shopping_list.label: Add to Shopping List
             add_to.label: Add to
@@ -20,6 +25,10 @@ orob2b:
 
         actions:
             set_current: Set as current
+            add_to_shopping_list: Add to
+            add_to_new_shopping_list: Create New Shopping List
+            add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
+
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
@@ -35,10 +44,6 @@ orob2b:
         controller:
             shopping_list.saved.message: Shopping List has been saved
 
-        security:
-            permission:
-                view_shopping_list: View Shopping List
-
         lineitem:
             entity_label: Line Item
             entity_plural_label: Line Items
@@ -49,7 +54,7 @@ orob2b:
             shopping_list.label: Shopping List
             unit.label: Unit
             add_line_item: Add Line Item
-            create_new_shopping_list: Create New
+            create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
 
             controller:

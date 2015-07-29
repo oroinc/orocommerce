@@ -3,13 +3,15 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -21,7 +23,6 @@ class ShoppingListController extends Controller
     /**
      * @Route("/", name="orob2b_shopping_list_frontend_index")
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:index.html.twig")
-     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @return array
      */
@@ -57,7 +58,6 @@ class ShoppingListController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_shopping_list_frontend_info", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *
@@ -171,18 +171,58 @@ class ShoppingListController extends Controller
             $this->createForm(ShoppingListType::NAME, $shoppingList),
             function (ShoppingList $shoppingList) {
                 return [
-                    'route'      => 'orob2b_shopping_list_frontend_update',
+                    'route' => 'orob2b_shopping_list_frontend_update',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
             function (ShoppingList $shoppingList) {
                 return [
-                    'route'      => 'orob2b_shopping_list_frontend_view',
+                    'route' => 'orob2b_shopping_list_frontend_view',
                     'parameters' => ['id' => $shoppingList->getId()]
                 ];
             },
             $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
+    }
+
+    /**
+     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
+     *
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return JsonResponse
+     */
+    public function addProductsMassAction($gridName, $actionName)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+
+        $data = [
+            'successful' => $response->isSuccessful(),
+            'message' => $response->getMessage()
+        ];
+
+        return new JsonResponse(array_merge($data, $response->getOptions()));
+    }
+
+    /**
+     * @return Response
+     */
+    public function getProductsAddBtnAction()
+    {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+        $shoppingLists = $this
+            ->getDoctrine()
+            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->findByUser($accountUser);
+
+        return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
+            'shoppingLists' => $shoppingLists
+        ]);
     }
 }

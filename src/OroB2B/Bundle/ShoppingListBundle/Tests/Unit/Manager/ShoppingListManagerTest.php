@@ -2,8 +2,12 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
@@ -15,8 +19,10 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     protected $shoppingListTwo;
     /** @var  ShoppingListManager */
     protected $manager;
-    /** @var  array */
+    /** @var  ShoppingList[] */
     protected $shoppingLists = [];
+    /** @var LineItem[] */
+    protected $lineItems = [];
 
     protected function setUp()
     {
@@ -26,48 +32,41 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->shoppingListTwo = new ShoppingList();
         $this->shoppingListTwo->setCurrent(false);
 
-        $entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityRepository->expects($this->once())
-            ->method('findCurrentForAccountUser')
-            ->willReturnCallback(function (AccountUser $accountUser) {
-                return $accountUser->getFirstName() === null ? $this->shoppingListOne : null;
-            });
 
-        $entityRepository->expects($this->once())
-            ->method('findCurrentForAccountUser')
-            ->willReturn($this->shoppingListOne);
-
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $securityToken = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $entityManager->expects($this->any())
-            ->method('getRepository')
-            ->with('OroB2BShoppingListBundle:ShoppingList')
-            ->will($this->returnValue($entityRepository));
-        $entityManager->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(function (ShoppingList $obj) {
-                $this->shoppingLists[] = $obj;
-            });
+        $securityToken->expects($this->any())
+            ->method('getUser')
+            ->willReturn(
+                (new AccountUser())
+                    ->setFirstName('skip')
+                    ->setCustomer(new Customer())
+            );
 
-        $managerRegistry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+        $securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
             ->disableOriginalConstructor()
             ->getMock();
-        $managerRegistry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->willReturn($entityManager);
 
-        $this->manager = new ShoppingListManager($managerRegistry);
+        $securityContext->expects($this->any())
+            ->method('getToken')
+            ->willReturn($securityToken);
+
+        $entityManager = $this->getManagerRegistry();
+
+        $this->manager = new ShoppingListManager(
+            $entityManager,
+            $securityContext
+        );
     }
 
     public function testCreateCurrent()
     {
-        $this->manager->setCurrent(new AccountUser(), $this->shoppingListTwo);
+        $this->manager->setCurrent(
+            (new AccountUser())->setFirstName('setCurrent'),
+            $this->shoppingListTwo
+        );
         $this->assertTrue($this->shoppingListTwo->isCurrent());
         $this->assertFalse($this->shoppingListOne->isCurrent());
     }
@@ -75,14 +74,140 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     public function testSetCurrent()
     {
         $this->assertEmpty($this->shoppingLists);
-        $accountUser = new AccountUser();
-        $accountUser->setCustomer(new Customer());
-        $accountUser->setFirstName('First');
-        $this->manager->createCurrent($accountUser);
+        $this->manager->createCurrent();
         $this->assertCount(1, $this->shoppingLists);
         /** @var ShoppingList $list */
         $list = array_shift($this->shoppingLists);
         $this->assertTrue($list->isCurrent());
-        $this->assertEquals($accountUser, $list->getAccountUser());
+    }
+
+    public function testAddLineItem()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = new LineItem();
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+    }
+
+    public function testAddLineItemDuplicate()
+    {
+        $shoppingList = new ShoppingList();
+        $reflectionClass = new \ReflectionClass(get_class($shoppingList));
+        $reflectionProperty = $reflectionClass->getProperty('id');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($shoppingList, 1);
+
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setQuantity(10);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        $this->assertEquals(1, count($this->lineItems));
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setQuantity(5);
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList);
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        /** @var LineItem $resultingItem */
+        $resultingItem = array_shift($this->lineItems);
+        $this->assertEquals(15, $resultingItem->getQuantity());
+    }
+
+    public function testGetForCurrentUser()
+    {
+        $shoppingList = $this->manager->getForCurrentUser();
+        $this->assertInstanceOf(
+            'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            $shoppingList
+        );
+    }
+
+    public function testBulkAddLineItems()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItems = [];
+        for ($i = 0; $i < 10; $i++) {
+            $lineItems[] = new LineItem();
+        }
+
+        $this->manager->bulkAddLineItems($lineItems, $shoppingList, 10);
+        $this->assertEquals(10, $shoppingList->getLineItems()->count());
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getManagerRegistry()
+    {
+        $shoppingListRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $shoppingListRepository->expects($this->any())
+            ->method('findCurrentForAccountUser')
+            ->willReturnCallback(function (AccountUser $accountUser) {
+                if ($accountUser->getFirstName() === 'setCurrent') {
+                    return $this->shoppingListOne;
+                }
+
+                return null;
+            });
+
+
+        $lineItemRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $lineItemRepository
+            ->expects($this->any())
+            ->method('findDuplicate')
+            ->willReturnCallback(function (LineItem $lineItem) {
+                /** @var ArrayCollection $shoppingListLineItems */
+                $shoppingListLineItems = $lineItem->getShoppingList()->getLineItems();
+                if ($lineItem->getShoppingList()->getId() === 1
+                    && $shoppingListLineItems->count() > 0
+                    && $shoppingListLineItems->current()->getUnit() === $lineItem->getUnit()
+                ) {
+                    return $lineItem->getShoppingList()->getLineItems()->current();
+                }
+
+                return null;
+            });
+
+        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects($this->any())
+            ->method('getRepository')
+            ->will($this->returnValueMap([
+                ['OroB2BShoppingListBundle:ShoppingList', $shoppingListRepository],
+                ['OroB2BShoppingListBundle:LineItem', $lineItemRepository]
+            ]));
+
+        $entityManager->expects($this->any())
+            ->method('persist')
+            ->willReturnCallback(function ($obj) {
+                if ($obj instanceof ShoppingList) {
+                    $this->shoppingLists[] = $obj;
+                }
+                if ($obj instanceof LineItem) {
+                    $this->lineItems[] = $obj;
+                }
+            });
+
+        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()->getMock();
+        $managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        return $managerRegistry;
     }
 }

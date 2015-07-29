@@ -5,12 +5,13 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
 
+/**
+ * @dbIsolation
+ */
 class ProductControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->markTestSkipped('Acl for AccountUser');
-
         $this->initClient(
             [],
             array_merge(

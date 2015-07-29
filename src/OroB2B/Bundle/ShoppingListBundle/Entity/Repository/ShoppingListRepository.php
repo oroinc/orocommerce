@@ -3,17 +3,18 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\NonUniqueResultException;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
 {
     /**
      * @param AccountUser $accountUser
      *
-     * @return array
+     * @return ShoppingList|null
      */
     public function findCurrentForAccountUser(AccountUser $accountUser)
     {
@@ -25,6 +26,11 @@ class ShoppingListRepository extends EntityRepository
             ->getQuery()->getOneOrNullResult();
     }
 
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return QueryBuilder
+     */
     public function createFindForAccountUserQueryBuilder(AccountUser $accountUser)
     {
         $qb = $this->createQueryBuilder('sl');
@@ -35,8 +41,41 @@ class ShoppingListRepository extends EntityRepository
                 'sl.account = :account'
             )
         )
-        ->setParameter('accountUser', $accountUser)
-        ->setParameter('account', $accountUser->getCustomer());
+            ->setParameter('accountUser', $accountUser)
+            ->setParameter('account', $accountUser->getCustomer());
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return array
+     */
+    public function findByUser(AccountUser $accountUser)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list')
+            ->where('list.accountUser = :accountUser')
+            ->setParameter('accountUser', $accountUser)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param int         $id
+     *
+     * @return mixed
+     * @throws NonUniqueResultException
+     */
+    public function findByUserAndId(AccountUser $accountUser, $id)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list')
+            ->where('list.accountUser = :accountUser')
+            ->andWhere('list.id = :id')
+            ->setParameter('accountUser', $accountUser)
+            ->setParameter('id', $id)
+            ->getQuery()->getOneOrNullResult();
     }
 
     /**

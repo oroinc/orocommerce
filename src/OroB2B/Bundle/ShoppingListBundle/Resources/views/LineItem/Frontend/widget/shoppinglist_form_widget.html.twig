@@ -4,7 +4,7 @@
         <select {{ block('widget_attributes') }}>
             {% for group_label, choice in choices %}
                 {% set isCurrent = currentShoppingList is not null and choice.value == currentShoppingList.id %}
-                {% set label = choice.label ~ (isCurrent ? ' (Current)') %}
+                {% set label = choice.label ~ (isCurrent ? ' (current)') %}
                 <option value="{{ choice.value }}"
                         {% if not app.request.isMethod('POST') and value is empty and isCurrent or app.request.isMethod('POST') and value is not empty and choice is selectedchoice(value) %} selected="selected"{% endif %}>
                     {{ label }}
