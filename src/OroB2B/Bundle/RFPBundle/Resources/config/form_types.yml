@@ -1,17 +1,116 @@
 parameters:
-    orob2b_rfp.request.class: OroB2B\Bundle\RFPBundle\Entity\Request
-    orob2b_rfp.request_status.class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
-
-    orob2b_rfp.form.type.request.class: OroB2B\Bundle\RFPBundle\Form\RequestType
+    orob2b_rfp.form.type.user_select.class: OroB2B\Bundle\RFPBundle\Form\Type\UserSelectType
+    orob2b_rfp.form.type.request_status.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusType
+    orob2b_rfp.form.type.request_status_select.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType
+    orob2b_rfp.form.type.request_change_status.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType
+    orob2b_rfp.form.type.default_request_status.class: OroB2B\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType
+    orob2b_rfp.form.type.request_status_translation.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType
+    orob2b_rfp.form.type.request_status_with_deleted_select.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType
+    orob2b_rfp.form.type.request.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestType
+    orob2b_rfp.form.type.frontend_request.class: OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType
+    orob2b_rfp.form.type.request_product.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType
+    orob2b_rfp.form.type.request_product_item.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType
+    orob2b_rfp.form.type.request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType
+    orob2b_rfp.form.type.request_product_item_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType
 
 services:
+    orob2b_rfp.form.type.default_request_status:
+        class: %orob2b_rfp.form.type.default_request_status.class%
+        arguments:
+            - @doctrine
+        calls:
+            - [setRequestStatusClass, [%orob2b_rfp.entity.request.status.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_default_request_status }
+
+    orob2b_rfp.form.type.request_status_with_deleted_select:
+        class: %orob2b_rfp.form.type.request_status_with_deleted_select.class%
+        arguments:
+            - @doctrine
+        calls:
+            - [setEntityClass, [%orob2b_rfp.entity.request.status.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_status_with_deleted_select }
+
+    # Request form types
     orob2b_rfp.form.type.request:
         class: %orob2b_rfp.form.type.request.class%
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request }
+
+    orob2b_rfp.form.type.request_status_select:
+        class: %orob2b_rfp.form.type.request_status_select.class%
+        arguments:
+            - @doctrine
+        calls:
+            - [setEntityClass, [%orob2b_rfp.entity.request.status.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_status_select }
+
+    orob2b_rfp.form.type.request_change_status:
+        class: %orob2b_rfp.form.type.request_change_status.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_change_status }
+
+    orob2b_rfp.form.type.user_select:
+        class: %orob2b_rfp.form.type.user_select.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_rfp_user_select }
+
+    orob2b_rfp.form.type.request_status_translation:
+        class: %orob2b_rfp.form.type.request_status_translation.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_status_translation }
+
+    orob2b_rfp.form.type.request_status:
+        class: %orob2b_rfp.form.type.request_status.class%
+        arguments:
+            - @oro_config.user
+            - @oro_locale.settings
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request.status.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_status }
+
+    orob2b_rfp.form.type.request_product:
+        class: %orob2b_rfp.form.type.request_product.class%
+        arguments:
+            - @translator
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_product }
+
+    orob2b_rfp.form.type.request_product_item:
+        class: %orob2b_rfp.form.type.request_product_item.class%
+        arguments:
+            - @translator
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request_product_item.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_product_item }
+
+    orob2b_rfp.form.type.request_product_collection:
+        class: %orob2b_rfp.form.type.request_product_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_product_collection }
+
+    orob2b_rfp.form.type.request_product_item_collection:
+        class: %orob2b_rfp.form.type.request_product_item_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_request_product_item_collection }
+
+    orob2b_rfp.form.type.frontend_request:
+        class: %orob2b_rfp.form.type.frontend_request.class%
         arguments:
             - @oro_config.manager
             - @doctrine
         calls:
-            - [setDataClass, [%orob2b_rfp.request.class%]]
-            - [setRequestStatusClass, [%orob2b_rfp.request_status.class%]]
+            - [setDataClass, [%orob2b_rfp.entity.request.class%]]
+            - [setRequestStatusClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
-            - { name: form.type, alias: orob2b_rfp_request_type }
+            - { name: form.type, alias: orob2b_rfp_frontend_request_type }

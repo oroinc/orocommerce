@@ -1,0 +1,58 @@
+{% block orob2b_rfp_request_product_collection_row %}
+    <div class="rfp-requestproduct-collection">
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block orob2b_rfp_request_product_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' rfp-requestproduct-widget control-group'}) %}
+
+    {% set units = [] %}
+    {% set product = form.vars.value.product|default(null) %}
+    {% if product %}
+        {% for code in product.availableUnitCodes %}
+            {% set units = units|merge({ (code) : code|orob2b_format_product_unit_label}) %}
+        {% endfor %}
+    {% endif %}
+
+    <div {{ block('widget_container_attributes') }} data-page-component-options="{{ {'units': units ? {(product.id) : units} : {} }|json_encode }}"
+        data-page-component-module="orob2brfp/js/app/components/rfp-requestproductitems-component">
+        {{ form_label(form.product, '', { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+        <div class="rfp-requestproduct-product-select controls{% if errors|length > 0 %} validation-error{% endif %}">
+            {{ form_widget(form.product) }}
+            {{ form_errors(form.product) }}
+        </div>
+        <div class="rfp-requestproductitem-collection">
+            {{ form_widget(form.requestProductItems) }}
+            {{ form_errors(form.requestProductItems) }}
+            <div class="rfp-requestproduct-comment-control">
+                {{ form_label(form.comment, '' , { label_attr: label_attr|merge({ class: 'control-label' })}) }}
+                {{ form_widget(form.comment) }}
+                {{ form_errors(form.comment) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block orob2b_rfp_request_product_item_widget %}
+    <table class="rfp-requestproductitem-widget">
+        <tr>
+            <td>
+                {{ form_widget(form.quantity) }}
+                {{ form_errors(form.quantity) }}
+            </td>
+            <td>
+                {{ form_widget(form.productUnit, {attr: attr|merge({class: 'rfp-requestproductitem-productunit-select'})}) }}
+                {{ form_errors(form.productUnit) }}
+            </td>
+            <td>
+                {{ form_widget(form.price.value) }}
+                {{ form_errors(form.price.value) }}
+            </td>
+            <td>
+                {{ form_widget(form.price.currency) }}
+                {{ form_errors(form.price.currency) }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

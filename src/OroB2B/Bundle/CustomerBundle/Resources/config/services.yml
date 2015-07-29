@@ -1,8 +1,11 @@
 parameters:
     orob2b_customer.entity.customer.class: OroB2B\Bundle\CustomerBundle\Entity\Customer
+    orob2b_customer.entity.customer_address.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress
     orob2b_customer.entity.customer_group.class: OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup
     orob2b_customer.entity.account_user.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUser
     orob2b_customer.entity.account_user_role.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole
+    orob2b_customer.entity.audit.class: OroB2B\Bundle\CustomerBundle\Entity\Audit
+    orob2b_customer.entity.audit_field.class: OroB2B\Bundle\CustomerBundle\Entity\AuditField
 
     orob2b_customer.customer_tree_handler.class: OroB2B\Bundle\CustomerBundle\JsTree\CustomerTreeHandler
     orob2b_customer.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -12,6 +15,7 @@ parameters:
     orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.datagrid.action_permission_provider.class: OroB2B\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider
+    orob2b_customer.datagrid.extension.accoun_user.class: OroB2B\Bundle\CustomerBundle\Datagrid\Extension\AccountUserExtension
     orob2b_customer.mailer.processor.class: OroB2B\Bundle\CustomerBundle\Mailer\Processor
     orob2b_account_user.manager.class: OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager
 
@@ -26,6 +30,8 @@ parameters:
     orob2b_customer.event_listener.login.class: OroB2B\Bundle\CustomerBundle\EventListener\LoginListener
 
     orob2b_customer.acl.voter.account_user_role.class: OroB2B\Bundle\CustomerBundle\Acl\Voter\AccountUserRoleVoter
+    orob2b_customer.acl.group_provider.class: OroB2B\Bundle\CustomerBundle\Acl\Group\AclGroupProvider
+    orob2b_customer.customer_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
 services:
     orob2b_customer.customer_tree_handler:
@@ -92,6 +98,13 @@ services:
 
     orob2b_customer.datagrid.action_permission_provider:
         class: %orob2b_customer.datagrid.action_permission_provider.class%
+
+    orob2b_customer.datagrid.extension.accoun_user:
+        class: %orob2b_customer.datagrid.extension.accoun_user.class%
+        calls:
+            - [setContainer, [@service_container]]
+        tags:
+            - { name: oro_datagrid.extension }
 
     orob2b_customer.mailer.processor:
         class: %orob2b_customer.mailer.processor.class%
@@ -164,7 +177,21 @@ services:
         tags:
             - { name: security.voter, priority: 10 }
 
+    orob2b_customer.customer_address.manager.api:
+        class: %orob2b_customer.customer_address.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_customer.entity.customer_address.class%
+            - @doctrine.orm.entity_manager
+
     orob2b_customer.event_listener.login:
         class: %orob2b_customer.event_listener.login.class%
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onSecurityInteractiveLogin }
+
+    orob2b_customer.acl.group_provider:
+        class: %orob2b_customer.acl.group_provider.class%
+        arguments:
+            - @service_container
+        tags:
+            - { name: oro_security.acl.group_provider, alias: frontend_group }

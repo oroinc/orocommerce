@@ -8,3 +8,12 @@ Oro\Bundle\CurrencyBundle\Model\Price:
         currency:
             - NotBlank: ~
             - Currency: ~
+
+Oro\Bundle\CurrencyBundle\Model\OptionalPrice:
+    constraints:
+        - Oro\Bundle\CurrencyBundle\Validator\Constraints\OptionalPrice:
+            groups: [Optional]
+    properties:
+        currency:
+            - Currency:
+                groups: [Optional]

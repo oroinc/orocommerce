@@ -336,6 +336,7 @@
         <attribute name="locale" default="en"/>
         <attribute name="secret" default="ThisTokenIsNotSoSecretChangeIt"/>
         <attribute name="installed" default="~"/>
+        <attribute name="assets-version" default="~"/>
         <sequential>
             <if>
                 <equals arg1="@{env}" arg2="prod"/>
@@ -371,6 +372,7 @@
             <echo file="${appconfig.filename}" append="true">    locale: @{locale}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    secret: @{secret}${line.separator}</echo>
             <echo file="${appconfig.filename}" append="true">    installed: @{installed}${line.separator}</echo>
+            <echo file="${appconfig.filename}" append="true">    assets_version: @{assets-version}${line.separator}</echo>
         </sequential>
     </macrodef>
 
@@ -557,6 +559,8 @@
             <arg line="--exclude=ProductBundle/Migrations/Schema"/>
             <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
             <arg line="--exclude=PricingBundle/Migrations/Schema"/>
+            <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
+            <arg line="--exclude=RFPBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

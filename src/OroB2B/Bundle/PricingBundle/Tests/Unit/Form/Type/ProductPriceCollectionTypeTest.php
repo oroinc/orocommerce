@@ -95,7 +95,7 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $firstPriceList = new PriceList();
         $this->setProperty($firstPriceList, 'id', 1);
         $firstPriceList->setName('First Price List')
-            ->setCurrencies(['USD', 'EUR']);
+            ->setCurrencies(['EUR', 'USD']);
 
         $secondPriceList = new PriceList();
         $this->setProperty($secondPriceList, 'id', 2);
@@ -128,7 +128,7 @@ class ProductPriceCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType->finishView($view, $form, []);
         $this->assertEquals(
             json_encode([
-                '1' => ['USD', 'EUR'],
+                '1' => ['EUR', 'USD'],
                 '2' => ['CAD', 'USD']
             ]),
             $view->vars['attr']['data-currencies']

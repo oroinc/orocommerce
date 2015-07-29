@@ -10,3 +10,7 @@
     display: none;
     visibility: hidden;
 }
+
+.product-container div.box-type1 div.title {
+    padding: 0 !important;
+}

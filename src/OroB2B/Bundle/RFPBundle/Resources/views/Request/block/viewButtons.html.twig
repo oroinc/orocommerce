@@ -1,0 +1,19 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% for groupName, group in data -%}
+    {% if groupName is empty -%}
+        {% for widget in group.widgets -%}
+            {% include widget.button.template with { data: widget.button.data|default([]) } %}
+        {%- endfor -%}
+    {% else -%}
+        {% set items = [] -%}
+        {% for widget in group.widgets -%}
+            {% set items = items|merge(['<li>' ~ include(widget.link.template, { data: widget.button.data|default([]) }) ~ '</li>']) -%}
+        {% endfor -%}
+        {% set items = items|merge(['<li>' ~ include('OroB2BRFPBundle:Request:block/createQuoteButton.html.twig', { formCreateQuote: formCreateQuote }) ~ '</li>']) -%}
+        {{ UI.dropdownButton({
+            'label': group.label,
+            'aCss': 'pull-left',
+            'html': items|join
+        }) }}
+    {%- endif -%}
+{% endfor %}

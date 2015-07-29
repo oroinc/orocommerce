@@ -145,7 +145,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         $product->addUnitPrecision($productUnitPrecision);
 
         /** @var PriceList $existingProductPriceList */
-        $existingProductPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
+        $existingProductPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1);
         $existingProductPrice = new ProductPrice();
         $existingProductPrice
             ->setProduct($product)
@@ -156,13 +156,13 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
 
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2);
-        $expectedUnit = (new ProductUnit())->setCode('kg');
-        $expectedPrice = (new Price())->setValue(42)->setCurrency('USD');
+        $expectedUnit = (new ProductUnit())->setCode('item');
+        $expectedPrice = (new Price())->setValue(43)->setCurrency('EUR');
 
         $expectedProductPrice = new ProductPrice();
         $expectedProductPrice
             ->setPriceList($expectedPriceList)
-            ->setQuantity(123)
+            ->setQuantity(124)
             ->setUnit($expectedUnit)
             ->setPrice($expectedPrice);
 
@@ -174,11 +174,11 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                 'defaultData'   => new ProductPrice(),
                 'submittedData' => [
                     'priceList' => 2,
-                    'quantity'  => 123,
-                    'unit'      => 'kg',
+                    'quantity'  => 124,
+                    'unit'      => 'item',
                     'price'     => [
-                        'value'    => 42,
-                        'currency' => 'USD'
+                        'value'    => 43,
+                        'currency' => 'EUR'
                     ]
                 ],
                 'expectedData' => $expectedProductPrice
@@ -187,11 +187,11 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                 'defaultData'   => $existingProductPrice,
                 'submittedData' => [
                     'priceList' => 2,
-                    'quantity'  => 123,
-                    'unit'      => 'kg',
+                    'quantity'  => 124,
+                    'unit'      => 'item',
                     'price'     => [
-                        'value'    => 42,
-                        'currency' => 'USD'
+                        'value'    => 43,
+                        'currency' => 'EUR'
                     ]
                 ],
                 'expectedData' => $updatedExpectedProductPrice,

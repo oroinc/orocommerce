@@ -3,6 +3,11 @@ orob2b_customer:
     type:         annotation
     prefix:       /customer
 
+orob2b_customer_address:
+    resource:     "@OroB2BCustomerBundle/Controller/CustomerAddressController.php"
+    type:         annotation
+    prefix:       /customer/address
+
 orob2b_customer_group:
     resource:     "@OroB2BCustomerBundle/Controller/CustomerGroupController.php"
     type:         annotation
@@ -57,3 +62,11 @@ orob2b_customer_bundle_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_customer_frontend_account_user_datagrid_index:
+    path: /datagrid/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:get }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
