@@ -10,10 +10,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -59,20 +57,14 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * Add Product to existing shopping list (create line item) form
+     * Add Product to Shopping List
      *
      * @Route(
      *      "/{shoppingListId}/products/{productId}",
      *      name="orob2b_shopping_list_frontend_add_product",
      *      requirements={"shoppingListId"="\d+", "productId"="\d+"}
      * )
-     * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_add",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_create")
      * @ParamConverter("shoppingList", class="OroB2BShoppingListBundle:ShoppingList", options={"id" = "shoppingListId"})
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
@@ -81,32 +73,26 @@ class AjaxLineItemController extends Controller
      *
      * @return array|RedirectResponse
      */
-    public function addNewProductAction(ShoppingList $shoppingList, Product $product)
+    public function addProductFromViewAction(ShoppingList $shoppingList, Product $product)
     {
         $lineItem = new LineItem();
         $lineItem->setProduct($product);
         $lineItem->setShoppingList($shoppingList);
 
-        return $this->update($lineItem);
-    }
-
-    /**
-     * @param LineItem $lineItem
-     *
-     * @return array|RedirectResponse
-     */
-    protected function update(LineItem $lineItem)
-    {
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
+        $saveRoute = function (LineItem $lineItem) {
+            return [
+                'route' => 'orob2b_product_frontend_product_view',
+                'parameters' => ['id' => $lineItem->getProduct()->getId()]
+            ];
+        };
 
-        $isFormHandled = $this->get('orob2b_shopping_list.form.handler.frontend_line_item')->handle($form, $lineItem);
-
-        if (!$isFormHandled) {
-            return new JsonResponse(['successful' => false, 'message' => $form->getErrorsAsString()]);
-        }
-
-        $message = $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages');
-
-        return new JsonResponse(['successful' => true, 'message' => $message]);
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $lineItem,
+            $form,
+            $saveRoute,
+            $saveRoute,
+            $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages')
+        );
     }
 }
