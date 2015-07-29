@@ -71,10 +71,21 @@ define(function(require) {
          * Bind events to controls
          */
         bindEvents: function() {
+            var self = this;
 
             this.getValueEl(this.$el)
                 .change(_.bind(this.cloneValueToChildsEvent, this))
                 .keyup(_.bind(this.cloneValueToChildsEvent, this));
+
+            this.$el.find(this.options.selectors.itemValue).find('.mce-tinymce').each(function() {
+                self.getValueEl(self.getItemEl(this)).tinymce()
+                    .on('change', function(e) {
+                        $(this.targetElm).change();
+                    })
+                    .on('keyup', function(e) {
+                        $(this.targetElm).change();
+                    });
+            });
 
             this.getUseFallbackEl(this.$el)
                 .change(_.bind(this.switchUseFallbackEvent, this));
@@ -254,14 +265,16 @@ define(function(require) {
          */
         cloneValue: function($fromValue, $toValue) {
             $fromValue.each(function(i) {
+                var toValue = $toValue.get(i);
+
                 if ($(this).is(':checkbox')) {
-                    $toValue.get(i).checked = this.checked;
+                    toValue.checked = this.checked;
                 } else {
-                    $toValue.get(i).value = this.value;
+                    $(toValue).val($(this).val());
                 }
             });
 
-            $toValue.change();
+            $toValue.filter(':first').change();
         },
 
         /**
@@ -287,7 +300,7 @@ define(function(require) {
          * @returns {jQuery}
          */
         getValueEl: function($el) {
-            return $el.find(this.options.selectors.itemValue).find(':input');
+            return $el.find(this.options.selectors.itemValue).find('input, textarea, select');
         },
 
         /**
