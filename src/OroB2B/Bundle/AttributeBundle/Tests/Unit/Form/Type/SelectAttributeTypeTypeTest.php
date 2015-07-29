@@ -58,7 +58,7 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $options */
         $options = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $options->expects($this->once())->method('offsetGet')->willReturn($attribute);
+        $options->expects($this->once())->method('offsetGet')->with('attribute')->willReturn($attribute);
 
         /** @var \Closure $queryBuilderCallback */
         $queryBuilderCallback = $normalizerCallback($options);
@@ -94,7 +94,10 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
                 function (array $normalizers) {
                     /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $options */
                     $options = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-                    $options->expects($this->once())->method('offsetGet')->willReturn(new \DateTime());
+                    $options->expects($this->once())
+                        ->method('offsetGet')
+                        ->with('attribute')
+                        ->willReturn(new \DateTime());
 
                     /** @var \Closure $normalizerCallback */
                     $normalizerCallback = $normalizers['query_builder'];
