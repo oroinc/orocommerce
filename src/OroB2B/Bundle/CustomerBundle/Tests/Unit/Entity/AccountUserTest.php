@@ -8,16 +8,39 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class AccountUserTest extends AbstractUserTest
 {
+    use AddressEntityTestTrait;
+
     /**
      * @return AccountUser
      */
     public function getUser()
     {
         return new AccountUser();
+    }
+
+    /**
+     * @return AccountUserAddress
+     */
+    public function createAddressEntity()
+    {
+        return new AccountUserAddress();
+    }
+
+    /**
+     * @return AccountUser
+     */
+    protected function createTestedEntity()
+    {
+        return $this->getUser();
     }
 
     public function testProperties()

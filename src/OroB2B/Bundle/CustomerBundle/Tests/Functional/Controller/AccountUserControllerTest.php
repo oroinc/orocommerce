@@ -7,7 +7,6 @@ use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
  * @dbIsolation
@@ -262,6 +261,7 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertContains('Add note', $content);
         $this->assertContains('Send email', $content);
         $this->assertContains('Add Event', $content);
+        $this->assertContains('Address Book', $content);
 
         return $id;
     }

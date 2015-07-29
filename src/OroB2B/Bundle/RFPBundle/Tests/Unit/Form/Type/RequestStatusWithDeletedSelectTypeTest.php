@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType;
 
@@ -30,25 +28,7 @@ class RequestStatusWithDeletedSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $repository = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects($this->any())
-            ->method('getNotDeletedAndDeletedWithRequestsStatuses')
-            ->willReturn($this->choices);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects($this->any())
-            ->method('getRepository')
-            ->with(self::ENTITY_CLASS)
-            ->willReturn($repository);
-
-        $this->formType = new RequestStatusWithDeletedSelectType($registry);
+        $this->formType = new RequestStatusWithDeletedSelectType();
         $this->formType->setEntityClass(self::ENTITY_CLASS);
     }
 
@@ -57,19 +37,47 @@ class RequestStatusWithDeletedSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetDefaultOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolverInterface')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
             ->getMock();
 
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'class'   => self::ENTITY_CLASS,
-                'choices' => $this->choices,
-            ]);
+            ->with($this->isType('array'))
+            ->willReturnCallback([$this, 'assertDefaults']);
 
         $this->formType->setDefaultOptions($resolver);
+    }
+
+    /**
+     * @param array $defaults
+     */
+    public function assertDefaults(array $defaults)
+    {
+        $this->assertArrayHasKey('query_builder', $defaults);
+
+        /** @var \Closure $callback */
+        $callback = $defaults['query_builder'];
+        $this->assertInstanceOf('\Closure', $callback);
+
+        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->any())
+            ->method('getNotDeletedAndDeletedWithRequestsStatusesQueryBuilder')
+            ->willReturn($queryBuilder);
+
+        /** @var \Closure $queryBuilderCallback */
+        $queryBuilderCallback = $callback($repository);
+        $this->assertInstanceOf('Doctrine\ORM\QueryBuilder', $queryBuilderCallback);
+
+        $this->assertEquals($queryBuilder, $callback($repository));
     }
 
     /**

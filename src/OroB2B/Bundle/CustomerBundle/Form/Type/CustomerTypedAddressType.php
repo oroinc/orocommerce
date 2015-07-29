@@ -90,7 +90,7 @@ class CustomerTypedAddressType extends AbstractType
      */
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**

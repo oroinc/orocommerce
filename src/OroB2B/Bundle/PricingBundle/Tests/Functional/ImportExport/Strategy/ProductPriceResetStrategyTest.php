@@ -71,7 +71,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroB2BPricingBundle:ProductPrice')
             ->findBy(['priceList' => $priceList->getId()]);
-        $this->assertCount(6, $actualPrices);
+        $this->assertCount(7, $actualPrices);
 
         $expectedPricesIds = [
             $productPrice->getId(),
