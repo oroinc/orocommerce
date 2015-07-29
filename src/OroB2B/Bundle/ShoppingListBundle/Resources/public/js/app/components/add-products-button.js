@@ -4,6 +4,7 @@ define(function (require) {
     'use strict';
 
     var $ = require('jquery'),
+        _ = require('underscore'),
         mediator = require('oroui/js/mediator'),
         DialogWidget = require('oro/dialog-widget'),
         routing = require('routing'),

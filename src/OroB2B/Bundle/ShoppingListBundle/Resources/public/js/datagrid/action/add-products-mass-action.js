@@ -12,7 +12,7 @@ define([
     var AddProductsAction;
 
     /**
-     * Mark email as read/unread
+     * Add products to shopping list
      *
      * @export  oro/datagrid/action/add-products-mass-action
      * @class   oro.datagrid.action.MarkAction

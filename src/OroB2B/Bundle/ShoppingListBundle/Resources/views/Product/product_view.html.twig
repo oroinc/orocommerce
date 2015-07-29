@@ -10,8 +10,7 @@
       method="{{ form.vars.method }}" data-collect="true" class="form-horizontal add-to-shopping-list-form">
 
     <fieldset class="form-horizontal">
-        {{ form_row(form.quantity) }}
-        {{ form_row(form.unit) }}
+        {{ form_widget(form) }}
     </fieldset>
 
     <div class="hidden">
