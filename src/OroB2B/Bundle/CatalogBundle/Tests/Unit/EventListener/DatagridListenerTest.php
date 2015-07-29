@@ -11,22 +11,9 @@ use OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener;
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DatagridListener
-     */
-    protected $listener;
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        $this->listener = new DatagridListener();
-    }
-
-    /**
      * @var array
      */
-    protected $expectedTemplate = [
+    protected static $expectedTemplate = [
         'source' => [
             'query' => [
                 'select' => [],
@@ -71,26 +58,17 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function tearDown()
-    {
-        unset($this->listener);
-    }
-
     public function testOnBuildBeforeProductsSelect()
     {
-
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeProductsSelect($event);
+        $listener = new DatagridListener();
+        $listener->onBuildBeforeProductsSelect($event);
 
-        $expected = $this->expectedTemplate;
+        $expected = self::$expectedTemplate;
         $expected['source']['query']['select'] = ['categoryTitle.string as ' . DatagridListener::CATEGORY_COLUMN];
 
         $this->assertEquals($expected, $config->toArray());

@@ -13,8 +13,8 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -54,6 +54,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->getBeforeListRenderEvent();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -95,7 +96,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->willReturn($repository);
 
-        $event = $this->getBeforeListRenderEvent();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
@@ -103,6 +104,8 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('render')
             ->with('OroB2BCatalogBundle:Product:category_view.html.twig', ['entity' => new Category()])
             ->willReturn('');
+
+        $event = $this->getBeforeListRenderEvent();
         $event->expects($this->once())
             ->method('getEnvironment')
             ->willReturn($env);
