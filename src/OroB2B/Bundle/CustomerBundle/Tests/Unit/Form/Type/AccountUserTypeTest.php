@@ -10,29 +10,39 @@ use Symfony\Component\Validator\Validation;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as CustomerSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityType ;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser';
     const ROLE_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole';
+    const ADDRESS_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress';
 
     /**
      * @var AccountUserType
      */
     protected $formType;
 
-    /** @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $securityFacade;
 
     /**
      * @var Customer[]
      */
     protected static $customers = [];
+
+    /**
+     * @var AccountUserAddress[]
+     */
+    protected static $addresses = [];
 
     /**
      * {@inheritdoc}
@@ -47,6 +57,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $this->formType = new AccountUserType($this->securityFacade);
         $this->formType->setDataClass(self::DATA_CLASS);
         $this->formType->setRoleClass(self::ROLE_CLASS);
+        $this->formType->setAddressClass(self::ADDRESS_CLASS);
     }
 
     /**
@@ -61,6 +72,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
             ]
         );
 
+        $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $customerSelectType = new CustomerSelectTypeStub($this->getCustomers(), 'orob2b_customer_select');
 
         return [
@@ -68,7 +80,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                 [
                     OroDateType::NAME => new OroDateType(),
                     'entity' => $rolesEntity,
-                    $customerSelectType->getName() => $customerSelectType
+                    $customerSelectType->getName() => $customerSelectType,
+                    AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
+                    $addressEntityType->getName() => $addressEntityType,
                 ],
                 []
             ),
@@ -77,14 +91,19 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param $defaultData
-     * @param $submittedData
-     * @param $expectedData
-     * @param bool $rolesGranted
      * @dataProvider submitProvider
+     *
+     * @param AccountUser $defaultData
+     * @param array $submittedData
+     * @param AccountUser $expectedData
+     * @param bool|true $rolesGranted
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData, $rolesGranted = true)
-    {
+    public function testSubmit(
+        AccountUser $defaultData,
+        array $submittedData,
+        AccountUser $expectedData,
+        $rolesGranted = true
+    ) {
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')
@@ -119,6 +138,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser->setEmail('johndoe@example.com');
         $existingAccountUser->setPassword('123456');
         $existingAccountUser->setCustomer($this->getCustomer(1));
+        $existingAccountUser->addAddress($this->getAddresses()[1]);
 
         $alteredExistingAccountUser = clone $existingAccountUser;
         $alteredExistingAccountUser->setEnabled(false);
@@ -126,6 +146,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         $alteredExistingAccountUserWithRole = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithRole->setRoles([$this->getRole(2, 'test02')]);
+
+        $alteredExistingAccountUserWithAddresses = clone $alteredExistingAccountUser;
+        $alteredExistingAccountUserWithAddresses->addAddress($this->getAddresses()[2]);
 
         return [
             'user without submitted data' => [
@@ -154,6 +177,17 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => $alteredExistingAccountUserWithRole,
                 'rolesGranted' => true
+            ],
+            'altered existing user with addresses' => [
+                'defaultData' => $existingAccountUser,
+                'submittedData' => [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'customer' => 2,
+                    'addresses' => [1, 2]
+                ],
+                'expectedData' => $alteredExistingAccountUserWithAddresses,
             ]
         ];
     }
@@ -164,6 +198,21 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(AccountUserType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @return AccountUserAddress[]
+     */
+    protected function getAddresses()
+    {
+        if (!self::$addresses) {
+            self::$addresses = [
+                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
+                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress', 2)
+            ];
+        }
+
+        return self::$addresses;
     }
 
     /**
@@ -213,7 +262,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $label
-     * @return object
+     * @return AccountUserRole
      */
     protected function getRole($id, $label)
     {
@@ -226,5 +275,22 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $role->setLabel($label);
 
         return $role;
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }

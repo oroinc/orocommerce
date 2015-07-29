@@ -2,16 +2,17 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\EventListener;
 
-use Doctrine\Common\Collections\Collection;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
-
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+use Doctrine\Common\Collections\Collection;
+
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+
+use OroB2B\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 /**
  * When address is created/updated from single form, it will ensure the rules of one address has default mark per type
@@ -66,10 +67,10 @@ class FixCustomerAddressesDefaultSubscriber implements EventSubscriberInterface
     /**
      * Only one address must have one default address per type.
      *
-     * @param CustomerAddress $address
-     * @param CustomerAddress[] $allAddresses
+     * @param AbstractDefaultTypedAddress $address
+     * @param AbstractDefaultTypedAddress[] $allAddresses
      */
-    protected function handleDefaultType(CustomerAddress $address, $allAddresses)
+    protected function handleDefaultType(AbstractDefaultTypedAddress $address, $allAddresses)
     {
         /** @var Collection|AddressType[] $addressDefaults */
         $addressDefaults = $address->getDefaults();
