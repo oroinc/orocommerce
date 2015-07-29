@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%label%": entity.label }}) %}
 
@@ -56,6 +57,19 @@
             'subblocks': generalSectionBlocks
         }
     ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+    {
+    'title' : 'orob2b.shoppinglist.lineitem.entity_plural_label'|trans,
+    'subblocks': [
+    {
+    'title' : '',
+    'useSpan': false,
+    'data' : [dataGrid.renderGrid('frontend-shopping-list-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
+    }
+    ]
+    }
+    ]) %}
 
     {% set id = 'shopping-list-frontend-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
