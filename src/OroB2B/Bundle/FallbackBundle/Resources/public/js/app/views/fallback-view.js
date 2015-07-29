@@ -15,6 +15,16 @@ define(function(require) {
         /**
          * @property {Object}
          */
+        itemsByCode: {},
+
+        /**
+         * @property {Object}
+         */
+        itemToChilds: {},
+
+        /**
+         * @property {Object}
+         */
         options: {
             selectors: {
                 item: '.fallback-item',
@@ -40,48 +50,172 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$el.find(this.options.selectors.itemUseFallback).find('input')
-                .change(_.bind(this._switchValueType, this))
-                .change();
+            var self = this;
+
+            this.mapItemsByCode();
+
+            this.getUseFallbackEl(this.$el).each(function() {
+                self.switchUseFallback(self.getItemEl(this));
+            });
+
+            this.mapItemToChilds();
+
+            this.getValueEl(this.$el).each(function() {
+                self.cloneValueToChilds(self.getItemEl(this));
+            });
+
+            this.bindEvents();
         },
 
         /**
-         * Switch value type
+         * Bind events to controls
+         */
+        bindEvents: function() {
+
+            this.getValueEl(this.$el)
+                .change(_.bind(this.cloneValueToChildsEvent, this))
+                .keyup(_.bind(this.cloneValueToChildsEvent, this));
+
+            this.getUseFallbackEl(this.$el)
+                .change(_.bind(this.switchUseFallbackEvent, this));
+
+            this.getFallbackEl(this.$el)
+                .change(_.bind(this.switchFallbackTypeEvent, this));
+
+        },
+
+        /**
+         * Create item code to element mapping
+         */
+        mapItemsByCode: function() {
+            var self = this;
+
+            this.itemsByCode = {};
+
+            this.$el.find(this.options.selectors.item).each(function() {
+                var $item = $(this);
+                self.itemsByCode[self.getItemCode($item)] = $item;
+            });
+        },
+
+        /**
+         * Create item to childs mapping
+         */
+        mapItemToChilds: function() {
+            var self = this;
+
+            this.itemToChilds = {};
+
+            this.$el.find(this.options.selectors.item).each(function() {
+                var $item = $(this);
+                var parentItemCode = self.getParentItemCode($item);
+
+                if (!parentItemCode) {
+                    return;
+                }
+
+                if (self.itemToChilds[parentItemCode] === undefined) {
+                    self.itemToChilds[parentItemCode] = [];
+                }
+                self.itemToChilds[parentItemCode].push($item);
+            });
+        },
+
+        /**
+         * Trigger on value change
          *
          * @param {Event} e
-         * @private
          */
-        _switchValueType: function(e) {
-            var useFallback = e.currentTarget;
-            var isCustom = !useFallback.checked;
+        cloneValueToChildsEvent: function(e) {
+            this.cloneValueToChilds(this.getItemEl(e.currentTarget));
+        },
 
-            this._enableDisableValue(this.getValueRelatedTo(useFallback), isCustom);
-            this._enableDisableFallback(this.getFallbackRelatedTo(useFallback), !isCustom);
+        /**
+         * Trigger on "use fallback" change
+         *
+         * @param {Event} e
+         */
+        switchUseFallbackEvent: function(e) {
+            this.switchUseFallback(this.getItemEl(e.currentTarget));
+        },
+
+        /**
+         * Trigger on fallback change
+         *
+         * @param {Event} e
+         */
+        switchFallbackTypeEvent: function(e) {
+
+            var $item = this.getItemEl(e.currentTarget);
+
+            this.mapItemToChilds();
+
+            var parentItemCode = this.getParentItemCode($item);
+            if (parentItemCode) {
+                var fromValue = this.getValueEl(this.itemsByCode[parentItemCode]);
+                var toValue = this.getValueEl($item);
+                this.cloneValue(fromValue, toValue);
+            } else {
+                this.cloneValueToChildsEvent(e);
+            }
+        },
+
+        /**
+         * Clone item value to childs
+         *
+         * @param {jQuery} $item
+         */
+        cloneValueToChilds: function($item) {
+            var $fromValue = this.getValueEl($item);
+            var itemCode = this.getItemCode($item);
+
+            var self = this;
+            $.each(this.itemToChilds[itemCode] || [], function() {
+                var $toValue = self.getValueEl(this);
+                self.cloneValue($fromValue, $toValue);
+            });
+        },
+
+        /**
+         * Enable/disable controls depending on the "use fallback"
+         *
+         * @param {jQuery} $item
+         */
+        switchUseFallback: function($item) {
+            var $useFallback = this.getUseFallbackEl($item);
+            if ($useFallback.length === 0) {
+                return ;
+            }
+
+            var checked = $useFallback.get(0).checked;
+
+            this.enableDisableValue(this.getValueEl($item), !checked);
+            this.enableDisableFallback(this.getFallbackEl($item), checked);
         },
 
         /**
          * Enable/disable value
          *
-         * @param {jQuery} value
+         * @param {jQuery} $value
          * @param {Boolean} enable
-         * @private
          */
-        _enableDisableValue: function(value, enable) {
+        enableDisableValue: function($value, enable) {
+            var $valueContainer = $value.closest(this.options.selectors.itemValue);
 
             var editor;
-            if (value.find('.mce-tinymce').length > 0) {
-                editor = value.find('textarea').tinymce();
+            if ($valueContainer.find('.mce-tinymce').length > 0) {
+                editor = $valueContainer.find('textarea').tinymce();
             }
 
             if (enable) {
-                value.find(':input').removeAttr('disabled');
+                $value.removeAttr('disabled');
 
                 if (editor) {
                     editor.getBody().setAttribute('contenteditable', true);
                     $(editor.editorContainer).removeClass('disabled');
                 }
             } else {
-                value.find(':input').attr('disabled', 'disabled');
+                $value.attr('disabled', 'disabled');
 
                 if (editor) {
                     editor.getBody().setAttribute('contenteditable', false);
@@ -93,42 +227,120 @@ define(function(require) {
         /**
          * Enable/disable fallback
          *
-         * @param {jQuery} fallback
+         * @param {jQuery} $fallback
          * @param {Boolean} enable
-         * @private
          */
-        _enableDisableFallback: function(fallback, enable) {
+        enableDisableFallback: function($fallback, enable) {
+            var $fallbackContainer = $fallback.closest(this.options.selectors.itemFallback);
+
             if (enable) {
-                fallback.find('select').attr('disabled', 'disabled');
+                $fallback.removeAttr('disabled');
 
-                fallback.find('div.selector').addClass('disabled');
+                $fallbackContainer.find('div.selector').removeClass('disabled');
             } else {
-                fallback.find('select').removeAttr('disabled');
+                $fallback.attr('disabled', 'disabled');
 
-                fallback.find('div.selector').removeClass('disabled');
+                $fallbackContainer.find('div.selector').addClass('disabled');
             }
+
+            $fallback.change();
         },
 
         /**
-         * Find item value element, related to item child
+         * Clone value to another value
          *
-         * @param child
-         * @returns {jQuery}
+         * @param {jQuery} $fromValue
+         * @param {jQuery} $toValue
          */
-        getValueRelatedTo: function(child) {
-            return $(child).closest(this.options.selectors.item)
-                .find(this.options.selectors.itemValue);
+        cloneValue: function($fromValue, $toValue) {
+            $fromValue.each(function(i) {
+                if ($(this).is(':checkbox')) {
+                    $toValue.get(i).checked = this.checked;
+                } else {
+                    $toValue.get(i).value = this.value;
+                }
+            });
+
+            $toValue.change();
         },
 
         /**
-         * Find item fallback element, related to item child
+         * Get item element by children
          *
-         * @param child
+         * @param {*|jQuery|HTMLElement} el
+         *
          * @returns {jQuery}
          */
-        getFallbackRelatedTo: function(child) {
-            return $(child).closest(this.options.selectors.item)
-                .find(this.options.selectors.itemFallback);
+        getItemEl: function(el) {
+            var $item = $(el);
+            if (!$item.is(this.options.selectors.item)) {
+                $item = $item.closest(this.options.selectors.item);
+            }
+            return $item;
+        },
+
+        /**
+         * Get value element
+         *
+         * @param {jQuery} $el
+         *
+         * @returns {jQuery}
+         */
+        getValueEl: function($el) {
+            return $el.find(this.options.selectors.itemValue).find(':input');
+        },
+
+        /**
+         * Get "use fallback" element
+         *
+         * @param {jQuery} $el
+         *
+         * @returns {jQuery}
+         */
+        getUseFallbackEl: function($el) {
+            return $el.find(this.options.selectors.itemUseFallback).find('input');
+        },
+
+        /**
+         * Get fallback element
+         *
+         * @param {jQuery} $el
+         *
+         * @returns {jQuery}
+         */
+        getFallbackEl: function($el) {
+            return $el.find(this.options.selectors.itemFallback).find('select');
+        },
+
+        /**
+         * Get parent item code
+         *
+         * @param {jQuery} $item
+         *
+         * @returns {undefined|String}
+         */
+        getParentItemCode: function($item) {
+            var select = this.getFallbackEl($item);
+            if (select.length === 0 || select.attr('disabled')) {
+                return;
+            }
+
+            var parentItemCode = select.attr('data-parent-locale');
+            return parentItemCode && select.val() !== 'system' ? parentItemCode : select.val();
+        },
+
+        /**
+         * Get item code
+         *
+         * @param {jQuery} $item
+         *
+         * @returns {String}
+         */
+        getItemCode: function($item) {
+            var select = this.getFallbackEl($item);
+
+            var itemCode = select.attr('data-locale');
+            return itemCode ? itemCode : 'system';
         }
     });
 
