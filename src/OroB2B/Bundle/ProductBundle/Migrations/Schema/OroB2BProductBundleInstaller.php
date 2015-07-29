@@ -64,7 +64,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -99,9 +99,7 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['sku'], 'UNIQ_5F9796C9F9038C4');
-        $table->addIndex(['business_unit_owner_id'], 'IDX_5F9796C959294170', []);
-        $table->addIndex(['organization_id'], 'IDX_5F9796C932C8A3DE', []);
+        $table->addUniqueIndex(['sku']);
     }
 
     /**
@@ -131,8 +129,6 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('unit_precision', 'integer', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['product_id', 'unit_code'], 'product_unit_precision__product_id__unit_code__uidx');
-        $table->addIndex(['product_id'], 'IDX_47015B824584665A', []);
-        $table->addIndex(['unit_code'], 'IDX_47015B82FBD3D1C2', []);
     }
 
     /**
@@ -197,6 +193,13 @@ class OroB2BProductBundleInstaller implements
             self::PRODUCT_TABLE_NAME,
             'visibility',
             'prod_visibility'
+        );
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            self::PRODUCT_TABLE_NAME,
+            'status',
+            'prod_status'
         );
     }
 

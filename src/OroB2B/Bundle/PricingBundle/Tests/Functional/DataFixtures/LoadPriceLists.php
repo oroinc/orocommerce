@@ -38,7 +38,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         [
             'name' => 'priceList3',
             'reference' => 'price_list_3',
-            'default' => true,
+            'default' => false,
             'customers' => ['customer.orphan'],
             'groups' => [],
             'websites' => ['Canada'],

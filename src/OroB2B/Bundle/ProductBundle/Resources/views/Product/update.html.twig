@@ -18,6 +18,15 @@
     {% endif %}
     {{ UI.cancelButton(path('orob2b_product_index')) }}
     {% set html = UI.saveAndCloseButton() %}
+    {% if resource_granted('orob2b_product_create') %}
+        {% set saveAndDuplicateButton = UI.buttonType({
+            'type': 'button',
+            'class': 'btn-success main-group',
+            'label': 'orob2b.product.ui.save_and_duplicate'|trans,
+            'action': 'save_and_duplicate'
+        }) %}
+        {% set html = html ~ saveAndDuplicateButton %}
+    {% endif %}
     {% if entity.id or resource_granted('orob2b_product_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
@@ -49,6 +58,7 @@
             'title': '',
             'data': [
                 form_row(form.sku),
+                form_row(form.status),
                 form_row(form.inventoryStatus),
                 form_row(form.image),
                 form_row(form.unitPrecisions),

@@ -3,8 +3,9 @@ config:
         'orob2bpricing/js/app/components/price-list-currency-limitations-component': 'bundles/orob2bpricing/js/app/components/price-list-currency-limitations-component.js'
         'orob2bpricing/js/app/components/product-price-product-unit-component': 'bundles/orob2bpricing/js/app/components/product-price-product-unit-component.js'
         'orob2bpricing/js/app/components/product-unit-precision-limitations-component': 'bundles/orob2bpricing/js/app/components/product-unit-precision-limitations-component.js'
-        'orob2bpricing/js/app/components/widget-form-component': 'bundles/orob2bpricing/js/app/components/widget-form-component.js'
         'orob2bpricing/js/app/modules/validator-constraints-module': 'bundles/orob2bpricing/js/app/modules/validator-constraints-module.js'
         'orob2bpricing/js/validator/unique-product-prices': 'bundles/orob2bpricing/js/validator/unique-product-prices.js'
+        'orob2bpricing/js/app/components/product-sidebar-component': 'bundles/orob2bpricing/js/app/components/product-sidebar-component.js'
+        'oro/filter/product-price-filter': 'bundles/orob2bpricing/js/filter/product-price-filter.js'
     appmodules:
         - orob2bpricing/js/app/modules/validator-constraints-module

@@ -65,8 +65,6 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['parent_id'], 'idx_fbd712dd727aca70', []);
-
         $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
     }
 
@@ -81,8 +79,7 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
-        $table->addUniqueIndex(['localized_value_id'], 'uniq_179c42f5eb576e89');
-        $table->addIndex(['category_id'], 'idx_179c42f512469de2', []);
+        $table->addUniqueIndex(['localized_value_id']);
     }
 
     /**
@@ -96,8 +93,7 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'product_id']);
-        $table->addUniqueIndex(['product_id'], 'UNIQ_FB6D81664584665A');
-        $table->addIndex(['category_id'], 'IDX_FB6D816612469DE2', []);
+        $table->addUniqueIndex(['product_id']);
     }
 
     /**

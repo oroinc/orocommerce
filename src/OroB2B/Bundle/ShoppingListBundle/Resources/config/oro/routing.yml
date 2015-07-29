@@ -2,3 +2,18 @@ orob2b_shopping_list:
     resource:     "@OroB2BShoppingListBundle/Controller/ShoppingListController.php"
     type:         annotation
     prefix:       /shoppinglist
+
+orob2b_shopping_list_frontend:
+    resource: "@OroB2BShoppingListBundle/Controller/Frontend/ShoppingListController.php"
+    type:     annotation
+    prefix:   /account/shoppinglist
+    options:
+        frontend: true
+
+orob2b_shopping_list_bundle_api:
+    resource:     "@OroB2BShoppingListBundle/Resources/config/oro/routing_api.yml"
+
+orob2b_shopping_list_line_item:
+    resource:     "@OroB2BShoppingListBundle/Controller/AjaxLineItemController.php"
+    type:         annotation
+    prefix:       /lineitem

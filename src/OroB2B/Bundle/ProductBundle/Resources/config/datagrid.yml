@@ -16,12 +16,15 @@ datagrid:
                     - productInventoryStatus.name as inventoryStatusName
                     - productVisibility.id as visibilityId
                     - productVisibility.name as visibilityName
+                    - productStatus.id as statusId
+                    - productStatus.name as statusName
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: product.visibility, alias: productVisibility}
+                        - { join: product.status, alias: productStatus}
         columns:
             sku:
                 label:         orob2b.product.sku.label
@@ -35,6 +38,11 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BProductBundle:Product:Datagrid/visibility.html.twig
+            status:
+                label:         orob2b.product.status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -51,6 +59,8 @@ datagrid:
                     data_name: inventoryStatusName
                 visibility:
                     data_name: visibilityName
+                status:
+                    data_name: statusName
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -70,6 +80,10 @@ datagrid:
                     type:      enum
                     data_name: visibilityId
                     enum_code: prod_visibility
+                status:
+                    type:      enum
+                    data_name: statusId
+                    enum_code: prod_status
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -91,6 +105,10 @@ datagrid:
                 type: url
                 route: orob2b_product_update
                 params: [ id ]
+            duplicate_link:
+                type: url
+                route: orob2b_product_duplicate
+                params: [ id ]
             delete_link:
                 type: url
                 route: orob2b_api_delete_product
@@ -109,6 +127,12 @@ datagrid:
                 link:          update_link
                 icon:          edit
                 acl_resource:  orob2b_product_update
+            duplicate:
+                type:          navigate
+                label:         orob2b.product.grid.action.duplicate
+                link:          duplicate_link
+                icon:          copy
+                acl_resource:  orob2b_product_create
             delete:
                 type:          delete
                 label:         oro.grid.action.delete

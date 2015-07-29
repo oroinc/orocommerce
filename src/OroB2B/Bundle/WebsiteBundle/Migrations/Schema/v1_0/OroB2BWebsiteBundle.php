@@ -40,8 +40,7 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['code'], 'UNIQ_4F6E51C677153098');
-        $table->addIndex(['parent_id'], 'IDX_4F6E51C6727ACA70', []);
+        $table->addUniqueIndex(['code']);
     }
 
     /**
@@ -55,8 +54,6 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('related_website_id', 'integer', []);
         $table->setPrimaryKey(['website_id', 'related_website_id']);
-        $table->addIndex(['website_id'], 'IDX_8E360C7418F45C82', []);
-        $table->addIndex(['related_website_id'], 'IDX_8E360C7492395432', []);
     }
 
     /**
@@ -77,10 +74,8 @@ class OroB2BWebsiteBundle implements Migration
 
         $table->setPrimaryKey(['id']);
 
-        $table->addUniqueIndex(['name'], 'UNIQ_CBB2CF835E237E06');
-        $table->addUniqueIndex(['url'], 'UNIQ_CBB2CF83F47645AE');
-        $table->addIndex(['business_unit_owner_id'], 'IDX_CBB2CF8359294170', []);
-        $table->addIndex(['organization_id'], 'IDX_CBB2CF8332C8A3DE', []);
+        $table->addUniqueIndex(['name']);
+        $table->addUniqueIndex(['url']);
     }
 
     /**
@@ -94,8 +89,6 @@ class OroB2BWebsiteBundle implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('locale_id', 'integer', []);
         $table->setPrimaryKey(['website_id', 'locale_id']);
-        $table->addIndex(['website_id'], 'IDX_EB4D58FE18F45C82', []);
-        $table->addIndex(['locale_id'], 'IDX_EB4D58FEE559DFD1', []);
     }
 
     /**
