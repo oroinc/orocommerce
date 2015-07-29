@@ -29,3 +29,5 @@ orob2b_shopping_list_api_line_item_frontend:
         _format:  json
     defaults:
         version:  latest
+    options:
+        frontend: true
