@@ -5,6 +5,11 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 class ProductType extends AbstractType
 {
@@ -51,6 +56,25 @@ class ProductType extends AbstractType
                     'configs'   => [
                         'allowClear' => false,
                     ]
+                ]
+            )
+            ->add(
+                'names',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.names.label',
+                    'required' => true,
+                    'options' => ['constraints' => [new NotBlank()]],
+                ]
+            )
+            ->add(
+                'descriptions',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.descriptions.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
                 ]
             )
             ->add(

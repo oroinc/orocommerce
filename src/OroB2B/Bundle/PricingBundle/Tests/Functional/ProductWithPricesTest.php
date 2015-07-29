@@ -7,6 +7,10 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @outputBuffering enabled
@@ -34,6 +38,8 @@ class ProductWithPricesTest extends WebTestCase
     const SECOND_PRICE_VALUE = 0.5;
     const SECOND_PRICE_CURRENCY = 'USD';
 
+    const DEFAULT_NAME = 'default name';
+
     /**
      * {@inheritDoc}
      */
@@ -55,30 +61,39 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->client->followRedirects(true);
 
-        $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action'        => 'save_and_stay',
-            'orob2b_product_form' => [
-                '_token' => $form['orob2b_product_form[_token]']->getValue(),
-                'owner'  => $this->getBusinessUnitId(),
-                'sku'    => self::TEST_SKU,
-                'unitPrecisions' => [
-                    [
-                        'unit'      => self::FIRST_UNIT_CODE,
-                        'precision' => self::FIRST_UNIT_PRECISION
-                    ]
-                ],
-                'prices' => [
-                    [
-                        'priceList' => $priceList->getId(),
-                        'price'     => [
-                            'value'    => self::FIRST_PRICE_VALUE,
-                            'currency' => self::FIRST_PRICE_CURRENCY
-                        ],
-                        'quantity'  => self::FIRST_QUANTITY,
-                        'unit'      => self::FIRST_UNIT_CODE
-                    ]
+        $locales = $this->getLocales();
+
+        $formData = [
+            '_token' => $form['orob2b_product_form[_token]']->getValue(),
+            'owner'  => $this->getBusinessUnitId(),
+            'sku'    => self::TEST_SKU,
+            'unitPrecisions' => [
+                [
+                    'unit'      => self::FIRST_UNIT_CODE,
+                    'precision' => self::FIRST_UNIT_PRECISION
+                ]
+            ],
+            'prices' => [
+                [
+                    'priceList' => $priceList->getId(),
+                    'price'     => [
+                        'value'    => self::FIRST_PRICE_VALUE,
+                        'currency' => self::FIRST_PRICE_CURRENCY
+                    ],
+                    'quantity'  => self::FIRST_QUANTITY,
+                    'unit'      => self::FIRST_UNIT_CODE
                 ]
             ]
+        ];
+
+        $formData['names']['values']['default'] = self::DEFAULT_NAME;
+        foreach ($locales as $locale) {
+            $formData['names']['values']['locales'][$locale->getId()]['fallback'] = FallbackType::SYSTEM;
+        }
+
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
+            'input_action'        => 'save_and_stay',
+            'orob2b_product_form' => $formData
         ]);
 
         $result = $this->client->getResponse();
@@ -205,10 +220,43 @@ class ProductWithPricesTest extends WebTestCase
     }
 
     /**
+     * @return Locale[]
+     */
+    protected function getLocales()
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Locale')
+            ->getRepository('OroB2BWebsiteBundle:Locale')
+            ->findAll();
+    }
+
+    /**
      * @return integer
      */
     protected function getBusinessUnitId()
     {
         return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
+    }
+
+    /**
+     * @param Product $product
+     * @param Locale $locale
+     * @return LocalizedFallbackValue
+     */
+    protected function getLocalizedName(Product $product, Locale $locale)
+    {
+        $localizedName = null;
+        foreach ($product->getNames() as $name) {
+            $nameLocale = $name->getLocale();
+            if ($nameLocale && $nameLocale->getId() === $locale->getId()) {
+                $localizedName = $name;
+                break;
+            }
+        }
+
+        if (!$localizedName) {
+            throw new \LogicException('At least one localized name must be defined');
+        }
+
+        return $localizedName;
     }
 }
