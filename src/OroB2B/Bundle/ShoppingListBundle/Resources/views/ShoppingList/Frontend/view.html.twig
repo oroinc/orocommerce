@@ -59,16 +59,16 @@
     ] %}
 
     {% set dataBlocks = dataBlocks|merge([
-    {
-    'title' : 'orob2b.shoppinglist.lineitem.entity_plural_label'|trans,
-    'subblocks': [
-    {
-    'title' : '',
-    'useSpan': false,
-    'data' : [dataGrid.renderGrid('frontend-shopping-list-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
-    }
-    ]
-    }
+        {
+            'title' : 'orob2b.shoppinglist.lineitem.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('frontend-shopping-list-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
     ]) %}
 
     {% set id = 'shopping-list-frontend-view' %}
