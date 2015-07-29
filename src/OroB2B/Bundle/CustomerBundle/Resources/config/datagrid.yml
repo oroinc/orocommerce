@@ -481,8 +481,6 @@ datagrid:
                     - { table: %orob2b_customer.entity.account_user.class%, alias: user }
             bind_parameters:
                 - role
-        options:
-            entityHint: user
         properties:
             id: ~
         columns:
@@ -523,6 +521,7 @@ datagrid:
             default:
                 hasRole: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         options:
+            entityHint: user
             rowSelection:
                 dataField: id
                 columnName: hasRole
