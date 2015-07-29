@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;

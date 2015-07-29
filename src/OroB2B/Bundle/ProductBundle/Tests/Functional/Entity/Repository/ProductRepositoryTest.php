@@ -61,6 +61,16 @@ class ProductRepositoryTest extends WebTestCase
         ];
     }
 
+    public function testGetProductsQueryBuilder()
+    {
+        /** @var Product $product */
+        $product = $this->getRepository()->findOneBy(['sku' => 'product.1']);
+        $builder = $this->getRepository()->getProductsQueryBuilder([$product->getId()]);
+        $result = $builder->getQuery()->getResult();
+        $this->assertCount(1, $result);
+        $this->assertEquals($product, $result[0]);
+    }
+
     /**
      * @param string $reference
      * @return Product

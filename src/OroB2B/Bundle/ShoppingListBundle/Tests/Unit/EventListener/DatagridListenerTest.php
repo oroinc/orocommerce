@@ -13,7 +13,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $expectedTemplate = [
+    protected static $expectedTemplate = [
         'properties' => [
             'add_to_shopping_list_link' => [
                 'type' => 'url',
@@ -36,6 +36,14 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ]
+            ],
+        ],
+        'mass_actions' => [
+            'addproducts' => [
+                'type' => 'addproducts',
+                'entity_name' => '%orob2b_product.product.class%',
+                'data_identifier' => 'product.id',
+                'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label'
             ],
         ],
     ];
@@ -73,7 +81,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBeforeFrontendProducts($event);
 
-        $expected = $this->expectedTemplate;
-        $this->assertEquals($expected, $config->toArray());
+        $this->assertEquals(self::$expectedTemplate, $config->toArray());
     }
 }
