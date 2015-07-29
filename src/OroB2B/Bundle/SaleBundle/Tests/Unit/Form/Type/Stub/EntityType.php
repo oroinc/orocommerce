@@ -14,7 +14,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 class EntityType extends StubEntityType
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -27,8 +27,7 @@ class EntityType extends StubEntityType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

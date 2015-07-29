@@ -65,9 +65,19 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $user = $this->getUser($manager);
         $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
-        $accountUsers = $this->getAccountUsers($manager);
         $accounts = $this->getAccounts($manager);
+
         for ($i = 0; $i < 20; $i++) {
+            /* @var $account Customer */
+            $account = $accounts[rand(0, count($accounts) - 1)];
+
+            if (!$account) {
+                $accountUser = null;
+            } else {
+                $accountUsers = array_merge([null], $account->getUsers()->getValues());
+                $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+            }
+
             // set date in future
             $validUntil = new \DateTime('now');
             $addDays = sprintf('+%s days', rand(10, 100));
@@ -77,8 +87,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setOwner($user)
                 ->setOrganization($organization)
                 ->setValidUntil($validUntil)
-                ->setAccountUser($accountUsers[rand(0, count($accountUsers) - 1)])
-                ->setAccount($accounts[rand(0, count($accounts) - 1)])
+                ->setAccountUser($accountUser)
+                ->setAccount($account)
             ;
 
             if (1 === rand(1, 3)) {
@@ -91,15 +101,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return Collection|AccountUser[]
-     */
-    protected function getAccountUsers(ObjectManager $manager)
-    {
-        return array_merge([null], $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findBy([], null, 10));
     }
 
     /**

@@ -84,7 +84,7 @@ class DatagridListenerTest extends WebTestCase
             ->willReturn($inputData['permission']['return'])
         ;
 
-        $this->securityFacade->expects($inputData['mask']['expects'] ? $this->once() : $this->never())
+        $this->securityFacade->expects($inputData['mask']['expects'])
             ->method('isGrantedClassMask')
             ->with($inputData['mask']['mask'], $inputData['mask']['class'])
             ->willReturn($inputData['mask']['return'])
@@ -139,7 +139,7 @@ class DatagridListenerTest extends WebTestCase
                         'return'        => false,
                     ],
                     'mask' => [
-                        'expects' => false,
+                        'expects' => $this->never(),
                         'mask'    => null,
                         'class'   => null,
                         'return'  => null,
@@ -158,7 +158,7 @@ class DatagridListenerTest extends WebTestCase
                         'return'        => true,
                     ],
                     'mask' => [
-                        'expects' => true,
+                        'expects' => $this->once(),
                         'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
                         'class'   => $this->quoteClass,
                         'return'  => false,
@@ -177,7 +177,7 @@ class DatagridListenerTest extends WebTestCase
                         'return'        => true,
                     ],
                     'mask' => [
-                        'expects' => true,
+                        'expects' => $this->once(),
                         'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
                         'class'   => $this->quoteClass,
                         'return'  => true,

@@ -3,10 +3,16 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Mapping\ClassMetadataFactory;
 
 use Oro\Bundle\SearchBundle\Engine\Indexer;
+use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
@@ -56,7 +62,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $metadataFactory = $this->getMetaMocks();
         $this->entityManager->expects($this->once())
             ->method('getMetadataFactory')
-            ->will($this->returnValue($metadataFactory));
+            ->willReturn($metadataFactory);
         $this->entityRepository = $this
             ->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
@@ -64,13 +70,13 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $this->entityManager->expects($this->once())
             ->method('getRepository')
             ->with(self::TEST_ENTITY_CLASS)
-            ->will($this->returnValue($this->entityRepository));
+            ->willReturn($this->entityRepository);
 
         $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
             ->with(self::TEST_ENTITY_CLASS)
-            ->will($this->returnValue($this->entityManager));
+            ->willReturn($this->entityManager);
         $this->indexer = $this->getMockBuilder('Oro\Bundle\SearchBundle\Engine\Indexer')
             ->disableOriginalConstructor()
             ->getMock();
@@ -204,10 +210,11 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return ClassMetadataFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getMetaMocks()
     {
+        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
             ->setMethods(['getSingleIdentifierFieldName'])
             ->disableOriginalConstructor()
@@ -215,6 +222,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         $metadata->expects($this->once())
             ->method('getSingleIdentifierFieldName')
             ->will($this->returnValue('id'));
+        /* @var $metadataFactory ClassMetadataFactory|\PHPUnit_Framework_MockObject_MockObject */
         $metadataFactory = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadataFactory')
             ->setMethods(['getMetadataFor'])
             ->disableOriginalConstructor()
@@ -244,6 +252,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
         array $resultData,
         array $expectedIds
     ) {
+        /* @var $searchResult Result|\PHPUnit_Framework_MockObject_MockObject */
         $searchResult = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')
             ->disableOriginalConstructor()
             ->getMock();
@@ -257,10 +266,12 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($search, $page - 1, $perPage + 1, 'alias')
             ->willReturn($searchResult);
 
+        /* @var $queryBuilder QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
+        /* @var $query AbstractQuery|\PHPUnit_Framework_MockObject_MockObject */
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
             ->setMethods(['getResult'])
@@ -270,6 +281,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getResult')
             ->willReturn($resultData);
 
+        /* @var $expr Expr|\PHPUnit_Framework_MockObject_MockObject */
         $expr = $this->getMockBuilder('Doctrine\ORM\Query\Expr')
             ->disableOriginalConstructor()
             ->getMock();
