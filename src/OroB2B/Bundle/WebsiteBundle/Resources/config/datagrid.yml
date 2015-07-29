@@ -60,11 +60,3 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: website.updatedAt
-        actions:
-            view:
-                type:          navigate
-                label:         oro.grid.action.view
-                link:          view_link
-                icon:          eye-open
-                acl_resource:  orob2b_website_view
-                rowAction:     true
