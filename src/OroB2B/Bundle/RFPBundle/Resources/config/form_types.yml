@@ -25,23 +25,21 @@ services:
 
     orob2b_rfp.form.type.request_status_with_deleted_select:
         class: %orob2b_rfp.form.type.request_status_with_deleted_select.class%
-        arguments:
-            - @doctrine
         calls:
             - [setEntityClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request_status_with_deleted_select }
 
     # Request form types
-    orob2b_rfp_admin.form.type.request:
+    orob2b_rfp.form.type.request:
         class: %orob2b_rfp.form.type.request.class%
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request }
 
     orob2b_rfp.form.type.request_status_select:
         class: %orob2b_rfp.form.type.request_status_select.class%
-        arguments:
-            - @doctrine
         calls:
             - [setEntityClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
@@ -78,6 +76,8 @@ services:
         class: %orob2b_rfp.form.type.request_product.class%
         arguments:
             - @translator
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product }
 
@@ -85,6 +85,8 @@ services:
         class: %orob2b_rfp.form.type.request_product_item.class%
         arguments:
             - @translator
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request_product_item.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_request_product_item }
 

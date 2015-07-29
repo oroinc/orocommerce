@@ -64,7 +64,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_3';
     }
 
     /**
@@ -100,6 +100,8 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
+        $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
     }
 
     /**
@@ -193,6 +195,13 @@ class OroB2BProductBundleInstaller implements
             self::PRODUCT_TABLE_NAME,
             'visibility',
             'prod_visibility'
+        );
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            self::PRODUCT_TABLE_NAME,
+            'status',
+            'prod_status'
         );
     }
 
