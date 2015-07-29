@@ -58,15 +58,8 @@ class LineItemHandler
                 $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
                 $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
-                if ($existingLineItem) {
-                    $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
-                    $existingLineItemNote = $existingLineItem->getNotes();
-                    $newNotes = $lineItem->getNotes();
-                    $notes = trim(implode(' ', [$existingLineItemNote, $newNotes]));
-                    if ($notes) {
-                        $existingLineItem->setNotes($notes);
-                    }
-                    $this->savedId = $existingLineItem->getId();
+                if ($existingLineItem instanceof LineItem) {
+                    $this->updateExistingLineItem($lineItem, $existingLineItem);
                 } else {
                     $manager->persist($lineItem);
                 }
@@ -97,5 +90,21 @@ class LineItemHandler
         }
 
         return $result;
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param LineItem $existingLineItem
+     */
+    protected function updateExistingLineItem(LineItem $lineItem, LineItem $existingLineItem)
+    {
+        $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
+        $existingLineItemNote = $existingLineItem->getNotes();
+        $newNotes = $lineItem->getNotes();
+        $notes = trim(implode(' ', [$existingLineItemNote, $newNotes]));
+        if ($notes) {
+            $existingLineItem->setNotes($notes);
+        }
+        $this->savedId = $existingLineItem->getId();
     }
 }

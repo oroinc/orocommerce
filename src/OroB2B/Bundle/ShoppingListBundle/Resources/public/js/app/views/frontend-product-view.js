@@ -13,7 +13,6 @@ require([
                 url: btn.data('url'),
                 data: $('.add-to-shopping-list-form').serialize(),
                 success: function (response) {
-                    console.log(response);
                     if (response && response.message) {
                         mediator.once('page:afterChange', function () {
                             mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);

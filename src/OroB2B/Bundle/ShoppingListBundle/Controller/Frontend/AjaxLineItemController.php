@@ -80,6 +80,7 @@ class AjaxLineItemController extends Controller
         $lineItem->setShoppingList($shoppingList);
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
+        $handler = new LineItemHandler($form, $this->getRequest(), $this->getDoctrine());
         $saveRoute = function (LineItem $lineItem) {
             return [
                 'route' => 'orob2b_product_frontend_product_view',
@@ -92,7 +93,8 @@ class AjaxLineItemController extends Controller
             $form,
             $saveRoute,
             $saveRoute,
-            $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages')
+            $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages'),
+            $handler
         );
     }
 }
