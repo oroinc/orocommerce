@@ -1,0 +1,76 @@
+{% block orob2b_order_order_product_collection_row %}
+    <div class="order-orderproduct-collection">
+        <table class="order-orderproduct-collection order-orderproduct-collection-table">
+            <thead>
+                <tr>
+                    <th class="order-orderproduct-table-column-1">Product</th>
+                    <th class="order-orderproduct-table-column-3">Items</th>
+                </tr>
+            </thead>
+        </table>
+        {{ form_widget(form) }}
+    </div>
+{% endblock %}
+
+{% block orob2b_order_order_product_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' order-orderproduct-widget control-group'}) %}
+
+    {% set commentCustomer = form.vars.value.commentCustomer|default(null) %}
+    {% set commentSeller = form.vars.value.comment|default(null) %}
+
+    <table class="order-orderproduct-collection-table" {{ block('widget_container_attributes') }}
+           data-page-component-options="{{ componentOptions|json_encode }}"
+           data-page-component-module="orob2border/js/app/components/order-orderproductitem-selection-component">
+    <tr>
+        <td class="order-orderproduct-table-column-1">
+            <div class="order-orderproduct-product-select">
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+            </div>
+        </td>
+        <td class="order-orderproduct-table-column-3">
+            <div class="order-orderproductitem-collection{% if commentSeller is not empty %} order-orderproduct-notes-seller-active{% endif %}">
+                <div class="order-orderproductitem-collection">
+                    {{ form_widget(form.orderProductItems) }}
+                    {{ form_errors(form.orderProductItems) }}
+                </div>
+
+                <div>
+                    <a class="btn order-orderproduct-add-notes-btn" href="#">
+                        {{ 'orob2b.order.btn.add_seller_notes'|trans }}
+                    </a>
+                </div>
+                <div class="order-orderproduct-notes order-orderproduct-notes-seller ">
+                    {{ form_row(form.comment) }}
+                    <a class="btn order-orderproduct-remove-notes-btn" href="#">
+                        {{ 'orob2b.order.btn.remove_seller_notes'|trans }}
+                    </a>
+                </div>
+            </div>
+        </td>
+    </tr>
+    </table>
+{% endblock %}
+
+{% block orob2b_order_order_product_item_widget %}
+    <table class="order-orderproductitem-widget">
+        <tr>
+            <td class="order-orderproductitem-widget-quantity">
+                {{ form_widget(form.quantity) }}
+                {{ form_errors(form.quantity) }}
+            </td>
+            <td class="order-orderproductitem-widget-pricetype">
+                {{ form_widget(form.priceType) }}
+                {{ form_errors(form.priceType) }}
+            </td>
+            <td class="order-orderproductitem-widget-productunit">
+                {{ form_widget(form.productUnit, {attr: attr|merge({class: 'order-orderproductitem-productunit-select'})}) }}
+                {{ form_errors(form.productUnit) }}
+            </td>
+            <td class="order-orderproductitem-widget-price">
+                {{ form_widget(form.price) }}
+                {{ form_errors(form.price) }}
+            </td>
+        </tr>
+    </table>
+{% endblock %}

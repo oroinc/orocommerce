@@ -149,7 +149,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var Collection|OrderProduct[]
      *
-     * @ORM\OneToMany(targetEntity="OrderProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="OrderProduct", mappedBy="order", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $orderProducts;
 
