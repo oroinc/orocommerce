@@ -7,6 +7,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
@@ -26,7 +31,14 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      defaultValues={
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
+ *          },
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="owner",
+ *              "frontend_owner_column_name"="account_user_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -37,7 +49,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      }
  * )
  */
-class LineItem extends ExtendLineItem
+class LineItem extends ExtendLineItem implements OrganizationAwareInterface
 {
     /**
      * @var integer
@@ -124,6 +136,29 @@ class LineItem extends ExtendLineItem
      * )
      */
     protected $notes;
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $owner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     /**
      * @return integer
@@ -225,6 +260,44 @@ class LineItem extends ExtendLineItem
     public function setNotes($notes)
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param AccountUser $owningUser
+     *
+     * @return $this
+     */
+    public function setOwner(AccountUser $owningUser)
+    {
+        $this->owner = $owningUser;
 
         return $this;
     }
