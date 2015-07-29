@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class AddProductType extends AbstractType
@@ -88,6 +89,9 @@ class AddProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $accountUser = $this->accountUser;
+        /** @var LineItem $formData */
+        $formData = $builder->getForm()->getData();
+        $product = $formData->getProduct();
 
         $builder
             ->add(
@@ -117,6 +121,9 @@ class AddProductType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.unit.label',
+                    'query_builder' => function (ProductUnitRepository $repository) use ($product) {
+                        return $repository->getProductUnitsQueryBuilder($product);
+                    },
                     'empty_data' => null,
                     'empty_value' => 'orob2b.pricing.productprice.unit.choose'
                 ]
