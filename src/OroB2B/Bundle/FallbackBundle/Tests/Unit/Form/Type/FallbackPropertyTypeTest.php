@@ -97,11 +97,12 @@ class FallbackPropertyTypeTest extends FormIntegrationTestCase
             'parent locale with suffix' => [
                 'inputOptions' => [
                     'enabled_fallbacks' => [FallbackType::PARENT_LOCALE],
-                    'parent_locale' => 'en'
+                    'locale' => 'en_US',
+                    'parent_locale' => 'en',
                 ],
                 'expectedOptions' => [
                     'required' => false,
-                    'empty_value' => 'orob2b.fallback.type.empty',
+                    'empty_value' => false,
                     'choices' => [
                         FallbackType::PARENT_LOCALE => 'Parent locale value (en)',
                         FallbackType::SYSTEM => 'orob2b.fallback.type.default',
@@ -123,16 +124,22 @@ class FallbackPropertyTypeTest extends FormIntegrationTestCase
 
     public function testFinishView()
     {
+        $localeCode = 'en_US';
         $parentLocaleCode = 'en';
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
-        $this->formType->finishView($formView, $form, ['parent_locale' => $parentLocaleCode]);
+        $this->formType->finishView($formView, $form, [
+            'locale' => $localeCode,
+            'parent_locale' => $parentLocaleCode,
+        ]);
 
         $this->assertArrayHasKey('attr', $formView->vars);
+        $this->assertArrayHasKey('data-locale', $formView->vars['attr']);
         $this->assertArrayHasKey('data-parent-locale', $formView->vars['attr']);
+        $this->assertEquals($localeCode, $formView->vars['attr']['data-locale']);
         $this->assertEquals($parentLocaleCode, $formView->vars['attr']['data-parent-locale']);
     }
 

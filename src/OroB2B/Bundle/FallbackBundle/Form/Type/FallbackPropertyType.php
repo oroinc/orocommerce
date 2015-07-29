@@ -58,6 +58,7 @@ class FallbackPropertyType extends AbstractType
                     FallbackType::SYSTEM        => 'orob2b.fallback.type.default',
                     FallbackType::PARENT_LOCALE => 'orob2b.fallback.type.parent_locale',
                 ],
+                'locale' => null,
                 'parent_locale' => null,
             ]
         );
@@ -98,6 +99,9 @@ class FallbackPropertyType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        if ($options['locale']) {
+            $view->vars['attr']['data-locale'] = $options['locale'];
+        }
         if ($options['parent_locale']) {
             $view->vars['attr']['data-parent-locale'] = $options['parent_locale'];
         }

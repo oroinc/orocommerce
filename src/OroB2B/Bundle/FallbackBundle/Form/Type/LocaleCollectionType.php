@@ -96,6 +96,7 @@ class LocaleCollectionType extends AbstractType
                     'type'                        => $options['type'],
                     'options'                     => $options['options'],
                     'fallback_type'               => $options['fallback_type'],
+                    'fallback_type_locale'        => $locale->getCode(),
                     'fallback_type_parent_locale' => $parentLocaleCode,
                     'enabled_fallbacks'           => $enabledFallbacks,
                 ]
