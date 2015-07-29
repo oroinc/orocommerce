@@ -10,6 +10,8 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
+                    - productNames.string as productName
+                    - productDescriptions.text as productDescription
                     - product.createdAt
                     - product.updatedAt
                     - productInventoryStatus.id as inventoryStatusId
@@ -25,9 +27,23 @@ datagrid:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: product.visibility, alias: productVisibility}
                         - { join: product.status, alias: productStatus}
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
+                        -
+                            join: product.descriptions
+                            alias: productDescriptions
+                            conditionType: WITH
+                            condition: productDescriptions.locale IS NULL
         columns:
             sku:
                 label:         orob2b.product.sku.label
+            productName:
+                label:         orob2b.product.name.label
+            productDescription:
+                label:         orob2b.product.description.label
             inventoryStatus:
                 label:         orob2b.product.inventory_status.label
                 type:          twig
@@ -55,6 +71,10 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
+                productName:
+                    data_name: productName
+                productDescription:
+                    data_name: productDescription
                 inventoryStatus:
                     data_name: inventoryStatusName
                 visibility:
@@ -72,6 +92,12 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
+                productName:
+                    type:      string
+                    data_name: productName
+                productDescription:
+                    type:      string
+                    data_name: productDescription
                 inventoryStatus:
                     type:      enum
                     data_name: inventoryStatusId
