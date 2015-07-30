@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -69,17 +69,17 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessValidData()
     {
-        /** @var Customer $appendedCustomer */
-        $appendedCustomer = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1);
-        /** @var Customer $removedCustomer */
-        $removedCustomer = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2);
-        $this->entity->addCustomer($removedCustomer);
+        /** @var Account $appendedCustomer */
+        $appendedCustomer = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
+        /** @var Account $removedCustomer */
+        $removedCustomer = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2);
+        $this->entity->addAccount($removedCustomer);
 
-        /** @var CustomerGroup $appendedCustomerGroup */
-        $appendedCustomerGroup = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1);
-        /** @var CustomerGroup $removedCustomerGroup */
-        $removedCustomerGroup = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 2);
-        $this->entity->addCustomerGroup($removedCustomerGroup);
+        /** @var AccountGroup $appendedCustomerGroup */
+        $appendedCustomerGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1);
+        /** @var AccountGroup $removedCustomerGroup */
+        $removedCustomerGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2);
+        $this->entity->addAccountGroup($removedCustomerGroup);
 
         /** @var Website $appendedWebsite */
         $appendedWebsite = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1);
@@ -104,12 +104,12 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->handler->process($this->entity));
 
-        $this->assertFalse($this->entity->getCustomers()->contains($removedCustomer));
-        $this->assertFalse($this->entity->getCustomerGroups()->contains($removedCustomerGroup));
+        $this->assertFalse($this->entity->getAccounts()->contains($removedCustomer));
+        $this->assertFalse($this->entity->getAccountGroups()->contains($removedCustomerGroup));
         $this->assertFalse($this->entity->getWebsites()->contains($removedWebsite));
 
-        $this->assertTrue($this->entity->getCustomers()->contains($appendedCustomer));
-        $this->assertTrue($this->entity->getCustomerGroups()->contains($appendedCustomerGroup));
+        $this->assertTrue($this->entity->getAccounts()->contains($appendedCustomer));
+        $this->assertTrue($this->entity->getAccountGroups()->contains($appendedCustomerGroup));
         $this->assertTrue($this->entity->getWebsites()->contains($appendedWebsite));
     }
 
@@ -126,10 +126,10 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->any())->method('setPriceListToCustomer')->will(
             $this->returnCallback(
-                function (Customer $customer, PriceList $priceList = null) {
-                    $this->entity->removeCustomer($customer);
+                function (Account $customer, PriceList $priceList = null) {
+                    $this->entity->removeAccount($customer);
                     if ($priceList) {
-                        $this->entity->addCustomer($customer);
+                        $this->entity->addAccount($customer);
                     }
                 }
             )
@@ -137,10 +137,10 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->any())->method('setPriceListToCustomerGroup')->will(
             $this->returnCallback(
-                function (CustomerGroup $customerGroup, PriceList $priceList = null) {
-                    $this->entity->removeCustomerGroup($customerGroup);
+                function (AccountGroup $customerGroup, PriceList $priceList = null) {
+                    $this->entity->removeAccountGroup($customerGroup);
                     if ($priceList) {
-                        $this->entity->addCustomerGroup($customerGroup);
+                        $this->entity->addAccountGroup($customerGroup);
                     }
                 }
             )

@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -89,7 +89,7 @@ class PriceListTest extends EntityTestCase
     /**
      * @dataProvider relationsDataProvider
      *
-     * @param Customer|CustomerGroup|Website $entity
+     * @param Account|AccountGroup|Website $entity
      * @param string $getCollectionMethod
      * @param string $addMethod
      * @param string $removeMethod
@@ -124,16 +124,16 @@ class PriceListTest extends EntityTestCase
     {
         return [
             'customer' => [
-                'entity' => new Customer(),
+                'entity' => new Account(),
                 'getCollectionMethod' => 'getCustomers',
-                'addMethod' => 'addCustomer',
-                'removeMethod' => 'removeCustomer',
+                'addMethod' => 'addAccount',
+                'removeMethod' => 'removeAccount',
             ],
             'customerGroup' => [
-                'entity' => new CustomerGroup(),
+                'entity' => new AccountGroup(),
                 'getCollectionMethod' => 'getCustomerGroups',
-                'addMethod' => 'addCustomerGroup',
-                'removeMethod' => 'removeCustomerGroup',
+                'addMethod' => 'addAccountGroup',
+                'removeMethod' => 'removeAccountGroup',
             ],
             'website' => [
                 'entity' => new Website(),

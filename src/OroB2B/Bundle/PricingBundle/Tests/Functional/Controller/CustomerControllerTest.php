@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
@@ -21,15 +21,15 @@ class CustomerControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        /** @var Customer $customer */
-        $customer = $this->getReference('customer.orphan');
+        /** @var Account $customer */
+        $customer = $this->getReference('account.orphan');
 
         /** @var PriceList $priceList */
-        $priceList = $this->getReference('customer.orphan');
+        $priceList = $this->getReference('account.orphan');
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_customer_update', ['id' => $customer->getId()])
+            $this->getUrl('orob2b_account_update', ['id' => $customer->getId()])
         );
 
         $result = $this->client->getResponse();
@@ -37,7 +37,7 @@ class CustomerControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_customer_type' => ['priceList' => $priceList->getId()]
+                'orob2b_account_type' => ['priceList' => $priceList->getId()]
             ]
         );
 

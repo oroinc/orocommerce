@@ -2,18 +2,18 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Extension\CustomerFormExtension;
+use OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension;
 
 class CustomerFormExtensionTest extends AbstractPriceListExtensionTest
 {
     /**
-     * @return CustomerFormExtension
+     * @return AccountFormExtension
      */
     protected function getExtension()
     {
-        return new CustomerFormExtension($this->registry);
+        return new AccountFormExtension($this->registry);
     }
 
     /**
@@ -23,10 +23,10 @@ class CustomerFormExtensionTest extends AbstractPriceListExtensionTest
     {
         return [
             [null, false],
-            [new Customer(), false],
-            [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1), true],
-            [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1), true],
-            [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1), true, new PriceList()],
+            [new Account(), false],
+            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1), true],
+            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1), true],
+            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1), true, new PriceList()],
         ];
     }
 
@@ -37,10 +37,10 @@ class CustomerFormExtensionTest extends AbstractPriceListExtensionTest
     {
         return [
             [null, false],
-            [new Customer(), false],
-            [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1), true],
-            [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1), false, false],
-            [$this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1), true, true, new PriceList()],
+            [new Account(), false],
+            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1), true],
+            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1), false, false],
+            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1), true, true, new PriceList()],
         ];
     }
 
@@ -49,7 +49,7 @@ class CustomerFormExtensionTest extends AbstractPriceListExtensionTest
      */
     protected function getGetterMethodName()
     {
-        return 'getPriceListByCustomer';
+        return 'getPriceListByAccount';
     }
 
     /**
@@ -66,6 +66,6 @@ class CustomerFormExtensionTest extends AbstractPriceListExtensionTest
     public function testGetExtendedType()
     {
         $this->assertInternalType('string', $this->getExtension()->getExtendedType());
-        $this->assertEquals('orob2b_customer_type', $this->getExtension()->getExtendedType());
+        $this->assertEquals('orob2b_account_type', $this->getExtension()->getExtendedType());
     }
 }

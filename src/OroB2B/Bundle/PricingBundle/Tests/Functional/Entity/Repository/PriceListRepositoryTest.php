@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -58,64 +58,64 @@ class PriceListRepositoryTest extends WebTestCase
 
     public function testCustomerPriceList()
     {
-        /** @var Customer $customer */
-        $customer = $this->getReference('customer.orphan');
+        /** @var Account $customer */
+        $customer = $this->getReference('account.orphan');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_3');
 
-        $this->assertTrue($priceList->getCustomers()->contains($customer));
+        $this->assertTrue($priceList->getAccounts()->contains($customer));
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getPriceListByCustomer($customer)->getId()
+            $this->getRepository()->getPriceListByAccount($customer)->getId()
         );
-        $this->getRepository()->setPriceListToCustomer($customer, null);
+        $this->getRepository()->setPriceListToAccount($customer, null);
         $this->getManager()->flush();
 
         /** @var PriceList $newPriceList */
         $newPriceList = $this->getReference('price_list_2');
 
-        $this->getRepository()->setPriceListToCustomer($customer, $newPriceList);
+        $this->getRepository()->setPriceListToAccount($customer, $newPriceList);
         $this->getManager()->flush();
 
-        $this->assertFalse($priceList->getCustomers()->contains($customer));
-        $this->assertTrue($newPriceList->getCustomers()->contains($customer));
+        $this->assertFalse($priceList->getAccounts()->contains($customer));
+        $this->assertTrue($newPriceList->getAccounts()->contains($customer));
 
         $this->assertEquals(
             $newPriceList->getId(),
-            $this->getRepository()->getPriceListByCustomer($customer)->getId()
+            $this->getRepository()->getPriceListByAccount($customer)->getId()
         );
     }
 
     public function testCustomerGroupPriceList()
     {
-        /** @var CustomerGroup $customerGroup */
+        /** @var AccountGroup $customerGroup */
         $customerGroup = $this->getReference('customer_group.group1');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $this->assertTrue($priceList->getCustomerGroups()->contains($customerGroup));
+        $this->assertTrue($priceList->getAccountGroups()->contains($customerGroup));
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)->getId()
+            $this->getRepository()->getPriceListByAccountGroup($customerGroup)->getId()
         );
 
         /** @var PriceList $newPriceList */
         $newPriceList = $this->getReference('price_list_2');
 
-        $this->getRepository()->setPriceListToCustomerGroup($customerGroup, $newPriceList);
+        $this->getRepository()->setPriceListToAccountGroup($customerGroup, $newPriceList);
 
         $this->getManager()->flush();
 
-        $this->assertFalse($priceList->getCustomerGroups()->contains($customerGroup));
-        $this->assertTrue($newPriceList->getCustomerGroups()->contains($customerGroup));
+        $this->assertFalse($priceList->getAccountGroups()->contains($customerGroup));
+        $this->assertTrue($newPriceList->getAccountGroups()->contains($customerGroup));
 
         $this->assertEquals(
             $newPriceList->getId(),
-            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)->getId()
+            $this->getRepository()->getPriceListByAccountGroup($customerGroup)->getId()
         );
     }
 

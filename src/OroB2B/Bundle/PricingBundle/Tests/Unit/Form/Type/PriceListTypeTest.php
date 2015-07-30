@@ -14,8 +14,8 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 class PriceListTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
-    const CUSTOMER_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\Customer';
-    const CUSTOMER_GROUP_CLASS = 'OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup';
+    const CUSTOMER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const CUSTOMER_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
     const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
     /**
@@ -32,8 +32,8 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         $this->type = new PriceListType();
         $this->type->setDataClass(self::DATA_CLASS);
-        $this->type->setCustomerClass(self::CUSTOMER_CLASS);
-        $this->type->setCustomerGroupClass(self::CUSTOMER_GROUP_CLASS);
+        $this->type->setAccountClass(self::CUSTOMER_CLASS);
+        $this->type->setAccountGroupClass(self::CUSTOMER_GROUP_CLASS);
         $this->type->setWebsiteClass(self::WEBSITE_CLASS);
     }
 
