@@ -17,7 +17,7 @@
         {{ form_rest(form) }}
     </div>
 
-    <div class="btn-group">
+    <div class="btn-group" data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
         {% set buttonsHtml %}
             {% if currentShoppingList %}
                 {{ UI.clientButton({
@@ -50,7 +50,3 @@
     </div>
 </form>
 {{ oro_form_js_validation(form) }}
-
-<script type="text/javascript">
-    require(['orob2bshoppinglist/js/app/views/frontend-product-view'])
-</script>
