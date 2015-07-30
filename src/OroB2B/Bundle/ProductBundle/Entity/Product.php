@@ -196,6 +196,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         parent::__construct();
 
         $this->unitPrecisions = new ArrayCollection();
+        $this->names          = new ArrayCollection();
+        $this->descriptions   = new ArrayCollection();
     }
 
     /**
@@ -522,6 +524,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         if ($this->id) {
             $this->id = null;
             $this->unitPrecisions = new ArrayCollection();
+            $this->names = new ArrayCollection();
+            $this->descriptions = new ArrayCollection();
         }
     }
 }

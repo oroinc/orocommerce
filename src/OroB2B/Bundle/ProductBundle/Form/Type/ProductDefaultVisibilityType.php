@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -11,10 +11,10 @@ class ProductDefaultVisibilityType extends AbstractType
 {
     const NAME = 'orob2b_product_default_visibility';
 
-    /**
+     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
