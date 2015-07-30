@@ -44,7 +44,7 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        if (!$this->request || !$this->request->get('id')) {
             return;
         }
 

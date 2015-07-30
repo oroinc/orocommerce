@@ -40,13 +40,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $listener = new FormViewListener($translator, $this->doctrineHelper);
-        $listener->setRequest($request);
         $this->listener = $listener;
     }
 
@@ -72,11 +66,21 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getFormView')
             ->willReturn(new FormView());
 
+        $this->listener->setRequest($this->getRequest());
         $this->listener->onProductEdit($event);
     }
 
     public function testOnProductView()
     {
+        $request = $this->getRequest();
+        $request
+            ->expects($this->any())
+            ->method('get')
+            ->with('id')
+            ->willReturn(1);
+
+        $this->listener->setRequest($request);
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
@@ -110,6 +114,24 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEnvironment')
             ->willReturn($env);
 
+        $this->listener->onProductView($event);
+    }
+
+    public function testOnProductViewNoId()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->doctrineHelper
+            ->expects($this->never())
+            ->method('getEntityReference')
+            ->willReturn(new Product());
+
+        $this->listener->onProductView($event);
+
+        $this->listener->setRequest($this->getRequest());
         $this->listener->onProductView($event);
     }
 
@@ -148,5 +170,17 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('addSubBlockData');
 
         return $scrollData;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Request
+     */
+    protected function getRequest()
+    {
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $request;
     }
 }
