@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
@@ -39,7 +42,7 @@ class CustomerType extends AbstractType
             )
             ->add(
                 'addresses',
-                'oro_address_collection',
+                AddressCollectionType::NAME,
                 [
                     'label'    => 'orob2b.customer.addresses.label',
                     'type'     => CustomerTypedAddressType::NAME,
@@ -63,6 +66,17 @@ class CustomerType extends AbstractType
                 ]
             )
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'cascade_validation' => true,
+            'intention'          => 'customer',
+        ]);
     }
 
     /**
