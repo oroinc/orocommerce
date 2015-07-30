@@ -132,7 +132,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $request = $this->getRequest();
         $request
-            ->expects($this->once(0))
+            ->expects($this->once())
             ->method('get')
             ->with('id')
             ->willReturn('string');
