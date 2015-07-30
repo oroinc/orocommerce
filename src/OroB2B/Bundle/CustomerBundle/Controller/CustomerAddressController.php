@@ -20,7 +20,7 @@ class CustomerAddressController extends Controller
 {
     /**
      * @Route("/address-book/{id}", name="orob2b_customer_address_book", requirements={"id"="\d+"})
-     * @Template
+     * @Template("OroB2BCustomerBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("orob2b_customer_view")
      *
      * @param Customer $customer
@@ -30,19 +30,20 @@ class CustomerAddressController extends Controller
     {
         return [
             'entity' => $customer,
-            'address_edit_acl_resource' => 'orob2b_customer_update'
+            'address_edit_acl_resource' => 'orob2b_customer_update',
+            'options' => $this->getAddressBookOptions($customer)
         ];
     }
 
     /**
      * @Route(
-     *      "/{customerId}/address-create",
+     *      "/{entityId}/address-create",
      *      name="orob2b_customer_address_create",
-     *      requirements={"customerId"="\d+"}
+     *      requirements={"entityId"="\d+"}
      * )
-     * @Template("OroB2BCustomerBundle:CustomerAddress:update.html.twig")
+     * @Template("OroB2BCustomerBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_customer_create")
-     * @ParamConverter("customer", options={"id" = "customerId"})
+     * @ParamConverter("customer", options={"id" = "entityId"})
      *
      * @param Customer $customer
      * @return array
@@ -54,13 +55,13 @@ class CustomerAddressController extends Controller
 
     /**
      * @Route(
-     *      "/{customerId}/address-update/{id}",
+     *      "/{entityId}/address-update/{id}",
      *      name="orob2b_customer_address_update",
-     *      requirements={"customerId"="\d+","id"="\d+"},defaults={"id"=0}
+     *      requirements={"entityId"="\d+","id"="\d+"},defaults={"id"=0}
      * )
-     * @Template
+     * @Template("OroB2BCustomerBundle:Address/widget:update.html.twig")
      * @AclAncestor("orob2b_customer_update")
-     * @ParamConverter("customer", options={"id" = "customerId"})
+     * @ParamConverter("customer", options={"id" = "entityId"})
      *
      * @param Customer        $customer
      * @param CustomerAddress $address
@@ -81,19 +82,17 @@ class CustomerAddressController extends Controller
     {
         $responseData = [
             'saved' => false,
-            'customer' => $customer
+            'entity' => $customer
         ];
 
-        if ($this->getRequest()->getMethod() == 'GET' && !$address->getId()) {
-            if (!$customer->getAddresses()->count()) {
-                $address->setPrimary(true);
-            }
+        if ($this->getRequest()->getMethod() === 'GET' && !$address->getId() && !$customer->getAddresses()->count()) {
+            $address->setPrimary(true);
         }
 
-        if ($address->getOwner() && $address->getOwner()->getId() != $customer->getId()) {
-            throw new BadRequestHttpException('Address must belong to customer');
-        } elseif (!$address->getOwner()) {
+        if (!$address->getOwner()) {
             $customer->addAddress($address);
+        } elseif ($address->getOwner()->getId() != $customer->getId()) {
+            throw new BadRequestHttpException('Address must belong to Customer');
         }
 
         $form = $this->createForm(CustomerTypedAddressType::NAME, $address);
@@ -101,7 +100,9 @@ class CustomerAddressController extends Controller
         $handler = new AddressHandler(
             $form,
             $this->getRequest(),
-            $this->getDoctrine()->getManagerForClass('OroB2BCustomerBundle:CustomerAddress')
+            $this->getDoctrine()->getManagerForClass(
+                $this->container->getParameter('orob2b_customer.entity.customer_address.class')
+            )
         );
 
         if ($handler->process($address)) {
@@ -111,6 +112,36 @@ class CustomerAddressController extends Controller
         }
 
         $responseData['form'] = $form->createView();
+        $responseData['routes'] = [
+            'create' => 'orob2b_customer_address_create',
+            'update' => 'orob2b_customer_address_update'
+        ];
         return $responseData;
+    }
+
+    /**
+     * @param Customer $entity
+     * @return array
+     */
+    protected function getAddressBookOptions($entity)
+    {
+        $addressListUrl = $this->generateUrl('orob2b_api_customer_get_customer_addresses', [
+            'entityId' => $entity->getId()
+        ]);
+
+        $addressCreateUrl = $this->generateUrl('orob2b_customer_address_create', [
+            'entityId' => $entity->getId()
+        ]);
+
+        $currentAddresses = $this->get('fragment.handler')->render($addressListUrl);
+
+        return [
+            'wid'                    => $this->getRequest()->get('_wid'),
+            'entityId'               => $entity->getId(),
+            'addressListUrl'         => $addressListUrl,
+            'addressCreateUrl'       => $addressCreateUrl,
+            'addressUpdateRouteName' => 'orob2b_customer_address_update',
+            'currentAddresses'       => $currentAddresses
+        ];
     }
 }
