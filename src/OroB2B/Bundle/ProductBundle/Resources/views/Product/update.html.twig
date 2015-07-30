@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% oro_title_set({params : {"%name%": (entity.id ? entity.defaultName : null)|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
 {% set formAction = entity.id ? path('orob2b_product_update', { 'id': entity.id }) : path('orob2b_product_create')  %}
 
@@ -39,7 +39,7 @@
             'entity':      entity,
             'indexPath':   path('orob2b_product_index'),
             'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-            'entityTitle': entity.defaultName|default('N/A'|trans)
+            'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
         } %}
         {{ parent() }}
     {% else %}

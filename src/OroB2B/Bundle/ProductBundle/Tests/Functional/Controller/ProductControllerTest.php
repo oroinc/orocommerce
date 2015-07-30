@@ -179,7 +179,10 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains("Product has been duplicated", $html);
-        $this->assertContains(self::FIRST_DUPLICATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(
+            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            $html
+        );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);
@@ -211,7 +214,10 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(
+            self::UPDATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            $html
+        );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
@@ -296,7 +302,10 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains("Product has been saved and duplicated", $html);
-        $this->assertContains(self::SECOND_DUPLICATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(
+            self::SECOND_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            $html
+        );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);
