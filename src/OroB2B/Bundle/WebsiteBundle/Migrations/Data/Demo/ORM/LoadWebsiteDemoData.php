@@ -150,7 +150,7 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
      */
     protected function getLocaleNameByCode($code)
     {
-        return Intl::getLocaleBundle()->getLocaleName($code);
+        return Intl::getLocaleBundle()->getLocaleName($code, $this->container->get('oro_locale.settings')->getLocale());
     }
 
     /**
