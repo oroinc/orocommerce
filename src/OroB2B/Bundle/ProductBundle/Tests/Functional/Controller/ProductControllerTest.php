@@ -64,7 +64,7 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
         $form['orob2b_product_form[owner]'] = $this->getBusinessUnitId();
-        
+
         $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
         $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
         $form['orob2b_product_form[status]'] = Product::STATUS_DISABLED;

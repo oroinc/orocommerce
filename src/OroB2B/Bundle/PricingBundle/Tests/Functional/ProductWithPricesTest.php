@@ -7,9 +7,7 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
@@ -234,28 +232,5 @@ class ProductWithPricesTest extends WebTestCase
     protected function getBusinessUnitId()
     {
         return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
-    }
-
-    /**
-     * @param Product $product
-     * @param Locale $locale
-     * @return LocalizedFallbackValue
-     */
-    protected function getLocalizedName(Product $product, Locale $locale)
-    {
-        $localizedName = null;
-        foreach ($product->getNames() as $name) {
-            $nameLocale = $name->getLocale();
-            if ($nameLocale && $nameLocale->getId() === $locale->getId()) {
-                $localizedName = $name;
-                break;
-            }
-        }
-
-        if (!$localizedName) {
-            throw new \LogicException('At least one localized name must be defined');
-        }
-
-        return $localizedName;
     }
 }

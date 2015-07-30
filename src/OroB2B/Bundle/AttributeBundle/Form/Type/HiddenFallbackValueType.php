@@ -10,7 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class HiddenFallbackValueType extends AbstractType
 {
@@ -40,6 +40,7 @@ class HiddenFallbackValueType extends AbstractType
                     'type' => $options['type'],
                     'options' => $options['options'],
                     'fallback_type' => $options['fallback_type'],
+                    'fallback_type_locale' => $options['fallback_type_locale'],
                     'fallback_type_parent_locale' => $options['fallback_type_parent_locale'],
                     'enabled_fallbacks' => $options['enabled_fallbacks'],
                 ]
@@ -49,7 +50,7 @@ class HiddenFallbackValueType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
             'type',
@@ -59,6 +60,7 @@ class HiddenFallbackValueType extends AbstractType
             'data_class' => null,
             'options' => [],
             'fallback_type' => FallbackPropertyType::NAME,
+            'fallback_type_locale' => null,
             'fallback_type_parent_locale' => null,
             'enabled_fallbacks' => [],
             'extend_value_type' => 'hidden',
