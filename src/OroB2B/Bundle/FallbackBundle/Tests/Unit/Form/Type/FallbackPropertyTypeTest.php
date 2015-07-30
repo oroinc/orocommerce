@@ -101,7 +101,7 @@ class FallbackPropertyTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedOptions' => [
                     'required' => false,
-                    'empty_value' => 'orob2b.fallback.type.empty',
+                    'empty_value' => false,
                     'choices' => [
                         FallbackType::PARENT_LOCALE => 'Parent locale value (en)',
                         FallbackType::SYSTEM => 'orob2b.fallback.type.default',
