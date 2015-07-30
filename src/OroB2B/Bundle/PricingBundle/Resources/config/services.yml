@@ -158,6 +158,7 @@ services:
                 - @form.factory
                 - @oro_filter.filter_utility
                 - @orob2b_product.formatter.product_unit_label
+                - @orob2b_pricing.model.price_list_request_hanlder
             tags:
                 - { name: oro_filter.extension.orm_filter.filter, type: product-price }
 

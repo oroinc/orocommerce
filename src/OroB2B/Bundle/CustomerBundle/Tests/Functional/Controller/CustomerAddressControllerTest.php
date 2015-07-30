@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Form;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
 /**
  * @outputBuffering enabled
@@ -44,6 +44,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
     /**
      * @depends testCustomerView
+     *
+     * @return int
      */
     public function testCreateAddress()
     {
@@ -52,7 +54,7 @@ class CustomerAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'orob2b_customer_address_create',
-                ['customerId' => $customer->getId(), '_widgetContainer' => 'dialog']
+                ['entityId' => $customer->getId(), '_widgetContainer' => 'dialog']
             )
         );
 
@@ -61,6 +63,141 @@ class CustomerAddressControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form     = $crawler->selectButton('Save')->form();
+        $this->fillFormForCreateTest($form);
+
+        $this->client->followRedirects(true);
+        $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $customer->getId()])
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $this->assertEquals('Badakhshān', $result['region']);
+        $this->assertEquals([
+            [
+                'name'  => AddressType::TYPE_BILLING,
+                'label' => ucfirst(AddressType::TYPE_BILLING)
+            ]
+        ], $result['types']);
+
+        $this->assertEquals([
+            [
+                'name'  => AddressType::TYPE_BILLING,
+                'label' => ucfirst(AddressType::TYPE_BILLING)
+            ]
+        ], $result['defaults']);
+
+        return $customer->getId();
+    }
+
+    /**
+     * @depends testCreateAddress
+     *
+     * @param int $id
+     * @return int
+     */
+    public function testUpdateAddress($id)
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $id])
+        );
+
+        $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_customer_address_update',
+                ['entityId' => $id, 'id' => $address['id'], '_widgetContainer' => 'dialog']
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEquals(200, $result->getStatusCode());
+
+        /** @var Form $form */
+        $form     = $crawler->selectButton('Save')->form();
+        $form = $this->fillFormForUpdateTest($form);
+
+        $this->client->followRedirects(true);
+        $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $id])
+        );
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $this->assertEquals('Manicaland', $result['region']);
+        $this->assertEquals([
+            [
+                'name'  => AddressType::TYPE_BILLING,
+                'label' => ucfirst(AddressType::TYPE_BILLING)
+            ],
+            [
+                'name'  => AddressType::TYPE_SHIPPING,
+                'label' => ucfirst(AddressType::TYPE_SHIPPING)
+            ]
+        ], $result['types']);
+
+        $this->assertEquals([
+            [
+                'name'  => AddressType::TYPE_SHIPPING,
+                'label' => ucfirst(AddressType::TYPE_SHIPPING)
+            ]
+        ], $result['defaults']);
+
+        return $id;
+    }
+
+    /**
+     * @depends testCreateAddress
+     *
+     * @param int $customerId
+     */
+    public function testDeleteAddress($customerId)
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_api_customer_get_customer_address_primary',
+                ['entityId' => $customerId]
+            )
+        );
+
+        $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
+
+        $crawler = $this->client->request(
+            'DELETE',
+            $this->getUrl(
+                'orob2b_api_customer_delete_customer_address',
+                ['entityId' => $customerId, 'addressId' => $address['id']]
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEquals(204, $result->getStatusCode());
+    }
+
+    /**
+     * Fill form for address tests (create test)
+     *
+     * @param Form $form
+     * @return Form
+     */
+    protected function fillFormForCreateTest(Form $form)
+    {
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
@@ -91,62 +228,17 @@ class CustomerAddressControllerTest extends WebTestCase
         $form->set($field);
         $form['orob2b_customer_typed_address[region]'] = 'AF-BDS';
 
-        $this->client->followRedirects(true);
-        $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['customerId' => $customer->getId()])
-        );
-
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $this->assertEquals('Badakhshān', $result['region']);
-        $this->assertEquals([
-            [
-                'name'  => AddressType::TYPE_BILLING,
-                'label' => ucfirst(AddressType::TYPE_BILLING)
-            ]
-        ], $result['types']);
-
-        $this->assertEquals([
-            [
-                'name'  => AddressType::TYPE_BILLING,
-                'label' => ucfirst(AddressType::TYPE_BILLING)
-            ]
-        ], $result['defaults']);
-
-        return $customer->getId();
+        return $form;
     }
 
     /**
-     * @depends testCreateAddress
+     * Fill form for address tests (update test)
+     *
+     * @param Form $form
+     * @return Form
      */
-    public function testUpdateAddress($id)
+    protected function fillFormForUpdateTest(Form $form)
     {
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['customerId' => $id])
-        );
-
-        $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'orob2b_customer_address_update',
-                ['customerId' => $id, 'id' => $address['id'], '_widgetContainer' => 'dialog']
-            )
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertEquals(200, $result->getStatusCode());
-
-        /** @var Form $form */
-        $form     = $crawler->selectButton('Save')->form();
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
@@ -175,66 +267,6 @@ class CustomerAddressControllerTest extends WebTestCase
         $form->set($field);
         $form['orob2b_customer_typed_address[region]'] = 'ZW-MA';
 
-        $this->client->followRedirects(true);
-        $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['customerId' => $id])
-        );
-
-        $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $this->assertEquals('Manicaland', $result['region']);
-        $this->assertEquals([
-            [
-                'name'  => AddressType::TYPE_BILLING,
-                'label' => ucfirst(AddressType::TYPE_BILLING)
-            ],
-            [
-                'name'  => AddressType::TYPE_SHIPPING,
-                'label' => ucfirst(AddressType::TYPE_SHIPPING)
-            ]
-        ], $result['types']);
-
-        $this->assertEquals([
-            [
-                'name'  => AddressType::TYPE_SHIPPING,
-                'label' => ucfirst(AddressType::TYPE_SHIPPING)
-            ]
-        ], $result['defaults']);
-
-        return $id;
-    }
-
-    /**
-     * @depends testCreateAddress
-     * @param $customerId
-     */
-    public function testDeleteAddress($customerId)
-    {
-        $this->client->request(
-            'GET',
-            $this->getUrl(
-                'orob2b_api_customer_get_customer_address_primary',
-                ['customerId' => $customerId]
-            )
-        );
-
-        $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
-
-        $crawler = $this->client->request(
-            'DELETE',
-            $this->getUrl(
-                'orob2b_api_customer_delete_customer_address',
-                ['customerId' => $customerId, 'addressId' => $address['id']]
-            )
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertEquals(204, $result->getStatusCode());
+        return $form;
     }
 }

@@ -56,7 +56,9 @@ class RequestStatusRepositoryTest extends WebTestCase
         $statuses = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroB2BRFPBundle:RequestStatus')
-            ->getNotDeletedAndDeletedWithRequestsStatuses();
+            ->getNotDeletedAndDeletedWithRequestsStatusesQueryBuilder()
+            ->getQuery()
+            ->getResult();
 
         $this->assertCount(6, $statuses); // 3 from fixtures + 1 deleted + 2 default
 
