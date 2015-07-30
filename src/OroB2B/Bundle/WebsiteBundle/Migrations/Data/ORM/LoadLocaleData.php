@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Intl\Intl;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
@@ -32,7 +33,11 @@ class LoadLocaleData extends AbstractFixture implements ContainerAwareInterface
     public function load(ObjectManager $manager)
     {
         $locale = new Locale();
-        $locale->setCode($this->container->get('oro_locale.settings')->getLocale());
+        $locale->setCode(
+            Intl::getLocaleBundle()->getLocaleName(
+                $this->container->get('oro_locale.settings')->getLanguage()
+            )
+        );
 
         $manager->persist($locale);
         /** @var EntityManager $manager */
