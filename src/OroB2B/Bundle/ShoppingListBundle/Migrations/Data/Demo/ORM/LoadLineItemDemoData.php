@@ -45,6 +45,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
+        $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findOneBy([]);
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
@@ -75,6 +76,8 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
             /** @var Product $product */
             foreach ($chunkedProducts[$index] as $id => $product) {
                 $lineItem = (new LineItem())
+                    ->setOwner($accountUser)
+                    ->setOrganization($accountUser->getOrganization())
                     ->setShoppingList($shoppingList)
                     ->setNotes(sprintf('Line item %d notes', $id + 1))
                     ->setProduct($product)
