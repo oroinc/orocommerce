@@ -34,17 +34,18 @@ define(function(require) {
                 itemUseFallback: '.fallback-item-use-fallback',
                 itemFallback: '.fallback-item-fallback'
             },
+            fallbackWidth: 200,
             icons: {
                 new: {
-                    html: '<i class="icon-globe"></i>',
+                    html: '<i class="icon-folder-close-alt"></i>',
                     event: 'expandChildItems'
                 },
                 edited: {
-                    html: '<i class="icon-globe"></i><i class="icon-pencil"></i>',
+                    html: '<i class="icon-folder-close"></i>',
                     event: 'expandChildItems'
                 },
                 save: {
-                    html: '<i class="icon-ok-sign"></i>',
+                    html: '<i class="icon-folder-open"></i>',
                     event: 'collapseChildItems'
                 }
             },
@@ -81,6 +82,7 @@ define(function(require) {
                 self.cloneValueToChildren(self.getItemEl(this));
             });
 
+            this.fixFallbackWidth();
             this.setStatusIcon();
 
             this.bindEvents();
@@ -401,7 +403,7 @@ define(function(require) {
             }else{
                 itemCode = select.attr('data-locale');
             }
-            
+
             return itemCode;
         },
 
@@ -435,18 +437,9 @@ define(function(require) {
          * Set fallback selector width depending of their content
          */
         fixFallbackWidth: function() {
-            var maxWidth = 0;
-
-            this.getFallbackEl(this.$el).each(function() {
-                var width = $(this).width();
-                if (width > maxWidth) {
-                    maxWidth = width;
-                }
-            });
-
             this.$el.find(this.options.selectors.itemFallback)
-                .find('div.selector').width(maxWidth)
-                .find('span').width(maxWidth);
+                .find('div.selector').width(this.options.fallbackWidth)
+                .find('span').width(this.options.fallbackWidth);
         },
 
         /**
@@ -471,7 +464,6 @@ define(function(require) {
 
             if (this.options.expanded) {
                 this.$el.find(this.options.selectors.childItem).show();
-                this.fixFallbackWidth();
             } else {
                 this.$el.find(this.options.selectors.childItem).hide();
             }

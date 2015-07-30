@@ -12,10 +12,6 @@
     float: left;
 }
 
-.fallback-container select {
-    width: auto !important;
-}
-
 .mce-tinymce.disabled button {
     opacity: .4;
 }
@@ -42,10 +38,8 @@
 .fallback-status {
     font-size: 20px;
     float: left;
-    margin-left: 3px;
 }
 
 .fallback-status i {
     cursor: pointer;
-    margin: 0px;
 }
