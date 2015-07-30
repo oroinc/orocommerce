@@ -1,13 +1,13 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 
-{% oro_title_set({params : {"%sku%": entity.sku }}) %}
+{% oro_title_set({params : {"%name%": entity.defaultName }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_product_index'),
         'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-        'entityTitle': entity.sku|default('N/A'|trans)
+        'entityTitle': entity.defaultName|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
@@ -58,6 +58,9 @@
             'url': path('orob2b_product_info', {id: entity.id})
         }) }}
     {% endset %}
+    {% set productDescription %}
+        {{ UI.renderHtmlProperty('orob2b.product.descriptions.label'|trans, entity.defaultDescription) }}
+    {% endset %}
     {% set productVisibility %}
         {{ UI.renderHtmlProperty('orob2b.product.visibility.label'|trans, entity.visibility) }}
     {% endset %}
@@ -66,7 +69,10 @@
         {
             'title': 'orob2b.product.sections.general'|trans,
             'class': 'active',
-            'subblocks': [{'data' : [productInformationWidget]}]
+            'subblocks': [
+                {'data' : [productInformationWidget]},
+                {'data' : [productDescription]}
+            ]
         },
         {
             'title': 'orob2b.product.sections.visibility'|trans,
