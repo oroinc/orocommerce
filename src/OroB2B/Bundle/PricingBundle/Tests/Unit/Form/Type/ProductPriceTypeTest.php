@@ -164,14 +164,15 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ->setPriceList($expectedPriceList)
             ->setQuantity(124)
             ->setUnit($expectedUnit)
-            ->setPrice($expectedPrice);
+            ->setPrice($expectedPrice)
+            ->setProduct($product);
 
         $updatedExpectedProductPrice = clone($expectedProductPrice);
         $updatedExpectedProductPrice->setProduct($product);
 
         return [
             'product price with data' => [
-                'defaultData'   => new ProductPrice(),
+                'defaultData'   => (new ProductPrice())->setProduct($product)->setUnit($existingUnit),
                 'submittedData' => [
                     'priceList' => 2,
                     'quantity'  => 124,
