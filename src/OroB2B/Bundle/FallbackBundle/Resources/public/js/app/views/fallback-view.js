@@ -27,11 +27,28 @@ define(function(require) {
          */
         options: {
             selectors: {
+                status: '.fallback-status',
                 item: '.fallback-item',
+                childItem: '.fallback-item:not(:first)',
                 itemValue: '.fallback-item-value',
                 itemUseFallback: '.fallback-item-use-fallback',
                 itemFallback: '.fallback-item-fallback'
-            }
+            },
+            icons: {
+                new: {
+                    html: '<i class="icon-globe"></i>',
+                    event: 'expandChildItems'
+                },
+                edited: {
+                    html: '<i class="icon-globe"></i><i class="icon-pencil"></i>',
+                    event: 'expandChildItems'
+                },
+                save: {
+                    html: '<i class="icon-ok-sign"></i>',
+                    event: 'collapseChildItems'
+                }
+            },
+            expanded: false
         },
 
         /**
@@ -52,6 +69,8 @@ define(function(require) {
         handleLayoutInit: function() {
             var self = this;
 
+            this.setStatusIcon();
+
             this.mapItemsByCode();
 
             this.getUseFallbackEl(this.$el).each(function() {
@@ -65,8 +84,6 @@ define(function(require) {
             });
 
             this.bindEvents();
-
-            this.fixFallbackWidth();
         },
 
         /**
@@ -81,10 +98,10 @@ define(function(require) {
 
             this.$el.find(this.options.selectors.itemValue).find('.mce-tinymce').each(function() {
                 self.getValueEl(self.getItemEl(this)).tinymce()
-                    .on('change', function(e) {
+                    .on('change', function() {
                         $(this.targetElm).change();
                     })
-                    .on('keyup', function(e) {
+                    .on('keyup', function() {
                         $(this.targetElm).change();
                     });
             });
@@ -171,6 +188,22 @@ define(function(require) {
             } else {
                 this.cloneValueToChildsEvent(e);
             }
+        },
+
+        /**
+         * Show child items
+         */
+        expandChildItems: function() {
+            this.options.expanded = true;
+            this.setStatusIcon();
+        },
+
+        /**
+         * Hide child items
+         */
+        collapseChildItems: function() {
+            this.options.expanded = false;
+            this.setStatusIcon();
         },
 
         /**
@@ -360,20 +393,76 @@ define(function(require) {
             return itemCode ? itemCode : 'system';
         },
 
+        /**
+         * Check is child has custom value
+         */
+        isChildEdited: function() {
+            var isChildEdited = false;
+            var $childItems = this.$el.find(this.options.selectors.childItem);
+
+            this.getValueEl($childItems).each(function() {
+                if (this.disabled) {
+                    return;
+                }
+
+                if ($(this).is(':checkbox')) {
+                    isChildEdited = true;
+                } else {
+                    isChildEdited = $(this).val().length > 0;
+                }
+
+                if (isChildEdited) {
+                    return false;
+                }
+            });
+
+            return isChildEdited;
+        },
+
+        /**
+         * Set fallback selector width depending of their content
+         */
         fixFallbackWidth: function() {
             var maxWidth = 0;
 
-            var $fallback = this.$el.find(this.options.selectors.itemFallback).find('div.selector').each(function() {
+            this.getFallbackEl(this.$el).each(function() {
                 var width = $(this).width();
                 if (width > maxWidth) {
                     maxWidth = width;
                 }
             });
 
-            maxWidth -= 20;//minus arrow width
-
-            $fallback.width(maxWidth)
+            this.$el.find(this.options.selectors.itemFallback)
+                .find('div.selector').width(maxWidth)
                 .find('span').width(maxWidth);
+        },
+
+        /**
+         * Change status icon depending on expanded flag and child custom values
+         */
+        setStatusIcon: function() {
+            var icon;
+
+            if (this.options.expanded) {
+                icon = 'save';
+            } else if (this.isChildEdited()) {
+                icon = 'edited';
+            } else {
+                icon = 'new';
+            }
+
+            icon = this.options.icons[icon];
+
+            this.$el.find(this.options.selectors.status)
+                .html(icon.html)
+                .find('i').click(_.bind(this[icon.event], this));
+
+            if (this.options.expanded) {
+                this.$el.find(this.options.selectors.childItem).show();
+                this.fixFallbackWidth();
+            } else {
+                this.$el.find(this.options.selectors.childItem).hide();
+            }
         }
     });
 

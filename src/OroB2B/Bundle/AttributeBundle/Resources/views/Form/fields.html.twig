@@ -31,12 +31,15 @@
                 {{ form_errors(form.is_default) }}
             </td>
             <td class="fallback-item-value">
-                {{ form_widget(form.default) }}
+                <div class="fallback-default-field">
+                    {{ form_widget(form.default) }}
+                </div>
+                <div class="fallback-status"></div>
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for localeId, locale in form.locales %}
-            <tr class="fallback-item">
+            <tr class="fallback-item" style="display: none">
                 <td class="fallback-item-label">{{ locale.vars.label|trans }}</td>
                 <td>
                     {% if locale.extend_value is defined %}

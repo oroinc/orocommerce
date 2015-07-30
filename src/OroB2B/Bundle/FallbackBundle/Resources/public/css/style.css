@@ -34,3 +34,18 @@
 .fallback-item-label{
     white-space: nowrap;
 }
+
+.fallback-default-field {
+    float: left;
+}
+
+.fallback-status {
+    font-size: 20px;
+    float: left;
+    margin-left: 3px;
+}
+
+.fallback-status i {
+    cursor: pointer;
+    margin: 0px;
+}

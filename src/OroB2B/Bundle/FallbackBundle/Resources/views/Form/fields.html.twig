@@ -10,7 +10,7 @@
                     'class': 'fallback'
                 }}) }}
             </td>
-        <tr>
+        </tr>
     </table>
 
     {{ form_errors(form.value) }}
@@ -26,12 +26,15 @@
         <tr class="fallback-item">
             <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td class="fallback-item-value">
-                {{ form_widget(form.default) }}
+                <div class="fallback-default-field">
+                    {{ form_widget(form.default) }}
+                </div>
+                <div class="fallback-status"></div>
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for locale in form.locales %}
-            <tr class="fallback-item">
+            <tr class="fallback-item" style="display: none">
                 <td class="fallback-item-label">{{ locale.vars.label|trans }}</td>
                 <td>
                     {{ form_widget(locale) }}
@@ -51,12 +54,15 @@
         <tr class="fallback-item">
             <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td class="fallback-item-value">
-                {{ form_widget(form.default) }}
+                <div class="fallback-default-field">
+                    {{ form_widget(form.default) }}
+                </div>
+                <div class="fallback-status"></div>
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for website in form.websites %}
-            <tr class="fallback-item">
+            <tr class="fallback-item" style="display: none">
                 <td class="fallback-item-label">{{ website.vars.label|trans }}</td>
                 <td>
                     {{ form_widget(website) }}
