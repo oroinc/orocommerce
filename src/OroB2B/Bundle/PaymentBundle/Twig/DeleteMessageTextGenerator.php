@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Twig;
 
-use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\UIBundle\Twig\Environment;
+use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
@@ -47,7 +47,8 @@ class DeleteMessageTextGenerator
         return $message;
     }
 
-    public function getDeleteMessageTextForDataGrid($paymentTermId) {
+    public function getDeleteMessageTextForDataGrid($paymentTermId)
+    {
 
         $paymentRepository = $this->managerRegistry
             ->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
@@ -120,6 +121,13 @@ class DeleteMessageTextGenerator
         return $parameters;
     }
 
+    /**
+     * @param $paymentTermId
+     * @param $gridName
+     * @param $gridRoute
+     * @param $label
+     * @return string
+     */
     private function generateHtmFilterUrl($paymentTermId, $gridName, $gridRoute, $label)
     {
         $urlParameters = $this->getParameters($gridName, $paymentTermId);

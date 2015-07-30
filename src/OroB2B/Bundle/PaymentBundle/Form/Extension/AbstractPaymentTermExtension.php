@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -20,13 +20,13 @@ abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
      */
     protected $registry;
 
-    /** @var  Translator */
+    /** @var  TranslatorInterface */
     protected $translator;
 
     /**
      * @param ManagerRegistry $registry
      */
-    public function __construct(ManagerRegistry $registry, Translator $translator)
+    public function __construct(ManagerRegistry $registry, TranslatorInterface $translator)
     {
         $this->registry = $registry;
         $this->translator = $translator;

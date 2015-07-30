@@ -8,8 +8,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 /**
@@ -37,7 +35,6 @@ class CustomerGroupControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'
             ]
         );
     }
@@ -58,7 +55,6 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertCustomerGroupSave(
             $crawler,
             self::NAME,
-            $this->getReference(LoadPaymentTermData::TERM_LABEL_NET_10),
             [
                 $this->getReference('customer.level_1.1'),
                 $this->getReference('customer.level_1.2')
@@ -81,7 +77,6 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertCustomerGroupSave(
             $crawler,
             self::UPDATED_NAME,
-            $this->getReference(LoadPaymentTermData::TERM_LABEL_NET_20),
             [
                 $this->getReference('customer.level_1.1.1')
             ],
@@ -109,7 +104,6 @@ class CustomerGroupControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains(self::UPDATED_NAME . ' - Customer Groups - Customers', $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
-        $this->assertViewPage($html, LoadPaymentTermData::TERM_LABEL_NET_20);
     }
 
     /**
@@ -121,7 +115,6 @@ class CustomerGroupControllerTest extends WebTestCase
     protected function assertCustomerGroupSave(
         Crawler $crawler,
         $name,
-        PaymentTerm $paymentTerm,
         array $appendCustomers = [],
         array $removeCustomers = []
     ) {
@@ -140,7 +133,6 @@ class CustomerGroupControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_customer_group_type[name]' => $name,
-                'orob2b_customer_group_type[paymentTerm]' => $paymentTerm->getId(),
                 'orob2b_customer_group_type[appendCustomers]' => implode(',', $appendCustomerIds),
                 'orob2b_customer_group_type[removeCustomers]' => implode(',', $removeCustomerIds)
             ]

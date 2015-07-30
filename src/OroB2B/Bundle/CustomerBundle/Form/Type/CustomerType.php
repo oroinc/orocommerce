@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
@@ -14,9 +13,6 @@ use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 class CustomerType extends AbstractType
 {
     const NAME = 'orob2b_customer_type';
-
-    /** @var  Translator */
-    protected $translator;
 
     /** @var string */
     protected $addressClass;
@@ -89,14 +85,6 @@ class CustomerType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param Translator $translator
-     */
-    public function setTranslator(Translator $translator)
-    {
-        $this->translator = $translator;
     }
 
     /**
