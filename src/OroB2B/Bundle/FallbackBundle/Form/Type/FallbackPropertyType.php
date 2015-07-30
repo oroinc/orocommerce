@@ -83,8 +83,8 @@ class FallbackPropertyType extends AbstractType
                     if (array_key_exists(FallbackType::PARENT_LOCALE, $choices) && $options['parent_locale']) {
                         $choices[FallbackType::PARENT_LOCALE] = sprintf(
                             '%s (%s)',
-                            $this->translator->trans($choices[FallbackType::PARENT_LOCALE]),
-                            $options['parent_locale']
+                            $options['parent_locale'],
+                            $this->translator->trans($choices[FallbackType::PARENT_LOCALE])
                         );
                     }
 

@@ -65,6 +65,8 @@ define(function(require) {
             });
 
             this.bindEvents();
+
+            this.fixFallbackWidth();
         },
 
         /**
@@ -354,6 +356,22 @@ define(function(require) {
 
             var itemCode = select.attr('data-locale');
             return itemCode ? itemCode : 'system';
+        },
+
+        fixFallbackWidth: function() {
+            var maxWidth = 0;
+
+            var $fallback = this.$el.find(this.options.selectors.itemFallback).find('div.selector').each(function() {
+                var width = $(this).width();
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            });
+
+            maxWidth -= 20;//minus arrow width
+
+            $fallback.width(maxWidth)
+                .find('span').width(maxWidth);
         }
     });
 

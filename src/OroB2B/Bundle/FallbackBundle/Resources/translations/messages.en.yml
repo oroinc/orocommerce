@@ -1,11 +1,11 @@
 orob2b:
     fallback:
         type:
-            parent_locale: 'Parent locale value'
-            default:       'Default value'
+            parent_locale: 'parent'
+            default:       'Default Value'
 
         value:
-            default:       'Default'
+            default:       'Default Value'
 
         use_fallback:
             label:         'Use'

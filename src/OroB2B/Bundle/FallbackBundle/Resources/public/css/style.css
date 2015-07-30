@@ -1,3 +1,21 @@
+.fallback-container td {
+    vertical-align: top;
+    line-height: 28px;
+}
+
+.fallback-container input[type="radio"],
+.fallback-container input[type="checkbox"] {
+    margin-top: 0px;
+}
+.fallback-container div.selector {
+    width: auto !important;
+    float: left;
+}
+
+.fallback-container select {
+    width: auto !important;
+}
+
 .mce-tinymce.disabled button {
     cursor: default;
     -webkit-box-shadow: none;
@@ -6,4 +24,9 @@
     opacity: .4;
     filter: alpha(opacity=40);
     zoom: 1
+}
+
+.fallback-item-value,
+.fallback-item-label{
+    white-space: nowrap;
 }

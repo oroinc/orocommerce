@@ -14,7 +14,7 @@
             data-layout="separate"
             >
         <tr class="fallback-item">
-            <td>{{ form.default.vars.label|trans }}</td>
+            <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td>
                 {% set attr = {} %}
                 {% if form.vars.is_default_type == 'hidden' %}
@@ -37,7 +37,7 @@
         </tr>
         {% for localeId, locale in form.locales %}
             <tr class="fallback-item">
-                <td>{{ locale.vars.label|trans }}</td>
+                <td class="fallback-item-label">{{ locale.vars.label|trans }}</td>
                 <td>
                     {% if locale.extend_value is defined %}
                         {% set attr = {} %}
@@ -69,7 +69,7 @@
             </tr>
         {% endfor %}
         <tr>
-            <td>{{ form.order.vars.label|trans }}</td>
+            <td class="fallback-item-label">{{ form.order.vars.label|trans }}</td>
             <td>&nbsp;</td>
             <td>
                 {{ form_widget(form.order) }}
