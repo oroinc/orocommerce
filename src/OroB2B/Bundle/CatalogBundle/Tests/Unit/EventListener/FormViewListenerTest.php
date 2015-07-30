@@ -117,7 +117,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onProductView($event);
     }
 
-    public function testOnProductViewNoId()
+    public function testOnProductViewInvalidId()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
@@ -126,12 +126,46 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper
             ->expects($this->never())
-            ->method('getEntityReference')
-            ->willReturn(new Product());
+            ->method('getEntityReference');
 
         $this->listener->onProductView($event);
 
-        $this->listener->setRequest($this->getRequest());
+        $request = $this->getRequest();
+        $request
+            ->expects($this->once(0))
+            ->method('get')
+            ->with('id')
+            ->willReturn('string');
+
+        $this->listener->setRequest($request);
+        $this->listener->onProductView($event);
+    }
+
+    public function testOnProductViewEmptyProduct()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn(null);
+
+        $request = $this->getRequest();
+        $request
+            ->expects($this->once())
+            ->method('get')
+            ->with('id')
+            ->willReturn(1);
+
+        $this->doctrineHelper
+            ->expects($this->never())
+            ->method('getEntityRepository')
+            ->willReturn(null);
+
+        $this->listener->setRequest($request);
         $this->listener->onProductView($event);
     }
 

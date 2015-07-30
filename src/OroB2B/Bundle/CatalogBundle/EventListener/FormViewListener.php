@@ -44,13 +44,21 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request || !$this->request->get('id')) {
+        if (!$this->request) {
             return;
         }
 
-        $productId = $this->request->get('id');
+        $productId = (int)$this->request->get('id');
+        if (!$productId) {
+            return;
+        }
+
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        if (!$product) {
+            return;
+        }
+
         /** @var CategoryRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository('OroB2BCatalogBundle:Category');
         $category = $repository->findOneByProduct($product);
