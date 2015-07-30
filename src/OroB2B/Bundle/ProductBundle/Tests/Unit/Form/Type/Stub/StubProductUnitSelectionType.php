@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 class StubProductUnitSelectionType extends StubEntityType
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'compact' => false,

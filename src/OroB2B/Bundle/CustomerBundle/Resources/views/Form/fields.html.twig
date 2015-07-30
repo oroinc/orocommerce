@@ -11,6 +11,10 @@
     {{ block('oro_address_rows') }}
 {%  endblock %}
 
+{% block orob2b_customer_account_user_typed_address_widget %}
+    {{ block('orob2b_customer_typed_address_widget') }}
+{%  endblock %}
+
 {% block oro_address_rows %}
     {{ form_row(form.id) }}
     {{ form_row(form.label, {label: 'orob2b.customer.customeraddress.label.label'}) }}

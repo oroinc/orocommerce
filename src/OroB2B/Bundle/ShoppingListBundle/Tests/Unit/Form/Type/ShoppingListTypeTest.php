@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
@@ -47,7 +47,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
 
-        $this->assertEquals([], $form->getErrors());
+        $this->assertEmpty($form->getErrors()->count());
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -91,8 +91,8 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(['data_class' => self::DATA_CLASS]);

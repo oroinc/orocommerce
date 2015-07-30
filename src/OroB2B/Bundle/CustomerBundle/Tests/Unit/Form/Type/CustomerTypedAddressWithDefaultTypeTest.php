@@ -35,7 +35,7 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
     /**
      * {@inheritdoc}
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
         $this->billingType  = new AddressType(AddressType::TYPE_BILLING);
@@ -161,7 +161,7 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
      * @param array $entityModels
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createRepositoryMock($entityModels = [])
+    protected function createRepositoryMock(array $entityModels = [])
     {
         $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
@@ -282,6 +282,15 @@ class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
      */
     private function createTranslatorMock()
     {
-        return $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator->expects($this->any())->method('trans')->will(
+            $this->returnCallback(
+                function ($message) {
+                    return $message . uniqid('trans', true);
+                }
+            )
+        );
+
+        return $translator;
     }
 }

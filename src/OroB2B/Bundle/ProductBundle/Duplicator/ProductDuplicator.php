@@ -122,6 +122,14 @@ class ProductDuplicator
             $productCopy->addUnitPrecision(clone $unitPrecision);
         }
 
+        foreach ($product->getNames() as $name) {
+            $productCopy->addName(clone $name);
+        }
+
+        foreach ($product->getDescriptions() as $description) {
+            $productCopy->addDescription(clone $description);
+        }
+
         if ($imageFile = $product->getImage()) {
             $imageFileCopy = $this->attachmentManager->copyAttachmentFile($imageFile);
             $productCopy->setImage($imageFileCopy);

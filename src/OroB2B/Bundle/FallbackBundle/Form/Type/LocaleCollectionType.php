@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
@@ -60,7 +60,7 @@ class LocaleCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
             'type',
@@ -96,6 +96,7 @@ class LocaleCollectionType extends AbstractType
                     'type'                        => $options['type'],
                     'options'                     => $options['options'],
                     'fallback_type'               => $options['fallback_type'],
+                    'fallback_type_locale'        => $locale->getCode(),
                     'fallback_type_parent_locale' => $parentLocaleCode,
                     'enabled_fallbacks'           => $enabledFallbacks,
                 ]

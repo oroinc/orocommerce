@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
@@ -14,7 +14,7 @@ class ProductSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [

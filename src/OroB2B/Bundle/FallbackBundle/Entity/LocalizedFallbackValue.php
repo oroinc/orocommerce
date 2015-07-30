@@ -156,4 +156,9 @@ class LocalizedFallbackValue
             return '';
         }
     }
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
 }
