@@ -26,3 +26,12 @@
 .oro-options-collection.oro-item-collection :after {
      color: #bbb;
 }
+
+.form-horizontal .attribute-defaults .control-group {
+    max-width: 50% !important;
+}
+
+.attribute-defaults .oro-options-collection.oro-item-collection {
+    width: 100% !important;
+    min-width: 580px !important;
+}
