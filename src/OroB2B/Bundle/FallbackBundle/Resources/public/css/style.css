@@ -17,13 +17,17 @@
 }
 
 .mce-tinymce.disabled button {
-    cursor: default;
-    -webkit-box-shadow: none;
-    -moz-box-shadow: none;
-    box-shadow: none;
     opacity: .4;
-    filter: alpha(opacity=40);
-    zoom: 1
+}
+
+.mce-tinymce.disabled .disabled-overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: #eeeeee;
+    opacity: .4;
 }
 
 .fallback-item-value,

@@ -226,6 +226,7 @@ define(function(require) {
                 if (editor) {
                     editor.getBody().setAttribute('contenteditable', true);
                     $(editor.editorContainer).removeClass('disabled');
+                    $(editor.editorContainer).children('.disabled-overlay').remove();
                 }
             } else {
                 $value.attr('disabled', 'disabled');
@@ -233,6 +234,7 @@ define(function(require) {
                 if (editor) {
                     editor.getBody().setAttribute('contenteditable', false);
                     $(editor.editorContainer).addClass('disabled');
+                    $(editor.editorContainer).append('<div class="disabled-overlay"></div>');
                 }
             }
         },
