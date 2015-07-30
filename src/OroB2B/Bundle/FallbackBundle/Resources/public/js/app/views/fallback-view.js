@@ -69,8 +69,6 @@ define(function(require) {
         handleLayoutInit: function() {
             var self = this;
 
-            this.setStatusIcon();
-
             this.mapItemsByCode();
 
             this.getUseFallbackEl(this.$el).each(function() {
@@ -82,6 +80,8 @@ define(function(require) {
             this.getValueEl(this.$el).each(function() {
                 self.cloneValueToChilds(self.getItemEl(this));
             });
+
+            this.setStatusIcon();
 
             this.bindEvents();
         },
@@ -304,7 +304,7 @@ define(function(require) {
             $fromValue.each(function(i) {
                 var toValue = $toValue.get(i);
 
-                if ($(this).is(':checkbox')) {
+                if ($(this).is(':checkbox') || $(this).is(':radio')) {
                     toValue.checked = this.checked;
                 } else {
                     $(toValue).val($(this).val());
@@ -405,7 +405,7 @@ define(function(require) {
                     return;
                 }
 
-                if ($(this).is(':checkbox')) {
+                if ($(this).is(':checkbox') || $(this).is(':radio')) {
                     isChildEdited = true;
                 } else {
                     isChildEdited = $(this).val().length > 0;
