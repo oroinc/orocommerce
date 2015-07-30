@@ -6,7 +6,11 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @outputBuffering enabled
@@ -36,6 +40,10 @@ class ProductControllerTest extends WebTestCase
     const SECOND_UNIT_FULL_NAME = 'kilogram';
     const SECOND_UNIT_PRECISION = '1';
 
+    const DEFAULT_NAME = 'default name';
+    const DEFAULT_NAME_ALTERED = 'altered default name';
+    const DEFAULT_DESCRIPTION = 'default description';
+
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -61,6 +69,8 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
         $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
         $form['orob2b_product_form[status]'] = Product::STATUS_DISABLED;
+        $form['orob2b_product_form[names][values][default]'] = self::DEFAULT_NAME;
+        $form['orob2b_product_form[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -69,7 +79,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("Product has been saved", $html);
+        $this->assertContains('Product has been saved', $html);
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
         $this->assertContains(self::VISIBILITY, $html);
@@ -89,6 +99,11 @@ class ProductControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
+        $locale = $this->getLocale();
+        $product = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
+            ->find('OroB2BProductBundle:Product', $id);
+        $localizedName = $this->getLocalizedName($product, $locale);
+
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -104,7 +119,14 @@ class ProductControllerTest extends WebTestCase
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
-                ]
+                ],
+                'names' => [
+                    'values' => [
+                        'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]]
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()]
+                ],
             ]
         ];
 
@@ -158,7 +180,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("Product has been duplicated", $html);
+        $this->assertContains('Product has been duplicated', $html);
         $this->assertContains(self::FIRST_DUPLICATED_SKU . ' - Products - Product management', $html);
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
@@ -238,6 +260,11 @@ class ProductControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
+        $locale = $this->getLocale();
+        $product = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
+            ->find('OroB2BProductBundle:Product', $id);
+        $localizedName = $this->getLocalizedName($product, $locale);
+
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
@@ -253,7 +280,14 @@ class ProductControllerTest extends WebTestCase
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
                     ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
-                ]
+                ],
+                'names' => [
+                    'values' => [
+                        'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]]
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()]
+                ],
             ]
         ];
 
@@ -264,7 +298,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("Product has been saved and duplicated", $html);
+        $this->assertContains('Product has been saved and duplicated', $html);
         $this->assertContains(self::SECOND_DUPLICATED_SKU . ' - Products - Product management', $html);
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
@@ -342,5 +376,44 @@ class ProductControllerTest extends WebTestCase
     private function createUnitPrecisionString($name, $precision)
     {
         return sprintf('%s with precision %s decimal places', $name, $precision);
+    }
+
+    /**
+     * @return Locale
+     */
+    protected function getLocale()
+    {
+        $locale = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Locale')
+            ->getRepository('OroB2BWebsiteBundle:Locale')
+            ->findOneBy([]);
+
+        if (!$locale) {
+            throw new \LogicException('At least one locale must be defined');
+        }
+
+        return $locale;
+    }
+
+    /**
+     * @param Product $product
+     * @param Locale $locale
+     * @return LocalizedFallbackValue
+     */
+    protected function getLocalizedName(Product $product, Locale $locale)
+    {
+        $localizedName = null;
+        foreach ($product->getNames() as $name) {
+            $nameLocale = $name->getLocale();
+            if ($nameLocale && $nameLocale->getId() === $locale->getId()) {
+                $localizedName = $name;
+                break;
+            }
+        }
+
+        if (!$localizedName) {
+            throw new \LogicException('At least one localized name must be defined');
+        }
+
+        return $localizedName;
     }
 }

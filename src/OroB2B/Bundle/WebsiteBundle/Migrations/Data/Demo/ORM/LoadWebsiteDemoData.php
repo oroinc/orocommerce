@@ -2,19 +2,24 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Intl\Intl;
+
 use Oro\Bundle\UserBundle\Entity\User;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInterface
 {
+    /**
+     * @var array
+     */
     protected $webSites = [
         [
             'name' => 'US',
@@ -48,6 +53,9 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         ],
     ];
 
+    /**
+     * @var array
+     */
     protected $locales = [
         ['code' => 'en_US', 'parent' => null],
         ['code' => 'en_CA', 'parent' => 'en_US'],
@@ -85,12 +93,16 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         // Create locales sample with relationship between locales
         $localesRegistry = [];
         foreach ($this->locales as $item) {
+            $code = $this->getLocaleNameByCode($item['code']);
+
             $locale = new Locale();
-            $locale->setCode($item['code']);
+            $locale->setCode($code);
             if ($item['parent']) {
-                $locale->setParentLocale($localesRegistry[$item['parent']]);
+                $parentCode = $this->getLocaleNameByCode($item['parent']);
+
+                $locale->setParentLocale($localesRegistry[$parentCode]);
             }
-            $localesRegistry[$item['code']] = $locale;
+            $localesRegistry[$code] = $locale;
 
             $manager->persist($locale);
         }
@@ -133,6 +145,15 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
     }
 
     /**
+     * @param string $code
+     * @return string
+     */
+    protected function getLocaleNameByCode($code)
+    {
+        return Intl::getLocaleBundle()->getLocaleName($code, $this->container->get('oro_locale.settings')->getLocale());
+    }
+
+    /**
      * @param EntityManager $manager
      * @return User
      * @throws \LogicException
@@ -160,7 +181,8 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
      */
     protected function getLocaleByCode(EntityManager $manager, $code)
     {
-        $locale = $manager->getRepository('OroB2BWebsiteBundle:Locale')->findOneBy(['code' => $code]);
+        $locale = $manager->getRepository('OroB2BWebsiteBundle:Locale')
+            ->findOneBy(['code' => $this->getLocaleNameByCode($code)]);
 
         if (!$locale) {
             throw new \LogicException(sprintf('There is no locale with code "%s" .', $code));
