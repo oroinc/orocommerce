@@ -1,0 +1,261 @@
+.order-orderproduct-collection-table {
+    margin-left: 90px;
+}
+
+.order-orderproduct-collection-table label {
+    text-transform: none !important;
+}
+
+.order-orderproduct-collection-table-view {
+    margin-left: inherit;
+}
+
+.order-orderproduct-collection-table-view > tbody > tr > td {
+    vertical-align: top;
+}
+
+.order-orderproduct-collection-table > tbody > tr > td,
+.order-orderproduct-collection-table th {
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+    vertical-align: top;
+}
+
+.order-orderproduct-collection .btn.add-list-item {
+    margin-left: 90px;
+    margin-top: 7px;
+}
+
+.order-orderproduct-collection .row-oro.oro-multiselect-holder {
+    margin-bottom: 0;
+}
+
+.order-orderproduct-collection .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    top: 11px;
+    left: 388px;
+}
+
+.order-orderproduct-widget.control-group {
+    max-width: none;
+}
+
+.order-orderproduct-widget.control-group .controls {
+    float: left;
+    margin-left: 10px;
+}
+
+.order-orderproduct-widget .selector {
+    margin-left: 0;
+}
+
+.order-orderproduct-widget .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    right: -5px;
+    left: auto;
+}
+
+.order-orderproductitem-collection .btn.removeRow {
+    position: absolute;
+    width: 28px;
+    right: 0;
+    top: 11px;
+    left: auto;
+}
+
+.order-orderproductitem-collection {
+    float: left;
+    width: 100%;
+}
+
+.order-orderproductitem-collection .btn.add-list-item {
+    margin-top: 1px;
+}
+
+.order-orderproductitem-collection > div > div > div {
+    padding-right: 14px;
+}
+
+.order-orderproductitem-widget {
+    margin-right: 15px;
+}
+
+.order-orderproductitem-widget td {
+    width: 150px;
+    vertical-align: top;
+    padding-bottom: 4px;
+}
+
+.order-orderproductitem-widget-quantity {
+    padding-top: 5px;
+}
+
+.order-orderproductitem-widget-more {
+    padding-top: 10px;
+}
+
+.order-orderproductitem-widget-pricetype > div {
+    margin-bottom: -10px;
+}
+
+.order-orderproductitem-widget-productunit {
+    padding-top: 5px;
+}
+
+.order-orderproductitem-widget-price {
+    padding-top: 5px;
+}
+
+.order-orderproductitem-widget td span.validation-failed {
+    padding-top: 2px;
+}
+
+.order-orderproductitem-widget input[type="number"],
+.order-orderproductitem-widget input[type="text"] {
+    width: 120px !important;
+}
+
+.order-orderproductitem-widget select {
+    width: 120px !important;
+    height: 20px;
+    margin: 0;
+}
+
+.order-orderproduct-product {
+    padding: 0;
+    vertical-align: top;
+}
+
+.order-orderproduct-product-select button {
+    float: none;
+}
+
+.order-orderproducts-info.control-group {
+    max-width: none;
+}
+
+.order-orderproductitems-info {
+    padding: 5px 0 0 10px;
+}
+
+.order-orderproductitems-info > table {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.order-orderproductitems-info > table th,
+.order-orderproductitems-info > table td {
+    padding: 10px;
+    border: 1px solid #e5e5e5;
+}
+
+.order-orderproductitem-collection .oro-item-collection > div {
+    border: 1px solid #e6e6e6 !important;
+    background: #f8f8f8 !important;
+    border-radius: 4px !important;
+    padding-top: 5px;
+    padding-left: 5px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.order-orderproductitem-collection .oro-item-collection > div > table {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.order-orderproductitem-widget-last-line td {
+    width: 280px;
+}
+
+.order-orderproductitem-widget-last-line label {
+    width: auto !important;
+}
+
+.order-orderproductitem-widget-last-line input,
+.order-orderproductitem-widget-last-line select {
+    max-width: 180px !important;
+}
+
+.order-orderproductitem-widget .validate-group {
+    min-width: 145px;
+}
+
+.order-orderproduct-table-column-1 {
+    vertical-align: top;
+    min-width: 330px;
+    width: 330px;
+}
+
+.order-orderproduct-table-column-2 {
+    vertical-align: top;
+    min-width: 260px;
+    width: 260px;
+}
+
+.order-orderproduct-table-column-3 {
+    min-width: 800px;
+    width: 800px;
+}
+
+.order-orderproduct-collection .oro-item-collection>div {
+    margin-top: -1px !important;
+}
+
+.order-orderproductitem-widget input[type="checkbox"],
+.order-orderproductitem-widget input[type="radio"] {
+    margin-top: 0 !important;
+}
+
+.order-orderproductitem-collection .btn.add-list-item {
+  margin-left: 676px;
+  position: absolute;
+}
+
+.order-orderproductitem-widget .control-group {
+    margin: 0;
+}
+
+.order-orderproduct-notes .control-group {
+    max-width: none;
+    margin-top: 15px;
+}
+
+.order-orderproduct-notes .control-group textarea {
+    width: 98%;
+}
+
+.order-orderproduct-remove-notes-btn {
+    float: right;
+}
+
+.order-orderproduct-notes-seller {
+    display: none;
+}
+
+.order-orderproduct-notes-seller-active .order-orderproduct-notes-seller {
+    display: block;
+}
+
+.order-orderproduct-notes-seller-active .order-orderproduct-add-notes-btn {
+    visibility: hidden;
+    margin-top: 1px;
+}
+
+.order-orderproductrequest-collection label {
+    width: 115px !important;
+}
+
+.order-orderproductrequest-collection .controls {
+    margin-left: 125px !important;
+}
+
+.order-order-accountuser-select .entity-select-btn {
+    display: none;
+}
+
+.order-order-accountuser-select .select2-container {
+    width: 257px !important;
+}

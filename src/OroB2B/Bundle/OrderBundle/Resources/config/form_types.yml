@@ -1,10 +1,46 @@
 parameters:
     orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
+    orob2b_order.form.type.order_product.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductType
+    orob2b_order.form.type.order_product_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemType
+    orob2b_order.form.type.order_product_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductCollectionType
+    orob2b_order.form.type.order_product_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemCollectionType
 
 services:
+    # Order form types
     orob2b_order.form.type.order:
         class: %orob2b_order.form.type.order.class%
-        tags:
-            - { name: form.type, alias: orob2b_order_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_order_order }
+
+    orob2b_order.form.type.order_product:
+        class: %orob2b_order.form.type.order_product.class%
+        arguments:
+            - @translator
+            - @orob2b_product.formatter.product_unit_label
+            - @orob2b_order.formatter.order_product
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_product.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_order_order_product }
+
+    orob2b_order.form.type.order_product_item:
+        class: %orob2b_order.form.type.order_product_item.class%
+        arguments:
+            - @translator
+            - @orob2b_order.formatter.order_product_item
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_product_item.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_order_order_product_item }
+
+    orob2b_order.form.type.order_product_collection:
+        class: %orob2b_order.form.type.order_product_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_order_order_product_collection }
+
+    orob2b_order.form.type.order_product_item_collection:
+        class: %orob2b_order.form.type.order_product_item_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_order_order_product_item_collection }

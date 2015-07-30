@@ -114,6 +114,14 @@ class OrderProductItem
     protected $quoteProductOffer;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->fromQuote = false;
+    }
+
+    /**
      * @ORM\PostLoad
      */
     public function postLoad()

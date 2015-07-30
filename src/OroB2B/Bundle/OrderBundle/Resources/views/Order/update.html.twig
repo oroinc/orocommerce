@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
 {% oro_title_set({params : {"%identifier%": entity.identifier|default('N/A'|trans)} }) %}
 
@@ -42,35 +43,48 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
-    {% set dataBlocks = [{
+    {% set dataBlocks = [
+        {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'title': '',
-                'data': []
+                'data': [
+                    form_row(form.owner),
+                    form_row(
+                        form.accountUser,
+                        {attr: (attr is defined ? attr : [])|merge({class: 'order-order-accountuser-select'})}
+                    ),
+                    form_row(
+                        form.account,
+                        {attr: (attr is defined ? attr : [])|merge({class: 'order-order-account-select'})}
+                    )
+                ]
             }]
-        }]
+        },
+        {
+            'title': 'orob2b.order.sections.order_products'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_row(form.orderProducts)
+                ]
+            }]
+        }
+    ]
     %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
-    {% if additionalData is not empty %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title': 'orob2b.order.sections.additional'|trans,
-            'subblocks': [{
-                'title': '',
-                'useSpan': false,
-                'data' : additionalData
-            }]
-        }] ) %}
-    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    <div class="order-order-form" data-page-component-module="orob2border/js/app/components/order-order-selection-component">
+        {{ parent() }}
+    </div>
 {% endblock content_data %}
