@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\AttributeBundle\AttributeType\Select;
 use OroB2B\Bundle\AttributeBundle\Entity\Attribute;
@@ -25,7 +25,8 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setRequired')
             ->with(['attribute']);
@@ -55,8 +56,9 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
         $attribute->setCode('select_attribute')
             ->setType(Select::NAME);
 
-        $options = new Options();
-        $options->set('attribute', $attribute);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $options */
+        $options = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $options->expects($this->once())->method('offsetGet')->with('attribute')->willReturn($attribute);
 
         /** @var \Closure $queryBuilderCallback */
         $queryBuilderCallback = $normalizerCallback($options);
@@ -83,14 +85,19 @@ class SelectAttributeTypeTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testSetDefaultOptionsInvalidAttribute()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setNormalizers')
             ->with($this->isType('array'))
             ->willReturnCallback(
                 function (array $normalizers) {
-                    $options = new Options();
-                    $options->set('attribute', new \DateTime());
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $options */
+                    $options = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+                    $options->expects($this->once())
+                        ->method('offsetGet')
+                        ->with('attribute')
+                        ->willReturn(new \DateTime());
 
                     /** @var \Closure $normalizerCallback */
                     $normalizerCallback = $normalizers['query_builder'];

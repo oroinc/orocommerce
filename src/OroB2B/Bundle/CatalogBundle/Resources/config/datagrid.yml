@@ -1,9 +1,6 @@
 datagrid:
     category-products-grid:
         extended_entity_name: %orob2b_product.product.class%
-        options:
-            entityHint:        product
-            entity_pagination: true
         source:
             acl_resource: orob2b_product_update
             type:         orm
@@ -62,7 +59,7 @@ datagrid:
         filters:
             columns:
                 sku:
-                    type:      bool
+                    type:      boolean
                     data_name: inCategory
                 sku:
                     type:      string
@@ -74,6 +71,8 @@ datagrid:
                     type:      datetime
                     data_name: product.updatedAt
         options:
+            entityHint:        product
+            entity_pagination: true
             rowSelection:
                 dataField: id
                 columnName: inCategory

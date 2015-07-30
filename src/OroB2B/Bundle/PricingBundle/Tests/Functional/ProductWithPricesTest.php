@@ -9,7 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class ProductWithPricesTest extends WebTestCase

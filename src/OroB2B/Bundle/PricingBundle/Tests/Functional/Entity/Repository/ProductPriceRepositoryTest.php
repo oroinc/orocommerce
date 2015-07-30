@@ -65,7 +65,13 @@ class ProductPriceRepositoryTest extends WebTestCase
         return [
             'first product' => [
                 'productReference' => 'product.1',
-                'priceReferences' => ['product_price.2', 'product_price.7', 'product_price.1', 'product_price.6'],
+                'priceReferences' => [
+                    'product_price.10',
+                    'product_price.2',
+                    'product_price.7',
+                    'product_price.1',
+                    'product_price.6',
+                ],
             ],
             'second product' => [
                 'productReference' => 'product.2',
@@ -144,12 +150,12 @@ class ProductPriceRepositoryTest extends WebTestCase
             'first valid set' => [
                 'priceList' => 'price_list_1',
                 'products' => ['product.1'],
-                'expectedPrices' => ['product_price.2', 'product_price.7', 'product_price.1'],
+                'expectedPrices' => ['product_price.10', 'product_price.2', 'product_price.7', 'product_price.1'],
             ],
             'first valid set without tier prices' => [
                 'priceList' => 'price_list_1',
                 'products' => ['product.1'],
-                'expectedPrices' => ['product_price.7'],
+                'expectedPrices' => ['product_price.10', 'product_price.7'],
                 'getTierPrices' => false
             ],
             'second valid set' => [

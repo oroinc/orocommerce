@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Form\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
 use OroB2B\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 
 class RequestStatusWithDeletedSelectType extends RequestStatusSelectType
@@ -11,11 +13,14 @@ class RequestStatusWithDeletedSelectType extends RequestStatusSelectType
     /**
      * {@inheritdoc}
      */
-    protected function getChoices()
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        /** @var RequestStatusRepository $repository */
-        $repository = $this->registry->getRepository($this->entityClass);
-
-        return $repository->getNotDeletedAndDeletedWithRequestsStatuses();
+        $resolver->setDefaults(
+            [
+                'query_builder' => function (RequestStatusRepository $repository) {
+                    return $repository->getNotDeletedAndDeletedWithRequestsStatusesQueryBuilder();
+                },
+            ]
+        );
     }
 }
