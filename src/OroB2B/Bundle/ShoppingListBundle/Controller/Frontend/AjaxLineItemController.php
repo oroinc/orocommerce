@@ -6,9 +6,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
@@ -35,17 +34,17 @@ class AjaxLineItemController extends Controller
      * @AclAncestor("orob2b_shoppinglist_add_product")
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
+     * @param Request $request
      * @param Product $product
      *
      * @return array|RedirectResponse
      */
-    public function addProductAction(Product $product)
+    public function addProductAction(Request $request, Product $product)
     {
         $lineItem = new LineItem();
         $lineItem->setProduct($product);
 
         $form = $this->createForm(AddProductType::NAME, $lineItem);
-        $request = $this->getRequest();
 
         $handler = new LineItemHandler($form, $request, $this->getDoctrine());
         $result = $this->get('oro_form.model.update_handler')
@@ -70,19 +69,20 @@ class AjaxLineItemController extends Controller
      * @ParamConverter("shoppingList", class="OroB2BShoppingListBundle:ShoppingList", options={"id" = "shoppingListId"})
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
+     * @param Request $request
      * @param ShoppingList $shoppingList
      * @param Product $product
      *
      * @return array|RedirectResponse
      */
-    public function addProductFromViewAction(ShoppingList $shoppingList, Product $product)
+    public function addProductFromViewAction(Request $request, ShoppingList $shoppingList, Product $product)
     {
         $lineItem = new LineItem();
         $lineItem->setProduct($product);
         $lineItem->setShoppingList($shoppingList);
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
-        $handler = new LineItemHandler($form, $this->getRequest(), $this->getDoctrine());
+        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
         $saveRoute = function (LineItem $lineItem) {
             return [
                 'route' => 'orob2b_product_frontend_product_view',

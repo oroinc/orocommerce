@@ -9,10 +9,10 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
         quantity:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
                 groups: [create, update, add_product]
-            - NotNull:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                value: 0
                 groups: [create, update, add_product]
-            - Range:
-                min: 0
+            - NotNull:
                 groups: [create, update, add_product]
         unit:
             - NotNull:
