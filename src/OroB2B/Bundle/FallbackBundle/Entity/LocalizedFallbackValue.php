@@ -9,7 +9,13 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @ORM\Table(name="orob2b_fallback_locale_value")
+ * @ORM\Table(
+ *      name="orob2b_fallback_locale_value",
+ *      indexes={
+ *          @ORM\Index(name="idx_orob2b_fallback_fallback", columns={"fallback"}),
+ *          @ORM\Index(name="idx_orob2b_fallback_string", columns={"string"})
+ *      }
+ * )
  * @ORM\Entity
  * @Config
  */
@@ -143,9 +149,9 @@ class LocalizedFallbackValue
     public function __toString()
     {
         if ($this->string) {
-            return $this->string;
+            return (string)$this->string;
         } elseif ($this->text) {
-            return $this->text;
+            return (string)$this->text;
         } else {
             return '';
         }
