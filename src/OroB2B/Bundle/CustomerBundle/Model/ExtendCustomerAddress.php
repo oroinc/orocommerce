@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Model;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
+use OroB2B\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
-class ExtendCustomerAddress extends AbstractTypedAddress
+abstract class ExtendCustomerAddress extends AbstractDefaultTypedAddress
 {
     /**
      * Constructor

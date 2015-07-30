@@ -185,14 +185,14 @@ class Customer extends ExtendCustomer
     /**
      * Add addresses
      *
-     * @param CustomerAddress $address
+     * @param AbstractDefaultTypedAddress $address
      * @return Customer
      */
-    public function addAddress(CustomerAddress $address)
+    public function addAddress(AbstractDefaultTypedAddress $address)
     {
-        /** @var CustomerAddress $address */
-        if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
+        /** @var AbstractDefaultTypedAddress $address */
+        if (!$this->getAddresses()->contains($address)) {
+            $this->getAddresses()->add($address);
             $address->setOwner($this);
         }
 
@@ -202,16 +202,52 @@ class Customer extends ExtendCustomer
     /**
      * Remove addresses
      *
-     * @param CustomerAddress $addresses
-     * @return $this
+     * @param AbstractDefaultTypedAddress $addresses
+     * @return Customer
      */
-    public function removeAddress(CustomerAddress $addresses)
+    public function removeAddress(AbstractDefaultTypedAddress $addresses)
     {
         if ($this->hasAddress($addresses)) {
-            $this->addresses->removeElement($addresses);
+            $this->getAddresses()->removeElement($addresses);
         }
 
         return $this;
+    }
+
+    /**
+     * Gets one address that has specified type name.
+     *
+     * @param string $typeName
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getAddressByTypeName($typeName)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->hasTypeWithName($typeName)) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                return $address;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -225,48 +261,12 @@ class Customer extends ExtendCustomer
     }
 
     /**
-     * @param CustomerAddress $address
+     * @param AbstractDefaultTypedAddress $address
      * @return bool
      */
-    protected function hasAddress(CustomerAddress $address)
+    protected function hasAddress(AbstractDefaultTypedAddress $address)
     {
         return $this->getAddresses()->contains($address);
-    }
-
-    /**
-     * Gets one address that has specified type name.
-     *
-     * @param string $typeName
-     *
-     * @return CustomerAddress|null
-     */
-    public function getAddressByTypeName($typeName)
-    {
-        /** @var CustomerAddress $address */
-        foreach ($this->getAddresses() as $address) {
-            if ($address->hasTypeWithName($typeName)) {
-                return $address;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Gets primary address if it's available.
-     *
-     * @return CustomerAddress|null
-     */
-    public function getPrimaryAddress()
-    {
-        /** @var CustomerAddress $address */
-        foreach ($this->getAddresses() as $address) {
-            if ($address->isPrimary()) {
-                return $address;
-            }
-        }
-
-        return null;
     }
 
     /**

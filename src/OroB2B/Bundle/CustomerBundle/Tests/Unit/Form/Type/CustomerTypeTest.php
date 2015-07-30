@@ -2,19 +2,20 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EnumSelectType;
 
-use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class CustomerTypeTest extends FormIntegrationTestCase
 {
@@ -23,6 +24,9 @@ class CustomerTypeTest extends FormIntegrationTestCase
 
     /** @var EntityManager */
     protected $entityManager;
+
+    /** @var CustomerAddress[] */
+    protected static $addresses;
 
     /**
      * {@inheritdoc}
@@ -64,13 +68,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
             ParentCustomerSelectType::NAME
         );
 
-        $addressEntityType = new EntityType(
-            [
-                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
-                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 2)
-            ],
-            'test_address_entity'
-        );
+        $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
 
         $internalRatingEnumSelect = new EnumSelectType(
             [
@@ -86,7 +84,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     ParentCustomerSelectType::NAME => $parentCustomerSelectType,
                     'oro_address_collection'  => new AddressCollectionTypeStub(),
                     $addressEntityType->getName()  => $addressEntityType,
-                    EnumSelectType::NAME => $internalRatingEnumSelect,
+                    EnumSelectType::NAME => $internalRatingEnumSelect
                 ],
                 []
             )
@@ -94,15 +92,21 @@ class CustomerTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $options
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
      * @dataProvider submitDataProvider
+     *
+     * @param array $options
+     * @param array $defaultData
+     * @param array $viewData
+     * @param array $submittedData
+     * @param array $expectedData
      */
-    public function testSubmit(array $options, $defaultData, $viewData, $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        array $options,
+        array $defaultData,
+        array $viewData,
+        array $submittedData,
+        array $expectedData
+    ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $formConfig = $form->getConfig();
@@ -132,15 +136,15 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 1,
                     'parent' => 2,
-                    'internal_rating' => '2_of_5',
-                    'addresses' => 1,
+                    'addresses' => [1],
+                    'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'addresses' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                    'addresses' => [$this->getAddresses()[1]],
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
             'empty parent' => [
@@ -151,15 +155,15 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 1,
                     'parent' => null,
-                    'internal_rating' => '2_of_5',
-                    'addresses' => 1,
+                    'addresses' => [1],
+                    'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => null,
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'addresses' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                    'addresses' => [$this->getAddresses()[1]],
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
             'empty group' => [
@@ -170,15 +174,15 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => 2,
-                    'internal_rating' => '2_of_5',
-                    'addresses' => 1,
+                    'addresses' => [1],
+                    'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5'),
-                    'addresses' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                    'addresses' => [$this->getAddresses()[1]],
+                    'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
             'empty address' => [
@@ -196,7 +200,7 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
-                    'addresses' => null,
+                    'addresses' => [],
                     'internal_rating' => new StubEnumValue('2_of_5', '2 of 5')
                 ]
             ],
@@ -208,17 +212,16 @@ class CustomerTypeTest extends FormIntegrationTestCase
                     'name' => 'customer_name',
                     'group' => 1,
                     'parent' => 2,
-                    'internal_rating' => null,
-                    'addresses' => null,
+                    'internal_rating' => null
                 ],
                 'expectedData' => [
                     'name' => 'customer_name',
                     'group' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
                     'internal_rating' => null,
-                    'addresses' => null,
+                    'addresses' => [],
                 ]
-            ]
+            ],
         ];
     }
 
@@ -243,5 +246,19 @@ class CustomerTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @return CustomerAddress[]
+     */
+    protected function getAddresses()
+    {
+        if (!self::$addresses) {
+            self::$addresses = [
+                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress', 2)
+            ];
+        }
+        return self::$addresses;
     }
 }

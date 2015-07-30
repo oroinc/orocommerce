@@ -2,45 +2,14 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityRepository;
-
-class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
+class LoadCustomerAddressDemoData extends AbstractLoadAddressDemoData implements DependentFixtureInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
-
-    /** @var ObjectRepository|EntityRepository */
-    protected $countryRepository;
-
-    /** @var ObjectRepository|EntityRepository */
-    protected $regionRepository;
-
-    /** @var ObjectRepository|EntityRepository */
-    protected $addressTypeRepository;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -54,11 +23,7 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
      */
     public function load(ObjectManager $manager)
     {
-        $userManager = $this->container->get('orob2b_account_user.manager');
-        $manager = $userManager->getStorageManager();
-        $this->countryRepository = $manager->getRepository('OroAddressBundle:Country');
-        $this->regionRepository = $manager->getRepository('OroAddressBundle:Region');
-        $this->addressTypeRepository = $manager->getRepository('OroAddressBundle:AddressType');
+        parent::load($manager);
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BCustomerBundle/Migrations/Data/Demo/ORM/data/account-users.csv');
@@ -71,7 +36,6 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
 
         /** @var AccountUser[] $accountUsers */
         $accountUsers = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findAll();
-
         /** @var AccountUser[] $accountUserByEmail */
         $accountUserByEmail = [];
         foreach ($accountUsers as $accountUser) {
@@ -83,7 +47,7 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
             $accountUser = $accountUserByEmail[$row['email']];
             $accountUser
                 ->getCustomer()
-                ->addAddress($this->createCustomerAddress($row));
+                ->addAddress($this->createAddress($row));
         }
 
         fclose($handler);
@@ -91,49 +55,10 @@ class LoadCustomerAddressDemoData extends AbstractFixture implements DependentFi
     }
 
     /**
-     * @param array $data
-     * @return CustomerAddress
+     * {@inheritdoc}
      */
-    protected function createCustomerAddress(array $data)
+    protected function getNewAddressEntity()
     {
-        /** @var Country $country */
-        $country = $this->countryRepository->findOneBy(['iso2Code' => $data['country']]);
-        if (!$country) {
-            throw new \RuntimeException('Can\'t find country with ISO ' . $data['country']);
-        }
-
-        /** @var Region $region */
-        $region = $this->regionRepository->findOneBy(['country' => $country, 'code' => $data['state']]);
-        if (!$region) {
-            throw new \RuntimeException(
-                printf('Can\'t find region with country ISO %s and code %s', $data['country'], $data['state'])
-            );
-        }
-
-        $types = [];
-        $typesFromData = explode(',', $data['types']);
-        foreach ($typesFromData as $type) {
-            $types[] = $this->addressTypeRepository->find($type);
-        }
-
-        $defaultTypes = [];
-        $defaultTypesFromData = explode(',', $data['defaultTypes']);
-        foreach ($defaultTypesFromData as $defaultType) {
-            $defaultTypes[] = $this->addressTypeRepository->find($defaultType);
-        }
-
-        $address = new CustomerAddress();
-        $address
-            ->setPrimary(true)
-            ->setLabel('Primary address')
-            ->setCountry($country)
-            ->setStreet($data['street'])
-            ->setCity($data['city'])
-            ->setRegion($region)
-            ->setPostalCode($data['zipCode'])
-            ->setTypes(new ArrayCollection($types))
-            ->setDefaults(new ArrayCollection($defaultTypes));
-
-        return $address;
+        return new CustomerAddress();
     }
 }

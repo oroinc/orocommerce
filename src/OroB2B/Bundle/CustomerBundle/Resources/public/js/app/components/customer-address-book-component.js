@@ -22,7 +22,7 @@ define(function(require) {
                         var address = arguments[0];
                         return routing.generate(
                             options.addressUpdateRouteName,
-                            _.extend({}, options.addressUpdateParams, {'id': address.get('id')})
+                            {'id': address.get('id'), 'entityId': options.entityId}
                         );
                     }
                 });

@@ -24,14 +24,34 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
         productSku:
             - NotBlank:
                 groups: [ Import ]
-        quoteProductItems:
+        type:
+            - NotBlank: ~
+        quoteProductRequests:
+            - Valid: ~
+        quoteProductOffers:
             - OroB2B\Bundle\SaleBundle\Validator\Constraints\Count:
                 minMessage: 'orob2b.sale.quoteproduct.quote_product_items.blank'
             - Valid: ~
 
-OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    properties:
+        quoteProduct:
+            - NotBlank: ~
+        quantity:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        productUnit:
+            - NotBlank:
+                message: 'orob2b.sale.quoteproductoffer.product_unit.blank'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - Valid: ~
+
+OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
     constraints:
-        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductItem: ~
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOffer: ~
     properties:
         quoteProduct:
             - NotBlank: ~
@@ -39,11 +59,14 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductItem:
             - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        priceType:
+            - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.sale.quoteproductitem.product_unit.blank'
+                message: 'orob2b.sale.quoteproductoffer.product_unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
         price:
+            - NotBlank: ~
             - Valid: ~

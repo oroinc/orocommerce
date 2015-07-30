@@ -44,7 +44,7 @@ class SelectAttributeTypeType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -59,7 +59,7 @@ class SelectAttributeTypeType extends AbstractType
 
         $resolver->setNormalizers([
             'query_builder' => function (Options $options) {
-                $attribute = $options['attribute'];
+                $attribute = $options->offsetGet('attribute');
                 if (!$attribute instanceof Attribute) {
                     throw new UnexpectedTypeException($attribute, 'Attribute');
                 }

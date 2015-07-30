@@ -24,10 +24,12 @@ class LineItemTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+
     /**
      * @var LineItemType
      */
     protected $type;
+
     /**
      * @var array
      */
@@ -125,7 +127,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
 
-        $this->assertEquals([], $form->getErrors());
+        $this->assertEmpty($form->getErrors()->count());
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
