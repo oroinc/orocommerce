@@ -13,7 +13,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class ProductWithPricesTest extends WebTestCase

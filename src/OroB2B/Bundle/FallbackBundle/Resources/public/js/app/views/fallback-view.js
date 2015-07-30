@@ -98,7 +98,7 @@ define(function(require) {
          * @private
          */
         _enableDisableFallback: function(fallback, enable) {
-            if (enable) {
+            if (!enable) {
                 fallback.find('select').attr('disabled', 'disabled');
 
                 fallback.find('div.selector').addClass('disabled');
