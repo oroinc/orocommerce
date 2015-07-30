@@ -47,13 +47,17 @@ class RequestCreateQuoteHandlerTest extends FormHandlerTestCase
         $this->handler  = new RequestCreateQuoteHandler($this->form, $this->request, $this->manager, $this->getUser());
     }
 
+    public function testProcessValidData()
+    {
+    }
+
     /**
      * @param Request $inputData
      * @param Quote $expectedData
      *
      * @dataProvider processValidDataProvider
      */
-    public function testProcessValidData(Request $inputData, Quote $expectedData)
+    public function testProcessValidQuote(Request $inputData, Quote $expectedData)
     {
         $this->form->expects($this->once())
             ->method('setData')

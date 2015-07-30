@@ -16,7 +16,13 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
- * @ORM\Table(name="orob2b_product")
+ * @ORM\Table(
+ *      name="orob2b_product",
+ *      indexes={
+ *          @ORM\Index(name="idx_orob2b_product_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_orob2b_product_updated_at", columns={"updated_at"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository")
  * @Config(
  *      routeName="orob2b_product_index",
