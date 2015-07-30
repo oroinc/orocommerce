@@ -124,7 +124,13 @@ define(function(require) {
 
             this.$el.find(this.options.selectors.item).each(function() {
                 var $item = $(this);
-                self.itemsByCode[self.getItemCode($item)] = $item;
+                var itemCode = self.getItemCode($item);
+
+                if (!itemCode) {
+                    return;
+                }
+
+                self.itemsByCode[itemCode] = $item;
             });
         },
 
@@ -388,9 +394,15 @@ define(function(require) {
          */
         getItemCode: function($item) {
             var select = this.getFallbackEl($item);
+            var itemCode;
 
-            var itemCode = select.attr('data-locale');
-            return itemCode ? itemCode : 'system';
+            if (select.length === 0) {
+                itemCode = 'system';
+            }else{
+                itemCode = select.attr('data-locale');
+            }
+            
+            return itemCode;
         },
 
         /**
