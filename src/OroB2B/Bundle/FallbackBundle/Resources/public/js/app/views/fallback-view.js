@@ -20,7 +20,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        itemToChilds: {},
+        itemToChildren: {},
 
         /**
          * @property {Object}
@@ -75,10 +75,10 @@ define(function(require) {
                 self.switchUseFallback(self.getItemEl(this));
             });
 
-            this.mapItemToChilds();
+            this.mapItemToChildren();
 
             this.getValueEl(this.$el).each(function() {
-                self.cloneValueToChilds(self.getItemEl(this));
+                self.cloneValueToChildren(self.getItemEl(this));
             });
 
             this.setStatusIcon();
@@ -93,8 +93,8 @@ define(function(require) {
             var self = this;
 
             this.getValueEl(this.$el)
-                .change(_.bind(this.cloneValueToChildsEvent, this))
-                .keyup(_.bind(this.cloneValueToChildsEvent, this));
+                .change(_.bind(this.cloneValueToChildrenEvent, this))
+                .keyup(_.bind(this.cloneValueToChildrenEvent, this));
 
             this.$el.find(this.options.selectors.itemValue).find('.mce-tinymce').each(function() {
                 self.getValueEl(self.getItemEl(this)).tinymce()
@@ -135,12 +135,12 @@ define(function(require) {
         },
 
         /**
-         * Create item to childs mapping
+         * Create item to children mapping
          */
-        mapItemToChilds: function() {
+        mapItemToChildren: function() {
             var self = this;
 
-            this.itemToChilds = {};
+            this.itemToChildren = {};
 
             this.$el.find(this.options.selectors.item).each(function() {
                 var $item = $(this);
@@ -150,10 +150,10 @@ define(function(require) {
                     return;
                 }
 
-                if (self.itemToChilds[parentItemCode] === undefined) {
-                    self.itemToChilds[parentItemCode] = [];
+                if (self.itemToChildren[parentItemCode] === undefined) {
+                    self.itemToChildren[parentItemCode] = [];
                 }
-                self.itemToChilds[parentItemCode].push($item);
+                self.itemToChildren[parentItemCode].push($item);
             });
         },
 
@@ -162,8 +162,8 @@ define(function(require) {
          *
          * @param {Event} e
          */
-        cloneValueToChildsEvent: function(e) {
-            this.cloneValueToChilds(this.getItemEl(e.currentTarget));
+        cloneValueToChildrenEvent: function(e) {
+            this.cloneValueToChildren(this.getItemEl(e.currentTarget));
         },
 
         /**
@@ -184,7 +184,7 @@ define(function(require) {
 
             var $item = this.getItemEl(e.currentTarget);
 
-            this.mapItemToChilds();
+            this.mapItemToChildren();
 
             var parentItemCode = this.getParentItemCode($item);
             if (parentItemCode) {
@@ -192,7 +192,7 @@ define(function(require) {
                 var toValue = this.getValueEl($item);
                 this.cloneValue(fromValue, toValue);
             } else {
-                this.cloneValueToChildsEvent(e);
+                this.cloneValueToChildrenEvent(e);
             }
         },
 
@@ -213,16 +213,16 @@ define(function(require) {
         },
 
         /**
-         * Clone item value to childs
+         * Clone item value to children
          *
          * @param {jQuery} $item
          */
-        cloneValueToChilds: function($item) {
+        cloneValueToChildren: function($item) {
             var $fromValue = this.getValueEl($item);
             var itemCode = this.getItemCode($item);
 
             var self = this;
-            $.each(this.itemToChilds[itemCode] || [], function() {
+            $.each(this.itemToChildren[itemCode] || [], function() {
                 var $toValue = self.getValueEl(this);
                 self.cloneValue($fromValue, $toValue);
             });

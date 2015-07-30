@@ -1,7 +1,7 @@
 orob2b:
     fallback:
         type:
-            parent_locale: 'parent'
+            parent_locale: 'Parent Locale'
             default:       'Default Value'
 
         value:

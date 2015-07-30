@@ -31,7 +31,7 @@ class FallbackPropertyTypeTest extends FormIntegrationTestCase
         $this->translator->expects($this->any())
             ->method('trans')
             ->with('orob2b.fallback.type.parent_locale')
-            ->willReturn('Parent locale value');
+            ->willReturn('Parent Locale');
 
         $this->formType = new FallbackPropertyType($this->translator);
     }
@@ -104,7 +104,7 @@ class FallbackPropertyTypeTest extends FormIntegrationTestCase
                     'required' => false,
                     'empty_value' => false,
                     'choices' => [
-                        FallbackType::PARENT_LOCALE => 'Parent locale value (en)',
+                        FallbackType::PARENT_LOCALE => 'en [Parent Locale]',
                         FallbackType::SYSTEM => 'orob2b.fallback.type.default',
                     ],
                 ],
