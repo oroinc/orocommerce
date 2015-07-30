@@ -35,7 +35,7 @@ services:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setProductClass, [%orob2b_product.product.class%]]
         tags:
-            - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_type }
+            - { name: form.type, alias: orob2b_shopping_list_frontend_line_item }
 
     orob2b_shopping_list.form.handler.frontend_line_item:
         class: %orob2b_shopping_list.form.handler.frontend_line_item.class%
@@ -44,7 +44,7 @@ services:
             - @request
             - @oro_entity.doctrine_helper
 
-    orob2b_shopping_list.form.type.add_product:
+    orob2b_shopping_list.form.type.frontend_line_item_widget:
         class: %orob2b_shopping_list.form.type.frontend_line_item_widget.class%
         arguments:
             - @doctrine
@@ -53,4 +53,4 @@ services:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
-            - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget_type }
+            - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget }

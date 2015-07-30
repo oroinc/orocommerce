@@ -22,7 +22,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendLineItemType extends AbstractType
 {
-    const NAME = 'orob2b_shopping_list_frontend_line_item_type';
+    const NAME = 'orob2b_shopping_list_frontend_line_item';
 
     /**
      * @var string

@@ -16,7 +16,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class FrontendLineItemWidgetType extends AbstractType
 {
-    const NAME = 'orob2b_shopping_list_frontend_line_item_widget_type';
+    const NAME = 'orob2b_shopping_list_frontend_line_item_widget';
 
     /**
      * @var string
