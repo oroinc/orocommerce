@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
 class AjaxLineItemController extends Controller
@@ -44,7 +44,7 @@ class AjaxLineItemController extends Controller
         $lineItem = new LineItem();
         $lineItem->setProduct($product);
 
-        $form = $this->createForm(AddProductType::NAME, $lineItem);
+        $form = $this->createForm(FrontendLineItemWidgetType::NAME, $lineItem);
 
         $handler = new LineItemHandler($form, $request, $this->getDoctrine());
         $result = $this->get('oro_form.model.update_handler')
