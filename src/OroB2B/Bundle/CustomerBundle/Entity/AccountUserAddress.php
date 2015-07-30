@@ -7,10 +7,10 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomerAddress;
+use OroB2B\Bundle\CustomerBundle\Model\ExtendAccountUserAddress;
 
 /**
- * @ORM\Table("orob2b_customer_address")
+ * @ORM\Table("orob2b_account_user_address")
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *       defaultValues={
@@ -30,10 +30,10 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendCustomerAddress;
  * )
  * @ORM\Entity
  */
-class CustomerAddress extends ExtendCustomerAddress
+class AccountUserAddress extends ExtendAccountUserAddress
 {
     /**
-     * @ORM\ManyToOne(targetEntity="Customer", inversedBy="addresses", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="AccountUser", inversedBy="addresses", cascade={"persist"})
      * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $owner;
@@ -42,12 +42,12 @@ class CustomerAddress extends ExtendCustomerAddress
      * @var Collection
      *
      * @ORM\OneToMany(
-     *      targetEntity="CustomerAddressToAddressType",
+     *      targetEntity="AccountUserAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
      * )
-     */
+     **/
     protected $addressesToTypes;
 
     public function __construct()
@@ -60,6 +60,6 @@ class CustomerAddress extends ExtendCustomerAddress
      */
     protected function getAddressToAddressTypeEntity()
     {
-        return new CustomerAddressToAddressType();
+        return new AccountUserAddressToAddressType();
     }
 }

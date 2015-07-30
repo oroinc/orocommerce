@@ -13,6 +13,12 @@ orob2b.customer:
     addresses.label: 'Addresses'
     form.choose: 'Choose a customer...'
     form.choose_parent: 'Choose Parent...'
+    address_book.label: 'Address Book'
+
+    address:
+        add: 'Add Address'
+        cancel: 'Cancel'
+        save: 'Save'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -56,6 +62,8 @@ orob2b.customer:
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
         form.choose:                 'Choose an account user...'
+        addresses.label:             'Addresses'
+        address_book.label:          'Address Book'
 
         profile:
             registration.title: 'Registration'
@@ -88,6 +96,36 @@ orob2b.customer:
         label.label:                     'Label'
         role.label:                      'Role'
         websites.label:                  'Websites'
+
+    accountuseraddress:
+        city.label:                 City
+        country.label:              Country
+        entity_description:         Represent account user's address
+        entity_label:               Account User Address
+        entity_plural_label:        Account User Addresses
+        first_name.label:           First name
+        id.label:                   Id
+        label.label:                Label
+        last_name.label:            Last name
+        middle_name.label:          Middle name
+        name_prefix.label:          Name prefix
+        name_suffix.label:          Name suffix
+        organization.label:         Organization
+        owner.label:                Owner
+        postal_code.label:          Zip/postal code
+        primary.label:              Primary
+        region.label:               State
+        region_text.label:          State
+        street.label:               Street
+        street2.label:              Street 2
+        types.label:                Types
+        addresses_to_types.label:   Addresses to address types
+
+        country_name.label:         Country name
+        country_iso2_code.label:    Country ISO2 code
+        country_iso3_code.label:    Country ISO3 code
+        region_name.label:          State name
+        region_code.label:          State ISO code
 
     action:
         account_user:
