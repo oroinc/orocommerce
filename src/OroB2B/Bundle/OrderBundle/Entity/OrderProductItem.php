@@ -114,14 +114,6 @@ class OrderProductItem
     protected $quoteProductOffer;
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->fromQuote = false;
-    }
-
-    /**
      * @ORM\PostLoad
      */
     public function postLoad()
@@ -133,6 +125,16 @@ class OrderProductItem
 
     /**
      * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->updatePrice();
+        if (null === $this->fromQuote) {
+            $this->fromQuote = false;
+        }
+    }
+
+    /**
      * @ORM\PreUpdate
      */
     public function updatePrice()

@@ -30,30 +30,11 @@ class OrderExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_order_order_product_item',
+                'orob2b_format_order_product_item',
                 [$this, 'formatProductItem'],
                 ['is_safe' => ['html']]
             ),
-            new \Twig_SimpleFilter(
-                'orob2b_format_order_order_product_type',
-                [$this, 'formatProductType'],
-                ['is_safe' => ['html']]
-            ),
-            new \Twig_SimpleFilter(
-                'orob2b_format_order_order_product_request',
-                [$this, 'formatProductRequest'],
-                ['is_safe' => ['html']]
-            ),
         ];
-    }
-
-    /**
-     * @param int $type
-     * @return string
-     */
-    public function formatProductType($type)
-    {
-        return $this->orderProductFormatter->formatType($type);
     }
 
     /**
