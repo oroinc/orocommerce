@@ -560,6 +560,8 @@
             <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
             <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
             <arg line="--exclude=RFPBundle/Migrations/Schema"/>
+
+            <arg line="--exclude=ShoppingListBundle/Tests/Unit/Form/Type"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>
