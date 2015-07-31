@@ -20,9 +20,9 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $this->formType = new ProductUnitPrecisionCollectionType();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
@@ -30,7 +30,7 @@ class ProductUnitPrecisionCollectionTypeTest extends \PHPUnit_Framework_TestCase
                 'show_form_when_empty' => false
             ]);
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetParent()

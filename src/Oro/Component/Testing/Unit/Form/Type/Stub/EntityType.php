@@ -5,7 +5,7 @@ namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\View\ChoiceView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityType extends AbstractType
 {
@@ -47,9 +47,9 @@ class EntityType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(['choice_list' => $this->choiceList, 'query_builder' => null]);
     }
