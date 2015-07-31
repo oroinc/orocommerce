@@ -33,8 +33,12 @@ use OroB2B\Bundle\CustomerBundle\Model\ExtendAccountUserAddress;
 class AccountUserAddress extends ExtendAccountUserAddress
 {
     /**
-     * @ORM\ManyToOne(targetEntity="AccountUser", inversedBy="addresses", cascade={"persist"})
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(
+     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser",
+     *      inversedBy="addresses",
+     *      cascade={"persist"}
+     * )
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $owner;
 
@@ -42,7 +46,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
      * @var Collection
      *
      * @ORM\OneToMany(
-     *      targetEntity="AccountUserAddressToAddressType",
+     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddressToAddressType",
      *      mappedBy="address",
      *      cascade={"persist", "remove"},
      *      orphanRemoval=true
