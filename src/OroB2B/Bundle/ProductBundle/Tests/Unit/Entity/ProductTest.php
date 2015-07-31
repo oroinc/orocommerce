@@ -45,12 +45,13 @@ class ProductTest extends EntityTestCase
     public function testToString()
     {
         $product = new Product();
-
         $this->assertSame('', (string)$product);
 
         $product->setSku(123);
-
         $this->assertSame('123', (string)$product);
+
+        $product->addName((new LocalizedFallbackValue())->setString('localized_name'));
+        $this->assertEquals('localized_name', (string)$product);
     }
 
     public function testPrePersist()

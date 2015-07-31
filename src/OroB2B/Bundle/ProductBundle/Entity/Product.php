@@ -205,7 +205,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function __toString()
     {
-        return (string)$this->sku;
+        try {
+            return (string)$this->getDefaultName()->getString();
+        } catch (\LogicException $e) {
+            return (string)$this->sku;
+        }
     }
 
     /**

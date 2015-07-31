@@ -45,6 +45,10 @@ class LoadProducts extends AbstractFixture
 
         $product = new Product();
         $product->setSku($sku);
+
+        $name = new LocalizedFallbackValue();
+        $name->setString($sku);
+        $product->addName($name);
         $product->setOwner($businessUnit);
         $product->setOrganization($organization);
         $product->addName($name);
