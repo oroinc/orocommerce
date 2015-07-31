@@ -6,7 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
@@ -26,7 +30,14 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      defaultValues={
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
+ *          },
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="owner",
+ *              "frontend_owner_column_name"="account_user_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -37,7 +48,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      }
  * )
  */
-class LineItem extends ExtendLineItem
+class LineItem extends ExtendLineItem implements OrganizationAwareInterface
 {
     /**
      * @var integer
@@ -126,6 +137,29 @@ class LineItem extends ExtendLineItem
     protected $notes;
 
     /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $owner;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+
+    /**
      * @return integer
      */
     public function getId()
@@ -143,22 +177,12 @@ class LineItem extends ExtendLineItem
 
     /**
      * @param Product $product
+     *
      * @return $this
      */
     public function setProduct(Product $product)
     {
-        $this->product    = $product;
-
-        return $this;
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @return $this
-     */
-    public function setShoppingList(ShoppingList $shoppingList)
-    {
-        $this->shoppingList = $shoppingList;
+        $this->product = $product;
 
         return $this;
     }
@@ -172,12 +196,13 @@ class LineItem extends ExtendLineItem
     }
 
     /**
-     * @param float $quantity
+     * @param ShoppingList $shoppingList
+     *
      * @return $this
      */
-    public function setQuantity($quantity)
+    public function setShoppingList(ShoppingList $shoppingList)
     {
-        $this->quantity = $quantity;
+        $this->shoppingList = $shoppingList;
 
         return $this;
     }
@@ -191,6 +216,18 @@ class LineItem extends ExtendLineItem
     }
 
     /**
+     * @param float $quantity
+     *
+     * @return $this
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
      * @return ProductUnit
      */
     public function getUnit()
@@ -200,6 +237,7 @@ class LineItem extends ExtendLineItem
 
     /**
      * @param ProductUnit $unit
+     *
      * @return $this
      */
     public function setUnit(ProductUnit $unit)
@@ -225,6 +263,44 @@ class LineItem extends ExtendLineItem
     public function setNotes($notes)
     {
         $this->notes = $notes;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOrganization(OrganizationInterface $organization = null)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param AccountUser $owningUser
+     *
+     * @return $this
+     */
+    public function setOwner(AccountUser $owningUser)
+    {
+        $this->owner = $owningUser;
 
         return $this;
     }

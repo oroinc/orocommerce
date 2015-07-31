@@ -141,6 +141,38 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertEquals(1, $crawler->filter('input.orob2b-shoppinglist-label.error')->count());
     }
 
+    public function testUpdate()
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getReference('shopping_list_line_item.1');
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_shopping_list_line_item_frontend_update_widget',
+                [
+                    'id' => $lineItem->getId(),
+                    '_widgetContainer' => 'dialog',
+                    '_wid' => 'test-uuid'
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $form = $crawler->selectButton('Save')->form(
+            [
+                'orob2b_shopping_list_line_item[quantity]' => 33.3,
+                'orob2b_shopping_list_line_item[unit]' => $unit->getCode(),
+                'orob2b_shopping_list_line_item[notes]' => 'Updated test notes',
+            ]
+        );
+
+        $this->assertSaved($form);
+    }
+
     /**
      * @param Product $product
      *
