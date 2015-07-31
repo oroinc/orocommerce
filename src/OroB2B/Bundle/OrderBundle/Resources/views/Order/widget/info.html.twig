@@ -24,9 +24,9 @@
             {% endif %}
             {% if entity.quote %}
                 {%  if resource_granted('VIEW', entity.quote) %}
-                    {% set quote = UI.renderUrl(path('orob2b_sale_quotet_view', {id: entity.quote.id}), entity.quote) %}
+                    {% set quote = UI.renderUrl(path('orob2b_sale_quote_view', {id: entity.quote.id}), entity.quote.qid) %}
                 {% else %}
-                    {% set quote = entity.quote %}
+                    {% set quote = entity.quote.qid %}
                 {%  endif %}
                 {{ UI.renderHtmlProperty('orob2b.order.quote.label'|trans, quote) }}
             {% endif %}
