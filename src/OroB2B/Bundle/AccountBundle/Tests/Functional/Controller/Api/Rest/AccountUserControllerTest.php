@@ -33,7 +33,7 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertNotNull($user);
         $id = $user->getId();
 
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_customer_delete_account_user', ['id' => $id]));
+        $this->client->request('DELETE', $this->getUrl('orob2b_api_account_delete_account_user', ['id' => $id]));
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
 

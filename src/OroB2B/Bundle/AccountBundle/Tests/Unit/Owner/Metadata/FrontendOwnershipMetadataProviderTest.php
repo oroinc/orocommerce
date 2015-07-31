@@ -80,7 +80,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityClass')
             ->willReturnMap(
                 [
-                    ['OroB2BAccountBundle:Customer', self::LOCAL_LEVEL],
+                    ['OroB2BAccountBundle:Account', self::LOCAL_LEVEL],
                     ['OroB2BAccountBundle:AccountUser', self::BASIC_LEVEL],
                     [self::LOCAL_LEVEL, self::LOCAL_LEVEL],
                     [self::BASIC_LEVEL, self::BASIC_LEVEL],
@@ -151,7 +151,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $provider = new FrontendOwnershipMetadataProvider(
             [
-                'local_level' => 'OroB2BAccountBundle:Customer',
+                'local_level' => 'OroB2BAccountBundle:Account',
                 'basic_level' => 'OroB2BAccountBundle:AccountUser',
             ]
         );
@@ -305,7 +305,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'owningEntityNames' => [
-                    'local_level' => 'AcmeBundle\Entity\Customer',
+                    'local_level' => 'AcmeBundle\Entity\Account',
                 ],
             ],
             [
@@ -385,7 +385,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     public function testWarmUpCacheFilterConfigsByScope()
     {
         $config1 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\User'));
-        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Customer'));
+        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Account'));
 
         $this->configProvider->expects($this->once())->method('getConfigs')->willReturn([$config1, $config2]);
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('hasConfig')->willReturn(true);
@@ -399,7 +399,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('getConfig')
             ->will($this->onConsecutiveCalls($securityConfig1, $securityConfig2));
 
-        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Customer'));
+        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Account'));
 
         $this->provider->warmUpCache();
     }

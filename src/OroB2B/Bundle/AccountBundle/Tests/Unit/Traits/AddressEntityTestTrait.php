@@ -15,8 +15,8 @@ trait AddressEntityTestTrait
 
     public function testAddressesCollection()
     {
-        $customer = $this->createTestedEntity();
-        static::assertPropertyCollections($customer, [['addresses', $this->createAddressEntity()]]);
+        $account = $this->createTestedEntity();
+        static::assertPropertyCollections($account, [['addresses', $this->createAddressEntity()]]);
     }
 
     /**
@@ -27,12 +27,12 @@ trait AddressEntityTestTrait
      */
     public function testGetAddressByTypeName($addresses, $searchName, $expectedAddress)
     {
-        $customer = $this->createTestedEntity();
+        $account = $this->createTestedEntity();
         foreach ($addresses as $address) {
-            $customer->addAddress($address);
+            $account->addAddress($address);
         }
 
-        $actualAddress = $customer->getAddressByTypeName($searchName);
+        $actualAddress = $account->getAddressByTypeName($searchName);
         \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $actualAddress);
     }
 
@@ -85,12 +85,12 @@ trait AddressEntityTestTrait
      */
     public function testGetPrimaryAddress($addresses, $expectedAddress)
     {
-        $customer = $this->createTestedEntity();
+        $account = $this->createTestedEntity();
         foreach ($addresses as $address) {
-            $customer->addAddress($address);
+            $account->addAddress($address);
         }
 
-        \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $customer->getPrimaryAddress());
+        \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $account->getPrimaryAddress());
     }
 
     public function getPrimaryAddressProvider()
@@ -119,7 +119,7 @@ trait AddressEntityTestTrait
     /**
      * Return tested entity
      *
-     * @return AccountUser|Customer
+     * @return AccountUser|Account
      */
     abstract protected function createTestedEntity();
 

@@ -11,7 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountGroupHandler;
 
-class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
+class AccountGroupHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var Request
@@ -54,10 +54,10 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessValidData()
     {
-        $appendedCustomer = new Account();
+        $appendedAccount = new Account();
 
-        $removedCustomer = new Account();
-        $removedCustomer->setGroup($this->entity);
+        $removedAccount = new Account();
+        $removedAccount->setGroup($this->entity);
 
         $this->form->expects($this->once())
             ->method('setData')
@@ -78,10 +78,10 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $appendForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([$appendedCustomer]));
+            ->will($this->returnValue([$appendedAccount]));
         $this->form->expects($this->at(3))
             ->method('get')
-            ->with('appendCustomers')
+            ->with('appendAccounts')
             ->will($this->returnValue($appendForm));
 
         $removeForm = $this->getMockBuilder('Symfony\Component\Form\Form')
@@ -89,19 +89,19 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $removeForm->expects($this->once())
             ->method('getData')
-            ->will($this->returnValue([$removedCustomer]));
+            ->will($this->returnValue([$removedAccount]));
         $this->form->expects($this->at(4))
             ->method('get')
-            ->with('removeCustomers')
+            ->with('removeAccounts')
             ->will($this->returnValue($removeForm));
 
         $this->manager->expects($this->at(0))
             ->method('persist')
-            ->with($appendedCustomer);
+            ->with($appendedAccount);
 
         $this->manager->expects($this->at(1))
             ->method('persist')
-            ->with($removedCustomer);
+            ->with($removedAccount);
 
         $this->manager->expects($this->at(2))
             ->method('persist')
@@ -112,8 +112,8 @@ class CustomerGroupHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->handler->process($this->entity));
 
-        $this->assertEquals($this->entity, $appendedCustomer->getGroup());
-        $this->assertNull($removedCustomer->getGroup());
+        $this->assertEquals($this->entity, $appendedAccount->getGroup());
+        $this->assertNull($removedAccount->getGroup());
     }
 
     public function testBadMethod()

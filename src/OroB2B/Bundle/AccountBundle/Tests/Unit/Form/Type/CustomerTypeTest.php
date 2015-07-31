@@ -52,7 +52,7 @@ class AccountTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $customerGroupSelectType = new EntityType(
+        $accountGroupSelectType = new EntityType(
             [
                 1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                 2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2)
@@ -80,7 +80,7 @@ class AccountTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    AccountGroupSelectType::NAME  => $customerGroupSelectType,
+                    AccountGroupSelectType::NAME  => $accountGroupSelectType,
                     ParentAccountSelectType::NAME => $parentAccountSelectType,
                     'oro_address_collection'  => new AddressCollectionTypeStub(),
                     $addressEntityType->getName()  => $addressEntityType,
@@ -133,14 +133,14 @@ class AccountTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => 1,
                     'parent' => 2,
                     'addresses' => [1],
                     'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
@@ -152,14 +152,14 @@ class AccountTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => 1,
                     'parent' => null,
                     'addresses' => [1],
                     'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => null,
                     'addresses' => [$this->getAddresses()[1]],
@@ -171,14 +171,14 @@ class AccountTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => null,
                     'parent' => 2,
                     'addresses' => [1],
                     'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => null,
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [$this->getAddresses()[1]],
@@ -190,14 +190,14 @@ class AccountTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => 1,
                     'parent' => 2,
                     'addresses' => null,
                     'internal_rating' => '2_of_5'
                 ],
                 'expectedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'addresses' => [],
@@ -209,13 +209,13 @@ class AccountTypeTest extends FormIntegrationTestCase
                 'defaultData' => [],
                 'viewData' => [],
                 'submittedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => 1,
                     'parent' => 2,
                     'internal_rating' => null
                 ],
                 'expectedData' => [
-                    'name' => 'customer_name',
+                    'name' => 'account_name',
                     'group' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
                     'parent' => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
                     'internal_rating' => null,

@@ -10,7 +10,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 /**
  * @dbIsolation
  */
-class CustomerControllerTest extends WebTestCase
+class AccountControllerTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -21,15 +21,15 @@ class CustomerControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        /** @var Account $customer */
-        $customer = $this->getReference('account.orphan');
+        /** @var Account $account */
+        $account = $this->getReference('account.orphan');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('account.orphan');
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_update', ['id' => $customer->getId()])
+            $this->getUrl('orob2b_account_update', ['id' => $account->getId()])
         );
 
         $result = $this->client->getResponse();

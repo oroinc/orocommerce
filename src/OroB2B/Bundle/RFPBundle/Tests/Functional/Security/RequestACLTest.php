@@ -83,20 +83,20 @@ class RequestACLTest extends WebTestCase
         // Check owner access
         $this->assertIsGranted($permissions['owner'], $request);
 
-        // Login another user in same customer
-        $this->login(LoadAccountUsersData::SAME_CUSTOMER_USER_EMAIL, LoadAccountUsersData::SAME_CUSTOMER_USER_PASSWORD);
-        $this->assertIsGranted($permissions['sameCustomerUser'], $request);
+        // Login another user in same account
+        $this->login(LoadAccountUsersData::SAME_ACCOUNT_USER_EMAIL, LoadAccountUsersData::SAME_ACCOUNT_USER_PASSWORD);
+        $this->assertIsGranted($permissions['sameAccountUser'], $request);
 
-        // Login another user in sub customer
-        $this->login(LoadAccountUsersData::SUB_CUSTOMER_USER_EMAIL, LoadAccountUsersData::SUB_CUSTOMER_USER_PASSWORD);
-        $this->assertIsGranted($permissions['subCustomerUser'], $request);
+        // Login another user in sub account
+        $this->login(LoadAccountUsersData::SUB_ACCOUNT_USER_EMAIL, LoadAccountUsersData::SUB_ACCOUNT_USER_PASSWORD);
+        $this->assertIsGranted($permissions['subAccountUser'], $request);
 
-        // Login another user in another customer
+        // Login another user in another account
         $this->login(
-            LoadAccountUsersData::NOT_SAME_CUSTOMER_USER_EMAIL,
-            LoadAccountUsersData::NOT_SAME_CUSTOMER_USER_PASSWORD
+            LoadAccountUsersData::NOT_SAME_ACCOUNT_USER_EMAIL,
+            LoadAccountUsersData::NOT_SAME_ACCOUNT_USER_PASSWORD
         );
-        $this->assertIsGranted($permissions['notSameCustomerUser'], $request);
+        $this->assertIsGranted($permissions['notSameAccountUser'], $request);
     }
 
     /**
@@ -109,27 +109,27 @@ class RequestACLTest extends WebTestCase
                 'level' => AccessLevel::NONE_LEVEL,
                 'permissions' => [
                     'owner' => false,
-                    'sameCustomerUser' => false,
-                    'subCustomerUser' => false,
-                    'notSameCustomerUser' => false
+                    'sameAccountUser' => false,
+                    'subAccountUser' => false,
+                    'notSameAccountUser' => false
                 ]
             ],
             'account user' => [
                 'level' => AccessLevel::BASIC_LEVEL,
                 'permissions' => [
                     'owner' => true,
-                    'sameCustomerUser' => false,
-                    'subCustomerUser' => false,
-                    'notSameCustomerUser' => false
+                    'sameAccountUser' => false,
+                    'subAccountUser' => false,
+                    'notSameAccountUser' => false
                 ]
             ],
-            'customer' => [
+            'account' => [
                 'level' => AccessLevel::LOCAL_LEVEL,
                 'permissions' => [
                     'owner' => true,
-                    'sameCustomerUser' => true,
-                    'subCustomerUser' => false,
-                    'notSameCustomerUser' => false
+                    'sameAccountUser' => true,
+                    'subAccountUser' => false,
+                    'notSameAccountUser' => false
                 ]
             ]
         ];

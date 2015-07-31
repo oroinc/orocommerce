@@ -10,7 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class CustomerTypedAddressWithDefaultTypeStub extends AbstractType
+class AccountTypedAddressWithDefaultTypeStub extends AbstractType
 {
     const NAME = 'orob2b_account_typed_address_with_default';
 

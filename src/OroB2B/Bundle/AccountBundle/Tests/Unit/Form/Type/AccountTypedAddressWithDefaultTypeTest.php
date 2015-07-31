@@ -15,7 +15,7 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CustomerTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
+class AccountTypedAddressWithDefaultTypeTest extends FormIntegrationTestCase
 {
     /** @var AccountTypedAddressWithDefaultType */
     protected $formType;

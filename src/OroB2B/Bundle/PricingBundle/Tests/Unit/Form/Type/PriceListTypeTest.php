@@ -14,8 +14,8 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 class PriceListTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
-    const CUSTOMER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
-    const CUSTOMER_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
+    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
     const WEBSITE_CLASS = 'OroB2B\Bundle\WebsiteBundle\Entity\Website';
 
     /**
@@ -32,8 +32,8 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         $this->type = new PriceListType();
         $this->type->setDataClass(self::DATA_CLASS);
-        $this->type->setAccountClass(self::CUSTOMER_CLASS);
-        $this->type->setAccountGroupClass(self::CUSTOMER_GROUP_CLASS);
+        $this->type->setAccountClass(self::ACCOUNT_CLASS);
+        $this->type->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
         $this->type->setWebsiteClass(self::WEBSITE_CLASS);
     }
 
@@ -53,10 +53,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $currencySelectType = new CurrencySelectionTypeStub();
         $entityIdentifierType = new EntityIdentifierType(
             [
-                1 => $this->getEntity(self::CUSTOMER_CLASS, 1),
-                2 => $this->getEntity(self::CUSTOMER_CLASS, 2),
-                3 => $this->getEntity(self::CUSTOMER_GROUP_CLASS, 3),
-                4 => $this->getEntity(self::CUSTOMER_GROUP_CLASS, 4),
+                1 => $this->getEntity(self::ACCOUNT_CLASS, 1),
+                2 => $this->getEntity(self::ACCOUNT_CLASS, 2),
+                3 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3),
+                4 => $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4),
                 5 => $this->getEntity(self::WEBSITE_CLASS, 5),
                 6 => $this->getEntity(self::WEBSITE_CLASS, 6)
             ]
@@ -79,10 +79,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('name'));
         $this->assertTrue($form->has('currencies'));
-        $this->assertTrue($form->has('appendCustomers'));
-        $this->assertTrue($form->has('removeCustomers'));
-        $this->assertTrue($form->has('appendCustomerGroups'));
-        $this->assertTrue($form->has('removeCustomerGroups'));
+        $this->assertTrue($form->has('appendAccounts'));
+        $this->assertTrue($form->has('removeAccounts'));
+        $this->assertTrue($form->has('appendAccountGroups'));
+        $this->assertTrue($form->has('removeAccountGroups'));
         $this->assertTrue($form->has('appendWebsites'));
         $this->assertTrue($form->has('removeWebsites'));
     }
@@ -128,10 +128,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
         $result = $form->getData();
         $this->assertEquals($expectedData['name'], $result->getName());
         $this->assertEquals($expectedData['currencies'], array_values($result->getCurrencies()));
-        $this->assertEquals($expectedData['appendCustomers'], $form->get('appendCustomers')->getData());
-        $this->assertEquals($expectedData['removeCustomers'], $form->get('removeCustomers')->getData());
-        $this->assertEquals($expectedData['appendCustomerGroups'], $form->get('appendCustomerGroups')->getData());
-        $this->assertEquals($expectedData['removeCustomerGroups'], $form->get('removeCustomerGroups')->getData());
+        $this->assertEquals($expectedData['appendAccounts'], $form->get('appendAccounts')->getData());
+        $this->assertEquals($expectedData['removeAccounts'], $form->get('removeAccounts')->getData());
+        $this->assertEquals($expectedData['appendAccountGroups'], $form->get('appendAccountGroups')->getData());
+        $this->assertEquals($expectedData['removeAccountGroups'], $form->get('removeAccountGroups')->getData());
         $this->assertEquals($expectedData['appendWebsites'], $form->get('appendWebsites')->getData());
         $this->assertEquals($expectedData['removeWebsites'], $form->get('removeWebsites')->getData());
     }
@@ -147,10 +147,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'name' => 'Test Price List',
                     'currencies' => [],
-                    'appendCustomers' => [],
-                    'removeCustomers' => [],
-                    'appendCustomerGroups' => [],
-                    'removeCustomerGroups' => [],
+                    'appendAccounts' => [],
+                    'removeAccounts' => [],
+                    'appendAccountGroups' => [],
+                    'removeAccountGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
                 ],
@@ -158,10 +158,10 @@ class PriceListTypeTest extends FormIntegrationTestCase
                     'name' => 'Test Price List',
                     'currencies' => [],
                     'default' => false,
-                    'appendCustomers' => [],
-                    'removeCustomers' => [],
-                    'appendCustomerGroups' => [],
-                    'removeCustomerGroups' => [],
+                    'appendAccounts' => [],
+                    'removeAccounts' => [],
+                    'appendAccountGroups' => [],
+                    'removeAccountGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
                 ]
@@ -170,33 +170,33 @@ class PriceListTypeTest extends FormIntegrationTestCase
                 'defaultData' => [
                     'name' => 'Test Price List',
                     'currencies' => ['USD', 'UAH'],
-                    'appendCustomers' => [],
-                    'removeCustomers' => [],
-                    'appendCustomerGroups' => [],
-                    'removeCustomerGroups' => [],
+                    'appendAccounts' => [],
+                    'removeAccounts' => [],
+                    'appendAccountGroups' => [],
+                    'removeAccountGroups' => [],
                     'appendWebsites' => [],
                     'removeWebsites' => [],
                 ],
                 'submittedData' => [
                     'name' => 'Test Price List 01',
                     'currencies' => ['EUR', 'USD'],
-                    'appendCustomers' => [1],
-                    'removeCustomers' => [2],
-                    'appendCustomerGroups' => [3],
-                    'removeCustomerGroups' => [4],
+                    'appendAccounts' => [1],
+                    'removeAccounts' => [2],
+                    'appendAccountGroups' => [3],
+                    'removeAccountGroups' => [4],
                     'appendWebsites' => [5],
                     'removeWebsites' => [6],
                 ],
                 'expectedData' => [
                     'name' => 'Test Price List 01',
                     'currencies' => ['EUR', 'USD'],
-                    'appendCustomers' => [$this->getEntity(self::CUSTOMER_CLASS, 1)],
-                    'removeCustomers' => [$this->getEntity(self::CUSTOMER_CLASS, 2)],
-                    'appendCustomerGroups' => [
-                        $this->getEntity(self::CUSTOMER_GROUP_CLASS, 3)
+                    'appendAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 1)],
+                    'removeAccounts' => [$this->getEntity(self::ACCOUNT_CLASS, 2)],
+                    'appendAccountGroups' => [
+                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, 3)
                     ],
-                    'removeCustomerGroups' => [
-                        $this->getEntity(self::CUSTOMER_GROUP_CLASS, 4)
+                    'removeAccountGroups' => [
+                        $this->getEntity(self::ACCOUNT_GROUP_CLASS, 4)
                     ],
                     'appendWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 5)],
                     'removeWebsites' => [$this->getEntity(self::WEBSITE_CLASS, 6)],

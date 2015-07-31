@@ -34,7 +34,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
     public function testAccountUserView()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_customer_account_user_view', [
+        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_view', [
             'id' => $this->accountUser->getId()
         ]));
 
@@ -55,7 +55,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler     = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_customer_account_user_address_create',
+                'orob2b_account_account_user_address_create',
                 ['entityId' => $accountUser->getId(), '_widgetContainer' => 'dialog']
             )
         );
@@ -75,7 +75,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', [
+            $this->getUrl('orob2b_api_account_account_user_get_accountuser_address_primary', [
                 'entityId' => $accountUser->getId()
             ])
         );
@@ -110,7 +110,7 @@ class AccountUserAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', [
+            $this->getUrl('orob2b_api_account_account_user_get_accountuser_address_primary', [
                 'entityId' => $accountUserId
             ])
         );
@@ -120,7 +120,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_customer_account_user_address_update',
+                'orob2b_account_account_user_address_update',
                 ['entityId' => $accountUserId, 'id' => $address['id'], '_widgetContainer' => 'dialog']
             )
         );
@@ -140,7 +140,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_account_user_get_accountuser_address_primary', [
+            $this->getUrl('orob2b_api_account_account_user_get_accountuser_address_primary', [
                 'entityId' => $accountUserId
             ])
         );
@@ -179,7 +179,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_customer_account_user_get_accountuser_address_primary',
+                'orob2b_api_account_account_user_get_accountuser_address_primary',
                 ['entityId' => $accountUserId]
             )
         );
@@ -189,7 +189,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'DELETE',
             $this->getUrl(
-                'orob2b_api_customer_account_user_delete_accountuser_address',
+                'orob2b_api_account_account_user_delete_accountuser_address',
                 ['entityId' => $accountUserId, 'addressId' => $address['id']]
             )
         );
@@ -209,34 +209,34 @@ class AccountUserAddressControllerTest extends WebTestCase
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
-        $form['orob2b_customer_account_user_typed_address[street]']            = 'Street';
-        $form['orob2b_customer_account_user_typed_address[city]']              = 'City';
-        $form['orob2b_customer_account_user_typed_address[postalCode]']        = 'Zip code';
-        $form['orob2b_customer_account_user_typed_address[types]']             = [AddressType::TYPE_BILLING];
-        $form['orob2b_customer_account_user_typed_address[defaults][default]'] = [AddressType::TYPE_BILLING];
+        $form['orob2b_account_account_user_typed_address[street]']            = 'Street';
+        $form['orob2b_account_account_user_typed_address[city]']              = 'City';
+        $form['orob2b_account_account_user_typed_address[postalCode]']        = 'Zip code';
+        $form['orob2b_account_account_user_typed_address[types]']             = [AddressType::TYPE_BILLING];
+        $form['orob2b_account_account_user_typed_address[defaults][default]'] = [AddressType::TYPE_BILLING];
 
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
-            '<select name="orob2b_customer_account_user_typed_address[country]" ' .
-            'id="orob2b_customer_account_user_typed_address_country" ' .
+            '<select name="orob2b_account_account_user_typed_address[country]" ' .
+            'id="orob2b_account_account_user_typed_address_country" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="AF">Afghanistan</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_customer_account_user_typed_address[country]'] = 'AF';
+        $form['orob2b_account_account_user_typed_address[country]'] = 'AF';
 
         $doc->loadHTML(
-            '<select name="orob2b_customer_account_user_typed_address[region]" ' .
-            'id="orob2b_customer_account_user_typed_address_region" ' .
+            '<select name="orob2b_account_account_user_typed_address[region]" ' .
+            'id="orob2b_account_account_user_typed_address_region" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="AF-BDS">Badakhshān</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_customer_account_user_typed_address[region]'] = 'AF-BDS';
+        $form['orob2b_account_account_user_typed_address[region]'] = 'AF-BDS';
 
         return $form;
     }
@@ -252,35 +252,35 @@ class AccountUserAddressControllerTest extends WebTestCase
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
-        $form['orob2b_customer_account_user_typed_address[types]'] = [
+        $form['orob2b_account_account_user_typed_address[types]'] = [
             AddressType::TYPE_BILLING,
             AddressType::TYPE_SHIPPING
         ];
-        $form['orob2b_customer_account_user_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
+        $form['orob2b_account_account_user_typed_address[defaults][default]'] = [false, AddressType::TYPE_SHIPPING];
 
 
         $doc = new \DOMDocument("1.0");
         $doc->loadHTML(
-            '<select name="orob2b_customer_account_user_typed_address[country]" ' .
-            'id="orob2b_customer_account_user_typed_address_country" ' .
+            '<select name="orob2b_account_account_user_typed_address[country]" ' .
+            'id="orob2b_account_account_user_typed_address_country" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="ZW">Zimbabwe</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_customer_account_user_typed_address[country]'] = 'ZW';
+        $form['orob2b_account_account_user_typed_address[country]'] = 'ZW';
 
         $doc->loadHTML(
-            '<select name="orob2b_customer_account_user_typed_address[region]" ' .
-            'id="orob2b_customer_account_user_typed_address_region" ' .
+            '<select name="orob2b_account_account_user_typed_address[region]" ' .
+            'id="orob2b_account_account_user_typed_address_region" ' .
             'tabindex="-1" class="select2-offscreen"> ' .
             '<option value="" selected="selected"></option> ' .
             '<option value="ZW-MA">Manicaland</option> </select>'
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $form['orob2b_customer_account_user_typed_address[region]'] = 'ZW-MA';
+        $form['orob2b_account_account_user_typed_address[region]'] = 'ZW-MA';
 
         return $form;
     }

@@ -69,17 +69,17 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessValidData()
     {
-        /** @var Account $appendedCustomer */
-        $appendedCustomer = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
-        /** @var Account $removedCustomer */
-        $removedCustomer = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2);
-        $this->entity->addAccount($removedCustomer);
+        /** @var Account $appendedAccount */
+        $appendedAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
+        /** @var Account $removedAccount */
+        $removedAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2);
+        $this->entity->addAccount($removedAccount);
 
-        /** @var AccountGroup $appendedCustomerGroup */
-        $appendedCustomerGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1);
-        /** @var AccountGroup $removedCustomerGroup */
-        $removedCustomerGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2);
-        $this->entity->addAccountGroup($removedCustomerGroup);
+        /** @var AccountGroup $appendedAccountGroup */
+        $appendedAccountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1);
+        /** @var AccountGroup $removedAccountGroup */
+        $removedAccountGroup = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2);
+        $this->entity->addAccountGroup($removedAccountGroup);
 
         /** @var Website $appendedWebsite */
         $appendedWebsite = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1);
@@ -91,10 +91,10 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['appendCustomers', $this->getFormForEntity($appendedCustomer)],
-                    ['removeCustomers', $this->getFormForEntity($removedCustomer)],
-                    ['appendCustomerGroups', $this->getFormForEntity($appendedCustomerGroup)],
-                    ['removeCustomerGroups', $this->getFormForEntity($removedCustomerGroup)],
+                    ['appendAccounts', $this->getFormForEntity($appendedAccount)],
+                    ['removeAccounts', $this->getFormForEntity($removedAccount)],
+                    ['appendAccountGroups', $this->getFormForEntity($appendedAccountGroup)],
+                    ['removeAccountGroups', $this->getFormForEntity($removedAccountGroup)],
                     ['appendWebsites', $this->getFormForEntity($appendedWebsite)],
                     ['removeWebsites', $this->getFormForEntity($removedWebsite)],
                 ]
@@ -104,12 +104,12 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($this->handler->process($this->entity));
 
-        $this->assertFalse($this->entity->getAccounts()->contains($removedCustomer));
-        $this->assertFalse($this->entity->getAccountGroups()->contains($removedCustomerGroup));
+        $this->assertFalse($this->entity->getAccounts()->contains($removedAccount));
+        $this->assertFalse($this->entity->getAccountGroups()->contains($removedAccountGroup));
         $this->assertFalse($this->entity->getWebsites()->contains($removedWebsite));
 
-        $this->assertTrue($this->entity->getAccounts()->contains($appendedCustomer));
-        $this->assertTrue($this->entity->getAccountGroups()->contains($appendedCustomerGroup));
+        $this->assertTrue($this->entity->getAccounts()->contains($appendedAccount));
+        $this->assertTrue($this->entity->getAccountGroups()->contains($appendedAccountGroup));
         $this->assertTrue($this->entity->getWebsites()->contains($appendedWebsite));
     }
 
@@ -124,23 +124,23 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()->getMock();
 
-        $repository->expects($this->any())->method('setPriceListToCustomer')->will(
+        $repository->expects($this->any())->method('setPriceListToAccount')->will(
             $this->returnCallback(
-                function (Account $customer, PriceList $priceList = null) {
-                    $this->entity->removeAccount($customer);
+                function (Account $account, PriceList $priceList = null) {
+                    $this->entity->removeAccount($account);
                     if ($priceList) {
-                        $this->entity->addAccount($customer);
+                        $this->entity->addAccount($account);
                     }
                 }
             )
         );
 
-        $repository->expects($this->any())->method('setPriceListToCustomerGroup')->will(
+        $repository->expects($this->any())->method('setPriceListToAccountGroup')->will(
             $this->returnCallback(
-                function (AccountGroup $customerGroup, PriceList $priceList = null) {
-                    $this->entity->removeAccountGroup($customerGroup);
+                function (AccountGroup $accountGroup, PriceList $priceList = null) {
+                    $this->entity->removeAccountGroup($accountGroup);
                     if ($priceList) {
-                        $this->entity->addAccountGroup($customerGroup);
+                        $this->entity->addAccountGroup($accountGroup);
                     }
                 }
             )

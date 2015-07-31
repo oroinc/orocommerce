@@ -35,7 +35,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $id = $userRole->getId();
 
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_customer_delete_accountuserrole', ['id' => $id]));
+        $this->client->request('DELETE', $this->getUrl('orob2b_api_account_delete_accountuserrole', ['id' => $id]));
         $result = $this->client->getResponse();
 
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

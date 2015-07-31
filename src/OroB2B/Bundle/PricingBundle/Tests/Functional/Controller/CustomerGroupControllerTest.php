@@ -10,7 +10,7 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 /**
  * @dbIsolation
  */
-class CustomerGroupControllerTest extends WebTestCase
+class AccountGroupControllerTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -22,7 +22,7 @@ class CustomerGroupControllerTest extends WebTestCase
     public function testUpdate()
     {
         /** @var AccountGroup $group */
-        $group = $this->getReference('customer_group.group1');
+        $group = $this->getReference('account_group.group1');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');

@@ -21,8 +21,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList1',
             'reference' => 'price_list_1',
             'default' => false,
-            'customers' => [],
-            'groups' => ['customer_group.group1'],
+            'accounts' => [],
+            'groups' => ['account_group.group1'],
             'websites' => ['US'],
             'currencies' => ['USD', 'EUR', 'AUD', 'CAD']
         ],
@@ -30,7 +30,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList2',
             'reference' => 'price_list_2',
             'default' => false,
-            'customers' => ['account.level_1.2'],
+            'accounts' => ['account.level_1.2'],
             'groups' => [],
             'websites' => [],
             'currencies' => ['USD']
@@ -39,7 +39,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList3',
             'reference' => 'price_list_3',
             'default' => false,
-            'customers' => ['account.orphan'],
+            'accounts' => ['account.orphan'],
             'groups' => [],
             'websites' => ['Canada'],
             'currencies' => ['CAD']
@@ -48,8 +48,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList4',
             'reference' => 'price_list_4',
             'default' => false,
-            'customers' => ['account.level_1.1'],
-            'groups' => ['customer_group.group2'],
+            'accounts' => ['account.level_1.1'],
+            'groups' => ['account_group.group2'],
             'websites' => [],
             'currencies' => ['GBP']
         ],
@@ -57,8 +57,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList5',
             'reference' => 'price_list_5',
             'default' => false,
-            'customers' => ['account.level_1.1.1'],
-            'groups' => ['customer_group.group3'],
+            'accounts' => ['account.level_1.1.1'],
+            'groups' => ['account_group.group3'],
             'websites' => [],
             'currencies' => ['GBP', 'EUR']
         ]
@@ -81,18 +81,18 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now);
 
-            foreach ($priceListData['customers'] as $customerReference) {
-                /** @var Account $customer */
-                $customer = $this->getReference($customerReference);
+            foreach ($priceListData['accounts'] as $accountReference) {
+                /** @var Account $account */
+                $account = $this->getReference($accountReference);
 
-                $priceList->addAccount($customer);
+                $priceList->addAccount($account);
             }
 
-            foreach ($priceListData['groups'] as $customerGroupReference) {
-                /** @var AccountGroup $customerGroup */
-                $customerGroup = $this->getReference($customerGroupReference);
+            foreach ($priceListData['groups'] as $accountGroupReference) {
+                /** @var AccountGroup $accountGroup */
+                $accountGroup = $this->getReference($accountGroupReference);
 
-                $priceList->addAccountGroup($customerGroup);
+                $priceList->addAccountGroup($accountGroup);
             }
 
             foreach ($priceListData['websites'] as $websiteReference) {
@@ -120,7 +120,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
     {
         return [
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
         ];
     }

@@ -123,7 +123,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $roleLabel = 'customer_role_label';
+        $roleLabel = 'account_role_label';
         $alteredRoleLabel = 'altered_role_label';
 
         $defaultRole = new AccountUserRole();

@@ -14,10 +14,10 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  * @outputBuffering enabled
  * @dbIsolation
  */
-class CustomerControllerTest extends WebTestCase
+class AccountControllerTest extends WebTestCase
 {
-    const CUSTOMER_NAME = 'Customer_name';
-    const UPDATED_NAME = 'Customer_name_UP';
+    const ACCOUNT_NAME = 'Account_name';
+    const UPDATED_NAME = 'Account_name_UP';
 
     protected function setUp()
     {
@@ -25,7 +25,7 @@ class CustomerControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating'
             ]
@@ -48,9 +48,10 @@ class CustomerControllerTest extends WebTestCase
         /** @var Account $parent */
         $parent = $this->getReference('account.level_1');
         /** @var AccountGroup $group */
-        $group = $this->getReference('customer_group.group1');
+        $group = $this->getReference('account_group.group1');
+        /** @var AbstractEnumValue $internalRating */
         $internalRating = $this->getReference('internal_rating.1 of 5');
-        $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating);
+        $this->assertAccountSave($crawler, self::ACCOUNT_NAME, $parent, $group, $internalRating);
     }
 
     /**
@@ -59,8 +60,8 @@ class CustomerControllerTest extends WebTestCase
     public function testUpdate()
     {
         $response = $this->client->requestGrid(
-            'customer-customers-grid',
-            ['customer-customers-grid[_filter][name][value]' => self::CUSTOMER_NAME]
+            'account-accounts-grid',
+            ['account-accounts-grid[_filter][name][value]' => self::ACCOUNT_NAME]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
@@ -77,9 +78,10 @@ class CustomerControllerTest extends WebTestCase
         /** @var Account $newParent */
         $newParent = $this->getReference('account.level_1.1');
         /** @var AccountGroup $newGroup */
-        $newGroup = $this->getReference('customer_group.group2');
+        $newGroup = $this->getReference('account_group.group2');
+        /** @var AbstractEnumValue $internalRating */
         $internalRating = $this->getReference('internal_rating.2 of 5');
-        $this->assertCustomerSave($crawler, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
+        $this->assertAccountSave($crawler, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
 
         return $id;
     }
@@ -98,25 +100,27 @@ class CustomerControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Customers - Customers', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Accounts - Accounts', $html);
         $this->assertContains('Add attachment', $html);
         $this->assertContains('Add note', $html);
         $this->assertContains('Address Book', $html);
         /** @var Account $newParent */
         $newParent = $this->getReference('account.level_1.1');
         /** @var AccountGroup $newGroup */
-        $newGroup = $this->getReference('customer_group.group2');
+        $newGroup = $this->getReference('account_group.group2');
+        /** @var AbstractEnumValue $internalRating */
         $internalRating = $this->getReference('internal_rating.2 of 5');
         $this->assertViewPage($html, self::UPDATED_NAME, $newParent, $newGroup, $internalRating);
     }
 
     /**
-     * @param Crawler $crawler
-     * @param string $name
-     * @param Account $parent
-     * @param AccountGroup $group
+     * @param Crawler           $crawler
+     * @param string            $name
+     * @param Account           $parent
+     * @param AccountGroup      $group
+     * @param AbstractEnumValue $internalRating
      */
-    protected function assertCustomerSave(
+    protected function assertAccountSave(
         Crawler $crawler,
         $name,
         Account $parent,
@@ -140,7 +144,7 @@ class CustomerControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer has been saved', $html);
+        $this->assertContains('Account has been saved', $html);
         $this->assertViewPage($html, $name, $parent, $group, $internalRating);
     }
 

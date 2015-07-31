@@ -20,7 +20,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
     /**
      * @var Account[]
      */
-    protected static $customers = [];
+    protected static $accounts = [];
 
     /**
      * {@inheritdoc}

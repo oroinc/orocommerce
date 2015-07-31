@@ -7,7 +7,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as CustomerSelectTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
@@ -22,6 +22,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
     const ROLE_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole';
+    const ADDRESS_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress';
 
     /**
      * @var AccountUserType
@@ -36,7 +37,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @var Account[]
      */
-    protected static $customers = [];
+    protected static $accounts = [];
 
     /**
      * @var AccountUserAddress[]
@@ -72,14 +73,14 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         );
 
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
-        $customerSelectType = new CustomerSelectTypeStub($this->getCustomers(), 'orob2b_account_select');
+        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), 'orob2b_account_select');
 
         return [
             new PreloadedExtension(
                 [
                     OroDateType::NAME => new OroDateType(),
                     'entity' => $rolesEntity,
-                    $customerSelectType->getName() => $customerSelectType,
+                    $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
                 ],
@@ -136,12 +137,12 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser->setLastName('Doe');
         $existingAccountUser->setEmail('johndoe@example.com');
         $existingAccountUser->setPassword('123456');
-        $existingAccountUser->setAccount($this->getCustomer(1));
+        $existingAccountUser->setAccount($this->getAccount(1));
         $existingAccountUser->addAddress($this->getAddresses()[1]);
 
         $alteredExistingAccountUser = clone $existingAccountUser;
         $alteredExistingAccountUser->setEnabled(false);
-        $alteredExistingAccountUser->setAccount($this->getCustomer(2));
+        $alteredExistingAccountUser->setAccount($this->getAccount(2));
 
         $alteredExistingAccountUserWithRole = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithRole->setRoles([$this->getRole(2, 'test02')]);
@@ -161,7 +162,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'firstName' => 'John',
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
-                    'customer' => 2
+                    'account' => 2
                 ],
                 'expectedData' => $alteredExistingAccountUser
             ],
@@ -171,7 +172,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'firstName' => 'John',
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
-                    'customer' => 2,
+                    'account' => 2,
                     'roles' => [2]
                 ],
                 'expectedData' => $alteredExistingAccountUserWithRole,
@@ -183,7 +184,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'firstName' => 'John',
                     'lastName' => 'Doe',
                     'email' => 'johndoe@example.com',
-                    'customer' => 2,
+                    'account' => 2,
                     'addresses' => [1, 2]
                 ],
                 'expectedData' => $alteredExistingAccountUserWithAddresses,
@@ -217,27 +218,27 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @return Account[]
      */
-    protected function getCustomers()
+    protected function getAccounts()
     {
-        if (!self::$customers) {
-            self::$customers = [
-                '1' => $this->createCustomer(1, 'first'),
-                '2' => $this->createCustomer(2, 'second')
+        if (!self::$accounts) {
+            self::$accounts = [
+                '1' => $this->createAccount(1, 'first'),
+                '2' => $this->createAccount(2, 'second')
             ];
         }
 
-        return self::$customers;
+        return self::$accounts;
     }
 
     /**
      * @param int $id
      * @return Account
      */
-    protected function getCustomer($id)
+    protected function getAccount($id)
     {
-        $customers = $this->getCustomers();
+        $accounts = $this->getAccounts();
 
-        return $customers[$id];
+        return $accounts[$id];
     }
 
     /**
@@ -245,17 +246,17 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      * @param string $name
      * @return Account
      */
-    protected static function createCustomer($id, $name)
+    protected static function createAccount($id, $name)
     {
-        $customer = new Account();
+        $account = new Account();
 
-        $reflection = new \ReflectionProperty(get_class($customer), 'id');
+        $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);
-        $reflection->setValue($customer, $id);
+        $reflection->setValue($account, $id);
 
-        $customer->setName($name);
+        $account->setName($name);
 
-        return $customer;
+        return $account;
     }
 
     /**

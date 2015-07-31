@@ -13,10 +13,10 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressTypeStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\CustomerTypedAddressWithDefaultTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AccountTypedAddressWithDefaultTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
-class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
+class AccountTypedAddressTypeTest extends FormIntegrationTestCase
 {
     /** @var AccountTypedAddressType */
     protected $formType;
@@ -99,7 +99,7 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     $addressType->getName() => $addressType,
-                    CustomerTypedAddressWithDefaultTypeStub::NAME  => new CustomerTypedAddressWithDefaultTypeStub([
+                    AccountTypedAddressWithDefaultTypeStub::NAME  => new AccountTypedAddressWithDefaultTypeStub([
                         $this->billingType,
                         $this->shippingType
                     ], $this->em),
@@ -147,8 +147,8 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $customerAddressWithAllDefaultTypes = new AccountAddress();
-        $customerAddressWithAllDefaultTypes
+        $accountAddressWithAllDefaultTypes = new AccountAddress();
+        $accountAddressWithAllDefaultTypes
             ->setPrimary(true)
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
@@ -163,7 +163,7 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
                     'defaults' => ['default' => [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING]],
                     'primary' => true,
                 ],
-                'expectedData' => $customerAddressWithAllDefaultTypes,
+                'expectedData' => $accountAddressWithAllDefaultTypes,
             ],
         ];
     }
@@ -203,17 +203,17 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
      */
     public function submitWithFormSubscribersProvider()
     {
-        $customerAddress1 = new AccountAddress();
-        $customerAddress1
+        $accountAddress1 = new AccountAddress();
+        $accountAddress1
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $customerAddress2 = new AccountAddress();
-        $customerAddress2
+        $accountAddress2 = new AccountAddress();
+        $accountAddress2
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $customerAddressExpected = new AccountAddress();
-        $customerAddressExpected
+        $accountAddressExpected = new AccountAddress();
+        $accountAddressExpected
             ->setPrimary(true)
             ->addType($this->billingType)
             ->addType($this->shippingType)
@@ -223,23 +223,23 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
             ->addType($this->shippingType)
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $customer = new Account();
-        $customer->addAddress($customerAddress1);
-        $customer->addAddress($customerAddress2);
+        $account = new Account();
+        $account->addAddress($accountAddress1);
+        $account->addAddress($accountAddress2);
 
         return [
-            'FixCustomerAddressesDefaultSubscriber check' => [
+            'FixAccountAddressesDefaultSubscriber check' => [
                 'options' => [],
-                'defaultData' => $customerAddress1,
-                'viewData' => $customerAddress1,
+                'defaultData' => $accountAddress1,
+                'viewData' => $accountAddress1,
                 'submittedData' => [
                     'types' => [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING],
                     'defaults' => ['default' => [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING]],
                     'primary' => true,
                 ],
-                'expectedData' => $customerAddressExpected,
-                'otherAddresses' => [$customerAddress2],
-                'updateOwner' => $customer
+                'expectedData' => $accountAddressExpected,
+                'otherAddresses' => [$accountAddress2],
+                'updateOwner' => $account
             ]
         ];
 

@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Form\EventListener\FixAccountAddressesDefaultSub
 
 use Symfony\Component\Form\FormEvents;
 
-class FixCustomerAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCase
+class FixAccountAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var FixAccountAddressesDefaultSubscriber
@@ -39,9 +39,9 @@ class FixCustomerAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestC
     public function testPostSubmit(array $allAddresses, $formAddressKey, array $expectedAddressesData)
     {
         // Set owner for all addresses
-        $customer = new Account();
+        $account = new Account();
         foreach ($allAddresses as $address) {
-            $customer->addAddress($address);
+            $account->addAddress($address);
         }
 
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')

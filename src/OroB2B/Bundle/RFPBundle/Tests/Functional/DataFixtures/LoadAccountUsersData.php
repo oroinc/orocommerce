@@ -26,14 +26,14 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
     const USER_EMAIL     = 'user@example.com';
     const USER_PASSWORD  = '123123';
 
-    const SUB_CUSTOMER_USER_EMAIL = 'sub_customer@example.com';
-    const SUB_CUSTOMER_USER_PASSWORD ='147147';
+    const SUB_ACCOUNT_USER_EMAIL = 'sub_account@example.com';
+    const SUB_ACCOUNT_USER_PASSWORD ='147147';
 
-    const SAME_CUSTOMER_USER_EMAIL    = 'same_customer@example.com';
-    const SAME_CUSTOMER_USER_PASSWORD = '456456';
+    const SAME_ACCOUNT_USER_EMAIL    = 'same_account@example.com';
+    const SAME_ACCOUNT_USER_PASSWORD = '456456';
 
-    const NOT_SAME_CUSTOMER_USER_EMAIL    = 'not_same_customer@example.com';
-    const NOT_SAME_CUSTOMER_USER_PASSWORD = '789789';
+    const NOT_SAME_ACCOUNT_USER_EMAIL    = 'not_same_account@example.com';
+    const NOT_SAME_ACCOUNT_USER_PASSWORD = '789789';
 
     /** @var ContainerInterface */
     protected $container;
@@ -44,7 +44,7 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 
@@ -59,37 +59,37 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             'password' => self::USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'account.level_1.1',
+            'account' => 'account.level_1.1',
             'role' => self::BUYER
         ],
         [
             'first_name' => 'Alice',
             'last_name' => 'Smith',
-            'email' => self::SAME_CUSTOMER_USER_EMAIL,
-            'password' => self::SAME_CUSTOMER_USER_PASSWORD,
+            'email' => self::SAME_ACCOUNT_USER_EMAIL,
+            'password' => self::SAME_ACCOUNT_USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'account.level_1.1',
+            'account' => 'account.level_1.1',
             'role' => self::BUYER
         ],
         [
             'first_name' => 'Jim',
             'last_name' => 'Smith',
-            'email' => self::SUB_CUSTOMER_USER_EMAIL,
-            'password' => self::SUB_CUSTOMER_USER_PASSWORD,
+            'email' => self::SUB_ACCOUNT_USER_EMAIL,
+            'password' => self::SUB_ACCOUNT_USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'account.level_1.1.1',
+            'account' => 'account.level_1.1.1',
             'role' => self::BUYER
         ],
         [
             'first_name' => 'Jack',
             'last_name' => 'Brown',
-            'email' => self::NOT_SAME_CUSTOMER_USER_EMAIL,
-            'password' => self::NOT_SAME_CUSTOMER_USER_PASSWORD,
+            'email' => self::NOT_SAME_ACCOUNT_USER_EMAIL,
+            'password' => self::NOT_SAME_ACCOUNT_USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'account.level_1.2',
+            'account' => 'account.level_1.2',
             'role' => self::BUYER
         ]
     ];
@@ -127,14 +127,14 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             /** @var AccountUserRole $role */
             $role = $accountUserRoleRepository->findOneBy(['role' => $user['role']]);
 
-            /** @var Account $customer */
-            $customer = $this->getReference($user['customer']);
+            /** @var Account $account */
+            $account = $this->getReference($user['account']);
 
             $entity
                 ->setFirstName($user['first_name'])
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])
-                ->setAccount($customer)
+                ->setAccount($account)
                 ->setConfirmed($user['confirmed'])
                 ->setEnabled($user['enabled'])
                 ->setSalt('')

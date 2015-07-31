@@ -45,22 +45,22 @@ class AccountUserTest extends AbstractUserTest
 
     public function testProperties()
     {
-        $customer = new Account();
+        $account = new Account();
 
         $user = $this->getUser();
         $user->setFirstName('John');
         $user->setLastName('Doe');
         $user->setEmail('test@example.com');
-        $user->setAccount($customer);
+        $user->setAccount($account);
 
         $this->assertEquals('John', $user->getFirstName());
         $this->assertEquals('Doe', $user->getLastName());
         $this->assertEquals('test@example.com', $user->getUsername());
         $this->assertEquals('test@example.com', $user->getEmail());
-        $this->assertEquals($customer, $user->getAccount());
+        $this->assertEquals($account, $user->getAccount());
     }
 
-    public function testCreateCustomer()
+    public function testCreateAccount()
     {
         $organization = new Organization();
         $organization->setName('test');
@@ -73,12 +73,12 @@ class AccountUserTest extends AbstractUserTest
 
         // createAccount is triggered on prePersist event
         $user->createAccount();
-        $customer = $user->getAccount();
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\Account', $customer);
-        $this->assertEquals($organization, $customer->getOrganization());
-        $this->assertEquals('John Doe', $customer->getName());
+        $account = $user->getAccount();
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\Account', $account);
+        $this->assertEquals($organization, $account->getOrganization());
+        $this->assertEquals('John Doe', $account->getName());
 
-        // new customer created only if it not defined
+        // new account created only if it not defined
         $user->setFirstName('Jane');
         $user->createAccount();
         $this->assertEquals('John Doe', $user->getAccount()->getName());

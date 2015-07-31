@@ -123,15 +123,15 @@ class PriceListTest extends EntityTestCase
     public function relationsDataProvider()
     {
         return [
-            'customer' => [
+            'account' => [
                 'entity' => new Account(),
-                'getCollectionMethod' => 'getCustomers',
+                'getCollectionMethod' => 'getAccounts',
                 'addMethod' => 'addAccount',
                 'removeMethod' => 'removeAccount',
             ],
-            'customerGroup' => [
+            'accountGroup' => [
                 'entity' => new AccountGroup(),
-                'getCollectionMethod' => 'getCustomerGroups',
+                'getCollectionMethod' => 'getAccountGroups',
                 'addMethod' => 'addAccountGroup',
                 'removeMethod' => 'removeAccountGroup',
             ],

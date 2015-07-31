@@ -9,22 +9,22 @@ use PHPUnit_Framework_MockObject_MockObject as Mock;
 use OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
-class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
+class AccountTreeHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * Test createTree
      */
     public function testCreateTree()
     {
-        $class = 'OroB2BAccountBundle:Customer';
+        $class = 'OroB2BAccountBundle:Account';
 
-        $customer1 = $this->createCustomer(1, 'Waclaw Zagorski');
-        $customer2 = $this->createCustomer(2, 'Mieczyslaw Krawicz');
-        $customer3 = $this->createCustomer(3, 'Adam Brodzisz');
-        $customer4 = $this->createCustomer(4, 'Jerzy Ficowski');
+        $account1 = $this->createAccount(1, 'Waclaw Zagorski');
+        $account2 = $this->createAccount(2, 'Mieczyslaw Krawicz');
+        $account3 = $this->createAccount(3, 'Adam Brodzisz');
+        $account4 = $this->createAccount(4, 'Jerzy Ficowski');
 
-        $this->addChildren($customer3, [$customer4]);
-        $this->addChildren($customer1, [$customer2, $customer3]);
+        $this->addChildren($account3, [$account4]);
+        $this->addChildren($account1, [$account2, $account3]);
 
         /** @var Mock|\Doctrine\ORM\EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -34,7 +34,7 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $repository->expects($this->once())
             ->method('find')
             ->with(1)
-            ->willReturn($customer1);
+            ->willReturn($account1);
 
         /** @var Mock|\Doctrine\Bundle\DoctrineBundle\Registry $registry */
         $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
@@ -85,21 +85,21 @@ class CustomerTreeHandlerTest extends \PHPUnit_Framework_TestCase
      *
      * @return Mock|Account
      */
-    protected function createCustomer($id, $name)
+    protected function createAccount($id, $name)
     {
-        $customer = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Account')
+        $account = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Account')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $customer->expects($this->any())
+        $account->expects($this->any())
             ->method('getId')
             ->willReturn($id);
 
-        $customer->expects($this->any())
+        $account->expects($this->any())
             ->method('getName')
             ->willReturn($name);
 
-        return $customer;
+        return $account;
     }
 
     /**
