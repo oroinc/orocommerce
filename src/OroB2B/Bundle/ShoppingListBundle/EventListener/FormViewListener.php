@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -91,13 +92,18 @@ class FormViewListener
         $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
         $shoppingLists = $shoppingListRepository->findAllExceptCurrentForAccountUser($accountUser);
 
+        $lineItem = (new LineItem())
+            ->setProduct($product);
+
         $template = $event->getEnvironment()->render(
             'OroB2BShoppingListBundle:Product:product_view.html.twig',
             [
                 'product'             => $product,
                 'shoppingLists'       => $shoppingLists,
                 'currentShoppingList' => $currentShoppingList,
-                'form'                => $this->formFactory->create(FrontendLineItemType::NAME)->createView(),
+                'form'                => $this->formFactory
+                    ->create(FrontendLineItemType::NAME, $lineItem)
+                    ->createView(),
             ]
         );
 
