@@ -15,8 +15,6 @@ class ProductType extends AbstractType
 {
     const NAME = 'orob2b_product';
 
-
-
     /**
      * @var string
      */
