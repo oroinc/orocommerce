@@ -208,10 +208,10 @@ class LineItemTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = new OptionsResolver();
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
         $resolvedOptions = $resolver->resolve();
 
         $lineItem = new LineItem();

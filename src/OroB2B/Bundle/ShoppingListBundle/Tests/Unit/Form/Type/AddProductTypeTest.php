@@ -135,10 +135,10 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
     /**
      * Method testSetDefaultOptions
      */
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = new OptionsResolver();
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
         $resolvedOptions = $resolver->resolve();
 
         $this->assertEquals(self::DATA_CLASS, $resolvedOptions['data_class']);

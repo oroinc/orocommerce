@@ -3,14 +3,14 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as BaseEntityTypeStub;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityType extends BaseEntityTypeStub
 {
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         parent::setDefaultOptions($resolver);
 
