@@ -26,15 +26,19 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            expanded: false,
+            hideDefaultLabel: true,
+            fallbackWidth: 200,
             selectors: {
                 status: '.fallback-status',
                 item: '.fallback-item',
+                defaultItem: '.fallback-item:first',
                 childItem: '.fallback-item:not(:first)',
+                itemLabel: '.fallback-item-label',
                 itemValue: '.fallback-item-value',
                 itemUseFallback: '.fallback-item-use-fallback',
                 itemFallback: '.fallback-item-fallback'
             },
-            fallbackWidth: 200,
             icons: {
                 new: {
                     html: '<i class="icon-folder-close-alt"></i>',
@@ -48,8 +52,7 @@ define(function(require) {
                     html: '<i class="icon-folder-open"></i>',
                     event: 'collapseChildItems'
                 }
-            },
-            expanded: false
+            }
         },
 
         /**
@@ -400,7 +403,7 @@ define(function(require) {
 
             if (select.length === 0) {
                 itemCode = 'system';
-            }else{
+            } else {
                 itemCode = select.attr('data-locale');
             }
 
@@ -462,10 +465,20 @@ define(function(require) {
                 .html(icon.html)
                 .find('i').click(_.bind(this[icon.event], this));
 
+            var $defaultLabel = this.$el.find(this.options.selectors.defaultItem)
+                .find(this.options.selectors.itemLabel);
+            var $childItems = this.$el.find(this.options.selectors.childItem);
+
             if (this.options.expanded) {
-                this.$el.find(this.options.selectors.childItem).show();
+                if (this.options.hideDefaultLabel) {
+                    $defaultLabel.show();
+                }
+                $childItems.show();
             } else {
-                this.$el.find(this.options.selectors.childItem).hide();
+                if (this.options.hideDefaultLabel) {
+                    $defaultLabel.hide();
+                }
+                $childItems.hide();
             }
         }
     });

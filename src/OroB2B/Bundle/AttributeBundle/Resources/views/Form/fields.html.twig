@@ -8,9 +8,13 @@
 
     {{ form_widget(form.master_option_id) }}
     {{ form_errors(form.master_option_id) }}
+    {% set fallbackViewOptions = {
+        view: 'orob2bfallback/js/app/views/fallback-view',
+        hideDefaultLabel: false
+    } %}
     <table class="fallback-container"
             data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ {view: 'orob2bfallback/js/app/views/fallback-view'}|json_encode }}"
+            data-page-component-options="{{ fallbackViewOptions|json_encode }}"
             data-layout="separate"
             >
         <tr class="fallback-item">
