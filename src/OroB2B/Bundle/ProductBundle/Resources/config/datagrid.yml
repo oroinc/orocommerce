@@ -167,17 +167,23 @@ datagrid:
                     - product.sku
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
-                    - product.sku as name
+                    - productNames.string as name
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
+                    inner:
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
         columns:
             sku:
                 label: orob2b.product.sku.label
             name:
-                label: orob2b.product.name.label
+                label: orob2b.product.names.label
             inventoryStatusName:
                 label: orob2b.product.inventory_status.label
         properties:
