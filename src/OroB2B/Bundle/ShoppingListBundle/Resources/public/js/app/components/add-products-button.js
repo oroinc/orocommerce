@@ -12,7 +12,10 @@ define(function (require) {
         options = {
             successMessage: 'orob2b.shoppinglist.menu.add_products.success.message',
             errorMessage: 'orob2b.shoppinglist.menu.add_products.error.message',
-            redirect: '/'
+            redirect: '/',
+            intention: {
+                create_new: 'new'
+            }
         };
 
     mediator.on('frontend:shoppinglist:add-widget-requested-response', showForm, this);
@@ -20,15 +23,15 @@ define(function (require) {
     function onClick(e) {
         e.preventDefault();
 
-        if ($(e.currentTarget).data('id') === 'new') {
+        if ($(e.currentTarget).data('id') === options.intention.create_new) {
             mediator.trigger('frontend:shoppinglist:add-widget-requested');
         } else {
-            mediator.trigger('frontend:shoppinglist:products-add', {id: $(this).data('id')})
+            mediator.trigger('frontend:shoppinglist:products-add', {id: $(this).data('id')});
         }
     }
 
     function showForm(selections) {
-        if (selections.cnt < 1) {
+        if (!selections.cnt) {
             messenger.notificationFlashMessage('warning', selections.reason);
             return;
         }
@@ -40,7 +43,7 @@ define(function (require) {
             'dialogOptions': {
                 'modal': true,
                 'resizable': false,
-                'width': 675,
+                'width': '675',
                 'autoResize': true
             }
         });

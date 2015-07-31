@@ -15,7 +15,7 @@ define([
      * Add products to shopping list
      *
      * @export  oro/datagrid/action/add-products-mass-action
-     * @class   oro.datagrid.action.MarkAction
+     * @class   oro.datagrid.action.AddProductsAction
      * @extends oro.datagrid.action.MassAction
      */
     AddProductsAction = MassAction.extend({
@@ -28,7 +28,7 @@ define([
          * @param {object} eventArgs
          */
         _beforeProductsAdd: function (eventArgs) {
-            this.route_parameters['shoppingList'] = eventArgs.id;
+            this.route_parameters.shoppingList = eventArgs.id;
             this.run(true);
         },
         _checkSelectionState: function () {
@@ -39,14 +39,14 @@ define([
 
             for (var key in models) {
                 if (models.hasOwnProperty(key)) {
-                    length++
+                    length++;
                 }
             }
-            if (length < 1) {
+            if (!length) {
                 reason = AddProductsAction.__super__.defaultMessages.empty_selection;
             }
 
-            mediator.trigger('frontend:shoppinglist:add-widget-requested-response', {cnt: length, reason: reason})
+            mediator.trigger('frontend:shoppinglist:add-widget-requested-response', {cnt: length, reason: reason});
         },
         /**
          * Overridden in order to set shoppingList route param
@@ -55,7 +55,7 @@ define([
          */
         run: function (isCustom) {
             if (!isCustom) {
-                this.route_parameters['shoppingList'] = 'current';
+                this.route_parameters.shoppingList = 'current';
             }
             AddProductsAction.__super__.run.apply(this);
         }
