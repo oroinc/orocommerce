@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Mapping as ORM;
@@ -61,6 +62,7 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
 {
@@ -161,6 +163,19 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $birthday;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress",
+     *      mappedBy="owner",
+     *      cascade={"all"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"primary" = "DESC"})
+     */
+    protected $addresses;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -173,6 +188,12 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @ORM\Column(name="updated_at", type="datetime")
      */
     protected $updatedAt;
+
+    public function __construct()
+    {
+        $this->addresses = new ArrayCollection();
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -412,6 +433,93 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         $this->birthday = $birthday;
 
         return $this;
+    }
+
+    /**
+     * Add addresses
+     *
+     * @param AbstractDefaultTypedAddress $address
+     * @return AccountUser
+     */
+    public function addAddress(AbstractDefaultTypedAddress $address)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        if (!$this->getAddresses()->contains($address)) {
+            $this->getAddresses()->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove addresses
+     *
+     * @param AbstractDefaultTypedAddress $addresses
+     * @return AccountUser
+     */
+    public function removeAddress(AbstractDefaultTypedAddress $addresses)
+    {
+        if ($this->hasAddress($addresses)) {
+            $this->getAddresses()->removeElement($addresses);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Collection
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * @param AbstractDefaultTypedAddress $address
+     * @return bool
+     */
+    protected function hasAddress(AbstractDefaultTypedAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
+    }
+
+    /**
+     * Gets one address that has specified type name.
+     *
+     * @param string $typeName
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getAddressByTypeName($typeName)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->hasTypeWithName($typeName)) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                return $address;
+            }
+        }
+
+        return null;
     }
 
     /**
