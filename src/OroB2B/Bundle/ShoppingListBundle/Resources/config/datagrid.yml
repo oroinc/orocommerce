@@ -179,7 +179,7 @@ datagrid:
     shopping-list-line-items-grid:
         extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
         options:
-            entityHint:        lineItem
+            entityHint:        line item
         source:
             acl_resource:      orob2b_shopping_list_line_item_update
             type:              orm
@@ -281,11 +281,11 @@ datagrid:
     frontend-shopping-list-line-items-grid:
         extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
         options:
-            entityHint:        lineItem
+            entityHint:     line item
             skip_acl_check: true
         source:
-            acl_resource:      orob2b_shopping_list_line_item_update
-            type:              orm
+            acl_resource:   orob2b_shopping_list_line_item_update
+            type:           orm
             query:
                 select:
                     - product.id as productId
@@ -311,9 +311,9 @@ datagrid:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
                 label:         orob2b.pricing.productprice.unit_code.label
-                type: twig
+                type:          twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
             notes:
                 label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:

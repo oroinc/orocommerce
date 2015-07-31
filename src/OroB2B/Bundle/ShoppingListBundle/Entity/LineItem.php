@@ -6,11 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -178,22 +177,12 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
 
     /**
      * @param Product $product
+     *
      * @return $this
      */
     public function setProduct(Product $product)
     {
-        $this->product    = $product;
-
-        return $this;
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @return $this
-     */
-    public function setShoppingList(ShoppingList $shoppingList)
-    {
-        $this->shoppingList = $shoppingList;
+        $this->product = $product;
 
         return $this;
     }
@@ -207,12 +196,13 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
     }
 
     /**
-     * @param float $quantity
+     * @param ShoppingList $shoppingList
+     *
      * @return $this
      */
-    public function setQuantity($quantity)
+    public function setShoppingList(ShoppingList $shoppingList)
     {
-        $this->quantity = $quantity;
+        $this->shoppingList = $shoppingList;
 
         return $this;
     }
@@ -226,6 +216,18 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
     }
 
     /**
+     * @param float $quantity
+     *
+     * @return $this
+     */
+    public function setQuantity($quantity)
+    {
+        $this->quantity = $quantity;
+
+        return $this;
+    }
+
+    /**
      * @return ProductUnit
      */
     public function getUnit()
@@ -235,6 +237,7 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
 
     /**
      * @param ProductUnit $unit
+     *
      * @return $this
      */
     public function setUnit(ProductUnit $unit)
@@ -267,19 +270,19 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function setOrganization(OrganizationInterface $organization = null)
+    public function getOrganization()
     {
-        $this->organization = $organization;
-
-        return $this;
+        return $this->organization;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOrganization()
+    public function setOrganization(OrganizationInterface $organization = null)
     {
-        return $this->organization;
+        $this->organization = $organization;
+
+        return $this;
     }
 
     /**
