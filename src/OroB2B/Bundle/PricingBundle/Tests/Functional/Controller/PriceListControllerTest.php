@@ -49,15 +49,15 @@ class PriceListControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME,
-                'orob2b_pricing_price_list[appendCustomers]' => implode(
+                'orob2b_pricing_price_list[appendAccounts]' => implode(
                     ',',
-                    [$this->getCustomer('account.orphan')->getId(), $this->getCustomer('account.level_1')->getId()]
+                    [$this->getAccount('account.orphan')->getId(), $this->getAccount('account.level_1')->getId()]
                 ),
-                'orob2b_pricing_price_list[appendCustomerGroups]' => implode(
+                'orob2b_pricing_price_list[appendAccountGroups]' => implode(
                     ',',
                     [
-                        $this->getCustomerGroup('customer_group.group1')->getId(),
-                        $this->getCustomerGroup('customer_group.group2')->getId()
+                        $this->getAccountGroup('account_group.group1')->getId(),
+                        $this->getAccountGroup('account_group.group2')->getId()
                     ]
                 ),
                 'orob2b_pricing_price_list[appendWebsites]' => implode(',', [$this->getWebsite('US')->getId()])
@@ -72,13 +72,13 @@ class PriceListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Price List has been saved', $html);
-        $customersGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains($this->getCustomer('account.orphan')->getName(), $customersGrid);
-        $this->assertContains($this->getCustomer('account.level_1')->getName(), $customersGrid);
+        $accountsGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
+        $this->assertContains($this->getAccount('account.orphan')->getName(), $accountsGrid);
+        $this->assertContains($this->getAccount('account.level_1')->getName(), $accountsGrid);
 
-        $customersGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
-        $this->assertContains($this->getCustomerGroup('customer_group.group1')->getName(), $customersGroupGrid);
-        $this->assertContains($this->getCustomerGroup('customer_group.group2')->getName(), $customersGroupGrid);
+        $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
+        $this->assertContains($this->getAccountGroup('account_group.group1')->getName(), $accountsGroupGrid);
+        $this->assertContains($this->getAccountGroup('account_group.group2')->getName(), $accountsGroupGrid);
 
         $websitesGrid = $crawler->filter('.inner-grid')->eq(3)->attr('data-page-component-options');
         $this->assertContains($this->getWebsite('US')->getName(), $websitesGrid);
@@ -131,16 +131,16 @@ class PriceListControllerTest extends WebTestCase
             [
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME_EDIT,
                 'orob2b_pricing_price_list[currencies]' => self::CURRENCY,
-                'orob2b_pricing_price_list[appendCustomers]' => $this->getCustomer('account.level_1.1')->getId(),
-                'orob2b_pricing_price_list[appendCustomerGroups]' => $this
-                    ->getCustomerGroup('customer_group.group3')->getId(),
+                'orob2b_pricing_price_list[appendAccounts]' => $this->getAccount('account.level_1.1')->getId(),
+                'orob2b_pricing_price_list[appendAccountGroups]' => $this
+                    ->getAccountGroup('account_group.group3')->getId(),
                 'orob2b_pricing_price_list[appendWebsites]' => $this->getWebsite('Canada')->getId(),
-                'orob2b_pricing_price_list[removeCustomers]' => $this->getCustomer('account.orphan')->getId(),
-                'orob2b_pricing_price_list[removeCustomerGroups]' => implode(
+                'orob2b_pricing_price_list[removeAccounts]' => $this->getAccount('account.orphan')->getId(),
+                'orob2b_pricing_price_list[removeAccountGroups]' => implode(
                     ',',
                     [
-                        $this->getCustomerGroup('customer_group.group1')->getId(),
-                        $this->getCustomerGroup('customer_group.group2')->getId()
+                        $this->getAccountGroup('account_group.group1')->getId(),
+                        $this->getAccountGroup('account_group.group2')->getId()
                     ]
                 ),
                 'orob2b_pricing_price_list[removeWebsites]' => $this->getWebsite('US')->getId()
@@ -156,15 +156,15 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
 
-        $customersGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains($this->getCustomer('account.level_1')->getName(), $customersGrid);
-        $this->assertContains($this->getCustomer('account.level_1.1')->getName(), $customersGrid);
-        $this->assertNotContains($this->getCustomer('account.orphan')->getName(), $customersGrid);
+        $accountsGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
+        $this->assertContains($this->getAccount('account.level_1')->getName(), $accountsGrid);
+        $this->assertContains($this->getAccount('account.level_1.1')->getName(), $accountsGrid);
+        $this->assertNotContains($this->getAccount('account.orphan')->getName(), $accountsGrid);
 
-        $customersGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
-        $this->assertContains($this->getCustomerGroup('customer_group.group3')->getName(), $customersGroupGrid);
-        $this->assertNotContains($this->getCustomerGroup('customer_group.group1')->getName(), $customersGroupGrid);
-        $this->assertNotContains($this->getCustomerGroup('customer_group.group2')->getName(), $customersGroupGrid);
+        $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
+        $this->assertContains($this->getAccountGroup('account_group.group3')->getName(), $accountsGroupGrid);
+        $this->assertNotContains($this->getAccountGroup('account_group.group1')->getName(), $accountsGroupGrid);
+        $this->assertNotContains($this->getAccountGroup('account_group.group2')->getName(), $accountsGroupGrid);
 
         $websitesGrid = $crawler->filter('.inner-grid')->eq(3)->attr('data-page-component-options');
         $this->assertContains($this->getWebsite('Canada')->getName(), $websitesGrid);
@@ -206,7 +206,7 @@ class PriceListControllerTest extends WebTestCase
      *
      * @return Account
      */
-    protected function getCustomer($reference)
+    protected function getAccount($reference)
     {
         return $this->getReference($reference);
     }
@@ -216,7 +216,7 @@ class PriceListControllerTest extends WebTestCase
      *
      * @return AccountGroup
      */
-    protected function getCustomerGroup($reference)
+    protected function getAccountGroup($reference)
     {
         return $this->getReference($reference);
     }

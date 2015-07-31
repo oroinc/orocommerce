@@ -84,27 +84,27 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $isPriceListExist
      * @dataProvider viewDataProvider
      */
-    public function testOnCustomerView($isPriceListExist)
+    public function testOnAccountView($isPriceListExist)
     {
-        $customerId = 1;
-        $customer = new Account();
+        $accountId = 1;
+        $account = new Account();
         $priceList = new PriceList();
         $templateHtml = 'template_html';
 
-        $this->listener->setRequest(new Request(['id' => $customerId]));
+        $this->listener->setRequest(new Request(['id' => $accountId]));
 
         $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $priceRepository->expects($this->once())
             ->method('getPriceListByAccount')
-            ->with($customer)
+            ->with($account)
             ->willReturn($isPriceListExist ? $priceList : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:Customer', $customerId)
-            ->willReturn($customer);
+            ->with('OroB2BAccountBundle:Account', $accountId)
+            ->willReturn($account);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroB2BPricingBundle:PriceList')
@@ -135,27 +135,27 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $isPriceListExist
      * @dataProvider viewDataProvider
      */
-    public function testOnCustomerGroupView($isPriceListExist)
+    public function testOnAccountGroupView($isPriceListExist)
     {
-        $customerGroupId = 1;
-        $customerGroup = new AccountGroup();
+        $accountGroupId = 1;
+        $accountGroup = new AccountGroup();
         $priceList = new PriceList();
         $templateHtml = 'template_html';
 
-        $this->listener->setRequest(new Request(['id' => $customerGroupId]));
+        $this->listener->setRequest(new Request(['id' => $accountGroupId]));
 
         $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $priceRepository->expects($this->once())
             ->method('getPriceListByAccountGroup')
-            ->with($customerGroup)
+            ->with($accountGroup)
             ->willReturn($isPriceListExist ? $priceList : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BAccountBundle:AccountGroup', $customerGroupId)
-            ->willReturn($customerGroup);
+            ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
+            ->willReturn($accountGroup);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with('OroB2BPricingBundle:PriceList')

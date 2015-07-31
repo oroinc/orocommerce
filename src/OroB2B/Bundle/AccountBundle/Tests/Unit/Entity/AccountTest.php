@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
-class CustomerTest extends \PHPUnit_Framework_TestCase
+class AccountTest extends \PHPUnit_Framework_TestCase
 {
     use AddressEntityTestTrait;
 
@@ -19,11 +19,11 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessors()
     {
-        $this->assertPropertyAccessors($this->createCustomerEntity(), [
+        $this->assertPropertyAccessors($this->createAccountEntity(), [
             ['id', 42],
             ['name', 'Adam Weishaupt'],
-            ['parent', $this->createCustomerEntity()],
-            ['group', $this->createCustomerGroupEntity()],
+            ['parent', $this->createAccountEntity()],
+            ['group', $this->createAccountGroupEntity()],
             ['organization', $this->createOrganization()],
         ]);
     }
@@ -33,27 +33,27 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
      */
     public function testChildrenCollection()
     {
-        $parentCustomer = $this->createCustomerEntity();
+        $parentAccount = $this->createAccountEntity();
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $parentCustomer->getChildren());
-        $this->assertCount(0, $parentCustomer->getChildren());
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $parentAccount->getChildren());
+        $this->assertCount(0, $parentAccount->getChildren());
 
-        $customer = $this->createCustomerEntity();
+        $account = $this->createAccountEntity();
 
         $this->assertInstanceOf(
             'OroB2B\Bundle\AccountBundle\Entity\Account',
-            $parentCustomer->addChild($customer)
+            $parentAccount->addChild($account)
         );
 
-        $this->assertCount(1, $parentCustomer->getChildren());
+        $this->assertCount(1, $parentAccount->getChildren());
 
-        $parentCustomer->addChild($customer);
+        $parentAccount->addChild($account);
 
-        $this->assertCount(1, $parentCustomer->getChildren());
+        $this->assertCount(1, $parentAccount->getChildren());
 
-        $parentCustomer->removeChild($customer);
+        $parentAccount->removeChild($account);
 
-        $this->assertCount(0, $parentCustomer->getChildren());
+        $this->assertCount(0, $parentAccount->getChildren());
     }
 
     /**
@@ -61,32 +61,32 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
      */
     public function testUsersCollection()
     {
-        $customer = $this->createCustomerEntity();
+        $account = $this->createAccountEntity();
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $customer->getUsers());
-        $this->assertCount(0, $customer->getUsers());
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $account->getUsers());
+        $this->assertCount(0, $account->getUsers());
 
         $user = $this->createUserEntity();
 
-        $customer->addUser($user);
-        $this->assertEquals([$user], $customer->getUsers()->toArray());
+        $account->addUser($user);
+        $this->assertEquals([$user], $account->getUsers()->toArray());
 
         // entity added only once
-        $customer->addUser($user);
-        $this->assertEquals([$user], $customer->getUsers()->toArray());
+        $account->addUser($user);
+        $this->assertEquals([$user], $account->getUsers()->toArray());
 
-        $customer->removeUser($user);
-        $this->assertCount(0, $customer->getUsers());
+        $account->removeUser($user);
+        $this->assertCount(0, $account->getUsers());
 
         // undefined user can't be removed
-        $customer->removeUser($user);
-        $this->assertCount(0, $customer->getUsers());
+        $account->removeUser($user);
+        $this->assertCount(0, $account->getUsers());
     }
 
     /**
      * @return AccountGroup
      */
-    protected function createCustomerGroupEntity()
+    protected function createAccountGroupEntity()
     {
         return new AccountGroup();
     }
@@ -94,7 +94,7 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return Account
      */
-    protected function createCustomerEntity()
+    protected function createAccountEntity()
     {
         return new Account();
     }
@@ -128,6 +128,6 @@ class CustomerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTestedEntity()
     {
-        return $this->createCustomerEntity();
+        return $this->createAccountEntity();
     }
 }

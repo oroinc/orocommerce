@@ -86,11 +86,11 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'][0]['condition']
-            = 'customer MEMBER OF priceList.accounts';
+            = 'account MEMBER OF priceList.accounts';
         $this->assertEquals($expected, $config->toArray());
     }
 
-    public function testOnBuildBeforeCustomerGroups()
+    public function testOnBuildBeforeAccountGroups()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -101,7 +101,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'][0]['condition']
-            = 'customer_group MEMBER OF priceList.accountGroups';
+            = 'account_group MEMBER OF priceList.accountGroups';
         $this->assertEquals($expected, $config->toArray());
     }
 }

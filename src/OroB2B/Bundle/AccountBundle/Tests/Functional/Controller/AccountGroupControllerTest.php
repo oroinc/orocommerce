@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  * @outputBuffering enabled
  * @dbIsolation
  */
-class CustomerGroupControllerTest extends WebTestCase
+class AccountGroupControllerTest extends WebTestCase
 {
     const NAME = 'Group_name';
     const UPDATED_NAME = 'Group_name_UP';
@@ -33,7 +33,7 @@ class CustomerGroupControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
             ]
         );
@@ -52,7 +52,7 @@ class CustomerGroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertCustomerGroupSave(
+        $this->assertAccountGroupSave(
             $crawler,
             self::NAME,
             [
@@ -74,7 +74,7 @@ class CustomerGroupControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertCustomerGroupSave(
+        $this->assertAccountGroupSave(
             $crawler,
             self::UPDATED_NAME,
             [
@@ -102,39 +102,39 @@ class CustomerGroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Customer Groups - Customers', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Accounts', $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
     }
 
     /**
      * @param Crawler $crawler
      * @param string $name
-     * @param Account[] $appendCustomers
-     * @param Account[] $removeCustomers
+     * @param Account[] $appendAccounts
+     * @param Account[] $removeAccounts
      */
-    protected function assertCustomerGroupSave(
+    protected function assertAccountGroupSave(
         Crawler $crawler,
         $name,
-        array $appendCustomers = [],
-        array $removeCustomers = []
+        array $appendAccounts = [],
+        array $removeAccounts = []
     ) {
-        $appendCustomerIds = array_map(
-            function (Account $customer) {
-                return $customer->getId();
+        $appendAccountIds = array_map(
+            function (Account $account) {
+                return $account->getId();
             },
-            $appendCustomers
+            $appendAccounts
         );
-        $removeCustomerIds = array_map(
-            function (Account $customer) {
-                return $customer->getId();
+        $removeAccountIds = array_map(
+            function (Account $account) {
+                return $account->getId();
             },
-            $removeCustomers
+            $removeAccounts
         );
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_account_group_type[name]' => $name,
-                'orob2b_account_group_type[appendCustomers]' => implode(',', $appendCustomerIds),
-                'orob2b_account_group_type[removeCustomers]' => implode(',', $removeCustomerIds)
+                'orob2b_account_group_type[appendAccounts]' => implode(',', $appendAccountIds),
+                'orob2b_account_group_type[removeAccounts]' => implode(',', $removeAccountIds)
             ]
         );
 
@@ -145,14 +145,14 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains('Customer group has been saved', $html);
+        $this->assertContains('Account group has been saved', $html);
         $this->assertViewPage($html, $name);
 
-        foreach ($appendCustomers as $customer) {
-            $this->assertContains($customer->getName(), $html);
+        foreach ($appendAccounts as $account) {
+            $this->assertContains($account->getName(), $html);
         }
-        foreach ($removeCustomers as $customer) {
-            $this->assertNotContains($customer->getName(), $html);
+        foreach ($removeAccounts as $account) {
+            $this->assertNotContains($account->getName(), $html);
         }
     }
 
@@ -172,8 +172,8 @@ class CustomerGroupControllerTest extends WebTestCase
     protected function getGroupId($name)
     {
         $response = $this->client->requestGrid(
-            'customer-groups-grid',
-            ['customer-customers-grid[_filter][name][value]' => $name]
+            'account-groups-grid',
+            ['account-accounts-grid[_filter][name][value]' => $name]
         );
 
         $result = $this->getJsonResponseContent($response, 200);

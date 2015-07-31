@@ -3,13 +3,14 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @outputBuffering enabled
  * @dbIsolation
  */
-class CustomerControllerTest extends WebTestCase
+class AccountGroupControllerTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -17,19 +18,19 @@ class CustomerControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
             ]
         );
     }
 
     public function testDelete()
     {
-        /** @var Account $customer */
-        $customer = $this->getReference('account.orphan');
-        $customerId = $customer->getId();
+        /** @var AccountGroup $entity */
+        $entity = $this->getReference('account_group.group1');
+        $id = $entity->getId();
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_customer_delete_customer', ['id' => $customerId])
+            $this->getUrl('orob2b_api_account_delete_account_group', ['id' => $id])
         );
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

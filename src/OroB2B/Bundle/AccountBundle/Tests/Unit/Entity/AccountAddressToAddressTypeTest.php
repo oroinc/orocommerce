@@ -10,7 +10,7 @@ use Oro\Component\Testing\Unit\EntityTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddressToAddressType;
 
-class CustomerAddressToAddressTypeTest extends EntityTestCase
+class AccountAddressToAddressTypeTest extends EntityTestCase
 {
     /**
      * Test setters getters

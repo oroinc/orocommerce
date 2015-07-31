@@ -10,10 +10,10 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
-class CustomerGroupTypeTest extends FormIntegrationTestCase
+class AccountGroupTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
-    const CUSTOMER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
 
     /**
      * @var AccountGroupType
@@ -29,7 +29,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
 
         $this->formType = new AccountGroupType();
         $this->formType->setDataClass(self::DATA_CLASS);
-        $this->formType->setAccountClass(self::CUSTOMER_CLASS);
+        $this->formType->setAccountClass(self::ACCOUNT_CLASS);
     }
 
     /**
@@ -74,8 +74,8 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
-        $this->assertTrue($form->has('appendCustomers'));
-        $this->assertTrue($form->has('removeCustomers'));
+        $this->assertTrue($form->has('appendAccounts'));
+        $this->assertTrue($form->has('removeAccounts'));
 
         $formConfig = $form->getConfig();
         $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
@@ -93,7 +93,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $groupName = 'customer_group_name';
+        $groupName = 'account_group_name';
         $alteredGroupName = 'altered_group_name';
 
         $defaultGroup = new AccountGroup();

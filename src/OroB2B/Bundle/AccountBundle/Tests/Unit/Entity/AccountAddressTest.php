@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddressToAddressType;
 
-class CustomerAddressTest extends AbstractAddressTest
+class AccountAddressTest extends AbstractAddressTest
 {
     /**
      * @return AccountAddress

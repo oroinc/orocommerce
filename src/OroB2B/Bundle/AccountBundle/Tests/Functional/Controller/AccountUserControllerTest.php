@@ -34,7 +34,7 @@ class AccountUserControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
             ]
         );
@@ -52,13 +52,13 @@ class AccountUserControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_create'));
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\Account $customer */
-        $customer = $this->getAccountRepository()->findOneBy([]);
+        /** @var \OroB2B\Bundle\AccountBundle\Entity\Account $account */
+        $account = $this->getAccountRepository()->findOneBy([]);
 
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->findOneBy([]);
 
-        $this->assertNotNull($customer);
+        $this->assertNotNull($account);
         $this->assertNotNull($role);
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -72,7 +72,7 @@ class AccountUserControllerTest extends WebTestCase
         $form['orob2b_account_account_user[birthday]']              = date('Y-m-d');
         $form['orob2b_account_account_user[plainPassword][first]']  = $password;
         $form['orob2b_account_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_account_account_user[customer]']              = $customer->getId();
+        $form['orob2b_account_account_user[account]']              = $account->getId();
         $form['orob2b_account_account_user[passwordGenerate]']      = $isPasswordGenerate;
         $form['orob2b_account_account_user[sendEmail]']             = $isSendEmail;
         $form['orob2b_account_account_user[roles]']                 = [$role->getId()];
@@ -178,7 +178,7 @@ class AccountUserControllerTest extends WebTestCase
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Customer');
+        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Account');
     }
 
     /**
@@ -202,11 +202,11 @@ class AccountUserControllerTest extends WebTestCase
     public function testUpdate()
     {
         $response = $this->client->requestGrid(
-            'customer-account-user-grid',
+            'account-account-user-grid',
             [
-                'customer-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
-                'customer-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
-                'customer-account-user-grid[_filter][email][value]' => self::EMAIL
+                'account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
+                'account-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
+                'account-account-user-grid[_filter][email][value]' => self::EMAIL
             ]
         );
 
@@ -251,7 +251,7 @@ class AccountUserControllerTest extends WebTestCase
         $content = $result->getContent();
 
         $this->assertContains(
-            sprintf('%s - Account Users - Customers', self::UPDATED_EMAIL),
+            sprintf('%s - Account Users - Accounts', self::UPDATED_EMAIL),
             $content
         );
 

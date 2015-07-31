@@ -29,11 +29,11 @@ class AccountRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Customer');
+            ->getRepository('OroB2BAccountBundle:Account');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
             ]
         );
 
@@ -41,20 +41,20 @@ class AccountRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider customerReferencesDataProvider
+     * @dataProvider accountReferencesDataProvider
      * @param string $referenceName
      * @param array $expectedReferences
      */
     public function testGetChildrenIds($referenceName, array $expectedReferences)
     {
-        /** @var Account $customer */
-        $customer = $this->getReference($referenceName);
+        /** @var Account $account */
+        $account = $this->getReference($referenceName);
 
         $expected = [];
         foreach ($expectedReferences as $reference) {
             $expected[] = $this->getReference($reference)->getId();
         }
-        $childrenIds = $this->repository->getChildrenIds($this->aclHelper, $customer->getId());
+        $childrenIds = $this->repository->getChildrenIds($this->aclHelper, $account->getId());
         sort($expected);
         sort($childrenIds);
 
@@ -64,7 +64,7 @@ class AccountRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function customerReferencesDataProvider()
+    public function accountReferencesDataProvider()
     {
         return [
             'orphan' => ['account.orphan', []],

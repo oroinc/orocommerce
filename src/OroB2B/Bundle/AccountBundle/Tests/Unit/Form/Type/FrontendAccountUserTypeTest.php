@@ -24,7 +24,7 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
     /**
      * @var Account[]
      */
-    protected static $customers = [];
+    protected static $accounts = [];
 
     /**
      * {@inheritdoc}
@@ -42,7 +42,7 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
         parent::tearDown();
 
         unset($this->formType);
-        self::$customers = [];
+        self::$accounts = [];
     }
 
     /**

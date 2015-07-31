@@ -60,9 +60,9 @@ class AccountUserRoleControllerTest extends WebTestCase
     public function testUpdate()
     {
         $response = $this->client->requestGrid(
-            'customer-account-user-roles-grid',
+            'account-account-user-roles-grid',
             [
-                'customer-account-user-roles-grid[_filter][label][value]' => self::TEST_ROLE
+                'account-account-user-roles-grid[_filter][label][value]' => self::TEST_ROLE
             ]
         );
 

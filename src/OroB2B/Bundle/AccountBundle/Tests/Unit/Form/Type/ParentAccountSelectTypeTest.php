@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormView;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType;
 
-class ParentCustomerSelectTypeTest extends \PHPUnit_Framework_TestCase
+class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ParentAccountSelectType
@@ -83,21 +83,21 @@ class ParentCustomerSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function buildViewDataProvider()
     {
-        $customerId = 42;
-        $customer = new Account();
+        $accountId = 42;
+        $account = new Account();
 
-        $reflection = new \ReflectionProperty(get_class($customer), 'id');
+        $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);
-        $reflection->setValue($customer, $customerId);
+        $reflection->setValue($account, $accountId);
 
         return [
-            'without customer' => [
+            'without account' => [
                 'parentData' => null,
                 'expectedParentId' => null,
             ],
-            'with customer' => [
-                'parentData' => $customer,
-                'expectedParentId' => $customerId,
+            'with account' => [
+                'parentData' => $account,
+                'expectedParentId' => $accountId,
             ],
         ];
     }

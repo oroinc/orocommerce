@@ -21,11 +21,11 @@ use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
 class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
 {
     const ACCOUNT_USER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
-    const CUSTOMER_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
 
-    const MAIN_CUSTOMER_ID = 1;
-    const SECOND_CUSTOMER_ID = 2;
-    const CHILD_CUSTOMER_ID = 3;
+    const MAIN_ACCOUNT_ID = 1;
+    const SECOND_ACCOUNT_ID = 2;
+    const CHILD_ACCOUNT_ID = 3;
     const FIRST_USER_ID = 4;
     const SECOND_USER_ID = 5;
     const THIRD_USER_ID = 6;
@@ -125,12 +125,12 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
         $AccountRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $customerManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        $accountManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $customerManager->expects($this->any())
+        $accountManager->expects($this->any())
             ->method('getRepository')
-            ->with(self::CUSTOMER_CLASS)
+            ->with(self::ACCOUNT_CLASS)
             ->willReturn($AccountRepository);
 
         $this->ownershipMetadataProvider->expects($this->any())
@@ -138,16 +138,16 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(self::ACCOUNT_USER_CLASS);
         $this->ownershipMetadataProvider->expects($this->any())
             ->method('getLocalLevelClass')
-            ->willReturn(self::CUSTOMER_CLASS);
+            ->willReturn(self::ACCOUNT_CLASS);
 
         $this->managerRegistry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturnMap([
                 [self::ACCOUNT_USER_CLASS, $accountUserManager],
-                [self::CUSTOMER_CLASS, $customerManager],
+                [self::ACCOUNT_CLASS, $accountManager],
             ]);
 
-        list($accountUsers, $customers) = $this->getTestData();
+        list($accountUsers, $accounts) = $this->getTestData();
 
         $accountUserRepository->expects($this->any())
             ->method('findAll')
@@ -155,7 +155,7 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
 
         $AccountRepository->expects($this->any())
             ->method('findAll')
-            ->will($this->returnValue($customers));
+            ->will($this->returnValue($accounts));
 
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
             ->disableOriginalConstructor()
@@ -211,37 +211,37 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
         $organization = new Organization();
         $this->setId($organization, self::ORGANIZATION_ID);
 
-        $mainCustomer = new Account();
-        $this->setId($mainCustomer, self::MAIN_CUSTOMER_ID);
-        $mainCustomer->setOrganization($organization);
+        $mainAccount = new Account();
+        $this->setId($mainAccount, self::MAIN_ACCOUNT_ID);
+        $mainAccount->setOrganization($organization);
 
-        $secondCustomer = new Account();
-        $this->setId($secondCustomer, self::SECOND_CUSTOMER_ID);
-        $secondCustomer->setOrganization($organization);
+        $secondAccount = new Account();
+        $this->setId($secondAccount, self::SECOND_ACCOUNT_ID);
+        $secondAccount->setOrganization($organization);
 
-        $childCustomer = new Account();
-        $this->setId($childCustomer, self::CHILD_CUSTOMER_ID);
-        $childCustomer->setOrganization($organization);
-        $childCustomer->setParent($mainCustomer);
+        $childAccount = new Account();
+        $this->setId($childAccount, self::CHILD_ACCOUNT_ID);
+        $childAccount->setOrganization($organization);
+        $childAccount->setParent($mainAccount);
 
         $firstUser = new AccountUser();
         $this->setId($firstUser, self::FIRST_USER_ID);
-        $firstUser->setAccount($mainCustomer);
+        $firstUser->setAccount($mainAccount);
         $firstUser->setOrganizations(new ArrayCollection([$organization]));
 
         $secondUser = new AccountUser();
         $this->setId($secondUser, self::SECOND_USER_ID);
-        $secondUser->setAccount($secondCustomer);
+        $secondUser->setAccount($secondAccount);
         $secondUser->setOrganizations(new ArrayCollection([$organization]));
 
         $thirdUser = new AccountUser();
         $this->setId($thirdUser, self::THIRD_USER_ID);
-        $thirdUser->setAccount($childCustomer);
+        $thirdUser->setAccount($childAccount);
         $thirdUser->setOrganizations(new ArrayCollection([$organization]));
 
         return [
             [$firstUser, $secondUser, $thirdUser],
-            [$mainCustomer, $secondCustomer, $childCustomer]
+            [$mainAccount, $secondAccount, $childAccount]
         ];
     }
 
@@ -250,32 +250,32 @@ class FrontendOwnerTreeProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertTestData(OwnerTree $tree)
     {
-        foreach ([self::MAIN_CUSTOMER_ID, self::SECOND_CUSTOMER_ID, self::CHILD_CUSTOMER_ID] as $customerId) {
-            $this->assertEquals(self::ORGANIZATION_ID, $tree->getBusinessUnitOrganizationId($customerId));
+        foreach ([self::MAIN_ACCOUNT_ID, self::SECOND_ACCOUNT_ID, self::CHILD_ACCOUNT_ID] as $accountId) {
+            $this->assertEquals(self::ORGANIZATION_ID, $tree->getBusinessUnitOrganizationId($accountId));
         }
 
-        $this->assertEquals([self::CHILD_CUSTOMER_ID], $tree->getSubordinateBusinessUnitIds(self::MAIN_CUSTOMER_ID));
-        $this->assertEmpty($tree->getSubordinateBusinessUnitIds(self::SECOND_CUSTOMER_ID));
-        $this->assertEmpty($tree->getSubordinateBusinessUnitIds(self::CHILD_CUSTOMER_ID));
+        $this->assertEquals([self::CHILD_ACCOUNT_ID], $tree->getSubordinateBusinessUnitIds(self::MAIN_ACCOUNT_ID));
+        $this->assertEmpty($tree->getSubordinateBusinessUnitIds(self::SECOND_ACCOUNT_ID));
+        $this->assertEmpty($tree->getSubordinateBusinessUnitIds(self::CHILD_ACCOUNT_ID));
 
         foreach ([self::FIRST_USER_ID, self::SECOND_USER_ID, self::THIRD_USER_ID] as $userId) {
             $this->assertEquals(self::ORGANIZATION_ID, $tree->getUserOrganizationId($userId));
         }
 
-        $this->assertEquals(self::MAIN_CUSTOMER_ID, $tree->getUserBusinessUnitId(self::FIRST_USER_ID));
-        $this->assertEquals(self::SECOND_CUSTOMER_ID, $tree->getUserBusinessUnitId(self::SECOND_USER_ID));
-        $this->assertEquals(self::CHILD_CUSTOMER_ID, $tree->getUserBusinessUnitId(self::THIRD_USER_ID));
+        $this->assertEquals(self::MAIN_ACCOUNT_ID, $tree->getUserBusinessUnitId(self::FIRST_USER_ID));
+        $this->assertEquals(self::SECOND_ACCOUNT_ID, $tree->getUserBusinessUnitId(self::SECOND_USER_ID));
+        $this->assertEquals(self::CHILD_ACCOUNT_ID, $tree->getUserBusinessUnitId(self::THIRD_USER_ID));
 
         $this->assertEquals(
-            [self::MAIN_CUSTOMER_ID],
+            [self::MAIN_ACCOUNT_ID],
             $tree->getUserBusinessUnitIds(self::FIRST_USER_ID, self::ORGANIZATION_ID)
         );
         $this->assertEquals(
-            [self::SECOND_CUSTOMER_ID],
+            [self::SECOND_ACCOUNT_ID],
             $tree->getUserBusinessUnitIds(self::SECOND_USER_ID, self::ORGANIZATION_ID)
         );
         $this->assertEquals(
-            [self::CHILD_CUSTOMER_ID],
+            [self::CHILD_ACCOUNT_ID],
             $tree->getUserBusinessUnitIds(self::THIRD_USER_ID, self::ORGANIZATION_ID)
         );
 

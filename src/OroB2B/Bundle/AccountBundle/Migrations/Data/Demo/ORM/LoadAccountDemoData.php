@@ -35,37 +35,37 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
         $internalRatings =
             $manager->getRepository(ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE))->findAll();
 
-        $rootCustomer = null;
-        $firstLevelCustomer = null;
+        $rootAccount = null;
+        $firstLevelAccount = null;
 
-        // create customer groups
-        $rootGroup = $this->createCustomerGroup('Root');
-        $firstLevelGroup = $this->createCustomerGroup('First');
-        $secondLevelGroup = $this->createCustomerGroup('Second');
+        // create account groups
+        $rootGroup = $this->createAccountGroup('Root');
+        $firstLevelGroup = $this->createAccountGroup('First');
+        $secondLevelGroup = $this->createAccountGroup('Second');
 
         $manager->persist($rootGroup);
         $manager->persist($firstLevelGroup);
         $manager->persist($secondLevelGroup);
 
-        // create customers
+        // create accounts
         foreach ($accountUsers as $index => $accountUser) {
-            $customer = $accountUser->getAccount();
+            $account = $accountUser->getAccount();
             switch ($index % 3) {
                 case 0:
-                    $customer->setGroup($rootGroup);
-                    $rootCustomer = $customer;
+                    $account->setGroup($rootGroup);
+                    $rootAccount = $account;
                     break;
                 case 1:
-                    $customer->setGroup($firstLevelGroup)
-                        ->setParent($rootCustomer);
-                    $firstLevelCustomer = $customer;
+                    $account->setGroup($firstLevelGroup)
+                        ->setParent($rootAccount);
+                    $firstLevelAccount = $account;
                     break;
                 case 2:
-                    $customer->setGroup($secondLevelGroup)
-                        ->setParent($firstLevelCustomer);
+                    $account->setGroup($secondLevelGroup)
+                        ->setParent($firstLevelAccount);
                     break;
             }
-            $customer->setInternalRating($internalRatings[array_rand($internalRatings)]);
+            $account->setInternalRating($internalRatings[array_rand($internalRatings)]);
         }
 
         $manager->flush();
@@ -75,11 +75,11 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
      * @param string $name
      * @return AccountGroup
      */
-    protected function createCustomerGroup($name)
+    protected function createAccountGroup($name)
     {
-        $customerGroup = new AccountGroup();
-        $customerGroup->setName($name);
+        $accountGroup = new AccountGroup();
+        $accountGroup->setName($name);
 
-        return $customerGroup;
+        return $accountGroup;
     }
 }

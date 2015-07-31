@@ -6,7 +6,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension;
 
-class CustomerGroupFormExtensionTest extends AbstractPriceListExtensionTest
+class AccountGroupFormExtensionTest extends AbstractPriceListExtensionTest
 {
     /**
      * @return AccountGroupFormExtension
@@ -57,7 +57,7 @@ class CustomerGroupFormExtensionTest extends AbstractPriceListExtensionTest
      */
     protected function getSetterMethodName()
     {
-        return 'setPriceListToCustomerGroup';
+        return 'setPriceListToAccountGroup';
     }
 
     /**

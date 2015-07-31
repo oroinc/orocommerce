@@ -176,7 +176,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('product_replacement_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('type', 'smallint', ['notnull' => false]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addColumn('comment_customer', 'text', ['notnull' => false]);
+        $table->addColumn('comment_account', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

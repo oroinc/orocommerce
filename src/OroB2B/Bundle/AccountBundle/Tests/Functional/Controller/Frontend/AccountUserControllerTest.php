@@ -28,7 +28,7 @@ class AccountUserControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContains(LoadAccountUserData::AUTH_USER, $crawler->filter('.account-content')->html());
+        $this->assertContains(LoadAccountUserData::AUTH_USER, $crawler->filter('.customer-content')->html());
     }
 
     public function testEditProfile()

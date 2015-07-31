@@ -47,8 +47,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_ACCOUNT",
- *              "frontend_owner_field_name"="customer",
- *              "frontend_owner_column_name"="customer_id",
+ *              "frontend_owner_field_name"="account",
+ *              "frontend_owner_column_name"="account_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -88,7 +88,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *      inversedBy="users",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $account;
 

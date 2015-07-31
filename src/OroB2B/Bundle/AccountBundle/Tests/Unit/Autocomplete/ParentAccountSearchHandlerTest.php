@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 use OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler;
 
-class ParentCustomerSearchHandlerTest extends \PHPUnit_Framework_TestCase
+class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const TEST_ENTITY_CLASS = 'TestEntity';
 
@@ -113,7 +113,7 @@ class ParentCustomerSearchHandlerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider queryWithoutSeparatorDataProvider
      * @param string $search
      */
-    public function testSearchNewCustomer($search)
+    public function testSearchNewAccount($search)
     {
         $page = 1;
         $perPage = 15;
@@ -146,16 +146,16 @@ class ParentCustomerSearchHandlerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider queryWithoutSeparatorDataProvider
      * @param string $search
      */
-    public function testSearchExistingCustomer($search)
+    public function testSearchExistingAccount($search)
     {
         $page = 1;
         $perPage = 15;
-        $customerId = 2;
-        $queryString = $search . ';' . $customerId;
+        $accountId = 2;
+        $queryString = $search . ';' . $accountId;
 
         $foundElements = [
             $this->getSearchItem(1),
-            $this->getSearchItem($customerId)
+            $this->getSearchItem($accountId)
         ];
         $resultData = [
             $this->getResultStub(1, 'test1')
@@ -167,7 +167,7 @@ class ParentCustomerSearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->entityRepository->expects($this->once())
             ->method('getChildrenIds')
-            ->with($this->aclHelper, $customerId)
+            ->with($this->aclHelper, $accountId)
             ->will($this->returnValue([]));
 
         $this->assertSearchCall($search, $page, $perPage, $foundElements, $resultData, $expectedIds);
@@ -183,12 +183,12 @@ class ParentCustomerSearchHandlerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider queryWithoutSeparatorDataProvider
      * @param string $search
      */
-    public function testSearchExistingCustomerWithChildren($search)
+    public function testSearchExistingAccountWithChildren($search)
     {
         $page = 1;
         $perPage = 15;
-        $customerId = 2;
-        $queryString = $search . ';' . $customerId;
+        $accountId = 2;
+        $queryString = $search . ';' . $accountId;
         $foundElements = [
             $this->getSearchItem(1),
             $this->getSearchItem(3)
@@ -203,7 +203,7 @@ class ParentCustomerSearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->entityRepository->expects($this->once())
             ->method('getChildrenIds')
-            ->with($this->aclHelper, $customerId)
+            ->with($this->aclHelper, $accountId)
             ->will($this->returnValue([3]));
 
         $this->assertSearchCall($search, $page, $perPage, $foundElements, $resultData, $expectedIds);

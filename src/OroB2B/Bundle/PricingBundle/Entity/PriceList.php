@@ -83,12 +83,12 @@ class PriceList
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinTable(
-     *      name="orob2b_price_list_to_customer",
+     *      name="orob2b_price_list_to_account",
      *      joinColumns={
      *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
      */
@@ -104,7 +104,7 @@ class PriceList
      *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *          @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
      */

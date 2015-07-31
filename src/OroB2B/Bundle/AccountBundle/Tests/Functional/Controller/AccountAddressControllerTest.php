@@ -16,8 +16,8 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  */
 class AccountAddressControllerTest extends WebTestCase
 {
-    /** @var Account $customer */
-    protected $customer;
+    /** @var Account $account */
+    protected $account;
 
     /**
      * {@inheritdoc}
@@ -28,33 +28,33 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
             ]
         );
 
-        $this->customer = $this->getReference('account.orphan');
+        $this->account = $this->getReference('account.orphan');
     }
 
-    public function testCustomerView()
+    public function testAccountView()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_view', ['id' => $this->customer->getId()]));
+        $this->client->request('GET', $this->getUrl('orob2b_account_view', ['id' => $this->account->getId()]));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**
-     * @depends testCustomerView
+     * @depends testAccountView
      *
      * @return int
      */
     public function testCreateAddress()
     {
-        $customer = $this->customer;
+        $account = $this->account;
         $crawler  = $this->client->request(
             'GET',
             $this->getUrl(
                 'orob2b_account_address_create',
-                ['entityId' => $customer->getId(), '_widgetContainer' => 'dialog']
+                ['entityId' => $account->getId(), '_widgetContainer' => 'dialog']
             )
         );
 
@@ -73,7 +73,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $customer->getId()])
+            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $account->getId()])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -93,7 +93,7 @@ class AccountAddressControllerTest extends WebTestCase
             ]
         ], $result['defaults']);
 
-        return $customer->getId();
+        return $account->getId();
     }
 
     /**
@@ -106,7 +106,7 @@ class AccountAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $id])
+            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id])
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -134,7 +134,7 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_customer_get_customer_address_primary', ['entityId' => $id])
+            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id])
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -164,15 +164,15 @@ class AccountAddressControllerTest extends WebTestCase
     /**
      * @depends testCreateAddress
      *
-     * @param int $customerId
+     * @param int $accountId
      */
-    public function testDeleteAddress($customerId)
+    public function testDeleteAddress($accountId)
     {
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_customer_get_customer_address_primary',
-                ['entityId' => $customerId]
+                'orob2b_api_account_get_account_address_primary',
+                ['entityId' => $accountId]
             )
         );
 
@@ -181,8 +181,8 @@ class AccountAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'DELETE',
             $this->getUrl(
-                'orob2b_api_customer_delete_customer_address',
-                ['entityId' => $customerId, 'addressId' => $address['id']]
+                'orob2b_api_account_delete_account_address',
+                ['entityId' => $accountId, 'addressId' => $address['id']]
             )
         );
 
