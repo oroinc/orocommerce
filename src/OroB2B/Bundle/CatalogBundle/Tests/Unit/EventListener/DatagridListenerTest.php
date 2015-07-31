@@ -27,11 +27,12 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         ],
                         [
                             'join' => 'productCategory.titles',
-                            'alias' => 'categoryTitle',
-                            'conditionType' => 'WITH',
-                            'condition' => 'categoryTitle.locale IS NULL'
+                            'alias' => 'categoryTitle'
                         ]
                     ]
+                ],
+                'where' => [
+                    'and' => ['categoryTitle.locale IS NULL']
                 ]
             ],
         ],
