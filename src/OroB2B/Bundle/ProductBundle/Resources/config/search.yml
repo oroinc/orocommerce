@@ -32,6 +32,6 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             relation_type: many-to-many
             relation_fields:
                 -
-                    name: string
+                    name: text
                     target_type: text
                     target_fields: [descriptions]
