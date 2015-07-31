@@ -15,6 +15,8 @@ class ProductType extends AbstractType
 {
     const NAME = 'orob2b_product';
 
+
+
     /**
      * @var string
      */
@@ -75,6 +77,16 @@ class ProductType extends AbstractType
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'plugins' => array_merge(
+                                OroRichTextType::$defaultPlugins,
+                                ['fullscreen']
+                            ),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ],
+                    ],
                 ]
             )
             ->add(
