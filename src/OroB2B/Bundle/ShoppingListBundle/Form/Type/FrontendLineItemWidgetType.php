@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -10,6 +12,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class FrontendLineItemWidgetType extends AbstractType
@@ -38,13 +41,16 @@ class FrontendLineItemWidgetType extends AbstractType
 
     /**
      * @param ManagerRegistry $registry
+     * @param ShoppingListManager $shoppingListManager
      * @param TokenStorage $tokenStorage
      */
     public function __construct(
         ManagerRegistry $registry,
+        ShoppingListManager $shoppingListManager,
         TokenStorage $tokenStorage
     ) {
         $this->registry = $registry;
+        $this->shoppingListManager = $shoppingListManager;
         $this->accountUser = $tokenStorage->getToken()->getUser();
     }
 
@@ -77,10 +83,38 @@ class FrontendLineItemWidgetType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /** @var ShoppingListRepository $shoppingListRepository */
-        $shoppingListRepository = $currentShoppingList = $this->registry->getRepository($this->shoppingListClass);
+        $shoppingListRepository = $currentShoppingList = $this->registry
+            ->getManagerForClass($this->shoppingListClass)
+            ->getRepository($this->shoppingListClass);
         $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->accountUser);
 
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'create_shopping_list_handler' => [$this, 'createNewShoppingListHandler']
+            ]
+        );
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function createNewShoppingListHandler(FormEvent $event)
+    {
+        $data = $event->getData();
+
+        if (empty($data['shoppingList']) && !empty($data['shoppingListLabel'])) {
+            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
+            $data['shoppingList'] = $shoppingList->getId();
+            $event->setData($data);
+        }
     }
 
     /**
@@ -106,6 +140,7 @@ class FrontendLineItemWidgetType extends AbstractType
     {
         $this->shoppingListClass = $shoppingListClass;
     }
+
     /**
      * @param string $productClass
      *

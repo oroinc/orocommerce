@@ -12,12 +12,11 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\FrontendBundle\EventListener\Form\Type\LineItemSubscriber;
 
 class FrontendLineItemType extends AbstractType
 {
@@ -29,34 +28,23 @@ class FrontendLineItemType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var string
-     */
-    protected $productClass;
-
-    /**
-     * @var LineItemManager
-     */
-    protected $lineItemManager;
-
-    /**
      * @var ShoppingListManager
      */
     protected $shoppingListManager;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param LineItemManager $lineItemManager
+     * @var LineItemSubscriber
+     */
+    protected $lineItemSubscriber;
+
+    /**
      * @param ShoppingListManager $shoppingListManager
      * @param TokenStorage $tokenStorage
      */
     public function __construct(
-        ManagerRegistry $registry,
-        LineItemManager $lineItemManager,
         ShoppingListManager $shoppingListManager,
         TokenStorage $tokenStorage
     ) {
-        $this->registry = $registry;
-        $this->lineItemManager = $lineItemManager;
         $this->shoppingListManager = $shoppingListManager;
         $this->accountUser = $tokenStorage->getToken()->getUser();
     }
@@ -103,6 +91,7 @@ class FrontendLineItemType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+        $builder->addEventSubscriber($this->lineItemSubscriber);
     }
 
     /**
@@ -119,7 +108,8 @@ class FrontendLineItemType extends AbstractType
                         'methods' => [[$this, 'checkShoppingListLabel']]
                     ])
                 ],
-                'validation_groups' => ['add_product']
+                'validation_groups' => ['add_product'],
+                'create_shopping_list_handler' => [$this, 'createNewShoppingListHandler']
             ]
         );
     }
@@ -134,44 +124,6 @@ class FrontendLineItemType extends AbstractType
             $context->buildViolation('Shopping List label must not be empty')
                 ->atPath('shoppingListLabel')
                 ->addViolation();
-        }
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSubmitData(FormEvent $event)
-    {
-        $data = $event->getData();
-
-        /** @var LineItem $formData */
-        $formData = $event->getForm()->getData();
-
-        // Create new current shopping list
-        if (!$data['shoppingList'] && $data['shoppingListLabel']) {
-            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
-
-            $data['shoppingList'] = $shoppingList->getId();
-            $event->setData($data);
-
-            // TODO: check why this value isn't submitted via FormEvent::setData
-            $formData->setShoppingList($shoppingList);
-        }
-
-        // Round quantity
-        if (!isset($data['unit'], $data['quantity'])) {
-            return;
-        }
-
-        $repository = $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
-
-        /** @var Product $product */
-        $product = $repository->find($formData->getProduct());
-        if ($product) {
-            $data['quantity'] = $this->lineItemManager
-                ->roundProductQuantity($product, $data['unit'], $data['quantity']);
-
-            $event->setData($data);
         }
     }
 
@@ -196,10 +148,37 @@ class FrontendLineItemType extends AbstractType
     }
 
     /**
-     * @param string $productClass
+     * @param LineItemSubscriber $lineItemSubscriber
      */
-    public function setProductClass($productClass)
+    public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
     {
-        $this->productClass = $productClass;
+        $this->lineItemSubscriber = $lineItemSubscriber;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmitData(FormEvent $event)
+    {
+        $createShoppingListHandler = $event->getForm()->getConfig()->getOption('create_shopping_list_handler');
+
+        if (is_callable($createShoppingListHandler)) {
+            call_user_func($createShoppingListHandler, $event);
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function createNewShoppingListHandler(FormEvent $event)
+    {
+        /** @var LineItem $lineItem */
+        $lineItem = $event->getForm()->getData();
+        $data = $event->getData();
+
+        if (!$lineItem->getShoppingList() && !empty($data['shoppingListLabel'])) {
+            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
+            $lineItem->setShoppingList($shoppingList);
+        }
     }
 }

@@ -11,11 +11,11 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\FrontendBundle\EventListener\Form\Type\LineItemSubscriber;
 
 class LineItemType extends AbstractType
 {
@@ -40,6 +40,11 @@ class LineItemType extends AbstractType
      * @var LineItemManager
      */
     protected $lineItemManager;
+
+    /**
+     * @var LineItemSubscriber
+     */
+    protected $lineItemSubscriber;
 
     /**
      * @param ManagerRegistry $registry
@@ -100,7 +105,7 @@ class LineItemType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+        $builder->addEventSubscriber($this->lineItemSubscriber);
     }
 
     /**
@@ -132,27 +137,11 @@ class LineItemType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
+     * {@inheritdoc}
      */
-    public function preSubmitData(FormEvent $event)
+    public function getName()
     {
-        $data = $event->getData();
-
-        if (!isset($data['product'], $data['unit'], $data['quantity'])) {
-            return;
-        }
-
-        /** @var Product $product */
-        $product = $this->registry
-            ->getRepository($this->productClass)
-            ->find($data['product']);
-
-        if ($product) {
-            $data['quantity'] = $this->lineItemManager
-                ->roundProductQuantity($product, $data['unit'], $data['quantity']);
-
-            $event->setData($data);
-        }
+        return self::NAME;
     }
 
     /**
@@ -161,6 +150,14 @@ class LineItemType extends AbstractType
     public function setProductClass($productClass)
     {
         $this->productClass = $productClass;
+    }
+
+    /**
+     * @param LineItemSubscriber $lineItemSubscriber
+     */
+    public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
+    {
+        $this->lineItemSubscriber = $lineItemSubscriber;
     }
 
     /**
@@ -188,13 +185,5 @@ class LineItemType extends AbstractType
                 }
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 }
