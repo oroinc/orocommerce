@@ -2,17 +2,16 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;

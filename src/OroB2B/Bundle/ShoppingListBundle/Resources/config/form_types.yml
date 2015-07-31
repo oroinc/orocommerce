@@ -4,6 +4,7 @@ parameters:
     orob2b_shopping_list.form.type.frontend_line_item_widget.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType
     orob2b_shopping_list.form.type.frontend_line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType
     orob2b_shopping_list.form.handler.frontend_line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Handler\FrontendLineItemHandler
+    orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class: OroB2B\Bundle\FrontendBundle\EventListener\Form\Type\LineItemSubscriber
 
 services:
     orob2b_shopping_list.form.type.shopping_list:
@@ -19,6 +20,7 @@ services:
             - @doctrine
             - @orob2b_shopping_list.line_item.manager
         calls:
+            - [setLineItemSubscriber, [@orob2b_shopping_list.event_listener.form.type.line_item_subscriber]]
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setProductClass, [%orob2b_product.product.class%]]
         tags:
@@ -27,15 +29,25 @@ services:
     orob2b_shopping_list.form.type.frontend_line_item:
         class: %orob2b_shopping_list.form.type.frontend_line_item.class%
         arguments:
-            - @doctrine
-            - @orob2b_shopping_list.line_item.manager
             - @orob2b_shopping_list.shopping_list.manager
             - @security.token_storage
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
-            - [setProductClass, [%orob2b_product.product.class%]]
+            - [setLineItemSubscriber, [@orob2b_shopping_list.event_listener.form.type.line_item_subscriber]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_frontend_line_item }
+
+    orob2b_shopping_list.form.type.frontend_line_item_widget:
+        class: %orob2b_shopping_list.form.type.frontend_line_item_widget.class%
+        arguments:
+            - @doctrine
+            - @orob2b_shopping_list.shopping_list.manager
+            - @security.token_storage
+        calls:
+            - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
+            - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget }
 
     orob2b_shopping_list.form.handler.frontend_line_item:
         class: %orob2b_shopping_list.form.handler.frontend_line_item.class%
@@ -44,13 +56,10 @@ services:
             - @request
             - @oro_entity.doctrine_helper
 
-    orob2b_shopping_list.form.type.frontend_line_item_widget:
-        class: %orob2b_shopping_list.form.type.frontend_line_item_widget.class%
+    orob2b_shopping_list.event_listener.form.type.line_item_subscriber:
+        class: %orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class%
         arguments:
+            - @orob2b_shopping_list.line_item.manager
             - @doctrine
-            - @security.token_storage
         calls:
-            - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
-            - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
-        tags:
-            - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget }
+            - [setProductClass, [%orob2b_product.product.class%]]
