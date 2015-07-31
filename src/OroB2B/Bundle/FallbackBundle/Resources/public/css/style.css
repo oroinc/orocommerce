@@ -1,6 +1,12 @@
 .fallback-container td {
     vertical-align: top;
-    line-height: 28px;
+    line-height: 29px;
+}
+
+.fallback-container td.fallback-item-use-fallback,
+.fallback-container .fallback-status {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 .fallback-container input[type="radio"],
