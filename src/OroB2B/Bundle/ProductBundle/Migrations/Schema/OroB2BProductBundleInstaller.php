@@ -64,7 +64,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -100,6 +100,8 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
+        $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
     }
 
     /**

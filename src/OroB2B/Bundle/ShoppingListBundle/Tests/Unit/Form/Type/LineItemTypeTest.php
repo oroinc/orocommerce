@@ -127,7 +127,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
 
-        $this->assertEquals([], $form->getErrors());
+        $this->assertEmpty($form->getErrors()->count());
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
