@@ -10,7 +10,7 @@
                     'class': 'fallback'
                 }}) }}
             </td>
-        <tr>
+        </tr>
     </table>
 
     {{ form_errors(form.value) }}
@@ -23,16 +23,19 @@
             data-page-component-options="{{ {view: 'orob2bfallback/js/app/views/fallback-view'}|json_encode }}"
             data-layout="separate"
             >
-        <tr class="fallback-default-item">
-            <td>{{ form.default.vars.label|trans }}</td>
+        <tr class="fallback-item">
+            <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td class="fallback-item-value">
-                {{ form_widget(form.default) }}
+                <div class="fallback-default-field">
+                    {{ form_widget(form.default) }}
+                </div>
+                <div class="fallback-status"></div>
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for locale in form.locales %}
-            <tr class="fallback-item">
-                <td>{{ locale.vars.label|trans }}</td>
+            <tr class="fallback-item" style="display: none">
+                <td class="fallback-item-label">{{ locale.vars.label|trans }}</td>
                 <td>
                     {{ form_widget(locale) }}
                     {{ form_errors(locale) }}
@@ -48,16 +51,19 @@
             data-page-component-options="{{ {view: 'orob2bfallback/js/app/views/fallback-view'}|json_encode }}"
             data-layout="separate"
             >
-        <tr class="fallback-default-item">
-            <td>{{ form.default.vars.label|trans }}</td>
+        <tr class="fallback-item">
+            <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td class="fallback-item-value">
-                {{ form_widget(form.default) }}
+                <div class="fallback-default-field">
+                    {{ form_widget(form.default) }}
+                </div>
+                <div class="fallback-status"></div>
                 {{ form_errors(form.default) }}
             </td>
         </tr>
         {% for website in form.websites %}
-            <tr class="fallback-item">
-                <td>{{ website.vars.label|trans }}</td>
+            <tr class="fallback-item" style="display: none">
+                <td class="fallback-item-label">{{ website.vars.label|trans }}</td>
                 <td>
                     {{ form_widget(website) }}
                     {{ form_errors(website) }}

@@ -6,6 +6,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
@@ -64,7 +65,7 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product_form[sku]'] = self::TEST_SKU;
         $form['orob2b_product_form[owner]'] = $this->getBusinessUnitId();
-        
+
         $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
         $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
         $form['orob2b_product_form[status]'] = Product::STATUS_DISABLED;
@@ -78,7 +79,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("Product has been saved", $html);
+        $this->assertContains('Product has been saved', $html);
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
         $this->assertContains(self::VISIBILITY, $html);
@@ -178,8 +179,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("Product has been duplicated", $html);
-        $this->assertContains(self::FIRST_DUPLICATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains('Product has been duplicated', $html);
+        $this->assertContains(
+            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            $html
+        );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);
@@ -211,7 +215,10 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains(
+            self::UPDATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            $html
+        );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
@@ -295,8 +302,11 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("Product has been saved and duplicated", $html);
-        $this->assertContains(self::SECOND_DUPLICATED_SKU . ' - Products - Product management', $html);
+        $this->assertContains('Product has been saved and duplicated', $html);
+        $this->assertContains(
+            self::SECOND_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            $html
+        );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
         $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);

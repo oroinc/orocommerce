@@ -40,6 +40,9 @@ class LoadProducts extends AbstractFixture
             ->getRepository('OroOrganizationBundle:Organization')
             ->getFirst();
 
+        $name = new LocalizedFallbackValue();
+        $name->setString($sku);
+
         $product = new Product();
         $product->setSku($sku);
 
@@ -48,6 +51,7 @@ class LoadProducts extends AbstractFixture
         $product->addName($name);
         $product->setOwner($businessUnit);
         $product->setOrganization($organization);
+        $product->addName($name);
         $manager->persist($product);
         $this->addReference($sku, $product);
 

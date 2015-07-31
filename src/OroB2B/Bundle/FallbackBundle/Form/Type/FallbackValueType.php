@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\FallbackBundle\Form\DataTransformer\FallbackValueTransformer;
 
@@ -25,7 +25,7 @@ class FallbackValueType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
             'type',
@@ -35,6 +35,7 @@ class FallbackValueType extends AbstractType
             'data_class'                  => null,
             'options'                     => [],
             'fallback_type'               => FallbackPropertyType::NAME,
+            'fallback_type_locale'        => null,
             'fallback_type_parent_locale' => null,
             'enabled_fallbacks'           => [],
         ]);
@@ -59,8 +60,9 @@ class FallbackValueType extends AbstractType
                 $options['fallback_type'],
                 [
                     'enabled_fallbacks' => $options['enabled_fallbacks'],
-                    'parent_locale' => $options['fallback_type_parent_locale'],
-                    'required' => false
+                    'locale'            => $options['fallback_type_locale'],
+                    'parent_locale'     => $options['fallback_type_parent_locale'],
+                    'required'          => false
                 ]
             );
 
