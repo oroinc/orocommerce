@@ -89,7 +89,7 @@ class AjaxLineItemController extends Controller
         $isFormHandled = $handler->process($lineItem);
 
         if (!$isFormHandled) {
-            return new JsonResponse(['successful' => false, 'message' => $form->getErrorsAsString()]);
+            return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors()]);
         }
 
         $message = $this->get('translator')

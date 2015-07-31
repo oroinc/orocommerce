@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -26,19 +26,19 @@ class ShoppingListManager
     protected $lineItemEm;
 
     /**
-     * @var SecurityContext
+     * @var AccountUser
      */
-    protected $securityContext;
+    protected $accountUser;
 
     /**
      * @param ManagerRegistry $managerRegistry
-     * @param SecurityContext $securityContext
+     * @param TokenStorage $tokenStorage
      */
-    public function __construct(ManagerRegistry $managerRegistry, SecurityContext $securityContext)
+    public function __construct(ManagerRegistry $managerRegistry, TokenStorage $tokenStorage)
     {
         $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-        $this->securityContext = $securityContext;
+        $this->accountUser = $tokenStorage->getToken()->getUser();
     }
 
     /**
@@ -50,17 +50,15 @@ class ShoppingListManager
      */
     public function createCurrent($label = 'Default')
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->securityContext->getToken()->getUser();
         $shoppingList = new ShoppingList();
         $shoppingList
-            ->setOwner($accountUser)
-            ->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getCustomer())
-            ->setAccountUser($accountUser)
+            ->setOwner($this->accountUser)
+            ->setOrganization($this->accountUser->getOrganization())
+            ->setAccount($this->accountUser->getCustomer())
+            ->setAccountUser($this->accountUser)
             ->setLabel($label);
 
-        $this->setCurrent($accountUser, $shoppingList);
+        $this->setCurrent($this->accountUser, $shoppingList);
 
         return $shoppingList;
     }
@@ -132,12 +130,11 @@ class ShoppingListManager
      */
     public function getForCurrentUser($shoppingListId = null)
     {
-        $user = $this->securityContext->getToken()->getUser();
         /** @var ShoppingListRepository $repository */
         $repository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $shoppingList = null === $shoppingListId
-            ? $repository->findCurrentForAccountUser($user)
-            : $repository->findByUserAndId($user, $shoppingListId);
+            ? $repository->findCurrentForAccountUser($this->accountUser)
+            : $repository->findByUserAndId($this->accountUser, $shoppingListId);
 
         if (!$shoppingList instanceof ShoppingList) {
             $shoppingList = $this->createCurrent();

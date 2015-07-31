@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -35,9 +35,9 @@ class FormViewListener
     protected $request;
 
     /**
-     * @var SecurityContextInterface
+     * @var TokenStorage
      */
-    protected $securityContext;
+    protected $tokenStorage;
 
     /**
      * @var FormFactoryInterface
@@ -45,19 +45,19 @@ class FormViewListener
     protected $formFactory;
 
     /**
-     * @param TranslatorInterface      $translator
-     * @param DoctrineHelper           $doctrineHelper
-     * @param SecurityContextInterface $securityContext
+     * @param TranslatorInterface $translator
+     * @param DoctrineHelper $doctrineHelper
+     * @param TokenStorage $tokenStorage
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        SecurityContextInterface $securityContext,
+        TokenStorage $tokenStorage,
         FormFactoryInterface $formFactory
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->formFactory = $formFactory;
     }
 
@@ -115,7 +115,7 @@ class FormViewListener
      */
     protected function getUser()
     {
-        $token = $this->securityContext->getToken();
+        $token = $this->tokenStorage->getToken();
         if (null === $token) {
             return null;
         }
