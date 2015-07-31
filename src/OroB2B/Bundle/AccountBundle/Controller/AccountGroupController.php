@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -15,7 +16,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountGroupHandler;
-
 
 class AccountGroupController extends Controller
 {
