@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType;
 
@@ -51,5 +52,23 @@ class AjaxLineItemController extends Controller
         }
 
         return $result;
+    }
+
+    /**
+     * Edit product form
+     *
+     * @Route("/update/{id}", name="orob2b_shopping_list_line_item_frontend_update_widget", requirements={"id"="\d+"})
+     * @Template("OroB2BShoppingListBundle:LineItem:widget/update.html.twig")
+     *
+     * @param LineItem $lineItem
+     *
+     * @return array|RedirectResponse
+     */
+    public function updateAction(LineItem $lineItem)
+    {
+        $form = $this->createForm(LineItemType::NAME, $lineItem);
+
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate($lineItem, $form, null, null, null);
     }
 }
