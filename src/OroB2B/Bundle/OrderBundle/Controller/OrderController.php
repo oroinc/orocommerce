@@ -49,7 +49,7 @@ class OrderController extends Controller
     public function infoAction(Order $order)
     {
         return [
-            'order' => $order
+            'entity' => $order
         ];
     }
 

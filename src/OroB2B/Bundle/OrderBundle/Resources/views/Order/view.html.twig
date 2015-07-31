@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 
-{% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
+{% oro_title_set({params : {'%identifier%': entity.identifier }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -15,7 +15,7 @@
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
-            'path' : path('orob2b_order_update', { 'id': entity.id }),
+            'path' : path('orob2b_order_update', {'id': entity.id}),
             'entity_label': 'orob2b.order.entity_label'|trans
         }) }}
     {% endif %}
@@ -36,22 +36,81 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'orob2b.order.widgets.order_information'|trans,
-            'url': path('orob2b_order_info', {id: entity.id})
+            'url': path('orob2b_order_info', {'id': entity.id})
         }) }}
     {% endset %}
+    {% set orderProducts %}
+        <div class="order-orderproducts-info control-group">
+            <table class="order-orderproduct-collection-table order-orderproduct-collection-table-view">
+                <thead>
+                    <tr>
+                        <th>{{ 'orob2b.order.orderproduct.column.product'|trans }}</th>
+                        <th>{{ 'orob2b.order.orderproduct.column.order_product_items'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for orderProduct in entity.orderProducts %}
+                    <tr>
+                        <td>
+                            <div>
+                                {% if orderProduct.product %}
+                                    <a href="{{ path('orob2b_product_view', { id: orderProduct.product.id }) }}">{{ orderProduct.product|raw }}</a>
+                                {% else %}
+                                    {{ orderProduct.productSku|raw }}
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="order-orderproductitems-info">
+                            {% if orderProduct.orderProductItems|length %}
+                                <table>
+                                    <tr>
+                                        <th>{{ 'orob2b.order.orderproductitem.quantity.label'|trans }}</th>
+                                        <th>{{ 'orob2b.order.orderproductitem.price.label'|trans }}</th>
+                                        <th>{{ 'orob2b.order.orderproductitem.column_summary'|trans }}</th>
+                                    </tr>
 
-    {% set generalSectionBlocks = [{'data' : [orderInformationWidget]}]%}
+                                    {% for orderProductItem in orderProduct.orderProductItems %}
+                                        <tr>
+                                            <td>{{ orderProductItem.quantity|orob2b_format_product_unit_value(orderProductItem.productUnit) }}</td>
+                                            <td>{{ orderProductItem.price|oro_format_price }}</td>
+                                            <td>{{ orderProductItem|orob2b_format_order_product_item }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% if orderProduct.comment %}
+                                        <tr>
+                                            <td colspan="3">
+                                                {{ UI.renderProperty('orob2b.order.orderproduct.comment.label'|trans, orderProduct.comment) }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                </table>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endset %}
 
-    {% set dataBlocks = [
-        {
-            'title': 'orob2b.order.sections.general'|trans,
-            'class': 'active',
-            'subblocks': generalSectionBlocks
-        }
-    ] %}
+    {% set id = 'orderView' %}
 
-    {% set id = 'order-view' %}
-    {% set data = {'dataBlocks': dataBlocks} %}
+    {% set generalBlock = {
+        'title': 'orob2b.order.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{'data' : [orderInformationWidget]}]
+    } %}
+
+    {% set lineItemsBlock = {
+        'title': 'orob2b.order.sections.order_products'|trans,
+        'subblocks': [{'data' : [orderProducts]}]
+    } %}
+
+    {% if entity.orderProducts | length %}
+        {% set data = {'dataBlocks': [generalBlock, lineItemsBlock]} %}
+    {% else %}
+        {% set data = {'dataBlocks': [generalBlock]} %}
+    {% endif %}
 
     {{ parent() }}
 {% endblock content_data %}

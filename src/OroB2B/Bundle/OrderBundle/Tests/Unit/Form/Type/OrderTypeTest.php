@@ -18,12 +18,14 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
                 [
                     'data_class' => 'Order',
+                    'intention'  => 'order_order',
+                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]
             );
 
@@ -33,6 +35,6 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_order_type', $this->type->getName());
+        $this->assertEquals('orob2b_order_order', $this->type->getName());
     }
 }

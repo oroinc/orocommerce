@@ -46,8 +46,8 @@ orob2b:
                 order_product_items: 'Items'
 
         orderproductitem:
-            item: '{0}{units}, {price} per {unit}|{1}{units} or more, {price} per {unit}'
-            item_bundled: '{0}{units}, {price} for every {units}|{1}{units} or more, {price} for every {units}'
+            item: '{units}, {price} per {unit}'
+            item_bundled: '{units}, {price} for every {units}'
             entity_label: 'Order Product Item'
             entity_plural_label: 'Order Product Items'
             add_label: 'Add Item'
