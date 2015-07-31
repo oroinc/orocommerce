@@ -11,8 +11,8 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
+use OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
@@ -166,5 +166,40 @@ class OrderProductType extends AbstractType
                 'orob2b.order.orderproduct.product.removed'
             );
         }
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param string $field
+     * @param bool $required
+     * @param string $productSku
+     * @param string $label
+     * @param string $emptyLabel
+     */
+    protected function replaceProductField(
+        FormInterface $form,
+        $field,
+        $required,
+        $productSku,
+        $label,
+        $emptyLabel = null
+    ) {
+        $options = [
+            'create_enabled' => false,
+            'required' => $required,
+            'label' => $label,
+        ];
+
+        if ($emptyLabel) {
+            $emptyValueTitle = $this->translator->trans($emptyLabel, [
+                '{title}' => $productSku,
+            ]);
+
+            $options['configs'] = [
+                'placeholder' => $emptyValueTitle,
+            ];
+        }
+
+        $form->add($field, ProductSelectType::NAME, $options);
     }
 }

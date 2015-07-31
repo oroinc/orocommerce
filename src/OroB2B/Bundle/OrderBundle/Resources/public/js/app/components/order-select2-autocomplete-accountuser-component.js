@@ -4,7 +4,6 @@ define(function(require) {
 
     var Select2AutocompleteAccountUserComponent;
     var $ = require('jquery');
-    var _ = require('underscore');
     var Select2AutocompleteComponent = require('oro/select2-autocomplete-component');
 
     Select2AutocompleteAccountUserComponent = Select2AutocompleteComponent.extend({

@@ -7,6 +7,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var $ = require('jquery');
+    var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
