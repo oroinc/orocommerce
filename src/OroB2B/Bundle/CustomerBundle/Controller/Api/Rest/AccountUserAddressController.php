@@ -2,13 +2,6 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Controller\Api\Rest;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
-
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -18,10 +11,18 @@ use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
+
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
+
 /**
- * @NamePrefix("orob2b_api_customer_")
+ * @NamePrefix("orob2b_api_customer_account_user_")
  */
-class CustomerAddressController extends RestController implements ClassResourceInterface
+class AccountUserAddressController extends RestController implements ClassResourceInterface
 {
     /**
      * REST GET address
@@ -30,22 +31,22 @@ class CustomerAddressController extends RestController implements ClassResourceI
      * @param string $addressId
      *
      * @ApiDoc(
-     *      description="Get customer address",
+     *      description="Get account user address",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_customer_view")
+     * @AclAncestor("orob2b_customer_account_user_view")
      * @return Response
      */
     public function getAction($entityId, $addressId)
     {
-        /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($entityId);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
 
         /** @var CustomerAddress $address */
         $address = $this->getManager()->find($addressId);
 
         $addressData = null;
-        if ($address && $customer->getAddresses()->contains($address)) {
+        if ($address && $accountUser->getAddresses()->contains($address)) {
             $addressData = $this->getPreparedItem($address);
         }
         $responseData = $addressData ? json_encode($addressData) : '';
@@ -59,26 +60,26 @@ class CustomerAddressController extends RestController implements ClassResourceI
      *      description="Get all addresses items",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_customer_view")
+     * @AclAncestor("orob2b_customer_account_user_view")
      * @param int $entityId
      *
      * @return JsonResponse
      */
     public function cgetAction($entityId)
     {
-        /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($entityId);
-        $result = [];
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
+        $result  = [];
 
-        if ($customer) {
-            $items = $customer->getAddresses();
+        if ($accountUser) {
+            $items = $accountUser->getAddresses();
 
             foreach ($items as $item) {
                 $result[] = $this->getPreparedItem($item);
             }
         }
 
-        return new JsonResponse($result, $customer ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
+        return new JsonResponse($result, $accountUser ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
     }
 
     /**
@@ -88,7 +89,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
      *      description="Delete address items",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_customer_delete")
+     * @AclAncestor("orob2b_customer_account_user_delete")
      * @param int $entityId
      * @param int $addressId
      *
@@ -96,12 +97,12 @@ class CustomerAddressController extends RestController implements ClassResourceI
      */
     public function deleteAction($entityId, $addressId)
     {
-        /** @var CustomerAddress $address */
+        /** @var AccountUserAddress $address */
         $address = $this->getManager()->find($addressId);
-        /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($entityId);
-        if ($customer->getAddresses()->contains($address)) {
-            $customer->removeAddress($address);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
+        if ($accountUser->getAddresses()->contains($address)) {
+            $accountUser->removeAddress($address);
             return $this->handleDeleteRequest($addressId);
         } else {
             return $this->handleView($this->view(null, Codes::HTTP_NOT_FOUND));
@@ -115,19 +116,19 @@ class CustomerAddressController extends RestController implements ClassResourceI
      * @param string $typeName
      *
      * @ApiDoc(
-     *      description="Get customer address by type",
+     *      description="Get account user address by type",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_customer_view")
+     * @AclAncestor("orob2b_customer_account_user_view")
      * @return Response
      */
     public function getByTypeAction($entityId, $typeName)
     {
-        /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($entityId);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
 
-        if ($customer) {
-            $address = $customer->getAddressByTypeName($typeName);
+        if ($accountUser) {
+            $address = $accountUser->getAddressByTypeName($typeName);
         } else {
             $address = null;
         }
@@ -143,19 +144,19 @@ class CustomerAddressController extends RestController implements ClassResourceI
      * @param int $entityId
      *
      * @ApiDoc(
-     *      description="Get customer primary address",
+     *      description="Get account user primary address",
      *      resource=true
      * )
-     * @AclAncestor("orob2b_customer_view")
+     * @AclAncestor("orob2b_customer_account_user_view")
      * @return Response
      */
     public function getPrimaryAction($entityId)
     {
-        /** @var Customer $customer */
-        $customer = $this->getCustomerManager()->find($entityId);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getAccountUserManager()->find($entityId);
 
-        if ($customer) {
-            $address = $customer->getPrimaryAddress();
+        if ($accountUser) {
+            $address = $accountUser->getPrimaryAddress();
         } else {
             $address = null;
         }
@@ -168,9 +169,9 @@ class CustomerAddressController extends RestController implements ClassResourceI
     /**
      * @return \Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
      */
-    protected function getCustomerManager()
+    protected function getAccountUserManager()
     {
-        return $this->get('orob2b_customer.manager.customer.api.attribute');
+        return $this->get('orob2b_customer.account_user.manager.api');
     }
 
     /**
@@ -178,7 +179,7 @@ class CustomerAddressController extends RestController implements ClassResourceI
      */
     public function getManager()
     {
-        return $this->get('orob2b_customer.customer_address.manager.api');
+        return $this->get('orob2b_customer.account_user_address.manager.api');
     }
 
     /**

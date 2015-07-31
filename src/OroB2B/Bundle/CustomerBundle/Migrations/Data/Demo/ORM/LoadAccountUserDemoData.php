@@ -2,19 +2,20 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    const ACCOUNT_USERS_REFERENCE_PREFIX = 'account_user_demo_data_';
+
+    /** @var ContainerInterface */
     protected $container;
 
     /**
@@ -81,10 +82,11 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
                 ->addRole($role);
 
             $userManager->updateUser($accountUser, false);
+
+            $this->addReference(self::ACCOUNT_USERS_REFERENCE_PREFIX . $row['email'], $accountUser);
         }
 
         fclose($handler);
-
         $storageManager->flush();
     }
 }

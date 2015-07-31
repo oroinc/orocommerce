@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
@@ -23,6 +24,11 @@ class AccountUserType extends AbstractType
      * @var string
      */
     protected $roleClass;
+
+    /**
+     * @var string
+     */
+    protected $addressClass;
 
     /**
      * @param SecurityFacade $securityFacade
@@ -46,6 +52,14 @@ class AccountUserType extends AbstractType
     public function setRoleClass($roleClass)
     {
         $this->roleClass = $roleClass;
+    }
+
+    /**
+     * @param string $addressClass
+     */
+    public function setAddressClass($addressClass)
+    {
+        $this->addressClass = $addressClass;
     }
 
     /**
@@ -78,6 +92,7 @@ class AccountUserType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function addEntityFields(FormBuilderInterface $builder)
     {
@@ -155,6 +170,19 @@ class AccountUserType extends AbstractType
                     'label' => 'orob2b.customer.accountuser.birthday.label',
                 ]
             )
+            ->add(
+                'addresses',
+                AddressCollectionType::NAME,
+                [
+                    'label'    => 'orob2b.customer.accountuser.addresses.label',
+                    'type'     => AccountUserTypedAddressType::NAME,
+                    'required' => false,
+                    'options'  => [
+                        'data_class'  => $this->addressClass,
+                        'single_form' => false
+                    ]
+                ]
+            )
         ;
 
         if ($this->securityFacade->isGranted('orob2b_customer_account_user_role_view')) {
@@ -208,6 +236,7 @@ class AccountUserType extends AbstractType
         $resolver->setRequired(['data']);
 
         $resolver->setDefaults([
+            'cascade_validation'   => true,
             'data_class'           => $this->dataClass,
             'intention'            => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
