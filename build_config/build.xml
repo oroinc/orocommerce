@@ -120,8 +120,14 @@
     <condition property="db.host" value="${env.bamboo_dbhost}" else="127.0.0.1">
         <isset property="env.bamboo_dbhost"/>
     </condition>
-    <condition property="db.port" value="${env.bamboo_dbport}" else="3306">
+    <condition property="db.port" value="${env.bamboo_dbport}">
         <isset property="env.bamboo_dbport"/>
+    </condition>
+    <condition property="db.port" value="3306">
+        <equals arg1="${db.type}" arg2="mysql"/>
+    </condition>
+    <condition property="db.port" value="5432">
+        <equals arg1="${db.type}" arg2="pgsql"/>
     </condition>
     <condition property="db.user" value="${env.bamboo_dbuser}" else="mysql">
         <isset property="env.bamboo_dbuser"/>
@@ -228,11 +234,12 @@
                 <!-- TODO: Check if it works -->
                 <equals arg1="${db.type}" arg2="pgsql"/>
                 <then>
-                    <echo>Installing ${db.type}...</echo>
+                    <echo>Creating ${db.name} database in ${db.type}...</echo>
                     <path id="classpath.pgsqldriver">
                         <fileset dir="/usr/share/java/">
+                            <include name="postgresql-9.3-1103.jdbc41.jar"/>
                             <include name="postgresql-9.3-1101.jdbc41.jar"/>
-                            <!-- RedHat/CentOS/Fedora -->
+                            <include name="postgresql-9.3.jdbc41.jar"/>
                             <include name="postgresql-jdbc.jar"/>
                             <include name="postgresql-*.jdbc*.jar"/>
                         </fileset>
@@ -244,7 +251,7 @@
                         <arg line="-h ${db.host} -U postgres -c 'CREATE EXTENSION IF NOT EXISTS &quot;uuid-ossp&quot;;' -d template0" />
                     </exec>
                     <sql driver="org.postgresql.Driver"
-                        classpath="/usr/share/java/postgresql-9.3-1101.jdbc41.jar"
+                        classpathref="classpath.pgsqldriver"
                         url="jdbc:postgresql://${db.host}/template0"
                         userid="${db.user}"
                         password="${db.pass}"
@@ -313,7 +320,7 @@
     <!-- Create an application configuration file -->
     <macrodef name="appconfig">
         <attribute name="env"/>
-        <attribute name="database-driver" default="pdo_mysql"/>
+        <attribute name="database-driver" default="${db.driver}"/>
         <attribute name="database-host" default="${db.host}"/>
         <attribute name="database-port" default="${db.port}"/>
         <attribute name="database-name" default="${db.name}"/>
@@ -531,7 +538,7 @@
     </target>
 
     <!-- Check code standards -->
-    <target name="run-code-standards" depends="run-phpcs,run-phpmd,run-phpcpd" extensionOf="run-all-tests">
+    <target name="run-code-standards" depends="run-phpcs,run-phpcpd,run-phpmd" extensionOf="run-all-tests">
         <!--<parallel>
             <antcall target="run-phpcs"/>
             <antcall target="run-phpmd"/>
@@ -541,7 +548,7 @@
 
     <target name="run-phpcs">
         <exec dir="${basedir}" executable="phpcs" failonerror="true">
-            <arg line="--encoding=utf-8 --extensions=php --standard=${confdir}/phpcs.xml --report=checkstyle
+            <arg line="--encoding=utf-8 --extensions=php --standard=${confdir}/phpcs.xml --report=junit
                       --report-file=${reportdir}/phpcs.xml ${srcdir}"/>
         </exec>
     </target>
@@ -558,6 +565,7 @@
             <arg line="--exclude=SaleBundle/Migrations/Schema"/>
             <arg line="--exclude=ProductBundle/Migrations/Schema"/>
             <arg line="--exclude=AccountBundle/Migrations/Schema"/>
+            <arg line="--exclude=PricingBundle/Migrations/Schema"/>
             <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
             <arg line="--exclude=RFPBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
