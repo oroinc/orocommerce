@@ -32,6 +32,14 @@
     opacity: .4;
 }
 
+.fallback-item-top {
+    padding-top: 10px;
+}
+
+.fallback-item-value-top {
+    padding-top: 5px;
+}
+
 .fallback-item-value,
 .fallback-item-label{
     white-space: nowrap;

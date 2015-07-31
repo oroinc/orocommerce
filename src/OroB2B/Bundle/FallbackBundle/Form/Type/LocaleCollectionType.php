@@ -67,10 +67,11 @@ class LocaleCollectionType extends AbstractType
         ]);
 
         $resolver->setDefaults([
-            'options'           => [],
-            'fallback_type'     => FallbackPropertyType::NAME,
-            'enabled_fallbacks' => [],
-            'value_type'        => FallbackValueType::NAME
+            'options'               => [],
+            'fallback_type'         => FallbackPropertyType::NAME,
+            'enabled_fallbacks'     => [],
+            'value_type'            => FallbackValueType::NAME,
+            'group_fallback_fields' => null
         ]);
     }
 
@@ -99,6 +100,7 @@ class LocaleCollectionType extends AbstractType
                     'fallback_type_locale'        => $locale->getCode(),
                     'fallback_type_parent_locale' => $parentLocaleCode,
                     'enabled_fallbacks'           => $enabledFallbacks,
+                    'group_fallback_fields'       => $options['group_fallback_fields']
                 ]
             );
         }

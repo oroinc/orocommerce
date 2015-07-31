@@ -75,6 +75,12 @@ class ProductType extends AbstractType
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'width' => 350,
+                            'height' => 250,
+                        ]
+                    ]
                 ]
             )
             ->add(
