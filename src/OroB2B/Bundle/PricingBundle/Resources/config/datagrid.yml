@@ -397,12 +397,21 @@ datagrid:
                     - IDENTITY(productPrice.product) as productId
                     - productPrice.id
                     - productPrice.productSku
+                    - productNames.string as productName
                     - productPrice.quantity
                     - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                join:
+                    inner:
+                        - { join: productPrice.product, alias: product }
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
                 where:
                     and:
                         - IDENTITY(productPrice.priceList) = :price_list_id
@@ -411,6 +420,8 @@ datagrid:
         columns:
             productSku:
                 label:         orob2b.pricing.productprice.product_sku.label
+            productName:
+                label:         orob2b.pricing.productprice.product_name.label
             quantity:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
@@ -426,6 +437,8 @@ datagrid:
             columns:
                 productSku:
                     data_name: productPrice.productSku
+                productName:
+                    data_name: productName
                 quantity:
                     data_name: productPrice.quantity
                 unitCode:
@@ -441,6 +454,9 @@ datagrid:
                 productSku:
                     type:      string
                     data_name: productPrice.productSku
+                productName:
+                    type:      string
+                    data_name: productName
                 quantity:
                     type:      number
                     data_name: productPrice.quantity

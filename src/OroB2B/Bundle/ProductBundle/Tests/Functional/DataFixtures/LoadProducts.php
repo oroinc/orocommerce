@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProducts extends AbstractFixture
@@ -39,10 +40,14 @@ class LoadProducts extends AbstractFixture
             ->getRepository('OroOrganizationBundle:Organization')
             ->getFirst();
 
+        $name = new LocalizedFallbackValue();
+        $name->setString($sku);
+
         $product = new Product();
         $product->setSku($sku);
         $product->setOwner($businessUnit);
         $product->setOrganization($organization);
+        $product->addName($name);
         $manager->persist($product);
         $this->addReference($sku, $product);
 
