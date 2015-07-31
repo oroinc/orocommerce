@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Data\ORM;
+namespace OroB2B\Bundle\ProductBundle\Migrations\Data\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -11,14 +11,10 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Acl\Extension\ActionAclExtension;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class LoadAccountUserWithShoppingListPermissions extends AbstractFixture implements
-    DependentFixtureInterface,
-    ContainerAwareInterface
+class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const ROLE_FRONTEND_BUYER = 'ROLE_FRONTEND_BUYER';
 
@@ -50,7 +46,7 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
     {
         $aclManager = $this->container->get('oro_security.acl.manager');
 
-        $this->setBuyerShoppingListPermissions($manager, $aclManager);
+        $this->setBuyerPermissions($manager, $aclManager);
 
         $manager->flush();
         $aclManager->flush();
@@ -60,29 +56,15 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
      * @param ObjectManager $manager
      * @param AclManager    $aclManager
      */
-    protected function setBuyerShoppingListPermissions(ObjectManager $manager, AclManager $aclManager)
+    protected function setBuyerPermissions(ObjectManager $manager, AclManager $aclManager)
     {
-        $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
-        $allowedAcls = ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC', 'DELETE_BASIC'];
-        $role = $this->getBuyerRole($manager);
-
         if ($aclManager->isAclEnabled()) {
+            $role = $this->getBuyerRole($manager);
             $sid = $aclManager->getSid($role);
-            $className = $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class');
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
 
-                    $chainMetadataProvider->stopProviderEmulation();
-                } elseif ($extension instanceof ActionAclExtension) {
-                    $oid = $aclManager->getOid('action:orob2b_shoppinglist_add_product');
+            foreach ($aclManager->getAllExtensions() as $extension) {
+                if ($extension instanceof ActionAclExtension) {
+                    $oid = $aclManager->getOid('action:orob2b_product_view_products');
                     $builder = $aclManager->getMaskBuilder($oid);
                     $mask = $builder->reset()->add('EXECUTE')->get();
                     $aclManager->setPermission($sid, $oid, $mask, true);
