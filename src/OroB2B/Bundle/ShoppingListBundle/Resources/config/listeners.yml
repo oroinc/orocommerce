@@ -13,7 +13,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-            - @security.context
+            - @security.token_storage
             - @form.factory
         calls:
             - [setRequest, ["@?request="]]

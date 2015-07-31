@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -35,9 +36,9 @@ class FormViewListener
     protected $request;
 
     /**
-     * @var SecurityContextInterface
+     * @var TokenStorageInterface
      */
-    protected $securityContext;
+    protected $tokenStorage;
 
     /**
      * @var FormFactoryInterface
@@ -45,19 +46,20 @@ class FormViewListener
     protected $formFactory;
 
     /**
-     * @param TranslatorInterface      $translator
-     * @param DoctrineHelper           $doctrineHelper
-     * @param SecurityContextInterface $securityContext
+     * @param TranslatorInterface   $translator
+     * @param DoctrineHelper        $doctrineHelper
+     * @param TokenStorageInterface $tokenStorage
+     * @param FormFactoryInterface  $formFactory
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        SecurityContextInterface $securityContext,
+        TokenStorageInterface $tokenStorage,
         FormFactoryInterface $formFactory
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->formFactory = $formFactory;
     }
 
@@ -86,22 +88,21 @@ class FormViewListener
         $productId = $this->request->get('id');
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        $lineItem = (new LineItem())->setProduct($product);
 
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->doctrineHelper->getEntityRepository('OroB2BShoppingListBundle:ShoppingList');
         $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
         $shoppingLists = $shoppingListRepository->findAllExceptCurrentForAccountUser($accountUser);
 
-        $lineItem = (new LineItem())
-            ->setProduct($product);
-
         $template = $event->getEnvironment()->render(
-            'OroB2BShoppingListBundle:Product:product_view.html.twig',
+            'OroB2BShoppingListBundle:Product/Frontend:view.html.twig',
             [
                 'product'             => $product,
                 'shoppingLists'       => $shoppingLists,
                 'currentShoppingList' => $currentShoppingList,
-                'form'                => $this->formFactory
+                'form'                => $this
+                    ->formFactory
                     ->create(FrontendLineItemType::NAME, $lineItem)
                     ->createView(),
             ]
@@ -115,7 +116,7 @@ class FormViewListener
      */
     protected function getUser()
     {
-        $token = $this->securityContext->getToken();
+        $token = $this->tokenStorage->getToken();
         if (null === $token) {
             return null;
         }
