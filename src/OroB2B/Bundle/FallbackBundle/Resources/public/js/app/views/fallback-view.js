@@ -28,7 +28,7 @@ define(function(require) {
         options: {
             expanded: false,
             hideDefaultLabel: true,
-            fallbackWidth: 200,
+            fallbackWidth: 180,
             selectors: {
                 status: '.fallback-status',
                 item: '.fallback-item',
