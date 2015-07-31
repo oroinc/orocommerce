@@ -88,6 +88,8 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             /** @var ProductUnitPrecision $unitPrecision */
             $unitPrecision = $entity->getUnitPrecisions()->first();
             $lineItem = (new LineItem())
+                ->setOwner($shoppingList->getOwner())
+                ->setOrganization($shoppingList->getOrganization())
                 ->setProduct($entity)
                 ->setQuantity(1)
                 ->setUnit($unitPrecision->getUnit());
