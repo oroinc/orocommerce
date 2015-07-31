@@ -40,8 +40,8 @@ class OroB2BShoppingListBundleInstaller implements Installation
     {
         $table = $schema->createTable('orob2b_shopping_list');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('organization_id', 'integer');
-        $table->addColumn('account_user_owner_id', 'integer');
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('label', 'string', ['length' => 255]);
@@ -118,6 +118,18 @@ class OroB2BShoppingListBundleInstaller implements Installation
     protected function addOrob2BShoppingListLineItemForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_shopping_list_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_shopping_list'),
             ['shopping_list_id'],
