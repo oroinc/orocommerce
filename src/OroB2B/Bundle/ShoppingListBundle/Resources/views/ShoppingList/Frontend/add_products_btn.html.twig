@@ -1,14 +1,23 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as Buttons %}
+{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
 
-{% set buttonsHtml %}
-    {{ Buttons.addToShoppingListButton() }}
-    {% for shoppingList in shoppingLists %}
-        {{ Buttons.addToShoppingListButton(shoppingList) }}
-    {% endfor %}
-    {{ Buttons.addToShoppingListButton(null, true) }}
-{% endset %}
+{% set commonOptions = {
+    dataUrl: 'orob2b_shopping_list_add_products_massaction',
+    dataUrlOptions: {
+            gridName: 'frontend-products-grid',
+            actionName: 'addproducts',
+    },
+    dataAttributes: {
+        'page-component-module': 'orob2bshoppinglist/js/app/components/add-products-button',
+        'page-component-options': {
+            'redirect': path('orob2b_shopping_list_frontend_index'),
+        } | json_encode
+    }
+} %}
+{% set options = {
+    new: commonOptions,
+    current: commonOptions,
+    existing: commonOptions,
+    shoppingLists: shoppingLists
+} %}
 
-{{ UI.pinnedDropdownButton({
-    'html': buttonsHtml
-}) }}
+{{ buttons.createAddToShoppingListButton(options) }}
