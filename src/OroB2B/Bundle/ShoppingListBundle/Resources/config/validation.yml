@@ -7,13 +7,12 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
             - NotNull:
                 groups: [create, update, add_product]
         quantity:
-            - NotNull:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
                 groups: [create, update, add_product]
-            - Type:
-                type: numeric
-                groups: [create, update, add_product]
-            - GreaterThan:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 value: 0
+                groups: [create, update, add_product]
+            - NotNull:
                 groups: [create, update, add_product]
         unit:
             - NotNull:

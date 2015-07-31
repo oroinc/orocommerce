@@ -17,13 +17,13 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\AddProductType;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
-class AddProductTypeTest extends FormIntegrationTestCase
+class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
@@ -32,7 +32,7 @@ class AddProductTypeTest extends FormIntegrationTestCase
     const NEW_SHOPPING_LIST_ID = 10;
 
     /**
-     * @var AddProductType
+     * @var FrontendLineItemWidgetType
      */
     protected $type;
 
@@ -74,16 +74,13 @@ class AddProductTypeTest extends FormIntegrationTestCase
             ->method('createCurrent')
             ->willReturn($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
 
-        $this->type = new AddProductType(
+        $this->type = new FrontendLineItemWidgetType(
             $this->getRegistry(),
-            $lineItemManager,
-            $shoppingListManager,
             $this->getSecurityContext()
         );
 
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
-        $this->type->setProductClass(self::PRODUCT_CLASS);
     }
 
     /**
@@ -132,7 +129,7 @@ class AddProductTypeTest extends FormIntegrationTestCase
      */
     public function testGetName()
     {
-        $this->assertEquals(AddProductType::NAME, $this->type->getName());
+        $this->assertEquals(FrontendLineItemWidgetType::NAME, $this->type->getName());
     }
 
     /**
