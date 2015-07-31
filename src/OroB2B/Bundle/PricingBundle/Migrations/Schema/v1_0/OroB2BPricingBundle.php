@@ -140,7 +140,7 @@ class OroB2BPricingBundle implements Migration
     {
         $table = $schema->getTable('orob2b_price_list_to_customer');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer'),
+            $schema->getTable('orob2b_account'),
             ['customer_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -160,7 +160,7 @@ class OroB2BPricingBundle implements Migration
     {
         $table = $schema->getTable('orob2b_price_list_to_c_group');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer_group'),
+            $schema->getTable('orob2b_account_group'),
             ['customer_group_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']

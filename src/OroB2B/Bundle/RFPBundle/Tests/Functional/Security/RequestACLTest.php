@@ -13,8 +13,8 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData;
 
@@ -50,7 +50,7 @@ class RequestACLTest extends WebTestCase
 
         /** @var AccountUser $user */
         $user = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $user);
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
@@ -77,7 +77,7 @@ class RequestACLTest extends WebTestCase
         $request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $request->getFrontendOwner());
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getFrontendOwner());
         $this->assertEquals($user->getId(), $request->getFrontendOwner()->getId());
 
         // Check owner access
@@ -145,8 +145,8 @@ class RequestACLTest extends WebTestCase
 
         $role = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
-            ->getRepository('OroB2BCustomerBundle:AccountUserRole')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+            ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->findOneBy(['role' => LoadAccountUsersData::BUYER]);
 
         $aclPrivilege = new AclPrivilege();
@@ -183,7 +183,7 @@ class RequestACLTest extends WebTestCase
     protected function login($email, $password)
     {
         // Logout previous user
-        $this->client->request('GET', $this->getUrl('orob2b_customer_account_user_security_logout'));
+        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_security_logout'));
 
         // Login first user
         $this->initClient(

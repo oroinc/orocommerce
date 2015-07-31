@@ -6,8 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -30,7 +30,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList2',
             'reference' => 'price_list_2',
             'default' => false,
-            'customers' => ['customer.level_1.2'],
+            'customers' => ['account.level_1.2'],
             'groups' => [],
             'websites' => [],
             'currencies' => ['USD']
@@ -39,7 +39,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList3',
             'reference' => 'price_list_3',
             'default' => false,
-            'customers' => ['customer.orphan'],
+            'customers' => ['account.orphan'],
             'groups' => [],
             'websites' => ['Canada'],
             'currencies' => ['CAD']
@@ -48,7 +48,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList4',
             'reference' => 'price_list_4',
             'default' => false,
-            'customers' => ['customer.level_1.1'],
+            'customers' => ['account.level_1.1'],
             'groups' => ['customer_group.group2'],
             'websites' => [],
             'currencies' => ['GBP']
@@ -57,7 +57,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             'name' => 'priceList5',
             'reference' => 'price_list_5',
             'default' => false,
-            'customers' => ['customer.level_1.1.1'],
+            'customers' => ['account.level_1.1.1'],
             'groups' => ['customer_group.group3'],
             'websites' => [],
             'currencies' => ['GBP', 'EUR']
@@ -82,17 +82,17 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 ->setUpdatedAt($now);
 
             foreach ($priceListData['customers'] as $customerReference) {
-                /** @var Customer $customer */
+                /** @var Account $customer */
                 $customer = $this->getReference($customerReference);
 
-                $priceList->addCustomer($customer);
+                $priceList->addAccount($customer);
             }
 
             foreach ($priceListData['groups'] as $customerGroupReference) {
-                /** @var CustomerGroup $customerGroup */
+                /** @var AccountGroup $customerGroup */
                 $customerGroup = $this->getReference($customerGroupReference);
 
-                $priceList->addCustomerGroup($customerGroup);
+                $priceList->addAccountGroup($customerGroup);
             }
 
             foreach ($priceListData['websites'] as $websiteReference) {
@@ -120,8 +120,8 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
     {
         return [
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-            'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups'
         ];
     }
 }

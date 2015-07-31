@@ -11,10 +11,10 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
@@ -44,7 +44,7 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCustomers'
         ];
     }
 
@@ -59,7 +59,7 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             'password' => self::USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'customer.level_1.1',
+            'customer' => 'account.level_1.1',
             'role' => self::BUYER
         ],
         [
@@ -69,7 +69,7 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             'password' => self::SAME_CUSTOMER_USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'customer.level_1.1',
+            'customer' => 'account.level_1.1',
             'role' => self::BUYER
         ],
         [
@@ -79,7 +79,7 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             'password' => self::SUB_CUSTOMER_USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'customer.level_1.1.1',
+            'customer' => 'account.level_1.1.1',
             'role' => self::BUYER
         ],
         [
@@ -89,7 +89,7 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             'password' => self::NOT_SAME_CUSTOMER_USER_PASSWORD,
             'enabled' => true,
             'confirmed' => true,
-            'customer' => 'customer.level_1.2',
+            'customer' => 'account.level_1.2',
             'role' => self::BUYER
         ]
     ];
@@ -113,8 +113,8 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
         /* @var $accountUserRoleRepository AccountUserRoleRepository */
         $accountUserRoleRepository =  $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
-            ->getRepository('OroB2BCustomerBundle:AccountUserRole');
+            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+            ->getRepository('OroB2BAccountBundle:AccountUserRole');
 
         foreach ($this->users as $user) {
             if ($userManager->findUserByUsernameOrEmail($user['email'])) {
@@ -127,14 +127,14 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             /** @var AccountUserRole $role */
             $role = $accountUserRoleRepository->findOneBy(['role' => $user['role']]);
 
-            /** @var Customer $customer */
+            /** @var Account $customer */
             $customer = $this->getReference($user['customer']);
 
             $entity
                 ->setFirstName($user['first_name'])
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])
-                ->setCustomer($customer)
+                ->setAccount($customer)
                 ->setConfirmed($user['confirmed'])
                 ->setEnabled($user['enabled'])
                 ->setSalt('')

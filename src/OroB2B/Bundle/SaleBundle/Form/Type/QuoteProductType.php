@@ -137,7 +137,7 @@ class QuoteProductType extends AbstractType
             ->add('commentCustomer', 'textarea', [
                 'required' => false,
                 'read_only' => true,
-                'label' => 'orob2b.sale.quoteproduct.comment_customer.label',
+                'label' => 'orob2b.sale.quoteproduct.comment_account.label',
             ])
             ->add('comment', 'textarea', [
                 'required' => false,

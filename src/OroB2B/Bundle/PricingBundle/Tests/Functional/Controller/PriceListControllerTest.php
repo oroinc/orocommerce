@@ -6,8 +6,8 @@ use Symfony\Component\Intl\Intl;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
@@ -51,7 +51,7 @@ class PriceListControllerTest extends WebTestCase
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME,
                 'orob2b_pricing_price_list[appendCustomers]' => implode(
                     ',',
-                    [$this->getCustomer('customer.orphan')->getId(), $this->getCustomer('customer.level_1')->getId()]
+                    [$this->getCustomer('account.orphan')->getId(), $this->getCustomer('account.level_1')->getId()]
                 ),
                 'orob2b_pricing_price_list[appendCustomerGroups]' => implode(
                     ',',
@@ -73,8 +73,8 @@ class PriceListControllerTest extends WebTestCase
 
         $this->assertContains('Price List has been saved', $html);
         $customersGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains($this->getCustomer('customer.orphan')->getName(), $customersGrid);
-        $this->assertContains($this->getCustomer('customer.level_1')->getName(), $customersGrid);
+        $this->assertContains($this->getCustomer('account.orphan')->getName(), $customersGrid);
+        $this->assertContains($this->getCustomer('account.level_1')->getName(), $customersGrid);
 
         $customersGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
         $this->assertContains($this->getCustomerGroup('customer_group.group1')->getName(), $customersGroupGrid);
@@ -131,11 +131,11 @@ class PriceListControllerTest extends WebTestCase
             [
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME_EDIT,
                 'orob2b_pricing_price_list[currencies]' => self::CURRENCY,
-                'orob2b_pricing_price_list[appendCustomers]' => $this->getCustomer('customer.level_1.1')->getId(),
+                'orob2b_pricing_price_list[appendCustomers]' => $this->getCustomer('account.level_1.1')->getId(),
                 'orob2b_pricing_price_list[appendCustomerGroups]' => $this
                     ->getCustomerGroup('customer_group.group3')->getId(),
                 'orob2b_pricing_price_list[appendWebsites]' => $this->getWebsite('Canada')->getId(),
-                'orob2b_pricing_price_list[removeCustomers]' => $this->getCustomer('customer.orphan')->getId(),
+                'orob2b_pricing_price_list[removeCustomers]' => $this->getCustomer('account.orphan')->getId(),
                 'orob2b_pricing_price_list[removeCustomerGroups]' => implode(
                     ',',
                     [
@@ -157,9 +157,9 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
 
         $customersGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains($this->getCustomer('customer.level_1')->getName(), $customersGrid);
-        $this->assertContains($this->getCustomer('customer.level_1.1')->getName(), $customersGrid);
-        $this->assertNotContains($this->getCustomer('customer.orphan')->getName(), $customersGrid);
+        $this->assertContains($this->getCustomer('account.level_1')->getName(), $customersGrid);
+        $this->assertContains($this->getCustomer('account.level_1.1')->getName(), $customersGrid);
+        $this->assertNotContains($this->getCustomer('account.orphan')->getName(), $customersGrid);
 
         $customersGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
         $this->assertContains($this->getCustomerGroup('customer_group.group3')->getName(), $customersGroupGrid);
@@ -204,7 +204,7 @@ class PriceListControllerTest extends WebTestCase
     /**
      * @param string $reference
      *
-     * @return Customer
+     * @return Account
      */
     protected function getCustomer($reference)
     {
@@ -214,7 +214,7 @@ class PriceListControllerTest extends WebTestCase
     /**
      * @param string $reference
      *
-     * @return CustomerGroup
+     * @return AccountGroup
      */
     protected function getCustomerGroup($reference)
     {

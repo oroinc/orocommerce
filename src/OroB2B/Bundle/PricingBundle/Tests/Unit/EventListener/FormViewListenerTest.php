@@ -11,8 +11,8 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
 
@@ -64,8 +64,8 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMock('\Twig_Environment');
         $event = $this->createEvent($env);
-        $this->listener->onCustomerView($event);
-        $this->listener->onCustomerGroupView($event);
+        $this->listener->onAccountView($event);
+        $this->listener->onAccountGroupView($event);
         $this->listener->onProductView($event);
     }
 
@@ -87,7 +87,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnCustomerView($isPriceListExist)
     {
         $customerId = 1;
-        $customer = new Customer();
+        $customer = new Account();
         $priceList = new PriceList();
         $templateHtml = 'template_html';
 
@@ -97,13 +97,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $priceRepository->expects($this->once())
-            ->method('getPriceListByCustomer')
+            ->method('getPriceListByAccount')
             ->with($customer)
             ->willReturn($isPriceListExist ? $priceList : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BCustomerBundle:Customer', $customerId)
+            ->with('OroB2BAccountBundle:Customer', $customerId)
             ->willReturn($customer);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
@@ -114,11 +114,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($isPriceListExist ? $this->once() : $this->never())
             ->method('render')
-            ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
+            ->with('OroB2BPricingBundle:Account:price_list_view.html.twig', ['priceList' => $priceList])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
-        $this->listener->onCustomerView($event);
+        $this->listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPriceListExist) {
@@ -138,7 +138,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnCustomerGroupView($isPriceListExist)
     {
         $customerGroupId = 1;
-        $customerGroup = new CustomerGroup();
+        $customerGroup = new AccountGroup();
         $priceList = new PriceList();
         $templateHtml = 'template_html';
 
@@ -148,13 +148,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $priceRepository->expects($this->once())
-            ->method('getPriceListByCustomerGroup')
+            ->method('getPriceListByAccountGroup')
             ->with($customerGroup)
             ->willReturn($isPriceListExist ? $priceList : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BCustomerBundle:CustomerGroup', $customerGroupId)
+            ->with('OroB2BAccountBundle:AccountGroup', $customerGroupId)
             ->willReturn($customerGroup);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
@@ -165,11 +165,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($isPriceListExist ? $this->once() : $this->never())
             ->method('render')
-            ->with('OroB2BPricingBundle:Customer:price_list_view.html.twig', ['priceList' => $priceList])
+            ->with('OroB2BPricingBundle:Account:price_list_view.html.twig', ['priceList' => $priceList])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
-        $this->listener->onCustomerGroupView($event);
+        $this->listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPriceListExist) {
@@ -191,7 +191,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPricingBundle:Customer:price_list_update.html.twig', ['form' => $formView])
+            ->with('OroB2BPricingBundle:Account:price_list_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);

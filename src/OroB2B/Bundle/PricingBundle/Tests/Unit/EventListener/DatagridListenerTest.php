@@ -75,18 +75,18 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->listener);
     }
 
-    public function testOnBuildBeforeCustomers()
+    public function testOnBuildBeforeAccounts()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeCustomers($event);
+        $this->listener->onBuildBeforeAccounts($event);
 
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'][0]['condition']
-            = 'customer MEMBER OF priceList.customers';
+            = 'customer MEMBER OF priceList.accounts';
         $this->assertEquals($expected, $config->toArray());
     }
 
@@ -97,11 +97,11 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeCustomerGroups($event);
+        $this->listener->onBuildBeforeAccountGroups($event);
 
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'][0]['condition']
-            = 'customer_group MEMBER OF priceList.customerGroups';
+            = 'customer_group MEMBER OF priceList.accountGroups';
         $this->assertEquals($expected, $config->toArray());
     }
 }

@@ -1,0 +1,36 @@
+{% extends commerce.layout %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>{{ 'orob2b.account.entity_plural_label'|trans }}<span class="divider">/</span></li>
+        <li>{{ 'orob2b.account.accountuser.entity_plural_label'|trans }}</li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    <form action="{{ path('orob2b_account_frontend_account_user_reset_request') }}" class="form-signin" method="post"
+          id="{{ form.vars.id }}" name="{{ form.vars.name }}" {{ form_enctype(form) }}>
+        <div class="title-box">
+            <h2 class="title">{{ 'orob2b.account.accountuser.profile.forgot_password'|trans }}</h2>
+        </div>
+
+        <fieldset class="oro-forgot-password">
+            {% set formErrors = form_errors(form) %}
+            {% if formErrors %}
+                <div class="alert alert-error">
+                    {{ formErrors|raw }}
+                </div>
+            {% endif %}
+
+            {{ form_row(form.email) }}
+            {{ form_row(form._token) }}
+
+            <div class="form-row">
+                <a href="{{ path('orob2b_account_account_user_security_login') }}" class="btn btn-link">&laquo; {{ 'orob2b.account.accountuser.profile.return_to_login'|trans }}</a>
+                <button type="submit" class="btn extra-submit btn-large btn-primary">{{ 'orob2b.account.accountuser.profile.request_password.label'|trans }}</button>
+            </div>
+        </fieldset>
+    </form>
+
+    {{ oro_form_js_validation(form) }}
+{% endblock %}
