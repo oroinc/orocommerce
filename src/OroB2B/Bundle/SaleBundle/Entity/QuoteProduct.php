@@ -27,6 +27,10 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  */
 class QuoteProduct
 {
+    const TYPE_REQUESTED        = 10;
+    const TYPE_OFFER            = 20;
+    const TYPE_NOT_AVAILABLE    = 30;
+
     /**
      * @var int
      *
@@ -60,19 +64,104 @@ class QuoteProduct
     protected $productSku;
 
     /**
-     * @var Collection|QuoteProductItem[]
+     * @var Product
      *
-     * @ORM\OneToMany(targetEntity="QuoteProductItem", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinColumn(name="product_replacement_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $quoteProductItems;
+    protected $productReplacement;
 
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="product_replacement_sku", type="string", length=255, nullable=true)
+     */
+    protected $productReplacementSku;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="type", type="smallint", nullable=true)
+     */
+    protected $type;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="comment", type="text", nullable=true)
+     */
+    protected $comment;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="comment_customer", type="text", nullable=true)
+     */
+    protected $commentCustomer;
+
+    /**
+     * @var Collection|QuoteProductOffer[]
+     *
+     * @ORM\OneToMany(targetEntity="QuoteProductOffer", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $quoteProductOffers;
+
+    /**
+     * @var Collection|QuoteProductRequest[]
+     *
+     * @ORM\OneToMany(targetEntity="QuoteProductRequest", mappedBy="quoteProduct", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $quoteProductRequests;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->quoteProductItems = new ArrayCollection();
+        $this->quoteProductOffers   = new ArrayCollection();
+        $this->quoteProductRequests = new ArrayCollection();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getTypes()
+    {
+        return [
+            self::TYPE_OFFER            => 'offer',
+            self::TYPE_REQUESTED        => 'requested',
+            self::TYPE_NOT_AVAILABLE    => 'not_available',
+        ];
+    }
+
+    /**
+     * Check that type is TYPE_OFFER
+     *
+     * @return boolean
+     */
+    public function isTypeOffer()
+    {
+        return static::TYPE_OFFER === $this->getType();
+    }
+
+    /**
+     * Check that type is TYPE_REQUESTED
+     *
+     * @return boolean
+     */
+    public function isTypeRequested()
+    {
+        return static::TYPE_REQUESTED === $this->getType();
+    }
+
+    /**
+     * Check that type is TYPE_NOT_AVAILABLE
+     *
+     * @return boolean
+     */
+    public function isTypeNotAvailable()
+    {
+        return static::TYPE_NOT_AVAILABLE === $this->getType();
     }
 
     /**
@@ -158,43 +247,202 @@ class QuoteProduct
     }
 
     /**
-     * Add quoteProductItem
+     * Set productReplacement
      *
-     * @param QuoteProductItem $quoteProductItem
+     * @param Product $productReplacement
      * @return QuoteProduct
      */
-    public function addQuoteProductItem(QuoteProductItem $quoteProductItem)
+    public function setProductReplacement(Product $productReplacement = null)
     {
-        if (!$this->quoteProductItems->contains($quoteProductItem)) {
-            $this->quoteProductItems[] = $quoteProductItem;
-            $quoteProductItem->setQuoteProduct($this);
+        $this->productReplacement = $productReplacement;
+        if ($productReplacement) {
+            $this->productReplacementSku = $productReplacement->getSku();
         }
 
         return $this;
     }
 
     /**
-     * Remove quoteProductItem
+     * Get productReplacement
      *
-     * @param QuoteProductItem $quoteProductItem
+     * @return Product
+     */
+    public function getProductReplacement()
+    {
+        return $this->productReplacement;
+    }
+
+    /**
+     * Set productReplacementSku
+     *
+     * @param string $productReplacementSku
      * @return QuoteProduct
      */
-    public function removeQuoteProductItem(QuoteProductItem $quoteProductItem)
+    public function setProductReplacementSku($productReplacementSku)
     {
-        if ($this->quoteProductItems->contains($quoteProductItem)) {
-            $this->quoteProductItems->removeElement($quoteProductItem);
+        $this->productReplacementSku = $productReplacementSku;
+
+        return $this;
+    }
+
+    /**
+     * Get productReplacementSku
+     *
+     * @return string
+     */
+    public function getProductReplacementSku()
+    {
+        return $this->productReplacementSku;
+    }
+
+    /**
+     * Set type
+     *
+     * @param int $type
+     * @return QuoteProduct
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set seller comment
+     *
+     * @param string $comment
+     * @return QuoteProduct
+     */
+    public function setComment($comment)
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Get seller comment
+     *
+     * @return string
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set customer comment
+     *
+     * @param string $commentCustomer
+     * @return QuoteProduct
+     */
+    public function setCommentCustomer($commentCustomer)
+    {
+        $this->commentCustomer = $commentCustomer;
+
+        return $this;
+    }
+
+    /**
+     * Get customer comment
+     *
+     * @return string
+     */
+    public function getCommentCustomer()
+    {
+        return $this->commentCustomer;
+    }
+
+    /**
+     * Add quoteProductOffer
+     *
+     * @param QuoteProductOffer $quoteProductOffer
+     * @return QuoteProduct
+     */
+    public function addQuoteProductOffer(QuoteProductOffer $quoteProductOffer)
+    {
+        if (!$this->quoteProductOffers->contains($quoteProductOffer)) {
+            $this->quoteProductOffers[] = $quoteProductOffer;
+            $quoteProductOffer->setQuoteProduct($this);
         }
 
         return $this;
     }
 
     /**
-     * Get quoteProductItems
+     * Remove quoteProductOffer
      *
-     * @return Collection|QuoteProductItem[]
+     * @param QuoteProductOffer $quoteProductOffer
+     * @return QuoteProduct
      */
-    public function getQuoteProductItems()
+    public function removeQuoteProductOffer(QuoteProductOffer $quoteProductOffer)
     {
-        return $this->quoteProductItems;
+        if ($this->quoteProductOffers->contains($quoteProductOffer)) {
+            $this->quoteProductOffers->removeElement($quoteProductOffer);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get quoteProductOffers
+     *
+     * @return Collection|QuoteProductOffer[]
+     */
+    public function getQuoteProductOffers()
+    {
+        return $this->quoteProductOffers;
+    }
+
+    /**
+     * Add quoteProductRequest
+     *
+     * @param QuoteProductRequest $quoteProductRequest
+     * @return QuoteProduct
+     */
+    public function addQuoteProductRequest(QuoteProductRequest $quoteProductRequest)
+    {
+        if (!$this->quoteProductRequests->contains($quoteProductRequest)) {
+            $this->quoteProductRequests[] = $quoteProductRequest;
+            $quoteProductRequest->setQuoteProduct($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove quoteProductRequest
+     *
+     * @param QuoteProductRequest $quoteProductRequest
+     * @return QuoteProduct
+     */
+    public function removeQuoteProductRequest(QuoteProductRequest $quoteProductRequest)
+    {
+        if ($this->quoteProductRequests->contains($quoteProductRequest)) {
+            $this->quoteProductRequests->removeElement($quoteProductRequest);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get quoteProductRequests
+     *
+     * @return Collection|QuoteProductRequest[]
+     */
+    public function getQuoteProductRequests()
+    {
+        return $this->quoteProductRequests;
     }
 }

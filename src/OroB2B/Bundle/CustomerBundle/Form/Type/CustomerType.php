@@ -4,12 +4,18 @@ namespace OroB2B\Bundle\CustomerBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 
 class CustomerType extends AbstractType
 {
     const NAME = 'orob2b_customer_type';
+
+    /** @var string */
+    protected $addressClass;
 
     /**
      * {@inheritdoc}
@@ -35,6 +41,19 @@ class CustomerType extends AbstractType
                 ]
             )
             ->add(
+                'addresses',
+                AddressCollectionType::NAME,
+                [
+                    'label'    => 'orob2b.customer.addresses.label',
+                    'type'     => CustomerTypedAddressType::NAME,
+                    'required' => true,
+                    'options'  => [
+                        'data_class'  => $this->addressClass,
+                        'single_form' => false
+                    ]
+                ]
+            )
+            ->add(
                 'internal_rating',
                 'oro_enum_select',
                 [
@@ -52,8 +71,27 @@ class CustomerType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'cascade_validation' => true,
+            'intention'          => 'customer',
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param string $addressClass
+     */
+    public function setAddressClass($addressClass)
+    {
+        $this->addressClass = $addressClass;
     }
 }

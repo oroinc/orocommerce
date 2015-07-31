@@ -41,10 +41,22 @@
         }) }}
     {% endset %}
 
+    {% set addressBookWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'contentClasses': [],
+            'url': path('orob2b_customer_address_book', {id: entity.id}),
+            'title': 'orob2b.customer.address_book.label'|trans
+        }) }}
+    {% endset %}
+
     {% set dataBlocks = [{
         'title': 'orob2b.customer.sections.general'|trans,
         'class': 'active',
-        'subblocks': [{'data' : [customerInfo]}]
+        'subblocks': [
+            {'data' : [customerInfo]},
+            {'data' : [addressBookWidget]},
+        ]
     }] %}
 
     {% set id = 'customer-view' %}

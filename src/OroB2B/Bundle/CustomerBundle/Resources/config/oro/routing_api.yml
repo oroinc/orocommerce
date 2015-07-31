@@ -2,6 +2,10 @@ orob2b_customer_api:
     resource: "@OroB2BCustomerBundle/Controller/Api/Rest/CustomerController.php"
     type:     rest
 
+orob2b_customer_address_api:
+    resource: "@OroB2BCustomerBundle/Controller/Api/Rest/CustomerAddressController.php"
+    type:     rest
+
 orob2b_customer_group_api:
     resource: "@OroB2BCustomerBundle/Controller/Api/Rest/CustomerGroupController.php"
     type:     rest
@@ -12,4 +16,8 @@ orob2b_customer_account_user_api:
 
 orob2b_customer_account_user_role_api:
     resource: "@OroB2BCustomerBundle/Controller/Api/Rest/AccountUserRoleController.php"
+    type:     rest
+
+orob2b_customer_account_user_address_api:
+    resource: "@OroB2BCustomerBundle/Controller/Api/Rest/AccountUserAddressController.php"
     type:     rest

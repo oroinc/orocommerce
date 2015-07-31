@@ -37,6 +37,8 @@ orob2b.pricing:
         unit_code.label: Unit
         price.label: Price
         import: Import Product Prices
+        show_tier_prices.label: Show Tier Prices
+        price_in_%currency%: 'Price (%currency%)'
 
     menu:
         price_lists_tab.label: Price lists management

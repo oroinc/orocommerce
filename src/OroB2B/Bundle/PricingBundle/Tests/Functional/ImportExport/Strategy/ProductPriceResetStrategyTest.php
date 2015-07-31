@@ -65,22 +65,29 @@ class ProductPriceResetStrategyTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.1');
+        $productPrice = $this->getPriceByReference('product_price.1');
 
         $actualPrices = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroB2BPricingBundle:ProductPrice')
             ->findBy(['priceList' => $priceList->getId()]);
-        $this->assertCount(3, $actualPrices);
+        $this->assertCount(7, $actualPrices);
 
-        $expectedPrices = [
-            $productPrice,
-            $this->getReference('product_price.2'),
-            $this->getReference('product_price.3')
+        $expectedPricesIds = [
+            $productPrice->getId(),
+            $this->getPriceByReference('product_price.2')->getId(),
+            $this->getPriceByReference('product_price.3')->getId(),
         ];
-        foreach ($expectedPrices as $price) {
-            $this->assertContains($price, $actualPrices);
+
+        $actualPricesIds = array_map(
+            function (ProductPrice $price) {
+                return $price->getId();
+            },
+            $actualPrices
+        );
+
+        foreach ($expectedPricesIds as $price) {
+            $this->assertContains($price, $actualPricesIds);
         }
 
         $this->strategy->process($productPrice);
@@ -106,6 +113,15 @@ class ProductPriceResetStrategyTest extends WebTestCase
                 ->getRepository('OroB2BPricingBundle:ProductPrice')
                 ->findBy(['priceList' => $priceList->getId()])
         );
+    }
+
+    /**
+     * @param string $reference
+     * @return ProductPrice
+     */
+    protected function getPriceByReference($reference)
+    {
+        return $this->getReference($reference);
     }
 
     /**

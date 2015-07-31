@@ -81,6 +81,16 @@ class Customer extends ExtendCustomer
     protected $children;
 
     /**
+     * @var Collection
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress",
+     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     * )
+     * @ORM\OrderBy({"primary" = "DESC"})
+     */
+    protected $addresses;
+
+    /**
      * @var CustomerGroup
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup", inversedBy="customers")
@@ -113,6 +123,7 @@ class Customer extends ExtendCustomer
         parent::__construct();
 
         $this->children = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
         $this->users = new ArrayCollection();
     }
 
@@ -170,6 +181,93 @@ class Customer extends ExtendCustomer
     public function getParent()
     {
         return $this->parent;
+    }
+
+    /**
+     * Add addresses
+     *
+     * @param AbstractDefaultTypedAddress $address
+     * @return Customer
+     */
+    public function addAddress(AbstractDefaultTypedAddress $address)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        if (!$this->getAddresses()->contains($address)) {
+            $this->getAddresses()->add($address);
+            $address->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove addresses
+     *
+     * @param AbstractDefaultTypedAddress $addresses
+     * @return Customer
+     */
+    public function removeAddress(AbstractDefaultTypedAddress $addresses)
+    {
+        if ($this->hasAddress($addresses)) {
+            $this->getAddresses()->removeElement($addresses);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Gets one address that has specified type name.
+     *
+     * @param string $typeName
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getAddressByTypeName($typeName)
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->hasTypeWithName($typeName)) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets primary address if it's available.
+     *
+     * @return AbstractDefaultTypedAddress|null
+     */
+    public function getPrimaryAddress()
+    {
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($this->getAddresses() as $address) {
+            if ($address->isPrimary()) {
+                return $address;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Get addresses
+     *
+     * @return Collection
+     */
+    public function getAddresses()
+    {
+        return $this->addresses;
+    }
+
+    /**
+     * @param AbstractDefaultTypedAddress $address
+     * @return bool
+     */
+    protected function hasAddress(AbstractDefaultTypedAddress $address)
+    {
+        return $this->getAddresses()->contains($address);
     }
 
     /**

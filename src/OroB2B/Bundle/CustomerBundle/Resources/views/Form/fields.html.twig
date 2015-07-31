@@ -1,9 +1,57 @@
+{% extends 'OroAddressBundle:Include:fields.html.twig' %}
+
+{% block orob2b_customer_typed_address_with_default_row %}
+    {{ form_rest(form) }}
+{% endblock %}
+
+{% block orob2b_customer_typed_address_widget %}
+    {{ form_row(form.types, {label: 'orob2b.customer.customeraddress.types.label'}) }}
+    {{ form_row(form.defaults, {label: 'orob2b.customer.customeraddress.defaults.label'}) }}
+    {{ form_row(form.primary, {label: 'orob2b.customer.customeraddress.primary.label'}) }}
+    {{ block('oro_address_rows') }}
+{%  endblock %}
+
+{% block orob2b_customer_account_user_typed_address_widget %}
+    {{ block('orob2b_customer_typed_address_widget') }}
+{%  endblock %}
+
+{% block oro_address_rows %}
+    {{ form_row(form.id) }}
+    {{ form_row(form.label, {label: 'orob2b.customer.customeraddress.label.label'}) }}
+    {{ form_row(form.namePrefix, {label: 'orob2b.customer.customeraddress.name_prefix.label'}) }}
+    {{ form_row(form.firstName, {label: 'orob2b.customer.customeraddress.first_name.label'}) }}
+    {{ form_row(form.middleName, {label: 'orob2b.customer.customeraddress.middle_name.label'}) }}
+    {{ form_row(form.lastName, {label: 'orob2b.customer.customeraddress.last_name.label'}) }}
+    {{ form_row(form.nameSuffix, {label: 'orob2b.customer.customeraddress.name_suffix.label'}) }}
+    {{ form_row(form.organization, {label: 'orob2b.customer.customeraddress.organization.label'}) }}
+    {{ form_row(form.country, {label: 'orob2b.customer.customeraddress.country.label'}) }}
+    {{ form_row(form.street, {label: 'orob2b.customer.customeraddress.street.label'}) }}
+    {{ form_row(form.street2, {label: 'orob2b.customer.customeraddress.street2.label'}) }}
+    {{ form_row(form.city, {label: 'orob2b.customer.customeraddress.city.label'}) }}
+    {{ form_row(form.region_text, {label: 'orob2b.customer.customeraddress.region_text.label'}) }}
+    {{ form_row(form.region, {label: 'orob2b.customer.customeraddress.region.label'}) }}
+    {{ form_row(form.postalCode, {label: 'orob2b.customer.customeraddress.postal_code.label'}) }}
+    {{ form_rest(form) }}
+{%  endblock %}
+
+{% block oro_address_collection_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-address-collection' }) %}
+        {% set options = {
+            disableDefaultWithoutType: true,
+            disableRepeatedTypes: true
+        } %}
+    <span
+      data-page-component-module="orob2bcustomer/js/app/components/customer-address-component"
+      data-page-component-options="{{ options|json_encode }}">
+    {{ block('oro_collection_widget') }}
+    </span>
+{% endblock %}
+
 {% block oro_combobox_dataconfig_parent_aware %}
     {{ block('oro_combobox_dataconfig_autocomplete') }}
 
     select2Config.ajax.data = function (query, page) {
         var getQueryString = function (searchString) {
-            console.log(searchString);
             return [searchString, {{ parent_id|json_encode|raw }}].join(';');
         };
 

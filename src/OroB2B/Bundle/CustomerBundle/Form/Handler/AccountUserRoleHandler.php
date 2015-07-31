@@ -9,6 +9,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
@@ -123,5 +124,13 @@ class AccountUserRoleHandler extends AclRoleHandler
         if ($this->chainMetadataProvider) {
             $this->chainMetadataProvider->stopProviderEmulation();
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getAclGroup()
+    {
+        return AccountUser::SECURITY_GROUP;
     }
 }

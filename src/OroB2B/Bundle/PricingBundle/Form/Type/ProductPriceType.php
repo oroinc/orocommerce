@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -15,6 +16,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceType extends AbstractType
 {
@@ -70,25 +72,94 @@ class ProductPriceType extends AbstractType
                 ]
             );
 
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $data = $event->getData();
-            $form = $event->getForm();
-            $precision = null;
+        $this->addListeners($builder);
+    }
 
-            if ($data && $data->getProduct()) {
-                /** @var Product $product */
-                $product = $data->getProduct();
-                $productUnitPrecisions = $product->getUnitPrecisions();
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    protected function addListeners(FormBuilderInterface $builder)
+    {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                /** @var ProductPrice $data */
+                $data = $event->getData();
+                $form = $event->getForm();
+                $precision = null;
 
+                if ($data && $data->getProduct()) {
+                    /** @var Product $product */
+                    $product = $data->getProduct();
+                    $precision = $this->getPrecision($product, $data->getUnit()->getCode());
+                }
 
-                foreach ($productUnitPrecisions as $productUnitPrecision) {
-                    if ($productUnitPrecision->getUnit() == $data->getUnit()) {
-                        $precision = $productUnitPrecision->getPrecision();
-                    }
+                $this->addQuantity($form, $precision);
+            }
+        );
+
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                $data = $event->getData();
+                $precision = null;
+
+                if ($data && array_key_exists('unit', $data) && $form->getData()) {
+                    $unitCode = $data['unit'];
+
+                    /** @var Product $product */
+                    $product = $form->getData()->getProduct();
+                    $precision = $this->getPrecision($product, $unitCode);
+                }
+
+                $this->addQuantity($form, $precision, true);
+            }
+        );
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                /** @var ProductPrice $price */
+                $price = $event->getData();
+                if ($price) {
+                    $price->updatePrice();
                 }
             }
+        );
+    }
 
-            $form->add(
+    /**
+     * @param Product $product
+     * @param string $unitCode
+     * @return int|null
+     */
+    protected function getPrecision(Product $product, $unitCode)
+    {
+        $precision = null;
+        $productUnitPrecisions = $product->getUnitPrecisions();
+        foreach ($productUnitPrecisions as $productUnitPrecision) {
+            if ($productUnitPrecision->getUnit() && $productUnitPrecision->getUnit()->getCode() === $unitCode) {
+                $precision = $productUnitPrecision->getPrecision();
+            }
+        }
+
+        return $precision;
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param mixed $precision
+     * @param bool $force
+     */
+    protected function addQuantity(FormInterface $form, $precision, $force = false)
+    {
+        if ($force && $form->has('quantity')) {
+            $form->remove('quantity');
+        }
+
+        $form
+            ->add(
                 'quantity',
                 'number',
                 [
@@ -97,7 +168,6 @@ class ProductPriceType extends AbstractType
                     'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
                 ]
             );
-        });
     }
 
     /**

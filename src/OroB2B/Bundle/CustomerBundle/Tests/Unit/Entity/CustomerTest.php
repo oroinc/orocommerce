@@ -3,14 +3,17 @@
 namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\CustomerBundle\Entity\CustomerAddress;
 use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\CustomerBundle\Tests\Unit\Traits\AddressEntityTestTrait;
 
-class CustomerTest extends EntityTestCase
+class CustomerTest extends \PHPUnit_Framework_TestCase
 {
+    use AddressEntityTestTrait;
+
     /**
      * Test setters getters
      */
@@ -110,5 +113,21 @@ class CustomerTest extends EntityTestCase
     protected function createOrganization()
     {
         return new Organization();
+    }
+
+    /**
+     * @return CustomerAddress
+     */
+    protected function createAddressEntity()
+    {
+        return new CustomerAddress();
+    }
+
+    /**
+     * @return Customer
+     */
+    protected function createTestedEntity()
+    {
+        return $this->createCustomerEntity();
     }
 }

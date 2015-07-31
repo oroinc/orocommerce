@@ -84,4 +84,31 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
             [new AccountUser(), false]
         ];
     }
+
+    /**
+     * @dataProvider isFrontendApplicableDataProvider
+     *
+     * @param object|string $user
+     * @param bool $expected
+     */
+    public function testIsFrontendApplicable($user, $expected)
+    {
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn($user);
+
+        $this->assertEquals($expected, $this->placeholderFilter->isFrontendApplicable());
+    }
+
+    /**
+     * @return array
+     */
+    public function isFrontendApplicableDataProvider()
+    {
+        return [
+            'anonymous' => ['none', true],
+            'not valid user' => [new \stdClass(), false],
+            'valid user' => [new AccountUser(), true]
+        ];
+    }
 }
