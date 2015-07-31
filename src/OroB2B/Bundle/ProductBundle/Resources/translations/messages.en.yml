@@ -5,8 +5,6 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        name.label: Name
-        description.label: Description
         inventory_status.label: Inventory Status
         visibility.label: Visible to Customers
         status.label: Status
