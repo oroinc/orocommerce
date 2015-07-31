@@ -21,7 +21,9 @@ class ProductSelectType extends AbstractType
                 'autocomplete_alias' => 'orob2b_product',
                 'create_form_route' => 'orob2b_product_create',
                 'configs' => [
-                    'placeholder' => 'orob2b.product.form.choose'
+                    'placeholder' => 'orob2b.product.form.choose',
+                    'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
+                    'selection_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
                 ]
             ]
         );
