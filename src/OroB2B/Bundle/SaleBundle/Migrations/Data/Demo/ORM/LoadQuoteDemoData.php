@@ -75,6 +75,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 $accountUser = null;
             } else {
                 $accountUsers = array_merge([null], $account->getUsers()->getValues());
+                /* @var $accountUser AccountUser */
                 $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
             }
 

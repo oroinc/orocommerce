@@ -16,6 +16,8 @@ oro_menu_config:
         sale_frontend_quote_list:
             label: 'orob2b.frontend.sale.quote.entity_plural_label'
             route: 'orob2b_sale_frontend_quote_index'
+            extras:
+                routes: ['/^orob2b_sale_frontend/']
 
     tree:
         application_menu:
@@ -32,3 +34,6 @@ oro_titles:
     orob2b_sale_quote_view:   '%%id%%'
     orob2b_sale_quote_update: '%%id%% - oro.ui.edit'
     orob2b_sale_quote_create: 'oro.ui.create_entity'
+
+    orob2b_sale_frontend_quote_index: ~
+    orob2b_sale_frontend_quote_view:  '%%id%%'

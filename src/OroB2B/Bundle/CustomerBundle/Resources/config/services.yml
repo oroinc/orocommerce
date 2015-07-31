@@ -11,6 +11,7 @@ parameters:
     orob2b_customer.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_customer.form.autocomplete.parent_customer.search_handler.class: OroB2B\Bundle\CustomerBundle\Autocomplete\ParentCustomerSearchHandler
+    orob2b_customer.form.autocomplete.customer_account_user.search_handler.class: OroB2B\Bundle\CustomerBundle\Autocomplete\CustomerAccountUserSearchHandler
 
     orob2b_customer.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_customer.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -82,8 +83,9 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_parent, acl_resource: orob2b_customer_view }
         lazy: true
 
-    orob2b_customer.form.autocomplete.account_user.search_handler:
-        parent: oro_form.autocomplete.account_user.search_handler
+    orob2b_customer.form.autocomplete.account_user_customer.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: %orob2b_customer.form.autocomplete.customer_account_user.search_handler.class%
         arguments:
             - %orob2b_customer.entity.account_user.class%
             - ["email"]

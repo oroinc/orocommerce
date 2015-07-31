@@ -55,7 +55,7 @@ orob2b.customer:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
-        form.choose:                 'Choose an account user...'
+        form.choose:                 'Choose an Account User...'
 
         profile:
             registration.title: 'Registration'

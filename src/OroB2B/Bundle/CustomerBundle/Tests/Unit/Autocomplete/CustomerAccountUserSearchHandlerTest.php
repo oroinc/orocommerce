@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Autocomplete;
+namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
@@ -15,16 +15,16 @@ use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
+use OroB2B\Bundle\CustomerBundle\Autocomplete\CustomerAccountUserSearchHandler;
 
-class SearchHandlerTest extends \PHPUnit_Framework_TestCase
+class CustomerAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const DELIMITER = ';';
 
     const TEST_ENTITY_CLASS = 'TestAccountUserEntity';
 
     /**
-     * @var SearchHandler
+     * @var CustomerAccountUserSearchHandler
      */
     protected $searchHandler;
 
@@ -84,7 +84,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->searchHandler = new SearchHandler(self::TEST_ENTITY_CLASS, ['email']);
+        $this->searchHandler = new CustomerAccountUserSearchHandler(self::TEST_ENTITY_CLASS, ['email']);
         $this->searchHandler->initSearchIndexer($this->indexer, [self::TEST_ENTITY_CLASS => ['alias' => 'alias']]);
         $this->searchHandler->initDoctrinePropertiesByManagerRegistry($this->managerRegistry);
         $this->searchHandler->setAclHelper($this->aclHelper);
@@ -291,12 +291,22 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('e.id', $expectedIds)
             ->will($this->returnSelf());
 
-        $queryBuilder->expects($this->once())
+        $expr->expects($this->once())
+            ->method('asc')
+            ->with('e.email')
+            ->will($this->returnSelf());
+
+        $queryBuilder->expects($this->exactly(2))
             ->method('expr')
             ->willReturn($expr);
 
         $queryBuilder->expects($this->once())
             ->method('where')
+            ->with($expr)
+            ->will($this->returnSelf());
+
+        $queryBuilder->expects($this->once())
+            ->method('addOrderBy')
             ->with($expr)
             ->will($this->returnSelf());
 

@@ -35,12 +35,12 @@
                     <tr>
                         <td>
                             <div>
-                                {{ quoteProduct.productSku|raw }}
+                                {{ quoteProduct.productSku }}
                             </div>
                             {% if quoteProduct.isTypeNotAvailable %}
                                 <div>
                                     <div>{{ 'orob2b.frontend.sale.quoteproduct.product_replacement.label'|trans }}</div>
-                                    {{ quoteProduct.productReplacementSku|raw }}
+                                    {{ quoteProduct.productReplacementSku }}
                                 </div>
                             {% endif %}
                         </td>

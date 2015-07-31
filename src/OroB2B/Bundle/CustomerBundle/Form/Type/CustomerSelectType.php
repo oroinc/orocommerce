@@ -22,7 +22,10 @@ class CustomerSelectType extends AbstractType
                 'create_form_route' => 'orob2b_customer_create',
                 'configs' => [
                     'placeholder' => 'orob2b.customer.form.choose'
-                ]
+                ],
+                'attr' => [
+                    'class' => 'customer-account-select',
+                ],
             ]
         );
     }

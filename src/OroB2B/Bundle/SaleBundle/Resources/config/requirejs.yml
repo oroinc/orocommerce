@@ -1,5 +1,3 @@
 config:
     paths:
         'orob2bsale/js/app/components/sale-quoteproductitem-selection-component': 'bundles/orob2bsale/js/app/components/sale-quoteproductitem-selection-component.js'
-        'orob2bsale/js/app/components/sale-quote-selection-component': 'bundles/orob2bsale/js/app/components/sale-quote-selection-component.js'
-        'oro/select2-account-user-autocomplete-component': 'bundles/orob2bsale/js/app/components/sale-select2-autocomplete-accountuser-component.js'

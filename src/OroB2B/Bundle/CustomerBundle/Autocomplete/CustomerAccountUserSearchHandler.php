@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Autocomplete;
+namespace OroB2B\Bundle\CustomerBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler as BaseSearchHandler;
 
-class SearchHandler extends BaseSearchHandler
+class CustomerAccountUserSearchHandler extends BaseSearchHandler
 {
     const DELIMITER = ';';
 
@@ -24,7 +24,7 @@ class SearchHandler extends BaseSearchHandler
         $queryBuilder = $this->entityRepository->createQueryBuilder('e');
         $queryBuilder
             ->where($queryBuilder->expr()->in('e.' . $this->idFieldName, $entityIds))
-            ->addOrderBy('e.email', 'ASC')
+            ->addOrderBy($queryBuilder->expr()->asc('e.email'))
         ;
 
         if ($accountId) {
