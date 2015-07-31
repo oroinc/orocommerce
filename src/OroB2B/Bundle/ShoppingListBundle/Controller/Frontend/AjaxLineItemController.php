@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -82,21 +83,16 @@ class AjaxLineItemController extends Controller
         $lineItem->setShoppingList($shoppingList);
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
-        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
-        $saveRoute = function (LineItem $lineItem) {
-            return [
-                'route' => 'orob2b_product_frontend_product_view',
-                'parameters' => ['id' => $lineItem->getProduct()->getId()]
-            ];
-        };
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $lineItem,
-            $form,
-            $saveRoute,
-            $saveRoute,
-            $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages'),
-            $handler
-        );
+        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+        $isFormHandled = $handler->process($lineItem);
+
+        if (!$isFormHandled) {
+            return new JsonResponse(['successful' => false, 'message' => $form->getErrorsAsString()]);
+        }
+
+        $message = $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages');
+
+        return new JsonResponse(['successful' => true, 'message' => $message]);
     }
 }

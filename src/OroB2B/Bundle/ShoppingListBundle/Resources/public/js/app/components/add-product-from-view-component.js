@@ -17,26 +17,27 @@ define(function (require) {
 
                 var el = $(this);
                 var form = $('.add-to-shopping-list-form');
-                var valid = component._validate(form);
 
-                if (valid) {
-                    $.ajax({
-                        type: 'POST',
-                        url: el.data('url'),
-                        data: form.serialize(),
-                        success: function (response) {
-                            if (response && response.message) {
-                                mediator.once('page:afterChange', function () {
-                                    mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
-                                });
-                            }
-                            mediator.execute('refreshPage');
-                        },
-                        error: function (xhr) {
-                            Error.handle({}, xhr, {enforce: true});
-                        }
-                    });
+                if (!component._validate(form)) {
+                    return;
                 }
+
+                $.ajax({
+                    type: 'POST',
+                    url: el.data('url'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response && response.message) {
+                            mediator.once('page:afterChange', function () {
+                                mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
+                            });
+                        }
+                        mediator.execute('refreshPage');
+                    },
+                    error: function (xhr) {
+                        Error.handle({}, xhr, {enforce: true});
+                    }
+                });
             });
         },
 
