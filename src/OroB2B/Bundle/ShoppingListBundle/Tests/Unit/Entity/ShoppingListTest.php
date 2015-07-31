@@ -3,15 +3,17 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\CustomerBundle\Entity\Customer;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShoppingListTest extends EntityTestCase
+class ShoppingListTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $now = new \DateTime('now');

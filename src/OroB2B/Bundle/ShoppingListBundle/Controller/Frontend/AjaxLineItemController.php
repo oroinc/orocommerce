@@ -91,7 +91,8 @@ class AjaxLineItemController extends Controller
             return new JsonResponse(['successful' => false, 'message' => $form->getErrorsAsString()]);
         }
 
-        $message = $this->get('translator')->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages');
+        $message = $this->get('translator')
+            ->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages');
 
         return new JsonResponse(['successful' => true, 'message' => $message]);
     }

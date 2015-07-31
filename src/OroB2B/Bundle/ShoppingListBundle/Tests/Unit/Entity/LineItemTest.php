@@ -2,15 +2,17 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class LineItemTest extends EntityTestCase
+class LineItemTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $properties = [

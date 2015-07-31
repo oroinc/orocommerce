@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -83,9 +84,11 @@ class ShoppingListController extends Controller
      *      group_name="commerce"
      * )
      *
+     * @param Request $request
+     *
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $shoppingList = new ShoppingList();
         /** @var AccountUser $accountUser */
@@ -96,7 +99,7 @@ class ShoppingListController extends Controller
             ->setAccount($accountUser->getCustomer())
             ->setAccountUser($accountUser);
 
-        return $this->update($shoppingList);
+        return $this->update($request, $shoppingList);
     }
 
     /**
@@ -112,13 +115,14 @@ class ShoppingListController extends Controller
      *      group_name="commerce"
      * )
      *
+     * @param Request $request
      * @param ShoppingList $shoppingList
      *
      * @return array|RedirectResponse
      */
-    public function updateAction(ShoppingList $shoppingList)
+    public function updateAction(Request $request, ShoppingList $shoppingList)
     {
-        return $this->update($shoppingList);
+        return $this->update($request, $shoppingList);
     }
 
     /**
@@ -151,17 +155,18 @@ class ShoppingListController extends Controller
     }
 
     /**
+     * @param Request $request
      * @param ShoppingList $shoppingList
      *
      * @return array|RedirectResponse
      */
-    protected function update(ShoppingList $shoppingList)
+    protected function update(Request $request, ShoppingList $shoppingList)
     {
         $form = $this->createForm(ShoppingListType::NAME);
 
         $handler = new ShoppingListHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->get('orob2b_shopping_list.shopping_list.manager'),
             $this->getDoctrine()
         );
@@ -189,17 +194,18 @@ class ShoppingListController extends Controller
     /**
      * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
      *
+     * @param Request $request
      * @param string $gridName
      * @param string $actionName
      *
      * @return JsonResponse
      */
-    public function addProductsMassAction($gridName, $actionName)
+    public function addProductsMassAction(Request $request, $gridName, $actionName)
     {
         /** @var MassActionDispatcher $massActionDispatcher */
         $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
 
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $this->getRequest());
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
 
         $data = [
             'successful' => $response->isSuccessful(),

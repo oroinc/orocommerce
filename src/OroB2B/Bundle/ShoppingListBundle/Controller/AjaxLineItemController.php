@@ -15,6 +15,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxLineItemController extends Controller
 {
@@ -36,16 +37,16 @@ class AjaxLineItemController extends Controller
      * )
      * @ParamConverter("shoppingList", class="OroB2BShoppingListBundle:ShoppingList", options={"id" = "shoppingListId"})
      *
+     * @param Request $request
      * @param ShoppingList $shoppingList
      *
      * @return array|RedirectResponse
      */
-    public function createAction(ShoppingList $shoppingList)
+    public function createAction(Request $request, ShoppingList $shoppingList)
     {
         $lineItem = new LineItem();
         $lineItem->setShoppingList($shoppingList);
 
-        $request = $this->getRequest();
         $form = $this->createForm(LineItemType::NAME, $lineItem);
         $handler = new LineItemHandler($form, $request, $this->getDoctrine());
 
