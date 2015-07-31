@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Validator\ExecutionContextInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,6 +12,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -48,21 +47,18 @@ class FrontendLineItemType extends AbstractType
      * @param ManagerRegistry $registry
      * @param LineItemManager $lineItemManager
      * @param ShoppingListManager $shoppingListManager
-     * @param SecurityContext $securityContext
+     * @param TokenStorage $tokenStorage
      */
     public function __construct(
         ManagerRegistry $registry,
         LineItemManager $lineItemManager,
         ShoppingListManager $shoppingListManager,
-        SecurityContext $securityContext
+        TokenStorage $tokenStorage
     ) {
         $this->registry = $registry;
         $this->lineItemManager = $lineItemManager;
         $this->shoppingListManager = $shoppingListManager;
-
-        /** @var TokenInterface $token */
-        $token = $securityContext->getToken();
-        $this->accountUser = $token->getUser();
+        $this->accountUser = $tokenStorage->getToken()->getUser();
     }
 
     /**
@@ -135,7 +131,9 @@ class FrontendLineItemType extends AbstractType
     public function checkShoppingListLabel($data, ExecutionContextInterface $context)
     {
         if (!$data->getShoppingList()) {
-            $context->addViolationAt('shoppingListLabel', 'Shopping List label must not be empty');
+            $context->buildViolation('Shopping List label must not be empty')
+                ->atPath('shoppingListLabel')
+                ->addViolation();
         }
     }
 
@@ -165,11 +163,10 @@ class FrontendLineItemType extends AbstractType
             return;
         }
 
-        /** @var Product $product */
-        $product = $this->registry
-            ->getRepository($this->productClass)
-            ->find($formData->getProduct());
+        $repository = $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
 
+        /** @var Product $product */
+        $product = $repository->find($formData->getProduct());
         if ($product) {
             $data['quantity'] = $this->lineItemManager
                 ->roundProductQuantity($product, $data['unit'], $data['quantity']);

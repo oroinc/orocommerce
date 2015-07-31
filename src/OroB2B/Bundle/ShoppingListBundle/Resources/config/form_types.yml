@@ -30,7 +30,7 @@ services:
             - @doctrine
             - @orob2b_shopping_list.line_item.manager
             - @orob2b_shopping_list.shopping_list.manager
-            - @security.context
+            - @security.token_storage
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setProductClass, [%orob2b_product.product.class%]]
@@ -48,7 +48,7 @@ services:
         class: %orob2b_shopping_list.form.type.frontend_line_item_widget.class%
         arguments:
             - @doctrine
-            - @security.context
+            - @security.token_storage
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]

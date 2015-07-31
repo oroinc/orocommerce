@@ -3,15 +3,13 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\SecurityContext;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class FrontendLineItemWidgetType extends AbstractType
@@ -40,17 +38,14 @@ class FrontendLineItemWidgetType extends AbstractType
 
     /**
      * @param ManagerRegistry $registry
-     * @param SecurityContext $securityContext
+     * @param TokenStorage $tokenStorage
      */
     public function __construct(
         ManagerRegistry $registry,
-        SecurityContext $securityContext
+        TokenStorage $tokenStorage
     ) {
         $this->registry = $registry;
-
-        /** @var TokenInterface $token */
-        $token = $securityContext->getToken();
-        $this->accountUser = $token->getUser();
+        $this->accountUser = $tokenStorage->getToken()->getUser();
     }
 
     /**
