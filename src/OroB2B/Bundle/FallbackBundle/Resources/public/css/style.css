@@ -40,20 +40,23 @@
     padding-top: 5px;
 }
 
-.fallback-item-value,
 .fallback-item-label{
+    max-width: 150px;
     white-space: nowrap;
 }
 
-.fallback-default-field {
-    float: left;
+.fallback-item-value,
+.fallback-item-use-fallback {
+    width: 1%;/*fit to content*/
+    white-space: nowrap;
 }
 
-.fallback-status {
-    font-size: 20px;
-    float: left;
+.fallback-status,
+.fallback-item-fallback {
+    width: 100%;/*fit all available space*/
 }
 
 .fallback-status i {
+    font-size: 20px;
     cursor: pointer;
 }

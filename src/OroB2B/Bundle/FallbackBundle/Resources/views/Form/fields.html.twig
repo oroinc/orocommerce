@@ -41,17 +41,15 @@
         <tr class="fallback-item">
             <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td class="fallback-item-value">
-                <div class="fallback-default-field">
-                    {{ form_widget(form.default) }}
-                </div>
-                <div class="fallback-status"></div>
+                {{ form_widget(form.default) }}
                 {{ form_errors(form.default) }}
             </td>
+            <td class="fallback-status"></td>
         </tr>
         {% for locale in form.locales %}
             <tr class="fallback-item" style="display: none;">
                 <td class="fallback-item-label {% if locale.vars.group_fallback_fields %}fallback-item-top{% endif %}">{{ locale.vars.label|trans }}</td>
-                <td {% if locale.vars.group_fallback_fields %}class="fallback-item-top"{% endif %}>
+                <td {% if locale.vars.group_fallback_fields %}class="fallback-item-top"{% endif %} colspan="2">
                     {{ form_widget(locale) }}
                     {{ form_errors(locale) }}
                 </td>
@@ -69,17 +67,15 @@
         <tr class="fallback-item">
             <td class="fallback-item-label">{{ form.default.vars.label|trans }}</td>
             <td class="fallback-item-value">
-                <div class="fallback-default-field">
-                    {{ form_widget(form.default) }}
-                </div>
-                <div class="fallback-status"></div>
+                {{ form_widget(form.default) }}
                 {{ form_errors(form.default) }}
             </td>
+            <td class="fallback-status"></td>
         </tr>
         {% for website in form.websites %}
             <tr class="fallback-item" style="display: none">
                 <td class="fallback-item-label">{{ website.vars.label|trans }}</td>
-                <td>
+                <td colspan="2">
                     {{ form_widget(website) }}
                     {{ form_errors(website) }}
                 </td>

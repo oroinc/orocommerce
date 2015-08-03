@@ -79,7 +79,7 @@ class ProductType extends AbstractType
                         'wysiwyg_options' => [
                             'statusbar' => true,
                             'resize' => true,
-                            'width' => 350,
+                            'width' => 500,
                             'height' => 300,
                             'plugins' => array_merge(
                                 OroRichTextType::$defaultPlugins,
