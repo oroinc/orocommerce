@@ -26,10 +26,9 @@ define(function (require) {
 
                 if (el.data('intention') === 'new') {
                     component.createNewShoppingList(el.data('url'), urlOptions, form.serialize());
-                } else if (el.data('intention') === 'current' && !urlOptions.id) {
+                } else if (el.data('intention') === 'current' && !urlOptions.shoppingListId) {
                     component.createDefaultShoppingList(el.data('url'), urlOptions, form.serialize());
                 } else {
-                    urlOptions.shoppingListId = urlOptions.id;
                     component.addProductToShoppingList(el.data('url'), urlOptions, form.serialize());
                 }
             });
@@ -64,7 +63,7 @@ define(function (require) {
                     'dialogOptions': {
                         'modal': true,
                         'resizable': false,
-                        'width': '400',
+                        'width': '460',
                         'autoResize': true
                     }
                 });

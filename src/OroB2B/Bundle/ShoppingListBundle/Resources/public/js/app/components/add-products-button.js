@@ -26,7 +26,7 @@ define(function (require) {
         if ($(e.currentTarget).data('intention') === options.intention.create_new) {
             mediator.trigger('frontend:shoppinglist:add-widget-requested');
         } else {
-            mediator.trigger('frontend:shoppinglist:products-add', {id: $(this).data('id')});
+            mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: $(this).data('shoppingListId')});
         }
     }
 
@@ -43,14 +43,14 @@ define(function (require) {
             'dialogOptions': {
                 'modal': true,
                 'resizable': false,
-                'width': '675',
+                'width': '460',
                 'autoResize': true
             }
         });
         dialog.render();
         dialog.on('formSave', _.bind(function (response) {
-            mediator.trigger('frontend:shoppinglist:products-add', {id: response});
-            $('.btn[data-intention="current"]').data('id', response);
+            mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: response});
+            $('.btn[data-intention="current"]').data('shoppingListId', response);
         }, this));
     }
 

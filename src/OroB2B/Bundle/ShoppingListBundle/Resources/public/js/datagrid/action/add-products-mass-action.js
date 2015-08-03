@@ -28,7 +28,7 @@ define([
          * @param {object} eventArgs
          */
         _beforeProductsAdd: function (eventArgs) {
-            this.route_parameters.shoppingList = eventArgs.id;
+            this.route_parameters.shoppingList = eventArgs.shoppingListId;
             this.run();
         },
         _checkSelectionState: function () {
