@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -118,6 +119,26 @@ class ShoppingListController extends Controller
     }
 
     /**
+     * Check if shopping list exists
+     *
+     * @Route("/check-existing/{shoppingListId}", name="orob2b_shopping_list_frontend_check_existing")
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
+     *
+     * @param int $shoppingListId
+     *
+     * @return JsonResponse
+     */
+    public function checkExistingAction($shoppingListId = null)
+    {
+        $shoppingList = $this->getShoppingListRepository()->find((int) $shoppingListId);
+        if (!$shoppingList) {
+            $shoppingList = $this->get('orob2b_shopping_list.shopping_list.manager')->createCurrent();
+        }
+
+        return new JsonResponse(['shoppingListId' => $shoppingList->getId()]);
+    }
+
+    /**
      * Edit account user form
      *
      * @Route("/update/{id}", name="orob2b_shopping_list_frontend_update", requirements={"id"="\d+"})
@@ -213,18 +234,20 @@ class ShoppingListController extends Controller
     {
         /** @var AccountUser $accountUser */
         $accountUser = $this->getUser();
-        $shoppingLists = $this
-            ->getDoctrine()
-            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->findByUser($accountUser);
-        $currentShoppingList = $this
-            ->getDoctrine()
-            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
-            ->findCurrentForAccountUser($accountUser);
+        $shoppingLists = $this->getShoppingListRepository()->findByUser($accountUser);
+        $currentShoppingList = $this->getShoppingListRepository()->findCurrentForAccountUser($accountUser);
 
         return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
             'shoppingLists' => $shoppingLists,
             'currentShoppingList' => $currentShoppingList
         ]);
+    }
+
+    /**
+     * @return ShoppingListRepository
+     */
+    protected function getShoppingListRepository()
+    {
+        return $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
     }
 }

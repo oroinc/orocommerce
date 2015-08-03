@@ -18,18 +18,20 @@ define(function (require) {
             options._sourceElement.on('click', function () {
                 var el = $(this),
                     form = el.closest('form'),
-                    urlOptions = el.data('urloptions');
+                    url = el.data('url'),
+                    urlOptions = el.data('urloptions'),
+                    intention = el.data('intention');
 
                 if (!component.validateForm(form)) {
                     return;
                 }
 
-                if (el.data('intention') === 'new') {
-                    component.createNewShoppingList(el.data('url'), urlOptions, form.serialize());
-                } else if (el.data('intention') === 'current' && !urlOptions.shoppingListId) {
-                    component.createDefaultShoppingList(el.data('url'), urlOptions, form.serialize());
+                if (intention === 'new') {
+                    component.createNewShoppingList(url, urlOptions, form.serialize());
+                } else if (intention === 'current' && !urlOptions.shoppingListId) {
+                    component.createDefaultShoppingList(url, urlOptions, form.serialize());
                 } else {
-                    component.addProductToShoppingList(el.data('url'), urlOptions, form.serialize());
+                    component.checkExistingShoppingList(url, urlOptions, form.serialize());
                 }
             });
         },
@@ -79,6 +81,19 @@ define(function (require) {
             $.ajax({
                 type: 'POST',
                 url: routing.generate('orob2b_shopping_list_frontend_create_default'),
+                data: [],
+                success: function (response) {
+                    urlOptions.shoppingListId = response.shoppingListId;
+                    component.addProductToShoppingList(url, urlOptions, formData);
+                }
+            });
+        },
+
+        checkExistingShoppingList: function (url, urlOptions, formData) {
+            var component = this;
+            $.ajax({
+                type: 'POST',
+                url: routing.generate('orob2b_shopping_list_frontend_check_existing', {'shoppingListId': urlOptions.shoppingListId}),
                 data: [],
                 success: function (response) {
                     urlOptions.shoppingListId = response.shoppingListId;
