@@ -47,13 +47,8 @@
 
 .fallback-item-value,
 .fallback-item-use-fallback {
-    width: 1%;/*fit to content*/
+    width: 1px;/*fit to content*/
     white-space: nowrap;
-}
-
-.fallback-status,
-.fallback-item-fallback {
-    width: 100%;/*fit all available space*/
 }
 
 .fallback-status i {
