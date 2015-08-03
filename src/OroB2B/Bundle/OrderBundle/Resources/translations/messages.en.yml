@@ -76,3 +76,29 @@ orob2b:
 
         controller:
             order.saved.message: Order has been saved
+
+    frontend:
+        order:
+            entity_plural_label: Orders
+            id.label: Numeric ID
+            identifier.label: ID
+            account_user.label: Account User
+
+            widgets:
+                order_information: Order Information
+
+            sections:
+                general: General
+                line_items: Line Items
+
+            orderproduct:
+                comment.label: Seller Notes
+                column:
+                    product: Product
+                    type: Type
+                    order_product_items: Items
+
+            orderproductitem:
+                quantity.label: Quantity
+                price.label: Price
+                column_summary: Summary
