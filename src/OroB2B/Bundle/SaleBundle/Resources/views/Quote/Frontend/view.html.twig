@@ -12,6 +12,18 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block navButtons %}
+    {% if resource_granted('orob2b_sale_frontend_quote_create_order') %}
+        {% set formCreateOrderAction = path('orob2b_sale_frontend_quote_create_order', { 'id': entity.id }) %}
+        <form id="{{ formCreateOrder.vars.id }}" name="{{ formCreateOrder.vars.name }}" action="{{ formCreateOrderAction }}" method="post">
+            {{ form_widget(formCreateOrder) }}
+            <button type="submit" class="no-hash">
+                <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.sale.btn.create_order'|trans }}
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}
+
 {% block content_data %}
     {% set quoteInformationWidget %}
         {{ oro_widget_render({
