@@ -2,8 +2,10 @@
     {% import _self as buttons %}
 
     {% set btnOptions = {
-        dataUrl: path(options.dataUrl, options.dataUrlOptions|merge({id: options.shoppingList.id})),
-        dataAttributes: options.dataAttributes,
+        dataUrl: options.dataUrl,
+        dataAttributes: options.dataAttributes|merge({
+            urlOptions: (options.dataUrlOptions|merge({id: options.shoppingList.id}))|json_encode
+        }),
         btnLabel: options.shoppingList.label,
         btnId: options.shoppingList.id,
         dataId: options.shoppingList.id,
@@ -16,8 +18,11 @@
 {% macro addToNewShoppingListButton(options) %}
     {% import _self as buttons %}
     {% set btnOptions = {
-        dataUrl: path(options.dataUrl, options.dataUrlOptions),
-        dataAttributes: options.dataAttributes|merge({intention: 'new'}),
+        dataUrl: options.dataUrl,
+        dataAttributes: options.dataAttributes|merge({
+            intention: 'new',
+            urlOptions: options.dataUrlOptions|json_encode
+        }),
         btnLabel: 'orob2b.shoppinglist.actions.add_to_new_shopping_list'|trans,
         dataId: null,
         actionLabel: null
@@ -30,8 +35,11 @@
     {% import _self as buttons %}
     {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
     {% set btnOptions = {
-        dataUrl: path(options.dataUrl, options.dataUrlOptions|merge({id: shoppingListId})),
-        dataAttributes: options.dataAttributes|merge({intention: 'current'}),
+        dataUrl: options.dataUrl,
+        dataAttributes: options.dataAttributes|merge({
+            intention: 'current',
+            urlOptions: (options.dataUrlOptions|merge({id: shoppingListId}))|json_encode
+        }),
         btnLabel: 'orob2b.shoppinglist.entity_label'|trans,
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
