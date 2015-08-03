@@ -92,4 +92,21 @@ class ShoppingListRepository extends EntityRepository
             ->setParameter('accountUser', $accountUser)
             ->getQuery()->getResult();
     }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return ShoppingList|null
+     */
+    public function findLatestForAccountUserExceptCurrent(AccountUser $accountUser)
+    {
+        return $this->createQueryBuilder('list')
+            ->select('list')
+            ->where('list.accountUser = :accountUser')
+            ->andWhere('list.isCurrent = 0')
+            ->setParameter('accountUser', $accountUser)
+            ->orderBy('list.id', 'DESC')
+            ->setMaxResults(1)
+            ->getQuery()->getOneOrNullResult();
+    }
 }
