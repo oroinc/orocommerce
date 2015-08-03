@@ -11,7 +11,12 @@
             </tr>
         {% endif %}
         <tr>
-            <td class="fallback-item-value {% if form.vars.group_fallback_fields %}fallback-item-value-top" colspan="2"{% endif %}>{{ form_widget(form.value) }}</td>
+            <td
+                    class="fallback-item-value {% if form.vars.group_fallback_fields %}fallback-item-value-top{% endif %}"
+                    {% if form.vars.group_fallback_fields %}colspan="2"{% endif %}
+                    >
+                {{ form_widget(form.value) }}
+            </td>
             {% if not form.vars.group_fallback_fields %}
                 <td nowrap="true" class="fallback-item-use-fallback">
                     {{ form_widget(form.use_fallback) }} {{ form.use_fallback.vars.label|trans }}
