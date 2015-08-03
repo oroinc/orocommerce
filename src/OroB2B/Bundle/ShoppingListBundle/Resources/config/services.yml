@@ -5,6 +5,7 @@ parameters:
     orob2b_shopping_list.validator.line_item.class: OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator
     orob2b_shopping_list.shopping_list.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager
     orob2b_shopping_list.line_item.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager
+    orob2b_shopping_list.listener.shopping_list_listener.class: OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -38,3 +39,8 @@ services:
         class: %orob2b_shopping_list.line_item.manager.class%
         arguments:
             - @orob2b_product.service.rounding
+
+    orob2b_shopping_list.listener.shopping_list_listener:
+        class: %orob2b_shopping_list.listener.shopping_list_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }
