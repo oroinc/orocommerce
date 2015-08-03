@@ -62,6 +62,7 @@ class HiddenFallbackValueType extends AbstractType
             'fallback_type' => FallbackPropertyType::NAME,
             'fallback_type_locale' => null,
             'fallback_type_parent_locale' => null,
+            'group_fallback_fields' => null,
             'enabled_fallbacks' => [],
             'extend_value_type' => 'hidden',
             'default_callback' => function (FallbackType $fallbackType) {
