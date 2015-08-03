@@ -12,6 +12,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -99,6 +100,21 @@ class ShoppingListController extends Controller
             ->setAccountUser($accountUser);
 
         return $this->update($request, $shoppingList);
+    }
+
+    /**
+     * Create default shopping list
+     *
+     * @Route("/create-default", name="orob2b_shopping_list_frontend_create_default")
+     * @AclAncestor("orob2b_shopping_list_frontend_create")
+     *
+     * @return JsonResponse
+     */
+    public function createDefaultAction()
+    {
+        $shoppingList = $this->get('orob2b_shopping_list.shopping_list.manager')->createCurrent();
+
+        return new JsonResponse(['shoppingListId' => $shoppingList->getId()]);
     }
 
     /**

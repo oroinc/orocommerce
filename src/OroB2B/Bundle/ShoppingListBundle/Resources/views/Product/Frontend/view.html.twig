@@ -23,7 +23,6 @@
         {% set commonOptions = {
             dataUrl: 'orob2b_shopping_list_frontend_add_product',
             dataUrlOptions: {
-                shoppingListId: 2,
                 productId: product.id,
             },
             dataAttributes: {
@@ -34,7 +33,8 @@
             new: commonOptions,
             current: commonOptions,
             existing: commonOptions,
-            shoppingLists: shoppingLists
+            shoppingLists: shoppingLists,
+            currentShoppingList: currentShoppingList
         } %}
 
         {{ buttons.createAddToShoppingListButton(options) }}
