@@ -35,6 +35,17 @@ class OrderTest extends AbstractTest
         ]);
     }
 
+    public function testToString()
+    {
+        $order = new Order();
+
+        $this->assertSame('', (string)$order);
+
+        $order->setSku(123);
+
+        $this->assertSame('123', (string)$order);
+    }
+
     public function testPrePersist()
     {
         $order = new Order();

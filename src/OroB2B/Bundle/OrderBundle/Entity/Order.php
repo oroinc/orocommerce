@@ -164,6 +164,14 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getId();
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -309,7 +317,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
 
         return $this;
     }
-    
+
     /**
      * @param OrganizationInterface $organization
      *
@@ -329,7 +337,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     {
         return $this->organization;
     }
-    
+
     /**
      * Add orderProducts
      *
@@ -370,7 +378,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     {
         return $this->orderProducts;
     }
-    
+
     /**
      * Set quote
      *

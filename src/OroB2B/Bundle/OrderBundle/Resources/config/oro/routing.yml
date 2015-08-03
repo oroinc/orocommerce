@@ -11,3 +11,10 @@ orob2b_order_bundle_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_order_frontend:
+    resource: "@OroB2BOrderBundle/Controller/Frontend/OrderController.php"
+    type: annotation
+    prefix: /account/order
+    options:
+        frontend: true

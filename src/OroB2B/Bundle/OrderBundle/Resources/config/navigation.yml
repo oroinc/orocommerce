@@ -8,6 +8,10 @@ oro_menu_config:
                 routes:      ['/^orob2b_order/']
                 description: 'orob2b.order.menu.orders_list.description'
 
+        frontend_orders_list:
+            label: 'orob2b.frontend.order.entity_plural_label'
+            route: 'orob2b_order_frontend_order_index'
+
         shortcut_orders_list:
             label:           'orob2b.order.entity_plural_label'
             route:           'orob2b_order_index'
@@ -27,13 +31,20 @@ oro_menu_config:
                 sale_tab:
                     children:
                         orders_list: ~
+        frontend_menu:
+            children:
+                frontend_orders_list: ~
+
         shortcuts:
             children:
                 shortcut_orders_list: ~
                 shortcut_new_order:   ~
 
 oro_titles:
-    orob2b_order_index: ~
+    orob2b_order_index:  ~
     orob2b_order_view:   '%%identifier%%'
     orob2b_order_update: '%%identifier%% - Edit'
     orob2b_order_create: 'Create Order'
+
+    orob2b_order_frontend_order_index: ~
+    orob2b_order_frontend_order_view:  '%%identifier%%'
