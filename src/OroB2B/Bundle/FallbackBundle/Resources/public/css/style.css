@@ -32,20 +32,26 @@
     opacity: .4;
 }
 
-.fallback-item-value,
+.fallback-item-top {
+    padding-top: 10px;
+}
+
+.fallback-item-value-top {
+    padding-top: 5px;
+}
+
 .fallback-item-label{
+    max-width: 150px;
     white-space: nowrap;
 }
 
-.fallback-default-field {
-    float: left;
-}
-
-.fallback-status {
-    font-size: 20px;
-    float: left;
+.fallback-item-value,
+.fallback-item-use-fallback {
+    width: 1px;/*fit to content*/
+    white-space: nowrap;
 }
 
 .fallback-status i {
+    font-size: 20px;
     cursor: pointer;
 }

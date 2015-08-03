@@ -181,7 +181,18 @@ class UpdateAttributeType extends AbstractType
                     'label' => 'orob2b.attribute.default_values.label',
                     'required' => false,
                     'type' => $formType,
-                    'options' => array_merge($formOptions, ['required' => false])
+                    'options' => array_merge(
+                        $formOptions,
+                        [
+                            'required' => false,
+                            'wysiwyg_options' => [
+                                'statusbar' => true,
+                                'resize' => true,
+                                'width' => 500,
+                                'height' => 300
+                            ]
+                        ]
+                    )
                 ]
             );
         } else {
