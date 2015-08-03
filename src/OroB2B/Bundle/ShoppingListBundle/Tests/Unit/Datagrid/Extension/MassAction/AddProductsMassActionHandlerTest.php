@@ -17,9 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
-use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
 class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,29 +28,29 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     protected $args;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityContextInterface */
-    protected $authorizationChecker;
+    protected $securityFacade;
 
     protected function setUp()
     {
-        $this->authorizationChecker = $this->getAuthorizationChecker();
+        $this->securityFacade = $this->getSecurityFacade();
         $this->handler = new AddProductsMassActionHandler(
             $this->getManagerRegistry(),
             $this->getShoppingListManager(),
             $this->getTranslator(),
-            $this->authorizationChecker
+            $this->securityFacade
         );
     }
 
     public function testHandle()
     {
-        $this->authorizationChecker->expects($this->once())
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
-            ->willReturn(['shoppingList' => ArgsParser::CURRENT_SHOPPING_LIST_KEY]);
+            ->willReturn(['shoppingList' => null]);
 
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
@@ -61,7 +59,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleNoPermissions()
     {
-        $this->authorizationChecker->expects($this->once())
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);
 
@@ -111,17 +109,22 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getShoppingListManager()
     {
+        $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList->expects($this->any())
+            ->method('getOwner')
+            ->willReturn(new AccountUser());
+
         $shoppingListManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()
             ->getMock();
 
         $shoppingListManager->expects($this->any())
             ->method('createCurrent')
-            ->willReturn(new ShoppingList());
+            ->willReturn($shoppingList);
 
         $shoppingListManager->expects($this->any())
             ->method('getForCurrentUser')
-            ->willReturn(new ShoppingList());
+            ->willReturn($shoppingList);
 
         $shoppingListManager->expects($this->any())
             ->method('bulkAddLineItems')
@@ -135,27 +138,13 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getAuthorizationChecker()
+    protected function getSecurityFacade()
     {
-        $context = $this->getMockBuilder('Symfony\Component\Security\Core\Authorization\AuthorizationChecker')
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $token = $this->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\TokenInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $token->expects($this->any())
-            ->method('getUser')
-            ->willReturn(
-                new AccountUser()
-            );
-
-        $context->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-
-        return $context;
+        return $securityFacade;
     }
 
     /**
