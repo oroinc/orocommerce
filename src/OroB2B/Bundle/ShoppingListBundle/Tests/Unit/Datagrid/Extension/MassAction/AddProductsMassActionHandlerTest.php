@@ -30,22 +30,22 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     protected $args;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityContextInterface */
-    protected $securityContext;
+    protected $authorizationChecker;
 
     protected function setUp()
     {
-        $this->securityContext = $this->getSecurityContext();
+        $this->authorizationChecker = $this->getAuthorizationChecker();
         $this->handler = new AddProductsMassActionHandler(
             $this->getManagerRegistry(),
             $this->getShoppingListManager(),
             $this->getTranslator(),
-            $this->securityContext
+            $this->authorizationChecker
         );
     }
 
     public function testHandle()
     {
-        $this->securityContext->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(true);
 
@@ -61,7 +61,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandleNoPermissions()
     {
-        $this->securityContext->expects($this->once())
+        $this->authorizationChecker->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);
 
@@ -135,9 +135,9 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getSecurityContext()
+    protected function getAuthorizationChecker()
     {
-        $context = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContextInterface')
+        $context = $this->getMockBuilder('Symfony\Component\Security\Core\Authorization\AuthorizationChecker')
             ->disableOriginalConstructor()
             ->getMock();
 

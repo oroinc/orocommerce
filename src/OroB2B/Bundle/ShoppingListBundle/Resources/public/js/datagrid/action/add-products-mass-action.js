@@ -29,7 +29,7 @@ define([
          */
         _beforeProductsAdd: function (eventArgs) {
             this.route_parameters.shoppingList = eventArgs.id;
-            this.run(true);
+            this.run();
         },
         _checkSelectionState: function () {
             var selectionState = this.datagrid.getSelectionState(),
@@ -47,17 +47,6 @@ define([
             }
 
             mediator.trigger('frontend:shoppinglist:add-widget-requested-response', {cnt: length, reason: reason});
-        },
-        /**
-         * Overridden in order to set shoppingList route param
-         *
-         * @param {boolean} isCustom
-         */
-        run: function (isCustom) {
-            if (!isCustom) {
-                this.route_parameters.shoppingList = 'current';
-            }
-            AddProductsAction.__super__.run.apply(this);
         }
     });
 

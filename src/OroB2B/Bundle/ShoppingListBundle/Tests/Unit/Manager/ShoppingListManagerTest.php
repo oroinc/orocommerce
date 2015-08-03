@@ -45,11 +45,12 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
                     ->setCustomer(new Customer())
             );
 
-        $securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
+        $tokenStorage = $this
+            ->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $securityContext->expects($this->any())
+        $tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($securityToken);
 
@@ -57,7 +58,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager = new ShoppingListManager(
             $entityManager,
-            $securityContext
+            $tokenStorage
         );
     }
 

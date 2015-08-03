@@ -12,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -192,30 +191,6 @@ class ShoppingListController extends Controller
     }
 
     /**
-     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
-     *
-     * @param Request $request
-     * @param string $gridName
-     * @param string $actionName
-     *
-     * @return JsonResponse
-     */
-    public function addProductsMassAction(Request $request, $gridName, $actionName)
-    {
-        /** @var MassActionDispatcher $massActionDispatcher */
-        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
-
-        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
-
-        $data = [
-            'successful' => $response->isSuccessful(),
-            'message' => $response->getMessage()
-        ];
-
-        return new JsonResponse(array_merge($data, $response->getOptions()));
-    }
-
-    /**
      * @return Response
      */
     public function getProductsAddBtnAction()
@@ -226,9 +201,14 @@ class ShoppingListController extends Controller
             ->getDoctrine()
             ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
             ->findByUser($accountUser);
+        $currentShoppingList = $this
+            ->getDoctrine()
+            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->findCurrentForAccountUser($accountUser);
 
         return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
-            'shoppingLists' => $shoppingLists
+            'shoppingLists' => $shoppingLists,
+            'currentShoppingList' => $currentShoppingList
         ]);
     }
 }

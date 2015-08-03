@@ -16,12 +16,11 @@
 {% macro addToNewShoppingListButton(options) %}
     {% import _self as buttons %}
     {% set btnOptions = {
-        dataUrl: path(options.dataUrl, options.dataUrlOptions|merge({id: 'new'})),
-        dataAttributes: options.dataAttributes,
+        dataUrl: path(options.dataUrl, options.dataUrlOptions),
+        dataAttributes: options.dataAttributes|merge({intention: 'new'}),
         btnLabel: 'orob2b.shoppinglist.actions.add_to_new_shopping_list'|trans,
-        btnId: 'new',
-        dataId: 'new',
-        actionLabel: ''
+        dataId: null,
+        actionLabel: null
     } %}
 
     {{ buttons.getButton(btnOptions) }}
@@ -29,12 +28,12 @@
 
 {% macro addToCurrentShoppingListButton(options) %}
     {% import _self as buttons %}
+    {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
     {% set btnOptions = {
-        dataUrl: path(options.dataUrl, options.dataUrlOptions|merge({id: 'current'})),
-        dataAttributes: options.dataAttributes,
+        dataUrl: path(options.dataUrl, options.dataUrlOptions|merge({id: shoppingListId})),
+        dataAttributes: options.dataAttributes|merge({intention: 'current'}),
         btnLabel: 'orob2b.shoppinglist.entity_label'|trans,
-        btnId: 'current',
-        dataId: 'current',
+        dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
     } %}
 
@@ -57,7 +56,7 @@
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import _self as buttons %}
     {% set buttonsHtml %}
-        {{ buttons.addToCurrentShoppingListButton(options.current) }}
+        {{ buttons.addToCurrentShoppingListButton(options.current|merge({shoppingList: options.currentShoppingList})) }}
         {% for shoppingList in options.shoppingLists %}
             {{ buttons.addToShoppingListButton(options.existing|merge({shoppingList: shoppingList})) }}
         {% endfor %}

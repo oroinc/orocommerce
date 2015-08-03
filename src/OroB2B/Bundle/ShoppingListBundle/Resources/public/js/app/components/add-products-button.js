@@ -23,7 +23,7 @@ define(function (require) {
     function onClick(e) {
         e.preventDefault();
 
-        if ($(e.currentTarget).data('id') === options.intention.create_new) {
+        if ($(e.currentTarget).data('intention') === options.intention.create_new) {
             mediator.trigger('frontend:shoppinglist:add-widget-requested');
         } else {
             mediator.trigger('frontend:shoppinglist:products-add', {id: $(this).data('id')});
@@ -50,6 +50,7 @@ define(function (require) {
         dialog.render();
         dialog.on('formSave', _.bind(function (response) {
             mediator.trigger('frontend:shoppinglist:products-add', {id: response});
+            $('.btn[data-intention="current"]').data('id', response);
         }, this));
     }
 

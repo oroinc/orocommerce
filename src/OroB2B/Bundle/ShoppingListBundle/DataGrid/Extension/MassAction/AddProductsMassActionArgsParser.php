@@ -6,8 +6,6 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
 class AddProductsMassActionArgsParser
 {
-    const CURRENT_SHOPPING_LIST_KEY = 'current';
-
     /**
      * @var array
      */
@@ -39,13 +37,7 @@ class AddProductsMassActionArgsParser
      */
     public function getShoppingListId()
     {
-        $shoppingListId = $this->args['shoppingList'];
-
-        if ($shoppingListId === self::CURRENT_SHOPPING_LIST_KEY) {
-            $shoppingListId = null;
-        }
-
-        return $shoppingListId;
+        return is_numeric($this->args['shoppingList']) ? (int)$this->args['shoppingList'] : null;
     }
 
     /**

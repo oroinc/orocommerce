@@ -32,7 +32,7 @@ class ShoppingListManager
 
     /**
      * @param ManagerRegistry $managerRegistry
-     * @param TokenStorage $tokenStorage
+     * @param TokenStorage    $tokenStorage
      */
     public function __construct(ManagerRegistry $managerRegistry, TokenStorage $tokenStorage)
     {

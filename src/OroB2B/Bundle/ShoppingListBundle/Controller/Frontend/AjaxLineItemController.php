@@ -13,6 +13,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
+
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -114,5 +116,29 @@ class AjaxLineItemController extends Controller
 
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate($lineItem, $form, null, null, null);
+    }
+
+    /**
+     * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
+     *
+     * @param Request $request
+     * @param string $gridName
+     * @param string $actionName
+     *
+     * @return JsonResponse
+     */
+    public function addProductsMassAction(Request $request, $gridName, $actionName)
+    {
+        /** @var MassActionDispatcher $massActionDispatcher */
+        $massActionDispatcher = $this->get('oro_datagrid.mass_action.dispatcher');
+
+        $response = $massActionDispatcher->dispatchByRequest($gridName, $actionName, $request);
+
+        $data = [
+            'successful' => $response->isSuccessful(),
+            'message' => $response->getMessage()
+        ];
+
+        return new JsonResponse(array_merge($data, $response->getOptions()));
     }
 }

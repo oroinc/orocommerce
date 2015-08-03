@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
@@ -34,9 +34,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     protected $translator;
 
     /**
-     * @var AuthorizationChecker
+     * @var SecurityFacade
      */
-    protected $authorizationChecker;
+    protected $securityFacade;
 
     /**
      * @var ObjectManager
@@ -47,17 +47,17 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
      * @param ManagerRegistry     $managerRegistry
      * @param ShoppingListManager $shoppingListManager
      * @param TranslatorInterface $translator
-     * @param AuthorizationChecker $authorizationChecker
+     * @param SecurityFacade      $securityFacade
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
         TranslatorInterface $translator,
-        AuthorizationChecker $authorizationChecker
+        SecurityFacade $securityFacade
     ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->translator = $translator;
-        $this->authorizationChecker = $authorizationChecker;
+        $this->securityFacade = $securityFacade;
         $this->productEm = $managerRegistry->getManagerForClass('OroB2BProductBundle:Product');
     }
 
@@ -69,7 +69,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $argsParser = new ArgsParser($args);
         $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
-        if (!$this->authorizationChecker->isGranted('EDIT', $shoppingList)) {
+        if (!$this->securityFacade->isGranted('EDIT', $shoppingList)) {
             return $this->generateResponse($args);
         }
 
