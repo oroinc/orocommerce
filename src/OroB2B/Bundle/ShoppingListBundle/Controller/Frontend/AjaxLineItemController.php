@@ -27,7 +27,7 @@ use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 class AjaxLineItemController extends Controller
 {
     /**
-     * Add Product to shopping list (create line item) form
+     * Add Product to Shopping List (frontend grid action)
      *
      * @Route(
      *      "/add-product/{productId}",
@@ -66,7 +66,7 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * Add Product to Shopping List
+     * Add Product to Shopping List (product view form)
      *
      * @Route(
      *      "/products/{productId}",
@@ -101,8 +101,10 @@ class AjaxLineItemController extends Controller
             return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors()]);
         }
 
-        $message = $this->get('translator')
-            ->trans('orob2b.shoppinglist.line_item_save.flash.success', [], 'jsmessages');
+        $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
+        $translator = $this->get('translator');
+        $message = $translator->trans('orob2b.shoppinglist.product.added.label')
+            . $translator->trans('orob2b.shoppinglist.actions.add_success_message_link', ['%link%' => $link]);
 
         return new JsonResponse(['successful' => true, 'message' => $message]);
     }
@@ -121,8 +123,7 @@ class AjaxLineItemController extends Controller
     {
         $form = $this->createForm(LineItemType::NAME, $lineItem);
 
-        return $this->get('oro_form.model.update_handler')
-            ->handleUpdate($lineItem, $form, null, null, null);
+        return $this->get('oro_form.model.update_handler')->handleUpdate($lineItem, $form, null, null, null);
     }
 
     /**
@@ -160,9 +161,12 @@ class AjaxLineItemController extends Controller
         $shoppingLists = $repository->findByUser($accountUser);
         $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
 
-        return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
-            'shoppingLists' => $shoppingLists,
-            'currentShoppingList' => $currentShoppingList
-        ]);
+        return $this->render(
+            'OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig',
+            [
+                'shoppingLists' => $shoppingLists,
+                'currentShoppingList' => $currentShoppingList
+            ]
+        );
     }
 }
