@@ -1,103 +1,26 @@
 <?php
-namespace OroB2B\Bundle\OrderBundle\Migrations\Schema;
+
+namespace OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
-use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 
-class OroB2BOrderBundleInstaller implements
-    Installation,
-    NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface,
-    ActivityExtensionAwareInterface
+class AddOrderAddress implements Migration
 {
-    /** @var  NoteExtension */
-    protected $noteExtension;
-
-    /** @var  AttachmentExtension */
-    protected $attachmentExtension;
-
-    /** @var  ActivityExtension */
-    protected $activityExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setActivityExtension(ActivityExtension $activityExtension)
-    {
-        $this->activityExtension = $activityExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_1';
-    }
-
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BOrderTable($schema);
         $this->createOroB2BOrderAddressTable($schema);
         $this->createOroB2BOrderAddressTypeTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BOrderForeignKeys($schema);
         $this->addOroB2BOrderAddressForeignKeys($schema);
         $this->addOroB2BOrderAddressTypeForeignKeys($schema);
-    }
-
-    /**
-     * Create orob2b_order table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BOrderTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_order');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('identifier', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
-        $table->setPrimaryKey(['id']);
-        $table->addIndex(['user_owner_id'], 'idx_c036ff909eb185f9', []);
-        $table->addIndex(['organization_id'], 'idx_c036ff9032c8a3de', []);
-        $table->addIndex(['created_at'], 'created_at_index', []);
-
-        $this->noteExtension->addNoteAssociation($schema, $table->getName());
-        $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
-        $this->activityExtension->addActivityAssociation($schema, 'oro_calendar_event', $table->getName());
     }
 
     /**
@@ -146,28 +69,6 @@ class OroB2BOrderBundleInstaller implements
         $table->setPrimaryKey(['order_address_id', 'type_name']);
         $table->addIndex(['type_name'], 'idx_31dd983d892cbb0e', []);
         $table->addIndex(['order_address_id'], 'idx_31dd983d466d5220', []);
-    }
-
-    /**
-     * Add orob2b_order foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BOrderForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_order');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
-            ['organization_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_user'),
-            ['user_owner_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
     }
 
     /**
