@@ -12,8 +12,6 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInte
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 
-use OroB2B\Bundle\OrderBundle\Migrations\Schema\v1_0\OroB2BOrderBundle as OroB2BOrderBundle10;
-
 class OroB2BOrderBundleInstaller implements
     Installation,
     NoteExtensionAwareInterface,
@@ -58,7 +56,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -66,10 +64,127 @@ class OroB2BOrderBundleInstaller implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $migration = new OroB2BOrderBundle10();
-        $migration->setNoteExtension($this->noteExtension);
-        $migration->setActivityExtension($this->activityExtension);
-        $migration->setAttachmentExtension($this->attachmentExtension);
-        $migration->up($schema, $queries);
+        /** Tables generation **/
+        $this->createOroB2BOrderTable($schema);
+        $this->createOroB2BOrderAddressTable($schema);
+
+        /** Foreign keys generation **/
+        $this->addOroB2BOrderForeignKeys($schema);
+        $this->addOroB2BOrderAddressForeignKeys($schema);
+    }
+
+    /**
+     * Create orob2b_order table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BOrderTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_order');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('identifier', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['user_owner_id'], 'idx_c036ff909eb185f9', []);
+        $table->addIndex(['organization_id'], 'idx_c036ff9032c8a3de', []);
+        $table->addIndex(['created_at'], 'created_at_index', []);
+        $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
+        $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
+        $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
+
+        $this->noteExtension->addNoteAssociation($schema, $table->getName());
+        $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
+        $this->activityExtension->addActivityAssociation($schema, 'oro_calendar_event', $table->getName());
+    }
+
+    /**
+     * Create orob2b_order_address table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BOrderAddressTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_order_address');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
+        $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
+        $table->addColumn('city', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('postal_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('organization', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('name_prefix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('first_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('middle_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('last_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addIndex(['region_code'], 'idx_ff867c56aeb327af', []);
+        $table->addIndex(['country_code'], 'idx_ff867c56f026bb7c', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Add orob2b_order foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BOrderForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_order');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order_address'),
+            ['shipping_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order_address'),
+            ['billing_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+    }
+
+    /**
+     * Add orob2b_order_address foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BOrderAddressForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_order_address');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onUpdate' => null, 'onDelete' => null]
+        );
     }
 }
