@@ -49,13 +49,6 @@ services:
         tags:
             - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget }
 
-    orob2b_shopping_list.form.handler.frontend_line_item:
-        class: %orob2b_shopping_list.form.handler.frontend_line_item.class%
-        scope: request
-        arguments:
-            - @request
-            - @oro_entity.doctrine_helper
-
     orob2b_shopping_list.event_listener.form.type.line_item_subscriber:
         class: %orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class%
         arguments:

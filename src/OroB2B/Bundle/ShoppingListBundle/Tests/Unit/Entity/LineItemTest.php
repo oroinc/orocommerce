@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -21,7 +23,9 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
             ['shoppingList', new ShoppingList()],
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
-            ['quantity', 12.5]
+            ['quantity', 12.5],
+            ['owner', new AccountUser()],
+            ['organization', new Organization()],
         ];
 
         $this->assertPropertyAccessors(new LineItem(), $properties);

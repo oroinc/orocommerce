@@ -11,9 +11,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
@@ -46,20 +46,20 @@ class FormViewListener
 
     /**
      * @param TranslatorInterface   $translator
-     * @param DoctrineHelper        $doctrineHelper
      * @param TokenStorageInterface $tokenStorage
      * @param FormFactoryInterface  $formFactory
+     * @param DoctrineHelper        $doctrineHelper
      */
     public function __construct(
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper,
         TokenStorageInterface $tokenStorage,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
+        DoctrineHelper $doctrineHelper
     ) {
         $this->translator = $translator;
-        $this->doctrineHelper = $doctrineHelper;
         $this->tokenStorage = $tokenStorage;
         $this->formFactory = $formFactory;
+        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**
@@ -72,16 +72,18 @@ class FormViewListener
 
     /**
      * @param BeforeListRenderEvent $event
+     *
+     * @return bool
      */
     public function onFrontendProductView(BeforeListRenderEvent $event)
     {
         if (!$this->request) {
-            return;
+            return false;
         }
 
         $accountUser = $this->getUser();
         if (!$accountUser) {
-            return;
+            return false;
         }
 
         $productId = $this->request->get('id');
@@ -111,6 +113,8 @@ class FormViewListener
         );
 
         $this->addShoppingListBlock($event->getScrollData(), $template);
+
+        return true;
     }
 
     /**

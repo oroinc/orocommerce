@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\UnitOfWork;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -37,10 +39,11 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|LifecycleEventArgs
      */
     protected function getEventArgs()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LifecycleEventArgs $lifecycleEventArgs */
         $lifecycleEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
             ->disableOriginalConstructor()
             ->getMock();
@@ -59,8 +62,10 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getEntityManager()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|UnitOfWork $uow */
         $uow = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')->disableOriginalConstructor()->getMock();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->setMethods(['findLatestForAccountUserExceptCurrent'])
@@ -69,6 +74,7 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
             ->method('findLatestForAccountUserExceptCurrent')
             ->willReturn($this->shoppingListTwo);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
         $em->expects($this->once())
             ->method('getUnitOfWork')
