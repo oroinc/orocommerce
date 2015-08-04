@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 
 /**
@@ -125,6 +126,77 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * )
      */
     protected $addresses;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $poNumber;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $customerNotes;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="date", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shipUntil;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=3, nullable=true)
+     */
+    protected $currency;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(type="money", nullable=true)
+     */
+    protected $subtotal;
+
+    /**
+     * @var PaymentTerm
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
+     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $paymentTerm;
 
     public function __construct()
     {
@@ -359,5 +431,149 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Set poNumber
+     *
+     * @param string $poNumber
+     *
+     * @return Order
+     */
+    public function setPoNumber($poNumber)
+    {
+        $this->poNumber = $poNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get poNumber
+     *
+     * @return string
+     */
+    public function getPoNumber()
+    {
+        return $this->poNumber;
+    }
+
+    /**
+     * Set customerNotes
+     *
+     * @param string $customerNotes
+     *
+     * @return Order
+     */
+    public function setCustomerNotes($customerNotes)
+    {
+        $this->customerNotes = $customerNotes;
+
+        return $this;
+    }
+
+    /**
+     * Get customerNotes
+     *
+     * @return string
+     */
+    public function getCustomerNotes()
+    {
+        return $this->customerNotes;
+    }
+
+    /**
+     * Set shipUntil
+     *
+     * @param \DateTime $shipUntil
+     *
+     * @return Order
+     */
+    public function setShipUntil($shipUntil)
+    {
+        $this->shipUntil = $shipUntil;
+
+        return $this;
+    }
+
+    /**
+     * Get shipUntil
+     *
+     * @return \DateTime
+     */
+    public function getShipUntil()
+    {
+        return $this->shipUntil;
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return Order
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set subtotal
+     *
+     * @param float $subtotal
+     *
+     * @return Order
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * Get subtotal
+     *
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * Set paymentTerm
+     *
+     * @param PaymentTerm $paymentTerm
+     *
+     * @return Order
+     */
+    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
+    {
+        $this->paymentTerm = $paymentTerm;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentTerm
+     *
+     * @return PaymentTerm
+     */
+    public function getPaymentTerm()
+    {
+        return $this->paymentTerm;
     }
 }
