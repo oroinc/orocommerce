@@ -72,23 +72,29 @@ class FormViewListener
 
     /**
      * @param BeforeListRenderEvent $event
-     *
-     * @return bool
      */
     public function onFrontendProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
-            return false;
-        }
-
         $accountUser = $this->getUser();
         if (!$accountUser) {
-            return false;
+            return;
         }
 
-        $productId = $this->request->get('id');
+        if (!$this->request) {
+            return;
+        }
+
+        $productId = (int)$this->request->get('id');
+        if (!$productId) {
+            return;
+        }
+
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
+        if (!$product) {
+            return;
+        }
+
         $lineItem = (new LineItem())
             ->setProduct($product)
             ->setOwner($accountUser)
@@ -113,8 +119,6 @@ class FormViewListener
         );
 
         $this->addShoppingListBlock($event->getScrollData(), $template);
-
-        return true;
     }
 
     /**
