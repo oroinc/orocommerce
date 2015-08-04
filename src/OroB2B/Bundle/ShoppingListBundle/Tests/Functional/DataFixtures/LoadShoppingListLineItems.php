@@ -59,6 +59,8 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
     ) {
         $item = new LineItem();
         $item->setNotes('Test Notes');
+        $item->setOwner($shoppingList->getOwner());
+        $item->setOrganization($shoppingList->getOrganization());
         $item->setShoppingList($shoppingList);
         $item->setUnit($unit);
         $item->setProduct($product);

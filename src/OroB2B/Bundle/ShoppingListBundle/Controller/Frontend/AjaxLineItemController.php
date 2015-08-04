@@ -17,6 +17,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
@@ -45,8 +46,12 @@ class AjaxLineItemController extends Controller
      */
     public function addProductAction(Request $request, Product $product)
     {
-        $lineItem = new LineItem();
-        $lineItem->setProduct($product);
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+        $lineItem = (new LineItem())
+            ->setProduct($product)
+            ->setOwner($accountUser)
+            ->setOrganization($accountUser->getOrganization());
 
         $form = $this->createForm(FrontendLineItemWidgetType::NAME, $lineItem);
 
@@ -81,9 +86,11 @@ class AjaxLineItemController extends Controller
      */
     public function addProductFromViewAction(Request $request, ShoppingList $shoppingList, Product $product)
     {
-        $lineItem = new LineItem();
-        $lineItem->setProduct($product);
-        $lineItem->setShoppingList($shoppingList);
+        $lineItem = (new LineItem())
+            ->setProduct($product)
+            ->setShoppingList($shoppingList)
+            ->setOwner($shoppingList->getOwner())
+            ->setOrganization($shoppingList->getOrganization());
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
 

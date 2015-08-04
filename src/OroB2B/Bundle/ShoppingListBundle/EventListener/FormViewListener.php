@@ -87,7 +87,10 @@ class FormViewListener
         $productId = $this->request->get('id');
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
-        $lineItem = (new LineItem())->setProduct($product);
+        $lineItem = (new LineItem())
+            ->setProduct($product)
+            ->setOwner($accountUser)
+            ->setOrganization($accountUser->getOrganization());
 
         /** @var ShoppingListRepository $shoppingListRepository */
         $shoppingListRepository = $this->doctrineHelper->getEntityRepository('OroB2BShoppingListBundle:ShoppingList');
