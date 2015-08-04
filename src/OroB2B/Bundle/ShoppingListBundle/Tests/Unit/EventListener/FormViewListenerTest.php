@@ -9,10 +9,10 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -229,11 +229,9 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRequest()
     {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+        return $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
-
-        return $request;
     }
 
     /**
@@ -268,10 +266,8 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getBeforeListRenderEvent()
     {
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+        return $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
-
-        return $event;
     }
 }

@@ -3,21 +3,22 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\AbstractQuery;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
@@ -79,7 +80,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|MassActionHandlerArgs
      */
     protected function getMassActionArgs()
     {
@@ -114,6 +115,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getShoppingListManager()
     {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
         $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getOwner')
@@ -145,11 +147,9 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getSecurityFacade()
     {
-        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
-
-        return $securityFacade;
     }
 
     /**
@@ -157,11 +157,8 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRouter()
     {
-        $router = $this->getMockBuilder('Symfony\Component\Routing\RouterInterface')->getMock();
-
-        return $router;
+        return $this->getMock('Symfony\Component\Routing\RouterInterface');
     }
-
 
     /**
      * @return Registry|\PHPUnit_Framework_MockObject_MockObject
@@ -218,8 +215,10 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
                 ['OroB2BProductBundle:Product', $productRepository]
             ]));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Registry $managerRegistry */
         $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $managerRegistry->expects($this->any())
             ->method('getManagerForClass')
