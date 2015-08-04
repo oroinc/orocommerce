@@ -33,12 +33,8 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
-    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $router;
-
     protected function setUp()
     {
-        $this->router = $this->getRouter();
         $this->securityFacade = $this->getSecurityFacade();
 
         $this->handler = new AddProductsMassActionHandler(
@@ -46,7 +42,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getShoppingListManager(),
             $this->getTranslator(),
             $this->securityFacade,
-            $this->router
+            $this->getRouter()
         );
     }
 

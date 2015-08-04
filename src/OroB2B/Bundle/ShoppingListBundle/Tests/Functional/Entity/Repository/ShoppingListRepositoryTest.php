@@ -82,6 +82,28 @@ class ShoppingListRepositoryTest extends WebTestCase
         }
     }
 
+    public function testFindAllExceptCurrentForAccountUser()
+    {
+        $repository = $this->getRepository();
+        $account = $this->getAccountUser();
+        $lists = $repository->findAllExceptCurrentForAccountUser($account);
+        $this->assertGreaterThan(0, $lists);
+        /** @var ShoppingList $list */
+        foreach ($lists as $list) {
+            $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $list);
+            $this->assertFalse($list->isCurrent());
+        }
+    }
+
+    public function testFindLatestForAccountUserExceptCurrent()
+    {
+        $repository = $this->getRepository();
+        $account = $this->getAccountUser();
+        $list = $repository->findLatestForAccountUserExceptCurrent($account);
+        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $list);
+        $this->assertFalse($list->isCurrent());
+    }
+
     /**
      * @return AccountUser
      */
