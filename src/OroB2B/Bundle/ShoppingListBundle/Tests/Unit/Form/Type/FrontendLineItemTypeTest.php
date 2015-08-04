@@ -2,37 +2,31 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
-use BeSimple\SoapBundle\ServiceDefinition\Annotation\Method;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
-use Symfony\Component\Security\Core\SecurityContext;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
-class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
+class FrontendLineItemTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
-    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
     const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
-
     const NEW_SHOPPING_LIST_ID = 10;
 
     /**
-     * @var FrontendLineItemWidgetType
+     * @var FrontendLineItemType
      */
     protected $type;
 
@@ -51,36 +45,9 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
-        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $lineItemManager->expects($this->any())
-            ->method('roundProductQuantity')
-            ->willReturnCallback(
-                function ($product, $unit, $quantity) {
-                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
-                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
-                }
-            );
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager $shoppingListManager */
-        $shoppingListManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $shoppingListManager
-            ->expects($this->any())
-            ->method('createCurrent')
-            ->willReturn($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
-
-        $this->type = new FrontendLineItemWidgetType(
-            $this->getRegistry(),
-            $this->getSecurityContext()
-        );
-
+        $this->type = new FrontendLineItemType();
         $this->type->setDataClass(self::DATA_CLASS);
-        $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
+        $this->type->setLineItemSubscriber($this->getLineItemSubscriber());
     }
 
     /**
@@ -88,13 +55,6 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType(
-            [
-                1 => $this->getShoppingList(1, 'Shopping List 1'),
-                2 => $this->getShoppingList(2, 'Shopping List 2'),
-            ]
-        );
-
         $productUnitSelection = new EntityType(
             $this->prepareProductUnitSelectionChoices(),
             ProductUnitSelectionType::NAME
@@ -103,7 +63,6 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $entityType->getName()         => $entityType,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                 ],
                 []
@@ -116,20 +75,22 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
      */
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $lineItem = (new LineItem())
+            ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3))
+            ->setShoppingList($this->getShoppingList(1, 'Shopping List 1'));
 
-        $this->assertTrue($form->has('shoppingList'));
+        $form = $this->factory->create($this->type, $lineItem);
+
         $this->assertTrue($form->has('quantity'));
         $this->assertTrue($form->has('unit'));
-        $this->assertTrue($form->has('shoppingListLabel'));
     }
 
     /**
-     * mMethod testBuildForm
+     * Method testBuildForm
      */
     public function testGetName()
     {
-        $this->assertEquals(FrontendLineItemWidgetType::NAME, $this->type->getName());
+        $this->assertEquals(FrontendLineItemType::NAME, $this->type->getName());
     }
 
     /**
@@ -146,21 +107,6 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * Method testSetDefaultOptions
-     */
-    public function testCheckShoppingListLabel()
-    {
-        $context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
-        $context
-            ->expects($this->once())
-            ->method('addViolationAt');
-
-        $lineItem = new LineItem();
-
-        $this->type->checkShoppingListLabel($lineItem, $context);
-    }
-
-    /**
      * @dataProvider submitDataProvider
      *
      * @param mixed $defaultData
@@ -174,7 +120,6 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
 
-        $this->assertEquals([], $form->getErrors());
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -185,71 +130,27 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         $product = $this->getProductEntityWithPrecision(1, 'kg', 3);
+        $expectedShoppingList = $this->getShoppingList(1, 'Shopping List 1');
 
         $defaultLineItem = new LineItem();
         $defaultLineItem->setProduct($product);
-
-        /** @var ShoppingList $expectedShoppingList */
-        $expectedShoppingList = $this->getShoppingList(1, 'Shopping List 1');
+        $defaultLineItem->setShoppingList($expectedShoppingList);
 
         $expectedLineItem = clone $defaultLineItem;
         $expectedLineItem
             ->setQuantity(15.112)
-            ->setUnit($product->getUnitPrecision('kg')->getUnit())
-            ->setShoppingList($expectedShoppingList);
-
-        $expectedLineItem2 = clone $defaultLineItem;
-        $expectedLineItem2
-            ->setQuantity(10)
-            ->setUnit($product->getUnitPrecision('kg')->getUnit())
-            ->setShoppingList($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
+            ->setUnit($product->getUnitPrecision('kg')->getUnit());
 
         return [
             'New line item with existing shopping list' => [
                 'defaultData'   => $defaultLineItem,
                 'submittedData' => [
-                    'shoppingList'  => 1,
                     'quantity' => 15.1119,
-                    'unit'     => 'kg',
-                    'shoppingListLabel' => null
+                    'unit'     => 'kg'
                 ],
                 'expectedData'  => $expectedLineItem
             ],
-            'New line item with new shopping list' => [
-                'defaultData'   => $defaultLineItem,
-                'submittedData' => [
-                    'shoppingList'  => null,
-                    'quantity' => 10,
-                    'unit'     => 'kg',
-                    'shoppingListLabel' => 'New Shopping List'
-                ],
-                'expectedData'  => $expectedLineItem2,
-            ]
         ];
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRegistry()
-    {
-        $repo = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->any())
-            ->method('find')
-            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry->expects($this->any())
-            ->method('getRepository')
-            ->with($this->isType('string'))
-            ->willReturn($repo);
-
-        return $registry;
     }
 
     /**
@@ -325,31 +226,6 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SecurityContext
-     */
-    protected function getSecurityContext()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractToken $securityContext */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\AbstractToken');
-        $token
-            ->expects($this->any())
-            ->method('getUser')
-            ->willReturn(new AccountUser());
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityContext $securityContext */
-        $securityContext = $this->getMockBuilder('Symfony\Component\Security\Core\SecurityContext')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $securityContext
-            ->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-
-        return $securityContext;
-    }
-
-    /**
      * @param LineItem $lineItem
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
@@ -365,5 +241,33 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
             ->will($this->returnValue($lineItem));
 
         return $form;
+    }
+
+    /**
+     * @return LineItemSubscriber
+     */
+    protected function getLineItemSubscriber()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
+        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lineItemManager->expects($this->any())
+            ->method('roundProductQuantity')
+            ->willReturnCallback(
+                function ($product, $unit, $quantity) {
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
+                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
+                }
+            );
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+
+        return $lineItemSubscriber;
     }
 }

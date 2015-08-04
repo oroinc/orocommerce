@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -24,26 +22,9 @@ class FrontendLineItemType extends AbstractType
     protected $dataClass;
 
     /**
-     * @var ShoppingListManager
-     */
-    protected $shoppingListManager;
-
-    /**
      * @var LineItemSubscriber
      */
     protected $lineItemSubscriber;
-
-    /**
-     * @param ShoppingListManager $shoppingListManager
-     * @param TokenStorage $tokenStorage
-     */
-    public function __construct(
-        ShoppingListManager $shoppingListManager,
-        TokenStorage $tokenStorage
-    ) {
-        $this->shoppingListManager = $shoppingListManager;
-        $this->accountUser = $tokenStorage->getToken()->getUser();
-    }
 
     /**
      * {@inheritdoc}
@@ -117,20 +98,5 @@ class FrontendLineItemType extends AbstractType
     public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
     {
         $this->lineItemSubscriber = $lineItemSubscriber;
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function createNewShoppingListHandler(FormEvent $event)
-    {
-        /** @var LineItem $lineItem */
-        $lineItem = $event->getForm()->getData();
-        $data = $event->getData();
-
-        if (!$lineItem->getShoppingList() && !empty($data['shoppingListLabel'])) {
-            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
-            $lineItem->setShoppingList($shoppingList);
-        }
     }
 }

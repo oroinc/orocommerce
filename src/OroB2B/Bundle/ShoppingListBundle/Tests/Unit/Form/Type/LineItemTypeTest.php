@@ -58,6 +58,8 @@ class LineItemTypeTest extends FormIntegrationTestCase
         $this->type = new LineItemType($this->getRegistry(), $lineItemManager);
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setProductClass(self::PRODUCT_CLASS);
+
+        $this->type->setLineItemSubscriber($this->getLineItemSubscriber());
     }
 
     /**
