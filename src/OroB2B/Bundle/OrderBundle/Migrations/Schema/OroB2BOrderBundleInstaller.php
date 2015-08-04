@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\OrderBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -89,10 +90,21 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('customer_notes', 'text', ['notnull' => false]);
+        $table->addColumn('ship_until', 'date', ['notnull' => false]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn(
+            'subtotal',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
+        $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['user_owner_id'], 'idx_c036ff909eb185f9', []);
         $table->addIndex(['organization_id'], 'idx_c036ff9032c8a3de', []);
         $table->addIndex(['created_at'], 'created_at_index', []);
+        $table->addIndex(['payment_term_id'], 'IDX_C036FF9017653B16', []);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
@@ -140,6 +152,12 @@ class OroB2BOrderBundleInstaller implements
     protected function addOroB2BOrderForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_order');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_payment_term'),
+            ['payment_term_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],

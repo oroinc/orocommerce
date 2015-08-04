@@ -8,6 +8,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,6 +26,12 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['billingAddress', new OrderAddress()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
+            ['poNumber', 'PO-#1'],
+            ['customerNotes', 'customer notes'],
+            ['shipUntil', $now],
+            ['currency', 'USD'],
+            ['subtotal', 999.99],
+            ['paymentTerm', new PaymentTerm()],
         ];
 
         $this->assertPropertyAccessors(new Order(), $properties);
