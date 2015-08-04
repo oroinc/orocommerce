@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextTypeStub extends TextType
 {
@@ -20,9 +20,9 @@ class TextTypeStub extends TextType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $resolver->setDefaults(['validation_groups' => ['Default']]);
     }

@@ -13,6 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
 
 /**
@@ -52,6 +53,8 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface
 {
@@ -148,11 +151,53 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $unitPrecisions;
 
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="orob2b_product_name",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $names;
+
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="orob2b_product_description",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="description_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $descriptions;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->unitPrecisions = new ArrayCollection();
+        $this->names          = new ArrayCollection();
+        $this->descriptions   = new ArrayCollection();
     }
 
     /**
@@ -160,7 +205,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function __toString()
     {
-        return (string)$this->sku;
+        try {
+            return (string)$this->getDefaultName()->getString();
+        } catch (\LogicException $e) {
+            return (string)$this->sku;
+        }
     }
 
     /**
@@ -366,6 +415,112 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getNames()
+    {
+        return $this->names;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $name
+     *
+     * @return $this
+     */
+    public function addName(LocalizedFallbackValue $name)
+    {
+        if (!$this->names->contains($name)) {
+            $this->names->add($name);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $name
+     *
+     * @return $this
+     */
+    public function removeName(LocalizedFallbackValue $name)
+    {
+        if ($this->names->contains($name)) {
+            $this->names->removeElement($name);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     * @throws \LogicException
+     */
+    public function getDefaultName()
+    {
+        $names = $this->names->filter(function (LocalizedFallbackValue $name) {
+            return null === $name->getLocale();
+        });
+
+        if ($names->count() !== 1) {
+            throw new \LogicException('There must be only one default name');
+        }
+
+        return $names->first();
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getDescriptions()
+    {
+        return $this->descriptions;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $description
+     *
+     * @return $this
+     */
+    public function addDescription(LocalizedFallbackValue $description)
+    {
+        if (!$this->descriptions->contains($description)) {
+            $this->descriptions->add($description);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $description
+     *
+     * @return $this
+     */
+    public function removeDescription(LocalizedFallbackValue $description)
+    {
+        if ($this->descriptions->contains($description)) {
+            $this->descriptions->removeElement($description);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     * @throws \LogicException
+     */
+    public function getDefaultDescription()
+    {
+        $descriptions = $this->descriptions->filter(function (LocalizedFallbackValue $description) {
+            return null === $description->getLocale();
+        });
+
+        if ($descriptions->count() !== 1) {
+            throw new \LogicException('There must be only one default description');
+        }
+
+        return $descriptions->first();
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -391,6 +546,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         if ($this->id) {
             $this->id = null;
             $this->unitPrecisions = new ArrayCollection();
+            $this->names = new ArrayCollection();
+            $this->descriptions = new ArrayCollection();
         }
     }
 }
