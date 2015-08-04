@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 
 use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Routing\Router;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
@@ -37,7 +38,8 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getManagerRegistry(),
             $this->getShoppingListManager(),
             $this->getTranslator(),
-            $this->securityFacade
+            $this->securityFacade,
+            $this->getRouter()
         );
     }
 
@@ -205,5 +207,13 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         return $managerRegistry;
+    }
+
+    /**
+     * @return Router|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getRouter()
+    {
+        return $this->getMockBuilder('Symfony\Component\Routing\Router')->disableOriginalConstructor()->getMock();
     }
 }
