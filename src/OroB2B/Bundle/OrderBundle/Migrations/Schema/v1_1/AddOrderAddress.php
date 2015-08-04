@@ -76,7 +76,7 @@ class AddOrderAddress implements Migration
      */
     protected function updateOrderTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_order');
+        $table = $schema->getTable('orob2b_order');
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
