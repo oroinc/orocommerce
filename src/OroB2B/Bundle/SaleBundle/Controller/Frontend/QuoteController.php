@@ -15,10 +15,10 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 class QuoteController extends Controller
 {
     /**
-     * @Route("/view/{id}", name="orob2b_sale_frontend_quote_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="orob2b_sale_quote_frontend_view", requirements={"id"="\d+"})
      * @Template("OroB2BSaleBundle:Quote/Frontend:view.html.twig")
-     * Acl(
-     *      id="orob2b_sale_frontend_quote_view",
+     * @Acl(
+     *      id="orob2b_sale_quote_frontend_view",
      *      type="entity",
      *      class="OroB2BSaleBundle:Quote",
      *      permission="VIEW",
@@ -36,9 +36,9 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/", name="orob2b_sale_frontend_quote_index")
+     * @Route("/", name="orob2b_sale_quote_frontend_index")
      * @Template("OroB2BSaleBundle:Quote/Frontend:index.html.twig")
-     * @AclAncestor("orob2b_sale_frontend_quote_view")
+     * @AclAncestor("orob2b_sale_quote_frontend_view")
      *
      * @return array
      */
@@ -50,9 +50,9 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_sale_frontend_quote_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="orob2b_sale_quote_frontend_info", requirements={"id"="\d+"})
      * @Template("OroB2BSaleBundle:Quote/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_sale_frontend_quote_view")
+     * @AclAncestor("orob2b_sale_quote_frontend_view")
      *
      * @param Quote $quote
      * @return array
