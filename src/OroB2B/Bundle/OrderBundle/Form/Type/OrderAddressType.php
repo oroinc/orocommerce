@@ -6,29 +6,27 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class OrderType extends AbstractType
+class OrderAddressType extends AbstractType
 {
-    const NAME = 'orob2b_order_type';
+    const NAME = 'orob2b_order_address_type';
 
-    /** @var  string */
+    /** @var string */
     protected $dataClass;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'billingAddress',
-                OrderAddressType::NAME,
-                ['label' => 'orob2b.order.billing_address.label', 'mapped' => false]
-            )
-            ->add(
-                'shippingAddress',
-                OrderAddressType::NAME,
-                ['label' => 'orob2b.order.shipping_address.label', 'mapped' => false]
-            );
+        $builder->add(
+            'accountAddress',
+            'genemu_jqueryselect2_choice',
+            [
+                'label' => 'orob2b.order.form.select_address',
+                'required' => false,
+                'mapped' => false,
+            ]
+        );
     }
 
     /**
@@ -50,6 +48,15 @@ class OrderType extends AbstractType
     {
         $this->dataClass = $dataClass;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return 'oro_address';
+    }
+
 
     /**
      * @return string
