@@ -1,7 +1,7 @@
 #frontend-products-navButtons
 items:
     add-products-btn:
-        action: OroB2BShoppingListBundle:Frontend/ShoppingList:getProductsAddBtn
+        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
 
 placeholders:
     frontend_products_navButtons:

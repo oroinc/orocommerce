@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -44,21 +45,29 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
     protected $productEm;
 
     /**
+     * @var RouterInterface
+     */
+    protected $router;
+
+    /**
      * @param ManagerRegistry     $managerRegistry
      * @param ShoppingListManager $shoppingListManager
      * @param TranslatorInterface $translator
      * @param SecurityFacade      $securityFacade
+     * @param RouterInterface     $router
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         ShoppingListManager $shoppingListManager,
         TranslatorInterface $translator,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        RouterInterface $router
     ) {
         $this->shoppingListManager = $shoppingListManager;
         $this->translator = $translator;
         $this->securityFacade = $securityFacade;
         $this->productEm = $managerRegistry->getManagerForClass('OroB2BProductBundle:Product');
+        $this->router = $router;
     }
 
     /**
@@ -99,27 +108,38 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $addedCnt = $this->shoppingListManager
             ->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
 
-        return $this->generateResponse($args, $addedCnt);
+        return $this->generateResponse($args, $addedCnt, $shoppingList->getId());
     }
 
     /**
      * @param MassActionHandlerArgs $args
      * @param int                   $entitiesCount
+     * @param int|null              $shoppingListId
      *
      * @return MassActionResponse
      */
-    protected function generateResponse(MassActionHandlerArgs $args, $entitiesCount = 0)
+    protected function generateResponse(MassActionHandlerArgs $args, $entitiesCount = 0, $shoppingListId = null)
     {
+        $message = $this->translator->transChoice(
+            $args->getMassAction()->getOptions()->offsetGetByPath(
+                '[messages][success]',
+                'orob2b.shoppinglist.actions.add_success_message'
+            ),
+            $entitiesCount,
+            ['%count%' => $entitiesCount]
+        );
+
+        if ($shoppingListId && $entitiesCount > 0) {
+            $link = $this->router->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId]);
+            $message .= ' '.$this->translator->trans(
+                'orob2b.shoppinglist.actions.add_success_message_link',
+                ['%link%' => $link]
+            );
+        }
+
         return new MassActionResponse(
             $entitiesCount > 0,
-            $this->translator->transChoice(
-                $args->getMassAction()->getOptions()->offsetGetByPath(
-                    '[messages][success]',
-                    'orob2b.shoppinglist.actions.add_success_message'
-                ),
-                $entitiesCount,
-                ['%count%' => $entitiesCount]
-            ),
+            $message,
             ['count' => $entitiesCount]
         );
     }

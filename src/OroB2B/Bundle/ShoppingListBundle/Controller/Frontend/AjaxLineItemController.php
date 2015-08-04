@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -146,5 +147,22 @@ class AjaxLineItemController extends Controller
         ];
 
         return new JsonResponse(array_merge($data, $response->getOptions()));
+    }
+
+    /**
+     * @return Response
+     */
+    public function getProductsAddBtnAction()
+    {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+        $repository = $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingLists = $repository->findByUser($accountUser);
+        $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
+
+        return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
+            'shoppingLists' => $shoppingLists,
+            'currentShoppingList' => $currentShoppingList
+        ]);
     }
 }
