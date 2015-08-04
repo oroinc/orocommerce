@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;

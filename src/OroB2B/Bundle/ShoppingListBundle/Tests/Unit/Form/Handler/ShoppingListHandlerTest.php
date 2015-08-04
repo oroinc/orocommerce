@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,6 +88,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
         $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
 
         $this->registry->expects($this->once())
@@ -115,6 +117,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
         $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
 
         $manager->expects($this->once())
