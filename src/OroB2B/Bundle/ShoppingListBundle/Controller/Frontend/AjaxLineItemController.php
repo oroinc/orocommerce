@@ -158,7 +158,7 @@ class AjaxLineItemController extends Controller
         /** @var AccountUser $accountUser */
         $accountUser = $this->getUser();
         $repository = $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
-        $shoppingLists = $repository->findByUser($accountUser);
+        $shoppingLists = $repository->findAllExceptCurrentForAccountUser($accountUser);
         $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
 
         return $this->render(
