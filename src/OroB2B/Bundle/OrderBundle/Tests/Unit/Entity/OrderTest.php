@@ -24,38 +24,13 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['identifier', 'identifier-test-01'],
             ['owner', new User()],
             ['organization', new Organization()],
+            ['shippingAddress', new OrderAddress()],
+            ['billingAddress', new OrderAddress()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
         ];
 
         $this->assertPropertyAccessors(new Order(), $properties);
-    }
-
-    public function testCollections()
-    {
-        $this->assertPropertyCollection(new Order(), 'addresses', new OrderAddress());
-    }
-
-    public function testTypedAddresses()
-    {
-        $shippingAddressType = new AddressType(AddressType::TYPE_SHIPPING);
-        $billingAddressType = new AddressType(AddressType::TYPE_BILLING);
-
-        $shippingAddress = new OrderAddress();
-        $shippingAddress->setTypes(new ArrayCollection([$shippingAddressType]));
-
-        $billingAddress = new OrderAddress();
-        $billingAddress->setTypes(new ArrayCollection([$billingAddressType]));
-
-        $order = new Order();
-        $this->assertEmpty($order->getAddresses());
-
-        $order->resetAddresses([$shippingAddress, $billingAddress]);
-        $this->assertTrue($order->hasAddress($billingAddress));
-        $this->assertTrue($order->hasAddress($shippingAddress));
-
-        $this->assertSame($shippingAddress, $order->getShippingAddress());
-        $this->assertSame($billingAddress, $order->getBillingAddress());
     }
 
     public function testPrePersist()
