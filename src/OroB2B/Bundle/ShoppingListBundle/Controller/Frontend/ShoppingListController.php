@@ -12,13 +12,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class ShoppingListController extends Controller
 {
@@ -101,41 +99,6 @@ class ShoppingListController extends Controller
             ->setAccountUser($accountUser);
 
         return $this->update($request, $shoppingList);
-    }
-
-    /**
-     * Create default shopping list
-     *
-     * @Route("/create-default", name="orob2b_shopping_list_frontend_create_default")
-     * @AclAncestor("orob2b_shopping_list_frontend_create")
-     *
-     * @return JsonResponse
-     */
-    public function createDefaultAction()
-    {
-        $shoppingList = $this->get('orob2b_shopping_list.shopping_list.manager')->createCurrent();
-
-        return new JsonResponse(['shoppingListId' => $shoppingList->getId()]);
-    }
-
-    /**
-     * Check if shopping list exists
-     *
-     * @Route("/check-existing/{shoppingListId}", name="orob2b_shopping_list_frontend_check_existing")
-     * @AclAncestor("orob2b_shopping_list_frontend_view")
-     *
-     * @param int $shoppingListId
-     *
-     * @return JsonResponse
-     */
-    public function checkExistingAction($shoppingListId = null)
-    {
-        $shoppingList = $this->getShoppingListRepository()->find((int) $shoppingListId);
-        if (!$shoppingList) {
-            $shoppingList = $this->get('orob2b_shopping_list.shopping_list.manager')->createCurrent();
-        }
-
-        return new JsonResponse(['shoppingListId' => $shoppingList->getId()]);
     }
 
     /**
@@ -225,13 +188,5 @@ class ShoppingListController extends Controller
             $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
-    }
-
-    /**
-     * @return ShoppingListRepository
-     */
-    protected function getShoppingListRepository()
-    {
-        return $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
     }
 }

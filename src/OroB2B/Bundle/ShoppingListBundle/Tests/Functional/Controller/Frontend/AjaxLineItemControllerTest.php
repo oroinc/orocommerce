@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -194,11 +194,11 @@ class AjaxLineItemControllerTest extends WebTestCase
     }
 
     /**
-     * @param Crawler $crawler
-     * @param $shoppingListId
-     * @param $quantity
-     * @param $code
-     * @param $label
+     * @param Crawler     $crawler
+     * @param int|null    $shoppingListId
+     * @param float       $quantity
+     * @param string      $code
+     * @param string|null $label
      *
      * @return Form
      */
@@ -206,10 +206,10 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         return $crawler->selectButton('Save')->form(
             [
-                'orob2b_shopping_list_add_product[shoppingList]' => $shoppingListId,
-                'orob2b_shopping_list_add_product[quantity]' => $quantity,
-                'orob2b_shopping_list_add_product[unit]' => $code,
-                'orob2b_shopping_list_add_product[shoppingListLabel]' => $label,
+                'orob2b_shopping_list_frontend_line_item_widget[shoppingList]' => $shoppingListId,
+                'orob2b_shopping_list_frontend_line_item_widget[quantity]' => $quantity,
+                'orob2b_shopping_list_frontend_line_item_widget[unit]' => $code,
+                'orob2b_shopping_list_frontend_line_item_widget[shoppingListLabel]' => $label,
             ]
         );
     }
