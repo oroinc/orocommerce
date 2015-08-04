@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\FrontendBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
 
 class LineItemType extends AbstractType
 {

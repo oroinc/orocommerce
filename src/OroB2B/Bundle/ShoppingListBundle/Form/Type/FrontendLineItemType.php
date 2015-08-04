@@ -12,7 +12,7 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\FrontendBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
 
 class FrontendLineItemType extends AbstractType
 {
@@ -117,18 +117,6 @@ class FrontendLineItemType extends AbstractType
     public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
     {
         $this->lineItemSubscriber = $lineItemSubscriber;
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSubmitData(FormEvent $event)
-    {
-        $createShoppingListHandler = $event->getForm()->getConfig()->getOption('create_shopping_list_handler');
-
-        if (is_callable($createShoppingListHandler)) {
-            call_user_func($createShoppingListHandler, $event);
-        }
     }
 
     /**
