@@ -273,13 +273,6 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
         $multiSelectLocalizedAttribute->setType(MultiSelect::NAME)
             ->setLocalized(true);
 
-        $wysiwygOptions = [
-            'statusbar' => true,
-            'resize' => true,
-            'width' => 500,
-            'height' => 300
-        ];
-
         return [
             'string' => [
                 'attribute' => $stringLocalizedAttribute,
@@ -299,7 +292,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
                             'type' => 'text',
-                            'options' => ['required' => false, 'wysiwyg_options' => $wysiwygOptions],
+                            'options' => ['required' => false],
                         ]
                     ],
                     $addPreSubmitListener,
@@ -368,8 +361,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                                 'required' => false,
                                 'type' => 'text',
                                 'constraints' => [new IntegerConstraint()],
-                                'validation_groups' => ['Default'],
-                                'wysiwyg_options' => $wysiwygOptions
+                                'validation_groups' => ['Default']
                             ],
                         ]
                     ],
@@ -437,7 +429,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
                             'type' => 'oro_date',
-                            'options' => ['required' => false, 'wysiwyg_options' => $wysiwygOptions],
+                            'options' => ['required' => false],
                         ]
                     ],
                     $addPreSubmitListener,
@@ -494,7 +486,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                             'label' => 'orob2b.attribute.default_values.label',
                             'required' => false,
                             'type' => 'checkbox',
-                            'options' => ['required' => false, 'wysiwyg_options' => $wysiwygOptions],
+                            'options' => ['required' => false],
                         ]
                     ],
                     $addPreSubmitListener,
