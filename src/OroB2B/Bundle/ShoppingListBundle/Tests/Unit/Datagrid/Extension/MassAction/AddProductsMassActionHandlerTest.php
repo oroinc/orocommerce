@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\AbstractQuery;
 
-use Symfony\Component\Security\Core\SecurityContextInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
@@ -16,6 +18,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
 
@@ -27,17 +30,23 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var  MassActionHandlerArgs */
     protected $args;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityContextInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
+
+    /** @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $router;
 
     protected function setUp()
     {
+        $this->router = $this->getRouter();
         $this->securityFacade = $this->getSecurityFacade();
+
         $this->handler = new AddProductsMassActionHandler(
             $this->getManagerRegistry(),
             $this->getShoppingListManager(),
             $this->getTranslator(),
-            $this->securityFacade
+            $this->securityFacade,
+            $this->router
         );
     }
 
@@ -89,7 +98,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getTranslator()
     {
@@ -105,7 +114,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getShoppingListManager()
     {
@@ -136,7 +145,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getSecurityFacade()
     {
@@ -148,12 +157,25 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return RouterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getRouter()
+    {
+        $router = $this->getMockBuilder('Symfony\Component\Routing\RouterInterface')->getMock();
+
+        return $router;
+    }
+
+
+    /**
+     * @return Registry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getManagerRegistry()
     {
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
 
+        /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject $query */
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
             ->setMethods(['iterate'])
@@ -169,6 +191,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('iterate')
             ->willReturn($iterableResult);
 
+        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -177,6 +200,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getQuery')
             ->willReturn($query);
 
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository */
         $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->setMethods(['getProductsQueryBuilder'])
@@ -186,6 +210,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getProductsQueryBuilder')
             ->willReturn($queryBuilder);
 
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $shoppingListRepository */
         $shoppingListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
