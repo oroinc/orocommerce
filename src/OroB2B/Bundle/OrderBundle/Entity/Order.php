@@ -120,6 +120,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      *
      * @ORM\OneToOne(targetEntity="OrderAddress")
      * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $billingAddress;
 
@@ -128,12 +135,19 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      *
      * @ORM\OneToOne(targetEntity="OrderAddress")
      * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $shippingAddress;
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -147,7 +161,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="text", nullable=true)
+     * @ORM\Column(name="customer_notes", type="text", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -161,7 +175,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var \DateTime
      *
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(name="ship_until", type="date", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -175,14 +189,14 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=3, nullable=true)
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
      */
     protected $currency;
 
     /**
      * @var float
      *
-     * @ORM\Column(type="money", nullable=true)
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
      */
     protected $subtotal;
 
@@ -200,12 +214,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * )
      */
     protected $paymentTerm;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->addresses = new ArrayCollection();
-    }
 
     /**
      * @return int
@@ -316,7 +324,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @return OrderAddress
+     * @return OrderAddress|null
      */
     public function getBillingAddress()
     {
@@ -324,10 +332,10 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @param OrderAddress $billingAddress
+     * @param OrderAddress|null $billingAddress
      * @return Order
      */
-    public function setBillingAddress(OrderAddress $billingAddress)
+    public function setBillingAddress(OrderAddress $billingAddress = null)
     {
         $this->billingAddress = $billingAddress;
 
@@ -335,7 +343,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @return OrderAddress
+     * @return OrderAddress|null
      */
     public function getShippingAddress()
     {
@@ -343,10 +351,10 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @param OrderAddress $shippingAddress
+     * @param OrderAddress|null $shippingAddress
      * @return Order
      */
-    public function setShippingAddress(OrderAddress $shippingAddress)
+    public function setShippingAddress(OrderAddress $shippingAddress = null)
     {
         $this->shippingAddress = $shippingAddress;
 
@@ -497,7 +505,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * Set paymentTerm
      *
-     * @param PaymentTerm $paymentTerm
+     * @param PaymentTerm|null $paymentTerm
      *
      * @return Order
      */
@@ -511,7 +519,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * Get paymentTerm
      *
-     * @return PaymentTerm
+     * @return PaymentTerm|null
      */
     public function getPaymentTerm()
     {

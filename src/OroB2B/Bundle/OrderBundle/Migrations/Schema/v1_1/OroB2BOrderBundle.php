@@ -29,9 +29,9 @@ class OroB2BOrderBundle implements Migration
     protected function createOroB2BOrderTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_order');
-        $table->addColumn('poNumber', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('customerNotes', 'text', ['notnull' => false]);
-        $table->addColumn('shipUntil', 'date', ['notnull' => false]);
+        $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('customer_notes', 'text', ['notnull' => false]);
+        $table->addColumn('ship_until', 'date', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn(
             'subtotal',
