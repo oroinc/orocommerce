@@ -10,6 +10,7 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
+                    - productNames.string as productName
                     - product.createdAt
                     - product.updatedAt
                     - productInventoryStatus.id as inventoryStatusId
@@ -25,9 +26,17 @@ datagrid:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: product.visibility, alias: productVisibility}
                         - { join: product.status, alias: productStatus}
+                    inner:
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
         columns:
             sku:
                 label:         orob2b.product.sku.label
+            productName:
+                label:         orob2b.product.names.label
             inventoryStatus:
                 label:         orob2b.product.inventory_status.label
                 type:          twig
@@ -55,6 +64,8 @@ datagrid:
             columns:
                 sku:
                     data_name: product.sku
+                productName:
+                    data_name: productName
                 inventoryStatus:
                     data_name: inventoryStatusName
                 visibility:
@@ -72,6 +83,9 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
+                productName:
+                    type:      string
+                    data_name: productName
                 inventoryStatus:
                     type:      enum
                     data_name: inventoryStatusId

@@ -4,7 +4,12 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
 class ProductType extends AbstractType
 {
@@ -54,6 +59,39 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
+                'names',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.names.label',
+                    'required' => true,
+                    'options' => ['constraints' => [new NotBlank()]],
+                ]
+            )
+            ->add(
+                'descriptions',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.product.descriptions.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'statusbar' => true,
+                            'resize' => true,
+                            'width' => 500,
+                            'height' => 300,
+                            'plugins' => array_merge(
+                                OroRichTextType::$defaultPlugins,
+                                ['fullscreen']
+                            ),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ],
+                    ],
+                ]
+            )
+            ->add(
                 'image',
                 'oro_image',
                 [
@@ -84,9 +122,9 @@ class ProductType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class'           => $this->dataClass,
