@@ -2,11 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -119,14 +116,20 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $organization;
 
     /**
-     * @var ArrayCollection|OrderAddress[]
+     * @var OrderAddress
      *
-     * @ORM\OneToMany(targetEntity="OrderAddress",
-     *     mappedBy="order", cascade={"all"}, orphanRemoval=true
-     * )
+     * @ORM\OneToOne(targetEntity="OrderAddress")
+     * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $addresses;
+    protected $billingAddress;
 
+    /**
+     * @var OrderAddress
+     *
+     * @ORM\OneToOne(targetEntity="OrderAddress")
+     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $shippingAddress;
     /**
      * @var string
      *
@@ -313,103 +316,41 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * Set addresses.
-     *
-     * @param ArrayCollection|OrderAddress[] $addresses
-     *
-     * @return Order
-     */
-    public function resetAddresses($addresses)
-    {
-        $this->addresses->clear();
-
-        foreach ($addresses as $address) {
-            $this->addAddress($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add address
-     *
-     * @param OrderAddress $address
-     *
-     * @return Order
-     */
-    public function addAddress(OrderAddress $address)
-    {
-        if (!$this->hasAddress($address)) {
-            $this->addresses->add($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove address
-     *
-     * @param OrderAddress $address
-     *
-     * @return Order
-     */
-    public function removeAddress(OrderAddress $address)
-    {
-        if ($this->hasAddress($address)) {
-            $this->addresses->removeElement($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get addresses
-     *
-     * @return ArrayCollection|OrderAddress[]
-     */
-    public function getAddresses()
-    {
-        return $this->addresses;
-    }
-
-    /**
-     * @param OrderAddress $address
-     *
-     * @return bool
-     */
-    public function hasAddress(OrderAddress $address)
-    {
-        return $this->getAddresses()->contains($address);
-    }
-
-    /**
-     * {@inheritdoc}
+     * @return OrderAddress
      */
     public function getBillingAddress()
     {
-        $addresses = $this->getAddresses()->filter(
-            function (AbstractTypedAddress $address) {
-                return $address->hasTypeWithName(AddressType::TYPE_BILLING);
-            }
-        );
-
-        return $addresses->first();
+        return $this->billingAddress;
     }
 
     /**
-     * Get shipping address.
-     *
+     * @param OrderAddress $billingAddress
+     * @return Order
+     */
+    public function setBillingAddress(OrderAddress $billingAddress)
+    {
+        $this->billingAddress = $billingAddress;
+
+        return $this;
+    }
+
+    /**
      * @return OrderAddress
      */
     public function getShippingAddress()
     {
-        $addresses = $this->getAddresses()->filter(
-            function (AbstractTypedAddress $address) {
-                return $address->hasTypeWithName(AddressType::TYPE_SHIPPING);
-            }
-        );
+        return $this->shippingAddress;
+    }
 
-        return $addresses->first();
+    /**
+     * @param OrderAddress $shippingAddress
+     * @return Order
+     */
+    public function setShippingAddress(OrderAddress $shippingAddress)
+    {
+        $this->shippingAddress = $shippingAddress;
+
+        return $this;
     }
 
     /**

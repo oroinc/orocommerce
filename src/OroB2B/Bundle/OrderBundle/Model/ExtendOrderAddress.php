@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Model;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 
-abstract class ExtendOrderAddress extends AbstractTypedAddress
+abstract class ExtendOrderAddress extends AbstractAddress
 {
     /**
      * Constructor
@@ -15,6 +15,5 @@ abstract class ExtendOrderAddress extends AbstractTypedAddress
      */
     public function __construct()
     {
-        parent::__construct();
     }
 }

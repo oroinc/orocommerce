@@ -68,12 +68,10 @@ class OroB2BOrderBundleInstaller implements
         /** Tables generation **/
         $this->createOroB2BOrderTable($schema);
         $this->createOroB2BOrderAddressTable($schema);
-        $this->createOroB2BOrderAddressTypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BOrderForeignKeys($schema);
         $this->addOroB2BOrderAddressForeignKeys($schema);
-        $this->addOroB2BOrderAddressTypeForeignKeys($schema);
     }
 
     /**
@@ -87,6 +85,8 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('identifier', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
@@ -106,6 +106,9 @@ class OroB2BOrderBundleInstaller implements
         $table->addIndex(['organization_id'], 'idx_c036ff9032c8a3de', []);
         $table->addIndex(['created_at'], 'created_at_index', []);
         $table->addIndex(['payment_term_id'], 'IDX_C036FF9017653B16', []);
+        $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
+        $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
+        $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
 
         $this->noteExtension->addNoteAssociation($schema, $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
@@ -123,8 +126,6 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
-        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
         $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
@@ -141,23 +142,7 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addIndex(['region_code'], 'idx_ff867c56aeb327af', []);
         $table->addIndex(['country_code'], 'idx_ff867c56f026bb7c', []);
-        $table->addIndex(['owner_id'], 'idx_ff867c567e3c61f9', []);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create orob2b_order_address_type table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BOrderAddressTypeTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_order_address_type');
-        $table->addColumn('order_address_id', 'integer', []);
-        $table->addColumn('type_name', 'string', ['length' => 16]);
-        $table->setPrimaryKey(['order_address_id', 'type_name']);
-        $table->addIndex(['type_name'], 'idx_31dd983d892cbb0e', []);
-        $table->addIndex(['order_address_id'], 'idx_31dd983d466d5220', []);
     }
 
     /**
@@ -186,6 +171,18 @@ class OroB2BOrderBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order_address'),
+            ['shipping_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_order_address'),
+            ['billing_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
     }
 
     /**
@@ -207,34 +204,6 @@ class OroB2BOrderBundleInstaller implements
             ['country_code'],
             ['iso2_code'],
             ['onUpdate' => null, 'onDelete' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order'),
-            ['owner_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add orob2b_order_address_type foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BOrderAddressTypeForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_order_address_type');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_address_type'),
-            ['type_name'],
-            ['name'],
-            ['onUpdate' => null, 'onDelete' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
-            ['order_address_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }

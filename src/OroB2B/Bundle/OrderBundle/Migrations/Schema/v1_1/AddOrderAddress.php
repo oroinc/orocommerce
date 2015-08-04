@@ -14,13 +14,9 @@ class AddOrderAddress implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        /** Tables generation **/
         $this->createOroB2BOrderAddressTable($schema);
-        $this->createOroB2BOrderAddressTypeTable($schema);
-
-        /** Foreign keys generation **/
         $this->addOroB2BOrderAddressForeignKeys($schema);
-        $this->addOroB2BOrderAddressTypeForeignKeys($schema);
+        $this->updateOrderTable($schema);
     }
 
     /**
@@ -34,8 +30,6 @@ class AddOrderAddress implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
-        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('street', 'string', ['notnull' => false, 'length' => 500]);
         $table->addColumn('street2', 'string', ['notnull' => false, 'length' => 500]);
@@ -52,23 +46,7 @@ class AddOrderAddress implements Migration
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addIndex(['region_code'], 'idx_ff867c56aeb327af', []);
         $table->addIndex(['country_code'], 'idx_ff867c56f026bb7c', []);
-        $table->addIndex(['owner_id'], 'idx_ff867c567e3c61f9', []);
         $table->setPrimaryKey(['id']);
-    }
-
-    /**
-     * Create orob2b_order_address_type table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BOrderAddressTypeTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_order_address_type');
-        $table->addColumn('order_address_id', 'integer', []);
-        $table->addColumn('type_name', 'string', ['length' => 16]);
-        $table->setPrimaryKey(['order_address_id', 'type_name']);
-        $table->addIndex(['type_name'], 'idx_31dd983d892cbb0e', []);
-        $table->addIndex(['order_address_id'], 'idx_31dd983d466d5220', []);
     }
 
     /**
@@ -91,33 +69,31 @@ class AddOrderAddress implements Migration
             ['iso2_code'],
             ['onUpdate' => null, 'onDelete' => null]
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order'),
-            ['owner_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
     }
 
     /**
-     * Add orob2b_order_address_type foreign keys.
-     *
      * @param Schema $schema
      */
-    protected function addOroB2BOrderAddressTypeForeignKeys(Schema $schema)
+    protected function updateOrderTable(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_order_address_type');
+        $table = $schema->getTable('orob2b_order');
+        $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('billing_address_id', 'integer', ['notnull' => false]);
+        $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
+        $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
+
+        $addressTable = $schema->getTable('orob2b_order_address');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_address_type'),
-            ['type_name'],
-            ['name'],
-            ['onUpdate' => null, 'onDelete' => null]
+            $addressTable,
+            ['shipping_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_order_address'),
-            ['order_address_id'],
+            $addressTable,
+            ['billing_address_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 }
