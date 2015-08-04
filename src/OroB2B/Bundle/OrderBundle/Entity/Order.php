@@ -2,11 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -118,21 +115,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $organization;
 
     /**
-     * @var ArrayCollection|OrderAddress[]
-     *
-     * @ORM\OneToMany(targetEntity="OrderAddress",
-     *     mappedBy="order", cascade={"all"}, orphanRemoval=true
-     * )
-     */
-    protected $addresses;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->addresses = new ArrayCollection();
-    }
-
-    /**
      * @return int
      */
     public function getId()
@@ -238,106 +220,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function getOrganization()
     {
         return $this->organization;
-    }
-
-    /**
-     * Set addresses.
-     *
-     * @param ArrayCollection|OrderAddress[] $addresses
-     *
-     * @return Order
-     */
-    public function resetAddresses($addresses)
-    {
-        $this->addresses->clear();
-
-        foreach ($addresses as $address) {
-            $this->addAddress($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add address
-     *
-     * @param OrderAddress $address
-     *
-     * @return Order
-     */
-    public function addAddress(OrderAddress $address)
-    {
-        if (!$this->hasAddress($address)) {
-            $this->addresses->add($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove address
-     *
-     * @param OrderAddress $address
-     *
-     * @return Order
-     */
-    public function removeAddress(OrderAddress $address)
-    {
-        if ($this->hasAddress($address)) {
-            $this->addresses->removeElement($address);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get addresses
-     *
-     * @return ArrayCollection|OrderAddress[]
-     */
-    public function getAddresses()
-    {
-        return $this->addresses;
-    }
-
-    /**
-     * @param OrderAddress $address
-     *
-     * @return bool
-     */
-    public function hasAddress(OrderAddress $address)
-    {
-        return $this->getAddresses()->contains($address);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBillingAddress()
-    {
-        $addresses = $this->getAddresses()->filter(
-            function (AbstractTypedAddress $address) {
-                return $address->hasTypeWithName(AddressType::TYPE_BILLING);
-            }
-        );
-
-        return $addresses->first();
-    }
-
-    /**
-     * Get shipping address.
-     *
-     * @return OrderAddress
-     */
-    public function getShippingAddress()
-    {
-        $addresses = $this->getAddresses()->filter(
-            function (AbstractTypedAddress $address) {
-                return $address->hasTypeWithName(AddressType::TYPE_SHIPPING);
-            }
-        );
-
-        return $addresses->first();
     }
 
     /**
