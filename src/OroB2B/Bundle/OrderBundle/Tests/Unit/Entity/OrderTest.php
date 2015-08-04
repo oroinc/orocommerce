@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCase;
 
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
-class OrderTest extends EntityTestCase
+class OrderTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $now = new \DateTime('now');
