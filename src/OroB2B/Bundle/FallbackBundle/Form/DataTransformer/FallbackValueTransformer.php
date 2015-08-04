@@ -13,11 +13,16 @@ class FallbackValueTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        $result = ['value' => null, 'fallback' => null];
+        $result = [
+            'value' => null,
+            'fallback' => null,
+            'use_fallback' => true,
+        ];
 
         if ($value instanceof FallbackType) {
             $result['fallback'] = $value->getType();
         } else {
+            $result['use_fallback'] = false;
             $result['value'] = $value;
         }
 

@@ -12,6 +12,8 @@ orob2b:
         organization.label: Organization
         unit_precisions.label: Unit Precisions
         image.label: Image
+        names.label: Name
+        descriptions.label: Description
 
         visibility:
             visible.label: Yes

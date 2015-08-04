@@ -135,7 +135,7 @@ class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
         $password = $this->userManager->generatePassword(10);
         $this->assertNotEmpty($password);
         $this->assertRegExp('/\w+/', $password);
-        $this->assertLessThanOrEqual(10, $password);
+        $this->assertLessThanOrEqual(10, strlen($password));
     }
 
     public function testRegisterConfirmationRequired()

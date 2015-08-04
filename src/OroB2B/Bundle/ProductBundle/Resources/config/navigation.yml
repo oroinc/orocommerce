@@ -41,6 +41,6 @@ oro_menu_config:
 
 oro_titles:
     orob2b_product_index: ~
-    orob2b_product_view:   '%%sku%%'
-    orob2b_product_update: '%%sku%% - Edit'
+    orob2b_product_view:   '%%sku%% - %%name%%'
+    orob2b_product_update: '%%sku%% - %%name%% - Edit'
     orob2b_product_create: 'Create Product'

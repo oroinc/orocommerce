@@ -1,0 +1,61 @@
+.fallback-container td {
+    vertical-align: top;
+    line-height: 29px;
+}
+
+.fallback-container td.fallback-item-use-fallback,
+.fallback-container .fallback-status {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.fallback-container input[type="radio"],
+.fallback-container input[type="checkbox"] {
+    margin-top: 0px;
+}
+.fallback-container div.selector {
+    width: auto !important;
+    float: left;
+}
+
+.fallback-container div.selector span {
+    padding-right: 18px;
+}
+
+.mce-tinymce.disabled button {
+    opacity: .4;
+}
+
+.mce-tinymce.disabled .disabled-overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: #eeeeee;
+    opacity: .4;
+}
+
+.fallback-item-top {
+    padding-top: 10px;
+}
+
+.fallback-item-value-top {
+    padding-top: 5px;
+}
+
+.fallback-item-label{
+    max-width: 150px;
+    white-space: nowrap;
+}
+
+.fallback-item-value,
+.fallback-item-use-fallback {
+    width: 1px;/*fit to content*/
+    white-space: nowrap;
+}
+
+.fallback-status i {
+    font-size: 20px;
+    cursor: pointer;
+}

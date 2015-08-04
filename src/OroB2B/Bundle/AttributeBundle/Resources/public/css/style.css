@@ -19,10 +19,19 @@
     text-decoration: none;
 }
 
+.oro-options-collection.oro-item-collection {
+    width: 580px !important;
+}
+
 .oro-options-collection.oro-item-collection :after {
      color: #bbb;
- }
+}
 
-.oro-options-collection.oro-item-collection select.fallback {
-    width: 160px !important;
+.form-horizontal .attribute-defaults .control-group {
+    max-width: 50% !important;
+}
+
+.attribute-defaults .oro-options-collection.oro-item-collection {
+    width: 100% !important;
+    min-width: 580px !important;
 }

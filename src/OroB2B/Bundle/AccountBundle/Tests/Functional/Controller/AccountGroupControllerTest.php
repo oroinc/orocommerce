@@ -18,6 +18,7 @@ class AccountGroupControllerTest extends WebTestCase
 {
     const NAME = 'Group_name';
     const UPDATED_NAME = 'Group_name_UP';
+    const ADD_NOTE_BUTTON = 'Add note';
 
     /**
      * @var EntityManager
@@ -103,6 +104,7 @@ class AccountGroupControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
         $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Accounts', $html);
+        $this->assertContains(self::ADD_NOTE_BUTTON, $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
     }
 
