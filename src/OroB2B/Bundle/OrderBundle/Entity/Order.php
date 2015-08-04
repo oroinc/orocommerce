@@ -115,6 +115,22 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $organization;
 
     /**
+     * @var OrderAddress
+     *
+     * @ORM\OneToOne(targetEntity="OrderAddress")
+     * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $billingAddress;
+
+    /**
+     * @var OrderAddress
+     *
+     * @ORM\OneToOne(targetEntity="OrderAddress")
+     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $shippingAddress;
+
+    /**
      * @return int
      */
     public function getId()
@@ -220,6 +236,44 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function getOrganization()
     {
         return $this->organization;
+    }
+
+    /**
+     * @return OrderAddress
+     */
+    public function getBillingAddress()
+    {
+        return $this->billingAddress;
+    }
+
+    /**
+     * @param OrderAddress $billingAddress
+     * @return Order
+     */
+    public function setBillingAddress(OrderAddress $billingAddress)
+    {
+        $this->billingAddress = $billingAddress;
+
+        return $this;
+    }
+
+    /**
+     * @return OrderAddress
+     */
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
+    /**
+     * @param OrderAddress $shippingAddress
+     * @return Order
+     */
+    public function setShippingAddress(OrderAddress $shippingAddress)
+    {
+        $this->shippingAddress = $shippingAddress;
+
+        return $this;
     }
 
     /**
