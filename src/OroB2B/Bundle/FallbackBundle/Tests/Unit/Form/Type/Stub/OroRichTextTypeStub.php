@@ -2,12 +2,14 @@
 
 namespace OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub;
 
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class TextTypeStub extends TextType
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+
+class OroRichTextTypeStub extends AbstractType
 {
-    const NAME = 'text_stub';
+    const NAME = OroRichTextType::NAME;
 
     /**
      * {@inheritdoc}
@@ -15,6 +17,14 @@ class TextTypeStub extends TextType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return 'textarea';
     }
 
     /**

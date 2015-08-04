@@ -7,7 +7,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class SkiIncrementorTest extends \PHPUnit_Framework_TestCase
+class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_CLASS = 'OroB2BProductBundle:Product';
 

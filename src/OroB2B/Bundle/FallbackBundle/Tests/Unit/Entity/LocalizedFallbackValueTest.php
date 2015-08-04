@@ -37,4 +37,18 @@ class LocalizedFallbackValueTest extends EntityTestCase
         $emptyValue = new LocalizedFallbackValue();
         $this->assertEquals('', (string)$emptyValue);
     }
+
+    public function testClone()
+    {
+        $id = 123;
+        $value = new LocalizedFallbackValue();
+
+        $reflection = new \ReflectionProperty(get_class($value), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($value, $id);
+
+        $clonedValue = clone $value;
+        $this->assertEquals($id, $value->getId());
+        $this->assertNull($clonedValue->getId());
+    }
 }
