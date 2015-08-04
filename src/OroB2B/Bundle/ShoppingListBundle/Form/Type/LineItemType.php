@@ -90,8 +90,6 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.unit.label',
-                    'empty_data' => null,
-                    'empty_value' => 'orob2b.pricing.productprice.unit.choose'
                 ]
             )
             ->add(
@@ -127,8 +125,6 @@ class LineItemType extends AbstractType
             [
                 'required' => true,
                 'label' => 'orob2b.pricing.productprice.unit.label',
-                'empty_data' => null,
-                'empty_value' => 'orob2b.pricing.productprice.unit.choose',
                 'query_builder' => function (ProductUnitRepository $er) use ($entity) {
                     return $er->getProductUnitsQueryBuilder($entity->getProduct());
                 }

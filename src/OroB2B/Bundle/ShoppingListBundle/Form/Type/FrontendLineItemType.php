@@ -75,9 +75,7 @@ class FrontendLineItemType extends AbstractType
                     'label' => 'orob2b.pricing.productprice.unit.label',
                     'query_builder' => function (ProductUnitRepository $repository) use ($product) {
                         return $repository->getProductUnitsQueryBuilder($product);
-                    },
-                    'empty_data' => null,
-                    'empty_value' => 'orob2b.pricing.productprice.unit.choose'
+                    }
                 ]
             )
             ->add(
