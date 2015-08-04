@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -31,10 +31,10 @@ class ShoppingListManager
     protected $accountUser;
 
     /**
-     * @param ManagerRegistry $managerRegistry
-     * @param TokenStorage    $tokenStorage
+     * @param ManagerRegistry       $managerRegistry
+     * @param TokenStorageInterface $tokenStorage
      */
-    public function __construct(ManagerRegistry $managerRegistry, TokenStorage $tokenStorage)
+    public function __construct(ManagerRegistry $managerRegistry, TokenStorageInterface $tokenStorage)
     {
         $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
@@ -136,7 +136,7 @@ class ShoppingListManager
             ? $repository->findCurrentForAccountUser($this->accountUser)
             : $repository->findByUserAndId($this->accountUser, $shoppingListId);
 
-        if (!$shoppingList instanceof ShoppingList) {
+        if (!($shoppingList instanceof ShoppingList)) {
             $shoppingList = $this->createCurrent();
         }
 

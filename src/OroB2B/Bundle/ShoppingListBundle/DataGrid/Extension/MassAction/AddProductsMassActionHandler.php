@@ -82,9 +82,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             ->iterate();
 
         $lineItems = [];
-        foreach ($iterableResult as $entity) {
+        foreach ($iterableResult as $entityArray) {
             /** @var Product $entity */
-            $entity = $entity[0];
+            $entity = $entityArray[0];
             /** @var ProductUnitPrecision $unitPrecision */
             $unitPrecision = $entity->getUnitPrecisions()->first();
             $lineItem = (new LineItem())

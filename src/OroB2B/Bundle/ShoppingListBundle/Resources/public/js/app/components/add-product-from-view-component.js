@@ -28,10 +28,8 @@ define(function (require) {
 
                 if (intention === 'new') {
                     component.createNewShoppingList(url, urlOptions, form.serialize());
-                } else if (intention === 'current' && !urlOptions.shoppingListId) {
-                    component.createDefaultShoppingList(url, urlOptions, form.serialize());
                 } else {
-                    component.checkExistingShoppingList(url, urlOptions, form.serialize());
+                    component.addProductToShoppingList(url, urlOptions, form.serialize());
                 }
             });
         },
@@ -74,32 +72,6 @@ define(function (require) {
                 urlOptions.shoppingListId = response;
                 component.addProductToShoppingList(url, urlOptions, formData);
             }, this));
-        },
-
-        createDefaultShoppingList: function (url, urlOptions, formData) {
-            var component = this;
-            $.ajax({
-                type: 'POST',
-                url: routing.generate('orob2b_shopping_list_frontend_create_default'),
-                data: [],
-                success: function (response) {
-                    urlOptions.shoppingListId = response.shoppingListId;
-                    component.addProductToShoppingList(url, urlOptions, formData);
-                }
-            });
-        },
-
-        checkExistingShoppingList: function (url, urlOptions, formData) {
-            var component = this;
-            $.ajax({
-                type: 'POST',
-                url: routing.generate('orob2b_shopping_list_frontend_check_existing', {'shoppingListId': urlOptions.shoppingListId}),
-                data: [],
-                success: function (response) {
-                    urlOptions.shoppingListId = response.shoppingListId;
-                    component.addProductToShoppingList(url, urlOptions, formData);
-                }
-            });
         },
 
         addProductToShoppingList: function (url, urlOptions, formData) {
