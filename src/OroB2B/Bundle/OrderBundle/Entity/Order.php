@@ -250,7 +250,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * @param OrderAddress $billingAddress
      * @return Order
      */
-    public function setBillingAddress($billingAddress)
+    public function setBillingAddress(OrderAddress $billingAddress)
     {
         $this->billingAddress = $billingAddress;
 
@@ -269,7 +269,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * @param OrderAddress $shippingAddress
      * @return Order
      */
-    public function setShippingAddress($shippingAddress)
+    public function setShippingAddress(OrderAddress $shippingAddress)
     {
         $this->shippingAddress = $shippingAddress;
 
