@@ -47,7 +47,7 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccount;
  */
 class Account extends ExtendAccount
 {
-    const INTERNAL_RATING_CODE = 'cust_internal_rating';
+    const INTERNAL_RATING_CODE = 'acc_internal_rating';
 
     /**
      * @var integer

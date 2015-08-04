@@ -10,10 +10,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class AccountUserController extends Controller
 {

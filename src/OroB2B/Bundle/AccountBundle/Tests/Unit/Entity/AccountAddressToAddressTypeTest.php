@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Component\Testing\Unit\EntityTestCase;
 

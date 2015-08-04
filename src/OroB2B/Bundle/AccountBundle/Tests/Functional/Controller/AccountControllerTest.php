@@ -11,7 +11,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class AccountControllerTest extends WebTestCase
@@ -153,6 +152,7 @@ class AccountControllerTest extends WebTestCase
      * @param string $name
      * @param Account $parent
      * @param AccountGroup $group
+     * @param AbstractEnumValue $internalRating
      */
     protected function assertViewPage(
         $html,

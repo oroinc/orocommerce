@@ -3,10 +3,10 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class AccountControllerTest extends WebTestCase

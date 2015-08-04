@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
+use Doctrine\Common\Collections\Collection;
+
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
-use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 

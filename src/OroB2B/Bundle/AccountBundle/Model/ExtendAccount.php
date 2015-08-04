@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Model;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**

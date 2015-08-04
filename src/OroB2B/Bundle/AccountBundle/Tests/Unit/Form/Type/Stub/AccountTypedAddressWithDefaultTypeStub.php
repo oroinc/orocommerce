@@ -2,26 +2,35 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-
-use OroB2B\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+
+use OroB2B\Bundle\AccountBundle\Form\DataTransformer\AddressTypeDefaultTransformer;
+
 class AccountTypedAddressWithDefaultTypeStub extends AbstractType
 {
     const NAME = 'orob2b_account_typed_address_with_default';
 
+    /**
+     * @var EntityManager
+     */
     protected $em;
+
+    /**
+     * @var array
+     */
     protected $types;
 
     /**
-     * @param $types
-     * @param $em
+     * @param array $types
+     * @param EntityManager $em
      */
-    public function __construct($types, $em)
+    public function __construct(array $types, EntityManager $em)
     {
         $this->types = $types;
         $this->em = $em;

@@ -13,8 +13,8 @@ class OwnerTreeListenerPass implements CompilerPassInterface
      * @var array
      */
     protected static $supportedEntities = [
-        'orob2b_account.entity.account_user.class',
         'orob2b_account.entity.account.class',
+        'orob2b_account.entity.account_user.class',
     ];
 
     /**

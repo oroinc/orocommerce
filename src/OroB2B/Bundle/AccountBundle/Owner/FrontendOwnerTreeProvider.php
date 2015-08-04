@@ -8,8 +8,8 @@ use Oro\Bundle\SecurityBundle\Owner\AbstractOwnerTreeProvider;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider

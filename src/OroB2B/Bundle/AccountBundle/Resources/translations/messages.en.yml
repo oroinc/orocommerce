@@ -11,7 +11,7 @@ orob2b.account:
     has_group.label: 'Has group'
     users.label: 'Users'
     addresses.label: 'Addresses'
-    form.choose: 'Choose a account...'
+    form.choose: 'Choose an account...'
     form.choose_parent: 'Choose Parent...'
     address_book.label: 'Address Book'
 
@@ -26,7 +26,7 @@ orob2b.account:
         name.label: 'Name'
         id.label: 'Id'
         accounts.label: 'Accounts'
-        form.choose: 'Choose a account group...'
+        form.choose: 'Choose an account group...'
 
     accountuser:
         entity_label:                'Account User'
@@ -57,7 +57,7 @@ orob2b.account:
         name_suffix.label:           'Name Suffix'
         password_changed_at.label:   'Password Changed At'
         password_requested_at.label: 'Password Requested At'
-        account.label:              'Account'
+        account.label:               'Account'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'

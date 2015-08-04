@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
 
@@ -101,7 +100,7 @@ class FrontendAccountUserType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {

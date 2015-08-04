@@ -75,7 +75,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_account_user_get_accountuser_address_primary', [
+            $this->getUrl('orob2b_api_account_get_accountuser_address_primary', [
                 'entityId' => $accountUser->getId()
             ])
         );
@@ -110,7 +110,7 @@ class AccountUserAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_account_user_get_accountuser_address_primary', [
+            $this->getUrl('orob2b_api_account_get_accountuser_address_primary', [
                 'entityId' => $accountUserId
             ])
         );
@@ -140,7 +140,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_account_user_get_accountuser_address_primary', [
+            $this->getUrl('orob2b_api_account_get_accountuser_address_primary', [
                 'entityId' => $accountUserId
             ])
         );
@@ -179,7 +179,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_account_account_user_get_accountuser_address_primary',
+                'orob2b_api_account_get_accountuser_address_primary',
                 ['entityId' => $accountUserId]
             )
         );
@@ -189,7 +189,7 @@ class AccountUserAddressControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'DELETE',
             $this->getUrl(
-                'orob2b_api_account_account_user_delete_accountuser_address',
+                'orob2b_api_account_delete_accountuser_address',
                 ['entityId' => $accountUserId, 'addressId' => $address['id']]
             )
         );

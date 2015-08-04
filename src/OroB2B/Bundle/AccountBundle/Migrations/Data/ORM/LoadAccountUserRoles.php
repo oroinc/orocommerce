@@ -16,8 +16,8 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {

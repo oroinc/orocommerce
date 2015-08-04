@@ -72,7 +72,7 @@ class AccountUserControllerTest extends WebTestCase
         $form['orob2b_account_account_user[birthday]']              = date('Y-m-d');
         $form['orob2b_account_account_user[plainPassword][first]']  = $password;
         $form['orob2b_account_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_account_account_user[account]']              = $account->getId();
+        $form['orob2b_account_account_user[account]']               = $account->getId();
         $form['orob2b_account_account_user[passwordGenerate]']      = $isPasswordGenerate;
         $form['orob2b_account_account_user[sendEmail]']             = $isSendEmail;
         $form['orob2b_account_account_user[roles]']                 = [$role->getId()];

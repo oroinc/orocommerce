@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType;
 
 class AccountGroupSelectTypeTest extends \PHPUnit_Framework_TestCase

@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AccountUserManagerTest extends \PHPUnit_Framework_TestCase
 {

@@ -8,8 +8,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-
 use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\AccountBundle\Entity\Account;

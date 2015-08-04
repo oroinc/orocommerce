@@ -120,12 +120,12 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountUserRoleToWebsiteTable($schema);
         $this->createOroB2BAccountTable($schema);
         $this->createOroB2BAccountGroupTable($schema);
-        $this->createOrob2BAccountAddressTable($schema);
-        $this->createOrob2BAccountAdrAdrTypeTable($schema);
+        $this->createOroB2BAccountAddressTable($schema);
+        $this->createOroB2BAccountAdrAdrTypeTable($schema);
         $this->createOroB2BAuditFieldTable($schema);
         $this->createOroB2BAuditTable($schema);
-        $this->createOrob2BAccountUserAddressTable($schema);
-        $this->createOrob2BAccountAdrToAdrTypeTable($schema);
+        $this->createOroB2BAccountUserAddressTable($schema);
+        $this->createOroB2BAccountAdrToAdrTypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -407,7 +407,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAccountAddressTable(Schema $schema)
+    protected function createOroB2BAccountAddressTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -438,7 +438,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAccountAdrAdrTypeTable(Schema $schema)
+    protected function createOroB2BAccountAdrAdrTypeTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -659,7 +659,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAccountUserAddressTable(Schema $schema)
+    protected function createOroB2BAccountUserAddressTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -717,7 +717,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAccountAdrToAdrTypeTable(Schema $schema)
+    protected function createOroB2BAccountAdrToAdrTypeTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADR_TO_ADR_TYPE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);

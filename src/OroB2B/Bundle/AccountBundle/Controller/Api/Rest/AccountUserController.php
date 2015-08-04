@@ -5,14 +5,12 @@ namespace OroB2B\Bundle\AccountBundle\Controller\Api\Rest;
 use Symfony\Component\HttpFoundation\Response;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**

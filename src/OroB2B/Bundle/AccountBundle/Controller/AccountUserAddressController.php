@@ -127,7 +127,7 @@ class AccountUserAddressController extends Controller
      */
     protected function getAddressBookOptions($entity)
     {
-        $addressListUrl = $this->generateUrl('orob2b_api_account_account_user_get_accountuser_addresses', [
+        $addressListUrl = $this->generateUrl('orob2b_api_account_get_accountuser_addresses', [
             'entityId' => $entity->getId()
         ]);
 

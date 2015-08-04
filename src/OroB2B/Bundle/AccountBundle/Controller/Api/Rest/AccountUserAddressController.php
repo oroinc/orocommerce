@@ -20,7 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 
 /**
- * @NamePrefix("orob2b_api_account_account_user_")
+ * @NamePrefix("orob2b_api_account_")
  */
 class AccountUserAddressController extends RestController implements ClassResourceInterface
 {
