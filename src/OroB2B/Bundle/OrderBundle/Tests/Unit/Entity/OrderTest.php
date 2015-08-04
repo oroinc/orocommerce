@@ -2,20 +2,14 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
-use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
-class OrderTest extends \PHPUnit_Framework_TestCase
+class OrderTest extends EntityTestCase
 {
-    use EntityTestCaseTrait;
-
     public function testProperties()
     {
         $now = new \DateTime('now');
