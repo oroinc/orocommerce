@@ -18,6 +18,10 @@
     float: left;
 }
 
+.fallback-container div.selector span {
+    padding-right: 18px;
+}
+
 .mce-tinymce.disabled button {
     opacity: .4;
 }
