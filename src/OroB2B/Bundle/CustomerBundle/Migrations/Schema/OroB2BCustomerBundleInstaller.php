@@ -285,6 +285,8 @@ class OroB2BCustomerBundleInstaller implements
         $table->setPrimaryKey(['id']);
 
         $table->addIndex(['name'], 'orob2b_customer_group_name_idx', []);
+
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_CUSTOMER_GROUP_TABLE_NAME);
     }
 
     /**
