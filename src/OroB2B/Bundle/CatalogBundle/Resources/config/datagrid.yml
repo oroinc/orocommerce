@@ -8,6 +8,7 @@ datagrid:
                 select:
                     - product.id
                     - product.sku
+                    - productNames.string as name
                     - product.createdAt
                     - product.updatedAt
                     - >
@@ -26,7 +27,17 @@ datagrid:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
                     left:
-                        - { join: %orob2b_catalog.category.class%, alias: productCategory, conditionType: WITH, condition: 'productCategory = :category_id' }
+                        -
+                            join: %orob2b_catalog.category.class%
+                            alias: productCategory
+                            conditionType: WITH
+                            condition: 'productCategory = :category_id'
+                    inner:
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
             bind_parameters:
                 - category_id
         columns:
@@ -36,6 +47,8 @@ datagrid:
                 frontend_type: boolean
             sku:
                 label:         orob2b.product.sku.label
+            name:
+                label:         orob2b.product.names.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -50,6 +63,8 @@ datagrid:
                     data_name: inCategory
                 sku:
                     data_name: product.sku
+                name:
+                    data_name: name
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -64,6 +79,9 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
+                name:
+                    type:      string
+                    data_name: name
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt

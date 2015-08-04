@@ -10,6 +10,8 @@ parameters:
 services:
     orob2b_fallback.form.type.fallback_property:
         class: %orob2b_fallback.form.type.fallback_property.class%
+        arguments:
+            - @translator
         tags:
             - { name: form.type, alias: orob2b_fallback_property }
 

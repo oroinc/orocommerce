@@ -16,6 +16,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
 use OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementorInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -31,6 +32,10 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     const UNIT_PRECISION_DEFAULT_PRECISION_1 = 2;
     const UNIT_PRECISION_CODE_2 = 'mg';
     const UNIT_PRECISION_DEFAULT_PRECISION_2 = 4;
+    const NAME_DEFAULT_LOCALE = 'name default';
+    const NAME_CUSTOM_LOCALE = 'name custom';
+    const DESCRIPTION_DEFAULT_LOCALE = 'description default';
+    const DESCRIPTION_CUSTOM_LOCALE = 'description custom';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EntityManager
@@ -169,6 +174,10 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
                 self::UNIT_PRECISION_CODE_2,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
+            ->addName($this->prepareLocalizedValue(self::NAME_DEFAULT_LOCALE))
+            ->addName($this->prepareLocalizedValue(self::NAME_CUSTOM_LOCALE))
+            ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_DEFAULT_LOCALE))
+            ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_CUSTOM_LOCALE))
             ->setImage($image);
 
         $this->skuIncrementor->expects($this->once())
@@ -215,6 +224,15 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
             self::UNIT_PRECISION_DEFAULT_PRECISION_2,
             $productCopyUnitPrecisions[1]->getUnit()->getDefaultPrecision()
         );
+
+        $productCopyNames = $productCopy->getNames();
+        $this->assertEquals(self::NAME_DEFAULT_LOCALE, $productCopyNames[0]->getString());
+        $this->assertEquals(self::NAME_CUSTOM_LOCALE, $productCopyNames[1]->getString());
+
+        $productCopyDescriptions = $productCopy->getDescriptions();
+        $this->assertEquals(self::DESCRIPTION_DEFAULT_LOCALE, $productCopyDescriptions[0]->getText());
+        $this->assertEquals(self::DESCRIPTION_CUSTOM_LOCALE, $productCopyDescriptions[1]->getText());
+
         $this->assertEquals($imageCopy, $productCopy->getImage());
     }
 
@@ -259,5 +277,19 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         return (new ProductUnitPrecision())
             ->setUnit($productUnit);
+    }
+
+    /**
+     * @param string|null $string
+     * @param string|null $text
+     * @return LocalizedFallbackValue
+     */
+    protected function prepareLocalizedValue($string = null, $text = null)
+    {
+        $value = new LocalizedFallbackValue();
+        $value->setString($string)
+            ->setText($text);
+
+        return $value;
     }
 }

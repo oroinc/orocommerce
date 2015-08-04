@@ -361,7 +361,7 @@ class UpdateAttributeTypeTest extends \PHPUnit_Framework_TestCase
                                 'required' => false,
                                 'type' => 'text',
                                 'constraints' => [new IntegerConstraint()],
-                                'validation_groups' => ['Default'],
+                                'validation_groups' => ['Default']
                             ],
                         ]
                     ],
