@@ -38,7 +38,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
      *      inversedBy="addresses",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $owner;
 
