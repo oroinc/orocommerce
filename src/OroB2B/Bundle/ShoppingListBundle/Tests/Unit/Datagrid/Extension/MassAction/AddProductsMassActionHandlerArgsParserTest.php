@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
+use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
+
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
 class AddProductsMassActionHandlerArgsParserTest extends \PHPUnit_Framework_TestCase
@@ -27,7 +29,7 @@ class AddProductsMassActionHandlerArgsParserTest extends \PHPUnit_Framework_Test
      * @param string $values
      * @param int    $shoppingList
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|MassActionHandlerArgs
      */
     protected function getArgs($inset, $values, $shoppingList)
     {

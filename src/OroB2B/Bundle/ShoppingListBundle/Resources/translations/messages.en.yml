@@ -22,13 +22,14 @@ orob2b:
             add_to_shopping_list.label: Add to Shopping List
             add_to.label: Add to
             create_new_shopping_list.label: Create New Shopping List
+            added.label: Product has been added
 
         actions:
             set_current: Set as current
             add_to_shopping_list: Add to
             add_to_new_shopping_list: Create New Shopping List
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added."
-            add_success_message_link: "<a href='%link%'>View Shopping List</a>"
+            add_success_message_link: " (<a href='%link%'>view the shopping list</a>)."
 
         menu:
             sales_tab.label: Sales

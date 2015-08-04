@@ -2,8 +2,11 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Form\FormInterface;
@@ -11,6 +14,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -74,7 +78,18 @@ class FrontendLineItemWidgetType extends AbstractType
                     },
                     'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
                 ]
+            )
+            ->add(
+                'shoppingListLabel',
+                'text',
+                [
+                    'mapped' => false,
+                    'required' => false,
+                    'label' => 'orob2b.shoppinglist.lineitem.new_shopping_list_label'
+                ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
     /**
@@ -92,21 +107,9 @@ class FrontendLineItemWidgetType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-                'create_shopping_list_handler' => [$this, 'createNewShoppingListHandler']
-            ]
-        );
-    }
-
-    /**
      * @param FormEvent $event
      */
-    public function createNewShoppingListHandler(FormEvent $event)
+    public function preSubmit(FormEvent $event)
     {
         $data = $event->getData();
 
@@ -114,6 +117,36 @@ class FrontendLineItemWidgetType extends AbstractType
             $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'constraints' => [
+                    new Callback([
+                        'groups' => ['add_product'],
+                        'methods' => [[$this, 'checkShoppingListLabel']]
+                    ])
+                ]
+            ]
+        );
+    }
+
+    /**
+     * @param LineItem $data
+     * @param ExecutionContextInterface $context
+     */
+    public function checkShoppingListLabel($data, ExecutionContextInterface $context)
+    {
+        if (!$data->getShoppingList()) {
+            $context->buildViolation('Shopping List label must not be empty')
+                ->atPath('shoppingListLabel')
+                ->addViolation();
         }
     }
 

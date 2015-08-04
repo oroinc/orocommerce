@@ -91,9 +91,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             ->iterate();
 
         $lineItems = [];
-        foreach ($iterableResult as $entity) {
+        foreach ($iterableResult as $entityArray) {
             /** @var Product $entity */
-            $entity = $entity[0];
+            $entity = $entityArray[0];
             /** @var ProductUnitPrecision $unitPrecision */
             $unitPrecision = $entity->getUnitPrecisions()->first();
             $lineItem = (new LineItem())
@@ -131,7 +131,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
 
         if ($shoppingListId && $entitiesCount > 0) {
             $link = $this->router->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId]);
-            $message .= ' '.$this->translator->trans(
+            $message .= $this->translator->trans(
                 'orob2b.shoppinglist.actions.add_success_message_link',
                 ['%link%' => $link]
             );
