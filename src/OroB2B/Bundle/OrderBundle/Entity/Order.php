@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -130,12 +129,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $shippingAddress;
-
-    public function __construct()
-    {
-        parent::__construct();
-        $this->addresses = new ArrayCollection();
-    }
 
     /**
      * @return int
