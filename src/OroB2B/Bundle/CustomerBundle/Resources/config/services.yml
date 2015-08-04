@@ -90,7 +90,7 @@ services:
         class: %orob2b_customer.form.autocomplete.customer_account_user.search_handler.class%
         arguments:
             - %orob2b_customer.entity.account_user.class%
-            - ["email"]
+            - ["firstname", "lastname"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_customer_account_user, acl_resource: orob2b_customer_account_user_view }
         lazy: true

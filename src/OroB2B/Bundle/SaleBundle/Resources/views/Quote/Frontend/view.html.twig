@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {'%id%': entity.qid }}) %}
 
@@ -125,5 +126,5 @@
         {% set data = {'dataBlocks': [generalBlock]} %}
     {% endif %}
 
-    {{ parent() }}
+    {{ UI.scrollData(id, data) }}
 {% endblock content_data %}
