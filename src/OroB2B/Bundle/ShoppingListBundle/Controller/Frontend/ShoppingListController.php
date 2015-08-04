@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,6 +18,7 @@ use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
 class ShoppingListController extends Controller
 {
@@ -225,22 +225,6 @@ class ShoppingListController extends Controller
             $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
-    }
-
-    /**
-     * @return Response
-     */
-    public function getProductsAddBtnAction()
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $shoppingLists = $this->getShoppingListRepository()->findByUser($accountUser);
-        $currentShoppingList = $this->getShoppingListRepository()->findCurrentForAccountUser($accountUser);
-
-        return $this->render('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig', [
-            'shoppingLists' => $shoppingLists,
-            'currentShoppingList' => $currentShoppingList
-        ]);
     }
 
     /**

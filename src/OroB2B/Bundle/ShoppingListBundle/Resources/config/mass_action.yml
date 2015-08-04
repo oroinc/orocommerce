@@ -18,3 +18,4 @@ services:
             - @orob2b_shopping_list.shopping_list.manager
             - @translator
             - @oro_security.security_facade
+            - @router.default
