@@ -1,6 +1,7 @@
 parameters:
     orob2b_shopping_list.event_listener.datagrid.class: OroB2B\Bundle\ShoppingListBundle\EventListener\DatagridListener
     orob2b_shopping_list.event_listener.form_view.class: OroB2B\Bundle\ShoppingListBundle\EventListener\FormViewListener
+    orob2b_shopping_list.event_listener.shopping_list_listener.class: OroB2B\Bundle\ShoppingListBundle\EventListener\ShoppingListListener
 
 services:
     orob2b_shopping_list.event_listener.datagrid:
@@ -12,10 +13,15 @@ services:
         class: %orob2b_shopping_list.event_listener.form_view.class%
         arguments:
             - @translator
-            - @oro_entity.doctrine_helper
             - @security.token_storage
             - @form.factory
+            - @oro_entity.doctrine_helper
         calls:
             - [setRequest, ["@?request="]]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
+
+    orob2b_shopping_list.event_listener.shopping_list_listener:
+        class: %orob2b_shopping_list.event_listener.shopping_list_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }

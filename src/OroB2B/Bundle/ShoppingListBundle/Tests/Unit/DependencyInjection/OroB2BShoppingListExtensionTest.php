@@ -35,12 +35,11 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.form.type.line_item.class',
             'orob2b_shopping_list.form.type.frontend_line_item_widget.class',
             'orob2b_shopping_list.form.type.frontend_line_item.class',
-            'orob2b_shopping_list.form.handler.frontend_line_item.class',
 
             // Event listeners
             'orob2b_shopping_list.event_listener.datagrid.class',
             'orob2b_shopping_list.event_listener.form_view.class',
-            'orob2b_shopping_list.listener.shopping_list_listener.class',
+            'orob2b_shopping_list.event_listener.shopping_list_listener.class',
             'orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class'
         ];
         $this->assertParametersLoaded($expectedParameters);
@@ -55,7 +54,7 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
 
             // Listeners
             'orob2b_shopping_list.event_listener.datagrid',
-            'orob2b_shopping_list.listener.shopping_list_listener',
+            'orob2b_shopping_list.event_listener.shopping_list_listener',
             'orob2b_shopping_list.event_listener.form_view',
 
             // Forms
@@ -63,7 +62,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.form.type.line_item',
             'orob2b_shopping_list.form.type.frontend_line_item',
             'orob2b_shopping_list.form.type.frontend_line_item_widget',
-            'orob2b_shopping_list.form.handler.frontend_line_item'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

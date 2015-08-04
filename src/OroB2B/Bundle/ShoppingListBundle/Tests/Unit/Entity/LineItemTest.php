@@ -25,7 +25,9 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
             ['organization', new Organization()],
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
-            ['quantity', 12.5]
+            ['quantity', 12.5],
+            ['owner', new AccountUser()],
+            ['organization', new Organization()],
         ];
 
         $this->assertPropertyAccessors(new LineItem(), $properties);
