@@ -19,43 +19,23 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     protected $owner;
 
     /**
-     * One-to-many relation field, relation parameters must be in specific class
-     *
-     * @var Collection
-     **/
-    protected $addressesToTypes;
-
-    public function __construct()
-    {
-        $this->addressesToTypes = new ArrayCollection();
-        parent::__construct();
-    }
-
-    /**
-     * Get address types
-     *
-     * @return Collection|AddressType[]
+     * {@inheritdoc}
      */
     public function getTypes()
     {
-        $types = new ArrayCollection();
-        /** @var AbstractAddressToAddressType $addressToType */
-        foreach ($this->getAddressesToTypes() as $addressToType) {
-            $types->add($addressToType->getType());
-        }
-
-        return $types;
+        return $this->types->map(
+            function (AbstractAddressToAddressType $addressToType) {
+                return $addressToType->getType();
+            }
+        );
     }
 
     /**
-     * Set address types
-     *
-     * @param Collection $types
-     * @return AbstractDefaultTypedAddress
+     * {@inheritdoc}
      */
     public function setTypes(Collection $types)
     {
-        $this->getAddressesToTypes()->clear();
+        $this->types->clear();
 
         /** @var AddressType $type */
         foreach ($types as $type) {
@@ -66,17 +46,14 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     }
 
     /**
-     * Remove address type
-     *
-     * @param AddressType $type
-     * @return AbstractDefaultTypedAddress
+     * {@inheritdoc}
      */
     public function removeType(AddressType $type)
     {
         /** @var AbstractAddressToAddressType $addressesToType */
-        foreach ($this->getAddressesToTypes() as $addressesToType) {
+        foreach ($this->types as $addressesToType) {
             if ($addressesToType->getType()->getName() === $type->getName()) {
-                $this->removeAddressesToType($addressesToType);
+                $this->types->removeElement($addressesToType);
             }
         }
 
@@ -84,17 +61,17 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     }
 
     /**
-     * Add address type
-     *
-     * @param AddressType $type
-     * @return AbstractDefaultTypedAddress
+     * {@inheritdoc}
      */
     public function addType(AddressType $type)
     {
-        $addressToType = $this->getAddressToAddressTypeEntity();
-        $addressToType->setType($type);
-        $addressToType->setAddress($this);
-        $this->addAddressesToType($addressToType);
+        if (!$this->hasTypeWithName($type->getName())) {
+            $addressToType = $this->createAddressToAddressTypeEntity();
+            $addressToType->setType($type);
+            $addressToType->setAddress($this);
+
+            $this->types->add($addressToType);
+        }
 
         return $this;
     }
@@ -108,7 +85,7 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     {
         $defaultTypes = new ArrayCollection();
         /** @var AbstractAddressToAddressType $addressToType */
-        foreach ($this->getAddressesToTypes() as $addressToType) {
+        foreach ($this->types as $addressToType) {
             if ($addressToType->isDefault()) {
                 $defaultTypes->add($addressToType->getType());
             }
@@ -125,68 +102,17 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      */
     public function setDefaults($defaults)
     {
+        $defaultTypes = [];
+        foreach ($defaults as $default) {
+            $defaultTypes[$default->getName()] = true;
+        }
+
         /** @var AbstractAddressToAddressType $addressToType */
-        foreach ($this->getAddressesToTypes() as $addressToType) {
-            $addressToType->setDefault(false);
-            /** @var AddressType $default */
-            foreach ($defaults as $default) {
-                if ($addressToType->getType()->getName() === $default->getName()) {
-                    $addressToType->setDefault(true);
-                    break;
-                }
-            }
+        foreach ($this->types as $addressToType) {
+            $addressToType->setDefault(!empty($defaultTypes[$addressToType->getType()->getName()]));
         }
 
         return $this;
-    }
-
-    /**
-     * Add addressesToTypes
-     *
-     * @param AbstractAddressToAddressType $addressesToTypes
-     * @return AbstractDefaultTypedAddress
-     */
-    public function addAddressesToType(AbstractAddressToAddressType $addressesToTypes)
-    {
-        if (!$this->getAddressesToTypes()->contains($addressesToTypes)) {
-            $this->addressesToTypes[] = $addressesToTypes;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove addressesToTypes
-     *
-     * @param AbstractAddressToAddressType $addressesToType
-     * @return $this
-     */
-    public function removeAddressesToType(AbstractAddressToAddressType $addressesToType)
-    {
-        if ($this->hasAddressToType($addressesToType)) {
-            $this->addressesToTypes->removeElement($addressesToType);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get addressesToTypes
-     *
-     * @return Collection
-     */
-    public function getAddressesToTypes()
-    {
-        return $this->addressesToTypes;
-    }
-
-    /**
-     * @param AbstractAddressToAddressType $addressToType
-     * @return bool
-     */
-    protected function hasAddressToType(AbstractAddressToAddressType $addressToType)
-    {
-        return $this->getAddressesToTypes()->contains($addressToType);
     }
 
     /**
@@ -218,5 +144,5 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      *
      * @return AbstractAddressToAddressType
      */
-    abstract protected function getAddressToAddressTypeEntity();
+    abstract protected function createAddressToAddressTypeEntity();
 }

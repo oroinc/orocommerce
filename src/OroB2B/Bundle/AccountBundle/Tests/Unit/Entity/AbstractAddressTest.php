@@ -3,16 +3,17 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
-abstract class AbstractAddressTest extends EntityTestCase
+abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     /** @var AddressType */
     protected $billingType;
 
@@ -52,36 +53,31 @@ abstract class AbstractAddressTest extends EntityTestCase
     /**
      * Test children
      */
-    public function testAddressesToTypesCollection()
+    public function testTypesCollection()
     {
-        static::assertPropertyCollections($this->address, [['addressesToTypes', $this->createAddressToTypeEntity()]]);
+        static::assertPropertyCollections($this->address, [['types', $this->billingType]]);
     }
 
     public function testAddType()
     {
         $this->address->addType($this->billingType);
-        /** @var Collection|AbstractAddressToAddressType[] $addressesToTypes */
-        $addressesToTypes = $this->address->getAddressesToTypes();
-        $this->assertCount(1, $addressesToTypes);
-
-        $addressesToTypesArray = $addressesToTypes->toArray();
-        $addressToType = array_shift($addressesToTypesArray);
-        $this->assertEquals($this->address, $addressToType->getAddress());
-        $this->assertEquals($this->billingType, $addressToType->getType());
+        $types = $this->address->getTypes();
+        $this->assertCount(1, $types);
+        $this->assertEquals($this->billingType, $types->first());
     }
 
     public function testSetTypes()
     {
-        $this->assertCount(0, $this->address->getAddressesToTypes());
+        $this->assertCount(0, $this->address->getTypes());
         $this->assertInstanceOf(
             $this->addressEntityClass,
             $this->address->setTypes(new ArrayCollection([$this->billingType]))
         );
-        $this->assertCount(1, $this->address->getAddressesToTypes());
+        $this->assertCount(1, $this->address->getTypes());
 
         // addressesToTypes should be cleared
         $this->address->setTypes(new ArrayCollection([$this->shippingType]));
-        $this->assertCount(1, $this->address->getAddressesToTypes());
+        $this->assertCount(1, $this->address->getTypes());
     }
 
     public function testGetTypes()
@@ -93,20 +89,16 @@ abstract class AbstractAddressTest extends EntityTestCase
 
     public function testRemoveTypes()
     {
-        $types = new ArrayCollection([$this->billingType, $this->shippingType]);
-        $this->address->setTypes($types);
+        $testTypes = new ArrayCollection([$this->billingType, $this->shippingType]);
+        $this->address->setTypes($testTypes);
         $this->assertInstanceOf(
             $this->addressEntityClass,
             $this->address->removeType($this->billingType)
         );
 
-        /** @var Collection|AbstractAddressToAddressType[] $addressesToTypes */
-        $addressesToTypes = $this->address->getAddressesToTypes();
-        $this->assertCount(1, $addressesToTypes);
-        $addressesToTypesArray = $addressesToTypes->toArray();
-        $firstAddressesToType = array_shift($addressesToTypesArray);
-        $this->assertEquals($this->shippingType, $firstAddressesToType->getType());
-        $this->assertEquals($this->address, $firstAddressesToType->getAddress());
+        $types = $this->address->getTypes();
+        $this->assertCount(1, $types);
+        $this->assertEquals($this->shippingType, $types->first());
     }
 
     public function testGetDefaults()
@@ -118,13 +110,10 @@ abstract class AbstractAddressTest extends EntityTestCase
         );
 
         $this->address->addType($this->billingType);
+        $this->address->addType($this->shippingType);
         $this->assertCount(0, $this->address->getDefaults());
 
-        /** @var AbstractAddressToAddressType $addressToTypes */
-        $addressesToTypesArray = $this->address->getAddressesToTypes()->toArray();
-        $addressToTypes = array_shift($addressesToTypesArray);
-        $addressToTypes->setDefault(true);
-
+        $this->address->setDefaults([$this->billingType]);
         $this->assertCount(1, $this->address->getDefaults());
     }
 

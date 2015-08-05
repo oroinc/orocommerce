@@ -28,7 +28,7 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserAddress;
  *          }
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository")
  */
 class AccountUserAddress extends ExtendAccountUserAddress
 {
@@ -43,7 +43,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
     protected $owner;
 
     /**
-     * @var Collection
+     * @var Collection|AccountUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddressToAddressType",
@@ -52,17 +52,12 @@ class AccountUserAddress extends ExtendAccountUserAddress
      *      orphanRemoval=true
      * )
      **/
-    protected $addressesToTypes;
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $types;
 
     /**
      * {@inheritdoc}
      */
-    protected function getAddressToAddressTypeEntity()
+    protected function createAddressToAddressTypeEntity()
     {
         return new AccountUserAddressToAddressType();
     }

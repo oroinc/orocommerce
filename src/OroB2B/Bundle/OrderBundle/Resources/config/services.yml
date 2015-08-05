@@ -1,8 +1,11 @@
 parameters:
     orob2b_order.entity.order.class: OroB2B\Bundle\OrderBundle\Entity\Order
+
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
+
+    orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
 
 services:
     orob2b_order.order.manager.api:
@@ -20,3 +23,11 @@ services:
         arguments: [@orob2b_order.order.entity.id_generator]
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+
+    orob2b_order.order.provider.order_address:
+        class: %orob2b_order.order.provider.order_address.class%
+        arguments:
+            - @oro_security.security_facade
+            - @doctrine
+            - %orob2b_account.entity.account_address.class%
+            - %orob2b_account.entity.account_user_address.class%

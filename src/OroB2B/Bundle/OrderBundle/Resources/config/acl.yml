@@ -1,0 +1,47 @@
+# Use any shipping address from the account address book
+orob2b_order_address_shipping_account_use_any:
+    label: orob2b.order.security.permission.address_shipping_account_use_any
+    type: action
+    group_name: "commerce"
+
+# Use the default shipping address from the account user's address book
+orob2b_order_address_shipping_account_user_use_default:
+    label: orob2b.order.security.permission.address_shipping_account_user_use_default
+    type: action
+    group_name: "commerce"
+
+# Use any shipping address from the account user's address book
+orob2b_order_address_shipping_account_user_use_any:
+    label: orob2b.order.security.permission.address_shipping_account_user_use_any
+    type: action
+    group_name: "commerce"
+
+# Enter the shipping address manually
+orob2b_order_address_shipping_allow_manual:
+    label: orob2b.order.security.permission.address_shipping_allow_manual
+    type: action
+    group_name: "commerce"
+
+# Use any billing address from the account address book
+orob2b_order_address_billing_account_use_any:
+    label: orob2b.order.security.permission.address_billing_account_use_any
+    type: action
+    group_name: "commerce"
+
+# Use the default billing address from the account user's address book
+orob2b_order_address_billing_account_user_use_default:
+    label: orob2b.order.security.permission.address_billing_account_user_use_default
+    type: action
+    group_name: "commerce"
+
+# Use any billing address from the account user's address book
+orob2b_order_address_billing_account_user_use_any:
+    label: orob2b.order.security.permission.address_billing_account_user_use_any
+    type: action
+    group_name: "commerce"
+
+# Enter the billing address manually
+orob2b_order_address_billing_allow_manual:
+    label: orob2b.order.security.permission.address_billing_allow_manual
+    type: action
+    group_name: "commerce"
