@@ -13,7 +13,7 @@ class EntityType extends BaseEntityTypeStub
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        parent::setDefaultOptions($resolver);
+        parent::configureOptions($resolver);
 
         $resolver->setDefaults(['class' => null]);
     }

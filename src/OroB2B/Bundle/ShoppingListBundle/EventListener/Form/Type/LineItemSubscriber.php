@@ -58,6 +58,7 @@ class LineItemSubscriber implements EventSubscriberInterface
         if (!$product instanceof Product && !empty($product)) {
             /** @var ProductRepository $repository */
             $repository = $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
+
             /** @var Product $product */
             $product = $repository->find($product);
         }
