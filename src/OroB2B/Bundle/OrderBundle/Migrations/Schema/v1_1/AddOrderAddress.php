@@ -44,8 +44,6 @@ class AddOrderAddress implements Migration
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['region_code'], 'idx_ff867c56aeb327af', []);
-        $table->addIndex(['country_code'], 'idx_ff867c56f026bb7c', []);
         $table->setPrimaryKey(['id']);
     }
 

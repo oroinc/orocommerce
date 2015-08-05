@@ -100,11 +100,9 @@ class OroB2BOrderBundleInstaller implements
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['user_owner_id'], 'idx_c036ff909eb185f9', []);
-        $table->addIndex(['organization_id'], 'idx_c036ff9032c8a3de', []);
         $table->addIndex(['created_at'], 'created_at_index', []);
-        $table->addIndex(['payment_term_id'], 'IDX_C036FF9017653B16', []);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');
@@ -139,8 +137,6 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['region_code'], 'idx_ff867c56aeb327af', []);
-        $table->addIndex(['country_code'], 'idx_ff867c56f026bb7c', []);
         $table->setPrimaryKey(['id']);
     }
 

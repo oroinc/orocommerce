@@ -6,6 +6,8 @@ orob2b:
         id.label: Numeric ID
         identifier.label: ID
         owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
         organization.label: Organization
         currency.label: Currency
         customer_notes.label: Customer Notes

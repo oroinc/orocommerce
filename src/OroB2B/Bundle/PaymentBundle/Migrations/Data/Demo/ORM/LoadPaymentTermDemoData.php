@@ -9,13 +9,15 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class LoadPaymentTermDemoData extends AbstractFixture
 {
+    const PAYMENT_TERM_NET_10 = 'net 10';
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
         $paymentTermsLabels = [
-            'net 10',
+            self::PAYMENT_TERM_NET_10,
             'net 15',
             'net 30',
             'net 60',

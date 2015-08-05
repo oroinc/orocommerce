@@ -18,12 +18,16 @@ datagrid:
                     - order1.createdAt
                     - order1.updatedAt
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
+                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                    - account.name as accountName
                     - paymentTerm.label as paymentTermLabel
                 from:
                     - { table: %orob2b_order.entity.order.class%, alias: order1 }
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
+                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: accountUser.account, alias: account }
                         - { join: order1.paymentTerm, alias: paymentTerm }
         columns:
             id:
@@ -42,6 +46,10 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
+            accountName:
+                label:         orob2b.order.account.label
+            accountUserName:
+                label:         orob2b.order.account_user.label
             owner:
                 label:         orob2b.order.owner.label
             paymentTermLabel:
@@ -81,6 +89,10 @@ datagrid:
                     data_name: order1.currency
                 subtotal:
                     data_name: order1.subtotal
+                accountName:
+                    data_name: accountName
+                accountUserName:
+                    data_name: accountUserName
                 owner:
                     data_name: owner
                 paymentTermLabel:
@@ -110,6 +122,12 @@ datagrid:
                 subtotal:
                     type:      number
                     data_name: order1.subtotal
+                accountName:
+                    type:      string
+                    data_name: accountName
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
                 owner:
                     type:      string
                     data_name: owner

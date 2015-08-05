@@ -10,7 +10,6 @@
             {{ UI.renderProperty('orob2b.order.po_number.label'|trans, order.poNumber) }}
             {{ UI.renderProperty('orob2b.order.currency.label'|trans, order.currency) }}
             {{ UI.renderProperty('orob2b.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
-            {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
 
             {% if order.paymentTerm %}
                 {% if resource_granted('VIEW', order.paymentTerm) %}
@@ -21,8 +20,21 @@
                 {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
             {% endif %}
 
+            {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
         <div class="responsive-block">
+            {% if order.owner %}
+                {% if resource_granted('VIEW', order.owner) %}
+                    {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': order.accountUser.account.id}), order.accountUser.account|oro_format_name|default('N/A'|trans)|escape) %}
+                    {% set accountUserView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': order.accountUser.id}), order.accountUser|oro_format_name|default('N/A'|trans)|escape) %}
+                {% else %}
+                    {% set accountView = order.owner.account|oro_format_name|default('N/A'|trans)|escape %}
+                    {% set accountUserView = order.owner|oro_format_name|default('N/A'|trans)|escape %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.order.account.label'|trans, accountView) }}
+                {{ UI.renderHtmlProperty('orob2b.order.account_user.label'|trans, accountUserView) }}
+            {% endif %}
+
             {% if order.paymentTerm %}
                 {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
             {% endif %}
