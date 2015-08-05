@@ -30,7 +30,7 @@ class AjaxLineItemController extends Controller
      * Add Product to Shopping List (frontend grid action)
      *
      * @Route(
-     *      "/add-product/{productId}",
+     *      "/add-product-from-grid/{productId}",
      *      name="orob2b_shopping_list_line_item_frontend_add_widget",
      *      requirements={"productId"="\d+"}
      * )
@@ -69,17 +69,17 @@ class AjaxLineItemController extends Controller
      * Add Product to Shopping List (product view form)
      *
      * @Route(
-     *      "/products/{productId}",
+     *      "/add-product-from-view/{productId}",
      *      name="orob2b_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
-     * @AclAncestor("orob2b_shopping_list_frontend_create")
+     * @AclAncestor("orob2b_shoppinglist_add_product")
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
-     * @param Request  $request
-     * @param Product  $product
+     * @param Request $request
+     * @param Product $product
      *
-     * @return array|RedirectResponse
+     * @return JsonResponse
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
@@ -98,7 +98,7 @@ class AjaxLineItemController extends Controller
         $isFormHandled = $handler->process($lineItem);
 
         if (!$isFormHandled) {
-            return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors()]);
+            return new JsonResponse(['successful' => false, 'message' => (string)$form->getErrors(true, false)]);
         }
 
         $link = $this->get('router')->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
