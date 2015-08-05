@@ -20,6 +20,11 @@ use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingL
 class AjaxLineItemControllerTest extends WebTestCase
 {
     /**
+     * @var string
+     */
+    protected $csrf;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -37,6 +42,11 @@ class AjaxLineItemControllerTest extends WebTestCase
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems',
             ]
         );
+
+        $this->csrf = $this->client
+            ->getContainer()
+            ->get('security.csrf.token_manager')
+            ->getToken('orob2b_shopping_list_frontend_line_item');
     }
 
     /**
@@ -48,7 +58,7 @@ class AjaxLineItemControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
-        /** @var Product $product2 */
+        /** @var Product $product */
         $product = $this->getReference('product.1');
 
         $crawler = $this->getCrawler($product);
@@ -105,7 +115,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
-        /** @var Product $product2 */
+        /** @var Product $product */
         $product = $this->getReference('product.1');
 
         $crawler = $this->getCrawler($product);
@@ -123,7 +133,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
-        /** @var Product $product2 */
+        /** @var Product $product */
         $product = $this->getReference('product.1');
 
         $crawler = $this->getCrawler($product);
@@ -171,6 +181,50 @@ class AjaxLineItemControllerTest extends WebTestCase
         );
 
         $this->assertSaved($form);
+    }
+
+    public function testAddProductFromView()
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product.1');
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.bottle');
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
+            [
+                'orob2b_shopping_list_frontend_line_item' => [
+                    'quantity' => 110,
+                    'unit' => $unit->getCode(),
+                    '_token' => $this->csrf,
+                ],
+            ]
+        );
+        $result = $this->client->getResponse();
+        $json = $this->getJsonResponseContent($result, 200);
+        $this->assertTrue($json['successful']);
+    }
+
+    public function testAddProductFromViewNotValidData()
+    {
+        /** @var Product $product */
+        $product = $this->getReference('product.1');
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_shopping_list_frontend_add_product', ['productId' => $product->getId()]),
+            [
+                'orob2b_shopping_list_frontend_line_item' => [
+                    'quantity' => null,
+                    'unit' => null,
+                    '_token' => $this->csrf,
+                ],
+            ]
+        );
+        $result = $this->client->getResponse();
+        $json = $this->getJsonResponseContent($result, 200);
+        $this->assertFalse($json['successful']);
     }
 
     public function testAddProductsMassAction()
