@@ -81,8 +81,6 @@ services:
 
     orob2b_rfp.form.type.request_product_item:
         class: %orob2b_rfp.form.type.request_product_item.class%
-        arguments:
-            - @translator
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request_product_item.class%]]
         tags:

@@ -29,6 +29,7 @@ orob2b:
             code.label: Code
             default_precision.label: Default Precision
             form.choose: 'Choose Unit...'
+            removed: '{title} - removed'
 
         productunitprecision:
             entity_label: Product Unit Precision

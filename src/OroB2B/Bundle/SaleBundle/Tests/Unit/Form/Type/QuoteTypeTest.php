@@ -6,17 +6,23 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -185,13 +191,9 @@ class QuoteTypeTest extends AbstractTest
 
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
-        $productSelectType          = new ProductSelectTypeStub();
-        $productRemovedSelectType   = new StubProductRemovedSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($translator);
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($translator);
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
 
         $quoteProductType = new QuoteProductType(
             $translator,
@@ -206,19 +208,19 @@ class QuoteTypeTest extends AbstractTest
                     OroDateTimeType::NAME                       => new OroDateTimeType(),
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
-                        $translator,
                         $this->quoteProductOfferFormatter
                     ),
                     QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
+                    ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
+                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductSelectType::NAME                     => new ProductSelectTypeStub(),
+                    CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $userSelectType->getName()                  => $userSelectType,
                     $quoteProductType->getName()                => $quoteProductType,
-                    $productSelectType->getName()               => $productSelectType,
-                    $productRemovedSelectType->getName()        => $productRemovedSelectType,
-                    $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,

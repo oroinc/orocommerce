@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 /**
@@ -28,11 +29,11 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
  *      }
  * )
  */
-class OrderProductItem
+class OrderProductItem implements ProductUnitHolderInterface
 {
     const PRICE_TYPE_UNIT       = 10;
     const PRICE_TYPE_BUNDLED    = 20;
-    
+
     /**
      * @var int
      *
@@ -112,6 +113,14 @@ class OrderProductItem
      * @ORM\JoinColumn(name="quote_product_offer_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteProductOffer;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this->getOrderProduct();
+    }
 
     /**
      * @ORM\PostLoad
@@ -329,8 +338,7 @@ class OrderProductItem
     {
         return $this->fromQuote;
     }
-    
-    
+
     /**
      * @param QuoteProductOffer $quoteProductOffer
      * @return OrderProductItem

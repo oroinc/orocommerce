@@ -11,6 +11,12 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -512,11 +518,7 @@ class QuoteProductTypeTest extends AbstractTest
     {
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
-        $productSelectType          = new ProductSelectTypeStub();
-        $productRemovedSelectType   = new StubProductRemovedSelectType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-
         $quoteProductOfferType      = $this->prepareQuoteProductOfferType($this->translator);
         $quoteProductRequestType    = $this->prepareQuoteProductRequestType($this->translator);
 
@@ -526,11 +528,12 @@ class QuoteProductTypeTest extends AbstractTest
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
+                    ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
+                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductSelectType::NAME                     => new ProductSelectTypeStub(),
+                    CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
-                    $productSelectType->getName()               => $productSelectType,
-                    $productRemovedSelectType->getName()        => $productRemovedSelectType,
-                    $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,

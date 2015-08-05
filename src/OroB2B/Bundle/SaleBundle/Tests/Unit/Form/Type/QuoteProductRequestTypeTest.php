@@ -2,17 +2,18 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -30,30 +31,20 @@ class QuoteProductRequestTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->formType = new QuoteProductRequestType($this->translator);
+        $this->formType = new QuoteProductRequestType();
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest');
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
@@ -63,116 +54,12 @@ class QuoteProductRequestTypeTest extends AbstractTest
             ])
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()
     {
         $this->assertEquals('orob2b_sale_quote_product_request', $this->formType->getName());
-    }
-
-    public function testPreSubmit()
-    {
-        $form = $this->factory->create($this->formType, null, []);
-
-        $this->formType->preSubmit(new FormEvent($form, null));
-
-        $this->assertTrue($form->has('productUnit'));
-
-        $config = $form->get('productUnit')->getConfig();
-
-        $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
-        $options = $config->getOptions();
-
-        $this->assertEquals(false, $options['disabled']);
-        $this->assertEquals('orob2b.product.productunit.entity_label', $options['label']);
-    }
-
-    /**
-     * @param QuoteProductRequest $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider preSetDataProvider
-     */
-    public function testPreSetData(QuoteProductRequest $inputData = null, array $expectedData = [])
-    {
-        $form = $this->factory->create($this->formType);
-
-        $unitCode = $inputData ? $inputData->getProductUnitCode() : '';
-
-        $this->translator
-            ->expects($expectedData['empty_value'] ? $this->once() : $this->never())
-            ->method('trans')
-            ->with($expectedData['empty_value'], [
-                '{title}' => $unitCode,
-            ])
-            ->will($this->returnValue($expectedData['empty_value']))
-        ;
-
-        $this->formType->preSetData(new FormEvent($form, $inputData));
-
-        $this->assertTrue($form->has('productUnit'));
-
-        $config = $form->get('productUnit')->getConfig();
-
-        $this->assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
-
-        $options = $form->get('productUnit')->getConfig()->getOptions();
-
-        foreach ($expectedData as $key => $value) {
-            $this->assertEquals($value, $options[$key], $key);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function preSetDataProvider()
-    {
-        $units = $this->getProductUnits(['kg2', 'item2']);
-
-        return [
-            'choices is []' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'choices'       => [],
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is ProductUnit[] and unit is deleted' => [
-                'inputData'     => $this->createQuoteProductRequest(1, $units, 'test2'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is ProductUnit[]' => [
-                'inputData'     => $this->createQuoteProductRequest(1, $units, 'kg2'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is [] and unit is deleted' => [
-                'inputData'     => $this->createQuoteProductRequest(1, [], 'test2'),
-                'expectedData'  => [
-                    'choices'       => [],
-                    'empty_value'   => 'orob2b.sale.quoteproduct.product.removed',
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-        ];
     }
 
     /**
@@ -328,15 +215,15 @@ class QuoteProductRequestTypeTest extends AbstractTest
     {
         $priceType                  = $this->preparePriceType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
             new PreloadedExtension(
                 [
+                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    CurrencySelectionType::NAME             => new CurrencySelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
                     $optionalPriceType->getName()           => $optionalPriceType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
                 []
