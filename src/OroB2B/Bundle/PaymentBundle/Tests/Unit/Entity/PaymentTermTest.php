@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class PaymentTermTest extends EntityTestCase
@@ -22,7 +22,7 @@ class PaymentTermTest extends EntityTestCase
     /**
      * @dataProvider relationsDataProvider
      *
-     * @param Customer|CustomerGroup $entity
+     * @param Account|AccountGroup $entity
      * @param string $getCollectionMethod
      * @param string $addMethod
      * @param string $removeMethod
@@ -56,17 +56,17 @@ class PaymentTermTest extends EntityTestCase
     public function relationsDataProvider()
     {
         return [
-            'customer' => [
-                'entity' => new Customer(),
-                'getCollectionMethod' => 'getCustomers',
-                'addMethod' => 'addCustomer',
-                'removeMethod' => 'removeCustomer',
+            'account' => [
+                'entity' => new Account(),
+                'getCollectionMethod' => 'getAccounts',
+                'addMethod' => 'addAccount',
+                'removeMethod' => 'removeAccount',
             ],
-            'customerGroup' => [
-                'entity' => new CustomerGroup(),
-                'getCollectionMethod' => 'getCustomerGroups',
-                'addMethod' => 'addCustomerGroup',
-                'removeMethod' => 'removeCustomerGroup',
+            'accountGroup' => [
+                'entity' => new AccountGroup(),
+                'getCollectionMethod' => 'getAccountGroups',
+                'addMethod' => 'addAccountGroup',
+                'removeMethod' => 'removeAccountGroup',
             ]
         ];
     }

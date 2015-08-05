@@ -20,7 +20,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $expectedTemplateForCustomer = [
+    protected $expectedTemplateForAccount = [
         'source' => [
             'query' => [
                 'select' => [
@@ -34,13 +34,13 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'join' => self::PAYMENT_TERM_CLASS,
                             'alias' => 'payment_term',
                             'conditionType' => 'WITH',
-                            'condition' => 'customer MEMBER OF payment_term.customers'
+                            'condition' => 'account MEMBER OF payment_term.accounts'
                         ],
                         [
                             'join' => self::PAYMENT_TERM_CLASS,
                             'alias' => 'payment_term_group',
                             'conditionType' => 'WITH',
-                            'condition' => 'customer.group MEMBER OF payment_term_group.customerGroups'
+                            'condition' => 'account.group MEMBER OF payment_term_group.accountGroups'
                         ]
                     ]
                 ],
@@ -51,7 +51,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'type' => 'twig',
                 'label' => 'orob2b.payment.paymentterm.entity_label',
                 'frontend_type' => 'html',
-                'template' => 'OroB2BPaymentBundle:Customer:Datagrid/Property/paymentTerm.html.twig'
+                'template' => 'OroB2BPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
             ],
         ],
         'sorters' => [
@@ -81,7 +81,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $expectedTemplateForCustomerGroup = [
+    protected $expectedTemplateForAccountGroup = [
         'source' => [
             'query' => [
                 'select' => [
@@ -93,7 +93,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'join' => self::PAYMENT_TERM_CLASS,
                             'alias' => 'payment_term',
                             'conditionType' => 'WITH',
-                            'condition' => 'customer_group MEMBER OF payment_term.customerGroups'
+                            'condition' => 'account_group MEMBER OF payment_term.accountGroups'
                         ],
                     ]
                 ],
@@ -140,29 +140,29 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testOnBuildBeforeCustomers()
+    public function testOnBuildBeforeAccounts()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeCustomers($event);
+        $this->listener->onBuildBeforeAccounts($event);
 
-        $expected = $this->expectedTemplateForCustomer;
+        $expected = $this->expectedTemplateForAccount;
         $this->assertEquals($expected, $config->toArray());
     }
 
-    public function testOnBuildBeforeCustomerGroups()
+    public function testOnBuildBeforeAccountGroups()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeCustomerGroups($event);
+        $this->listener->onBuildBeforeAccountGroups($event);
 
-        $expected = $this->expectedTemplateForCustomerGroup;
+        $expected = $this->expectedTemplateForAccountGroup;
         $this->assertEquals($expected, $config->toArray());
     }
 }

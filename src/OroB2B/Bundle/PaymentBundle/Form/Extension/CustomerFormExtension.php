@@ -6,39 +6,39 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerType;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
-class CustomerFormExtension extends AbstractPaymentTermExtension
+class AccountFormExtension extends AbstractPaymentTermExtension
 {
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $customer = $builder->getData();
+        $account = $builder->getData();
         $customOptions = [
             'label' => 'orob2b.payment.paymentterm.entity_label',
             'required' => false,
             'mapped' => false,
         ];
 
-        if ($customer->getGroup()) {
-            $paymentTermByCustomerGroup =
-                $this->getPaymentTermRepository()->getOnePaymentTermByCustomerGroup($customer->getGroup());
+        if ($account->getGroup()) {
+            $paymentTermByAccountGroup =
+                $this->getPaymentTermRepository()->getOnePaymentTermByAccountGroup($account->getGroup());
 
-            if ($paymentTermByCustomerGroup) {
+            if ($paymentTermByAccountGroup) {
                 $customOptions['configs']['placeholder'] = $this->translator->trans(
-                    'orob2b.payment.customer.payment_term_defined_in_group',
+                    'orob2b.payment.account.payment_term_defined_in_group',
                     [
-                        '%payment_term%' => $paymentTermByCustomerGroup->getLabel()
+                        '%payment_term%' => $paymentTermByAccountGroup->getLabel()
                     ]
                 );
             } else {
                 $customOptions['configs']['placeholder'] = $this->translator->trans(
-                    'orob2b.payment.customer.payment_term_non_defined_in_group'
+                    'orob2b.payment.account.payment_term_non_defined_in_group'
                 );
             }
         }
@@ -58,15 +58,15 @@ class CustomerFormExtension extends AbstractPaymentTermExtension
      */
     public function onPostSetData(FormEvent $event)
     {
-        /** @var Customer|null $customer */
-        $customer = $event->getData();
+        /** @var Account|null $account */
+        $account = $event->getData();
 
         $form = $event->getForm();
-        if (!$customer || !$customer->getId()) {
+        if (!$account || !$account->getId()) {
             return;
         }
 
-        $paymentTerm = $this->getPaymentTermRepository()->getOnePaymentTermByCustomer($customer);
+        $paymentTerm = $this->getPaymentTermRepository()->getOnePaymentTermByAccount($account);
         $event->getForm()->get('paymentTerm')->setData($paymentTerm);
     }
 
@@ -75,9 +75,9 @@ class CustomerFormExtension extends AbstractPaymentTermExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
-        /** @var Customer|null $customer */
-        $customer = $event->getData();
-        if (!$customer || !$customer->getId()) {
+        /** @var Account|null $account */
+        $account = $event->getData();
+        if (!$account || !$account->getId()) {
             return;
         }
 
@@ -89,7 +89,7 @@ class CustomerFormExtension extends AbstractPaymentTermExtension
         /** @var PaymentTerm|null $paymentTerm */
         $paymentTerm = $form->get('paymentTerm')->getData();
 
-        $this->getPaymentTermRepository()->setPaymentTermToCustomer($customer, $paymentTerm);
+        $this->getPaymentTermRepository()->setPaymentTermToAccount($account, $paymentTerm);
     }
 
     /**
@@ -97,6 +97,6 @@ class CustomerFormExtension extends AbstractPaymentTermExtension
      */
     public function getExtendedType()
     {
-        return CustomerType::NAME;
+        return AccountType::NAME;
     }
 }

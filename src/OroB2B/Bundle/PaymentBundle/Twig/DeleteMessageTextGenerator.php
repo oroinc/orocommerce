@@ -12,10 +12,10 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextGenerator
 {
-    const CUSTOMER_GROUP_GRID_NAME = 'customer-groups-grid';
-    const CUSTOMER_GRID_NAME = 'customer-customers-grid';
-    const CUSTOMER_GROUP_GRID_ROUTE = 'orob2b_customer_group_index';
-    const CUSTOMER_GRID_ROUTE = 'orob2b_customer_index';
+    const ACCOUNT_GROUP_GRID_NAME = 'account-groups-grid';
+    const ACCOUNT_GRID_NAME = 'account-accounts-grid';
+    const ACCOUNT_GROUP_GRID_ROUTE = 'orob2b_account_group_index';
+    const ACCOUNT_GRID_ROUTE = 'orob2b_account_index';
 
     /** @var RouterInterface  */
     protected $router;
@@ -36,12 +36,12 @@ class DeleteMessageTextGenerator
      */
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
-        $customerGroupFilterUrlHtml  = $this->generateCustomerGroupFilterUrl($paymentTerm);
-        $customerFilterUrlHtml = $this->generateCustomerFilterUrl($paymentTerm);
+        $accountGroupFilterUrlHtml  = $this->generateAccountGroupFilterUrl($paymentTerm);
+        $accountFilterUrlHtml = $this->generateAccountFilterUrl($paymentTerm);
 
         $message = $this->twig->render('@OroB2BPayment/PaymentTerm/deleteMessage.html.twig', [
-            'customerFilterUrl' => $customerFilterUrlHtml,
-            'customerGroupFilterUrl' => $customerGroupFilterUrlHtml
+            'accountFilterUrl' => $accountFilterUrlHtml,
+            'accountGroupFilterUrl' => $accountGroupFilterUrlHtml
         ]);
 
         return $message;
@@ -63,41 +63,41 @@ class DeleteMessageTextGenerator
      * @param PaymentTerm $paymentTerm
      * @return string
      */
-    private function generateCustomerGroupFilterUrl(PaymentTerm $paymentTerm)
+    private function generateAccountGroupFilterUrl(PaymentTerm $paymentTerm)
     {
-        if ($paymentTerm->getCustomerGroups()->count() == 0) {
+        if ($paymentTerm->getAccountGroups()->count() == 0) {
             return null;
         }
 
-        $customerGroupFilterHtmlUrl =
+        $accountGroupFilterHtmlUrl =
             $this->generateHtmFilterUrl(
                 $paymentTerm->getId(),
-                static::CUSTOMER_GROUP_GRID_NAME,
-                static::CUSTOMER_GROUP_GRID_ROUTE,
-                'orob2b.customer.customergroup.entity_label'
+                static::ACCOUNT_GROUP_GRID_NAME,
+                static::ACCOUNT_GROUP_GRID_ROUTE,
+                'orob2b.account.accountgroup.entity_label'
             );
 
-        return $customerGroupFilterHtmlUrl;
+        return $accountGroupFilterHtmlUrl;
     }
 
     /**
      * @param PaymentTerm $paymentTerm
      * @return string
      */
-    private function generateCustomerFilterUrl(PaymentTerm $paymentTerm)
+    private function generateAccountFilterUrl(PaymentTerm $paymentTerm)
     {
-        if ($paymentTerm->getCustomers()->count() == 0) {
+        if ($paymentTerm->getAccounts()->count() == 0) {
             return null;
         }
 
-        $customerFilterHtmlUrl = $this->generateHtmFilterUrl(
+        $accountFilterHtmlUrl = $this->generateHtmFilterUrl(
             $paymentTerm->getId(),
-            static::CUSTOMER_GRID_NAME,
-            static::CUSTOMER_GRID_ROUTE,
-            'orob2b.customer.entity_label'
+            static::ACCOUNT_GRID_NAME,
+            static::ACCOUNT_GRID_ROUTE,
+            'orob2b.account.entity_label'
         );
 
-        return $customerFilterHtmlUrl;
+        return $accountFilterHtmlUrl;
 
     }
 

@@ -2,19 +2,19 @@
 
 <div class="row-fluid form-horizontal">
     <div class="responsive-block">
-        {% if customerGroupPaymentTerm %}
-            {% if is_granted('VIEW', customerGroupPaymentTerm) %}
-                {% set customerGroupPaymentTermData %}
-                    <a href="{{ path('orob2b_payment_term_view', {id: customerGroupPaymentTerm.id}) }}">
-                        {{ customerGroupPaymentTerm.label }}
+        {% if accountGroupPaymentTerm %}
+            {% if is_granted('VIEW', accountGroupPaymentTerm) %}
+                {% set accountGroupPaymentTermData %}
+                    <a href="{{ path('orob2b_payment_term_view', {id: accountGroupPaymentTerm.id}) }}">
+                        {{ accountGroupPaymentTerm.label }}
                     </a>
                 {% endset %}
-                {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, 'orob2b.payment.customer.payment_term_defined_in_group'|trans({'%payment_term%': customerGroupPaymentTermData})) }}
+                {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, 'orob2b.payment.account.payment_term_defined_in_group'|trans({'%payment_term%': accountGroupPaymentTermData})) }}
             {% else %}
-                {{ UI.renderProperty('orob2b.payment.paymentterm.entity_label'|trans, 'orob2b.payment.customer.payment_term_defined_in_group'|trans({'%payment_term%': customerGroupPaymentTerm.label})) }}
+                {{ UI.renderProperty('orob2b.payment.paymentterm.entity_label'|trans, 'orob2b.payment.account.payment_term_defined_in_group'|trans({'%payment_term%': accountGroupPaymentTerm.label})) }}
             {% endif %}
         {%  else %}
-            {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, 'orob2b.payment.customer.payment_term_non_defined_in_group'|trans) }}
+            {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, 'orob2b.payment.account.payment_term_non_defined_in_group'|trans) }}
         {% endif %}
     </div>
 </div>

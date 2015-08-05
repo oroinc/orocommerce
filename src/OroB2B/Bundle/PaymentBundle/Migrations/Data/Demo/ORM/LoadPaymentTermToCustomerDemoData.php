@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class LoadPaymentTermToCustomerDemoData extends AbstractFixture implements
+class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
@@ -28,7 +28,7 @@ class LoadPaymentTermToCustomerDemoData extends AbstractFixture implements
     {
         return [
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
         ];
     }
 
@@ -51,19 +51,19 @@ class LoadPaymentTermToCustomerDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $doctrine = $this->container->get('doctrine');
-        $customerRepository = $doctrine->getRepository('OroB2BCustomerBundle:Customer');
+        $accountRepository = $doctrine->getRepository('OroB2BAccountBundle:Account');
         $paymentTermRepository = $doctrine->getRepository('OroB2BPaymentBundle:PaymentTerm');
 
         $paymentTermsAll = $paymentTermRepository->findAll();
-        $customersAll = $customerRepository->findAll();
+        $accountsAll = $accountRepository->findAll();
 
-        foreach ($customersAll as $customer) {
+        foreach ($accountsAll as $account) {
             /** @var PaymentTerm $paymentTerm */
-            if ($customer->getGroup()->getName() == 'First') {
+            if ($account->getGroup()->getName() == 'First') {
                 continue;
             }
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
-            $paymentTerm->addCustomer($customer);
+            $paymentTerm->addAccount($account);
         }
         $manager->flush();
     }

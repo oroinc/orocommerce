@@ -11,10 +11,10 @@ class PaymentTermStub extends PaymentTerm
 {
     protected $id;
 
-    public function __construct($id, $customers = [], $customerGroups = [])
+    public function __construct($id, $accounts = [], $accountGroups = [])
     {
         $this->id = $id;
-        $this->customers = new ArrayCollection($customers);
-        $this->customerGroups = new ArrayCollection($customerGroups);
+        $this->accounts = new ArrayCollection($accounts);
+        $this->accountGroups = new ArrayCollection($accountGroups);
     }
 }

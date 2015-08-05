@@ -4,26 +4,26 @@ namespace OroB2B\Bundle\PaymentBundle\Form\Extension;
 
 use Symfony\Component\Form\FormEvent;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class CustomerGroupFormExtension extends AbstractPaymentTermExtension
+class AccountGroupFormExtension extends AbstractPaymentTermExtension
 {
     /**
      * {@inheritdoc}
      */
     public function onPostSetData(FormEvent $event)
     {
-        /** @var CustomerGroup|null $customerGroup */
-        $customerGroup = $event->getData();
-        if (!$customerGroup || !$customerGroup->getId()) {
+        /** @var AccountGroup|null $accountGroup */
+        $accountGroup = $event->getData();
+        if (!$accountGroup || !$accountGroup->getId()) {
             return;
         }
 
-        $paymentTermByCustomerGroup = $this->getPaymentTermRepository()->getOnePaymentTermByCustomerGroup($customerGroup);
+        $paymentTermByAccountGroup = $this->getPaymentTermRepository()->getOnePaymentTermByAccountGroup($accountGroup);
 
-        $event->getForm()->get('paymentTerm')->setData($paymentTermByCustomerGroup);
+        $event->getForm()->get('paymentTerm')->setData($paymentTermByAccountGroup);
     }
 
     /**
@@ -31,9 +31,9 @@ class CustomerGroupFormExtension extends AbstractPaymentTermExtension
      */
     public function onPostSubmit(FormEvent $event)
     {
-        /** @var CustomerGroup|null $customerGroup */
-        $customerGroup = $event->getData();
-        if (!$customerGroup || !$customerGroup->getId()) {
+        /** @var AccountGroup|null $accountGroup */
+        $accountGroup = $event->getData();
+        if (!$accountGroup || !$accountGroup->getId()) {
             return;
         }
 
@@ -45,7 +45,7 @@ class CustomerGroupFormExtension extends AbstractPaymentTermExtension
         /** @var PaymentTerm|null  */
         $paymentTerm = $form->get('paymentTerm')->getData();
 
-        $this->getPaymentTermRepository()->setPaymentTermToCustomerGroup($customerGroup, $paymentTerm);
+        $this->getPaymentTermRepository()->setPaymentTermToAccountGroup($accountGroup, $paymentTerm);
     }
 
     /**
@@ -53,6 +53,6 @@ class CustomerGroupFormExtension extends AbstractPaymentTermExtension
      */
     public function getExtendedType()
     {
-        return CustomerGroupType::NAME;
+        return AccountGroupType::NAME;
     }
 }

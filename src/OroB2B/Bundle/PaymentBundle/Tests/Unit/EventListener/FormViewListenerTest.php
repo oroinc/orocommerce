@@ -12,8 +12,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -63,14 +63,14 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMock('\Twig_Environment');
         $event = $this->createEvent($env);
-        $this->listener->onCustomerView($event);
-        $this->listener->onCustomerGroupView($event);
+        $this->listener->onAccountView($event);
+        $this->listener->onAccountGroupView($event);
     }
 
     /**
      * @return array
      */
-    public function viewCustomerDataProvider()
+    public function viewAccountDataProvider()
     {
         return [
             'payment term does not exists, payment term in group does exist' => [false, true],
@@ -82,7 +82,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function viewCustomerGroupDataProvider()
+    public function viewAccountGroupDataProvider()
     {
         return [
             'payment term does not exists' => [false],
@@ -93,37 +93,37 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $isPaymentTermExist
      * @param bool $isPaymentTermInGroupExist
-     * @dataProvider viewCustomerDataProvider
+     * @dataProvider viewAccountDataProvider
      */
-    public function testOnCustomerView($isPaymentTermExist, $isPaymentTermInGroupExist)
+    public function testOnAccountView($isPaymentTermExist, $isPaymentTermInGroupExist)
     {
-        $customerId = 1;
-        $customer = new Customer();
-        $customerGroup = new CustomerGroup();
+        $accountId = 1;
+        $account = new Account();
+        $accountGroup = new AccountGroup();
         $paymentTerm = new PaymentTerm();
-        $templateCustomerPaymentTermHtml = 'template_html_with_customer_payment_term';
-        $templateCustomerGroupPaymentTermHtml = 'template_html_with_customer_group_payment_term';
-        $templateCustomerGroupWithoutPaymentTermHtml = 'template_html_without_customer_group_payment_term';
+        $templateAccountPaymentTermHtml = 'template_html_with_account_payment_term';
+        $templateAccountGroupPaymentTermHtml = 'template_html_with_account_group_payment_term';
+        $templateAccountGroupWithoutPaymentTermHtml = 'template_html_without_account_group_payment_term';
 
         if ($isPaymentTermInGroupExist) {
-            $customer->setGroup($customerGroup);
+            $account->setGroup($accountGroup);
         }
 
-        $this->listener->setRequest(new Request(['id' => $customerId]));
+        $this->listener->setRequest(new Request(['id' => $accountId]));
 
         $paymentTermRepository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $paymentTermRepository->expects($this->once())
-            ->method('getOnePaymentTermByCustomer')
-            ->with($customer)
+            ->method('getOnePaymentTermByAccount')
+            ->with($account)
             ->willReturn($isPaymentTermExist ? $paymentTerm : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BCustomerBundle:Customer', $customerId)
-            ->willReturn($customer);
+            ->with('OroB2BAccountBundle:Account', $accountId)
+            ->willReturn($account);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->with('OroB2BPaymentBundle:PaymentTerm')
@@ -135,46 +135,46 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         if ($isPaymentTermExist) {
             $environment->expects($isPaymentTermExist ? $this->once() : $this->never())
                 ->method('render')
-                ->with('OroB2BPaymentBundle:Customer:payment_term_view.html.twig', ['paymentTerm' => $paymentTerm])
-                ->willReturn($templateCustomerPaymentTermHtml);
+                ->with('OroB2BPaymentBundle:Account:payment_term_view.html.twig', ['paymentTerm' => $paymentTerm])
+                ->willReturn($templateAccountPaymentTermHtml);
         } else {
             $paymentTermRepository->expects($this->any())
-                ->method('getOnePaymentTermByCustomerGroup')
-                ->with($customerGroup)
+                ->method('getOnePaymentTermByAccountGroup')
+                ->with($accountGroup)
                 ->willReturn($isPaymentTermInGroupExist ? $paymentTerm : null);
 
             $environment->expects($this->once())
                 ->method('render')
                 ->with(
-                    'OroB2BPaymentBundle:Customer:payment_term_for_customer_view.html.twig',
+                    'OroB2BPaymentBundle:Account:payment_term_for_account_view.html.twig',
                     [
-                        'customerGroupPaymentTerm' => $isPaymentTermInGroupExist ? $paymentTerm : null
+                        'accountGroupPaymentTerm' => $isPaymentTermInGroupExist ? $paymentTerm : null
                     ]
                 )
                 ->willReturn(
                     $isPaymentTermInGroupExist ?
-                        $templateCustomerGroupPaymentTermHtml :
-                        $templateCustomerGroupWithoutPaymentTermHtml
+                        $templateAccountGroupPaymentTermHtml :
+                        $templateAccountGroupWithoutPaymentTermHtml
                 );
         }
 
         $event = $this->createEvent($environment);
-        $this->listener->onCustomerView($event);
+        $this->listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPaymentTermExist) {
             $this->assertEquals(
-                [$templateCustomerPaymentTermHtml],
+                [$templateAccountPaymentTermHtml],
                 $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
             );
         } elseif ($isPaymentTermInGroupExist) {
             $this->assertEquals(
-                [$templateCustomerGroupPaymentTermHtml],
+                [$templateAccountGroupPaymentTermHtml],
                 $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
             );
         } else {
             $this->assertEquals(
-                [$templateCustomerGroupWithoutPaymentTermHtml],
+                [$templateAccountGroupWithoutPaymentTermHtml],
                 $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
             );
         }
@@ -182,30 +182,30 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param bool $isPaymentTermExist
-     * @dataProvider viewCustomerGroupDataProvider
+     * @dataProvider viewAccountGroupDataProvider
      */
-    public function testOnCustomerGroupView($isPaymentTermExist)
+    public function testOnAccountGroupView($isPaymentTermExist)
     {
-        $customerGroupId = 1;
-        $customerGroup = new CustomerGroup();
+        $accountGroupId = 1;
+        $accountGroup = new AccountGroup();
         $paymentTerm = new PaymentTerm();
         $templateHtml = 'template_html';
         $emptyTemplate = 'template_html_empty';
 
-        $this->listener->setRequest(new Request(['id' => $customerGroupId]));
+        $this->listener->setRequest(new Request(['id' => $accountGroupId]));
 
         $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $priceRepository->expects($this->once())
-            ->method('getOnePaymentTermByCustomerGroup')
-            ->with($customerGroup)
+            ->method('getOnePaymentTermByAccountGroup')
+            ->with($accountGroup)
             ->willReturn($isPaymentTermExist ? $paymentTerm : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
-            ->with('OroB2BCustomerBundle:CustomerGroup', $customerGroupId)
-            ->willReturn($customerGroup);
+            ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
+            ->willReturn($accountGroup);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
@@ -217,7 +217,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $environment->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BPaymentBundle:Customer:payment_term_view.html.twig',
+                'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
                 [
                     'paymentTerm' => $isPaymentTermExist ? $paymentTerm : null
                 ]
@@ -225,7 +225,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($isPaymentTermExist ? $templateHtml : $emptyTemplate);
 
         $event = $this->createEvent($environment);
-        $this->listener->onCustomerGroupView($event);
+        $this->listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPaymentTermExist) {
@@ -250,7 +250,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPaymentBundle:Customer:payment_term_update.html.twig', ['form' => $formView])
+            ->with('OroB2BPaymentBundle:Account:payment_term_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);

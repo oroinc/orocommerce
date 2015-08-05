@@ -8,8 +8,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
 class FormViewListener
@@ -42,32 +42,32 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onCustomerView(BeforeListRenderEvent $event)
+    public function onAccountView(BeforeListRenderEvent $event)
     {
         if (!$this->request) {
             return;
         }
 
-        $customerId = $this->request->get('id');
-        /** @var Customer $customer */
-        $customer = $this->doctrineHelper->getEntityReference('OroB2BCustomerBundle:Customer', $customerId);
+        $accountId = $this->request->get('id');
+        /** @var Account $account */
+        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
 
-        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByCustomer($customer);
+        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByAccount($account);
         if ($paymentTerm) {
             $template = $event->getEnvironment()->render(
-                'OroB2BPaymentBundle:Customer:payment_term_view.html.twig',
+                'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
                 ['paymentTerm' => $paymentTerm]
             );
         } else {
-            $customerGroupPaymentTerm = null;
-            if ($customer->getGroup()) {
-                $customerGroupPaymentTerm =
-                    $this->getPaymentRepository()->getOnePaymentTermByCustomerGroup($customer->getGroup());
+            $accountGroupPaymentTerm = null;
+            if ($account->getGroup()) {
+                $accountGroupPaymentTerm =
+                    $this->getPaymentRepository()->getOnePaymentTermByAccountGroup($account->getGroup());
             }
 
             $template = $event->getEnvironment()->render(
-                'OroB2BPaymentBundle:Customer:payment_term_for_customer_view.html.twig',
-                ['customerGroupPaymentTerm' => $customerGroupPaymentTerm]
+                'OroB2BPaymentBundle:Account:payment_term_for_account_view.html.twig',
+                ['accountGroupPaymentTerm' => $accountGroupPaymentTerm]
             );
         }
         $event->getScrollData()->addSubBlockData(0, 0, $template);
@@ -76,19 +76,19 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onCustomerGroupView(BeforeListRenderEvent $event)
+    public function onAccountGroupView(BeforeListRenderEvent $event)
     {
         if (!$this->request) {
             return;
         }
 
         $groupId = $this->request->get('id');
-        /** @var CustomerGroup $group */
-        $group = $this->doctrineHelper->getEntityReference('OroB2BCustomerBundle:CustomerGroup', $groupId);
-        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByCustomerGroup($group);
+        /** @var AccountGroup $group */
+        $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
+        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByAccountGroup($group);
 
         $template = $event->getEnvironment()->render(
-            'OroB2BPaymentBundle:Customer:payment_term_view.html.twig',
+            'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
             ['paymentTerm' => $paymentTerm]);
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
@@ -99,7 +99,7 @@ class FormViewListener
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BPaymentBundle:Customer:payment_term_update.html.twig',
+            'OroB2BPaymentBundle:Account:payment_term_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

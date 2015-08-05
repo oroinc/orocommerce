@@ -58,8 +58,8 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertDeleteMessage(
             $message,
             $paymentTerm->getId(),
-            $paymentTerm->getCustomerGroups()->count(),
-            $paymentTerm->getCustomers()->count()
+            $paymentTerm->getAccountGroups()->count(),
+            $paymentTerm->getAccounts()->count()
         );
     }
     
@@ -103,40 +103,40 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param $message
      * @param $paymentTermId
-     * @param $customerGroupCount
-     * @param $customerCount
+     * @param $accountGroupCount
+     * @param $accountCount
      */
-    public function assertDeleteMessage($message, $paymentTermId, $customerGroupCount, $customerCount)
+    public function assertDeleteMessage($message, $paymentTermId, $accountGroupCount, $accountCount)
     {
         $message = unserialize($message);
 
-        $this->assertArrayHasKey('customerGroupFilterUrl', $message);
-        $this->assertArrayHasKey('customerFilterUrl', $message);
+        $this->assertArrayHasKey('accountGroupFilterUrl', $message);
+        $this->assertArrayHasKey('accountFilterUrl', $message);
 
-        if ($customerGroupCount) {
-            $customerGroupFilterUrl = unserialize($message['customerGroupFilterUrl']);
+        if ($accountGroupCount) {
+            $accountGroupFilterUrl = unserialize($message['accountGroupFilterUrl']);
             $this->assertDataFromDeleteMessage(
                 $message,
                 $paymentTermId,
-                $customerGroupFilterUrl,
-                DeleteMessageTextGenerator::CUSTOMER_GROUP_GRID_NAME,
-                'orob2b.customer.customergroup.entity_label'
+                $accountGroupFilterUrl,
+                DeleteMessageTextGenerator::ACCOUNT_GROUP_GRID_NAME,
+                'orob2b.account.accountgroup.entity_label'
             );
         } else {
-            $this->assertNull($message['customerGroupFilterUrl']);
+            $this->assertNull($message['accountGroupFilterUrl']);
         }
 
-        if ($customerCount) {
-            $customerFilterUrl = unserialize($message['customerFilterUrl']);
+        if ($accountCount) {
+            $accountFilterUrl = unserialize($message['accountFilterUrl']);
             $this->assertDataFromDeleteMessage(
                 $message,
                 $paymentTermId,
-                $customerFilterUrl,
-                DeleteMessageTextGenerator::CUSTOMER_GRID_NAME,
-                'orob2b.customer.entity_label'
+                $accountFilterUrl,
+                DeleteMessageTextGenerator::ACCOUNT_GRID_NAME,
+                'orob2b.account.entity_label'
                 );
         } else {
-            $this->assertNull($message['customerFilterUrl']);
+            $this->assertNull($message['accountFilterUrl']);
         }
     }
 
@@ -146,14 +146,14 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
     public function getDeleteMessageTextDataProvider()
     {
         return [
-            'payment with customer and customer group' => [
-                'paymentTerm' => new PaymentTermStub(1, ['one customer'], ['one customerGroup'])
+            'payment with account and account group' => [
+                'paymentTerm' => new PaymentTermStub(1, ['one account'], ['one accountGroup'])
             ],
-            'payment only with customer' => [
-                'paymentTerm' => new PaymentTermStub(1, ['one customer'], [])
+            'payment only with account' => [
+                'paymentTerm' => new PaymentTermStub(1, ['one account'], [])
             ],
-            'payment only with customer group' => [
-                'paymentTerm' => new PaymentTermStub(1, [], ['one customerGroup'])
+            'payment only with account group' => [
+                'paymentTerm' => new PaymentTermStub(1, [], ['one accountGroup'])
             ],
             'empty' => [
                 'paymentTerm' => new PaymentTermStub(1, [], [])
@@ -182,9 +182,9 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
      * @param $message
      * @param $paymentTerm
      */
-    private function assertDataFromDeleteMessage($message, $paymentTermId, $customerFilterUrl, $gridName, $label)
+    private function assertDataFromDeleteMessage($message, $paymentTermId, $accountFilterUrl, $gridName, $label)
     {
-        $urlParameters = unserialize($customerFilterUrl['urlPath']);
+        $urlParameters = unserialize($accountFilterUrl['urlPath']);
 
         $this->assertEquals(
             $this->generateUrlParameters(
@@ -194,6 +194,6 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
             $urlParameters
         );
 
-        $this->assertEquals($label, $customerFilterUrl['label']);
+        $this->assertEquals($label, $accountFilterUrl['label']);
     }
 }

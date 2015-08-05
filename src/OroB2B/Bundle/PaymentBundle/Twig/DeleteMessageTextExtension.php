@@ -6,10 +6,10 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {
-    const CUSTOMER_GROUP_GRID_NAME = 'customer-groups-grid';
-    const CUSTOMER_GRID_NAME = 'customer-customers-grid';
-    const CUSTOMER_GROUP_GRID_ROUTE = 'orob2b_customer_group_index';
-    const CUSTOMER_GRID_ROUTE = 'orob2b_customer_index';
+    const ACCOUNT_GROUP_GRID_NAME = 'account-groups-grid';
+    const ACCOUNT_GRID_NAME = 'account-accounts-grid';
+    const ACCOUNT_GROUP_GRID_ROUTE = 'orob2b_account_group_index';
+    const ACCOUNT_GRID_ROUTE = 'orob2b_account_index';
 
     /** @var  DeleteMessageTextGenerator */
     protected $deleteMessageGenerator;

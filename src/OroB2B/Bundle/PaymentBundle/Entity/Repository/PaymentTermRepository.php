@@ -4,83 +4,83 @@ namespace OroB2B\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class PaymentTermRepository extends EntityRepository
 {
     /**
-     * @param CustomerGroup $customerGroup
+     * @param AccountGroup $accountGroup
      * @return PaymentTerm|null
      */
-    public function getOnePaymentTermByCustomerGroup(CustomerGroup $customerGroup)
+    public function getOnePaymentTermByAccountGroup(AccountGroup $accountGroup)
     {
         return $this->createQueryBuilder('paymentTerm')
-            ->innerJoin('paymentTerm.customerGroups', 'customerGroup')
-            ->andWhere('customerGroup = :customerGroup')
-            ->setParameter('customerGroup', $customerGroup)
+            ->innerJoin('paymentTerm.accountGroups', 'accountGroup')
+            ->andWhere('accountGroup = :accountGroup')
+            ->setParameter('accountGroup', $accountGroup)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
-    public function getOnePaymentTermByCustomer(Customer $customer)
+    public function getOnePaymentTermByAccount(Account $account)
     {
         return $this->createQueryBuilder('paymentTerm')
-            ->innerJoin('paymentTerm.customers', 'customer')
-            ->andWhere('customer = :customer')
-            ->setParameter('customer', $customer)
+            ->innerJoin('paymentTerm.accounts', 'account')
+            ->andWhere('account = :account')
+            ->setParameter('account', $account)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
     /**
-     * @param CustomerGroup    $customerGroup
+     * @param AccountGroup    $accountGroup
      * @param PaymentTerm|null $paymentTerm
      */
-    public function setPaymentTermToCustomerGroup(CustomerGroup $customerGroup, PaymentTerm $paymentTerm = null)
+    public function setPaymentTermToAccountGroup(AccountGroup $accountGroup, PaymentTerm $paymentTerm = null)
     {
-        $oldPaymentTermByCustomerGroup = $this->getOnePaymentTermByCustomerGroup($customerGroup);
+        $oldPaymentTermByAccountGroup = $this->getOnePaymentTermByAccountGroup($accountGroup);
 
         if (
-            $oldPaymentTermByCustomerGroup &&
+            $oldPaymentTermByAccountGroup &&
             $paymentTerm &&
-            $oldPaymentTermByCustomerGroup->getId() === $paymentTerm->getId()
+            $oldPaymentTermByAccountGroup->getId() === $paymentTerm->getId()
         ) {
             return;
         }
 
-        if ($oldPaymentTermByCustomerGroup) {
-            $oldPaymentTermByCustomerGroup->removeCustomerGroup($customerGroup);
+        if ($oldPaymentTermByAccountGroup) {
+            $oldPaymentTermByAccountGroup->removeAccountGroup($accountGroup);
         }
 
         if ($paymentTerm) {
-            $paymentTerm->addCustomerGroup($customerGroup);
+            $paymentTerm->addAccountGroup($accountGroup);
         }
     }
 
     /**
-     * @param Customer         $customer
+     * @param Account         $account
      * @param PaymentTerm|null $paymentTerm
      */
-    public function setPaymentTermToCustomer(Customer $customer, PaymentTerm $paymentTerm = null)
+    public function setPaymentTermToAccount(Account $account, PaymentTerm $paymentTerm = null)
     {
-        $oldPaymentTermByCustomer = $this->getOnePaymentTermByCustomer($customer);
+        $oldPaymentTermByAccount = $this->getOnePaymentTermByAccount($account);
 
         if (
-            $oldPaymentTermByCustomer &&
+            $oldPaymentTermByAccount &&
             $paymentTerm &&
-            $oldPaymentTermByCustomer->getId() === $paymentTerm->getId()
+            $oldPaymentTermByAccount->getId() === $paymentTerm->getId()
         ) {
             return;
         }
 
-        if ($oldPaymentTermByCustomer) {
-            $oldPaymentTermByCustomer->removeCustomer($customer);
+        if ($oldPaymentTermByAccount) {
+            $oldPaymentTermByAccount->removeAccount($account);
         }
 
         if ($paymentTerm) {
-            $paymentTerm->addCustomer($customer);
+            $paymentTerm->addAccount($account);
         }
     }
 }

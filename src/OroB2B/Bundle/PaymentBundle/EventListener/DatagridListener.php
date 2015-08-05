@@ -31,27 +31,27 @@ class DatagridListener
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBeforeCustomers(BuildBefore $event)
+    public function onBuildBeforeAccounts(BuildBefore $event)
     {
-        $this->addPaymentTermRelationForCustomer($event->getConfig());
+        $this->addPaymentTermRelationForAccount($event->getConfig());
     }
 
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBeforeCustomerGroups(BuildBefore $event)
+    public function onBuildBeforeAccountGroups(BuildBefore $event)
     {
-        $this->addPaymentTermRelationForCustomerGroup($event->getConfig());
+        $this->addPaymentTermRelationForAccountGroup($event->getConfig());
     }
 
     /**
      * @param DatagridConfiguration $config
      */
-    private function addPaymentTermRelationForCustomer(DatagridConfiguration $config)
+    private function addPaymentTermRelationForAccount(DatagridConfiguration $config)
     {
 
-        $selectCustomerPaymentTerm = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
-        $this->addConfigElement($config, '[source][query][select]', $selectCustomerPaymentTerm);
+        $selectAccountPaymentTerm = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
+        $this->addConfigElement($config, '[source][query][select]', $selectAccountPaymentTerm);
 
         $selectGroupPaymentTermLabel =
             static::PAYMENT_TERM_GROUP_ALIAS . '.label as ' . static::PAYMENT_TERM_GROUP_LABEL_ALIAS;
@@ -68,24 +68,24 @@ class DatagridListener
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_ALIAS,
             'conditionType' => 'WITH',
-            'condition' => 'customer MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customers'
+            'condition' => 'account MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.accounts'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoinPaymentTerm);
 
 
-        $leftJoinCustomerGroupPaymentTerm = [
+        $leftJoinAccountGroupPaymentTerm = [
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_GROUP_ALIAS,
             'conditionType' => 'WITH',
-            'condition' => 'customer.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.customerGroups'
+            'condition' => 'account.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.accountGroups'
         ];
-        $this->addConfigElement($config, '[source][query][join][left]', $leftJoinCustomerGroupPaymentTerm);
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoinAccountGroupPaymentTerm);
 
         $column = [
             'type' => 'twig',
             'label' => 'orob2b.payment.paymentterm.entity_label',
             'frontend_type' => 'html',
-            'template' => 'OroB2BPaymentBundle:Customer:Datagrid/Property/paymentTerm.html.twig'
+            'template' => 'OroB2BPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
         ];
         $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
 
@@ -110,7 +110,7 @@ class DatagridListener
      * @param DatagridConfiguration $config
      * @param string $joinCondition
      */
-    protected function addPaymentTermRelationForCustomerGroup(DatagridConfiguration $config)
+    protected function addPaymentTermRelationForAccountGroup(DatagridConfiguration $config)
     {
 
         $select = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
@@ -120,7 +120,7 @@ class DatagridListener
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_ALIAS,
             'conditionType' => 'WITH',
-            'condition' => 'customer_group MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.customerGroups'
+            'condition' => 'account_group MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.accountGroups'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
 
