@@ -4,9 +4,18 @@
     '_wid': app.request.get('_wid'),
     'savedId': savedId is defined and savedId ? savedId : null
 } %}
+{% set message %}
+    {{ 'orob2b.shoppinglist.lineitem.flash.success'|trans ~ ' '}}
+    {% if shoppingListId is defined %}
+        (<a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingListId}) }}">
+            {{ 'orob2b.shoppinglist.actions.view'|trans}}
+        </a>)
+        {% else %}
+    {% endif %}
+{% endset %}
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
-     data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.line_item_save.flash.success'})|json_encode }}"
+     data-page-component-options="{{ pageComponentOptions|merge({message: message})|json_encode }}"
 >
     {% if form.vars.errors|length > 0 %}
         <div class="alert alert-error">
