@@ -7,7 +7,7 @@ class Subtotal
     /**
      * @var string
      */
-    protected $name;
+    protected $type;
 
     /**
      * @var string
@@ -27,19 +27,19 @@ class Subtotal
     /**
      * @return string
      */
-    public function getName()
+    public function getType()
     {
-        return $this->name;
+        return $this->type;
     }
 
     /**
-     * @param string $name
+     * @param string $type
      *
      * @return Subtotal
      */
-    public function setName($name)
+    public function setType($type)
     {
-        $this->name = $name;
+        $this->type = $type;
         return $this;
     }
 

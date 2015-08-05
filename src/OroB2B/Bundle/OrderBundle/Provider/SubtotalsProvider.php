@@ -37,8 +37,8 @@ class SubtotalsProvider
     {
         $subtotal = new Subtotal();
 
-        $subtotal->setName('subtotal');
-        $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getName());
+        $subtotal->setType('subtotal');
+        $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
         $subtotal->setLabel($this->translator->trans($translation));
 
         $subtotal->setAmount(0);
