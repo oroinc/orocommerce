@@ -46,8 +46,8 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         /** Foreign keys generation **/
         $this->addOrob2BPriceListCurrencyForeignKeys($schema);
         $this->addOrob2BPriceListToWebsiteForeignKeys($schema);
-        $this->addOrob2BPriceListToCustomerForeignKeys($schema);
-        $this->addOrob2BPriceListToCustomerGroupForeignKeys($schema);
+        $this->addOrob2BPriceListToAccountForeignKeys($schema);
+        $this->addOrob2BPriceListToAccountGroupForeignKeys($schema);
         $this->addOroB2BPriceProductForeignKeys($schema);
     }
 
@@ -111,17 +111,17 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->setPrimaryKey(['price_list_id', 'website_id']);
         $table->addUniqueIndex(['website_id']);
 
-        $table = $schema->createTable('orob2b_price_list_to_customer');
+        $table = $schema->createTable('orob2b_price_list_to_account');
         $table->addColumn('price_list_id', 'integer', []);
-        $table->addColumn('customer_id', 'integer', []);
-        $table->setPrimaryKey(['price_list_id', 'customer_id']);
-        $table->addUniqueIndex(['customer_id']);
+        $table->addColumn('account_id', 'integer', []);
+        $table->setPrimaryKey(['price_list_id', 'account_id']);
+        $table->addUniqueIndex(['account_id']);
 
         $table = $schema->createTable('orob2b_price_list_to_c_group');
         $table->addColumn('price_list_id', 'integer', []);
-        $table->addColumn('customer_group_id', 'integer', []);
-        $table->setPrimaryKey(['price_list_id', 'customer_group_id']);
-        $table->addUniqueIndex(['customer_group_id']);
+        $table->addColumn('account_group_id', 'integer', []);
+        $table->setPrimaryKey(['price_list_id', 'account_group_id']);
+        $table->addUniqueIndex(['account_group_id']);
     }
 
     /**
@@ -161,12 +161,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListToCustomerForeignKeys(Schema $schema)
+    protected function addOrob2BPriceListToAccountForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_price_list_to_customer');
+        $table = $schema->getTable('orob2b_price_list_to_account');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer'),
-            ['customer_id'],
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
@@ -181,12 +181,12 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * @param Schema $schema
      */
-    protected function addOrob2BPriceListToCustomerGroupForeignKeys(Schema $schema)
+    protected function addOrob2BPriceListToAccountGroupForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_price_list_to_c_group');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer_group'),
-            ['customer_group_id'],
+            $schema->getTable('orob2b_account_group'),
+            ['account_group_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );

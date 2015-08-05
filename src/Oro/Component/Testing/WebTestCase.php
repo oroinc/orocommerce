@@ -35,7 +35,7 @@ abstract class WebTestCase extends OroWebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_customer_frontend_account_user_datagrid_index', $gridParameters)
+            $this->getUrl('orob2b_account_frontend_account_user_datagrid_index', $gridParameters)
         );
 
         return $this->client->getResponse();

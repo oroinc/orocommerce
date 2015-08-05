@@ -1,0 +1,7 @@
+config:
+    paths:
+        'orob2baccount/js/app/components/account-tree-component': 'bundles/orob2baccount/js/app/components/account-tree-component.js'
+        'orob2baccount/js/app/components/account-user-management-component': 'bundles/orob2baccount/js/app/components/account-user-management-component.js'
+        'orob2baccount/js/app/components/password-generate': 'bundles/orob2baccount/js/app/components/password-generate.js'
+        'orob2baccount/js/app/components/account-address-component': 'bundles/orob2baccount/js/app/components/account-address-component.js'
+        'orob2baccount/js/app/components/account-address-book-component': 'bundles/orob2baccount/js/app/components/account-address-book-component.js'

@@ -25,17 +25,17 @@ class DatagridListener
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBeforeCustomers(BuildBefore $event)
+    public function onBuildBeforeAccounts(BuildBefore $event)
     {
-        $this->addPriceListRelation($event->getConfig(), 'customer MEMBER OF priceList.customers');
+        $this->addPriceListRelation($event->getConfig(), 'account MEMBER OF priceList.accounts');
     }
 
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBeforeCustomerGroups(BuildBefore $event)
+    public function onBuildBeforeAccountGroups(BuildBefore $event)
     {
-        $this->addPriceListRelation($event->getConfig(), 'customer_group MEMBER OF priceList.customerGroups');
+        $this->addPriceListRelation($event->getConfig(), 'account_group MEMBER OF priceList.accountGroups');
     }
 
     /**
