@@ -19,12 +19,9 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     protected $container;
 
     /**
-     * This method must return an array of fixtures classes
-     * on which the implementing class depends on
-     *
-     * @return array
+     * {@inheritdoc}
      */
-    function getDependencies()
+    public function getDependencies()
     {
         return [
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
@@ -33,11 +30,7 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     }
 
     /**
-     * Sets the Container.
-     *
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
-     *
-     * @api
+     * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
