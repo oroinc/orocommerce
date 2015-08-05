@@ -23,12 +23,12 @@ class PriceListType extends AbstractType
     /**
      * @var string
      */
-    protected $customerClass;
+    protected $accountClass;
 
     /**
      * @var string
      */
-    protected $customerGroupClass;
+    protected $accountGroupClass;
 
     /**
      * @var string
@@ -44,19 +44,19 @@ class PriceListType extends AbstractType
     }
 
     /**
-     * @param string $customerClass
+     * @param string $accountClass
      */
-    public function setCustomerClass($customerClass)
+    public function setAccountClass($accountClass)
     {
-        $this->customerClass = $customerClass;
+        $this->accountClass = $accountClass;
     }
 
     /**
-     * @param string $customerGroupClass
+     * @param string $accountGroupClass
      */
-    public function setCustomerGroupClass($customerGroupClass)
+    public function setAccountGroupClass($accountGroupClass)
     {
-        $this->customerGroupClass = $customerGroupClass;
+        $this->accountGroupClass = $accountGroupClass;
     }
 
     /**
@@ -89,40 +89,40 @@ class PriceListType extends AbstractType
                 ]
             )
             ->add(
-                'appendCustomers',
+                'appendAccounts',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => $this->customerClass,
+                    'class' => $this->accountClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
                 ]
             )
             ->add(
-                'removeCustomers',
+                'removeAccounts',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => $this->customerClass,
+                    'class' => $this->accountClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
                 ]
             )
             ->add(
-                'appendCustomerGroups',
+                'appendAccountGroups',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => $this->customerGroupClass,
+                    'class' => $this->accountGroupClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
                 ]
             )
             ->add(
-                'removeCustomerGroups',
+                'removeAccountGroups',
                 EntityIdentifierType::NAME,
                 [
-                    'class' => $this->customerGroupClass,
+                    'class' => $this->accountGroupClass,
                     'required' => false,
                     'mapped' => false,
                     'multiple' => true,
