@@ -12,7 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Acl\Extension\ActionAclExtension;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -28,7 +28,7 @@ class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureIn
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles'];
+        return ['OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles'];
     }
 
     /**
