@@ -118,7 +118,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var OrderAddress
      *
-     * @ORM\OneToOne(targetEntity="OrderAddress")
+     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
      * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -133,7 +133,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var OrderAddress
      *
-     * @ORM\OneToOne(targetEntity="OrderAddress")
+     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
      * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={

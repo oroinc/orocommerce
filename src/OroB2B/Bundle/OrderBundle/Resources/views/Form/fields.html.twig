@@ -1,0 +1,11 @@
+{% block orob2b_order_address_type_widget %}
+    {% if form.parent is not empty %}
+        <div {{ block('widget_container_attributes') }}>
+            {{ form_row(form.accountAddress) }}
+            {{ block('oro_address_rows') }}
+        </div>
+    {% else %}
+        {{ form_row(form.accountAddress) }}
+        {{ block('oro_address_rows') }}
+    {% endif %}
+{% endblock %}

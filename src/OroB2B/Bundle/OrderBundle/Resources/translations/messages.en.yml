@@ -6,7 +6,8 @@ orob2b:
         id.label: Numeric ID
         identifier.label: ID
         owner.label: Owner
-        organization.label: Organization
+        shipping_address.label: Shipping Address
+        billing_address.label: Billing Address
 
         menu:
             sales_tab.label: Sales
@@ -35,3 +36,6 @@ orob2b:
                 address_billing_account_user_use_default: Use the default billing address from the account user's address book
                 address_billing_account_user_use_any: Use any billing address from the account user's address book
                 address_billing_allow_manual: Enter the billing address manually
+
+        form:
+            select_address: Select Predefined Address
