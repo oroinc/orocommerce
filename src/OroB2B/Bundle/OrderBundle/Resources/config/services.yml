@@ -8,6 +8,8 @@ parameters:
 
     orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
 
+    orob2b_order.manager.order_address.class: OroB2B\Bundle\OrderBundle\Model\OrderAddressManager
+
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -32,3 +34,13 @@ services:
             - @doctrine
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%
+
+    orob2b_order.manager.order_address:
+        class: %orob2b_order.manager.order_address.class%
+        arguments:
+            - @orob2b_order.order.provider.order_address
+            - @doctrine
+            - %orob2b_order.entity.order_address.class%
+        calls:
+            - [addEntity, ['a', %orob2b_account.entity.account_address.class%]]
+            - [addEntity, ['au', %orob2b_account.entity.account_user_address.class%]]

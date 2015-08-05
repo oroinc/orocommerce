@@ -8,7 +8,9 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
 
@@ -86,7 +88,7 @@ class OrderAddressProvider
     /**
      * @param Account $account
      * @param string $type
-     * @return array
+     * @return AccountAddress[]
      * @throws \InvalidArgumentException
      */
     public function getAccountAddresses(Account $account, $type)
@@ -107,7 +109,7 @@ class OrderAddressProvider
     /**
      * @param AccountUser $accountUser
      * @param string $type
-     * @return array
+     * @return AccountUserAddress[]
      * @throws \InvalidArgumentException
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type)

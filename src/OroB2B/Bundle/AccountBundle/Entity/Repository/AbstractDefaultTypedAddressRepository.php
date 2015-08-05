@@ -20,7 +20,7 @@ abstract class AbstractDefaultTypedAddressRepository extends EntityRepository
             ->innerJoin(
                 'a.types',
                 'types',
-                Join::ON,
+                Join::WITH,
                 $qb->expr()->eq('IDENTITY(types.type)', ':type')
             )
             ->setParameter('type', $type)

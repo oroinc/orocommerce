@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+
 class OrderType extends AbstractType
 {
     const NAME = 'orob2b_order_type';
@@ -19,15 +21,25 @@ class OrderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            // @todo: user selector
+            ->add('accountUser', 'entity', ['class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'])
             ->add(
                 'billingAddress',
                 OrderAddressType::NAME,
-                ['label' => 'orob2b.order.billing_address.label']
+                [
+                    'label' => 'orob2b.order.billing_address.label',
+                    'order' => $options['data'],
+                    'addressType' => AddressType::TYPE_BILLING,
+                ]
             )
             ->add(
                 'shippingAddress',
                 OrderAddressType::NAME,
-                ['label' => 'orob2b.order.shipping_address.label']
+                [
+                    'label' => 'orob2b.order.shipping_address.label',
+                    'order' => $options['data'],
+                    'addressType' => AddressType::TYPE_SHIPPING,
+                ]
             );
     }
 

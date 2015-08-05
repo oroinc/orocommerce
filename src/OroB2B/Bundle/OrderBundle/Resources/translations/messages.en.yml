@@ -38,4 +38,6 @@ orob2b:
                 address_billing_allow_manual: Enter the billing address manually
 
         form:
-            select_address: Select Predefined Address
+            group:
+                account: Account Addresses
+                account_user: Account User Addresses
