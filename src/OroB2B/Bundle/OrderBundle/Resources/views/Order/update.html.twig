@@ -4,6 +4,8 @@
 
 {% set formAction = entity.id ? path('orob2b_order_update', { 'id': entity.id }) : path('orob2b_order_create')  %}
 
+{% form_theme form with ['OroB2BOrderBundle:Form:fields.html.twig'] %}
+
 {% block navButtons %}
     {% if entity.id and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
@@ -42,15 +44,27 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
-    {% set dataBlocks = [{
+    {% set dataBlocks = [
+        {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
+            'subblocks': []
+        },
+        {
+            'title': 'orob2b.order.billing_address.label'|trans,
+            'class': 'active',
             'subblocks': [{
-                'title': '',
-                'data': []
+                'data': [form_widget(form.billingAddress)]
             }]
-        }]
-    %}
+        },
+        {
+            'title': 'orob2b.order.shipping_address.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [form_widget(form.shippingAddress)]
+            }]
+        }
+    ] %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}

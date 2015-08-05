@@ -1,5 +1,6 @@
 parameters:
     orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
+    orob2b_order.form.type.order_address.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType
 
 services:
     orob2b_order.form.type.order:
@@ -8,3 +9,10 @@ services:
             - { name: form.type, alias: orob2b_order_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
+
+    orob2b_order.form.type.order_address:
+        class: %orob2b_order.form.type.order_address.class%
+        tags:
+            - { name: form.type, alias: orob2b_order_address_type }
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_address.class%]]
