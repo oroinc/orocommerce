@@ -118,6 +118,10 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
         $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
+
+        $shoppingList->expects($this->any())
             ->method('getOwner')
             ->willReturn(new AccountUser());
 
