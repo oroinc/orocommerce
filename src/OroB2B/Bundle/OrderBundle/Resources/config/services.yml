@@ -1,5 +1,7 @@
 parameters:
     orob2b_order.entity.order.class: OroB2B\Bundle\OrderBundle\Entity\Order
+    orob2b_order.entity.order_address.class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
+
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
