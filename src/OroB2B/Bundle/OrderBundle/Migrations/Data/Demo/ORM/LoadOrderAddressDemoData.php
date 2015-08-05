@@ -12,8 +12,8 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 
 class LoadOrderAddressDemoData extends AbstractFixture
 {
-    const ORDER_ADDRESS_1 = 'Billing Address';
-    const ORDER_ADDRESS_2 = 'Shipping Address';
+    const ORDER_ADDRESS_1 = 'Office Address';
+    const ORDER_ADDRESS_2 = 'Warehouse Address';
 
     /**
      * @var array

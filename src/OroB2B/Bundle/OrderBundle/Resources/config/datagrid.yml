@@ -56,7 +56,7 @@ datagrid:
                 label:         orob2b.order.payment_term.label
             shipUntil:
                 label:         orob2b.order.ship_until.label
-                frontend_type: datetime
+                frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
