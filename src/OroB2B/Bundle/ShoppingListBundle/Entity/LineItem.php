@@ -105,7 +105,7 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
      *      }
      * )
      */
-    protected $quantity;
+    protected $quantity = 1;
 
     /**
      * @var ProductUnit

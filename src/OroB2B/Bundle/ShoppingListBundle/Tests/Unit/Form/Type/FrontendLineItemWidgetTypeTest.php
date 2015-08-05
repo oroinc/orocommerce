@@ -6,12 +6,18 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
+
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -66,7 +72,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
             $shoppingListManager,
             $this->getTokenStorage()
         );
-        $this->type->setDataClass(self::DATA_CLASS);
+
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
     }
 
@@ -81,13 +87,16 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
                 2 => $this->getShoppingList(2, 'Shopping List 2'),
             ]
         );
+
         $productUnitSelection = new EntityType(
             $this->prepareProductUnitSelectionChoices(),
             ProductUnitSelectionType::NAME
         );
+
         return [
             new PreloadedExtension(
                 [
+                    FrontendLineItemType::NAME     => $this->getParentForm(),
                     $entityType->getName()         => $entityType,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                 ],
@@ -98,13 +107,80 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $lineItem = (new LineItem())
+            ->setProduct($this->getProductEntityWithPrecision(1, 'kg', 3));
+
+        $form = $this->factory->create($this->type, $lineItem);
 
         $this->assertTrue($form->has('shoppingList'));
         $this->assertTrue($form->has('quantity'));
         $this->assertTrue($form->has('unit'));
-        $this->assertTrue($form->has('notes'));
         $this->assertTrue($form->has('shoppingListLabel'));
+    }
+
+    /**
+     * @dataProvider submitDataProvider
+     *
+     * @param mixed $defaultData
+     * @param mixed $submittedData
+     * @param mixed $expectedData
+     */
+    public function testSubmit($defaultData, $submittedData, $expectedData)
+    {
+        $form = $this->factory->create($this->type, $defaultData, []);
+
+        $this->assertEquals($defaultData, $form->getData());
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function submitDataProvider()
+    {
+        $product = $this->getProductEntityWithPrecision(1, 'kg', 3);
+        $defaultLineItem = new LineItem();
+        $defaultLineItem->setProduct($product);
+
+        /** @var ShoppingList $expectedShoppingList */
+        $expectedShoppingList = $this->getShoppingList(1, 'Shopping List 1');
+        $expectedLineItem = clone $defaultLineItem;
+        $expectedLineItem
+            ->setQuantity(15.112)
+            ->setUnit($product->getUnitPrecision('kg')->getUnit())
+            ->setShoppingList($expectedShoppingList);
+
+        $expectedLineItem2 = clone $defaultLineItem;
+        $expectedLineItem2
+            ->setQuantity(10)
+            ->setUnit($product->getUnitPrecision('kg')->getUnit())
+            ->setShoppingList($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
+
+        return [
+            'New line item with existing shopping list' => [
+                'defaultData'   => $defaultLineItem,
+                'submittedData' => [
+                    'shoppingList'  => 1,
+                    'quantity' => 15.1119,
+                    'unit'     => 'kg',
+                    'shoppingListLabel' => null
+                ],
+                'expectedData'  => $expectedLineItem
+            ],
+            'New line item with new shopping list' => [
+                'defaultData'   => $defaultLineItem,
+                'submittedData' => [
+                    'shoppingList'  => null,
+                    'quantity' => 10,
+                    'unit'     => 'kg',
+                    'shoppingListLabel' => 'New Shopping List'
+                ],
+                'expectedData'  => $expectedLineItem2,
+            ]
+        ];
     }
 
     public function testCheckShoppingListLabel()
@@ -226,6 +302,30 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
     }
 
     /**
+     * @param integer $productId
+     * @param string  $unitCode
+     * @param integer $precision
+     *
+     * @return Product
+     */
+    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
+    {
+        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+
+        $unit = new ProductUnit();
+        $unit->setCode($unitCode);
+
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision
+            ->setPrecision($precision)
+            ->setUnit($unit)
+            ->setProduct($product);
+
+        return $product->addUnitPrecision($unitPrecision);
+    }
+
+    /**
      * @param string $className
      * @param int    $id
      *
@@ -254,5 +354,45 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
         }
 
         return $choices;
+    }
+
+    /**
+     * @return FrontendLineItemType
+     */
+    protected function getParentForm()
+    {
+        $form = new FrontendLineItemType();
+        $form->setLineItemSubscriber($this->getLineItemSubscriber());
+        $form->setDataClass(self::DATA_CLASS);
+
+        return $form;
+    }
+
+    /**
+     * @return LineItemSubscriber
+     */
+    protected function getLineItemSubscriber()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
+        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lineItemManager->expects($this->any())
+            ->method('roundProductQuantity')
+            ->willReturnCallback(
+                function ($product, $unit, $quantity) {
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
+                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
+                }
+            );
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+
+        return $lineItemSubscriber;
     }
 }

@@ -81,13 +81,13 @@ class FrontendLineItemType extends AbstractType
     }
 
     /**
-     * @param string $productClass
+     * @param string $dataClass
      *
      * @return $this
      */
-    public function setDataClass($productClass)
+    public function setDataClass($dataClass)
     {
-        $this->dataClass = $productClass;
+        $this->dataClass = $dataClass;
 
         return $this;
     }

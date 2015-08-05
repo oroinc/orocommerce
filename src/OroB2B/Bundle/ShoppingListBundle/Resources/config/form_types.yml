@@ -40,7 +40,6 @@ services:
             - @orob2b_shopping_list.shopping_list.manager
             - @security.token_storage
         calls:
-            - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget }

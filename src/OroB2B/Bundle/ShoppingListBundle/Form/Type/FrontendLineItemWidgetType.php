@@ -24,11 +24,6 @@ class FrontendLineItemWidgetType extends AbstractType
     const NAME = 'orob2b_shopping_list_frontend_line_item_widget';
 
     /**
-     * @var string
-     */
-    protected $dataClass;
-
-    /**
      * @var ManagerRegistry
      */
     protected $registry;
@@ -117,6 +112,9 @@ class FrontendLineItemWidgetType extends AbstractType
             $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
+
+            // TODO: shopping list is not being set by FormEvent::setData for FormIntegrationTestCase.
+            $event->getForm()->getData()->setShoppingList($shoppingList);
         }
     }
 
@@ -172,17 +170,5 @@ class FrontendLineItemWidgetType extends AbstractType
     public function setShoppingListClass($shoppingListClass)
     {
         $this->shoppingListClass = $shoppingListClass;
-    }
-
-    /**
-     * @param string $productClass
-     *
-     * @return $this
-     */
-    public function setDataClass($productClass)
-    {
-        $this->dataClass = $productClass;
-
-        return $this;
     }
 }
