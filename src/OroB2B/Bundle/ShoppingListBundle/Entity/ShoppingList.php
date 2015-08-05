@@ -370,7 +370,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
         return $this;
     }
 
-
     /**
      * Pre persist event handler
      *

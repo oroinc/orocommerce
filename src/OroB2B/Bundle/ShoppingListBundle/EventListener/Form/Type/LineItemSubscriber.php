@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class LineItemSubscriber implements EventSubscriberInterface
 {

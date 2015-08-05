@@ -2,22 +2,22 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use Symfony\Component\Validator\Constraints\Callback;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Validator\Constraints\Callback;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendLineItemWidgetType extends AbstractType
 {

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,6 +24,7 @@ class ShoppingListController extends Controller
     /**
      * @Route("/", name="orob2b_shopping_list_frontend_index")
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:index.html.twig")
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @return array
      */
@@ -58,6 +60,7 @@ class ShoppingListController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_shopping_list_frontend_info", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend/widget:info.html.twig")
+     * @AclAncestor("orob2b_shopping_list_frontend_view")
      *
      * @param ShoppingList $shoppingList
      *
@@ -126,12 +129,7 @@ class ShoppingListController extends Controller
 
     /**
      * @Route("/set-current/{id}", name="orob2b_shopping_list_frontend_set_current", requirements={"id"="\d+"})
-     * @Acl(
-     *      id="orob2b_shopping_list_frontend_set_current",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:ShoppingList",
-     *      permission="EDIT"
-     * )
+     * @AclAncestor("orob2b_shopping_list_frontend_update")
      *
      * @param ShoppingList $shoppingList
      *

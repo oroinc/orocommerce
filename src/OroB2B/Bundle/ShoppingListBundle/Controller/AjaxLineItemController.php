@@ -6,8 +6,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -15,7 +16,6 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
-use Symfony\Component\HttpFoundation\Request;
 
 class AjaxLineItemController extends Controller
 {
