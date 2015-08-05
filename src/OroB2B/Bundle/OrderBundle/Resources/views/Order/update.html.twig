@@ -44,22 +44,27 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
-    {% set dataBlocks = [{
-        'title': 'orob2b.order.sections.general'|trans,
-        'class': 'active',
-        'subblocks': [
-            {
-                'data': []
-            },
-            {
-                'title': 'orob2b.order.sections.addresses'|trans,
-                'data': [
-                    form_row(form.billingAddress),
-                    form_row(form.shippingAddress)
-                ]
-            },
-        ]
-    }] %}
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.order.sections.general'|trans,
+            'class': 'active',
+            'subblocks': []
+        },
+        {
+            'title': 'orob2b.order.billing_address.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [form_widget(form.billingAddress)]
+            }]
+        },
+        {
+            'title': 'orob2b.order.billing_address.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [form_widget(form.shippingAddress)]
+            }]
+        }
+    ] %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}

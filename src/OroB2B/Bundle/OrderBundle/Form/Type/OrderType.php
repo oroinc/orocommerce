@@ -22,12 +22,12 @@ class OrderType extends AbstractType
             ->add(
                 'billingAddress',
                 OrderAddressType::NAME,
-                ['label' => 'orob2b.order.billing_address.label', 'mapped' => false]
+                ['label' => 'orob2b.order.billing_address.label']
             )
             ->add(
                 'shippingAddress',
                 OrderAddressType::NAME,
-                ['label' => 'orob2b.order.shipping_address.label', 'mapped' => false]
+                ['label' => 'orob2b.order.shipping_address.label']
             );
     }
 
