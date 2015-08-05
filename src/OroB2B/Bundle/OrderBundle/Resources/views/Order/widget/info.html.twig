@@ -1,5 +1,6 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroAddressBundle::macros.html.twig' as address %}
 
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
@@ -23,11 +24,11 @@
         </div>
         <div class="responsive-block">
             {% if order.paymentTerm %}
-                {{ UI.renderProperty('orob2b.order.billing_address.label'|trans, order.billingAddress|oro_format_address) }}
+                {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
             {% endif %}
 
             {% if order.paymentTerm %}
-                {{ UI.renderProperty('orob2b.order.shipping_address.label'|trans, order.shippingAddress|oro_format_address) }}
+                {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
             {% endif %}
 
             {{ UI.renderHtmlProperty('orob2b.order.customer_notes.label'|trans, order.customerNotes|escape) }}
