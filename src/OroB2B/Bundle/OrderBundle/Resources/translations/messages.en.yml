@@ -25,7 +25,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            addresses: Addresses
 
         form:
             select_address: Select Predefined Address
