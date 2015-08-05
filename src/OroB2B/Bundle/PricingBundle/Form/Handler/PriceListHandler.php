@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -56,10 +56,10 @@ class PriceListHandler
             if ($this->form->isValid()) {
                 $this->onSuccess(
                     $priceList,
-                    $this->form->get('appendCustomers')->getData(),
-                    $this->form->get('removeCustomers')->getData(),
-                    $this->form->get('appendCustomerGroups')->getData(),
-                    $this->form->get('removeCustomerGroups')->getData(),
+                    $this->form->get('appendAccounts')->getData(),
+                    $this->form->get('removeAccounts')->getData(),
+                    $this->form->get('appendAccountGroups')->getData(),
+                    $this->form->get('removeAccountGroups')->getData(),
                     $this->form->get('appendWebsites')->getData(),
                     $this->form->get('removeWebsites')->getData()
                 );
@@ -75,62 +75,62 @@ class PriceListHandler
      * "Success" form handler
      *
      * @param PriceList $entity
-     * @param Customer[] $appendCustomers
-     * @param Customer[] $removeCustomers
-     * @param CustomerGroup[] $appendCustomerGroups
-     * @param CustomerGroup[] $removeCustomerGroups
+     * @param Account[] $appendAccounts
+     * @param Account[] $removeAccounts
+     * @param AccountGroup[] $appendAccountGroups
+     * @param AccountGroup[] $removeAccountGroups
      * @param Website[] $appendWebsites
      * @param Website[] $removeWebsites
      */
     protected function onSuccess(
         PriceList $entity,
-        array $appendCustomers,
-        array $removeCustomers,
-        array $appendCustomerGroups,
-        array $removeCustomerGroups,
+        array $appendAccounts,
+        array $removeAccounts,
+        array $appendAccountGroups,
+        array $removeAccountGroups,
         array $appendWebsites,
         array $removeWebsites
     ) {
         $this->manager->persist($entity);
 
         // first stage - remove relations to entities, used to prevent unique key conflicts
-        $this->setPriceListToCustomers(array_merge($appendCustomers, $removeCustomers));
-        $this->setPriceListToCustomerGroups(array_merge($appendCustomerGroups, $removeCustomerGroups));
+        $this->setPriceListToAccounts(array_merge($appendAccounts, $removeAccounts));
+        $this->setPriceListToAccountGroups(array_merge($appendAccountGroups, $removeAccountGroups));
         $this->setPriceListToWebsites(array_merge($appendWebsites, $removeWebsites));
 
         $this->manager->flush();
 
         // second stage - set correct relations
-        $this->setPriceListToCustomers($appendCustomers, $entity);
-        $this->setPriceListToCustomerGroups($appendCustomerGroups, $entity);
+        $this->setPriceListToAccounts($appendAccounts, $entity);
+        $this->setPriceListToAccountGroups($appendAccountGroups, $entity);
         $this->setPriceListToWebsites($appendWebsites, $entity);
 
         $this->manager->flush();
     }
 
     /**
-     * @param Customer[] $customers
+     * @param Account[] $accounts
      * @param PriceList|null $priceList
      */
-    protected function setPriceListToCustomers(array $customers, PriceList $priceList = null)
+    protected function setPriceListToAccounts(array $accounts, PriceList $priceList = null)
     {
         $repository = $this->getPriceListRepository();
 
-        foreach ($customers as $customer) {
-            $repository->setPriceListToCustomer($customer, $priceList);
+        foreach ($accounts as $account) {
+            $repository->setPriceListToAccount($account, $priceList);
         }
     }
 
     /**
-     * @param CustomerGroup[] $customerGroups
+     * @param AccountGroup[] $accountGroups
      * @param PriceList|null $priceList
      */
-    protected function setPriceListToCustomerGroups(array $customerGroups, PriceList $priceList = null)
+    protected function setPriceListToAccountGroups(array $accountGroups, PriceList $priceList = null)
     {
         $repository = $this->getPriceListRepository();
 
-        foreach ($customerGroups as $customerGroup) {
-            $repository->setPriceListToCustomerGroup($customerGroup, $priceList);
+        foreach ($accountGroups as $accountGroup) {
+            $repository->setPriceListToAccountGroup($accountGroup, $priceList);
         }
     }
 

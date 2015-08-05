@@ -35,7 +35,7 @@ orob2b:
             quote_product_requests.label: 'Quote Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            comment_customer.label: 'Customer Notes'
+            comment_account.label: 'Account Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
             type:

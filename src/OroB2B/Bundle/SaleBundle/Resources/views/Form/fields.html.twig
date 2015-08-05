@@ -16,7 +16,7 @@
 {% block orob2b_sale_quote_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
 
-    {% set commentCustomer = form.vars.value.commentCustomer|default(null) %}
+    {% set commentAccount = form.vars.value.commentAccount|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
 
     <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }}
@@ -54,9 +54,9 @@
                         {{ 'orob2b.sale.btn.add_seller_notes'|trans }}
                     </a>
                 </div>
-                {% if commentCustomer %}
-                    <div class="sale-quoteproduct-notes sale-quoteproduct-notes-customer sale-quoteproductrequest-only">
-                        {{ form_row(form.commentCustomer) }}
+                {% if commentAccount %}
+                    <div class="sale-quoteproduct-notes sale-quoteproduct-notes-account sale-quoteproductrequest-only">
+                        {{ form_row(form.commentAccount) }}
                     </div>
                 {% endif %}
                 <div class="sale-quoteproduct-notes sale-quoteproduct-notes-seller ">

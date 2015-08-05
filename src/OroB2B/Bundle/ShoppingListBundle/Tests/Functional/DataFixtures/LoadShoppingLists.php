@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
@@ -47,7 +47,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
-        $shoppingList->setAccount($accountUser->getCustomer());
+        $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
 
@@ -65,7 +65,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getAccountUser(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
         if (!$accountUser) {

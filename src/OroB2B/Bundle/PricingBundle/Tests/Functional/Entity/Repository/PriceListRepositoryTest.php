@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -56,66 +56,66 @@ class PriceListRepositoryTest extends WebTestCase
         return reset($defaultPriceLists);
     }
 
-    public function testCustomerPriceList()
+    public function testAccountPriceList()
     {
-        /** @var Customer $customer */
-        $customer = $this->getReference('customer.orphan');
+        /** @var Account $account */
+        $account = $this->getReference('account.orphan');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_3');
 
-        $this->assertTrue($priceList->getCustomers()->contains($customer));
+        $this->assertTrue($priceList->getAccounts()->contains($account));
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getPriceListByCustomer($customer)->getId()
+            $this->getRepository()->getPriceListByAccount($account)->getId()
         );
-        $this->getRepository()->setPriceListToCustomer($customer, null);
+        $this->getRepository()->setPriceListToAccount($account, null);
         $this->getManager()->flush();
 
         /** @var PriceList $newPriceList */
         $newPriceList = $this->getReference('price_list_2');
 
-        $this->getRepository()->setPriceListToCustomer($customer, $newPriceList);
+        $this->getRepository()->setPriceListToAccount($account, $newPriceList);
         $this->getManager()->flush();
 
-        $this->assertFalse($priceList->getCustomers()->contains($customer));
-        $this->assertTrue($newPriceList->getCustomers()->contains($customer));
+        $this->assertFalse($priceList->getAccounts()->contains($account));
+        $this->assertTrue($newPriceList->getAccounts()->contains($account));
 
         $this->assertEquals(
             $newPriceList->getId(),
-            $this->getRepository()->getPriceListByCustomer($customer)->getId()
+            $this->getRepository()->getPriceListByAccount($account)->getId()
         );
     }
 
-    public function testCustomerGroupPriceList()
+    public function testAccountGroupPriceList()
     {
-        /** @var CustomerGroup $customerGroup */
-        $customerGroup = $this->getReference('customer_group.group1');
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $this->assertTrue($priceList->getCustomerGroups()->contains($customerGroup));
+        $this->assertTrue($priceList->getAccountGroups()->contains($accountGroup));
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)->getId()
+            $this->getRepository()->getPriceListByAccountGroup($accountGroup)->getId()
         );
 
         /** @var PriceList $newPriceList */
         $newPriceList = $this->getReference('price_list_2');
 
-        $this->getRepository()->setPriceListToCustomerGroup($customerGroup, $newPriceList);
+        $this->getRepository()->setPriceListToAccountGroup($accountGroup, $newPriceList);
 
         $this->getManager()->flush();
 
-        $this->assertFalse($priceList->getCustomerGroups()->contains($customerGroup));
-        $this->assertTrue($newPriceList->getCustomerGroups()->contains($customerGroup));
+        $this->assertFalse($priceList->getAccountGroups()->contains($accountGroup));
+        $this->assertTrue($newPriceList->getAccountGroups()->contains($accountGroup));
 
         $this->assertEquals(
             $newPriceList->getId(),
-            $this->getRepository()->getPriceListByCustomerGroup($customerGroup)->getId()
+            $this->getRepository()->getPriceListByAccountGroup($accountGroup)->getId()
         );
     }
 
