@@ -173,6 +173,25 @@ class AjaxLineItemControllerTest extends WebTestCase
         $this->assertSaved($form);
     }
 
+    public function testAddProductsMassAction()
+    {
+        $url = $this->getUrl(
+            'orob2b_shopping_list_add_products_massaction',
+            [
+                'gridName' => 'frontend-products-grid',
+                'actionName' => 'addproducts',
+                'shoppingList' => 'current',
+                'inset' => 1,
+                'values' => $this->getReference('product.1')->getId()
+            ]
+        );
+        $this->client->request('GET', $url);
+        $result = $this->client->getResponse();
+        $data = json_decode($result->getContent(), true);
+        $this->assertTrue($data['successful'] === true);
+        $this->assertTrue($data['count'] === 1);
+    }
+
     /**
      * @param Product $product
      *
