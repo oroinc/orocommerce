@@ -7,6 +7,8 @@ orob2b:
         identifier.label: ID
         owner.label: Owner
         organization.label: Organization
+        shipping_address.label: Shipping Address
+        billing_address.label: Billing Address
 
         menu:
             sales_tab.label: Sales
@@ -24,6 +26,9 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        form:
+            select_address: Select Predefined Address
 
         totals:
             subtotal: Subtotal
