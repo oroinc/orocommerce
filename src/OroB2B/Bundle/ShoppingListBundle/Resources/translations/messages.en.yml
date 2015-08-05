@@ -56,6 +56,8 @@ orob2b:
             product.label: Product
             shopping_list.label: Shopping List
             unit.label: Unit
+            organization.label: Organization
+            owner.label: Owner
             add_line_item: Add Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
