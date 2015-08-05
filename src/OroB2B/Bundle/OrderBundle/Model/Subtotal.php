@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Model;
 
-class Total
+class Subtotal
 {
     /**
      * @var string
@@ -35,7 +35,7 @@ class Total
     /**
      * @param string $name
      *
-     * @return Total
+     * @return Subtotal
      */
     public function setName($name)
     {
@@ -54,7 +54,7 @@ class Total
     /**
      * @param string $label
      *
-     * @return Total
+     * @return Subtotal
      */
     public function setLabel($label)
     {
@@ -73,7 +73,7 @@ class Total
     /**
      * @param float $amount
      *
-     * @return Total
+     * @return Subtotal
      */
     public function setAmount($amount)
     {
@@ -92,7 +92,7 @@ class Total
     /**
      * @param string $currency
      *
-     * @return Total
+     * @return Subtotal
      */
     public function setCurrency($currency)
     {

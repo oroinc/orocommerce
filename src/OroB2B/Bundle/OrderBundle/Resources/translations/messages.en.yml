@@ -30,5 +30,5 @@ orob2b:
         form:
             select_address: Select Predefined Address
 
-        totals:
+        subtotals:
             subtotal: Subtotal
