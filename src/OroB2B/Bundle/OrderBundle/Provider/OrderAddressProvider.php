@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -94,10 +93,7 @@ class OrderAddressProvider
         $this->assertType($type);
         $permissionsMap = $this->permissionsByType[$type];
 
-        $loggedUser = $this->securityFacade->getLoggedUser();
-        if ($loggedUser instanceof User
-            || $this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_ADDRESS_ANY])
-        ) {
+        if ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_ADDRESS_ANY])) {
             return $this->getAccountAddressRepository()->getAddressesByType($account, $type);
         }
 
@@ -116,10 +112,7 @@ class OrderAddressProvider
         $permissionsMap = $this->permissionsByType[$type];
 
         $repository = $this->getAccountUserAddressRepository();
-        $loggedUser = $this->securityFacade->getLoggedUser();
-        if ($loggedUser instanceof User
-            || $this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_ANY])
-        ) {
+        if ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_ANY])) {
             return $repository->getAddressesByType($accountUser, $type);
         } elseif ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_DEFAULT])) {
             return $repository->getDefaultAddressesByType($accountUser, $type);
