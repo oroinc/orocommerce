@@ -24,20 +24,35 @@ class SubtotalsProvider
         $this->translator = $translator;
     }
 
+    /**
+     * Collect all order subtotals
+     *
+     * @param Order $order
+     *
+     * @return ArrayCollection
+     */
     public function getSubtotals(Order $order)
     {
         $subtotals = new ArrayCollection();
 
-        $subtotals->set('subtotal', $this->getSubtotal($order));
+        $subtotal = $this->getSubtotal($order);
+        $subtotals->set($subtotal->getType(), $subtotal);
 
         return $subtotals;
     }
 
-    private function getSubtotal(Order $order)
+    /**
+     * Get order subtotal
+     *
+     * @param Order $order
+     *
+     * @return Subtotal
+     */
+    protected function getSubtotal(Order $order)
     {
         $subtotal = new Subtotal();
 
-        $subtotal->setType('subtotal');
+        $subtotal->setType(Subtotal::TYPE_SUBTOTAL);
         $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
         $subtotal->setLabel($this->translator->trans($translation));
 
