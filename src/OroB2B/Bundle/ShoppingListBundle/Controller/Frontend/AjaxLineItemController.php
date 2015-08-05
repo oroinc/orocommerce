@@ -60,6 +60,9 @@ class AjaxLineItemController extends Controller
 
         if ($request->get('_wid')) {
             $result = $handler->updateSavedId($result);
+            if ($lineItem->getShoppingList()) {
+                $result['shoppingListId'] = $lineItem->getShoppingList()->getId();
+            }
         }
 
         return $result;
