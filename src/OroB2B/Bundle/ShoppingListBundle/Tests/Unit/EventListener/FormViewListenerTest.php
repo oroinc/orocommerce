@@ -14,7 +14,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\EventListener\FormViewListener;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -243,7 +243,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
-        $accountUser = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUser')
+        $accountUser = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

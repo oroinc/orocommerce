@@ -25,7 +25,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
@@ -245,7 +245,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
-        $accountUser = $this->getMockBuilder('OroB2B\Bundle\CustomerBundle\Entity\AccountUser')
+        $accountUser = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountUser')
             ->disableOriginalConstructor()
             ->getMock();
 

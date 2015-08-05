@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;

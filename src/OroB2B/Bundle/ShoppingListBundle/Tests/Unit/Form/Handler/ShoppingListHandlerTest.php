@@ -8,7 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\Test\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;

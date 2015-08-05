@@ -9,8 +9,8 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -46,7 +46,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(
                 (new AccountUser())
                     ->setFirstName('skip')
-                    ->setCustomer(new Customer())
+                    ->setAccount(new Account())
             );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */

@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
@@ -95,7 +95,7 @@ class ShoppingListController extends Controller
         $shoppingList
             ->setOwner($accountUser)
             ->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getCustomer())
+            ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);
 
         return $this->update($request, $shoppingList);

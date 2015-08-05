@@ -7,8 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -33,7 +33,7 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $this->accountUser = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BCustomerBundle:AccountUser')
+            ->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 
@@ -74,8 +74,8 @@ class ShoppingListRepositoryTest extends WebTestCase
         /** @var ShoppingList[] $accountShoppingLists */
         $accountShoppingLists = $qb->getQuery()->execute();
         foreach ($accountShoppingLists as $shoppingList) {
-            if ($shoppingList->getAccount() instanceof Customer) {
-                $this->assertEquals($account->getCustomer()->getId(), $shoppingList->getAccount()->getId());
+            if ($shoppingList->getAccount() instanceof Account) {
+                $this->assertEquals($account->getAccount()->getId(), $shoppingList->getAccount()->getId());
             } else {
                 $this->assertEquals($account->getId(), $shoppingList->getAccountUser()->getId());
             }
@@ -109,7 +109,7 @@ class ShoppingListRepositoryTest extends WebTestCase
      */
     public function getAccountUser()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BCustomerBundle:AccountUser')
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
     }
 

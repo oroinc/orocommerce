@@ -564,7 +564,7 @@
             <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
             <arg line="--exclude=SaleBundle/Migrations/Schema"/>
             <arg line="--exclude=ProductBundle/Migrations/Schema"/>
-            <arg line="--exclude=CustomerBundle/Migrations/Schema"/>
+            <arg line="--exclude=AccountBundle/Migrations/Schema"/>
             <arg line="--exclude=PricingBundle/Migrations/Schema"/>
             <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
             <arg line="--exclude=RFPBundle/Migrations/Schema"/>

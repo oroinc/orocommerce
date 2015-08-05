@@ -1,0 +1,42 @@
+parameters:
+    orob2b_account.entity.owners:
+        local_level: %orob2b_account.entity.account.class%
+        basic_level: %orob2b_account.entity.account_user.class%
+
+    orob2b_account.owner.frontend_ownership_metadata_provider.class: OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
+    orob2b_account.owner.decision_maker.class: OroB2B\Bundle\AccountBundle\Owner\EntityOwnershipDecisionMaker
+    orob2b_account.owner.tree_provider.class: OroB2B\Bundle\AccountBundle\Owner\FrontendOwnerTreeProvider
+
+services:
+    orob2b_account.owner.frontend_ownership_metadata_provider:
+        class: %orob2b_account.owner.frontend_ownership_metadata_provider.class%
+        arguments:
+            - %orob2b_account.entity.owners%
+        calls:
+            - [setContainer, ["@service_container"]]
+        tags:
+            - { name: oro_security.owner.metadata_provider, alias: frontend_ownership }
+
+    orob2b_account.owner.frontend_ownership_metadata_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ "oro_acl_entity_ownership.frontend.cache" ] ]
+
+    orob2b_account.owner.decision_maker:
+        public: false
+        class: %orob2b_account.owner.decision_maker.class%
+        parent: oro_security.owner.decision_maker.abstract
+        tags:
+           - { name: oro_security.owner.ownership_decision_maker, priority: 10 }
+
+    orob2b_account.owner.tree_provider:
+        public: false
+        parent: oro_security.abstract_ownership_tree_provider
+        class: %orob2b_account.owner.tree_provider.class%
+        tags:
+            - { name: oro_security.ownership.tree_provider }
+
+    orob2b_account.owner.frontend_ownership_tree_provider.cache:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ "oro_acl_owner_tree.frontend.cache" ] ]

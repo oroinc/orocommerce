@@ -15,7 +15,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 

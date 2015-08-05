@@ -11,8 +11,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
@@ -118,7 +118,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
@@ -141,15 +141,15 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUser;
 
     /**
-     * @var Customer
+     * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $account;
@@ -393,7 +393,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @return Customer
+     * @return Account
      */
     public function getAccount()
     {
@@ -401,11 +401,11 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      *
      * @return $this
      */
-    public function setAccount(Customer $account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 

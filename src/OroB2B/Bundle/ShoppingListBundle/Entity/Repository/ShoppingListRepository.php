@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\NonUniqueResultException;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
@@ -42,7 +42,7 @@ class ShoppingListRepository extends EntityRepository
             )
         )
             ->setParameter('accountUser', $accountUser)
-            ->setParameter('account', $accountUser->getCustomer());
+            ->setParameter('account', $accountUser->getAccount());
     }
 
     /**

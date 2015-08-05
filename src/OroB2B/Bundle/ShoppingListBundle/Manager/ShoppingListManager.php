@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
@@ -54,7 +54,7 @@ class ShoppingListManager
         $shoppingList
             ->setOwner($this->accountUser)
             ->setOrganization($this->accountUser->getOrganization())
-            ->setAccount($this->accountUser->getCustomer())
+            ->setAccount($this->accountUser->getAccount())
             ->setAccountUser($this->accountUser)
             ->setLabel($label);
 

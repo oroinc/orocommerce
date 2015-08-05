@@ -14,7 +14,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;

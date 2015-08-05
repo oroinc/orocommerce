@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -60,72 +60,72 @@ class PriceListRepository extends EntityRepository
     }
 
     /**
-     * @param Customer $customer
+     * @param Account $account
      * @return PriceList|null
      */
-    public function getPriceListByCustomer(Customer $customer)
+    public function getPriceListByAccount(Account $account)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.customers', 'customer')
-            ->andWhere('customer = :customer')
-            ->setParameter('customer', $customer)
+            ->innerJoin('priceList.accounts', 'account')
+            ->andWhere('account = :account')
+            ->setParameter('account', $account)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
     /**
-     * @param Customer $customer
+     * @param Account $account
      * @param PriceList $priceList
      */
-    public function setPriceListToCustomer(Customer $customer, PriceList $priceList = null)
+    public function setPriceListToAccount(Account $account, PriceList $priceList = null)
     {
-        $oldPriceList = $this->getPriceListByCustomer($customer);
+        $oldPriceList = $this->getPriceListByAccount($account);
 
         if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
             return;
         }
 
         if ($oldPriceList) {
-            $oldPriceList->removeCustomer($customer);
+            $oldPriceList->removeAccount($account);
         }
 
         if ($priceList) {
-            $priceList->addCustomer($customer);
+            $priceList->addAccount($account);
         }
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * @param AccountGroup $accountGroup
      * @return PriceList|null
      */
-    public function getPriceListByCustomerGroup(CustomerGroup $customerGroup)
+    public function getPriceListByAccountGroup(AccountGroup $accountGroup)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.customerGroups', 'customerGroup')
-            ->andWhere('customerGroup = :customerGroup')
-            ->setParameter('customerGroup', $customerGroup)
+            ->innerJoin('priceList.accountGroups', 'accountGroup')
+            ->andWhere('accountGroup = :accountGroup')
+            ->setParameter('accountGroup', $accountGroup)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * @param AccountGroup $accountGroup
      * @param PriceList $priceList
      */
-    public function setPriceListToCustomerGroup(CustomerGroup $customerGroup, PriceList $priceList = null)
+    public function setPriceListToAccountGroup(AccountGroup $accountGroup, PriceList $priceList = null)
     {
-        $oldPriceList = $this->getPriceListByCustomerGroup($customerGroup);
+        $oldPriceList = $this->getPriceListByAccountGroup($accountGroup);
 
         if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
             return;
         }
 
         if ($oldPriceList) {
-            $oldPriceList->removeCustomerGroup($customerGroup);
+            $oldPriceList->removeAccountGroup($accountGroup);
         }
 
         if ($priceList) {
-            $priceList->addCustomerGroup($customerGroup);
+            $priceList->addAccountGroup($accountGroup);
         }
     }
 
