@@ -50,7 +50,6 @@ class CustomerControllerTest extends WebTestCase
         /** @var CustomerGroup $group */
         $group = $this->getReference('customer_group.group1');
         $internalRating = $this->getReference('internal_rating.1 of 5');
-
         $this->assertCustomerSave($crawler, self::CUSTOMER_NAME, $parent, $group, $internalRating);
     }
 
@@ -116,7 +115,6 @@ class CustomerControllerTest extends WebTestCase
      * @param string $name
      * @param Customer $parent
      * @param CustomerGroup $group
-     * @param AbstractEnumValue $internalRating
      */
     protected function assertCustomerSave(
         Crawler $crawler,
