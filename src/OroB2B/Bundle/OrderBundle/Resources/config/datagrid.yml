@@ -11,21 +11,44 @@ datagrid:
                 select:
                     - order1.id
                     - order1.identifier
+                    - order1.poNumber
+                    - order1.currency
+                    - order1.subtotal
+                    - order1.shipUntil
                     - order1.createdAt
                     - order1.updatedAt
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
+                    - paymentTerm.label as paymentTermLabel
                 from:
                     - { table: %orob2b_order.entity.order.class%, alias: order1 }
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
+                        - { join: order1.paymentTerm, alias: paymentTerm }
         columns:
             id:
                 label:         orob2b.order.id.label
             identifier:
                 label:         orob2b.order.identifier.label
+            poNumber:
+                label:         orob2b.order.po_number.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/poNumber.html.twig
+            currency:
+                label:         orob2b.order.currency.label
+            subtotal:
+                label:         orob2b.order.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
             owner:
                 label:         orob2b.order.owner.label
+            paymentTermLabel:
+                label:         orob2b.order.payment_term.label
+            shipUntil:
+                label:         orob2b.order.ship_until.label
+                frontend_type: datetime
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -52,8 +75,18 @@ datagrid:
                     data_name: order1.id
                 identifier:
                     data_name: order1.identifier
+                poNumber:
+                    data_name: order1.poNumber
+                currency:
+                    data_name: order1.currency
+                subtotal:
+                    data_name: order1.subtotal
                 owner:
                     data_name: owner
+                paymentTermLabel:
+                    data_name: paymentTermLabel
+                shipUntil:
+                    data_name: order1.shipUntil
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -68,9 +101,24 @@ datagrid:
                 identifier:
                     type:      string
                     data_name: order1.identifier
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                currency:
+                    type:      choice
+                    data_name: order1.currency
+                subtotal:
+                    type:      number
+                    data_name: order1.subtotal
                 owner:
                     type:      string
                     data_name: owner
+                paymentTermLabel:
+                    type:      string
+                    data_name: paymentTermLabel
+                shipUntil:
+                    type:      datetime
+                    data_name: order1.shipUntil
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt

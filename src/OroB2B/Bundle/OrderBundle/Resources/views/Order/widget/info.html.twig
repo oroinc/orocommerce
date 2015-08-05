@@ -6,6 +6,31 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.order.id.label'|trans, order.id) }}
             {{ UI.renderProperty('orob2b.order.identifier.label'|trans, order.identifier) }}
+            {{ UI.renderProperty('orob2b.order.po_number.label'|trans, order.poNumber) }}
+            {{ UI.renderProperty('orob2b.order.currency.label'|trans, order.currency) }}
+            {{ UI.renderProperty('orob2b.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
+            {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
+
+            {% if order.paymentTerm %}
+                {% if resource_granted('VIEW', order.paymentTerm) %}
+                    {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': order.paymentTerm.id}), order.paymentTerm.label) %}
+                {% else %}
+                    {% set paymentTermView = order.paymentTerm.label|escape %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
+            {% endif %}
+
+        </div>
+        <div class="responsive-block">
+            {% if order.paymentTerm %}
+                {{ UI.renderProperty('orob2b.order.billing_address.label'|trans, order.billingAddress|oro_format_address) }}
+            {% endif %}
+
+            {% if order.paymentTerm %}
+                {{ UI.renderProperty('orob2b.order.shipping_address.label'|trans, order.shippingAddress|oro_format_address) }}
+            {% endif %}
+
+            {{ UI.renderHtmlProperty('orob2b.order.customer_notes.label'|trans, order.customerNotes|escape) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(order) }}
