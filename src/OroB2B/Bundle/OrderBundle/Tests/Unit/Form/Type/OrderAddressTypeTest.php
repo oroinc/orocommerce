@@ -79,7 +79,10 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($isValid, $form->isValid());
 
-        $this->assertCount($form->getErrors(true)->count(), $formErrors);
+        if ($form->getErrors(true)->count()) {
+            $this->assertNotEmpty($formErrors);
+        }
+
         /** @var FormError $error */
         foreach ($form->getErrors(true) as $error) {
             $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
@@ -128,7 +131,15 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => (new OrderAddress())->setCountry(new Country('US')),
                 'defaultData' => new OrderAddress(),
-                'formErrors' => [],
+            ],
+            'account address preselector' => [
+                'isValid' => true,
+                'submittedData' => [
+                    'country' => 'US',
+                    'accountAddress' => null,
+                ],
+                'expectedData' => (new OrderAddress())->setCountry(new Country('US')),
+                'defaultData' => new OrderAddress(),
             ],
             'valid full' => [
                 'isValid' => true,
@@ -164,7 +175,6 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                     ->setPostalCode('AL')
                     ->setCountry($country),
                 'defaultData' => new OrderAddress(),
-                'formErrors' => [],
             ],
         ];
     }
