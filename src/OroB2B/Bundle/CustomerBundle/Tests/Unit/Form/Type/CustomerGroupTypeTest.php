@@ -50,7 +50,7 @@ class CustomerGroupTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $entityIdentifierType->getName() => $entityIdentifierType,
+                    $entityIdentifierType->getName() => $entityIdentifierType
                 ],
                 []
             )

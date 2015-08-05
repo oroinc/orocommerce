@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\CustomerBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -35,7 +35,7 @@ class CustomerGroupControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups'
             ]
         );
     }

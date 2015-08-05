@@ -27,7 +27,7 @@ class CustomerControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
                 'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating',
+                'OroB2B\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating'
             ]
         );
     }
@@ -130,7 +130,8 @@ class CustomerControllerTest extends WebTestCase
                 'orob2b_customer_type[name]' => $name,
                 'orob2b_customer_type[parent]' => $parent->getId(),
                 'orob2b_customer_type[group]' => $group->getId(),
-                'orob2b_customer_type[internal_rating]' => $internalRating->getId()
+                'orob2b_customer_type[internal_rating]' => $internalRating->getId(),
+
             ]
         );
 
@@ -150,7 +151,6 @@ class CustomerControllerTest extends WebTestCase
      * @param string $name
      * @param Customer $parent
      * @param CustomerGroup $group
-     * @param AbstractEnumValue $internalRating
      */
     protected function assertViewPage(
         $html,

@@ -225,6 +225,7 @@ class OroB2BCustomerBundleInstaller implements
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
+
         $table->addIndex(['name'], 'orob2b_customer_name_idx', []);
 
         $this->attachmentExtension->addAttachmentAssociation(
