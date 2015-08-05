@@ -3,6 +3,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
