@@ -1,0 +1,96 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
+
+{% set formAction = entity.id ? path('orob2b_account_account_user_role_update', {id: entity.id}) : path('orob2b_account_account_user_role_create') %}
+
+{% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
+
+{% block navButtons %}
+    {% if entity.id and resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_account_delete_accountuserrole', {'id': entity.id}),
+            'dataRedirect': path('orob2b_account_account_user_role_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans,
+        }) }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
+    {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_account_account_user_role_index'),
+            'indexLabel': 'orob2b.account.accountuserrole.entity_plural_label'|trans,
+            'entityTitle': entity.label|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'account-user-role-edit' %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.account.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {
+                    'data': [
+                        form_row(form.label)
+                    ]
+                }
+            ]
+        }
+    ] %}
+
+    {% for name, config in form.vars.privilegeConfig %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': config.label|trans,
+            'subblocks': [
+                {
+                    'title': '',
+                    'useSpan': false,
+                    'data': [
+                        form_widget(form.children[name])
+                    ]
+                }
+            ]
+        }]) %}
+    {% endfor %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title' : 'orob2b.account.accountuser.entity_plural_label'|trans,
+        'subblocks': [{
+            'title' : null,
+            'useSpan': false,
+            'data' : [
+                form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
+                form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
+                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id}, { cssClass: 'inner-grid' })
+            ]
+        }]
+    }] ) %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

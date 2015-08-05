@@ -6,8 +6,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListTest extends EntityTestCase
@@ -21,7 +21,7 @@ class ShoppingListTest extends EntityTestCase
             ['notes', 'notes-test-123'],
             ['owner', new AccountUser()],
             ['organization', new Organization()],
-            ['account', new Customer()],
+            ['account', new Account()],
             ['accountUser', new AccountUser()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],

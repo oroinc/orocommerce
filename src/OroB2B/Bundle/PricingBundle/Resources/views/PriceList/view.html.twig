@@ -107,12 +107,12 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.customer.entity_plural_label'|trans,
+            'title' : 'orob2b.account.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-customers-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-accounts-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
@@ -120,12 +120,12 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'orob2b.customer.customergroup.entity_plural_label'|trans,
+            'title' : 'orob2b.account.accountgroup.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-customer-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-account-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }

@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;

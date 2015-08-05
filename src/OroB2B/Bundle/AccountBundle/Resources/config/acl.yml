@@ -1,0 +1,11 @@
+# TODO: Remove after https://magecore.atlassian.net/browse/BB-600
+orob2b_account_account_user_role_view:
+    type: entity
+    class: OroB2BAccountBundle:AccountUserRole
+    permission: VIEW
+    group_name: ""
+
+orob2b_account_register_account_user:
+    label: orob2b.account.security.permission.register_account_user
+    type: action
+    group_name: "commerce"

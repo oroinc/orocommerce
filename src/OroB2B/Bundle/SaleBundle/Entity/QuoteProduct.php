@@ -95,9 +95,9 @@ class QuoteProduct
     /**
      * @var string
      *
-     * @ORM\Column(name="comment_customer", type="text", nullable=true)
+     * @ORM\Column(name="comment_account", type="text", nullable=true)
      */
-    protected $commentCustomer;
+    protected $commentAccount;
 
     /**
      * @var Collection|QuoteProductOffer[]
@@ -342,26 +342,26 @@ class QuoteProduct
     }
 
     /**
-     * Set customer comment
+     * Set account comment
      *
-     * @param string $commentCustomer
+     * @param string $commentAccount
      * @return QuoteProduct
      */
-    public function setCommentCustomer($commentCustomer)
+    public function setCommentAccount($commentAccount)
     {
-        $this->commentCustomer = $commentCustomer;
+        $this->commentAccount = $commentAccount;
 
         return $this;
     }
 
     /**
-     * Get customer comment
+     * Get account comment
      *
      * @return string
      */
-    public function getCommentCustomer()
+    public function getCommentAccount()
     {
-        return $this->commentCustomer;
+        return $this->commentAccount;
     }
 
     /**
