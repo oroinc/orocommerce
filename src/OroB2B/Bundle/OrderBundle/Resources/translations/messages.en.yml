@@ -24,3 +24,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        totals:
+            subtotal: Subtotal
