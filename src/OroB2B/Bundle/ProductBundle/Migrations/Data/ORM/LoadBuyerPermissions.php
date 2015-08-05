@@ -81,7 +81,7 @@ class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureIn
     protected function getBuyerRole(ObjectManager $manager)
     {
         return $manager
-            ->getRepository($this->container->getParameter('orob2b_customer.entity.account_user_role.class'))
+            ->getRepository($this->container->getParameter('orob2b_account.entity.account_user_role.class'))
             ->findOneBy(['role' => self::ROLE_FRONTEND_BUYER]);
     }
 }
