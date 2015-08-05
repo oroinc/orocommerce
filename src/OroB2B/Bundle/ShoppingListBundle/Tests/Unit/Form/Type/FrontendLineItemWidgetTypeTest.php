@@ -5,19 +5,10 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
-
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -25,10 +16,19 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
@@ -229,7 +229,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
      */
     protected function getShoppingList($id, $label)
     {
-        /** @var \OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList $shoppingList */
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $id);
         $shoppingList->setLabel($label);
 
@@ -270,7 +270,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
      */
     protected function getRegistry()
     {
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $repository */
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->setMethods(['findCurrentForAccountUser'])
             ->disableOriginalConstructor()
@@ -280,7 +280,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
             ->method('findCurrentForAccountUser')
             ->willReturn($this->getShoppingList(1, 'Found Current Shopping List'));
 
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $manager */
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $manager */
         $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -310,7 +310,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
      */
     protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
     {
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+        /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
 
         $unit = new ProductUnit();

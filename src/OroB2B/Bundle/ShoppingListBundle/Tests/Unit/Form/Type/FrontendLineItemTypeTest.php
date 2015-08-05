@@ -2,22 +2,22 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\EntityType;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
+use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class FrontendLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -162,7 +162,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
     {
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
+        /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
 
         $unit = new ProductUnit();
@@ -185,7 +185,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getShoppingList($id, $label)
     {
-        /** @var \OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList $shoppingList */
+        /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $id);
         $shoppingList->setLabel($label);
 
