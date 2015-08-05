@@ -42,8 +42,6 @@ orob2b:
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
             comment_customer.label: 'Customer Notes'
-            product.removed: '{title} - removed'
-            product_replacement.removed: '{title} - removed'
             type:
                 label: 'Type'
                 requested: 'Requested'

@@ -17,7 +17,6 @@ services:
     orob2b_order.form.type.order_product:
         class: %orob2b_order.form.type.order_product.class%
         arguments:
-            - @translator
             - @orob2b_product.formatter.product_unit_label
             - @orob2b_order.formatter.order_product
         calls:

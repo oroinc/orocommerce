@@ -40,7 +40,6 @@ orob2b:
             order_product_requests.label: 'Order Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            product.removed: '{title} - removed'
             column:
                 product: 'Product'
                 order_product_items: 'Items'

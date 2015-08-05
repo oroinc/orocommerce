@@ -9,10 +9,11 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
@@ -113,7 +114,7 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductRemovedSelectType::NAME, [
                 'required' => true,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
@@ -151,7 +152,7 @@ class QuoteProductType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
@@ -182,61 +183,22 @@ class QuoteProductType extends AbstractType
 
         $form = $event->getForm();
 
-        if (!$quoteProduct->getProduct()) {
-            $this->replaceProductField(
-                $form,
-                'product',
-                true,
-                $quoteProduct->getProductSku(),
-                'orob2b.product.entity_label',
-                'orob2b.sale.quoteproduct.product.removed'
-            );
-        }
-
         if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
-            $this->replaceProductField(
-                $form,
-                'productReplacement',
-                false,
-                $quoteProduct->getProductReplacementSku(),
-                'orob2b.sale.quoteproduct.product_replacement.label',
-                'orob2b.sale.quoteproduct.product_replacement.removed'
-            );
-        }
-    }
+            $options = [
+                'create_enabled' => false,
+                'required' => false,
+                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
+            ];
 
-    /**
-     * @param FormInterface $form
-     * @param string $field
-     * @param bool $required
-     * @param string $productSku
-     * @param string $label
-     * @param string $emptyLabel
-     */
-    protected function replaceProductField(
-        FormInterface $form,
-        $field,
-        $required,
-        $productSku,
-        $label,
-        $emptyLabel = null
-    ) {
-        $options = [
-            'create_enabled' => false,
-            'required' => $required,
-            'label' => $label,
-        ];
-
-        if ($emptyLabel) {
-            $emptyValueTitle = $this->translator->trans($emptyLabel, [
-                '{title}' => $productSku,
+            $emptyValueTitle = $this->translator->trans('orob2b.product.removed', [
+                '{title}' => $quoteProduct->getProductReplacementSku(),
             ]);
 
             $options['configs'] = [
                 'placeholder' => $emptyValueTitle,
             ];
-        }
 
-        $form->add($field, ProductSelectType::NAME, $options);
+            $form->add('productReplacement', ProductSelectType::NAME, $options);
+        }
     }
 }

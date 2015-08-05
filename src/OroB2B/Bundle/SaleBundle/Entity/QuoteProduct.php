@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote_product")
@@ -25,7 +26,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *      }
  * )
  */
-class QuoteProduct
+class QuoteProduct implements ProductHolderInterface
 {
     const TYPE_REQUESTED        = 10;
     const TYPE_OFFER            = 20;
