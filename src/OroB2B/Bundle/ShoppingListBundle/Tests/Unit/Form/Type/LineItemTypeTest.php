@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
@@ -18,6 +21,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
+use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
 class LineItemTypeTest extends FormIntegrationTestCase
@@ -58,7 +62,6 @@ class LineItemTypeTest extends FormIntegrationTestCase
         $this->type = new LineItemType($this->getRegistry(), $lineItemManager);
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setProductClass(self::PRODUCT_CLASS);
-
         $this->type->setLineItemSubscriber($this->getLineItemSubscriber());
     }
 
@@ -171,7 +174,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
 
         $expectedLineItem3 = clone $existingLineItem;
         $expectedLineItem3
-            ->setQuantity('15.1119')
+            ->setQuantity(15.112)
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes(null);
 
@@ -327,5 +330,55 @@ class LineItemTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @return LineItemSubscriber
+     */
+    protected function getLineItemSubscriber()
+    {
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $repository */
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->any())
+            ->method('find')
+            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
+
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $manager */
+        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
+        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lineItemManager->expects($this->any())
+            ->method('roundProductQuantity')
+            ->willReturnCallback(
+                function ($product, $unit, $quantity) {
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
+                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
+                }
+            );
+
+        $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+
+        return $lineItemSubscriber;
     }
 }
