@@ -36,10 +36,11 @@ class PaymentTermProvider
      */
     public function getPaymentTerm(Account $account)
     {
-        $paymentTerm = $this->getPaymentTermRepository()->getOnePaymentTermByAccount($account);
+        $repository = $this->getPaymentTermRepository();
+        $paymentTerm = $repository->getOnePaymentTermByAccount($account);
 
         if (!$paymentTerm && $account->getGroup()) {
-            $paymentTerm = $this->getPaymentTermRepository()->getOnePaymentTermByAccountGroup($account->getGroup());
+            $paymentTerm = $repository->getOnePaymentTermByAccountGroup($account->getGroup());
         }
 
         return $paymentTerm;
