@@ -15,4 +15,19 @@ class SubtotalTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('USD', $subtotal->setCurrency('USD')->getCurrency());
         $this->assertEquals(999.99, $subtotal->setAmount(999.99)->getAmount());
     }
+
+    public function testToArray()
+    {
+        $subtotal = new Subtotal();
+
+        $this->assertEquals(
+            [
+                'type' => $subtotal->getType(),
+                'label' => $subtotal->getLabel(),
+                'amount' => $subtotal->getAmount(),
+                'currency' => $subtotal->getCurrency(),
+            ],
+            $subtotal->toArray()
+        );
+    }
 }
