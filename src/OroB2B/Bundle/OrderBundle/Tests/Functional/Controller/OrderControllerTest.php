@@ -88,6 +88,33 @@ class OrderControllerTest extends WebTestCase
      *
      * @param int $id
      */
+    public function testSubtotals($id)
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_order_update', ['id' => $id])
+        );
+
+        $form = $crawler->selectButton('Save and Close')->form();
+        $form->getFormNode()->setAttribute('action', $this->getUrl('orob2b_order_subtotals', ['id' => $id]));
+
+        $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+
+        $this->assertArrayHasKey('subtotals', $data);
+        $this->assertArrayHasKey('subtotal', $data['subtotals']);
+    }
+
+    /**
+     * @depends testUpdate
+     *
+     * @param int $id
+     */
     public function testView($id)
     {
         $crawler = $this->client->request(

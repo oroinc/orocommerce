@@ -101,4 +101,17 @@ class Subtotal
         $this->currency = $currency;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return [
+            'type' => $this->getType(),
+            'label' => $this->getLabel(),
+            'amount' => $this->getAmount(),
+            'currency' => $this->getCurrency(),
+        ];
+    }
 }
