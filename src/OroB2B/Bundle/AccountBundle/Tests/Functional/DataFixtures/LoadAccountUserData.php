@@ -3,11 +3,13 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class LoadAccountUserData extends AbstractFixture
+class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface
 {
     const FIRST_NAME = 'Grzegorz';
     const LAST_NAME = 'Brzeczyszczykiewicz';
@@ -32,9 +34,12 @@ class LoadAccountUserData extends AbstractFixture
      */
     public function load(ObjectManager $manager)
     {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1');
         foreach ($this->users as $user) {
             $entity = new AccountUser();
             $entity
+                ->setAccount($account)
                 ->setFirstName($user['first_name'])
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])
@@ -47,5 +52,15 @@ class LoadAccountUserData extends AbstractFixture
         }
 
         $manager->flush();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+        ];
     }
 }

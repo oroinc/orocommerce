@@ -19,7 +19,7 @@ class AjaxOrderController extends Controller
     /**
      * Get order subtotals
      *
-     * @Route("/subtotals/{id}", name="orob2b_order_subtotals", requirements={"id"="\d*"})
+     * @Route("/subtotals", name="orob2b_order_subtotals")
      * @Method({"POST"})
      * @Acl(
      *      id="orob2b_order_update",
@@ -28,14 +28,17 @@ class AjaxOrderController extends Controller
      *      permission="EDIT"
      * )
      *
-     * @param Order $order
-     *
      * @return JsonResponse
      */
-    public function subtotalsAction(Order $order = null)
+    public function subtotalsAction()
     {
-        if (!$order) {
-            $order = new Order();
+        $orderClass = $this->getParameter('orob2b_order.entity.order.class');
+        $id = $this->get('request')->get('id');
+        if ($id) {
+            /** @var Order $order */
+            $order = $this->getDoctrine()->getManagerForClass($orderClass)->find($orderClass, $id);
+        } else {
+            $order = new $orderClass();
         }
 
         $form = $this->createForm(OrderType::NAME, $order);

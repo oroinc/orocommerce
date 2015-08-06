@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
@@ -35,6 +36,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
         ];
@@ -61,7 +63,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     protected function createOrder(ObjectManager $manager, $name, array $orderData)
     {
         /** @var User $user */
-        $user = $this->getReference($orderData['user']);
+        $user = $this->getReference('order.simple_user');
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getReference('grzegorz.brzeczyszczykiewicz@example.com');
 
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getReference($orderData['paymentTerm']);
@@ -75,7 +79,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
             ->setShipUntil(new \DateTime())
             ->setCurrency($orderData['currency'])
             ->setPoNumber($orderData['poNumber'])
-            ->setSubtotal($orderData['subtotal']);
+            ->setSubtotal($orderData['subtotal'])
+            ->setAccount($accountUser->getAccount())
+            ->setAccountUser($accountUser);
 
         $manager->persist($order);
         $this->addReference($name, $order);
