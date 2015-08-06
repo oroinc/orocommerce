@@ -14,13 +14,13 @@ class AddAccountUser implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->createTable('orob2b_order');
+        $table = $schema->getTable('orob2b_order');
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
             ['account_user_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 }

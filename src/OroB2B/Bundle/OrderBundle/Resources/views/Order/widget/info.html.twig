@@ -11,14 +11,15 @@
             {{ UI.renderProperty('orob2b.order.currency.label'|trans, order.currency) }}
             {{ UI.renderProperty('orob2b.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
 
+            {% set paymentTermView = 'N/A' %}
             {% if order.paymentTerm %}
                 {% if resource_granted('VIEW', order.paymentTerm) %}
                     {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': order.paymentTerm.id}), order.paymentTerm.label) %}
                 {% else %}
                     {% set paymentTermView = order.paymentTerm.label|escape %}
                 {% endif %}
-                {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
             {% endif %}
+            {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
 
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
@@ -35,15 +36,9 @@
                 {{ UI.renderHtmlProperty('orob2b.order.account_user.label'|trans, accountUserView) }}
             {% endif %}
 
-            {% if order.paymentTerm %}
-                {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
-            {% endif %}
-
-            {% if order.paymentTerm %}
-                {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
-            {% endif %}
-
-            {{ UI.renderHtmlProperty('orob2b.order.customer_notes.label'|trans, order.customerNotes|escape) }}
+            {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.order.customer_notes.label'|trans, order.customerNotes) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(order) }}

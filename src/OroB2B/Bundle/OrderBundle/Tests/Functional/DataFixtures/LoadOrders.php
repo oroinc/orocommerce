@@ -9,7 +9,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface
@@ -22,8 +21,6 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     protected $orders = [
         self::ORDER_1 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
-            'billingAddress' => LoadOrderAddressData::ORDER_ADDRESS_1,
-            'shippingAddress' => LoadOrderAddressData::ORDER_ADDRESS_2,
             'poNumber' => '1234567890',
             'customerNotes' => 'Test account user notes',
             'currency' => 'USD',
@@ -39,7 +36,6 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     {
         return [
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
-            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
         ];
     }
@@ -67,12 +63,6 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
         /** @var User $user */
         $user = $this->getReference($orderData['user']);
 
-        /** @var OrderAddress $billingAddress */
-        $billingAddress = $this->getReference($orderData['billingAddress']);
-
-        /** @var OrderAddress $shippingAddress */
-        $shippingAddress = $this->getReference($orderData['shippingAddress']);
-
         /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $this->getReference($orderData['paymentTerm']);
 
@@ -81,8 +71,6 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
             ->setIdentifier($name)
             ->setOwner($user)
             ->setOrganization($user->getOrganization())
-            ->setBillingAddress($billingAddress)
-            ->setShippingAddress($shippingAddress)
             ->setPaymentTerm($paymentTerm)
             ->setShipUntil(new \DateTime())
             ->setCurrency($orderData['currency'])

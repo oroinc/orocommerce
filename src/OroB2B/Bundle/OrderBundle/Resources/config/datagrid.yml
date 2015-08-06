@@ -36,9 +36,6 @@ datagrid:
                 label:         orob2b.order.identifier.label
             poNumber:
                 label:         orob2b.order.po_number.label
-                type:          twig
-                frontend_type: html
-                template:      OroB2BOrderBundle:Order:Datagrid/poNumber.html.twig
             currency:
                 label:         orob2b.order.currency.label
             subtotal:

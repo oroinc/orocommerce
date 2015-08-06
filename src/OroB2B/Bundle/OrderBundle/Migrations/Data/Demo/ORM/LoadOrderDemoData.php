@@ -6,6 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -19,12 +21,39 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
     /**
      * @var array
      */
-    protected $addresses = [];
+    protected $paymentTerms = [];
 
     /**
      * @var array
      */
-    protected $paymentTerms = [];
+    protected $countries = [];
+
+    /**
+     * @var array
+     */
+    protected $regions = [];
+
+    /**
+     * @var array
+     */
+    protected $addresses = [
+        [
+            'label' => 'Office Address',
+            'country' => 'US',
+            'city' => 'Rochester',
+            'region' => 'US-NY',
+            'street' => '1215 Caldwell Road',
+            'postalCode' => '14608',
+        ],
+        [
+            'label' => 'Warehouse Address',
+            'country' => 'US',
+            'city' => 'Romney',
+            'region' => 'US-IN',
+            'street' => '2413 Capitol Avenue',
+            'postalCode' => '47981',
+        ]
+    ];
 
     /**
      * {@inheritdoc}
@@ -32,7 +61,6 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderAddressDemoData',
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData'
         ];
@@ -54,8 +82,8 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
                 ->setAccountUser($this->getAccountUser($manager))
                 ->setOrganization($user->getOrganization())
                 ->setIdentifier($user->getId())
-                ->setBillingAddress($this->getOrderAddressByLabel($manager, LoadOrderAddressDemoData::ORDER_ADDRESS_1))
-                ->setShippingAddress($this->getOrderAddressByLabel($manager, LoadOrderAddressDemoData::ORDER_ADDRESS_2))
+                ->setBillingAddress($this->createOrderAddress($manager, $this->addresses[0]))
+                ->setShippingAddress($this->createOrderAddress($manager, $this->addresses[1]))
                 ->setPaymentTerm($this->getPaymentTermByLabel($manager, LoadPaymentTermDemoData::PAYMENT_TERM_NET_10))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency('USD')
@@ -66,6 +94,27 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param array $address
+     * @return OrderAddress
+     */
+    protected function createOrderAddress(ObjectManager $manager, array $address)
+    {
+        $orderAddress = new OrderAddress();
+        $orderAddress
+            ->setLabel($address['label'])
+            ->setCountry($this->getCountryByIso2Code($manager, $address['country']))
+            ->setCity($address['city'])
+            ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
+            ->setStreet($address['street'])
+            ->setPostalCode($address['postalCode']);
+
+        $manager->persist($orderAddress);
+
+        return $orderAddress;
     }
 
     /**
@@ -85,17 +134,30 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
-     * @param string $label
-     * @return OrderAddress|null
+     * @param string $iso2Code
+     * @return Country|null
      */
-    protected function getOrderAddressByLabel(ObjectManager $manager, $label)
+    protected function getCountryByIso2Code(ObjectManager $manager, $iso2Code)
     {
-        if (!array_key_exists($label, $this->addresses)) {
-            $this->addresses[$label] = $manager->getRepository('OroB2BOrderBundle:OrderAddress')
-                ->findOneBy(['label' => $label]);
+        if (!array_key_exists($iso2Code, $this->countries)) {
+            $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
         }
 
-        return $this->addresses[$label];
+        return $this->countries[$iso2Code];
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $code
+     * @return Region|null
+     */
+    protected function getRegionByIso2Code(ObjectManager $manager, $code)
+    {
+        if (!array_key_exists($code, $this->regions)) {
+            $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
+        }
+
+        return $this->regions[$code];
     }
 
     /**
