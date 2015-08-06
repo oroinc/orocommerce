@@ -1,0 +1,4 @@
+# Can override payment term
+orob2b_order_payment_term_account_can_override:
+    label: orob2b.order.security.permission.payment_term_account_can_override
+    type: action

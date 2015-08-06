@@ -27,6 +27,10 @@ orob2b:
             general: General
             additional: Additional
 
+        security:
+            permission:
+                payment_term_account_can_override: Override account payment term
+
         form:
             select_address: Select Predefined Address
 
