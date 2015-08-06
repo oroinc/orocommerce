@@ -83,58 +83,6 @@ class OrderControllerTest extends WebTestCase
         return $id;
     }
 
-    public function testCreateSubtotals()
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_order_create')
-        );
-
-        $this->assertSubtotals($crawler);
-    }
-
-    /**
-     * @depends testUpdate
-     *
-     * @param int $id
-     */
-    public function testSubtotals($id)
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_order_update', ['id' => $id])
-        );
-
-        $this->assertSubtotals($crawler, $id);
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param null|int $id
-     */
-    protected function assertSubtotals(Crawler $crawler, $id = null)
-    {
-        $form = $crawler->selectButton('Save and Close')->form();
-
-        if ($id === null) {
-            $action = $this->getUrl('orob2b_order_create_subtotals');
-        } else {
-            $action = $this->getUrl('orob2b_order_subtotals', ['id' => $id]);
-        }
-        $form->getFormNode()->setAttribute('action', $action);
-
-        $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $data = json_decode($result->getContent(), true);
-
-        $this->assertArrayHasKey('subtotals', $data);
-        $this->assertArrayHasKey('subtotal', $data['subtotals']);
-    }
-
     /**
      * @depends testUpdate
      *
