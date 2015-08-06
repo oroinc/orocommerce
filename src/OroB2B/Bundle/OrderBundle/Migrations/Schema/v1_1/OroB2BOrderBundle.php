@@ -39,7 +39,6 @@ class OroB2BOrderBundle implements Migration
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
-        $table->addIndex(['payment_term_id'], 'IDX_C036FF9017653B16', []);
     }
 
     /**

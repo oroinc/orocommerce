@@ -10,6 +10,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 
@@ -28,7 +29,10 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "organization_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -214,6 +218,14 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * )
      */
     protected $paymentTerm;
+
+    /**
+     * @var AccountUser $user
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $accountUser;
 
     /**
      * @return int
@@ -524,5 +536,25 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function getPaymentTerm()
     {
         return $this->paymentTerm;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return Order
+     */
+    public function setAccountUser(AccountUser $accountUser = null)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
     }
 }

@@ -1,3 +1,43 @@
+# Use any shipping address from the account address book
+orob2b_order_address_shipping_account_use_any:
+    label: orob2b.order.security.permission.address_shipping_account_use_any
+    type: action
+
+# Use the default shipping address from the account user's address book
+orob2b_order_address_shipping_account_user_use_default:
+    label: orob2b.order.security.permission.address_shipping_account_user_use_default
+    type: action
+
+# Use any shipping address from the account user's address book
+orob2b_order_address_shipping_account_user_use_any:
+    label: orob2b.order.security.permission.address_shipping_account_user_use_any
+    type: action
+
+# Enter the shipping address manually
+orob2b_order_address_shipping_allow_manual:
+    label: orob2b.order.security.permission.address_shipping_allow_manual
+    type: action
+
+# Use any billing address from the account address book
+orob2b_order_address_billing_account_use_any:
+    label: orob2b.order.security.permission.address_billing_account_use_any
+    type: action
+
+# Use the default billing address from the account user's address book
+orob2b_order_address_billing_account_user_use_default:
+    label: orob2b.order.security.permission.address_billing_account_user_use_default
+    type: action
+
+# Use any billing address from the account user's address book
+orob2b_order_address_billing_account_user_use_any:
+    label: orob2b.order.security.permission.address_billing_account_user_use_any
+    type: action
+
+# Enter the billing address manually
+orob2b_order_address_billing_allow_manual:
+    label: orob2b.order.security.permission.address_billing_allow_manual
+    type: action
+
 # Can override payment term
 orob2b_order_payment_term_account_can_override:
     label: orob2b.order.security.permission.payment_term_account_can_override

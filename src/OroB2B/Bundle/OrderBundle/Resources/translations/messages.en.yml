@@ -29,10 +29,20 @@ orob2b:
 
         security:
             permission:
+                address_shipping_account_use_any: Use any shipping address from the account address book
+                address_shipping_account_user_use_default: Use the default shipping address from the account user's address book
+                address_shipping_account_user_use_any: Use any shipping address from the account user's address book
+                address_shipping_allow_manual: Enter the shipping address manually
+                address_billing_account_use_any: Use any billing address from the account address book
+                address_billing_account_user_use_default: Use the default billing address from the account user's address book
+                address_billing_account_user_use_any: Use any billing address from the account user's address book
+                address_billing_allow_manual: Enter the billing address manually
                 payment_term_account_can_override: Override account payment term
 
         form:
-            select_address: Select Predefined Address
+            address:
+                choose: Select an address
+                choose_or_create: Select an existing address or enter a new address below
 
         subtotals:
             subtotal: Subtotal
