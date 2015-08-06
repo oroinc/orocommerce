@@ -178,6 +178,29 @@ orob2b.account:
         region_name.label:       State name
         region_code.label:       State ISO code
 
+    accountcategoryvisibility:
+        entity_label: Account Category Visibility
+        entity_plural_label: Account Category Visibilities
+        id.label: ID
+        account.label: Account
+        category.label: Category
+        visibility.label: Visibility
+
+    accountgroupcategoryvisibility:
+        entity_label: Account Group Category Visibility
+        entity_plural_label: Account Group Category Visibilities
+        id.label: ID
+        account_group.label: Account Group
+        category.label: Category
+        visibility.label: Visibility
+
+    categoryvisibility:
+        entity_label: Category Visibility
+        entity_plural_label: Category Visibilities
+        id.label: ID
+        category.label: Category
+        visibility.label: Visibility
+
     menu:
         account_tab.label: 'Accounts'
         account_list.description: 'List of Accounts'
