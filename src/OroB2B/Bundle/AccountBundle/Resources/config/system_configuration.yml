@@ -6,6 +6,14 @@ oro_system_configuration:
             page_reload: true
         account_users:
             title: orob2b.account.system_configuration.groups.account_users.title
+        catalog:
+            title: orob2b.account.catalog.visibility.product_configuration_label
+        catalog_settings:
+            title: orob2b.account.catalog.visibility.catalog_configuration_label
+            icon: 'icon-briefcase'
+            page_reload: true
+        catalog_category_settings:
+            title: orob2b.account.catalog.visibility.label
 
     fields:
         oro_b2b_account.default_account_owner:
@@ -41,7 +49,15 @@ oro_system_configuration:
                 label: orob2b.account.system_configuration.fields.send_password_in_welcome_email.label
                 tooltip: orob2b.account.system_configuration.fields.send_password_in_welcome_email.tooltip
                 required: true
-
+        oro_b2b_account.category_visibility:
+            data_type: string
+            type: orob2b_account_catalog_default_visibility
+            priority: 10
+            options:
+                label: orob2b.account.catalog.visibility.form_label
+                required: true
+                constraints:
+                    - NotBlank: ~
     tree:
         system_configuration:
             platform:
@@ -58,3 +74,12 @@ oro_system_configuration:
                                             - oro_b2b_account.registration_allowed
                                             - oro_b2b_account.confirmation_required
                                             - oro_b2b_account.send_password_in_welcome_email
+                    catalog:
+                        children:
+                            catalog_settings:
+                                priority: 220
+                                children:
+                                    catalog_category_settings:
+                                        priority: 100
+                                        children:
+                                            - oro_b2b_account.category_visibility

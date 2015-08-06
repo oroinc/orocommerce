@@ -247,3 +247,12 @@ orob2b.account:
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
+
+    catalog:
+        visibility:
+            label: Default Visibility to Accounts
+            form_label: Visibility
+            product_configuration_label: Product Catalog
+            catalog_configuration_label: Categories
+            visible.label: Visible
+            not_visible.label: Not visible
