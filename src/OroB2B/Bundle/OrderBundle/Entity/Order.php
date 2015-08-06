@@ -10,6 +10,8 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 
@@ -28,7 +30,10 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "organization_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -40,10 +45,13 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
+     * @var integer
+     * 
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -65,7 +73,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $identifier;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
@@ -79,7 +87,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -214,6 +222,22 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * )
      */
     protected $paymentTerm;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $account;
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $accountUser;
 
     /**
      * @return int
@@ -524,5 +548,48 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function getPaymentTerm()
     {
         return $this->paymentTerm;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return Order
+     */
+    public function setAccountUser(AccountUser $accountUser = null)
+    {
+        $this->accountUser = $accountUser;
+
+        if ($accountUser->getAccount() && !$this->getAccount()) {
+            $this->setAccount($accountUser->getAccount());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return Order
+     */
+    public function setAccount($account)
+    {
+        $this->account = $account;
+
+        return $this;
     }
 }
