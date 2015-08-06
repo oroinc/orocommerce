@@ -29,6 +29,10 @@ class LineItemSubscriber implements EventSubscriberInterface
      */
     protected $productClass;
 
+    /**
+     * @param LineItemManager $lineItemManager
+     * @param ManagerRegistry $registry
+     */
     public function __construct(LineItemManager $lineItemManager, ManagerRegistry $registry)
     {
         $this->lineItemManager = $lineItemManager;

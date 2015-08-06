@@ -1,5 +1,5 @@
 orob2b_product_view_products:
-    label: View products
+    label: orob2b.product.acl.view_products.label
     type: action
     group_name: "commerce"
     bindings: ~

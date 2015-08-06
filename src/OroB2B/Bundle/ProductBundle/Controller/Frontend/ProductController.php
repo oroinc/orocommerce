@@ -34,6 +34,8 @@ class ProductController extends Controller
      *
      * @Route("/view/{id}", name="orob2b_product_frontend_product_view", requirements={"id"="\d+"})
      * @Template("OroB2BProductBundle:Product\Frontend:view.html.twig")
+     * @AclAncestor("orob2b_product_view_products")
+     *
      * @param Product $product
      *
      * @return array
@@ -48,6 +50,8 @@ class ProductController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_product_frontend_product_info", requirements={"id"="\d+"})
      * @Template("OroB2BProductBundle:Product\Frontend\widget:info.html.twig")
+     * @AclAncestor("orob2b_product_view_products")
+     *
      * @param Product $product
      *
      * @return array

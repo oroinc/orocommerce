@@ -37,6 +37,9 @@ orob2b:
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the account users
 
+        acl:
+            shoppinglist_add_product.label: Add Product To Shopping List
+
         widgets:
             shopping_list_information: Shopping Lists Information
 
