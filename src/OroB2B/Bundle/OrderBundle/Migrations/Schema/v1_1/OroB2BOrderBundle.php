@@ -15,18 +15,18 @@ class OroB2BOrderBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroB2BOrderTable($schema);
+        $this->updateOroB2BOrderTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroB2BOrderForeignKeys($schema);
+        $this->updateOroB2BOrderForeignKeys($schema);
     }
 
     /**
-     * Create orob2b_order table
+     * Update orob2b_order table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BOrderTable(Schema $schema)
+    protected function updateOroB2BOrderTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_order');
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
@@ -39,15 +39,16 @@ class OroB2BOrderBundle implements Migration
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
-        $table->addIndex(['payment_term_id'], 'IDX_C036FF9017653B16', []);
+        $table->addColumn('account_id', 'integer', []);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
     }
 
     /**
-     * Add orob2b_order foreign keys.
+     * Update orob2b_order foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BOrderForeignKeys(Schema $schema)
+    protected function updateOroB2BOrderForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_order');
         $table->addForeignKeyConstraint(
@@ -55,6 +56,18 @@ class OroB2BOrderBundle implements Migration
             ['payment_term_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 }
