@@ -57,11 +57,12 @@ class DatagridListener
             static::PAYMENT_TERM_GROUP_ALIAS . '.label as ' . static::PAYMENT_TERM_GROUP_LABEL_ALIAS;
         $this->addConfigElement($config, '[source][query][select]', $selectGroupPaymentTermLabel);
 
-        $selectPaymentTermForFilter = "CONCAT(CASE WHEN " .
-            static::PAYMENT_TERM_ALIAS . ".id IS NOT NULL THEN " .
-            static::PAYMENT_TERM_ALIAS . ".id ELSE CASE WHEN " .
-            static::PAYMENT_TERM_GROUP_ALIAS . ".id IS NOT NULL THEN " .
-            static::PAYMENT_TERM_GROUP_ALIAS . ".id ELSE '' END END, '') as " . static::PAYMENT_TERM_FOR_FILTER;
+        $selectPaymentTermForFilter = '(CASE WHEN ' .
+            static::PAYMENT_TERM_ALIAS . '.id IS NOT NULL THEN ' .
+            static::PAYMENT_TERM_ALIAS . '.id ELSE CASE WHEN ' .
+            static::PAYMENT_TERM_GROUP_ALIAS . '.id IS NOT NULL THEN ' .
+            static::PAYMENT_TERM_GROUP_ALIAS . '.id ELSE ' . static::PAYMENT_TERM_GROUP_ALIAS .
+            '.id END END) as ' . static::PAYMENT_TERM_FOR_FILTER;
         $this->addConfigElement($config, '[source][query][select]', $selectPaymentTermForFilter);
 
         $leftJoinPaymentTerm = [
