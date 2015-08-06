@@ -111,6 +111,25 @@ class OrderController extends Controller
     }
 
     /**
+     * Get subtotals for new order
+     *
+     * @Route("/subtotals", name="orob2b_order_create_subtotals")
+     * @Method({"POST"})
+     * @Acl(
+     *      id="orob2b_order_update",
+     *      type="entity",
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="EDIT"
+     * )
+     *
+     * @return JsonResponse
+     */
+    public function createSubtotalsAction()
+    {
+        return $this->subtotals(new Order());
+    }
+
+    /**
      * Get order subtotals
      *
      * @Route("/subtotals/{id}", name="orob2b_order_subtotals", requirements={"id"="\d+"})
@@ -127,6 +146,16 @@ class OrderController extends Controller
      * @return JsonResponse
      */
     public function subtotalsAction(Order $order)
+    {
+        return $this->subtotals($order);
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return JsonResponse
+     */
+    protected function subtotals(Order $order)
     {
         $form = $this->createForm(OrderType::NAME, $order);
         $form->submit($this->get('request'));
