@@ -9,3 +9,9 @@ oro_entity:
         OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility:
             alias:        category_visibility
             plural_alias: category_visibilities
+        OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility:
+            alias:        account_category_visibility
+            plural_alias: account_category_visibilities
+        OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility:
+            alias:        account_group_category_visibility
+            plural_alias: account_group_category_visibilities

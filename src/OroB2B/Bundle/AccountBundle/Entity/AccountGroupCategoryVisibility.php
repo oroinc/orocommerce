@@ -8,16 +8,17 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\AccountBundle\Model\ExtendCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Model\ExtendAccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_category_visibility")
+ * @ORM\Table(name="orob2b_acc_grp_ctgr_visibility")
  * @Config
  */
-class CategoryVisibility extends ExtendCategoryVisibility
+class AccountGroupCategoryVisibility extends ExtendAccountGroupCategoryVisibility
 {
+    const PARENT_CATEGORY = 'parent_category';
     const CONFIG = 'config';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
@@ -38,6 +39,14 @@ class CategoryVisibility extends ExtendCategoryVisibility
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;
+
+    /**
+     * @var AccountGroup
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $accountGroup;
 
     /**
      * @return int
@@ -63,6 +72,26 @@ class CategoryVisibility extends ExtendCategoryVisibility
     public function setCategory(Category $category)
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    /**
+     * @return AccountGroup
+     */
+    public function getAccountGroup()
+    {
+        return $this->accountGroup;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     *
+     * @return $this
+     */
+    public function setAccountGroup(AccountGroup $accountGroup)
+    {
+        $this->accountGroup = $accountGroup;
 
         return $this;
     }
