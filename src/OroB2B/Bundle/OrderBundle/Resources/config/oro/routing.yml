@@ -3,11 +3,6 @@ orob2b_order:
     type:         annotation
     prefix:       /order
 
-orob2b_order_ajax:
-    resource:     "@OroB2BOrderBundle/Controller/AjaxOrderController.php"
-    type:         annotation
-    prefix:       /order
-
 orob2b_order_bundle_api:
     resource:     "@OroB2BOrderBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
