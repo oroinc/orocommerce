@@ -6,21 +6,29 @@ use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\ConstraintViolation;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
+use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
 class OrderAddressTypeTest extends FormIntegrationTestCase
@@ -28,11 +36,36 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /** @var OrderAddressType */
     protected $formType;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
+    protected $addressFormatter;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
+    protected $securityFacade;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
+    protected $orderAddressManager;
+
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new OrderAddressType();
+        $this->addressFormatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\AddressFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->orderAddressManager = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderAddressManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new OrderAddressType(
+            $this->addressFormatter,
+            $this->securityFacade,
+            $this->orderAddressManager
+        );
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
 
@@ -45,9 +78,14 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with(['data_class' => 'OroB2B\Bundle\OrderBundle\Entity\OrderAddress']);
+        $resolver->expects($this->once())->method('setDefaults')->with($this->isType('array'))
+            ->will($this->returnSelf());
+        $resolver->expects($this->once())->method('setRequired')->with($this->isType('array'))
+            ->will($this->returnSelf());
+        $resolver->expects($this->once())->method('setAllowedValues')
+            ->with($this->isType('string'), $this->isType('array'))->will($this->returnSelf());
+        $resolver->expects($this->once())->method('setAllowedTypes')
+            ->with($this->isType('string'), $this->isType('string'))->will($this->returnSelf());
 
         $this->formType->configureOptions($resolver);
     }
@@ -70,32 +108,17 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
      * @param array $formErrors
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, $submittedData, $expectedData, $defaultData, array $formErrors = [])
-    {
-        $form = $this->factory->create($this->formType, $defaultData, []);
-        $this->assertEquals($defaultData, $form->getData());
+    public function testSubmitWithManualPermission(
+        $isValid,
+        $submittedData,
+        $expectedData,
+        $defaultData,
+        array $formErrors = []
+    ) {
+        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(true);
 
-        $form->submit($submittedData);
-
-        $this->assertEquals($isValid, $form->isValid());
-
-        if ($form->getErrors(true)->count()) {
-            $this->assertNotEmpty($formErrors);
-        }
-
-        /** @var FormError $error */
-        foreach ($form->getErrors(true) as $error) {
-            $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
-
-            /** @var ConstraintViolation $violation */
-            $violation = $error->getCause();
-            $this->assertEquals(
-                $formErrors[$error->getOrigin()->getName()],
-                $error->getMessage(),
-                sprintf('Failed path: %s', $violation->getPropertyPath())
-            );
-        }
-        $this->assertEquals($expectedData, $form->getData());
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
     }
 
     /**
@@ -177,6 +200,164 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                 'defaultData' => new OrderAddress(),
             ],
         ];
+    }
+
+    /**
+     * @param bool $isValid
+     * @param array $submittedData
+     * @param mixed $expectedData
+     * @param mixed $defaultData
+     * @param array $formErrors
+     * @param array $groupedAddresses
+     * @dataProvider submitWithPermissionProvider
+     */
+    public function testSubmitWithoutManualPermission(
+        $isValid,
+        $submittedData,
+        $expectedData,
+        $defaultData,
+        array $formErrors = [],
+        array $groupedAddresses = []
+    ) {
+        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
+            ->willReturn($groupedAddresses);
+        $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
+            ->will(
+                $this->returnCallback(
+                    function ($identifier) use ($groupedAddresses) {
+                        foreach ($groupedAddresses as $groupedAddressesGroup) {
+                            if (array_key_exists($identifier, $groupedAddressesGroup)) {
+                                return $groupedAddressesGroup[$identifier];
+                            }
+                        }
+
+                        return null;
+                    }
+                )
+            );
+
+        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address) {
+                        $orderAddress = new OrderAddress();
+                        $orderAddress->setCountry($address->getCountry());
+                        $orderAddress->setStreet($address->getStreet());
+
+                        return $orderAddress;
+                    }
+                )
+            );
+
+        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(false);
+
+        $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function submitWithPermissionProvider()
+    {
+        $country = new Country('US');
+
+        return [
+            'empty data' => [
+                'isValid' => true,
+                'submittedData' => [],
+                'expectedData' => null,
+                'defaultData' => new OrderAddress(),
+            ],
+            'not valid identifier' => [
+                'isValid' => false,
+                'submittedData' => [
+                    'accountAddress' => 'a_1',
+                ],
+                'expectedData' => null,
+                'defaultData' => new OrderAddress(),
+                'formErrors' => ['accountAddress' => 'This value is not valid.'],
+            ],
+            'has identifier' => [
+                'isValid' => true,
+                'submittedData' => [
+                    'accountAddress' => 'a_1',
+                ],
+                'expectedData' => (new OrderAddress())
+                    ->setCountry($country)
+                    ->setStreet('Street'),
+                'defaultData' => new OrderAddress(),
+                'formErrors' => ['accountAddress' => 1],
+                'groupedAddresses' => [
+                    'group_name' => [
+                        'a_1' => (new AccountAddress())
+                            ->setCountry($country)
+                            ->setStreet('Street'),
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param bool $isValid
+     * @param array $submittedData
+     * @param mixed $expectedData
+     * @param mixed $defaultData
+     * @param array $formErrors
+     */
+    protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors)
+    {
+        $form = $this->factory->create(
+            $this->formType,
+            $defaultData,
+            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()]
+        );
+        $this->assertEquals($defaultData, $form->getData());
+
+        $form->submit($submittedData);
+
+        $this->assertEquals($isValid, $form->isValid());
+
+        if ($form->getErrors(true)->count()) {
+            $this->assertNotEmpty($formErrors);
+        }
+
+        /** @var FormError $error */
+        foreach ($form->getErrors(true) as $error) {
+            $this->assertArrayHasKey($error->getOrigin()->getName(), $formErrors);
+
+            /** @var ConstraintViolation $violation */
+            $violation = $error->getCause();
+            $this->assertEquals(
+                $formErrors[$error->getOrigin()->getName()],
+                $error->getMessage(),
+                sprintf('Failed path: %s', $violation->getPropertyPath())
+            );
+        }
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    public function testFinishView()
+    {
+        $view = new FormView();
+        $view->children = ['country' => new FormView(), 'city' => new FormView(), 'accountAddress' => new FormView()];
+
+        $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
+        $this->securityFacade->expects($this->atLeastOnce())->method('isGranted')->willReturn(false);
+
+        $form = $this->factory->create(
+            $this->formType,
+            new OrderAddress(),
+            ['addressType' => AddressTypeEntity::TYPE_SHIPPING, 'order' => new Order()]
+        );
+
+        $this->formType->finishView($view, $form, ['addressType' => AddressTypeEntity::TYPE_SHIPPING]);
+
+        $this->assertTrue($view->offsetGet('country')->vars['disabled']);
+        $this->assertTrue($view->offsetGet('city')->vars['disabled']);
+        $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
     }
 
     /**

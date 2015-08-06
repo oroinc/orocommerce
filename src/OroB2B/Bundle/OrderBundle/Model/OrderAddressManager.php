@@ -78,19 +78,13 @@ class OrderAddressManager
 
         $existingClassName = ClassUtils::getClass($address);
         $metadata = $this->registry->getManagerForClass($existingClassName)->getClassMetadata($existingClassName);
-        $orderMetadata = $this->registry->getManagerForClass($this->orderAddressClass)
-            ->getClassMetadata($this->orderAddressClass);
 
         foreach ($metadata->getFieldNames() as $fieldName) {
-            if ($orderMetadata->hasField($fieldName)) {
-                $this->setValue($orderAddress, $address, $fieldName);
-            }
+            $this->setValue($address, $orderAddress, $fieldName);
         }
 
         foreach ($metadata->getAssociationNames() as $associationName) {
-            if ($orderMetadata->hasAssociation($associationName)) {
-                $this->setValue($orderAddress, $address, $associationName);
-            }
+            $this->setValue($address, $orderAddress, $associationName);
         }
 
         return $orderAddress;
@@ -103,12 +97,12 @@ class OrderAddressManager
      */
     protected function setValue(AbstractAddress $from, AbstractAddress $to, $property)
     {
-        $value = $this->propertyAccessor->getValue($from, $property);
-        if (!$value || ($value instanceof Collection && $value->isEmpty())) {
-            return;
-        }
-
         try {
+            $value = $this->propertyAccessor->getValue($from, $property);
+            if (!$value || ($value instanceof Collection && $value->isEmpty())) {
+                return;
+            }
+
             $this->propertyAccessor->setValue($to, $property, $value);
         } catch (NoSuchPropertyException $e) {
         }
@@ -124,11 +118,9 @@ class OrderAddressManager
         $addresses = [];
         $accountUser = $order->getAccountUser();
         if ($accountUser) {
-            if ($accountUser->getAccount()) {
-                $accountAddresses = $this->orderAddressProvider->getAccountAddresses(
-                    $accountUser->getAccount(),
-                    $type
-                );
+            $account = $accountUser->getAccount();
+            if ($account) {
+                $accountAddresses = $this->orderAddressProvider->getAccountAddresses($account, $type);
                 foreach ($accountAddresses as $accountAddress) {
                     $addresses['orob2b.account.entity_label'][$this->getIdentifier($accountAddress)] =
                         $accountAddress;
@@ -138,7 +130,7 @@ class OrderAddressManager
             $accountUserAddresses = $this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
             if ($accountUserAddresses) {
                 foreach ($accountUserAddresses as $accountUserAddress) {
-                    $addresses['orob2b.accountuser.entity_label'][$this->getIdentifier($accountUserAddress)] =
+                    $addresses['orob2b.account.accountuser.entity_label'][$this->getIdentifier($accountUserAddress)] =
                         $accountUserAddress;
                 }
             }
@@ -168,14 +160,23 @@ class OrderAddressManager
      */
     public function getEntityByIdentifier($identifier)
     {
-        list($alias, $id) = explode(self::DELIMITER, $identifier);
+        $identifierData = explode(self::DELIMITER, $identifier);
+        if (empty($identifierData[1]) || !empty($identifierData[2])) {
+            throw new \InvalidArgumentException(sprintf('Wrong identifier "%s"', $identifier));
+        }
 
-        if (!$this->map->containsKey($alias)) {
+        $id = $identifierData[1];
+        if (!filter_var($id, FILTER_VALIDATE_INT)) {
+            throw new \InvalidArgumentException(sprintf('Wrong entity id "%s"', $id));
+        }
+
+        $alias = $identifierData[0];
+        if (!$alias || !$this->map->containsKey($alias)) {
             throw new \InvalidArgumentException(sprintf('Unknown alias "%s"', $alias));
         }
 
         $className = $this->map->get($alias);
 
-        return $this->registry->getManagerForClass($className)->find($className, $id);
+        return $this->registry->getManagerForClass($className)->find($className, (int)$id);
     }
 }
