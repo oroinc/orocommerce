@@ -24,6 +24,10 @@ class PaymentTermRepository extends EntityRepository
             ->getOneOrNullResult();
     }
 
+    /**
+     * @param Account $account
+     * @return PaymentTerm|null
+     */
     public function getOnePaymentTermByAccount(Account $account)
     {
         return $this->createQueryBuilder('paymentTerm')
@@ -42,8 +46,7 @@ class PaymentTermRepository extends EntityRepository
     {
         $oldPaymentTermByAccountGroup = $this->getOnePaymentTermByAccountGroup($accountGroup);
 
-        if (
-            $oldPaymentTermByAccountGroup &&
+        if ($oldPaymentTermByAccountGroup &&
             $paymentTerm &&
             $oldPaymentTermByAccountGroup->getId() === $paymentTerm->getId()
         ) {
@@ -67,8 +70,7 @@ class PaymentTermRepository extends EntityRepository
     {
         $oldPaymentTermByAccount = $this->getOnePaymentTermByAccount($account);
 
-        if (
-            $oldPaymentTermByAccount &&
+        if ($oldPaymentTermByAccount &&
             $paymentTerm &&
             $oldPaymentTermByAccount->getId() === $paymentTerm->getId()
         ) {
