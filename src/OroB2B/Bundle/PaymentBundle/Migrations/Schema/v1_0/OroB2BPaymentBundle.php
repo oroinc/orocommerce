@@ -1,15 +1,15 @@
 <?php
 
-namespace OroB2B\Bundle\PaymentBundle\Migrations\Schema;
+namespace OroB2B\Bundle\PaymentBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroB2BPaymentBundle implements Migration, NoteExtensionAwareInterface
 {
     /**
      * Table name for PaymentTerm
@@ -26,13 +26,8 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
     protected $noteExtension;
 
     /**
-     * {@inheritdoc}
+     * @param NoteExtension $noteExtension
      */
-    public function getMigrationVersion()
-    {
-        return 'v1_0';
-    }
-
     public function setNoteExtension(NoteExtension $noteExtension)
     {
         $this->noteExtension = $noteExtension;

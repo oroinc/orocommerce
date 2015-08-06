@@ -5,6 +5,7 @@ parameters:
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
+    orob2b_order.provider.subtotals.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider
 
 services:
     orob2b_order.order.manager.api:
@@ -22,3 +23,8 @@ services:
         arguments: [@orob2b_order.order.entity.id_generator]
         tags:
             - { name: doctrine.event_listener, event: postPersist }
+
+    orob2b_order.provider.subtotals:
+            class: %orob2b_order.provider.subtotals.class%
+            arguments:
+                - @translator

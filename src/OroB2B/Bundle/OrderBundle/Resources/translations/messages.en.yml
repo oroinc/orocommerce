@@ -56,3 +56,6 @@ orob2b:
 
         form:
             select_address: Select Predefined Address
+
+        subtotals:
+            subtotal: Subtotal
