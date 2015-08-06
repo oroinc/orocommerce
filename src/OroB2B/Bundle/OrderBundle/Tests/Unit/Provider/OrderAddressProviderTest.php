@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -23,6 +24,11 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AclHelper
+     */
+    protected $aclHelper;
 
     /**
      * @var string
@@ -47,9 +53,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
+        $this->aclHelper = $this->getMockBuilder(' Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = new OrderAddressProvider(
             $this->securityFacade,
             $this->registry,
+            $this->aclHelper,
             $this->accountAddressClass,
             $this->accountUserAddressClass
         );
@@ -85,9 +96,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->with($expectedPermission)
             ->will($this->returnValue(false));
 
+        $this->securityFacade->expects($this->once())
+            ->method('isGrantedClassPermission')
+            ->with('VIEW', $this->accountAddressClass)
+            ->will($this->returnValue(false));
+
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->never())
-            ->method('getAddressesByType');
+            ->method($this->anything());
 
         $this->provider->getAccountAddresses(new Account(), $type);
     }
@@ -97,7 +113,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $type
      * @param string $expectedPermission
      */
-    public function testGetAccountAddressesGranted($type, $expectedPermission)
+    public function testGetAccountAddressesGrantedAny($type, $expectedPermission)
     {
         $account = new Account();
         $addresses = [new AccountAddress()];
@@ -107,10 +123,13 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->with($expectedPermission)
             ->will($this->returnValue(true));
 
+        $this->securityFacade->expects($this->never())
+            ->method('isGrantedClassPermission');
+
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->once())
             ->method('getAddressesByType')
-            ->with($account, $type)
+            ->with($account, $type, $this->aclHelper)
             ->will($this->returnValue($addresses));
 
         $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
@@ -128,13 +147,45 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider accountAddressPermissions
+     * @param string $type
+     * @param string $expectedPermission
+     */
+    public function testGetAccountAddressesGrantedView($type, $expectedPermission)
+    {
+        $account = new Account();
+        $addresses = [new AccountAddress()];
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with($expectedPermission)
+            ->will($this->returnValue(false));
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGrantedClassPermission')
+            ->with('VIEW', $this->accountAddressClass)
+            ->will($this->returnValue(true));
+
+        $repository = $this->assertAccountAddressRepositoryCall();
+        $repository->expects($this->never())
+            ->method('getAddressesByType');
+
+        $repository->expects($this->once())
+            ->method('getDefaultAddressesByType')
+            ->with($account, $type, $this->aclHelper)
+            ->will($this->returnValue($addresses));
+
+        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+    }
+
+    /**
      * @dataProvider accountUserAddressPermissions
      * @param string $type
      * @param array $expectedCalledPermissions
      * @param string $calledRepositoryMethod
      * @param array $addresses
      */
-    public function testGetAccountUserAddressesGranted(
+    public function testGetAccountUserAddresses(
         $type,
         array $expectedCalledPermissions,
         $calledRepositoryMethod,
@@ -155,7 +206,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
         if ($calledRepositoryMethod) {
             $repository->expects($this->once())
                 ->method($calledRepositoryMethod)
-                ->with($accountUser, $type)
+                ->with($accountUser, $type, $this->aclHelper)
                 ->will($this->returnValue($addresses));
         } else {
             $repository->expects($this->never())

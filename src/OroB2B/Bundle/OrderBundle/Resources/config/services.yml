@@ -36,5 +36,6 @@ services:
         arguments:
             - @oro_security.security_facade
             - @doctrine
+            - @oro_security.acl_helper
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%

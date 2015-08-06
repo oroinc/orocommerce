@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -55,6 +56,11 @@ class OrderAddressProvider
     protected $registry;
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @var string
      */
     protected $accountAddressClass;
@@ -67,17 +73,21 @@ class OrderAddressProvider
     /**
      * @param SecurityFacade $securityFacade
      * @param ManagerRegistry $registry
+     * @param AclHelper $aclHelper
      * @param string $accountAddressClass
      * @param string $accountUserAddressClass
      */
     public function __construct(
         SecurityFacade $securityFacade,
         ManagerRegistry $registry,
+        AclHelper $aclHelper,
         $accountAddressClass,
         $accountUserAddressClass
     ) {
         $this->securityFacade = $securityFacade;
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
+
         $this->accountAddressClass = $accountAddressClass;
         $this->accountUserAddressClass = $accountUserAddressClass;
     }
@@ -93,8 +103,11 @@ class OrderAddressProvider
         $this->assertType($type);
         $permissionsMap = $this->permissionsByType[$type];
 
+        $repository = $this->getAccountAddressRepository();
         if ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_ADDRESS_ANY])) {
-            return $this->getAccountAddressRepository()->getAddressesByType($account, $type);
+            return $repository->getAddressesByType($account, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
+            return $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
         }
 
         return [];
@@ -113,9 +126,9 @@ class OrderAddressProvider
 
         $repository = $this->getAccountUserAddressRepository();
         if ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_ANY])) {
-            return $repository->getAddressesByType($accountUser, $type);
+            return $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
         } elseif ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_DEFAULT])) {
-            return $repository->getDefaultAddressesByType($accountUser, $type);
+            return $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
         }
 
         return [];
