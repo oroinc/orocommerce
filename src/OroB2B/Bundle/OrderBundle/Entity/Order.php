@@ -50,6 +50,8 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
+     * @var integer
+     * 
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -71,7 +73,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $identifier;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
@@ -85,7 +87,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -222,7 +224,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $paymentTerm;
 
     /**
-     * @var Account $user
+     * @var Account
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
