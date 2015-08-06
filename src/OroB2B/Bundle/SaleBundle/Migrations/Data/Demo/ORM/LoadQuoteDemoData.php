@@ -217,7 +217,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setProduct($product)
             ->setType($type)
             ->setComment(sprintf('Seller Notes %s', $index + 1))
-            ->setCommentCustomer(sprintf('Customer Notes %s', $index + 1))
+            ->setCommentAccount(sprintf('Account Notes %s', $index + 1))
         ;
 
         return $quoteProduct;

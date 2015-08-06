@@ -120,7 +120,7 @@ class QuoteTypeTest extends AbstractTest
                             'product'   => 2,
                             'type'      => self::QP_TYPE1,
                             'comment'   => 'comment1',
-                            'commentCustomer' => 'comment2',
+                            'commentAccount' => 'comment2',
                             'quoteProductOffers' => [
                                 [
                                     'quantity'      => 33,

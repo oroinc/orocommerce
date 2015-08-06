@@ -10,6 +10,9 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 
 use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubLocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -85,6 +88,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ],
                         ProductUnitSelectionType::NAME
                     ),
+                    LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
                 ],
                 [
                     'form' => [
@@ -136,7 +140,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $defaultProduct = new StubProduct();
 
         return [
-            'product without unitPrecisions' => [
+            'simple product' => [
                 'defaultData'   => $defaultProduct,
                 'submittedData' => [
                     'sku' => 'test sku',
@@ -165,15 +169,38 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
             ],
+            'product with names and descriptions' => [
+                'defaultData'   => $defaultProduct,
+                'submittedData' => [
+                    'sku' => 'test sku',
+                    'unitPrecisions' => [],
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'visible' => 1,
+                    'status' => Product::STATUS_DISABLED,
+                    'names' => [
+                        ['string' => 'first name'],
+                        ['string' => 'second name'],
+                    ],
+                    'descriptions' => [
+                        ['text' => 'first description'],
+                        ['text' => 'second description'],
+                    ],
+                ],
+                'expectedData'  => $this->createExpectedProductEntity(false, true),
+                'rounding' => false
+            ],
         ];
     }
 
     /**
      * @param boolean $withProductUnitPrecision
+     * @param boolean $withNamesAndDescriptions
      * @return Product
      */
-    protected function createExpectedProductEntity($withProductUnitPrecision = false)
-    {
+    protected function createExpectedProductEntity(
+        $withProductUnitPrecision = false,
+        $withNamesAndDescriptions = false
+    ) {
         $expectedProduct = new StubProduct();
 
         $productUnit = new ProductUnit();
@@ -187,6 +214,14 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ->setPrecision(3);
 
             $expectedProduct->addUnitPrecision($productUnitPrecision);
+        }
+
+        if ($withNamesAndDescriptions) {
+            $expectedProduct
+                ->addName($this->createLocalizedValue('first name'))
+                ->addName($this->createLocalizedValue('second name'))
+                ->addDescription($this->createLocalizedValue(null, 'first description'))
+                ->addDescription($this->createLocalizedValue(null, 'second description'));
         }
 
         return $expectedProduct->setSku('test sku');
@@ -203,5 +238,19 @@ class ProductTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals('orob2b_product', $this->type->getName());
+    }
+
+    /**
+     * @param string|null $string
+     * @param string|null $text
+     * @return LocalizedFallbackValue
+     */
+    protected function createLocalizedValue($string = null, $text = null)
+    {
+        $value = new LocalizedFallbackValue();
+        $value->setString($string)
+            ->setText($text);
+
+        return $value;
     }
 }

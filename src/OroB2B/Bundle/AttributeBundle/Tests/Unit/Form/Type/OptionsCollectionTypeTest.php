@@ -2,6 +2,11 @@
 
 namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Extension\Core\CoreExtension;
+use Symfony\Component\Form\FormFactoryBuilder;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType;
@@ -12,10 +17,6 @@ use OroB2B\Bundle\AttributeBundle\Form\Type\OptionsCollectionType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\IntegerType;
 use OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Type\Stub\TextType;
 use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\AbstractLocalizedType;
-
-use Symfony\Component\Form\Extension\Core\CoreExtension;
-use Symfony\Component\Form\FormFactoryBuilder;
-use Symfony\Component\Form\PreloadedExtension;
 
 class OptionsCollectionTypeTest extends AbstractLocalizedType
 {
@@ -45,6 +46,9 @@ class OptionsCollectionTypeTest extends AbstractLocalizedType
         $localeCollection = new LocaleCollectionType($this->registry);
         $localeCollection->setLocaleClass(self::LOCALE_CLASS);
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         return [
             new PreloadedExtension(
                 [
@@ -54,7 +58,7 @@ class OptionsCollectionTypeTest extends AbstractLocalizedType
                     OptionRowType::NAME => new OptionRowType(),
                     LocaleCollectionType::NAME => $localeCollection,
                     FallbackValueType::NAME => new FallbackValueType(),
-                    FallbackPropertyType::NAME => new FallbackPropertyType(),
+                    FallbackPropertyType::NAME => new FallbackPropertyType($translator),
                 ],
                 []
             )

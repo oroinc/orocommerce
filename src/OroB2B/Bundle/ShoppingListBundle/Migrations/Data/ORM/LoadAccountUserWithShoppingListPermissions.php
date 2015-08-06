@@ -12,8 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadAccountUserWithShoppingListPermissions extends AbstractFixture implements
     DependentFixtureInterface,
@@ -31,7 +31,7 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAccountUserRoles'];
+        return ['OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles'];
     }
 
     /**
@@ -93,7 +93,7 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
     protected function getBuyerRole(ObjectManager $manager)
     {
         return $manager
-            ->getRepository($this->container->getParameter('orob2b_customer.entity.account_user_role.class'))
+            ->getRepository($this->container->getParameter('orob2b_account.entity.account_user_role.class'))
             ->findOneBy(['role' => self::ROLE_FRONTEND_BUYER]);
     }
 }

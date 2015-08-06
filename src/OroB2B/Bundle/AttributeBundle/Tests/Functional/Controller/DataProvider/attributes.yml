@@ -11,60 +11,76 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: 'Canada integer attribute label'
                 fallback: null
         defaultValue: '100'
         localeDefaultValue:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: '200'
                 fallback: null
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'integer not localized':
@@ -80,53 +96,67 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: 'Canada integer attribute label'
                 fallback: null
         defaultValue: '100'
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'float localized':
@@ -142,60 +172,76 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: system
         defaultValue: '3.10'
         localeDefaultValue:
             en_US:
+                use_fallback: false
                 value: '3.14'
                 fallback: null
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: parent_locale
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
 'float not localized':
@@ -211,53 +257,67 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: system
         defaultValue: '100.55'
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
 'boolean localized':
@@ -270,60 +330,76 @@
     data:
         label:
             en_US:
+                use_fallback: false
                 value: 'US boolean attribute label'
                 fallback: null
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: parent_locale
         defaultValue: true
         localeDefaultValue:
             en_US:
+                use_fallback: false
                 value: true
                 fallback: null
             en_CA:
+                use_fallback: false
                 value: true
                 fallback: null
         additional:
             onProductView:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
 'boolean not localized':
@@ -336,53 +412,67 @@
     data:
         label:
             en_US:
+                use_fallback: false
                 value: 'US boolean attribute label'
                 fallback: null
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: parent_locale
         defaultValue: true
         additional:
             onProductView:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
 'string not localized':
@@ -398,18 +488,22 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: system
         defaultValue: 'Some string'
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'text not localized':
@@ -425,18 +519,22 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: true
                 value: null
                 fallback: system
         defaultValue: '<p>Text <b>with HTML</b>.</p>'
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
 'date not localized':
@@ -451,18 +549,22 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: false
                 fallback: system
             en_CA:
+                use_fallback: true
                 value: false
                 fallback: system
         defaultValue: '2000-01-01'
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'datetime not localized':
@@ -477,18 +579,22 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: false
                 fallback: system
             en_CA:
+                use_fallback: true
                 value: false
                 fallback: system
         defaultValue: '2000-01-01T08:11:12Z'
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'multiselect not localized':
@@ -502,9 +608,11 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: 'Canada multiselect attribute label'
                 fallback: null
         options:
@@ -513,9 +621,11 @@
                 is_default: 1
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US red'
                         fallback: null
                     en_CA:
+                        use_fallback: false
                         value: 'CA red'
                         fallback: null
                 order: 5
@@ -524,60 +634,76 @@
                 is_default: 1
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US brown'
                         fallback: null
                     en_CA:
+                        use_fallback: false
                         value: 'CA brown'
                         fallback: null
                 order: 100
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useForSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'multiselect localized':
@@ -591,9 +717,11 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: 'Canada multiselect attribute label'
                 fallback: null
         options:
@@ -602,10 +730,12 @@
                 is_default: 1
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US red'
                         fallback: null
                         extend_value: 1
                     en_CA:
+                        use_fallback: false
                         value: 'CA red'
                         fallback: null
                         extend_value: 1
@@ -615,10 +745,12 @@
                 is_default: 1
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US brown'
                         fallback: null
                         extend_value: 1
                     en_CA:
+                        use_fallback: false
                         value: 'CA brown'
                         fallback: null
                         extend_value: 1
@@ -626,51 +758,65 @@
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useForSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'select not localized':
@@ -684,9 +830,11 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: 'Canada select attribute label'
                 fallback: null
         options:
@@ -695,9 +843,11 @@
                 is_default: 1
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US red'
                         fallback: null
                     en_CA:
+                        use_fallback: false
                         value: 'CA red'
                         fallback: null
                 order: 5
@@ -706,60 +856,76 @@
                 is_default: null
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US brown'
                         fallback: null
                     en_CA:
+                        use_fallback: false
                         value: 'CA brown'
                         fallback: null
                 order: 100
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useForSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
 'select localized':
@@ -773,9 +939,11 @@
     data:
         label:
             en_US:
+                use_fallback: true
                 value: null
                 fallback: system
             en_CA:
+                use_fallback: false
                 value: 'Canada select attribute label'
                 fallback: null
         options:
@@ -784,10 +952,12 @@
                 is_default: 1
                 locales:
                     en_US:
+                        use_fallback: false
                         value: 'US red'
                         fallback: null
                         extend_value: null
                     en_CA:
+                        use_fallback: false
                         value: 'CA red'
                         fallback: null
                         extend_value: null
@@ -797,10 +967,12 @@
                 is_default: null
                 locales:
                     en_US:
+                        use_fallback: false
                         extend_value: 1
                         value: 'US brown'
                         fallback: null
                     en_CA:
+                        use_fallback: false
                         extend_value: 1
                         value: 'CA brown'
                         fallback: null
@@ -808,50 +980,64 @@
         additional:
             onProductView:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             inProductListing:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInSorting:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useForSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onAdvancedSearch:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             onProductComparison:
                 US:
+                    use_fallback: false
                     value: false
                     fallback: null
                 Canada:
+                    use_fallback: false
                     value: false
                     fallback: null
             useInFilters:
                 US:
+                    use_fallback: true
                     value: false
                     fallback: system
                 Canada:
+                    use_fallback: true
                     value: false
                     fallback: system
