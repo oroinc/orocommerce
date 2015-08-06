@@ -24,6 +24,13 @@ class LoadAccountUserData extends AbstractFixture
             'email' => self::EMAIL,
             'enabled' => true,
             'password' => self::PASSWORD
+        ],
+        [
+            'first_name' => 'First',
+            'last_name' => 'Last',
+            'email' => 'other.user@test.com',
+            'enabled' => true,
+            'password' => 'pass'
         ]
     ];
 
