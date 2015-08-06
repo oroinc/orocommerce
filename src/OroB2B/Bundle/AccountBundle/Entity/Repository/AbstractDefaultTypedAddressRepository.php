@@ -45,7 +45,7 @@ abstract class AbstractDefaultTypedAddressRepository extends EntityRepository
         }
 
         $qb
-            ->innerJoin('a.types', 'types', Join::ON, $joinConditions)
+            ->innerJoin('a.types', 'types', Join::WITH, $joinConditions)
             ->setParameter('isDefault', true)
             ->andWhere($qb->expr()->eq('a.owner', ':owner'))
             ->setParameter('owner', $owner);

@@ -28,6 +28,11 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
+    orob2b_order.provider.subtotals:
+            class: %orob2b_order.provider.subtotals.class%
+            arguments:
+                - @translator
+
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%
         arguments:
@@ -45,8 +50,3 @@ services:
         calls:
             - [addEntity, ['a', %orob2b_account.entity.account_address.class%]]
             - [addEntity, ['au', %orob2b_account.entity.account_user_address.class%]]
-
-    orob2b_order.provider.subtotals:
-            class: %orob2b_order.provider.subtotals.class%
-            arguments:
-                - @translator
