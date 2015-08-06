@@ -156,7 +156,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
         );
     }
 
-    public function testGetCustomerIdAction()
+    public function testGetAccountIdAction()
     {
         /** @var AccountUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
@@ -167,7 +167,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_customer_account_user_get_customer', ['id' => $id])
+            $this->getUrl('orob2b_account_account_user_get_account', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
@@ -176,11 +176,11 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
 
-        $this->assertArrayHasKey('customerId', $data);
+        $this->assertArrayHasKey('accountId', $data);
 
-        $customerId = $user->getCustomer() ? $user->getCustomer()->getId() : null;
+        $accountId = $user->getAccount() ? $user->getAccount()->getId() : null;
 
-        $this->assertEquals($data['customerId'], $customerId);
+        $this->assertEquals($data['accountId'], $accountId);
     }
 
     /**

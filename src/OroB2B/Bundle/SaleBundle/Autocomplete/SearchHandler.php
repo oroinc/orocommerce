@@ -29,7 +29,7 @@ class SearchHandler extends BaseSearchHandler
 
         if ($accountId) {
             $queryBuilder
-                ->andWhere('e.customer = :account')
+                ->andWhere('e.account = :account')
                 ->setParameter('account', $accountId)
             ;
         }

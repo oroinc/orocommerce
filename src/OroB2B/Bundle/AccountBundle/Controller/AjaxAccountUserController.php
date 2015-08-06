@@ -44,7 +44,7 @@ class AjaxAccountUserController extends Controller
 
         return new JsonResponse($response);
     }
-    
+
     /**
      * Send confirmation email
      *
@@ -111,18 +111,18 @@ class AjaxAccountUserController extends Controller
     }
 
     /**
-     * @Route("/get-customer/{id}",
-     *      name="orob2b_customer_account_user_get_customer",
+     * @Route("/get-account/{id}",
+     *      name="orob2b_account_account_user_get_account",
      *      requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_customer_account_user_view")
+     * @AclAncestor("orob2b_account_account_user_view")
      *
      * @param AccountUser $accountUser
      * @return JsonResponse
      */
-    public function getCustomerIdAction(AccountUser $accountUser)
+    public function getAccountIdAction(AccountUser $accountUser)
     {
         return new JsonResponse([
-            'customerId' => $accountUser->getCustomer() ? $accountUser->getCustomer()->getId() : null
+            'accountId' => $accountUser->getAccount() ? $accountUser->getAccount()->getId() : null
         ]);
     }
 

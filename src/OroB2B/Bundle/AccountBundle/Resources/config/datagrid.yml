@@ -366,32 +366,32 @@ datagrid:
                 confirmed:
                     type:      boolean
                     data_name: accountUser.confirmed
-        action_configuration: [@orob2b_customer.datagrid.action_permission_provider, "getUserPermissions"]
+        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
 
-    customer-account-user-grid:
-        extends: customer-account-user-select-grid
+    account-account-user-grid:
+        extends: account-account-user-select-grid
         options:
             entity_pagination: true
         properties:
             view_link:
                 type:   url
-                route:  orob2b_customer_account_user_view
+                route:  orob2b_account_account_user_view
                 params: [ id ]
             update_link:
                 type:   url
-                route:  orob2b_customer_account_user_update
+                route:  orob2b_account_account_user_update
                 params: [ id ]
             delete_link:
                 type:   url
-                route:  orob2b_api_customer_delete_account_user
+                route:  orob2b_api_account_delete_account_user
                 params: [ id ]
             enable_link:
                 type:   url
-                route:  orob2b_customer_account_user_enable
+                route:  orob2b_account_account_user_enable
                 params: [ id ]
             disable_link:
                 type:   url
-                route:  orob2b_customer_account_user_disable
+                route:  orob2b_account_account_user_disable
                 params: [ id ]
         actions:
             enable:

@@ -8,8 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
 
 class QuoteType extends AbstractType
@@ -48,7 +48,7 @@ class QuoteType extends AbstractType
                     'delimiter' => SearchHandler::DELIMITER,
                 ],
             ])
-            ->add('account', CustomerSelectType::NAME, [
+            ->add('account', AccountSelectType::NAME, [
                 'label'     => 'orob2b.sale.quote.account.label',
                 'required'  => false,
             ])

@@ -19,7 +19,7 @@ define(function(require) {
         options: {
             accountSelect: '.sale-quote-account-select input[type="hidden"]',
             accountUserSelect: '.sale-quote-accountuser-select input[type="hidden"]',
-            accountRoute: 'orob2b_customer_account_user_get_customer',
+            accountRoute: 'orob2b_account_account_user_get_account',
             errorMessage: 'Sorry, unexpected error was occurred'
         },
 
@@ -88,8 +88,8 @@ define(function(require) {
                     self.loadingMask.show();
                 },
                 success: function(response) {
-                    if (response.customerId) {
-                        self.$accountSelect.select2('val', response.customerId);
+                    if (response.accountId) {
+                        self.$accountSelect.select2('val', response.accountId);
                     } else {
                         self.$accountSelect.select2('val', '');
                     }

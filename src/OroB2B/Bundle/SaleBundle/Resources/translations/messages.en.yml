@@ -119,7 +119,7 @@ orob2b:
 
             quoteproduct:
                 comment.label: 'Seller Notes'
-                comment_customer.label: 'Customer Notes'
+                comment_account.label: 'Account Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'

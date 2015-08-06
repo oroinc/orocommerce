@@ -98,7 +98,7 @@ datagrid:
                     data_name: quote.accountUser
                     options:
                         field_options:
-                            class:      %orob2b_customer.entity.account_user.class%
+                            class:      %orob2b_account.entity.account_user.class%
                             multiple:   false
                 accountName:
                     type:      entity
@@ -106,7 +106,7 @@ datagrid:
                     options:
                         field_options:
                             property:   name
-                            class:      %orob2b_customer.entity.customer.class%
+                            class:      %orob2b_account.entity.account.class%
                             multiple:   false
                 validUntil:
                     type:      datetime
@@ -196,7 +196,7 @@ datagrid:
                     data_name: quote.accountUser
                     options:
                         field_options:
-                            class:      %orob2b_customer.entity.account_user.class%
+                            class:      %orob2b_account.entity.account_user.class%
                             multiple:   false
                 validUntil:
                     type:      datetime

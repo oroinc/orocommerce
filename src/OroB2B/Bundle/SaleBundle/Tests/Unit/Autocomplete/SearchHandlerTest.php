@@ -132,7 +132,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider queryWithoutSeparatorDataProvider
      * @param string $search
      */
-    public function testSearchEmptyCustomer($search)
+    public function testSearchEmptyAccount($search)
     {
         $page = 1;
         $perPage = 15;
@@ -164,25 +164,25 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider queryFullDataProvider
-     * @param int $customerId
+     * @param int $accountId
      * @param string $search
      */
-    public function testSearchWithCustomer($customerId, $search)
+    public function testSearchWithAccount($accountId, $search)
     {
         $page = 1;
         $perPage = 15;
-        $queryString = sprintf('%d%s%s', $customerId, self::DELIMITER, $search);
+        $queryString = sprintf('%d%s%s', $accountId, self::DELIMITER, $search);
 
         $foundElements = [
-            $this->getSearchItem($customerId)
+            $this->getSearchItem($accountId)
         ];
         $resultData = [
-            $this->getResultStub($customerId, 'test1')
+            $this->getResultStub($accountId, 'test1')
         ];
         $expectedResultData = [
-            ['id' => $customerId, 'email' => 'test1'],
+            ['id' => $accountId, 'email' => 'test1'],
         ];
-        $expectedIds = [$customerId];
+        $expectedIds = [$accountId];
         $this->assertSearchCall($search, $page, $perPage, $foundElements, $resultData, $expectedIds);
 
         $searchResult = $this->searchHandler->search($queryString, $page, $perPage);
@@ -302,7 +302,7 @@ class SearchHandlerTest extends \PHPUnit_Framework_TestCase
 
         $queryBuilder->expects($this->any())
             ->method('andWhere')
-            ->with('e.customer = :account')
+            ->with('e.account = :account')
             ->will($this->returnSelf());
 
         $this->aclHelper->expects($this->once())

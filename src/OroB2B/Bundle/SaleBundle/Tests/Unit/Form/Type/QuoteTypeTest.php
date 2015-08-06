@@ -10,8 +10,8 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -80,11 +80,11 @@ class QuoteTypeTest extends AbstractTest
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
 
         if (null !== $accountUserId) {
-            $quote->setAccountUser($this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $accountUserId));
+            $quote->setAccountUser($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $accountUserId));
         }
 
         if (null !== $accountId) {
-            $quote->setAccount($this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', $accountId));
+            $quote->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId));
         }
 
         foreach ($items as $item) {
@@ -166,18 +166,18 @@ class QuoteTypeTest extends AbstractTest
             'oro_user_select'
         );
 
-        $customerSelectType = new StubEntityType(
+        $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1),
-                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
             ],
-            CustomerSelectType::NAME
+            AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );
@@ -219,7 +219,7 @@ class QuoteTypeTest extends AbstractTest
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    $customerSelectType->getName()              => $customerSelectType,
+                    $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
                 ],
                 []

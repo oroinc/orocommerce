@@ -11,11 +11,11 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserManager;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer as Account;
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AcccountBundle\Entity\AccountUserManager;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadUserData extends AbstractFixture implements FixtureInterface
 {
@@ -44,7 +44,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'orob2b_customer.entity.account_user.class',
+                'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
@@ -54,7 +54,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_customer.entity.account_user.class',
+                'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
@@ -64,7 +64,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_customer.entity.account_user.class',
+                'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
@@ -217,7 +217,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             $accountUser
                 ->setEmail($item['email'])
-                ->setCustomer($this->getReference($item['account']))
+                ->setAccount($this->getReference($item['account']))
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)

@@ -53,8 +53,8 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *              "organization_column_name"="organization_id"
  *          },
  *          "form"={
- *              "form_type"="orob2b_customer_account_user_select",
- *              "grid_name"="customer-account-user-select-grid"
+ *              "form_type"="orob2b_account_account_user_select",
+ *              "grid_name"="account-account-user-select-grid"
  *          },
  *          "security"={
  *              "type"="ACL",

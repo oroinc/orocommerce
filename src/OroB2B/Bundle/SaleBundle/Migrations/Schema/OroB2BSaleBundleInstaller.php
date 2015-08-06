@@ -209,7 +209,7 @@ class OroB2BSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer'),
+            $schema->getTable('orob2b_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]

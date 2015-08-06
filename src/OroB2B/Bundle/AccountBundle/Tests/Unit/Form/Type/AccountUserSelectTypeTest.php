@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
 class AccountUserSelectTypeTest extends FormIntegrationTestCase
 {
@@ -43,10 +43,10 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
                     $this->assertArrayHasKey('autocomplete_alias', $options);
                     $this->assertArrayHasKey('create_form_route', $options);
                     $this->assertArrayHasKey('configs', $options);
-                    $this->assertEquals('orob2b_customer_account_user', $options['autocomplete_alias']);
-                    $this->assertEquals('orob2b_customer_account_user_create', $options['create_form_route']);
+                    $this->assertEquals('orob2b_account_account_user', $options['autocomplete_alias']);
+                    $this->assertEquals('orob2b_account_account_user_create', $options['create_form_route']);
                     $this->assertEquals(
-                        ['placeholder' => 'orob2b.customer.accountuser.form.choose'],
+                        ['placeholder' => 'orob2b.account.accountuser.form.choose'],
                         $options['configs']
                     );
                 }
