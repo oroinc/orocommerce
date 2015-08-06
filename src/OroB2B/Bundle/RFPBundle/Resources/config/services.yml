@@ -4,21 +4,13 @@ parameters:
     orob2b_rfp.entity.request_product_item.class: OroB2B\Bundle\RFPBundle\Entity\RequestProductItem
     orob2b_rfp.entity.request.status.class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
     orob2b_rfp.datagrid.action_permission_provider.class: OroB2B\Bundle\RFPBundle\Datagrid\ActionPermissionProvider
-
     orob2b_rfp.mailer.processor.class: OroB2B\Bundle\RFPBundle\Mailer\Processor
-    #Validators
-    orob2b_rfp.validator.request_product_item.class: OroB2B\Bundle\RFPBundle\Validator\Constraints\RequestProductItemValidator
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
         arguments:
             - @oro_config.manager
-
-    orob2b_rfp.validator.request_product_item:
-        class: %orob2b_rfp.validator.request_product_item.class%
-        tags:
-            - { name: validator.constraint_validator, alias: orob2b_rfp.validator.request_product_item }
 
     orob2b_rfp.mailer.processor:
         class: %orob2b_rfp.mailer.processor.class%
