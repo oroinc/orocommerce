@@ -6,6 +6,7 @@ parameters:
     orob2b_payment.event_listener.datagrid.class: OroB2B\Bundle\PaymentBundle\EventListener\DatagridListener
     orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
     orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
+    orob2b_payment.provider.payment_term.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -64,3 +65,9 @@ services:
         scope: prototype
         tags:
             - { name: oro_datagrid.extension.action.type, type: payment-delete }
+
+    orob2b_payment.provider.payment_term:
+        class: %orob2b_payment.provider.payment_term.class%
+        arguments:
+            - @doctrine
+            - %orob2b_payment.entity.payment_term.class%
