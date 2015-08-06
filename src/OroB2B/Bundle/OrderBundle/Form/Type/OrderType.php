@@ -29,6 +29,7 @@ class OrderType extends AbstractType
                 [
                     'label' => 'orob2b.order.billing_address.label',
                     'order' => $options['data'],
+                    'required' => false,
                     'addressType' => AddressType::TYPE_BILLING,
                 ]
             )
@@ -38,6 +39,7 @@ class OrderType extends AbstractType
                 [
                     'label' => 'orob2b.order.shipping_address.label',
                     'order' => $options['data'],
+                    'required' => false,
                     'addressType' => AddressType::TYPE_SHIPPING,
                 ]
             );

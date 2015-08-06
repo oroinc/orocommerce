@@ -3,16 +3,19 @@
 namespace OroB2B\Bundle\OrderBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\PropertyAccess\PropertyAccessor;
+
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class OrderAddressManager
 {
@@ -75,23 +78,40 @@ class OrderAddressManager
 
         $existingClassName = ClassUtils::getClass($address);
         $metadata = $this->registry->getManagerForClass($existingClassName)->getClassMetadata($existingClassName);
-        $orderMetadata = $this->registry->getManagerForClass($this->orderAddressClass)->getClassMetadata(
-            $this->orderAddressClass
-        );
+        $orderMetadata = $this->registry->getManagerForClass($this->orderAddressClass)
+            ->getClassMetadata($this->orderAddressClass);
+
         foreach ($metadata->getFieldNames() as $fieldName) {
             if ($orderMetadata->hasField($fieldName)) {
-                try {
-                    $this->propertyAccessor->setValue(
-                        $orderAddress,
-                        $fieldName,
-                        $this->propertyAccessor->getValue($address, $fieldName)
-                    );
-                } catch (NoSuchPropertyException $e) {
-                }
+                $this->setValue($orderAddress, $address, $fieldName);
+            }
+        }
+
+        foreach ($metadata->getAssociationNames() as $associationName) {
+            if ($orderMetadata->hasAssociation($associationName)) {
+                $this->setValue($orderAddress, $address, $associationName);
             }
         }
 
         return $orderAddress;
+    }
+
+    /**
+     * @param AbstractAddress $from
+     * @param AbstractAddress $to
+     * @param string $property
+     */
+    protected function setValue(AbstractAddress $from, AbstractAddress $to, $property)
+    {
+        $value = $this->propertyAccessor->getValue($from, $property);
+        if (!$value || ($value instanceof Collection && $value->isEmpty())) {
+            return;
+        }
+
+        try {
+            $this->propertyAccessor->setValue($to, $property, $value);
+        } catch (NoSuchPropertyException $e) {
+        }
     }
 
     /**
@@ -104,21 +124,22 @@ class OrderAddressManager
         $addresses = [];
         $accountUser = $order->getAccountUser();
         if ($accountUser) {
-            $accountUserAddresses = $this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
-            if ($accountUserAddresses) {
-                foreach ($accountUserAddresses as $accountUserAddress) {
-                    $addresses['orob2b.order.form.group.account'][$this->getIdentifier($accountUserAddress)] =
-                        $accountUserAddress;
-                }
-            }
             if ($accountUser->getAccount()) {
                 $accountAddresses = $this->orderAddressProvider->getAccountAddresses(
                     $accountUser->getAccount(),
                     $type
                 );
                 foreach ($accountAddresses as $accountAddress) {
-                    $addresses['orob2b.order.form.group.account_user'][$this->getIdentifier($accountAddress)] =
+                    $addresses['orob2b.account.entity_label'][$this->getIdentifier($accountAddress)] =
                         $accountAddress;
+                }
+            }
+
+            $accountUserAddresses = $this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
+            if ($accountUserAddresses) {
+                foreach ($accountUserAddresses as $accountUserAddress) {
+                    $addresses['orob2b.accountuser.entity_label'][$this->getIdentifier($accountUserAddress)] =
+                        $accountUserAddress;
                 }
             }
         }

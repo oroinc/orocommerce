@@ -2,12 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -15,6 +9,14 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
+use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 
 class OrderAddressType extends AbstractType
 {
@@ -62,34 +64,46 @@ class OrderAddressType extends AbstractType
     {
         $type = $options['addressType'];
 
-        $builder->add(
-            'accountAddress',
-            'genemu_jqueryselect2_choice',
-            [
-                'label' => false,
-                'required' => false,
-                'mapped' => false,
-                'choices' => $this->getAddresses($options['order'], $type),
-            ]
-        );
+        $builder
+            ->add(
+                'accountAddress',
+                'genemu_jqueryselect2_choice',
+                [
+                    'label' => false,
+                    'required' => false,
+                    'mapped' => false,
+                    'choices' => $this->getAddresses($options['order'], $type),
+                    'configs' => [
+                        'placeholder' => 'orob2b.order.form.address.' .
+                            ($this->isManualEditGranted($type) ? 'choose_or_create' : 'choose'),
+                    ],
+                ]
+            );
 
-        if (!$this->isManualEditGranted($type)) {
-            $builder->addEventListener(
-                FormEvents::SUBMIT,
-                function (FormEvent $event) {
-                    $form = $event->getForm();
-                    $identifier = $form->get('accountAddress')->getData();
-                    if ($identifier) {
-                        $address = $this->orderAddressManager->getEntityByIdentifier($identifier);
-                        if ($address) {
-                            $event->setData(
-                                $this->orderAddressManager->updateFromAbstract($address, $event->getData())
-                            );
-                        }
+        $builder->addEventListener(
+            FormEvents::SUBMIT,
+            function (FormEvent $event) use ($type) {
+                if (!$this->isManualEditGranted($type)) {
+                    $event->setData(null);
+                }
+
+                $form = $event->getForm();
+                if (!$form->has('accountAddress')) {
+                    return;
+                }
+
+                $identifier = $form->get('accountAddress')->getData();
+                if ($identifier) {
+                    $address = $this->orderAddressManager->getEntityByIdentifier($identifier);
+                    if ($address) {
+                        $event->setData(
+                            $this->orderAddressManager->updateFromAbstract($address, $event->getData())
+                        );
                     }
                 }
-            );
-        }
+            },
+            -10
+        );
     }
 
     /**
@@ -97,11 +111,15 @@ class OrderAddressType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        $isManualEditGranted = $this->isManualEditGranted($options['addressType']);
+
         foreach ($view->children as $child) {
-            $child->vars['read_only'] = !$this->isManualEditGranted($options['addressType']);
+            $child->vars['disabled'] = !$isManualEditGranted;
         }
 
-        $view->offsetGet('accountAddress')->vars['read_only'] = false;
+        if ($view->offsetExists('accountAddress')) {
+            $view->offsetGet('accountAddress')->vars['disabled'] = false;
+        }
     }
 
     /**
@@ -131,7 +149,6 @@ class OrderAddressType extends AbstractType
     {
         return 'oro_address';
     }
-
 
     /**
      * @return string
