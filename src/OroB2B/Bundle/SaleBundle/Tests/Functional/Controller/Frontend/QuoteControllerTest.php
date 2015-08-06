@@ -154,6 +154,9 @@ class QuoteControllerTest extends WebTestCase
                 'expected' => [
                     'data' => [
                         [
+                            'qid' => LoadQuoteData::QUOTE2,
+                        ],
+                        [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
                         [
@@ -179,6 +182,9 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'data' => [
+                        [
+                            'qid' => LoadQuoteData::QUOTE2,
+                        ],
                         [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
