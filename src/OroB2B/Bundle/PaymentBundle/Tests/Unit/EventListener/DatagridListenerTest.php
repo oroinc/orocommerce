@@ -24,9 +24,9 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         'source' => [
             'query' => [
                 'select' => [
-                    "payment_term.label as payment_term_label",
-                    "payment_term_group.label as payment_term_group_label",
-                    "CONCAT(CASE WHEN payment_term.id IS NOT NULL THEN payment_term.id ELSE CASE WHEN payment_term_group.id IS NOT NULL THEN payment_term_group.id ELSE '' END END, '') as payment_term_for_filter"
+                    'payment_term.label as payment_term_label',
+                    'payment_term_group.label as payment_term_group_label',
+                    '(CASE WHEN payment_term.id IS NOT NULL THEN payment_term.id ELSE payment_term_group.id END) as payment_term_for_filter'
                 ],
                 'join' => [
                     'left' => [
