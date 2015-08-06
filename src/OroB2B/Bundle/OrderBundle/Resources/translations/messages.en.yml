@@ -9,6 +9,7 @@ orob2b:
         organization.label: Organization
         shipping_address.label: Shipping Address
         billing_address.label: Billing Address
+        payment_term.label: Payment Term
 
         menu:
             sales_tab.label: Sales
@@ -40,6 +41,7 @@ orob2b:
                 payment_term_account_can_override: Override account payment term
 
         form:
+            payment.label: Payment
             address:
                 choose: Select an address
                 choose_or_create: Select an existing address or enter a new address below

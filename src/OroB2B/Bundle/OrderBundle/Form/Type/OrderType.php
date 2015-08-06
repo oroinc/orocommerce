@@ -7,6 +7,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 class OrderType extends AbstractType
 {
@@ -14,6 +17,17 @@ class OrderType extends AbstractType
 
     /** @var  string */
     protected $dataClass;
+
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
+    /**
+     * @param SecurityFacade $securityFacade
+     */
+    public function __construct(SecurityFacade $securityFacade)
+    {
+        $this->securityFacade = $securityFacade;
+    }
 
     /**
      * {@inheritDoc}
@@ -43,6 +57,18 @@ class OrderType extends AbstractType
                     'addressType' => AddressType::TYPE_SHIPPING,
                 ]
             );
+
+        if ($this->isOverridePaymentTermGranted()) {
+            $builder
+                ->add(
+                    'paymentTerm',
+                    PaymentTermSelectType::NAME,
+                    [
+                        'label' => 'orob2b.order.payment_term.label',
+                        'required' => false
+                    ]
+                );
+        }
     }
 
     /**
@@ -71,5 +97,13 @@ class OrderType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isOverridePaymentTermGranted()
+    {
+        return $this->securityFacade->isGranted('orob2b_order_payment_term_account_can_override');
     }
 }

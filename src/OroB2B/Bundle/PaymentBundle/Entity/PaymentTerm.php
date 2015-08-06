@@ -205,4 +205,14 @@ class PaymentTerm
     {
         return $this->accounts;
     }
+
+    /**
+     * Convert payment term to string
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getLabel();
+    }
 }
