@@ -46,6 +46,8 @@ class OroB2BAccountBundleInstaller implements
     const ORO_CALENDAR_EVENT = 'oro_calendar_event';
     const ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'orob2b_account_user_address';
     const ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'orob2b_acc_usr_adr_to_adr_type';
+    const ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_category_visibility';
+    const ORO_B2B_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -126,6 +128,7 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAuditTable($schema);
         $this->createOroB2BAccountUserAddressTable($schema);
         $this->createOroB2BAccUsrAdrToAdrTypeTable($schema);
+        $this->createOroB2BCategoryVisibilityTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -139,6 +142,7 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAuditForeignKeys($schema);
         $this->addOroB2BAccountUserAddressForeignKeys($schema);
         $this->addOroB2BAccUsrAdrToAdrTypeForeignKeys($schema);
+        $this->addOroB2BCategoryVisibilityForeignKeys($schema);
     }
 
     /**
@@ -789,6 +793,42 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME),
             ['account_user_address_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Create orob2b_category_visibility table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BCategoryVisibilityTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+
+        $this->extendExtension->addEnumField(
+            $schema,
+            self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME,
+            'visibility',
+            'category_visibility'
+        );
+    }
+
+    /**
+     * Add orob2b_category_visibility foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BCategoryVisibilityForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_CATEGORY_TABLE_NAME),
+            ['category_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

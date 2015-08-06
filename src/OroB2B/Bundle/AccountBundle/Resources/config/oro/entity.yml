@@ -6,3 +6,6 @@ oro_entity:
         OroB2B\Bundle\AccountBundle\Entity\AuditField:
             alias:        account_user_audit_field
             plural_alias: account_user_audit_fields
+        OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility:
+            alias:        category_visibility
+            plural_alias: category_visibilities
