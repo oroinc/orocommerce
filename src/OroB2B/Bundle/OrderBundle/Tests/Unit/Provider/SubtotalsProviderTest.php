@@ -27,8 +27,19 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new SubtotalsProvider($this->translator);
     }
 
+    protected function tearDown()
+    {
+        unset($this->translator, $this->provider);
+    }
+
     public function testGetSubtotals()
     {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('orob2b.order.subtotals.%s', Subtotal::TYPE_SUBTOTAL))
+            ->will($this->returnValue(ucfirst(Subtotal::TYPE_SUBTOTAL)))
+        ;
+
         $order = new Order();
         $order->setCurrency('USD');
 
@@ -38,6 +49,7 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $subtotal = $subtotals->get(Subtotal::TYPE_SUBTOTAL);
         $this->assertInstanceOf('OroB2B\Bundle\OrderBundle\Model\Subtotal', $subtotal);
         $this->assertEquals(Subtotal::TYPE_SUBTOTAL, $subtotal->getType());
+        $this->assertEquals(ucfirst(Subtotal::TYPE_SUBTOTAL), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertTrue(0 === $subtotal->getAmount());
     }
