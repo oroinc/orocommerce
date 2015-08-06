@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -24,7 +23,7 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
-class LineItemTypeTest extends FormIntegrationTestCase
+class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
@@ -288,48 +287,6 @@ class LineItemTypeTest extends FormIntegrationTestCase
             ->willReturn($repo);
 
         return $registry;
-    }
-
-    /**
-     * @param integer $productId
-     * @param string  $unitCode
-     * @param integer $precision
-     *
-     * @return Product
-     */
-    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
-    {
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
-
-        $unit = new ProductUnit();
-        $unit->setCode($unitCode);
-
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setPrecision($precision)
-            ->setUnit($unit)
-            ->setProduct($product);
-
-        return $product->addUnitPrecision($unitPrecision);
-    }
-
-    /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 
     /**

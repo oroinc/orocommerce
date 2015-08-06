@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Doctrine\DBAL\Driver\Connection;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -35,7 +36,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Doctrine\DBAL\Connection
+     * @var \PHPUnit_Framework_MockObject_MockObject|Connection
      */
     protected $connection;
 
@@ -81,15 +82,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessFormNotValid()
     {
-        $this->connection
-            ->expects($this->once())
-            ->method('beginTransaction');
-        $this->connection
-            ->expects($this->never())
-            ->method('commit');
-        $this->connection
-            ->expects($this->once())
-            ->method('rollBack');
+        $this->prepareConnection($this->connection, false);
 
         $this->request->expects($this->once())
             ->method('getMethod')
@@ -114,12 +107,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessExistingLineItem($existingLineItem, $newNotes)
     {
-        $this->connection
-            ->expects($this->once())
-            ->method('beginTransaction');
-        $this->connection
-            ->expects($this->once())
-            ->method('commit');
+        $this->prepareConnection($this->connection);
 
         $this->request->expects($this->once())
             ->method('getMethod')
@@ -216,12 +204,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessNotExistingLineItem()
     {
-        $this->connection
-            ->expects($this->once())
-            ->method('beginTransaction');
-        $this->connection
-            ->expects($this->once())
-            ->method('commit');
+        $this->prepareConnection($this->connection);
 
         $this->request->expects($this->once())
             ->method('getMethod')
@@ -261,5 +244,29 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $handler = new LineItemHandler($this->form, $this->request, $this->registry);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals([], $handler->updateSavedId([]));
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject|Connection $connection
+     * @param boolean $expectCommit
+     */
+    protected function prepareConnection(Connection $connection, $expectCommit = true)
+    {
+        $connection
+            ->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($expectCommit) {
+            $connection
+                ->expects($this->once())
+                ->method('commit');
+        } else {
+            $connection
+                ->expects($this->never())
+                ->method('commit');
+            $connection
+                ->expects($this->once())
+                ->method('rollBack');
+        }
     }
 }
