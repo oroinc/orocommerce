@@ -14,6 +14,8 @@ parameters:
     #Listeners
     orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.event_listener.datagrid.class: OroB2B\Bundle\SaleBundle\EventListener\DatagridListener
+    #Voters
+    orob2b_sale.acl.voter.account.class: OroB2B\Bundle\SaleBundle\Acl\Voter\AccountVoter
 
 services:
     orob2b_sale.event_listener.entity_subscriber:
@@ -61,3 +63,13 @@ services:
         class: %orob2b_sale.formatter.quote_product_offer.class%
         arguments:
             - @translator
+
+    orob2b_sale.acl.voter.account:
+        class: %orob2b_sale.acl.voter.account.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @service_container
+        calls:
+            - [setClassName, [%orob2b_sale.entity.quote.class%]]
+        tags:
+            - { name: security.voter }

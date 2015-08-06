@@ -21,7 +21,7 @@ class QuoteController extends Controller
      *      id="orob2b_sale_quote_frontend_view",
      *      type="entity",
      *      class="OroB2BSaleBundle:Quote",
-     *      permission="VIEW",
+     *      permission="CUSTOM_VIEW",
      *      group_name="commerce"
      * )
      *
@@ -38,7 +38,13 @@ class QuoteController extends Controller
     /**
      * @Route("/", name="orob2b_sale_quote_frontend_index")
      * @Template("OroB2BSaleBundle:Quote/Frontend:index.html.twig")
-     * @AclAncestor("orob2b_sale_quote_frontend_view")
+     * @Acl(
+     *      id="orob2b_sale_quote_frontend_index",
+     *      type="entity",
+     *      class="OroB2BSaleBundle:Quote",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      *
      * @return array
      */
