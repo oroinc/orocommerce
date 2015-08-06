@@ -81,10 +81,12 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
         /** @var User $user */
         $user = $userRepository->findOneBy([]);
 
+        $accountUser = $this->getAccountUser($manager);
         $order = new Order();
         $order
             ->setOwner($user)
-            ->setAccountUser($this->getAccountUser($manager))
+            ->setAccount($accountUser->getAccount())
+            ->setAccountUser($accountUser)
             ->setOrganization($user->getOrganization())
             ->setIdentifier($user->getId())
             ->setBillingAddress($this->createOrderAddress($manager, $this->billingAddressesData))

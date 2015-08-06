@@ -27,7 +27,7 @@ datagrid:
                     left:
                         - { join: order1.owner, alias: order_owner }
                         - { join: order1.accountUser, alias: accountUser }
-                        - { join: accountUser.account, alias: account }
+                        - { join: order1.account, alias: account }
                         - { join: order1.paymentTerm, alias: paymentTerm }
         columns:
             id:
