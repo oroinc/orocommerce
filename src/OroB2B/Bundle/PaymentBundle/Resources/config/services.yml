@@ -1,6 +1,12 @@
 parameters:
     orob2b_payment.entity.payment_term.class: OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm
     orob2b_payment.payment_term.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_payment.twig.delete_message_text_extension.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextExtension
+    orob2b_payment.event_listener.form_view.class: OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener
+    orob2b_payment.event_listener.datagrid.class: OroB2B\Bundle\PaymentBundle\EventListener\DatagridListener
+    orob2b_payment.payment_term.delete_message_generator.class: OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator
+    orob2b_payment.extension.action.type.payment_delete.class: OroB2B\Bundle\PaymentBundle\Extension\Action\Actions\PaymentDeleteAction
+    orob2b_payment.provider.payment_term.class: OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider
 
 services:
     orob2b_payment.payment_term.manager.api:
@@ -18,3 +24,50 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_payment_term, acl_resource: orob2b_payment_term_view }
         lazy: true
+
+    orob2b_payment.payment_term.delete_message_generator:
+        class: %orob2b_payment.payment_term.delete_message_generator.class%
+        arguments:
+            - @router
+            - @twig
+            - @doctrine
+
+    orob2b_payment.twig.delete_message_text_extension:
+        class: %orob2b_payment.twig.delete_message_text_extension.class%
+        arguments:
+            - @orob2b_payment.payment_term.delete_message_generator
+        tags:
+            - { name: twig.extension }
+
+    orob2b_payment.event_listener.form_view:
+        class: %orob2b_payment.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
+
+    orob2b_payment.event_listener.datagrid:
+        class: %orob2b_payment.event_listener.datagrid.class%
+        calls:
+            - [setPaymentTermClass, [%orob2b_payment.entity.payment_term.class%]]
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
+
+    orob2b_payment.extension.action.type.payment_delete:
+        class: %orob2b_payment.extension.action.type.payment_delete.class%
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: payment-delete }
+
+    orob2b_payment.provider.payment_term:
+        class: %orob2b_payment.provider.payment_term.class%
+        arguments:
+            - @doctrine
+            - %orob2b_payment.entity.payment_term.class%

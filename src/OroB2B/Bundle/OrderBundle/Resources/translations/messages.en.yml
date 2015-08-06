@@ -6,6 +6,7 @@ orob2b:
         id.label: Numeric ID
         identifier.label: ID
         owner.label: Owner
+        organization.label: Organization
         shipping_address.label: Shipping Address
         billing_address.label: Billing Address
 
@@ -41,3 +42,6 @@ orob2b:
             address:
                 choose: Select an address
                 choose_or_create: Select an existing address or enter a new address below
+
+        subtotals:
+            subtotal: Subtotal

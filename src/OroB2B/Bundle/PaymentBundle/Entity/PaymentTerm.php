@@ -2,14 +2,19 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+
 /**
- * @ORM\Entity
  * @ORM\Table(name="orob2b_payment_term")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository")
  * @Config(
  *      routeName="orob2b_payment_term_index",
  *      routeView="orob2b_payment_term_view",
@@ -55,6 +60,44 @@ class PaymentTerm
     protected $label;
 
     /**
+     * @var AccountGroup[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
+     * @ORM\JoinTable(
+     *      name="orob2b_payment_term_to_c_group",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $accountGroups;
+
+    /**
+     * @var Account[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinTable(
+     *      name="orob2b_payment_t_to_account",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $accounts;
+
+    public function __construct()
+    {
+        $this->accountGroups = new ArrayCollection();
+        $this->accounts = new ArrayCollection();
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -85,5 +128,81 @@ class PaymentTerm
         $this->label = $label;
 
         return $this;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     *
+     * @return PaymentTerm
+     */
+    public function addAccountGroup(AccountGroup $accountGroup)
+    {
+        if (!$this->accountGroups->contains($accountGroup)) {
+            $this->accountGroups->add($accountGroup);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     *
+     * @return PaymentTerm
+     */
+    public function removeAccountGroup(AccountGroup $accountGroup)
+    {
+        if ($this->accountGroups->contains($accountGroup)) {
+            $this->accountGroups->removeElement($accountGroup);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get account groups
+     *
+     * @return Collection|AccountGroup[]
+     */
+    public function getAccountGroups()
+    {
+        return $this->accountGroups;
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return PaymentTerm
+     */
+    public function addAccount(Account $account)
+    {
+        if (!$this->accounts->contains($account)) {
+            $this->accounts->add($account);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Account $account
+     *
+     * @return PaymentTerm
+     */
+    public function removeAccount(Account $account)
+    {
+        if ($this->accounts->contains($account)) {
+            $this->accounts->removeElement($account);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get account groups
+     *
+     * @return Collection|Account[]
+     */
+    public function getAccounts()
+    {
+        return $this->accounts;
     }
 }
