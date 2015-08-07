@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionDispatcher;
 
@@ -34,7 +35,13 @@ class AjaxLineItemController extends Controller
      *      requirements={"productId"="\d+"}
      * )
      * @Template("OroB2BShoppingListBundle:LineItem/Frontend/widget:add.html.twig")
-     * @AclAncestor("orob2b_shoppinglist_add_product")
+     * @Acl(
+     *      id="orob2b_shopping_list_line_item_frontend_add",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:LineItem",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
@@ -75,7 +82,7 @@ class AjaxLineItemController extends Controller
      *      name="orob2b_shopping_list_frontend_add_product",
      *      requirements={"productId"="\d+"}
      * )
-     * @AclAncestor("orob2b_shoppinglist_add_product")
+     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
      * @ParamConverter("product", class="OroB2BProductBundle:Product", options={"id" = "productId"})
      *
      * @param Request $request
@@ -116,7 +123,13 @@ class AjaxLineItemController extends Controller
      *
      * @Route("/update/{id}", name="orob2b_shopping_list_line_item_frontend_update_widget", requirements={"id"="\d+"})
      * @Template("OroB2BShoppingListBundle:LineItem:widget/update.html.twig")
-     *
+     * @Acl(
+     *      id="orob2b_shopping_list_line_item_frontend_update",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:LineItem",
+     *      permission="EDIT",
+     *      group_name="commerce"
+     * )
      * @param LineItem $lineItem
      *
      * @return array|RedirectResponse
@@ -130,6 +143,7 @@ class AjaxLineItemController extends Controller
 
     /**
      * @Route("/{gridName}/massAction/{actionName}", name="orob2b_shopping_list_add_products_massaction")
+     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
      *
      * @param Request $request
      * @param string $gridName

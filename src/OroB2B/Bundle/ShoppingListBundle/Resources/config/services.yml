@@ -1,4 +1,5 @@
 parameters:
+    orob2b_shopping_list.placeholder.filter.class: OroB2B\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter
     orob2b_shopping_list.entity.shopping_list.class: OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList
     orob2b_shopping_list.entity.line_item.class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
     orob2b_shopping_list.shopping_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -38,3 +39,8 @@ services:
         class: %orob2b_shopping_list.line_item.manager.class%
         arguments:
             - @orob2b_product.service.rounding
+
+    orob2b_shopping_list.placeholder.filter:
+        class: %orob2b_shopping_list.placeholder.filter.class%
+        arguments:
+            - @oro_security.security_facade

@@ -10,8 +10,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Acl\Extension\ActionAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -50,7 +50,7 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
     {
         $aclManager = $this->container->get('oro_security.acl.manager');
 
-        $this->setBuyerShoppingListPermissions($manager, $aclManager);
+        $this->setBuyerPermissions($manager, $aclManager);
 
         $manager->flush();
         $aclManager->flush();
@@ -60,35 +60,63 @@ class LoadAccountUserWithShoppingListPermissions extends AbstractFixture impleme
      * @param ObjectManager $manager
      * @param AclManager    $aclManager
      */
-    protected function setBuyerShoppingListPermissions(ObjectManager $manager, AclManager $aclManager)
+    protected function setBuyerPermissions(ObjectManager $manager, AclManager $aclManager)
     {
+        if (!$aclManager->isAclEnabled()) {
+            return;
+        }
+
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
-        $allowedAcls = ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC', 'DELETE_BASIC'];
+        $allowedAclCollection = ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC', 'DELETE_BASIC'];
         $role = $this->getBuyerRole($manager);
 
-        if ($aclManager->isAclEnabled()) {
-            $sid = $aclManager->getSid($role);
-            $className = $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class');
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
+        $sid = $aclManager->getSid($role);
+        $classNames = [
+            $this->container->getParameter('orob2b_shopping_list.entity.shopping_list.class'),
+            $this->container->getParameter('orob2b_shopping_list.entity.line_item.class')
+        ];
 
-                    $chainMetadataProvider->stopProviderEmulation();
-                } elseif ($extension instanceof ActionAclExtension) {
-                    $oid = $aclManager->getOid('action:orob2b_shoppinglist_add_product');
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->add('EXECUTE')->get();
-                    $aclManager->setPermission($sid, $oid, $mask, true);
-                }
+        foreach ($aclManager->getAllExtensions() as $extension) {
+            if (!$extension instanceof EntityAclExtension) {
+                continue;
+            }
+
+            foreach ($classNames as $className) {
+                $this->setAllowedAclForClass(
+                    $allowedAclCollection,
+                    $chainMetadataProvider,
+                    $aclManager,
+                    $className,
+                    $sid
+                );
             }
         }
+    }
+
+    /**
+     * @param array $allowedAclCollection
+     * @param ChainMetadataProvider $chainMetadataProvider
+     * @param AclManager $aclManager
+     * @param string $className
+     * @param string $sid
+     */
+    protected function setAllowedAclForClass(
+        array $allowedAclCollection,
+        ChainMetadataProvider $chainMetadataProvider,
+        AclManager $aclManager,
+        $className,
+        $sid
+    ) {
+        $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+        $oid = $aclManager->getOid('entity:' . $className);
+        $builder = $aclManager->getMaskBuilder($oid);
+        $mask = $builder->reset()->get();
+
+        foreach ($allowedAclCollection as $acl) {
+            $mask = $builder->add($acl)->get();
+        }
+        $aclManager->setPermission($sid, $oid, $mask);
+        $chainMetadataProvider->stopProviderEmulation();
     }
 
     /**
