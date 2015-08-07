@@ -20,7 +20,7 @@ use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 
 class OrderAddressType extends AbstractType
 {
-    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual';
+    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual_backend';
 
     const NAME = 'orob2b_order_address_type';
 
