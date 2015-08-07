@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -17,6 +19,8 @@ class OrderAddressProvider
 {
     const ADDRESS_TYPE_SHIPPING = 'shipping';
     const ADDRESS_TYPE_BILLING = 'billing';
+
+    const ADMIN_ACL_POSTFIX = '_backend';
 
     const ACCOUNT_ADDRESS_ANY = 'account_any';
     const ACCOUNT_USER_ADDRESS_DEFAULT = 'account_user_default';
@@ -57,6 +61,11 @@ class OrderAddressProvider
     protected $registry;
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @var string
      */
     protected $accountAddressClass;
@@ -69,17 +78,21 @@ class OrderAddressProvider
     /**
      * @param SecurityFacade $securityFacade
      * @param ManagerRegistry $registry
+     * @param AclHelper $aclHelper
      * @param string $accountAddressClass
      * @param string $accountUserAddressClass
      */
     public function __construct(
         SecurityFacade $securityFacade,
         ManagerRegistry $registry,
+        AclHelper $aclHelper,
         $accountAddressClass,
         $accountUserAddressClass
     ) {
         $this->securityFacade = $securityFacade;
         $this->registry = $registry;
+        $this->aclHelper = $aclHelper;
+
         $this->accountAddressClass = $accountAddressClass;
         $this->accountUserAddressClass = $accountUserAddressClass;
     }
@@ -93,10 +106,12 @@ class OrderAddressProvider
     public function getAccountAddresses(Account $account, $type)
     {
         $this->assertType($type);
-        $permissionsMap = $this->permissionsByType[$type];
 
-        if ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_ADDRESS_ANY])) {
-            return $this->getAccountAddressRepository()->getAddressesByType($account, $type);
+        $repository = $this->getAccountAddressRepository();
+        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
+            return $repository->getAddressesByType($account, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
+            return $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
         }
 
         return [];
@@ -111,13 +126,12 @@ class OrderAddressProvider
     public function getAccountUserAddresses(AccountUser $accountUser, $type)
     {
         $this->assertType($type);
-        $permissionsMap = $this->permissionsByType[$type];
 
         $repository = $this->getAccountUserAddressRepository();
-        if ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_ANY])) {
-            return $repository->getAddressesByType($accountUser, $type);
-        } elseif ($this->securityFacade->isGranted($permissionsMap[self::ACCOUNT_USER_ADDRESS_DEFAULT])) {
-            return $repository->getDefaultAddressesByType($accountUser, $type);
+        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
+            return $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
+            return $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
         }
 
         return [];
@@ -157,5 +171,20 @@ class OrderAddressProvider
     {
         return $this->registry->getManagerForClass($this->accountUserAddressClass)
             ->getRepository($this->accountUserAddressClass);
+    }
+
+    /**
+     * @param string $type
+     * @param string $key
+     * @return string
+     */
+    protected function getPermission($type, $key)
+    {
+        $postfix = '';
+        if ($this->securityFacade->getLoggedUser() instanceof User) {
+            $postfix = self::ADMIN_ACL_POSTFIX;
+        }
+
+        return $this->permissionsByType[$type][$key] . $postfix;
     }
 }

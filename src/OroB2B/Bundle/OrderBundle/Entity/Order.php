@@ -10,6 +10,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
@@ -44,10 +45,13 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
+     * @var integer
+     *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -69,7 +73,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $identifier;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
@@ -83,7 +87,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -220,7 +224,15 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     protected $paymentTerm;
 
     /**
-     * @var AccountUser $user
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $account;
+
+    /**
+     * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
@@ -554,6 +566,29 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function setAccountUser(AccountUser $accountUser = null)
     {
         $this->accountUser = $accountUser;
+
+        if ($accountUser->getAccount() && !$this->getAccount()) {
+            $this->setAccount($accountUser->getAccount());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return Order
+     */
+    public function setAccount($account)
+    {
+        $this->account = $account;
 
         return $this;
     }

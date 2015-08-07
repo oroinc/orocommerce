@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
 {
@@ -17,6 +18,14 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      * @var object
      */
     protected $owner;
+
+    /**
+     * @var OrganizationInterface
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="system_org_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $systemOrganization;
 
     /**
      * {@inheritdoc}
@@ -145,4 +154,23 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      * @return AbstractAddressToAddressType
      */
     abstract protected function createAddressToAddressTypeEntity();
+
+    /**
+     * @return OrganizationInterface
+     */
+    public function getSystemOrganization()
+    {
+        return $this->systemOrganization;
+    }
+
+    /**
+     * @param OrganizationInterface $systemOrganization
+     * @return AbstractDefaultTypedAddress
+     */
+    public function setSystemOrganization(OrganizationInterface $systemOrganization = null)
+    {
+        $this->systemOrganization = $systemOrganization;
+
+        return $this;
+    }
 }

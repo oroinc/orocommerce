@@ -6,10 +6,36 @@ orob2b:
         id.label: Numeric ID
         identifier.label: ID
         owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
         organization.label: Organization
-        shipping_address.label: Shipping Address
-        billing_address.label: Billing Address
+        currency.label: Currency
+        customer_notes.label: Customer Notes
+        po_number.label: PO Number
+        ship_until.label: Do Not Ship Later Than
+        subtotal.label: Subtotal
         payment_term.label: Payment Term
+        billing_address.label: Billing Address
+        shipping_address.label: Shipping Address
+
+        orderaddress:
+            entity_label: Order Address
+            entity_plural_label: Order Addresses
+            id.label: ID
+            label.label: Label
+            first_name.label: First Name
+            middle_name.label: Middle Name
+            last_name.label: Last Name
+            name_prefix.label: Name Prefix
+            name_suffix.label: Name Suffix
+            organization.label: Organization
+            city.label: City
+            postal_code.label: Zip/Postal Code
+            country.label: Country
+            region.label: State
+            region_text.label: State
+            street.label: Street
+            street2.label: Street 2
 
         menu:
             sales_tab.label: Sales

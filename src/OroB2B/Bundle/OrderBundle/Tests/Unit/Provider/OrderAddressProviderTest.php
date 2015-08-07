@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -23,6 +25,11 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $registry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AclHelper
+     */
+    protected $aclHelper;
 
     /**
      * @var string
@@ -47,9 +54,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
+        $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = new OrderAddressProvider(
             $this->securityFacade,
             $this->registry,
+            $this->aclHelper,
             $this->accountAddressClass,
             $this->accountUserAddressClass
         );
@@ -77,17 +89,27 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider accountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
+     * @param object $loggedUser
      */
-    public function testGetAccountAddressesNotGranted($type, $expectedPermission)
+    public function testGetAccountAddressesNotGranted($type, $expectedPermission, $loggedUser)
     {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->with($expectedPermission)
             ->will($this->returnValue(false));
 
+        $this->securityFacade->expects($this->once())
+            ->method('isGrantedClassPermission')
+            ->with('VIEW', $this->accountAddressClass)
+            ->will($this->returnValue(false));
+
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->never())
-            ->method('getAddressesByType');
+            ->method($this->anything());
 
         $this->provider->getAccountAddresses(new Account(), $type);
     }
@@ -96,9 +118,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider accountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
+     * @param object $loggedUser
      */
-    public function testGetAccountAddressesGranted($type, $expectedPermission)
+    public function testGetAccountAddressesGrantedAny($type, $expectedPermission, $loggedUser)
     {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $account = new Account();
         $addresses = [new AccountAddress()];
 
@@ -107,10 +134,13 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->with($expectedPermission)
             ->will($this->returnValue(true));
 
+        $this->securityFacade->expects($this->never())
+            ->method('isGrantedClassPermission');
+
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->once())
             ->method('getAddressesByType')
-            ->with($account, $type)
+            ->with($account, $type, $this->aclHelper)
             ->will($this->returnValue($addresses));
 
         $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
@@ -122,9 +152,48 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
     public function accountAddressPermissions()
     {
         return [
-            ['shipping', 'orob2b_order_address_shipping_account_use_any'],
-            ['billing', 'orob2b_order_address_billing_account_use_any'],
+            ['shipping', 'orob2b_order_address_shipping_account_use_any', new AccountUser()],
+            ['shipping', 'orob2b_order_address_shipping_account_use_any_backend', new User()],
+            ['billing', 'orob2b_order_address_billing_account_use_any', new AccountUser()],
+            ['billing', 'orob2b_order_address_billing_account_use_any_backend', new User()],
         ];
+    }
+
+    /**
+     * @dataProvider accountAddressPermissions
+     * @param string $type
+     * @param string $expectedPermission
+     * @param object $loggedUser
+     */
+    public function testGetAccountAddressesGrantedView($type, $expectedPermission, $loggedUser)
+    {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
+        $account = new Account();
+        $addresses = [new AccountAddress()];
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with($expectedPermission)
+            ->will($this->returnValue(false));
+
+        $this->securityFacade->expects($this->once())
+            ->method('isGrantedClassPermission')
+            ->with('VIEW', $this->accountAddressClass)
+            ->will($this->returnValue(true));
+
+        $repository = $this->assertAccountAddressRepositoryCall();
+        $repository->expects($this->never())
+            ->method('getAddressesByType');
+
+        $repository->expects($this->once())
+            ->method('getDefaultAddressesByType')
+            ->with($account, $type, $this->aclHelper)
+            ->will($this->returnValue($addresses));
+
+        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
     }
 
     /**
@@ -133,13 +202,19 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedCalledPermissions
      * @param string $calledRepositoryMethod
      * @param array $addresses
+     * @param object $loggedUser
      */
-    public function testGetAccountUserAddressesGranted(
+    public function testGetAccountUserAddresses(
         $type,
         array $expectedCalledPermissions,
         $calledRepositoryMethod,
-        array $addresses
+        array $addresses,
+        $loggedUser
     ) {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $accountUser = new AccountUser();
 
         $permissionsValueMap = [];
@@ -155,7 +230,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
         if ($calledRepositoryMethod) {
             $repository->expects($this->once())
                 ->method($calledRepositoryMethod)
-                ->with($accountUser, $type)
+                ->with($accountUser, $type, $this->aclHelper)
                 ->will($this->returnValue($addresses));
         } else {
             $repository->expects($this->never())
@@ -167,6 +242,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function accountUserAddressPermissions()
     {
@@ -179,6 +255,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 null,
                 [],
+                new AccountUser()
             ],
             [
                 'shipping',
@@ -187,6 +264,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
             ],
             [
                 'shipping',
@@ -196,6 +274,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
             ],
             [
                 'billing',
@@ -205,6 +284,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 null,
                 [],
+                new AccountUser()
             ],
             [
                 'billing',
@@ -213,6 +293,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
             ],
             [
                 'billing',
@@ -222,6 +303,65 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
+            ],
+            [
+                'shipping',
+                [
+                    'orob2b_order_address_shipping_account_user_use_any_backend' => false,
+                    'orob2b_order_address_shipping_account_user_use_default_backend' => false,
+                ],
+                null,
+                [],
+                new User()
+            ],
+            [
+                'shipping',
+                [
+                    'orob2b_order_address_shipping_account_user_use_any_backend' => true
+                ],
+                'getAddressesByType',
+                [new AccountUserAddress()],
+                new User()
+            ],
+            [
+                'shipping',
+                [
+                    'orob2b_order_address_shipping_account_user_use_any_backend' => false,
+                    'orob2b_order_address_shipping_account_user_use_default_backend' => true
+                ],
+                'getDefaultAddressesByType',
+                [new AccountUserAddress()],
+                new User()
+            ],
+            [
+                'billing',
+                [
+                    'orob2b_order_address_billing_account_user_use_any_backend' => false,
+                    'orob2b_order_address_billing_account_user_use_default_backend' => false,
+                ],
+                null,
+                [],
+                new User()
+            ],
+            [
+                'billing',
+                [
+                    'orob2b_order_address_billing_account_user_use_any_backend' => true
+                ],
+                'getAddressesByType',
+                [new AccountUserAddress()],
+                new User()
+            ],
+            [
+                'billing',
+                [
+                    'orob2b_order_address_billing_account_user_use_any_backend' => false,
+                    'orob2b_order_address_billing_account_user_use_default_backend' => true
+                ],
+                'getDefaultAddressesByType',
+                [new AccountUserAddress()],
+                new User()
             ]
         ];
     }
