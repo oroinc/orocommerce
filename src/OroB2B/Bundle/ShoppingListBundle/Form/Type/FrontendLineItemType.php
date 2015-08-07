@@ -40,7 +40,7 @@ class FrontendLineItemType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.quantity.label'
+                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label'
                 ]
             )
             ->add(
@@ -48,7 +48,7 @@ class FrontendLineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.unit.label',
+                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                     'query_builder' => function (ProductUnitRepository $repository) use ($product) {
                         return $repository->getProductUnitsQueryBuilder($product);
                     }

@@ -55,6 +55,7 @@ orob2b:
             entity_plural_label: Line Items
             id.label: ID
             notes.label: Notes
+            product_sku.label: Product SKU
             quantity.label: Quantity
             product.label: Product
             shopping_list.label: Shopping List
@@ -64,6 +65,10 @@ orob2b:
             add_line_item: Add Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
+            grid:
+                action:
+                    view:
+                        product: View Product
             flash:
                 success: Line item has been added
             controller:

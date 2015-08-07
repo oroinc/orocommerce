@@ -203,14 +203,14 @@ datagrid:
                 - shopping_list_id
         columns:
             productSku:
-                label:         orob2b.pricing.productprice.product_sku.label
+                label:         orob2b.shoppinglist.lineitem.product_sku.label
             quantity:
-                label:         orob2b.pricing.productprice.quantity.label
+                label:         orob2b.shoppinglist.lineitem.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unit_code.label
+                label:         orob2b.shoppinglist.lineitem.unit.label
                 type: twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template: OroB2BShoppingListBundle:LineItem:Datagrid/Property/unitCode.html.twig
             notes:
                 label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:
@@ -255,7 +255,7 @@ datagrid:
         actions:
             view_product:
                 type:          navigate
-                label:         orob2b.pricing.grid.action.view.product
+                label:         orob2b.shoppinglist.lineitem.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
@@ -306,14 +306,14 @@ datagrid:
                 - shopping_list_id
         columns:
             productSku:
-                label:         orob2b.pricing.productprice.product_sku.label
+                label:         orob2b.shoppinglist.lineitem.product_sku.label
             quantity:
-                label:         orob2b.pricing.productprice.quantity.label
+                label:         orob2b.shoppinglist.lineitem.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unit_code.label
+                label:         orob2b.shoppinglist.lineitem.unit.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BShoppingListBundle:LineItem:Datagrid/Property/unitCode.html.twig
             notes:
                 label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:
@@ -358,7 +358,7 @@ datagrid:
         actions:
             view_product:
                 type:          navigate
-                label:         orob2b.pricing.grid.action.view.product
+                label:         orob2b.shoppinglist.lineitem.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
                 rowAction:     true
