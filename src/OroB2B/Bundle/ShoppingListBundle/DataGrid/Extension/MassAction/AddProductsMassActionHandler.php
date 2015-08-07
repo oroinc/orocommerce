@@ -78,6 +78,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $argsParser = new ArgsParser($args);
         $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
+        /**
+         * TODO: check if a user can create line item
+         */
         if (!$this->securityFacade->isGranted('EDIT', $shoppingList)) {
             return $this->generateResponse($args);
         }
@@ -96,13 +99,13 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             $entity = $entityArray[0];
             /** @var ProductUnitPrecision $unitPrecision */
             $unitPrecision = $entity->getUnitPrecisions()->first();
-            $lineItem = (new LineItem())
+
+            $lineItems[] = (new LineItem())
                 ->setOwner($shoppingList->getOwner())
                 ->setOrganization($shoppingList->getOrganization())
                 ->setProduct($entity)
                 ->setQuantity(1)
                 ->setUnit($unitPrecision->getUnit());
-            $lineItems[] = $lineItem;
         }
 
         $addedCnt = $this->shoppingListManager

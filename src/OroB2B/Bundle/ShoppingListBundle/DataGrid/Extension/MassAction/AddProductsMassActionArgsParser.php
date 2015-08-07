@@ -26,7 +26,9 @@ class AddProductsMassActionArgsParser
     {
         $productIds = [];
         if (!$this->isAllSelected() && array_key_exists('values', $this->args)) {
-            $productIds = explode(',', $this->args['values']);
+            $productIds = array_map(function ($id) {
+                return (int)$id;
+            }, explode(',', $this->args['values']));
         }
 
         return $productIds;
