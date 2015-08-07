@@ -12,6 +12,7 @@ orob2b:
         organization.label: Organization
         line_items.label: Line Items
         is_current.label: Current
+        default.label: Default
 
         create_new_form:
             input_label: Shopping List Label
