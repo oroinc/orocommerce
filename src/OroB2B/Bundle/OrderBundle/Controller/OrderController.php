@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -14,7 +15,6 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use Symfony\Component\HttpFoundation\Request;
 
 class OrderController extends Controller
 {
