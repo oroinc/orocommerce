@@ -25,10 +25,24 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountAddress;
  *          },
  *          "attachment"={
  *              "immutable"=true
+ *          },
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="systemOrganization",
+ *              "owner_column_name"="system_org_id",
+ *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_field_name"="owner",
+ *              "frontend_owner_column_name"="owner_id",
+ *              "organization_field_name"="systemOrganization",
+ *              "organization_column_name"="system_org_id"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository")
  */
 class AccountAddress extends ExtendAccountAddress
 {
@@ -39,7 +53,7 @@ class AccountAddress extends ExtendAccountAddress
     protected $owner;
 
     /**
-     * @var Collection
+     * @var Collection|AccountUserAddressToAddressType[]
      *
      * @ORM\OneToMany(
      *      targetEntity="AccountAddressToAddressType",
@@ -48,17 +62,12 @@ class AccountAddress extends ExtendAccountAddress
      *      orphanRemoval=true
      * )
      */
-    protected $addressesToTypes;
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
+    protected $types;
 
     /**
      * {@inheritdoc}
      */
-    protected function getAddressToAddressTypeEntity()
+    protected function createAddressToAddressTypeEntity()
     {
         return new AccountAddressToAddressType();
     }

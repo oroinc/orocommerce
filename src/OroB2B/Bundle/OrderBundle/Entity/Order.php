@@ -51,7 +51,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
 {
     /**
      * @var integer
-     * 
+     *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
