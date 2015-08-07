@@ -63,6 +63,7 @@ class OrderAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $type = $options['addressType'];
+        $isManualEditGranted = $this->isManualEditGranted($type);
 
         $builder
             ->add(
@@ -75,15 +76,15 @@ class OrderAddressType extends AbstractType
                     'choices' => $this->getAddresses($options['order'], $type),
                     'configs' => [
                         'placeholder' => 'orob2b.order.form.address.' .
-                            ($this->isManualEditGranted($type) ? 'choose_or_create' : 'choose'),
+                            ($isManualEditGranted ? 'choose_or_create' : 'choose'),
                     ],
                 ]
             );
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
-            function (FormEvent $event) use ($type) {
-                if (!$this->isManualEditGranted($type)) {
+            function (FormEvent $event) use ($isManualEditGranted) {
+                if (!$isManualEditGranted) {
                     $event->setData(null);
                 }
 

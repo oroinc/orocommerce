@@ -53,7 +53,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        $this->aclHelper = $this->getMockBuilder(' Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
+        $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
