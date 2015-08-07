@@ -11,6 +11,9 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+
 use OroB2B\Bundle\SaleBundle\EventListener\DatagridListener;
 
 /**
@@ -78,16 +81,35 @@ class DatagridListenerTest extends WebTestCase
      */
     public function testBuildBeforeFrontendQuotes(array $inputData, array $expectedData)
     {
-        $this->securityFacade->expects($this->once())
+        $this->securityFacade->expects($this->any())
             ->method('isGrantedClassPermission')
             ->with($inputData['permission']['permission'], $inputData['permission']['class'])
             ->willReturn($inputData['permission']['return'])
         ;
 
-        $this->securityFacade->expects($inputData['mask']['expects'])
+        $this->securityFacade->expects($this->any())
             ->method('isGrantedClassMask')
             ->with($inputData['mask']['mask'], $inputData['mask']['class'])
             ->willReturn($inputData['mask']['return'])
+        ;
+
+        /* @var $account Account|\PHPUnit_Framework_MockObject_MockObject */
+        $account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn($inputData['accountId'])
+        ;
+
+        /* @var $user AccountUser|\PHPUnit_Framework_MockObject_MockObject */
+        $user = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $user->expects($this->any())
+            ->method('getAccount')
+            ->willReturn($account)
+        ;
+
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->willReturn($user)
         ;
 
         $datagridConfig = DatagridConfiguration::create($inputData['config']);
@@ -104,23 +126,94 @@ class DatagridListenerTest extends WebTestCase
      */
     public function buildBeforeFrontendQuotesProvider()
     {
-        $config = [
-            'columns' => [
-                'accountUserName' => true,
-            ],
-            'sorters' => [
-                'columns' => [
-                    'accountUserName' => true,
+        return [
+            '!AccountUser::VIEW_LOCAL and !Quote::VIEW_LOCAL' => [
+                'input' => [
+                    'permission' => [
+                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
+                        'class'         => $this->accountUserClass,
+                        'return'        => false,
+                    ],
+                    'mask' => [
+                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                        'class'   => $this->quoteClass,
+                        'return'  => false,
+                    ],
+                    'config'    => $this->getConfig(),
+                    'accountId' => null,
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(true),
                 ],
             ],
-            'filters' => [
-                'columns' => [
-                    'accountUserName' => true,
+            'AccountUser::VIEW_LOCAL and !Quote::VIEW_LOCAL' => [
+                'input' => [
+                    'permission' => [
+                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
+                        'class'         => $this->accountUserClass,
+                        'return'        => false,
+                    ],
+                    'mask' => [
+                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                        'class'   => $this->quoteClass,
+                        'return'  => false,
+                    ],
+                    'accountId' => null,
+                    'config'    => $this->getConfig(),
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(true),
+                ],
+            ],
+            '!AccountUser::VIEW_LOCAL and Quote::VIEW_LOCAL' => [
+                'input' => [
+                    'permission' => [
+                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
+                        'class'         => $this->accountUserClass,
+                        'return'        => false,
+                    ],
+                    'mask' => [
+                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                        'class'   => $this->quoteClass,
+                        'return'  => true,
+                    ],
+                    'accountId' => 2,
+                    'config'    => $this->getConfig(),
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(true, 2),
+                ],
+            ],
+            'AccountUser::VIEW_LOCAL and Quote::VIEW_LOCAL' => [
+                'input' => [
+                    'permission' => [
+                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
+                        'class'         => $this->accountUserClass,
+                        'return'        => true,
+                    ],
+                    'mask' => [
+                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                        'class'   => $this->quoteClass,
+                        'return'  => true,
+                    ],
+                    'accountId' => 3,
+                    'config'    => $this->getConfig(true),
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(true, 3),
                 ],
             ],
         ];
+    }
 
-        $emptyConfig = [
+    /**
+     * @param bool $empty
+     * @param int $accountId
+     * @return array
+     */
+    protected function getConfig($empty = false, $accountId = null)
+    {
+        $config = [
             'columns' => [],
             'sorters' => [
                 'columns' => [],
@@ -130,64 +223,34 @@ class DatagridListenerTest extends WebTestCase
             ],
         ];
 
-        return [
-            'no permission VIEW for AccountUser class' => [
-                'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => false,
+        if (!$empty) {
+            $config['columns']['accountUserName'] = true;
+            $config['sorters']['columns']['accountUserName'] = true;
+            $config['filters']['columns']['accountUserName'] = true;
+        }
+
+        if (null !== $accountId) {
+            $config = array_merge(
+                $config,
+                [
+                    'options' => [
+                        'skip_acl_check' => true,
                     ],
-                    'mask' => [
-                        'expects' => $this->never(),
-                        'mask'    => null,
-                        'class'   => null,
-                        'return'  => null,
+                ],
+                [
+                    'source' => [
+                        'query' => [
+                            'where' => [
+                                'and' => [
+                                    'quote.account = ' . $accountId,
+                                ],
+                            ],
+                        ],
                     ],
-                    'config' => $config,
-                ],
-                'expected' => [
-                    'config' => $emptyConfig,
-                ],
-            ],
-            'no permission VIEW_LOCAL for Quote class' => [
-                'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => true,
-                    ],
-                    'mask' => [
-                        'expects' => $this->once(),
-                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
-                        'class'   => $this->quoteClass,
-                        'return'  => false,
-                    ],
-                    'config' => $config,
-                ],
-                'expected' => [
-                    'config' => $emptyConfig,
-                ],
-            ],
-            'has permissions' => [
-                'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => true,
-                    ],
-                    'mask' => [
-                        'expects' => $this->once(),
-                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
-                        'class'   => $this->quoteClass,
-                        'return'  => true,
-                    ],
-                    'config' => $config,
-                ],
-                'expected' => [
-                    'config' => $config,
-                ],
-            ],
-        ];
+                ]
+            );
+        }
+
+        return $config;
     }
 }
