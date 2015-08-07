@@ -38,10 +38,12 @@ class DatagridListener
         $joinCategoryTitles = [
             'join' => 'productCategory.titles',
             'alias' => 'categoryTitle',
-            'conditionType' => 'WITH',
-            'condition' => 'categoryTitle.locale IS NULL'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $joinCategoryTitles);
+
+        // conditions - where condition is required to prevent selection of extra joined rows
+        $where = 'categoryTitle.locale IS NULL';
+        $this->addConfigElement($config, '[source][query][where][and]', $where);
 
         // columns
         $categoryColumn = ['label' => 'orob2b.catalog.category.entity_label'];

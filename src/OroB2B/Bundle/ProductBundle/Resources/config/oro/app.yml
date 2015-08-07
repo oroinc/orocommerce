@@ -1,0 +1,6 @@
+assetic:
+    assets:
+        tinymce_fullscreen:
+            inputs:
+                - %kernel.root_dir%/../vendor/tinymce/tinymce/plugins/fullscreen/plugin.min.js
+            output: bundles/tinymce/plugins/fullscreen/plugin.min.js

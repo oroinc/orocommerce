@@ -14,7 +14,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AttributeBundle\Entity\AttributeOption;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -208,7 +207,11 @@ class AttributeControllerTest extends WebTestCase
             $locale = $this->localeRegistry[$localeName];
             $localeId = $locale->getId();
             foreach ($localeValue as $name => $value) {
-                $form["$this->formUpdate[label][locales][$localeId][$name]"] = $value;
+                if (!$value) {
+                    $form->offsetUnset("$this->formUpdate[label][locales][$localeId][$name]");
+                } else {
+                    $form->offsetSet("$this->formUpdate[label][locales][$localeId][$name]", $value);
+                }
             }
 
         }
@@ -224,7 +227,11 @@ class AttributeControllerTest extends WebTestCase
                 $website = $this->websiteRegistry[$siteName];
                 $siteId = $website->getId();
                 foreach ($siteValue as $name => $value) {
-                    $form["$this->formUpdate[$attributePropertyName][websites][$siteId][$name]"] = $value;
+                    if (!$value) {
+                        $form->offsetUnset("$this->formUpdate[$attributePropertyName][websites][$siteId][$name]");
+                    } else {
+                        $form->offsetSet("$this->formUpdate[$attributePropertyName][websites][$siteId][$name]", $value);
+                    }
                 }
             }
         }
@@ -252,7 +259,9 @@ class AttributeControllerTest extends WebTestCase
             $locale = $this->localeRegistry[$localeName];
             $localeId = $locale->getId();
             foreach ($localeValue as $name => $value) {
-                $this->assertEquals($value, $formValues["$this->formUpdate[label][locales][$localeId][$name]"]);
+                if ($value) {
+                    $this->assertEquals($value, $formValues["$this->formUpdate[label][locales][$localeId][$name]"]);
+                }
             }
         }
 
@@ -488,11 +497,15 @@ class AttributeControllerTest extends WebTestCase
                 $locale = $this->localeRegistry[$localeName];
                 $localeId = $locale->getId();
                 foreach ($localeValue as $name => $value) {
-                    if ($name == 'extend_value') {
+                    if ($name === 'extend_value') {
                         $form["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"] = $value;
                     } else {
-                        $form["$this->formUpdate[defaultOptions][$key]"
-                        . "[locales][$localeId][fallback_value][$name]"] = $value;
+                        $formKey = "$this->formUpdate[defaultOptions][$key][locales][$localeId][fallback_value][$name]";
+                        if (!$value) {
+                            $form->offsetUnset($formKey);
+                        } else {
+                            $form->offsetSet($formKey, $value);
+                        }
                     }
                 }
             }
@@ -510,7 +523,11 @@ class AttributeControllerTest extends WebTestCase
             $locale = $this->localeRegistry[$localeName];
             $localeId = $locale->getId();
             foreach ($localeValue as $name => $value) {
-                $form["$this->formUpdate[defaultValue][locales][$localeId][$name]"] = $value;
+                if (!$value) {
+                    $form->offsetUnset("$this->formUpdate[defaultValue][locales][$localeId][$name]");
+                } else {
+                    $form->offsetSet("$this->formUpdate[defaultValue][locales][$localeId][$name]", $value);
+                }
             }
         }
     }
@@ -529,7 +546,11 @@ class AttributeControllerTest extends WebTestCase
                 $locale = $this->localeRegistry[$localeName];
                 $localeId = $locale->getId();
                 foreach ($localeValue as $name => $value) {
-                    $form["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"] = $value;
+                    if (!$value) {
+                        $form->offsetUnset("$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]");
+                    } else {
+                        $form->offsetSet("$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]", $value);
+                    }
                 }
             }
         }
@@ -560,10 +581,12 @@ class AttributeControllerTest extends WebTestCase
                 $locale = $this->localeRegistry[$localeName];
                 $localeId = $locale->getId();
                 foreach ($localeValue as $name => $value) {
-                    $this->assertEquals(
-                        $value,
-                        $formValues["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"]
-                    );
+                    if ($value) {
+                        $this->assertEquals(
+                            $value,
+                            $formValues["$this->formUpdate[defaultOptions][$key][locales][$localeId][$name]"]
+                        );
+                    }
                 }
             }
         }
@@ -592,18 +615,17 @@ class AttributeControllerTest extends WebTestCase
                 $locale = $this->localeRegistry[$localeName];
                 $localeId = $locale->getId();
                 foreach ($localeValue as $name => $value) {
-                    if ($name == 'extend_value') {
+                    if ($name === 'extend_value') {
                         $this->assertEquals(
                             $value,
                             $formValues["$this->formUpdate[defaultOptions][$key]"
                             . "[locales][$localeId][$name]"]
                         );
                     } else {
-                        $this->assertEquals(
-                            $value,
-                            $formValues["$this->formUpdate[defaultOptions][$key]"
-                            . "[locales][$localeId][fallback_value][$name]"]
-                        );
+                        $formKey = "$this->formUpdate[defaultOptions][$key][locales][$localeId][fallback_value][$name]";
+                        if ($value) {
+                            $this->assertEquals($value, $formValues[$formKey]);
+                        }
                     }
                 }
             }
@@ -621,10 +643,12 @@ class AttributeControllerTest extends WebTestCase
             $locale = $this->localeRegistry[$localeName];
             $localeId = $locale->getId();
             foreach ($localeValue as $name => $value) {
-                $this->assertEquals(
-                    $value,
-                    $formValues["$this->formUpdate[defaultValue][locales][$localeId][$name]"]
-                );
+                if ($value) {
+                    $this->assertEquals(
+                        $value,
+                        $formValues["$this->formUpdate[defaultValue][locales][$localeId][$name]"]
+                    );
+                }
             }
         }
     }

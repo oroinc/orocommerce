@@ -8,7 +8,18 @@
 {% set showImage = false %}
 
 {% set recordUrl = indexer_item.recordUrl %}
-{% set title = indexer_item.recordTitle %}
+
+{% set titles = [] %}
+
+{% if entity.sku is defined %}
+    {% set titles = titles|merge([entity.sku]) %}
+{% endif %}
+
+{% if entity.defaultName is defined %}
+    {% set titles = titles|merge([entity.defaultName.string]) %}
+{% endif %}
+
+{% set title = titles|join(' - ') %}
 
 {% set entityType = 'orob2b.product.entity_label'|trans %}
 

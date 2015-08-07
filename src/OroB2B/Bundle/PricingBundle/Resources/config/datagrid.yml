@@ -144,31 +144,31 @@ datagrid:
                 icon:         eye-open
                 rowAction:    true
 
-    price-list-customers-grid:
+    price-list-accounts-grid:
         extends:                base-price-list-relations-grid
         source:
             query:
                 select:
-                    - customerGroup.name as groupName
+                    - accountGroup.name as groupName
                     - parent.name as parentName
                 from:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: priceList.customers, alias: relatedEntity }
+                        - { join: priceList.accounts, alias: relatedEntity }
                     left:
-                        - { join: relatedEntity.group, alias: customerGroup }
+                        - { join: relatedEntity.group, alias: accountGroup }
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label: orob2b.customer.name.label
+                label: orob2b.account.name.label
             groupName:
-                label: orob2b.customer.group.label
+                label: orob2b.account.group.label
             parentName:
-                label: orob2b.customer.parent.label
+                label: orob2b.account.parent.label
         properties:
             view_link:
-                route:  orob2b_customer_view
+                route:  orob2b_account_view
         sorters:
             columns:
                 groupName:
@@ -179,20 +179,20 @@ datagrid:
             columns:
                 groupName:
                     type:      entity
-                    data_name: customerGroup.id
+                    data_name: accountGroup.id
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_customer.entity.customer_group.class%
+                            class:    %orob2b_account.entity.account_group.class%
                             property: name
                 parentName:
                     type:      string
                     data_name: parent.name
         actions:
             view:
-                acl_resource: orob2b_customer_view
+                acl_resource: orob2b_account_view
 
-    price-list-customer-groups-grid:
+    price-list-account-groups-grid:
         extends:                base-price-list-relations-grid
         source:
             query:
@@ -200,16 +200,16 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: priceList.customerGroups, alias: relatedEntity }
+                        - { join: priceList.accountGroups, alias: relatedEntity }
         columns:
             name:
-                label: orob2b.customer.customergroup.name.label
+                label: orob2b.account.accountgroup.name.label
         properties:
             view_link:
-                route:  orob2b_customer_group_view
+                route:  orob2b_account_group_view
         actions:
             view:
-                acl_resource: orob2b_customer_group_view
+                acl_resource: orob2b_account_group_view
 
     price-list-websites-grid:
         extends:                base-price-list-relations-grid
@@ -291,36 +291,36 @@ datagrid:
                 dataField:      id
                 columnName:     has_price_list
 
-    price-list-select-customers-grid:
+    price-list-select-accounts-grid:
         extends:                base-price-list-select-relations-grid
         source:
             query:
                 select:
-                    - customerGroup.name as groupName
+                    - accountGroup.name as groupName
                     - parent.name as parentName
                 from:
-                    - { table: %orob2b_customer.entity.customer.class%, alias: relatedEntity }
+                    - { table: %orob2b_account.entity.account.class%, alias: relatedEntity }
                 join:
                     left:
-                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customers' }
-                        - { join: relatedEntity.group, alias: customerGroup }
+                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accounts' }
+                        - { join: relatedEntity.group, alias: accountGroup }
                         - { join: relatedEntity.parent, alias: parent }
         columns:
             name:
-                label:          orob2b.customer.name.label
+                label:          orob2b.account.name.label
             groupName:
-                label:          orob2b.customer.group.label
+                label:          orob2b.account.group.label
             parentName:
-                label:          orob2b.customer.parent.label
+                label:          orob2b.account.parent.label
         filters:
             columns:
                 groupName:
                     type:      entity
-                    data_name: customerGroup.id
+                    data_name: accountGroup.id
                     options:
                         field_type: entity
                         field_options:
-                            class:    %orob2b_customer.entity.customer_group.class%
+                            class:    %orob2b_account.entity.account_group.class%
                             property: name
                 parentName:
                     type:       string
@@ -334,26 +334,26 @@ datagrid:
         options:
             rowSelection:
                 selectors:
-                    included:   '#priceListAppendCustomers'
-                    excluded:   '#priceListRemoveCustomers'
+                    included:   '#priceListAppendAccounts'
+                    excluded:   '#priceListRemoveAccounts'
 
-    price-list-select-customer-groups-grid:
+    price-list-select-account-groups-grid:
         extends:                base-price-list-select-relations-grid
         source:
             query:
                 from:
-                    - { table: %orob2b_customer.entity.customer_group.class%, alias: relatedEntity }
+                    - { table: %orob2b_account.entity.account_group.class%, alias: relatedEntity }
                 join:
                     left:
-                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.customerGroups' }
+                        - { join: %orob2b_pricing.entity.price_list.class%, alias: priceList, conditionType: 'WITH', condition: 'relatedEntity MEMBER OF priceList.accountGroups' }
         columns:
             name:
-                label:          orob2b.customer.customergroup.name.label
+                label:          orob2b.account.accountgroup.name.label
         options:
             rowSelection:
                 selectors:
-                    included:   '#priceListAppendCustomerGroups'
-                    excluded:   '#priceListRemoveCustomerGroups'
+                    included:   '#priceListAppendAccountGroups'
+                    excluded:   '#priceListRemoveAccountGroups'
 
     price-list-select-websites-grid:
         extends:                base-price-list-select-relations-grid
@@ -397,12 +397,21 @@ datagrid:
                     - IDENTITY(productPrice.product) as productId
                     - productPrice.id
                     - productPrice.productSku
+                    - productNames.string as productName
                     - productPrice.quantity
                     - IDENTITY(productPrice.unit) as unitCode
                     - productPrice.value
                     - productPrice.currency
                 from:
                     - { table: %orob2b_pricing.entity.product_price.class%, alias: productPrice }
+                join:
+                    inner:
+                        - { join: productPrice.product, alias: product }
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
                 where:
                     and:
                         - IDENTITY(productPrice.priceList) = :price_list_id
@@ -411,6 +420,8 @@ datagrid:
         columns:
             productSku:
                 label:         orob2b.pricing.productprice.product_sku.label
+            productName:
+                label:         orob2b.pricing.productprice.product_name.label
             quantity:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
@@ -426,6 +437,8 @@ datagrid:
             columns:
                 productSku:
                     data_name: productPrice.productSku
+                productName:
+                    data_name: productName
                 quantity:
                     data_name: productPrice.quantity
                 unitCode:
@@ -441,6 +454,9 @@ datagrid:
                 productSku:
                     type:      string
                     data_name: productPrice.productSku
+                productName:
+                    type:      string
+                    data_name: productName
                 quantity:
                     type:      number
                     data_name: productPrice.quantity

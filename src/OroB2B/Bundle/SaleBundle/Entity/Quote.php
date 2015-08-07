@@ -12,8 +12,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
@@ -82,15 +82,15 @@ class Quote extends ExtendQuote
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUser;
 
     /**
-     * @var Customer
+     * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer"),
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $account;
@@ -370,7 +370,7 @@ class Quote extends ExtendQuote
     }
 
     /**
-     * @return Customer
+     * @return Account
      */
     public function getAccount()
     {
@@ -378,10 +378,10 @@ class Quote extends ExtendQuote
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      * @return Quote
      */
-    public function setAccount(Customer $account = null)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
 

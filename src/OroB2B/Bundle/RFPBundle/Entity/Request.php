@@ -10,7 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
 
 /**
@@ -146,7 +146,7 @@ class Request extends ExtendRequest
     /**
      * @var AccountUser|null
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $frontendOwner;

@@ -13,6 +13,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BProductBundleInstaller implements
     Installation,
     ExtendExtensionAwareInterface,
@@ -64,7 +67,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -75,9 +78,13 @@ class OroB2BProductBundleInstaller implements
         $this->createOroB2BProductTable($schema);
         $this->createOroB2BProductUnitTable($schema);
         $this->createOroB2BProductUnitPrecisionTable($schema);
+        $this->createOrob2BProductNameTable($schema);
+        $this->createOrob2BProductDescriptionTable($schema);
 
         $this->addOroB2BProductForeignKeys($schema);
         $this->addOroB2BProductUnitPrecisionForeignKeys($schema);
+        $this->addOrob2BProductNameForeignKeys($schema);
+        $this->addOrob2BProductDescriptionForeignKeys($schema);
 
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
@@ -134,6 +141,30 @@ class OroB2BProductBundleInstaller implements
     }
 
     /**
+     * @param Schema $schema
+     */
+    protected function createOrob2BProductNameTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_product_name');
+        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['product_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id'], 'uniq_ba57d521eb576e89');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOrob2BProductDescriptionTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_product_description');
+        $table->addColumn('description_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->setPrimaryKey(['description_id', 'localized_value_id']);
+        $table->addUniqueIndex(['localized_value_id'], 'uniq_416a3679eb576e89');
+    }
+
+    /**
      * Add orob2b_product foreign keys.
      *
      * @param Schema $schema
@@ -177,6 +208,45 @@ class OroB2BProductBundleInstaller implements
         );
     }
 
+    /**
+     * @param Schema $schema
+     */
+    protected function addOrob2BProductNameForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_product_name');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_fallback_locale_value'),
+            ['localized_value_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOrob2BProductDescriptionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_product_description');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_fallback_locale_value'),
+            ['localized_value_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['description_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
 
     /**
      * @param Schema $schema

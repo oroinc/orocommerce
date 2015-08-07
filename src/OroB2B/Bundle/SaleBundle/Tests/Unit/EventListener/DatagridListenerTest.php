@@ -31,7 +31,7 @@ class DatagridListenerTest extends WebTestCase
     /**
      * @var string
      */
-    protected $accountUserClass = 'OroB2B\Bundle\CustomerBundle\Entity\AccountUser';
+    protected $accountUserClass = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
 
     /**
      * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject

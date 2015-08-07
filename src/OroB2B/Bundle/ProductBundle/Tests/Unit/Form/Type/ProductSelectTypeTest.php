@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -27,9 +29,10 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->type->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -41,7 +44,12 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals('orob2b_product', $options['autocomplete_alias']);
                         $this->assertEquals('orob2b_product_create', $options['create_form_route']);
                         $this->assertEquals(
-                            ['placeholder' => 'orob2b.product.form.choose'],
+                            [
+                                'placeholder' => 'orob2b.product.form.choose',
+                                'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
+                                'selection_template_twig'
+                                    => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
+                            ],
                             $options['configs']
                         );
 
@@ -50,6 +58,6 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 }
