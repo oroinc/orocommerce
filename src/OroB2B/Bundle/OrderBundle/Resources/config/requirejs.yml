@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2border/js/app/components/subtotals-component': 'bundles/orob2border/js/app/components/subtotals-component.js'

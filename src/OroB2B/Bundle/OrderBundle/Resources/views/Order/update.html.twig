@@ -44,6 +44,15 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
+    {% set subtotals %}
+        {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
+            options: {
+                url: path('orob2b_order_subtotals', {id: entity.id}),
+                selectors: {form: '#' ~ form.vars.id}
+                }
+        } only %}
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.general'|trans,
@@ -62,6 +71,13 @@
             'class': 'active',
             'subblocks': [{
                 'data': [form_widget(form.shippingAddress)]
+            }]
+        },
+        {
+            'title': 'orob2b.order.sections.subtotals'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [subtotals]
             }]
         }
     ] %}

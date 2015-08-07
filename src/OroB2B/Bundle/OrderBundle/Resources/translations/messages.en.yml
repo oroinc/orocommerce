@@ -53,6 +53,7 @@ orob2b:
         sections:
             general: General
             additional: Additional
+            subtotals: Order Totals
 
         form:
             select_address: Select Predefined Address

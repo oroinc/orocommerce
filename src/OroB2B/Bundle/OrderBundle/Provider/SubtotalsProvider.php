@@ -56,7 +56,7 @@ class SubtotalsProvider
         $translation = sprintf('orob2b.order.subtotals.%s', $subtotal->getType());
         $subtotal->setLabel($this->translator->trans($translation));
 
-        $subtotal->setAmount(0);
+        $subtotal->setAmount(123456.789);
         $subtotal->setCurrency($order->getCurrency());
 
         return $subtotal;
