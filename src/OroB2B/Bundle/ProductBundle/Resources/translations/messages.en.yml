@@ -13,6 +13,8 @@ orob2b:
         unit_precisions.label: Unit Precisions
         image.label: Image
 
+        removed: '{title} - removed'
+
         visibility:
             visible.label: Yes
             not_visible.label: No

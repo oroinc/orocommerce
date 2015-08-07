@@ -8,9 +8,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
@@ -206,7 +205,7 @@ class RequestTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $productSelectType          = new ProductSelectTypeStub();
+        $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType($translator);
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
@@ -223,7 +222,7 @@ class RequestTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
-                    $productSelectType->getName()           => $productSelectType,
+                    $productRemovedSelectType->getName()    => $productRemovedSelectType,
                     $requestProductType->getName()          => $requestProductType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,

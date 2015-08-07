@@ -89,7 +89,6 @@ orob2b.rfp:
         request_status_not_found: 'Request Status not found'
         request_status_changed: 'Request For Proposal Status was successfully changed'
         request_status_not_deletable: 'Request Status is not deletable'
-        requestproduct.product.removed: '{title} - removed'
         requestproductitem.unit.removed: '{title} - removed'
         request.create_quote.success: 'New Quote created'
         request.create_quote.error: 'Can not create new Quote'

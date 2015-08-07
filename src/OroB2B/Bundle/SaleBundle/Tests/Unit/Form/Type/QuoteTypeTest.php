@@ -16,6 +16,7 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -185,6 +186,7 @@ class QuoteTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productSelectType          = new ProductSelectTypeStub();
+        $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
@@ -215,6 +217,7 @@ class QuoteTypeTest extends AbstractTest
                     $userSelectType->getName()                  => $userSelectType,
                     $quoteProductType->getName()                => $quoteProductType,
                     $productSelectType->getName()               => $productSelectType,
+                    $productRemovedSelectType->getName()        => $productRemovedSelectType,
                     $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,

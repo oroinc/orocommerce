@@ -5,17 +5,14 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class OrderProductType extends AbstractType
 {
@@ -32,26 +29,16 @@ class OrderProductType extends AbstractType
     protected $formatter;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * @var string
      */
     protected $dataClass;
 
     /**
-     * @param TranslatorInterface $translator
      * @param ProductUnitLabelFormatter $labelFormatter
      * @param OrderProductFormatter $formatter
      */
-    public function __construct(
-        TranslatorInterface $translator,
-        ProductUnitLabelFormatter $labelFormatter,
-        OrderProductFormatter $formatter
-    ) {
-        $this->translator = $translator;
+    public function __construct(ProductUnitLabelFormatter $labelFormatter, OrderProductFormatter $formatter)
+    {
         $this->labelFormatter = $labelFormatter;
         $this->formatter = $formatter;
     }
@@ -105,7 +92,7 @@ class OrderProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductRemovedSelectType::NAME, [
                 'required' => true,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
@@ -117,9 +104,7 @@ class OrderProductType extends AbstractType
                 'required' => false,
                 'label' => 'orob2b.order.orderproduct.comment.label',
             ])
-
         ;
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
@@ -140,66 +125,5 @@ class OrderProductType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSetData(FormEvent $event)
-    {
-        /* @var $orderProduct OrderProduct */
-        $orderProduct = $event->getData();
-
-        if (!$orderProduct || null === $orderProduct->getId()) {
-            return;
-        }
-
-        $form = $event->getForm();
-
-        if (!$orderProduct->getProduct()) {
-            $this->replaceProductField(
-                $form,
-                'product',
-                true,
-                $orderProduct->getProductSku(),
-                'orob2b.product.entity_label',
-                'orob2b.order.orderproduct.product.removed'
-            );
-        }
-    }
-
-    /**
-     * @param FormInterface $form
-     * @param string $field
-     * @param bool $required
-     * @param string $productSku
-     * @param string $label
-     * @param string $emptyLabel
-     */
-    protected function replaceProductField(
-        FormInterface $form,
-        $field,
-        $required,
-        $productSku,
-        $label,
-        $emptyLabel = null
-    ) {
-        $options = [
-            'create_enabled' => false,
-            'required' => $required,
-            'label' => $label,
-        ];
-
-        if ($emptyLabel) {
-            $emptyValueTitle = $this->translator->trans($emptyLabel, [
-                '{title}' => $productSku,
-            ]);
-
-            $options['configs'] = [
-                'placeholder' => $emptyValueTitle,
-            ];
-        }
-
-        $form->add($field, ProductSelectType::NAME, $options);
     }
 }
