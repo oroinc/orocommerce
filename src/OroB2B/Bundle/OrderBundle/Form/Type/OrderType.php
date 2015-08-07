@@ -7,7 +7,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderType extends AbstractType
@@ -34,8 +37,24 @@ class OrderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
             // @todo: user selector
-            ->add('accountUser', 'entity', ['class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'])
+            ->add(
+                'accountUser',
+                'entity',
+                [
+                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                    'label' => 'orob2b.order.account_user.label',
+                    'required' => false,
+                ]
+            )
+            ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
+            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
+            ->add(
+                'paymentTerm',
+                PaymentTermSelectType::NAME,
+                ['required' => false, 'label' => 'orob2b.order.payment_term.label',]
+            )
             ->add(
                 'billingAddress',
                 OrderAddressType::NAME,
