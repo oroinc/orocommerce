@@ -268,5 +268,4 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         return $entities[$className][$id];
     }
-
 }
