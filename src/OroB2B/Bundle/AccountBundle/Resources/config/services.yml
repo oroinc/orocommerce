@@ -12,6 +12,7 @@ parameters:
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_account.form.autocomplete.parent_account.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler
+    orob2b_account.form.autocomplete.account_account_user.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler
 
     orob2b_account.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -82,6 +83,16 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_parent, acl_resource: orob2b_account_view }
+        lazy: true
+
+    orob2b_account.form.autocomplete.account_user_account.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: %orob2b_account.form.autocomplete.account_account_user.search_handler.class%
+        arguments:
+            - %orob2b_account.entity.account_user.class%
+            - ["firstname", "lastname"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_account_user, acl_resource: orob2b_account_account_user_view }
         lazy: true
 
     orob2b_account.account_user.manager.api:

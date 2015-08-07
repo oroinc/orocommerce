@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class DatagridListener
 {
@@ -69,7 +69,7 @@ class DatagridListener
 
         $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
 
-        $where['and'][] = 'quote.account = ' . $user->getCustomer()->getId();
+        $where['and'][] = 'quote.account = ' . $user->getAccount()->getId();
 
         $config->offsetSetByPath('[source][query][where]', $where);
     }

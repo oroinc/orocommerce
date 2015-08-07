@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\Autocomplete;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Autocomplete;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\AbstractQuery;
@@ -15,16 +15,16 @@ use Oro\Bundle\SearchBundle\Engine\Indexer;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-use OroB2B\Bundle\CustomerBundle\Autocomplete\CustomerAccountUserSearchHandler;
+use OroB2B\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler;
 
-class CustomerAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
+class AccountAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const DELIMITER = ';';
 
     const TEST_ENTITY_CLASS = 'TestAccountUserEntity';
 
     /**
-     * @var CustomerAccountUserSearchHandler
+     * @var AccountAccountUserSearchHandler
      */
     protected $searchHandler;
 
@@ -84,7 +84,7 @@ class CustomerAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->searchHandler = new CustomerAccountUserSearchHandler(self::TEST_ENTITY_CLASS, ['email']);
+        $this->searchHandler = new AccountAccountUserSearchHandler(self::TEST_ENTITY_CLASS, ['email']);
         $this->searchHandler->initSearchIndexer($this->indexer, [self::TEST_ENTITY_CLASS => ['alias' => 'alias']]);
         $this->searchHandler->initDoctrinePropertiesByManagerRegistry($this->managerRegistry);
         $this->searchHandler->setAclHelper($this->aclHelper);

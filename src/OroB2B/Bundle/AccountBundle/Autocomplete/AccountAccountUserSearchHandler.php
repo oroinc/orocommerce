@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\Autocomplete;
+namespace OroB2B\Bundle\AccountBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler as BaseSearchHandler;
 
-class CustomerAccountUserSearchHandler extends BaseSearchHandler
+class AccountAccountUserSearchHandler extends BaseSearchHandler
 {
     const DELIMITER = ';';
 

@@ -21,7 +21,7 @@ class AccountSelectType extends AbstractType
                 'autocomplete_alias' => 'orob2b_account',
                 'create_form_route' => 'orob2b_account_create',
                 'configs' => [
-                    'placeholder' => 'orob2b.account.form.choose'
+                    'placeholder' => 'orob2b.account.form.choose',
                 ],
                 'attr' => [
                     'class' => 'account-account-select',

@@ -61,6 +61,8 @@ class QuoteControllerTest extends WebTestCase
         $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
         $owner      = $this->getUser(LoadUserData::USER1);
 
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
@@ -187,7 +189,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @dataProvider submitProvider
      */
-    public function testSubmit(array $submittedData, array $expectedData)
+    public function __testSubmit(array $submittedData, array $expectedData)
     {
         $this->prepareProviderData($submittedData);
 

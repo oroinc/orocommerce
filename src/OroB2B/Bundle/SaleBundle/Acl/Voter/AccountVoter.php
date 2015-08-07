@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
@@ -72,7 +72,7 @@ class AccountVoter extends AbstractEntityVoter
         }
 
         if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $class)) {
-            if ($user->getCustomer() === $this->object->getAccount()) {
+            if ($user->getAccount() === $this->object->getAccount()) {
                 return self::ACCESS_GRANTED;
             }
         } else {

@@ -11,7 +11,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            accountSelect: '.customer-account-select input[type="hidden"]',
+            accountSelect: '.account-account-select input[type="hidden"]',
             delimiter: ';'
         },
 
