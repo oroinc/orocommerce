@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 /**
@@ -27,7 +28,7 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
  *      }
  * )
  */
-class BaseQuoteProductItem
+class BaseQuoteProductItem implements ProductUnitHolderInterface
 {
     /**
      * @var int
@@ -86,6 +87,14 @@ class BaseQuoteProductItem
      * @var Price
      */
     protected $price;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this->getQuoteProduct();
+    }
 
     /**
      * @ORM\PostLoad

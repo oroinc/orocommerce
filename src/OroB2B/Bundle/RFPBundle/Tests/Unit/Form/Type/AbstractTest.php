@@ -70,9 +70,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param TranslatorInterface $translator
      * @return RequestProductItemType
      */
-    protected function prepareRequestProductItemType(TranslatorInterface $translator)
+    protected function prepareRequestProductItemType()
     {
-        $requestProductItemType = new RequestProductItemType($translator);
+        $requestProductItemType = new RequestProductItemType();
         $requestProductItemType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
 
         return $requestProductItemType;

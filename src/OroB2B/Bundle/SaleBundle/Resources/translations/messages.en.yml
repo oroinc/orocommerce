@@ -72,7 +72,6 @@ orob2b:
                 bundled: 'bundled offer'
                 unit: 'at unit price of'
 
-            product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
 
@@ -90,7 +89,6 @@ orob2b:
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
             request_product_item.label: 'Request Product Item'
-            product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
 

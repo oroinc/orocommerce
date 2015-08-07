@@ -9,6 +9,9 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
@@ -205,7 +208,6 @@ class RequestTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType($translator);
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
@@ -219,10 +221,11 @@ class RequestTypeTest extends AbstractTest
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
+                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
+                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
-                    $productRemovedSelectType->getName()    => $productRemovedSelectType,
                     $requestProductType->getName()          => $requestProductType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,

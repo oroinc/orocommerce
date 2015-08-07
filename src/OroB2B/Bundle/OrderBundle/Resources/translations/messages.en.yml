@@ -65,7 +65,6 @@ orob2b:
                 bundled: 'bundled item'
                 unit: 'at unit price of'
 
-            product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
 

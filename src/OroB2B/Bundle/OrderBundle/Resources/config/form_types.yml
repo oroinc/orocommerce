@@ -27,7 +27,6 @@ services:
     orob2b_order.form.type.order_product_item:
         class: %orob2b_order.form.type.order_product_item.class%
         arguments:
-            - @translator
             - @orob2b_order.formatter.order_product_item
         calls:
             - [setDataClass, [%orob2b_order.entity.order_product_item.class%]]
