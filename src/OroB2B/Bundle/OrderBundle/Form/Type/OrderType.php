@@ -35,19 +35,23 @@ class OrderType extends AbstractType
     {
         $builder
             // @todo: user selector
-            ->add('accountUser', 'entity', ['class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser'])
-            ->add(
-                'billingAddress',
-                OrderAddressType::NAME,
-                [
-                    'label' => 'orob2b.order.billing_address.label',
-                    'order' => $options['data'],
-                    'required' => false,
-                    'addressType' => AddressType::TYPE_BILLING,
-                ]
-            );
+            ->add('accountUser', 'entity', ['class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser']);
 
-        if ($this->orderAddressSecurityProvider->isShippingAddressGranted()) {
+        if ($this->orderAddressSecurityProvider->isAddressGranted(AddressType::TYPE_BILLING)) {
+            $builder
+                ->add(
+                    'billingAddress',
+                    OrderAddressType::NAME,
+                    [
+                        'label' => 'orob2b.order.billing_address.label',
+                        'order' => $options['data'],
+                        'required' => false,
+                        'addressType' => AddressType::TYPE_BILLING,
+                    ]
+                );
+        }
+
+        if ($this->orderAddressSecurityProvider->isAddressGranted(AddressType::TYPE_SHIPPING)) {
             $builder
                 ->add(
                     'shippingAddress',

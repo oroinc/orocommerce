@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Provider;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class OrderAddressSecurityProvider
@@ -28,30 +29,54 @@ class OrderAddressSecurityProvider
     }
 
     /**
+     * @param string $type
+     *
      * @return bool
      */
-    public function isShippingAddressGranted()
+    public function isAddressGranted($type)
     {
-        return $this->isShippingAccountAddressGranted() || $this->isShippingAccountUserAddressGranted();
+        return $this->isAccountAddressGranted() || $this->isAccountUserAddressGranted($type);
     }
 
     /**
      * @return bool
      */
-    public function isShippingAccountAddressGranted()
+    public function isAccountAddressGranted()
     {
         return $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass);
     }
 
     /**
+     * @param string $type
+     *
      * @return bool
      */
-    public function isShippingAccountUserAddressGranted()
+    public function isAccountUserAddressGranted($type)
     {
         return $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountUserAddressClass) &&
         $this->securityFacade->isGrantedClassPermission(
-            OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY,
+            $this->getTypedPermission($type),
             $this->accountUserAddressClass
+        );
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return string
+     */
+    protected function getTypedPermission($type)
+    {
+        if ($type === AddressType::TYPE_SHIPPING) {
+            return OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY;
+        }
+
+        if ($type === AddressType::TYPE_BILLING) {
+            return OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY;
+        }
+
+        throw new \InvalidArgumentException(
+            sprintf('Expected "%s" or "%s", "%s" given', AddressType::TYPE_SHIPPING, AddressType::TYPE_BILLING, $type)
         );
     }
 }

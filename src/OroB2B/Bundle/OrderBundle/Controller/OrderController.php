@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -139,7 +140,9 @@ class OrderController extends Controller
                     'entity' => $order,
                     'isWidgetContext' => (bool)$request->get('_wid', false),
                     'isShippingAddressGranted' => $this->get('orob2b_order.order.provider.order_address_security')
-                        ->isShippingAddressGranted()
+                        ->isAddressGranted(AddressType::TYPE_SHIPPING),
+                    'isBillingAddressGranted' => $this->get('orob2b_order.order.provider.order_address_security')
+                        ->isAddressGranted(AddressType::TYPE_BILLING)
                 ];
             }
         );
