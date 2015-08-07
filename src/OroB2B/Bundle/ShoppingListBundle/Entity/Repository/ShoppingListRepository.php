@@ -21,7 +21,7 @@ class ShoppingListRepository extends EntityRepository
         return $this->createQueryBuilder('list')
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->andWhere('list.isCurrent = true')
+            ->andWhere('list.current = true')
             ->setParameter('accountUser', $accountUser)
             ->getQuery()->getOneOrNullResult();
     }
@@ -88,7 +88,7 @@ class ShoppingListRepository extends EntityRepository
         return $this->createQueryBuilder('list')
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->andWhere('list.isCurrent = false')
+            ->andWhere('list.current = false')
             ->setParameter('accountUser', $accountUser)
             ->getQuery()->getResult();
     }
@@ -105,7 +105,7 @@ class ShoppingListRepository extends EntityRepository
         return $qb
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->andWhere('list.isCurrent = false')
+            ->andWhere('list.current = false')
             ->setParameter('accountUser', $accountUser)
             ->orderBy($qb->expr()->desc('list.id'))
             ->setMaxResults(1)

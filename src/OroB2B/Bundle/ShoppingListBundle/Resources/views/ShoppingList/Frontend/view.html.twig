@@ -19,7 +19,7 @@
             'path' : path('orob2b_shopping_list_frontend_update', { 'id': entity.id }),
             'entity_label': 'orob2b.shoppinglist.entity_label'|trans
         }) }}
-        {% if not entity.isCurrent %}
+        {% if not entity.current %}
             {{ UI.editButton({
                 'path' : path('orob2b_shopping_list_frontend_set_current', { 'id': entity.id }),
                 'entity_label': 'orob2b.shoppinglist.entity_label'|trans,
