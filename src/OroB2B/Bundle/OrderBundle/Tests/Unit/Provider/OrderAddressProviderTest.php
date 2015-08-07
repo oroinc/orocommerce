@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -88,9 +89,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider accountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
+     * @param object $loggedUser
      */
-    public function testGetAccountAddressesNotGranted($type, $expectedPermission)
+    public function testGetAccountAddressesNotGranted($type, $expectedPermission, $loggedUser)
     {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->with($expectedPermission)
@@ -112,9 +118,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider accountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
+     * @param object $loggedUser
      */
-    public function testGetAccountAddressesGrantedAny($type, $expectedPermission)
+    public function testGetAccountAddressesGrantedAny($type, $expectedPermission, $loggedUser)
     {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $account = new Account();
         $addresses = [new AccountAddress()];
 
@@ -141,8 +152,10 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
     public function accountAddressPermissions()
     {
         return [
-            ['shipping', 'orob2b_order_address_shipping_account_use_any'],
-            ['billing', 'orob2b_order_address_billing_account_use_any'],
+            ['shipping', 'orob2b_order_address_shipping_account_use_any', new AccountUser()],
+            ['shipping', 'orob2b_order_address_shipping_account_use_any_backend', new User()],
+            ['billing', 'orob2b_order_address_billing_account_use_any', new AccountUser()],
+            ['billing', 'orob2b_order_address_billing_account_use_any_backend', new User()],
         ];
     }
 
@@ -150,9 +163,14 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider accountAddressPermissions
      * @param string $type
      * @param string $expectedPermission
+     * @param object $loggedUser
      */
-    public function testGetAccountAddressesGrantedView($type, $expectedPermission)
+    public function testGetAccountAddressesGrantedView($type, $expectedPermission, $loggedUser)
     {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $account = new Account();
         $addresses = [new AccountAddress()];
 
@@ -184,13 +202,19 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedCalledPermissions
      * @param string $calledRepositoryMethod
      * @param array $addresses
+     * @param object $loggedUser
      */
     public function testGetAccountUserAddresses(
         $type,
         array $expectedCalledPermissions,
         $calledRepositoryMethod,
-        array $addresses
+        array $addresses,
+        $loggedUser
     ) {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->will($this->returnValue($loggedUser));
+
         $accountUser = new AccountUser();
 
         $permissionsValueMap = [];
@@ -218,6 +242,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function accountUserAddressPermissions()
     {
@@ -230,6 +255,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 null,
                 [],
+                new AccountUser()
             ],
             [
                 'shipping',
@@ -238,6 +264,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
             ],
             [
                 'shipping',
@@ -247,6 +274,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
             ],
             [
                 'billing',
@@ -256,6 +284,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 null,
                 [],
+                new AccountUser()
             ],
             [
                 'billing',
@@ -264,6 +293,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
             ],
             [
                 'billing',
@@ -273,6 +303,65 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
+                new AccountUser()
+            ],
+            [
+                'shipping',
+                [
+                    'orob2b_order_address_shipping_account_user_use_any_backend' => false,
+                    'orob2b_order_address_shipping_account_user_use_default_backend' => false,
+                ],
+                null,
+                [],
+                new User()
+            ],
+            [
+                'shipping',
+                [
+                    'orob2b_order_address_shipping_account_user_use_any_backend' => true
+                ],
+                'getAddressesByType',
+                [new AccountUserAddress()],
+                new User()
+            ],
+            [
+                'shipping',
+                [
+                    'orob2b_order_address_shipping_account_user_use_any_backend' => false,
+                    'orob2b_order_address_shipping_account_user_use_default_backend' => true
+                ],
+                'getDefaultAddressesByType',
+                [new AccountUserAddress()],
+                new User()
+            ],
+            [
+                'billing',
+                [
+                    'orob2b_order_address_billing_account_user_use_any_backend' => false,
+                    'orob2b_order_address_billing_account_user_use_default_backend' => false,
+                ],
+                null,
+                [],
+                new User()
+            ],
+            [
+                'billing',
+                [
+                    'orob2b_order_address_billing_account_user_use_any_backend' => true
+                ],
+                'getAddressesByType',
+                [new AccountUserAddress()],
+                new User()
+            ],
+            [
+                'billing',
+                [
+                    'orob2b_order_address_billing_account_user_use_any_backend' => false,
+                    'orob2b_order_address_billing_account_user_use_default_backend' => true
+                ],
+                'getDefaultAddressesByType',
+                [new AccountUserAddress()],
+                new User()
             ]
         ];
     }
