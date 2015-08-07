@@ -44,6 +44,29 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
+    {% set subtotalsListenerAddress = {
+        view: 'orob2border/js/app/views/subtotals-listener-view',
+        filterNameEnding: ['\[country\]', '\[street\]', '\[street2\]', '\[city\]', '\[region\]', '\[postalCode\]']
+    } %}
+
+    {% set billingAddress %}
+        <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ subtotalsListenerAddress|json_encode }}"
+                >
+            {{ form_widget(form.billingAddress) }}
+        </div>
+    {% endset %}
+
+    {% set shippingAddress %}
+        <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ subtotalsListenerAddress|json_encode }}"
+                >
+            {{ form_widget(form.shippingAddress) }}
+        </div>
+    {% endset %}
+
     {% set subtotals %}
         {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
             options: {
@@ -63,14 +86,14 @@
             'title': 'orob2b.order.billing_address.label'|trans,
             'class': 'active',
             'subblocks': [{
-                'data': [form_widget(form.billingAddress)]
+                'data': [billingAddress]
             }]
         },
         {
             'title': 'orob2b.order.shipping_address.label'|trans,
             'class': 'active',
             'subblocks': [{
-                'data': [form_widget(form.shippingAddress)]
+                'data': [shippingAddress]
             }]
         },
         {

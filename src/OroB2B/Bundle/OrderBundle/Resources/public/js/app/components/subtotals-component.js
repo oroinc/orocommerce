@@ -4,6 +4,7 @@ define(function(require) {
     var SubtotalsComponent;
     var $ = require('jquery');
     var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
@@ -46,6 +47,11 @@ define(function(require) {
         template: null,
 
         /**
+         * @property {String}
+         */
+        formData: '',
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -60,6 +66,11 @@ define(function(require) {
             this.template = _.template(this.$el.find(this.options.selectors.template).text());
 
             this.getSubtotals(_.bind(this.render, this));
+
+            var self = this;
+            mediator.on('order-subtotals:update', function() {
+                self.getSubtotals(_.bind(self.render, self));
+            });
         },
 
         /**
@@ -68,13 +79,25 @@ define(function(require) {
          * @param {Function} callback
          */
         getSubtotals: function(callback) {
+            var formData = this.$form.serialize();
+
+            if (formData === this.formData) {
+                return null;//nothing changed
+            }
+
+            this.formData = formData;
+
+            var self = this;
             $.ajax({
                 url: this.options.url,
                 type: 'POST',
-                data: this.$form.serialize(),
+                data: formData,
                 success: function(response) {
-                    var subtotals = response.subtotals || {};
-                    callback(subtotals);
+                    if (formData === self.formData) {
+                        //data doesn't change after ajax call
+                        var subtotals = response.subtotals || {};
+                        callback(subtotals);
+                    }
                 }
             });
         },
