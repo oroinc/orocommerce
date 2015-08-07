@@ -65,6 +65,7 @@ orob2b:
             add_line_item: Add Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
+            new_shopping_list_label.empty: Shopping List label must not be empty
             grid:
                 action:
                     view:

@@ -39,6 +39,7 @@ services:
             - @doctrine
             - @orob2b_shopping_list.shopping_list.manager
             - @security.token_storage
+            - @translator.default
         calls:
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
