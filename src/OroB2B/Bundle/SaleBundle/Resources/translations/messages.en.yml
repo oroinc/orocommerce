@@ -14,7 +14,6 @@ orob2b:
             quote_products.label: 'Quote Products'
             request.label: 'Request'
             account.label: 'Account'
-            customer.label: 'Customer'
             account_user.label: 'Account User'
 
             sections:
@@ -102,6 +101,8 @@ orob2b:
 
     frontend:
         sale:
+            menu:
+                label: 'Sales'
             quote:
                 entity_plural_label: Quotes
                 qid.label: 'ID'

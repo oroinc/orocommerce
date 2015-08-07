@@ -7,7 +7,7 @@ use Oro\Component\Testing\Unit\FormHandlerTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;

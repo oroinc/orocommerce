@@ -12,8 +12,8 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
@@ -117,15 +117,15 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUser;
 
     /**
-     * @var Customer
+     * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer"),
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $account;
@@ -300,7 +300,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @return Customer
+     * @return Account
      */
     public function getAccount()
     {
@@ -308,10 +308,10 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      * @return Order
      */
-    public function setAccount(Customer $account = null)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
 

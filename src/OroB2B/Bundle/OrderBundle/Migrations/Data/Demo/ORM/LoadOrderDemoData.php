@@ -15,7 +15,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
@@ -48,8 +48,8 @@ class LoadOrderDemoData extends AbstractFixture implements
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'OroB2B\Bundle\SaleBundle\Migrations\Data\Demo\ORM\LoadQuoteDemoData',
         ];
     }
@@ -72,7 +72,7 @@ class LoadOrderDemoData extends AbstractFixture implements
                 ->setOwner($user)
                 ->setOrganization($organization)
                 ->setAccountUser($accountUser)
-                ->setAccount($accountUser ? $accountUser->getCustomer() : null)
+                ->setAccount($accountUser ? $accountUser->getAccount() : null)
             ;
 
             if ($fromQuote) {
@@ -93,7 +93,7 @@ class LoadOrderDemoData extends AbstractFixture implements
      */
     protected function getAccountUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:AccountUser')->findBy([], null, 10));
     }
 
     /**

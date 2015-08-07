@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -21,7 +21,7 @@ class OrderTest extends AbstractTest
             ['identifier', 'ORD-123456'],
             ['owner', new User()],
             ['accountUser', new AccountUser()],
-            ['account', new Customer()],
+            ['account', new Account()],
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],

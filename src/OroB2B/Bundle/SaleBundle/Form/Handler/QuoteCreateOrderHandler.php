@@ -8,7 +8,7 @@ use Doctrine\DBAL\DBALException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
@@ -108,7 +108,7 @@ class QuoteCreateOrderHandler
             ->setOwner($entity->getOwner())
             ->setQuote($entity)
             ->setAccountUser($this->user)
-            ->setAccount($this->user->getCustomer())
+            ->setAccount($this->user->getAccount())
         ;
 
         foreach ($entity->getQuoteProducts() as $quoteProduct) {

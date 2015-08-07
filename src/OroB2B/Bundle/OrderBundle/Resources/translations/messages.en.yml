@@ -10,7 +10,6 @@ orob2b:
         order_products.label: 'Order Products'
         quote.label: 'Quote'
         account.label: 'Account'
-        customer.label: 'Customer'
         account_user.label: 'Account User'
 
         menu:

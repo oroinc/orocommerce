@@ -15,7 +15,7 @@
 {% block orob2b_order_order_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' order-orderproduct-widget control-group'}) %}
 
-    {% set commentCustomer = form.vars.value.commentCustomer|default(null) %}
+    {% set commentAccount = form.vars.value.commentAccount|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
 
     <table class="order-orderproduct-collection-table" {{ block('widget_container_attributes') }}
