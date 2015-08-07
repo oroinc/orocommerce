@@ -6,6 +6,8 @@ parameters:
     orob2b_account.form.type.account_group_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupSelectType
     orob2b_account.form.type.account_parent_select.class: OroB2B\Bundle\AccountBundle\Form\Type\ParentAccountSelectType
     orob2b_account.form.type.account_user_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType
+
+    orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
 
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
@@ -55,6 +57,17 @@ services:
         class: %orob2b_account.form.type.account_user_select.class%
         tags:
             - { name: form.type, alias: orob2b_account_account_user_select }
+
+    orob2b_account.form.type.account_user:
+        class: %orob2b_account.form.type.account_user.class%
+        arguments:
+            - @oro_security.security_facade
+        calls:
+            - [setDataClass, [%orob2b_account.entity.account_user.class%]]
+            - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
+            - [setAddressClass, [%orob2b_account.entity.account_user_address.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_account_user }
 
     orob2b_account.form.type.account_user_role:
         class: %orob2b_account.form.type.account_user_role.class%
