@@ -171,7 +171,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      *
      * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
      */
-    protected $сurrent = false;
+    protected $current = false;
 
     public function __construct()
     {
