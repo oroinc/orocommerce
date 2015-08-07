@@ -24,7 +24,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;

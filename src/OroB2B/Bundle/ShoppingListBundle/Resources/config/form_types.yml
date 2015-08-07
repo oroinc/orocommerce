@@ -3,7 +3,7 @@ parameters:
     orob2b_shopping_list.form.type.line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType
     orob2b_shopping_list.form.type.frontend_line_item_widget.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType
     orob2b_shopping_list.form.type.frontend_line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType
-    orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class: OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber
+    orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class: OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber
 
 services:
     orob2b_shopping_list.form.type.shopping_list:

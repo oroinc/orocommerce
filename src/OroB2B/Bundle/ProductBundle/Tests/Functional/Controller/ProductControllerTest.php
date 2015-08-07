@@ -6,7 +6,6 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
@@ -323,17 +322,6 @@ class ProductControllerTest extends WebTestCase
         $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
         return $result['id'];
-    }
-
-    /**
-     * @param string $title
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle($title)
-    {
-        return $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->findOneByDefaultTitle($title);
     }
 
     /**
