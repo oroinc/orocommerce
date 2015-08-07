@@ -100,6 +100,7 @@ class OroB2BOrderBundleInstaller implements
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('payment_term_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', []);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'created_at_index', []);
@@ -177,6 +178,12 @@ class OroB2BOrderBundleInstaller implements
             ['billing_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),

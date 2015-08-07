@@ -102,16 +102,16 @@ orob2b.account:
         entity_description:         Represent account user's address
         entity_label:               Account User Address
         entity_plural_label:        Account User Addresses
-        first_name.label:           First name
+        first_name.label:           First Name
         id.label:                   Id
         label.label:                Label
-        last_name.label:            Last name
-        middle_name.label:          Middle name
-        name_prefix.label:          Name prefix
-        name_suffix.label:          Name suffix
+        last_name.label:            Last Name
+        middle_name.label:          Middle Name
+        name_prefix.label:          Name Prefix
+        name_suffix.label:          Name Suffix
         organization.label:         Organization
         owner.label:                Owner
-        postal_code.label:          Zip/postal code
+        postal_code.label:          Zip/Postal Code
         primary.label:              Primary
         region.label:               State
         region_text.label:          State
