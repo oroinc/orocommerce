@@ -58,15 +58,18 @@
             'subblocks': [{
                 'data': [form_widget(form.billingAddress)]
             }]
-        },
-        {
+        }
+    ] %}
+
+    {% if isShippingAddressGranted %}
+        {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.shipping_address.label'|trans,
             'class': 'active',
             'subblocks': [{
                 'data': [form_widget(form.shippingAddress)]
             }]
-        }
-    ] %}
+        }]) %}
+    {% endif %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}

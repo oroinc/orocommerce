@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -13,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use Symfony\Component\HttpFoundation\Request;
 
 class OrderController extends Controller
 {
@@ -129,7 +131,17 @@ class OrderController extends Controller
                     'parameters' => ['id' => $order->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.order.controller.order.saved.message')
+            $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
+            null,
+            function (Order $order, FormInterface $form, Request $request) {
+                return [
+                    'form' => $form->createView(),
+                    'entity' => $order,
+                    'isWidgetContext' => (bool)$request->get('_wid', false),
+                    'isShippingAddressGranted' => $this->get('orob2b_order.order.provider.order_address_security')
+                        ->isShippingAddressGranted()
+                ];
+            }
         );
     }
 }
