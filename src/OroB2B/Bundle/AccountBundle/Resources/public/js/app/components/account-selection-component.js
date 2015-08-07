@@ -17,8 +17,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            accountSelect: '.sale-quote-account-select input[type="hidden"]',
-            accountUserSelect: '.sale-quote-accountuser-select input[type="hidden"]',
+            accountSelect: '.account-account-select input[type="hidden"]',
+            accountUserSelect: '.account-accountuser-select input[type="hidden"]',
             accountRoute: 'orob2b_account_account_user_get_account',
             errorMessage: 'Sorry, unexpected error was occurred'
         },
