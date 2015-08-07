@@ -164,7 +164,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
         return [
             'empty account user' => [new Order()],
             'empty account' => [
-                (new Order())->setAccountUser((new AccountUser())),
+                (new Order())->setAccountUser(new AccountUser()),
                 [],
                 [
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 1),
@@ -184,7 +184,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'account' => [
-                (new Order())->setAccountUser((new AccountUser())->setAccount(new Account())),
+                (new Order())->setAccountUser(new AccountUser())->setAccount(new Account()),
                 [
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 1),
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 2),
@@ -204,7 +204,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'full' => [
-                (new Order())->setAccountUser((new AccountUser())->setAccount(new Account())),
+                (new Order())->setAccountUser(new AccountUser())->setAccount(new Account()),
                 [
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 1),
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountAddress', 2),

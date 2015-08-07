@@ -116,17 +116,17 @@ class OrderAddressManager
     public function getGroupedAddresses(Order $order, $type)
     {
         $addresses = [];
+
+        $account = $order->getAccount();
+        if ($account) {
+            $accountAddresses = $this->orderAddressProvider->getAccountAddresses($account, $type);
+            foreach ($accountAddresses as $accountAddress) {
+                $addresses['orob2b.account.entity_label'][$this->getIdentifier($accountAddress)] = $accountAddress;
+            }
+        }
+
         $accountUser = $order->getAccountUser();
         if ($accountUser) {
-            $account = $accountUser->getAccount();
-            if ($account) {
-                $accountAddresses = $this->orderAddressProvider->getAccountAddresses($account, $type);
-                foreach ($accountAddresses as $accountAddress) {
-                    $addresses['orob2b.account.entity_label'][$this->getIdentifier($accountAddress)] =
-                        $accountAddress;
-                }
-            }
-
             $accountUserAddresses = $this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
             if ($accountUserAddresses) {
                 foreach ($accountUserAddresses as $accountUserAddress) {
