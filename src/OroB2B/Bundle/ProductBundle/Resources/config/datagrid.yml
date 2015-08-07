@@ -195,10 +195,13 @@ datagrid:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                name:
+                    type:      string
+                    data_name: product.sku
                 sku:
                     type:      string
                     data_name: product.sku
-                inventoryStatus:
+                inventoryStatusName:
                     type:      enum
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status

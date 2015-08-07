@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 
 class LineItemType extends AbstractType
 {
@@ -71,7 +71,7 @@ class LineItemType extends AbstractType
                 ProductSelectType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.product.label',
+                    'label' => 'orob2b.shoppinglist.lineitem.product.label',
                     'create_enabled' => false,
                     'disabled' => $isExisting
                 ]
@@ -81,7 +81,7 @@ class LineItemType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.quantity.label'
+                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label'
                 ]
             )
             ->add(
@@ -89,7 +89,7 @@ class LineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.unit.label',
+                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                 ]
             )
             ->add(
@@ -124,7 +124,7 @@ class LineItemType extends AbstractType
             ProductUnitSelectionType::NAME,
             [
                 'required' => true,
-                'label' => 'orob2b.pricing.productprice.unit.label',
+                'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                 'query_builder' => function (ProductUnitRepository $er) use ($entity) {
                     return $er->getProductUnitsQueryBuilder($entity->getProduct());
                 }

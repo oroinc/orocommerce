@@ -7,6 +7,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use Oro\Bundle\TranslationBundle\Translation\Translator;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -31,14 +33,24 @@ class ShoppingListManager
     protected $accountUser;
 
     /**
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
      * @param ManagerRegistry       $managerRegistry
      * @param TokenStorageInterface $tokenStorage
+     * @param Translator            $translator
      */
-    public function __construct(ManagerRegistry $managerRegistry, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        TokenStorageInterface $tokenStorage,
+        Translator $translator
+    ) {
         $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
         $this->accountUser = $tokenStorage->getToken()->getUser();
+        $this->translator = $translator;
     }
 
     /**
@@ -48,8 +60,10 @@ class ShoppingListManager
      *
      * @return ShoppingList
      */
-    public function createCurrent($label = 'Default')
+    public function createCurrent($label = '')
     {
+        $label = $label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label');
+
         $shoppingList = new ShoppingList();
         $shoppingList
             ->setOwner($this->accountUser)

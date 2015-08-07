@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 
 class LineItemSubscriberTest extends \PHPUnit_Framework_TestCase

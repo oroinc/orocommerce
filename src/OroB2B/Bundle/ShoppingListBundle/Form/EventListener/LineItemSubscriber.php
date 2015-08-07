@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type;
+namespace OroB2B\Bundle\ShoppingListBundle\Form\EventListener;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

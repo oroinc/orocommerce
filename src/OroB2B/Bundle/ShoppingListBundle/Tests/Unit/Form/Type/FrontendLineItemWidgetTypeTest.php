@@ -15,6 +15,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -24,7 +25,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
@@ -66,10 +67,16 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
             ->method('createCurrent')
             ->willReturn($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->type = new FrontendLineItemWidgetType(
             $this->getRegistry(),
             $shoppingListManager,
-            $this->getTokenStorage()
+            $this->getTokenStorage(),
+            $translator
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);

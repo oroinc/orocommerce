@@ -12,23 +12,23 @@ class AddProductsMassAction extends AjaxMassAction
      */
     public function setOptions(ActionConfiguration $options)
     {
-        if (empty($options['frontend_type'])) {
+        if (!isset($options['frontend_type'])) {
             $options['frontend_type'] = 'add-products-mass';
         }
 
-        if (empty($options['handler'])) {
+        if (!isset($options['handler'])) {
             $options['handler'] = 'orob2b_shopping_list.mass_action.add_products_handler';
         }
 
-        if (empty($options['route'])) {
+        if (!isset($options['route'])) {
             $options['route'] = 'orob2b_shopping_list_add_products_massaction';
         }
 
-        if (empty($options['route_parameters'])) {
+        if (!isset($options['route_parameters'])) {
             $options['route_parameters'] = [];
         }
 
-        if (empty($options['frontend_handle'])) {
+        if (!isset($options['frontend_handle'])) {
             $options['frontend_handle'] = 'ajax';
         }
 

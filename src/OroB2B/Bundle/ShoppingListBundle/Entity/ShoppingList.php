@@ -171,7 +171,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      *
      * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
      */
-    protected $isCurrent = false;
+    protected $current = false;
 
     public function __construct()
     {
@@ -355,7 +355,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function isCurrent()
     {
-        return $this->isCurrent;
+        return $this->current;
     }
 
     /**
@@ -365,7 +365,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function setCurrent($isCurrent)
     {
-        $this->isCurrent = (bool) $isCurrent;
+        $this->current = (bool) $isCurrent;
 
         return $this;
     }
