@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Doctrine\DBAL\Driver\Connection;
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 
 class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
@@ -36,11 +37,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Connection
-     */
-    protected $connection;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -51,26 +47,18 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->connection = $this->getMockBuilder('\Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->registry
-            ->expects($this->once())
-            ->method('getConnection')
-            ->willReturn($this->connection);
 
         $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
     }
 
     public function testProcessWrongMethod()
     {
-        $this->connection
+        $this->registry
             ->expects($this->never())
-            ->method('beginTransaction');
+            ->method('getManagerForClass');
 
         $this->request->expects($this->once())
             ->method('getMethod')
@@ -82,7 +70,19 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessFormNotValid()
     {
-        $this->prepareConnection($this->connection, false);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
+        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager->expects($this->once())
+            ->method('beginTransaction');
+        $manager->expects($this->never())
+            ->method('commit');
+        $manager->expects($this->once())
+            ->method('rollback');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(self::LINE_ITEM_SHORTCUT)
+            ->will($this->returnValue($manager));
 
         $this->request->expects($this->once())
             ->method('getMethod')
@@ -107,11 +107,40 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessExistingLineItem($existingLineItem, $newNotes)
     {
-        $this->prepareConnection($this->connection);
-
         $this->request->expects($this->once())
             ->method('getMethod')
             ->will($this->returnValue('PUT'));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository $repository */
+        $repository = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())
+            ->method('findDuplicate')
+            ->with($this->lineItem)
+            ->will($this->returnValue($existingLineItem));
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
+        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
+        $manager->expects($this->once())
+            ->method('beginTransaction');
+        $manager->expects($this->once())
+            ->method('commit');
+        $manager->expects($this->never())
+            ->method('rollback');
+        $manager->expects($this->never())
+            ->method('persist');
+        $manager->expects($this->once())
+            ->method('flush');
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->with(self::LINE_ITEM_SHORTCUT)
+            ->will($this->returnValue($repository));
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(self::LINE_ITEM_SHORTCUT)
+            ->will($this->returnValue($manager));
 
         $this->form->expects($this->once())
             ->method('submit')
@@ -126,24 +155,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->lineItem->expects($this->once())
             ->method('getNotes')
             ->will($this->returnValue($newNotes));
-
-        $repository = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository->expects($this->once())
-            ->method('findDuplicate')
-            ->with($this->lineItem)
-            ->will($this->returnValue($existingLineItem));
-
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with(self::LINE_ITEM_SHORTCUT)
-            ->will($this->returnValue($repository));
-        $manager->expects($this->never())
-            ->method('persist');
-        $manager->expects($this->once())
-            ->method('flush');
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
@@ -204,8 +215,6 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessNotExistingLineItem()
     {
-        $this->prepareConnection($this->connection);
-
         $this->request->expects($this->once())
             ->method('getMethod')
             ->will($this->returnValue('PUT'));
@@ -217,6 +226,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemRepository $repository */
         $repository = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -225,16 +235,23 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($this->lineItem)
             ->will($this->returnValue(null));
 
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManagerInterface $manager */
+        $manager = $this->getMock('Doctrine\ORM\EntityManagerInterface');
         $manager->expects($this->once())
-            ->method('getRepository')
-            ->with(self::LINE_ITEM_SHORTCUT)
-            ->will($this->returnValue($repository));
+            ->method('beginTransaction');
+        $manager->expects($this->once())
+            ->method('commit');
+        $manager->expects($this->never())
+            ->method('rollback');
         $manager->expects($this->once())
             ->method('persist')
             ->with($this->lineItem);
         $manager->expects($this->once())
             ->method('flush');
+        $manager->expects($this->once())
+            ->method('getRepository')
+            ->with(self::LINE_ITEM_SHORTCUT)
+            ->will($this->returnValue($repository));
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
@@ -244,29 +261,5 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $handler = new LineItemHandler($this->form, $this->request, $this->registry);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals([], $handler->updateSavedId([]));
-    }
-
-    /**
-     * @param \PHPUnit_Framework_MockObject_MockObject|Connection $connection
-     * @param boolean $expectCommit
-     */
-    protected function prepareConnection(Connection $connection, $expectCommit = true)
-    {
-        $connection
-            ->expects($this->once())
-            ->method('beginTransaction');
-
-        if ($expectCommit) {
-            $connection
-                ->expects($this->once())
-                ->method('commit');
-        } else {
-            $connection
-                ->expects($this->never())
-                ->method('commit');
-            $connection
-                ->expects($this->once())
-                ->method('rollBack');
-        }
     }
 }

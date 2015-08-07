@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
