@@ -34,8 +34,8 @@
                 {% else %}
                     {% set paymentTermView = order.paymentTerm.label|escape %}
                 {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
             {% endif %}
-            {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
 
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
