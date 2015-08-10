@@ -6,7 +6,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 /**
  * @dbIsolation
@@ -19,7 +20,9 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders'
+                'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses'
             ]
         );
     }
@@ -68,16 +71,28 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertArrayHasKey('subtotal', $data['subtotals']);
     }
 
-    public function testGetRelatedDataAction()
+    /**
+     * @dataProvider getRelatedDataActionDataProvider
+     *
+     * @param string $account
+     * @param string|null $accountUser
+     */
+    public function testGetRelatedDataAction($account, $accountUser = null)
     {
-        /** @var Order $order */
-        $order = $this->getReference('simple_order');
+        /** @var Account $order */
+        $accountEntity = $this->getReference($account);
+
+        /** @var AccountUser $order */
+        $accountUserEntity = $accountUser ? $this->getReference($accountUser) : null;
 
         $this->client->request(
             'GET',
             $this->getUrl(
                 'orob2b_order_related_data',
-                ['accountId' => $order->getAccount()->getId(), 'accountUserId' => $order->getAccountUser()->getId()]
+                [
+                    'accountId' => $accountEntity->getId(),
+                    'accountUserId' => $accountUserEntity ? $accountUserEntity->getId() : null
+                ]
             )
         );
 
@@ -89,5 +104,47 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertArrayHasKey('billingAddress', $result);
         $this->assertArrayHasKey('shippingAddress', $result);
         $this->assertArrayHasKey('paymentTerm', $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getRelatedDataActionDataProvider()
+    {
+        return [
+            [
+                'account' => 'account.level_1',
+                'accountUser' => 'grzegorz.brzeczyszczykiewicz@example.com'
+            ],
+            [
+                'account' => 'account.level_1',
+                'accountUser' => null
+            ]
+        ];
+    }
+
+    public function testGetRelatedDataActionException()
+    {
+        /** @var AccountUser $accountUser1 */
+        $accountUser1 = $this->getReference('grzegorz.brzeczyszczykiewicz@example.com');
+
+        /** @var AccountUser $accountUser2 */
+        $accountUser2 = $this->getReference('second_account.user@test.com');
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_order_related_data',
+                [
+                    'accountId' => $accountUser1->getAccount()->getId(),
+                    'accountUserId' => $accountUser2->getId(),
+                ]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
+
+        $this->assertResponseStatusCodeEquals($response, 400);
     }
 }

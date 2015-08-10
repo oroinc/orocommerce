@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
@@ -64,24 +65,33 @@ class AjaxOrderController extends Controller
     /**
      * Get order related data
      *
-     * @Route(
-     *      "/related-data/{accountId}/{accountUserId}",
-     *      name="orob2b_order_related_data",
-     *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
-     *      defaults={"accountUserId"=0}
-     * )
+     * @Route("/related-data/{accountId}", name="orob2b_order_related_data", requirements={"accountId"="\d+"})
      * @Method({"GET"})
      * @AclAncestor("orob2b_order_update")
      *
      * @ParamConverter("account", options={"id" = "accountId"})
-     * @ParamConverter("accountUser", options={"id" = "accountUserId"})
      *
      * @param Account $account
-     * @param AccountUser|null $accountUser
      * @return JsonResponse
      */
-    public function getRelatedDataAction(Account $account, AccountUser $accountUser = null)
+    public function getRelatedDataAction(Account $account)
     {
+        /** @var AccountUser $accountUser */
+        $accountUser = null;
+
+        $accountUserId = $this->get('request')->get('accountUserId');
+        if ($accountUserId) {
+            $accountUserClass = $this->getParameter('orob2b_account.entity.account_user.class');
+
+            $accountUser = $this->getDoctrine()
+                ->getManagerForClass($accountUserClass)
+                ->find($accountUserClass, $accountUserId);
+        }
+
+        if ($accountUser && $accountUser->getAccount()->getId() !== $account->getId()) {
+            throw new BadRequestHttpException('AccountUser must belong to Account');
+        }
+
         $order = new Order();
         $order->setAccount($account)->setAccountUser($accountUser);
 
@@ -110,12 +120,7 @@ class AjaxOrderController extends Controller
         return $this->createForm(
             OrderAddressType::NAME,
             null,
-            [
-                'label' => 'orob2b.order.' . $type . '_address.label',
-                'order' => $order,
-                'required' => false,
-                'addressType' => $type,
-            ]
+            ['order' => $order, 'required' => false, 'addressType' => $type]
         );
     }
 
