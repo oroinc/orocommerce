@@ -113,7 +113,7 @@ class OrderAddressProvider
     {
         static::assertType($type);
 
-        $key = $this->getKey($account, $type);
+        $key = $this->getCacheKey($account, $type);
         if (array_key_exists($key, $this->cache)) {
             return $this->cache[$key];
         }
@@ -141,7 +141,7 @@ class OrderAddressProvider
     {
         static::assertType($type);
 
-        $key = $this->getKey($accountUser, $type);
+        $key = $this->getCacheKey($accountUser, $type);
         if (array_key_exists($key, $this->cache)) {
             return $this->cache[$key];
         }
@@ -215,7 +215,7 @@ class OrderAddressProvider
      * @param string $type
      * @return string
      */
-    protected function getKey($object, $type)
+    protected function getCacheKey($object, $type)
     {
         return sprintf('%s_%s_%s', ClassUtils::getClass($object), $object->getId(), $type);
     }

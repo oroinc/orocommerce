@@ -3,12 +3,10 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -171,7 +169,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 2),
                 ],
                 [
-                    'orob2b.account.accountuser.entity_label' => [
+                    OrderAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
                             'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress',
                             1
@@ -191,7 +189,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
                 ],
                 [],
                 [
-                    'orob2b.account.entity_label' => [
+                    OrderAddressManager::ACCOUNT_LABEL => [
                         'a_1' => $this->getEntity(
                             'OroB2B\Bundle\AccountBundle\Entity\AccountAddress',
                             1
@@ -214,7 +212,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress', 2),
                 ],
                 [
-                    'orob2b.account.entity_label' => [
+                    OrderAddressManager::ACCOUNT_LABEL => [
                         'a_1' => $this->getEntity(
                             'OroB2B\Bundle\AccountBundle\Entity\AccountAddress',
                             1
@@ -224,7 +222,7 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
                             2
                         ),
                     ],
-                    'orob2b.account.accountuser.entity_label' => [
+                    OrderAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
                             'OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress',
                             1

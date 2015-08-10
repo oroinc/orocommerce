@@ -11,7 +11,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 class OrderAddressSecurityProvider
 {
-    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual_backend';
+    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual';
 
     /** @var SecurityFacade */
     protected $securityFacade;
@@ -88,11 +88,8 @@ class OrderAddressSecurityProvider
      */
     public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
     {
-        $hasPermissions = $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountUserAddressClass) &&
-            $this->securityFacade->isGrantedClassPermission(
-                $this->getTypedPermission($type),
-                $this->accountUserAddressClass
-            );
+        $hasPermissions = $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountUserAddressClass)
+            && $this->securityFacade->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
             return false;
@@ -133,6 +130,11 @@ class OrderAddressSecurityProvider
     {
         OrderAddressProvider::assertType($type);
 
-        return $this->securityFacade->isGranted(sprintf(self::MANUAL_EDIT_ACTION, $type));
+        $permission = sprintf(self::MANUAL_EDIT_ACTION, $type);
+        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
+            $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
+        }
+
+        return $this->securityFacade->isGranted($permission);
     }
 }
