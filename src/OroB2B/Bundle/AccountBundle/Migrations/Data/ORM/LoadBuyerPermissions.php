@@ -63,10 +63,15 @@ class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureIn
         if ($aclManager->isAclEnabled()) {
             $role = $this->getBuyerRole($manager);
             $sid = $aclManager->getSid($role);
-            $oid = $aclManager->getOid('action:' . self::ACTION_ID);
-            $builder = $aclManager->getMaskBuilder($oid);
-            $mask = $builder->reset()->add('EXECUTE')->get();
-            $aclManager->setPermission($sid, $oid, $mask, true);
+
+            foreach ($aclManager->getAllExtensions() as $extension) {
+                if ($extension instanceof ActionAclExtension) {
+                    $oid = $aclManager->getOid('action:' . self::ACTION_ID);
+                    $builder = $aclManager->getMaskBuilder($oid);
+                    $mask = $builder->reset()->add('EXECUTE')->get();
+                    $aclManager->setPermission($sid, $oid, $mask, true);
+                }
+            }
         }
     }
 

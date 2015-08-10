@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Migrations\Data\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface as SID;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -17,7 +16,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class LoadBuyerPermissions extends AbstractFixture implements
+class LoadAccountUserWithShoppingListPermissions extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
@@ -77,14 +76,20 @@ class LoadBuyerPermissions extends AbstractFixture implements
             $this->container->getParameter('orob2b_shopping_list.entity.line_item.class')
         ];
 
-        foreach ($classNames as $className) {
-            $this->setAllowedAclForClass(
-                $allowedAclCollection,
-                $chainMetadataProvider,
-                $aclManager,
-                $className,
-                $sid
-            );
+        foreach ($aclManager->getAllExtensions() as $extension) {
+            if (!$extension instanceof EntityAclExtension) {
+                continue;
+            }
+
+            foreach ($classNames as $className) {
+                $this->setAllowedAclForClass(
+                    $allowedAclCollection,
+                    $chainMetadataProvider,
+                    $aclManager,
+                    $className,
+                    $sid
+                );
+            }
         }
     }
 
@@ -93,7 +98,7 @@ class LoadBuyerPermissions extends AbstractFixture implements
      * @param ChainMetadataProvider $chainMetadataProvider
      * @param AclManager $aclManager
      * @param string $className
-     * @param SID $sid
+     * @param string $sid
      */
     protected function setAllowedAclForClass(
         array $allowedAclCollection,
