@@ -195,6 +195,7 @@ class Account extends ExtendAccount
         if (!$this->getAddresses()->contains($address)) {
             $this->getAddresses()->add($address);
             $address->setOwner($this);
+            $address->setSystemOrganization($this->getOrganization());
         }
 
         return $this;
