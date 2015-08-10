@@ -116,10 +116,23 @@ class OrderAddressSecurityProvider
         OrderAddressProvider::assertType($type);
 
         if ($type === AddressType::TYPE_SHIPPING) {
-            return OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY;
+            return $this->getPermission(OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY);
         }
 
-        return OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY;
+        return $this->getPermission(OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY);
+    }
+
+    /**
+     * @param string $permission
+     * @return string
+     */
+    protected function getPermission($permission)
+    {
+        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
+            $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
+        }
+
+        return $permission;
     }
 
     /**
@@ -131,10 +144,7 @@ class OrderAddressSecurityProvider
         OrderAddressProvider::assertType($type);
 
         $permission = sprintf(self::MANUAL_EDIT_ACTION, $type);
-        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
-            $permission .= OrderAddressProvider::ADMIN_ACL_POSTFIX;
-        }
 
-        return $this->securityFacade->isGranted($permission);
+        return $this->securityFacade->isGranted($this->getPermission($permission));
     }
 }
