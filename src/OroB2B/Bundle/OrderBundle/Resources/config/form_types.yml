@@ -7,6 +7,7 @@ services:
         class: %orob2b_order.form.type.order.class%
         arguments:
             - @oro_security.security_facade
+            - @orob2b_order.order.provider.order_address_security
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
@@ -16,8 +17,8 @@ services:
         class: %orob2b_order.form.type.order_address.class%
         arguments:
             - @oro_locale.formatter.address
-            - @oro_security.security_facade
             - @orob2b_order.manager.order_address
+            - @orob2b_order.order.provider.order_address_security
         tags:
             - { name: form.type, alias: orob2b_order_address_type }
         calls:

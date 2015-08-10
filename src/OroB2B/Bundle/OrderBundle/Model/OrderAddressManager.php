@@ -21,6 +21,9 @@ class OrderAddressManager
 {
     const DELIMITER = '_';
 
+    const ACCOUNT_LABEL = 'orob2b.account.entity_label';
+    const ACCOUNT_USER_LABEL = 'orob2b.account.accountuser.entity_label';
+
     /**
      * @var OrderAddressProvider
      */
@@ -53,7 +56,6 @@ class OrderAddressManager
         $this->orderAddressClass = $orderAddressClass;
 
         $this->map = new ArrayCollection();
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -97,6 +99,10 @@ class OrderAddressManager
      */
     protected function setValue(AbstractAddress $from, AbstractAddress $to, $property)
     {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
         try {
             $value = $this->propertyAccessor->getValue($from, $property);
             if (!$value || ($value instanceof Collection && $value->isEmpty())) {
@@ -116,21 +122,21 @@ class OrderAddressManager
     public function getGroupedAddresses(Order $order, $type)
     {
         $addresses = [];
+
+        $account = $order->getAccount();
+        if ($account) {
+            $accountAddresses = $this->orderAddressProvider->getAccountAddresses($account, $type);
+            foreach ($accountAddresses as $accountAddress) {
+                $addresses[self::ACCOUNT_LABEL][$this->getIdentifier($accountAddress)] = $accountAddress;
+            }
+        }
+
         $accountUser = $order->getAccountUser();
         if ($accountUser) {
-            $account = $accountUser->getAccount();
-            if ($account) {
-                $accountAddresses = $this->orderAddressProvider->getAccountAddresses($account, $type);
-                foreach ($accountAddresses as $accountAddress) {
-                    $addresses['orob2b.account.entity_label'][$this->getIdentifier($accountAddress)] =
-                        $accountAddress;
-                }
-            }
-
             $accountUserAddresses = $this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
             if ($accountUserAddresses) {
                 foreach ($accountUserAddresses as $accountUserAddress) {
-                    $addresses['orob2b.account.accountuser.entity_label'][$this->getIdentifier($accountUserAddress)] =
+                    $addresses[self::ACCOUNT_USER_LABEL][$this->getIdentifier($accountUserAddress)] =
                         $accountUserAddress;
                 }
             }

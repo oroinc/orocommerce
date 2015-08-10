@@ -8,3 +8,15 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
+        currency:
+            - Currency: ~
+#        subtotal:
+#            - Type:
+#                type: float
+        account:
+            - NotBlank: ~
