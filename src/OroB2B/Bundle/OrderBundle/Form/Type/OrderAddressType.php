@@ -66,7 +66,10 @@ class OrderAddressType extends AbstractType
         ];
 
         if ($isManualEditGranted) {
-            $accountAddressOptions['placeholder'] = 'orob2b.order.form.address.manual';
+            $accountAddressOptions['choices'] = array_merge(
+                $accountAddressOptions['choices'],
+                ['orob2b.order.form.address.manual']
+            );
             $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
         }
 

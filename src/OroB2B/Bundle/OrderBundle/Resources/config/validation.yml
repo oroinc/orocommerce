@@ -15,9 +15,9 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
             - Date: ~
         currency:
             - Currency: ~
-        subtotal:
-            - Type:
-                type: float
+#        subtotal:
+#            - Type:
+#                type: float
         paymentTerm:
             - Valid: ~
         account:
