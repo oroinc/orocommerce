@@ -94,6 +94,14 @@ define(function(require) {
                     Error.handle({}, xhr, {enforce: true});
                 }
             });
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            AddProductFromViewComponent.__super__.dispose.call(this);
         }
     });
 
