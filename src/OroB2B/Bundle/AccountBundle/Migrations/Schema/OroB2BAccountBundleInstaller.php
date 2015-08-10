@@ -45,7 +45,7 @@ class OroB2BAccountBundleInstaller implements
     const ORO_EMAIL = 'oro_email';
     const ORO_CALENDAR_EVENT = 'oro_calendar_event';
     const ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'orob2b_account_user_address';
-    const ORO_B2B_ACCOUNT_ADR_TO_ADR_TYPE_TABLE_NAME = 'orob2b_account_adr_to_adr_type';
+    const ORO_B2B_ACCOUNT_USER_ADR_ADR_TYPE_TABLE_NAME = 'orob2b_acc_user_adr_adr_type';
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -125,7 +125,7 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAuditFieldTable($schema);
         $this->createOroB2BAuditTable($schema);
         $this->createOroB2BAccountUserAddressTable($schema);
-        $this->createOroB2BAccountAdrToAdrTypeTable($schema);
+        $this->createOroB2BAccUserAdrAdrTypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -133,12 +133,12 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountUserOrganizationForeignKeys($schema);
         $this->addOroB2BAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroB2BAccountForeignKeys($schema);
-        $this->addOrob2BAccountAddressForeignKeys($schema);
-        $this->addOrob2BAccountAdrAdrTypeForeignKeys($schema);
+        $this->addOroB2BAccountAddressForeignKeys($schema);
+        $this->addOroB2BAccountAdrAdrTypeForeignKeys($schema);
         $this->addOroB2BAuditFieldForeignKeys($schema);
         $this->addOroB2BAuditForeignKeys($schema);
-        $this->addOrob2BAccountUserAddressForeignKeys($schema);
-        $this->addOrob2BAccountAdrToAdrTypeForeignKeys($schema);
+        $this->addOroB2BAccountUserAddressForeignKeys($schema);
+        $this->addOroB2BAccUserAdrAdrTypeForeignKeys($schema);
     }
 
     /**
@@ -573,7 +573,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAccountAddressForeignKeys(Schema $schema)
+    protected function addOroB2BAccountAddressForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -617,7 +617,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAccountAdrAdrTypeForeignKeys(Schema $schema)
+    protected function addOroB2BAccountAdrAdrTypeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TO_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -691,7 +691,7 @@ class OroB2BAccountBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAccountUserAddressForeignKeys(Schema $schema)
+    protected function addOroB2BAccountUserAddressForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -715,29 +715,29 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_account_adr_to_adr_type table
+     * Create orob2b_acc_user_adr_adr_type table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BAccountAdrToAdrTypeTable(Schema $schema)
+    protected function createOroB2BAccUserAdrAdrTypeTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADR_TO_ADR_TYPE_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADR_ADR_TYPE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('type_name', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['account_user_address_id', 'type_name'], 'orob2b_account_adr_id_type_name_idx');
+        $table->addUniqueIndex(['account_user_address_id', 'type_name'], 'orob2b_account_user_adr_id_type_name_idx');
     }
 
     /**
-     * Add orob2b_account_adr_to_adr_type foreign keys.
+     * Add orob2b_acc_user_adr_adr_type foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAccountAdrToAdrTypeForeignKeys(Schema $schema)
+    protected function addOroB2BAccUserAdrAdrTypeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADR_TO_ADR_TYPE_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADR_ADR_TYPE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ADDRESS_TYPE_TABLE_NAME),
             ['type_name'],
