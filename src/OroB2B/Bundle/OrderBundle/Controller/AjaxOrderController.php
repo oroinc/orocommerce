@@ -76,9 +76,11 @@ class AjaxOrderController extends Controller
      */
     public function getRelatedDataAction(Account $account)
     {
+        $order = new Order();
+        $order->setAccount($account);
+
         /** @var AccountUser $accountUser */
         $accountUser = null;
-
         $accountUserId = $this->get('request')->get('accountUserId');
         if ($accountUserId) {
             $accountUserClass = $this->getParameter('orob2b_account.entity.account_user.class');
@@ -86,24 +88,25 @@ class AjaxOrderController extends Controller
             $accountUser = $this->getDoctrine()
                 ->getManagerForClass($accountUserClass)
                 ->find($accountUserClass, $accountUserId);
-        }
 
-        if ($accountUser && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+            if ($accountUser
+                && $accountUser->getAccount()
+                && $accountUser->getAccount()->getId() !== $account->getId()
+            ) {
+                throw new BadRequestHttpException('AccountUser must belong to Account');
+            }
+            $order->setAccountUser($accountUser);
         }
-
-        $order = new Order();
-        $order->setAccount($account)->setAccountUser($accountUser);
 
         $paymentTerm = $this->getPaymentTermProvider()->getPaymentTerm($account);
 
         return new JsonResponse(
             [
                 'billingAddress' => $this->renderForm(
-                    $this->createPriceListForm($order, AddressType::TYPE_BILLING)->createView()
+                    $this->createAddressForm($order, AddressType::TYPE_BILLING)->createView()
                 ),
                 'shippingAddress' => $this->renderForm(
-                    $this->createPriceListForm($order, AddressType::TYPE_SHIPPING)->createView()
+                    $this->createAddressForm($order, AddressType::TYPE_SHIPPING)->createView()
                 ),
                 'paymentTerm' => $paymentTerm ? $paymentTerm->getId() : null,
             ]
@@ -115,7 +118,7 @@ class AjaxOrderController extends Controller
      * @param string $type
      * @return Form
      */
-    protected function createPriceListForm(Order $order, $type)
+    protected function createAddressForm(Order $order, $type)
     {
         return $this->createForm(
             OrderAddressType::NAME,
