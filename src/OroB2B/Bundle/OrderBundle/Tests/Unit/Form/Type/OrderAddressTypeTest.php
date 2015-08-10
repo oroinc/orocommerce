@@ -357,9 +357,17 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
         $this->formType->finishView($view, $form, ['addressType' => AddressTypeEntity::TYPE_SHIPPING]);
 
-        $this->assertTrue($view->offsetGet('country')->vars['disabled']);
-        $this->assertTrue($view->offsetGet('city')->vars['disabled']);
+        foreach (['country', 'city'] as $childName) {
+            $this->assertTrue($view->offsetGet($childName)->vars['disabled']);
+            $this->assertFalse($view->offsetGet($childName)->vars['required']);
+
+            $this->assertArrayNotHasKey('data-validation', $view->offsetGet($childName)->vars['attr']);
+            $this->assertArrayNotHasKey('data-required', $view->offsetGet($childName)->vars['attr']);
+            $this->assertArrayNotHasKey('label_attr', $view->offsetGet($childName)->vars);
+        }
+
         $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
+        $this->assertFalse($view->offsetGet('accountAddress')->vars['required']);
     }
 
     /**
