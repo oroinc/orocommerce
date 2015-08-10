@@ -109,8 +109,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->securityFacade->expects($this->any())
             ->method('isGrantedClassMask')
-            ->will($this->returnCallback(function($mask) use ($inputData) {
-                return $mask == $inputData['grantedMask'];
+            ->will($this->returnCallback(function ($mask) use ($inputData) {
+                return $mask === $inputData['grantedMask'];
             }))
         ;
 
