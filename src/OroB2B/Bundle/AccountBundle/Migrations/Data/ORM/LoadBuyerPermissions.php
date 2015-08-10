@@ -10,7 +10,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Acl\Extension\ActionAclExtension;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
@@ -63,15 +62,10 @@ class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureIn
         if ($aclManager->isAclEnabled()) {
             $role = $this->getBuyerRole($manager);
             $sid = $aclManager->getSid($role);
-
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof ActionAclExtension) {
-                    $oid = $aclManager->getOid('action:' . self::ACTION_ID);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->add('EXECUTE')->get();
-                    $aclManager->setPermission($sid, $oid, $mask, true);
-                }
-            }
+            $oid = $aclManager->getOid('action:' . self::ACTION_ID);
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->add('EXECUTE')->get();
+            $aclManager->setPermission($sid, $oid, $mask, true);
         }
     }
 
