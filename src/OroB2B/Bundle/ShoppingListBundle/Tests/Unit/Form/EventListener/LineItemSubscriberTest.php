@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener\Form\Type;
+namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;

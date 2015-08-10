@@ -8,8 +8,7 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
-use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -57,10 +56,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $entityManager = $this->getManagerRegistry();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
-        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
-            ->disableOriginalConstructor()
-            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
         $this->manager = new ShoppingListManager($entityManager, $tokenStorage, $translator);
     }
