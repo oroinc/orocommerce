@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -88,6 +87,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      * @param bool $hasEntity
      *
      * @dataProvider permissionsDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function testIsAddressGranted(
         $isGrantedViewAccount,
@@ -106,35 +106,32 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $this->orderAddressProvider->expects($this->any())->method('getAccountUserAddresses')
             ->willReturn($hasAccountUserAddresses);
 
+        $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new \stdClass());
         $this->securityFacade->expects($this->atLeastOnce())->method('isGrantedClassPermission')
             ->with($this->isType('string'), $this->isType('string'))->will(
                 $this->returnValueMap(
                     [
-                        [
-                            'VIEW',
-                            self::ACCOUNT_ORDER_CLASS,
-                            $isGrantedViewAccount,
-                        ],
-                        [
-                            'VIEW',
-                            self::ACCOUNT_USER_ORDER_CLASS,
-                            $isGrantedViewAccountUser,
-                        ],
-                        [
-                            OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY,
-                            self::ACCOUNT_USER_ORDER_CLASS,
-                            $isGrantedUseAnyAccountUser,
-                        ],
-                        [
-                            OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY,
-                            self::ACCOUNT_USER_ORDER_CLASS,
-                            $isGrantedUseAnyAccountUser,
-                        ],
+                        ['VIEW', self::ACCOUNT_ORDER_CLASS, $isGrantedViewAccount],
+                        ['VIEW', self::ACCOUNT_USER_ORDER_CLASS, $isGrantedViewAccountUser],
                     ]
                 )
             );
+
         $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
-            ->willReturn($isManualEditGranted);
+            ->will(
+                $this->returnValueMap(
+                    [
+                        ['orob2b_order_address_shipping_allow_manual_backend', null, $isManualEditGranted],
+                        ['orob2b_order_address_billing_allow_manual_backend', null, $isManualEditGranted],
+                        [
+                            OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY,
+                            null,
+                            $isGrantedUseAnyAccountUser,
+                        ],
+                        [OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY, null, $isGrantedUseAnyAccountUser],
+                    ]
+                )
+            );
 
         $order = null;
         $account = null;
