@@ -20,7 +20,6 @@ use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -29,6 +28,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
+use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
 
 class OrderAddressTypeTest extends FormIntegrationTestCase
@@ -39,8 +39,8 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|AddressFormatter */
     protected $addressFormatter;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    protected $orderAddressSecurityProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
     protected $orderAddressManager;
@@ -53,7 +53,8 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->orderAddressSecurityProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -63,8 +64,8 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 
         $this->formType = new OrderAddressType(
             $this->addressFormatter,
-            $this->securityFacade,
-            $this->orderAddressManager
+            $this->orderAddressManager,
+            $this->orderAddressSecurityProvider
         );
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
@@ -116,7 +117,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         array $formErrors = []
     ) {
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
-        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(true);
+        $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
     }
@@ -249,7 +250,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
                 )
             );
 
-        $this->securityFacade->expects($this->once())->method('isGranted')->willReturn(false);
+        $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(false);
 
         $this->checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors);
     }
@@ -345,7 +346,8 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $view->children = ['country' => new FormView(), 'city' => new FormView(), 'accountAddress' => new FormView()];
 
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
-        $this->securityFacade->expects($this->atLeastOnce())->method('isGranted')->willReturn(false);
+        $this->orderAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
+            ->willReturn(false);
 
         $form = $this->factory->create(
             $this->formType,

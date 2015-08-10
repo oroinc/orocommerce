@@ -5,10 +5,19 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+
 class OrderAddressSecurityProvider
 {
+    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual_backend';
+
     /** @var SecurityFacade */
     protected $securityFacade;
+
+    /** @var OrderAddressProvider */
+    protected $orderAddressProvider;
 
     /** @var string */
     protected $accountAddressClass;
@@ -18,46 +27,86 @@ class OrderAddressSecurityProvider
 
     /**
      * @param SecurityFacade $securityFacade
+     * @param OrderAddressProvider $orderAddressProvider
      * @param string $accountAddressClass
      * @param string $accountUserAddressClass
      */
-    public function __construct(SecurityFacade $securityFacade, $accountAddressClass, $accountUserAddressClass)
-    {
+    public function __construct(
+        SecurityFacade $securityFacade,
+        OrderAddressProvider $orderAddressProvider,
+        $accountAddressClass,
+        $accountUserAddressClass
+    ) {
         $this->securityFacade = $securityFacade;
+        $this->orderAddressProvider = $orderAddressProvider;
         $this->accountAddressClass = $accountAddressClass;
         $this->accountUserAddressClass = $accountUserAddressClass;
     }
 
     /**
+     * @param Order $order
      * @param string $type
      *
      * @return bool
      */
-    public function isAddressGranted($type)
+    public function isAddressGranted(Order $order, $type)
     {
-        return $this->isAccountAddressGranted() || $this->isAccountUserAddressGranted($type);
-    }
-
-    /**
-     * @return bool
-     */
-    public function isAccountAddressGranted()
-    {
-        return $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass);
+        return $this->isAccountAddressGranted($type, $order->getAccount()) ||
+            $this->isAccountUserAddressGranted($type, $order->getAccountUser());
     }
 
     /**
      * @param string $type
+     * @param Account $account
      *
      * @return bool
      */
-    public function isAccountUserAddressGranted($type)
+    public function isAccountAddressGranted($type, Account $account = null)
     {
-        return $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountUserAddressClass) &&
-        $this->securityFacade->isGrantedClassPermission(
-            $this->getTypedPermission($type),
-            $this->accountUserAddressClass
-        );
+        $hasPermissions = $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass);
+
+        if (!$hasPermissions) {
+            return false;
+        }
+
+        if ($this->isManualEditGranted($type)) {
+            return true;
+        }
+
+        if (!$account) {
+            return false;
+        }
+
+        return (bool)$this->orderAddressProvider->getAccountAddresses($account, $type);
+    }
+
+    /**
+     * @param string $type
+     * @param AccountUser $accountUser
+     *
+     * @return bool
+     */
+    public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
+    {
+        $hasPermissions = $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountUserAddressClass) &&
+            $this->securityFacade->isGrantedClassPermission(
+                $this->getTypedPermission($type),
+                $this->accountUserAddressClass
+            );
+
+        if (!$hasPermissions) {
+            return false;
+        }
+
+        if ($this->isManualEditGranted($type)) {
+            return true;
+        }
+
+        if (!$accountUser) {
+            return false;
+        }
+
+        return (bool)$this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
     }
 
     /**
@@ -67,16 +116,23 @@ class OrderAddressSecurityProvider
      */
     protected function getTypedPermission($type)
     {
+        OrderAddressProvider::assertType($type);
+
         if ($type === AddressType::TYPE_SHIPPING) {
             return OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY;
         }
 
-        if ($type === AddressType::TYPE_BILLING) {
-            return OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY;
-        }
+        return OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY;
+    }
 
-        throw new \InvalidArgumentException(
-            sprintf('Expected "%s" or "%s", "%s" given', AddressType::TYPE_SHIPPING, AddressType::TYPE_BILLING, $type)
-        );
+    /**
+     * @param string $type
+     * @return bool
+     */
+    public function isManualEditGranted($type)
+    {
+        OrderAddressProvider::assertType($type);
+
+        return $this->securityFacade->isGranted(sprintf(self::MANUAL_EDIT_ACTION, $type));
     }
 }

@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderType extends AbstractType
@@ -33,11 +34,14 @@ class OrderType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Order $order */
+        $order = $options['data'];
+
         $builder
             // @todo: user selector
             ->add('accountUser', 'entity', ['class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser']);
 
-        if ($this->orderAddressSecurityProvider->isAddressGranted(AddressType::TYPE_BILLING)) {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
                 ->add(
                     'billingAddress',
@@ -51,7 +55,7 @@ class OrderType extends AbstractType
                 );
         }
 
-        if ($this->orderAddressSecurityProvider->isAddressGranted(AddressType::TYPE_SHIPPING)) {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
             $builder
                 ->add(
                     'shippingAddress',

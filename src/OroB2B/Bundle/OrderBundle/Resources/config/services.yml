@@ -47,6 +47,7 @@ services:
         class: %orob2b_order.order.provider.order_address_security.class%
         arguments:
             - @oro_security.security_facade
+            - @orob2b_order.order.provider.order_address
             - %orob2b_account.entity.account_address.class%
             - %orob2b_account.entity.account_user_address.class%
 
