@@ -3,6 +3,7 @@ define(function(require) {
 
     var SubtotalsListenerView;
     var $ = require('jquery');
+    var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
 
@@ -37,22 +38,15 @@ define(function(require) {
                 this.options.selectors.fields = this.options.selectors.fields.join(', ');
             }
 
-            var self = this;
-            this.initLayout().done(function() {
-                self.handleLayoutInit();
-            });
+            this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
 
         /**
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$fields = this._getFields();
-
-            var self = this;
-            this.$fields.change(function() {
-                self.updateSubtotals();
-            });
+            this.$fields = this._getFields()
+                .change(_.bind(this.updateSubtotals, this));
         },
 
         /**

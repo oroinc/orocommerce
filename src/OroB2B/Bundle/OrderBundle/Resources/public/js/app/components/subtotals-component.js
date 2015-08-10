@@ -72,13 +72,10 @@ define(function(require) {
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
             this.template = _.template(this.$el.find(this.options.selectors.template).text());
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
-            var self = this;
 
             this.updateSubtotals();
 
-            mediator.on('order-subtotals:update', function() {
-                self.updateSubtotals();
-            });
+            mediator.on('order-subtotals:update', this.updateSubtotals, this);
         },
 
         /**
@@ -131,13 +128,26 @@ define(function(require) {
          * @param {Object} subtotals
          */
         render: function(subtotals) {
-            $.each(subtotals, function() {
-                this.formattedAmount = NumberFormatter.formatCurrency(this.amount, this.currency);
+            _.each(subtotals, function(subtotal) {
+                subtotal.formattedAmount = NumberFormatter.formatCurrency(subtotal.amount, subtotal.currency);
             });
 
             this.$subtotals.html(this.template({
                 subtotals: subtotals
             }));
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('order-subtotals:update', this.updateSubtotals, this);
+
+            SubtotalsComponent.__super__.dispose.call(this);
         }
     });
 
