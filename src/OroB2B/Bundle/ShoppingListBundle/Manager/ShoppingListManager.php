@@ -87,7 +87,7 @@ class ShoppingListManager
         $shoppingListRepository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
 
-        if ($currentList instanceof ShoppingList && $currentList !== $shoppingList) {
+        if ($currentList instanceof ShoppingList && $currentList->getId() !== $shoppingList->getId()) {
             $currentList->setCurrent(false);
         }
         $shoppingList->setCurrent(true);
