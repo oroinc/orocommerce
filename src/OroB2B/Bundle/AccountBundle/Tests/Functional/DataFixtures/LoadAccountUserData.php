@@ -25,14 +25,24 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'last_name' => self::LAST_NAME,
             'email' => self::EMAIL,
             'enabled' => true,
-            'password' => self::PASSWORD
+            'password' => self::PASSWORD,
+            'account' => 'account.level_1'
         ],
         [
             'first_name' => 'First',
             'last_name' => 'Last',
             'email' => 'other.user@test.com',
             'enabled' => true,
-            'password' => 'pass'
+            'password' => 'pass',
+            'account' => 'account.level_1'
+        ],
+        [
+            'first_name' => 'FirstName',
+            'last_name' => 'LastName',
+            'email' => 'second_account.user@test.com',
+            'enabled' => true,
+            'password' => 'pass',
+            'account' => 'account.level_1.1'
         ]
     ];
 
@@ -41,9 +51,10 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1');
         foreach ($this->users as $user) {
+            /** @var Account $account */
+            $account = $this->getReference($user['account']);
+
             $entity = new AccountUser();
             $entity
                 ->setAccount($account)
