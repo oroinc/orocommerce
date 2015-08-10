@@ -106,9 +106,9 @@ class ShoppingListManager
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
         $repository = $this->lineItemEm->getRepository('OroB2BShoppingListBundle:LineItem');
-        $possibleDuplicate = $repository->findDuplicate($lineItem);
-        if ($possibleDuplicate instanceof LineItem && $shoppingList->getId()) {
-            $possibleDuplicate->setQuantity($possibleDuplicate->getQuantity() + $lineItem->getQuantity());
+        $duplicate = $repository->findDuplicate($lineItem);
+        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+            $duplicate->setQuantity($duplicate->getQuantity() + $lineItem->getQuantity());
         } else {
             $shoppingList->addLineItem($lineItem);
             $this->lineItemEm->persist($lineItem);
