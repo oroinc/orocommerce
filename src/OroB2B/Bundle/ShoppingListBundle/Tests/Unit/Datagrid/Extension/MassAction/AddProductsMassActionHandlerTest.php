@@ -34,13 +34,17 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager  */
+    protected $shoppingListManager;
+
     protected function setUp()
     {
         $this->securityFacade = $this->getSecurityFacade();
+        $this->shoppingListManager = $this->getShoppingListManager();
 
         $this->handler = new AddProductsMassActionHandler(
             $this->getManagerRegistry(),
-            $this->getShoppingListManager(),
+            $this->shoppingListManager,
             $this->getTranslator(),
             $this->securityFacade,
             $this->getRouter()
@@ -49,8 +53,16 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testHandle()
     {
-        $this->securityFacade->expects($this->once())
+        $shoppingList = $this->shoppingListManager->getForCurrentUser();
+
+        $this->securityFacade->expects($this->at(0))
             ->method('isGranted')
+            ->with('EDIT', $shoppingList)
+            ->willReturn(true);
+
+        $this->securityFacade->expects($this->at(1))
+            ->method('isGranted')
+            ->with('orob2b_shopping_list_line_item_create')
             ->willReturn(true);
 
         $args = $this->getMassActionArgs();

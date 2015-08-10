@@ -78,10 +78,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $argsParser = new ArgsParser($args);
         $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
-        /**
-         * TODO: check if a user can create line item
-         */
-        if (!$this->securityFacade->isGranted('EDIT', $shoppingList)) {
+        if (!$this->securityFacade->isGranted('EDIT', $shoppingList)
+            || !$this->securityFacade->isGranted('orob2b_shopping_list_line_item_create')
+        ) {
             return $this->generateResponse($args);
         }
 
