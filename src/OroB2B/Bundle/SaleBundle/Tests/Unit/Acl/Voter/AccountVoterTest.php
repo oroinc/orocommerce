@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -88,6 +88,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testVote(array $inputData, $expectedResult)
     {
+        /* @var $object Quote */
         $object = $inputData['object'];
         $class  = get_class($object);
 
@@ -108,7 +109,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->securityFacade->expects($this->any())
             ->method('isGrantedClassMask')
-            ->willReturn($inputData['isViewLocal'])
+            ->will($this->returnCallback(function($mask) use ($inputData) {
+                return $mask == $inputData['grantedMask'];
+            }))
         ;
 
         $this->voter->setClassName($class);
@@ -117,7 +120,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $this->assertEquals(
             $expectedResult,
-            $this->voter->vote($token, $object, ['CUSTOM_VIEW'])
+            $this->voter->vote($token, $object, ['ACCOUNT_VIEW'])
         );
     }
 
@@ -138,7 +141,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function supportsAttributeProvider()
     {
         return [
-            'CUSTOM_VIEW'   => ['CUSTOM_VIEW', true],
+            'ACCOUNT_VIEW'  => ['ACCOUNT_VIEW', true],
             'VIEW'          => ['VIEW', false],
             'CREATE'        => ['CREATE', false],
             'EDIT'          => ['EDIT', false],
@@ -157,7 +160,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'object'        => $this->getQuote(2),
                     'user'          => new \stdClass(),
-                    'isViewLocal'   => false,
+                    'grantedMask'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -165,7 +168,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'object'        => $this->getQuote(1, 1),
                     'user'          => $this->getAccountUser(2),
-                    'isViewLocal'   => false,
+                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_BASIC,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -173,23 +176,31 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'object'        => $this->getQuote(2, 3),
                     'user'          => $this->getAccountUser(3),
-                    'isViewLocal'   => false,
+                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_BASIC,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
-            'Quote::VIEW_LOCAL and different accounts' => [
+            'Quote::VIEW_LOCAL, different accounts and different users' => [
                 'input' => [
                     'object'        => $this->getQuote(4, 5, 6),
-                    'user'          => $this->getAccountUser(5, 7),
-                    'isViewLocal'   => true,
+                    'user'          => $this->getAccountUser(7, 8),
+                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_LOCAL,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
-            'Quote::VIEW_LOCAL and equal accounts' => [
+            'Quote::VIEW_LOCAL, equal accounts and different users' => [
                 'input' => [
-                    'object'        => $this->getQuote(8, 9, 10),
-                    'user'          => $this->getAccountUser(9, 10),
-                    'isViewLocal'   => true,
+                    'object'        => $this->getQuote(9, 10, 11),
+                    'user'          => $this->getAccountUser(12, 11),
+                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                ],
+                'expected' => AccountVoter::ACCESS_GRANTED,
+            ],
+            'Quote::VIEW_LOCAL, different accounts and equal users' => [
+                'input' => [
+                    'object'        => $this->getQuote(13, 14, 15),
+                    'user'          => $this->getAccountUser(14, 17),
+                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_LOCAL,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],

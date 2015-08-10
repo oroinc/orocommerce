@@ -21,7 +21,7 @@ class QuoteController extends Controller
      *      id="orob2b_sale_quote_frontend_view",
      *      type="entity",
      *      class="OroB2BSaleBundle:Quote",
-     *      permission="CUSTOM_VIEW",
+     *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
      *

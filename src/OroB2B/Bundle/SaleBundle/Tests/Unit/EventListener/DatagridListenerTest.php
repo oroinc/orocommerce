@@ -106,6 +106,10 @@ class DatagridListenerTest extends WebTestCase
             ->method('getAccount')
             ->willReturn($account)
         ;
+        $user->expects($this->any())
+            ->method('getId')
+            ->willReturn($inputData['accountUserId'])
+        ;
 
         $this->securityFacade->expects($this->any())
             ->method('getLoggedUser')
@@ -139,8 +143,9 @@ class DatagridListenerTest extends WebTestCase
                         'class'   => $this->quoteClass,
                         'return'  => false,
                     ],
-                    'config'    => $this->getConfig(),
-                    'accountId' => null,
+                    'config'        => $this->getConfig(),
+                    'accountId'     => null,
+                    'accountUserId' => null,
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true),
@@ -158,8 +163,9 @@ class DatagridListenerTest extends WebTestCase
                         'class'   => $this->quoteClass,
                         'return'  => false,
                     ],
-                    'accountId' => null,
-                    'config'    => $this->getConfig(),
+                    'accountId'     => null,
+                    'accountUserId' => null,
+                    'config'        => $this->getConfig(),
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true),
@@ -177,11 +183,12 @@ class DatagridListenerTest extends WebTestCase
                         'class'   => $this->quoteClass,
                         'return'  => true,
                     ],
-                    'accountId' => 2,
-                    'config'    => $this->getConfig(),
+                    'accountId'     => 2,
+                    'accountUserId' => 3,
+                    'config'        => $this->getConfig(),
                 ],
                 'expected' => [
-                    'config' => $this->getConfig(true, 2),
+                    'config' => $this->getConfig(true, 2, 3),
                 ],
             ],
             'AccountUser::VIEW_LOCAL and Quote::VIEW_LOCAL' => [
@@ -196,11 +203,12 @@ class DatagridListenerTest extends WebTestCase
                         'class'   => $this->quoteClass,
                         'return'  => true,
                     ],
-                    'accountId' => 3,
-                    'config'    => $this->getConfig(true),
+                    'accountId'     => 3,
+                    'accountUserId' => 4,
+                    'config'        => $this->getConfig(true),
                 ],
                 'expected' => [
-                    'config' => $this->getConfig(true, 3),
+                    'config' => $this->getConfig(true, 3, 4),
                 ],
             ],
         ];
@@ -211,7 +219,7 @@ class DatagridListenerTest extends WebTestCase
      * @param int $accountId
      * @return array
      */
-    protected function getConfig($empty = false, $accountId = null)
+    protected function getConfig($empty = false, $accountId = null, $accountUserId = null)
     {
         $config = [
             'columns' => [],
@@ -242,7 +250,7 @@ class DatagridListenerTest extends WebTestCase
                         'query' => [
                             'where' => [
                                 'and' => [
-                                    'quote.account = ' . $accountId,
+                                    sprintf('quote.account = %d OR quote.accountUser = %d', $accountId, $accountUserId),
                                 ],
                             ],
                         ],

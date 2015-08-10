@@ -69,7 +69,11 @@ class DatagridListener
 
         $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
 
-        $where['and'][] = 'quote.account = ' . $user->getAccount()->getId();
+        $where['and'][] = sprintf(
+            'quote.account = %d OR quote.accountUser = %d',
+            $user->getAccount()->getId(),
+            $user->getId()
+        );
 
         $config->offsetSetByPath('[source][query][where]', $where);
     }

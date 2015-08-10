@@ -189,7 +189,7 @@ class QuoteControllerTest extends WebTestCase
      *
      * @dataProvider submitProvider
      */
-    public function __testSubmit(array $submittedData, array $expectedData)
+    public function testSubmit(array $submittedData, array $expectedData)
     {
         $this->prepareProviderData($submittedData);
 

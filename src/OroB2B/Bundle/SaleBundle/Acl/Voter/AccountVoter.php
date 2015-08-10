@@ -16,7 +16,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 class AccountVoter extends AbstractEntityVoter
 {
-    const ATTRIBUTE_VIEW = 'CUSTOM_VIEW';
+    const ATTRIBUTE_VIEW = 'ACCOUNT_VIEW';
 
     /**
      * @var array
@@ -71,12 +71,17 @@ class AccountVoter extends AbstractEntityVoter
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $class)) {
-            if ($user->getAccount() === $this->object->getAccount()) {
+        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_BASIC, $class)) {
+            if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
                 return self::ACCESS_GRANTED;
             }
-        } else {
-            if ($user === $this->object->getAccountUser()) {
+        }
+
+        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $class)) {
+            if ($user->getAccount()->getId() === $this->object->getAccount()->getId()) {
+                return self::ACCESS_GRANTED;
+            }
+            if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
                 return self::ACCESS_GRANTED;
             }
         }
