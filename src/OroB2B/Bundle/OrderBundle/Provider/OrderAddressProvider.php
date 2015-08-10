@@ -7,7 +7,6 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -203,7 +202,7 @@ class OrderAddressProvider
     protected function getPermission($type, $key)
     {
         $postfix = '';
-        if ($this->securityFacade->getLoggedUser() instanceof User) {
+        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
             $postfix = self::ADMIN_ACL_POSTFIX;
         }
 
