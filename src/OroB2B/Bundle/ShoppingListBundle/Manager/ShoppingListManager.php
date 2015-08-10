@@ -5,9 +5,8 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
-use Oro\Bundle\TranslationBundle\Translation\Translator;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -33,19 +32,19 @@ class ShoppingListManager
     protected $accountUser;
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
     /**
      * @param ManagerRegistry       $managerRegistry
      * @param TokenStorageInterface $tokenStorage
-     * @param Translator            $translator
+     * @param TranslatorInterface   $translator
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
-        Translator $translator
+        TranslatorInterface $translator
     ) {
         $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');

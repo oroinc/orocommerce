@@ -34,6 +34,7 @@ services:
         arguments:
             - @doctrine
             - @security.token_storage
+            - @translator
 
     orob2b_shopping_list.line_item.manager:
         class: %orob2b_shopping_list.line_item.manager.class%
