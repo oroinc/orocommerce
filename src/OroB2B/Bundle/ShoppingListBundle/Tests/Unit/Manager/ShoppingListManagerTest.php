@@ -35,11 +35,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shoppingListOne = new ShoppingList();
-        $this->shoppingListOne->setCurrent(true);
-
-        $this->shoppingListTwo = new ShoppingList();
-        $this->shoppingListTwo->setCurrent(false);
+        $this->shoppingListOne = $this->getEntity(1, true);
+        $this->shoppingListTwo = $this->getEntity(2, false);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
         $securityToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
@@ -215,5 +212,22 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($entityManager);
 
         return $managerRegistry;
+    }
+
+    /**
+     * @param int  $id
+     * @param bool $isCurrent
+     *
+     * @return ShoppingList
+     */
+    protected function getEntity($id, $isCurrent)
+    {
+        $entity = (new ShoppingList())->setCurrent($isCurrent);
+        $reflectionClass = new \ReflectionClass(get_class($entity));
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }
