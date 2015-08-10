@@ -24,7 +24,7 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new OrderType($this->provider);
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');

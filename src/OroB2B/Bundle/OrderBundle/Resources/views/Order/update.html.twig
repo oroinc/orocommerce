@@ -51,20 +51,21 @@
             'subblocks': [{
                 'data': [form_row(form.accountUser)]
             }]
-        },
-        {
+        }
+    ] %}
+
+    {% if isBillingAddressGranted %}
+        {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.billing_address.label'|trans,
-            'class': 'active',
             'subblocks': [{
                 'data': [form_widget(form.billingAddress)]
             }]
-        }
-    ] %}
+        }]) %}
+    {% endif %}
 
     {% if isShippingAddressGranted %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.shipping_address.label'|trans,
-            'class': 'active',
             'subblocks': [{
                 'data': [form_widget(form.shippingAddress)]
             }]
