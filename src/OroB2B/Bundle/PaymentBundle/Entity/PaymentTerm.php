@@ -98,6 +98,14 @@ class PaymentTerm
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->label;
+    }
+
+    /**
      * Get id
      *
      * @return integer

@@ -57,21 +57,23 @@ class OrderAddressType extends AbstractType
         $type = $options['addressType'];
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
 
-        $builder
-            ->add(
-                'accountAddress',
-                'genemu_jqueryselect2_choice',
-                [
-                    'label' => false,
-                    'required' => false,
-                    'mapped' => false,
-                    'choices' => $this->getAddresses($options['order'], $type),
-                    'configs' => [
-                        'placeholder' => 'orob2b.order.form.address.' .
-                            ($isManualEditGranted ? 'choose_or_create' : 'choose'),
-                    ],
-                ]
+        $accountAddressOptions = [
+            'label' => false,
+            'required' => false,
+            'mapped' => false,
+            'choices' => $this->getAddresses($options['order'], $type),
+            'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
+        ];
+
+        if ($isManualEditGranted) {
+            $accountAddressOptions['choices'] = array_merge(
+                $accountAddressOptions['choices'],
+                ['orob2b.order.form.address.manual']
             );
+            $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
+        }
+
+        $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
@@ -108,6 +110,12 @@ class OrderAddressType extends AbstractType
 
         foreach ($view->children as $child) {
             $child->vars['disabled'] = !$isManualEditGranted;
+            $child->vars['required'] = false;
+            unset(
+                $child->vars['attr']['data-validation'],
+                $child->vars['attr']['data-required'],
+                $child->vars['label_attr']['data-required']
+            );
         }
 
         if ($view->offsetExists('accountAddress')) {
