@@ -11,6 +11,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderType extends AbstractType
@@ -36,6 +37,9 @@ class OrderType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Order $order */
+        $order = $options['data'];
+
         $builder
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
             // @todo: user selector
@@ -54,19 +58,23 @@ class OrderType extends AbstractType
                 'paymentTerm',
                 PaymentTermSelectType::NAME,
                 ['required' => false, 'label' => 'orob2b.order.payment_term.label',]
-            )
-            ->add(
-                'billingAddress',
-                OrderAddressType::NAME,
-                [
-                    'label' => 'orob2b.order.billing_address.label',
-                    'order' => $options['data'],
-                    'required' => false,
-                    'addressType' => AddressType::TYPE_BILLING,
-                ]
             );
 
-        if ($this->orderAddressSecurityProvider->isShippingAddressGranted()) {
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
+            $builder
+                ->add(
+                    'billingAddress',
+                    OrderAddressType::NAME,
+                    [
+                        'label' => 'orob2b.order.billing_address.label',
+                        'order' => $options['data'],
+                        'required' => false,
+                        'addressType' => AddressType::TYPE_BILLING,
+                    ]
+                );
+        }
+
+        if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
             $builder
                 ->add(
                     'shippingAddress',

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -76,6 +77,11 @@ class OrderAddressProvider
     protected $accountUserAddressClass;
 
     /**
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * @param SecurityFacade $securityFacade
      * @param ManagerRegistry $registry
      * @param AclHelper $aclHelper
@@ -105,16 +111,24 @@ class OrderAddressProvider
      */
     public function getAccountAddresses(Account $account, $type)
     {
-        $this->assertType($type);
+        static::assertType($type);
 
-        $repository = $this->getAccountAddressRepository();
-        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
-            return $repository->getAddressesByType($account, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
-            return $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
+        $key = $this->getKey($account, $type);
+        if (array_key_exists($key, $this->cache)) {
+            return $this->cache[$key];
         }
 
-        return [];
+        $result = [];
+        $repository = $this->getAccountAddressRepository();
+        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
+            $result = $repository->getAddressesByType($account, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
+            $result = $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
+        }
+
+        $this->cache[$key] = $result;
+
+        return $result;
     }
 
     /**
@@ -125,23 +139,31 @@ class OrderAddressProvider
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type)
     {
-        $this->assertType($type);
+        static::assertType($type);
 
-        $repository = $this->getAccountUserAddressRepository();
-        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
-            return $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
-            return $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
+        $key = $this->getKey($accountUser, $type);
+        if (array_key_exists($key, $this->cache)) {
+            return $this->cache[$key];
         }
 
-        return [];
+        $result = [];
+        $repository = $this->getAccountUserAddressRepository();
+        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
+            $result = $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
+            $result = $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
+        }
+
+        $this->cache[$key] = $result;
+
+        return $result;
     }
 
     /**
      * @param string $type
      * @throws \InvalidArgumentException
      */
-    protected function assertType($type)
+    public static function assertType($type)
     {
         $supportedTypes = [self::ADDRESS_TYPE_BILLING, self::ADDRESS_TYPE_SHIPPING];
         if (!in_array($type, $supportedTypes, true)) {
@@ -186,5 +208,15 @@ class OrderAddressProvider
         }
 
         return $this->permissionsByType[$type][$key] . $postfix;
+    }
+
+    /**
+     * @param Account|AccountUser $object
+     * @param string $type
+     * @return string
+     */
+    protected function getKey($object, $type)
+    {
+        return sprintf('%s_%s_%s', ClassUtils::getClass($object), $object->getId(), $type);
     }
 }
