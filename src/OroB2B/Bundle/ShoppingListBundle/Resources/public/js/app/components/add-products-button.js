@@ -1,6 +1,6 @@
 /*jslint nomen: true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var $ = require('jquery'),
@@ -48,13 +48,13 @@ define(function (require) {
             }
         });
         dialog.render();
-        dialog.on('formSave', _.bind(function (response) {
+        dialog.on('formSave', _.bind(function(response) {
             mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: response});
             $('.btn[data-intention="current"]').data('shoppingListId', response);
         }, this));
     }
 
-    return function (additionalOptions) {
+    return function(additionalOptions) {
         _.extend(options, additionalOptions || {});
         var button;
         button = options._sourceElement;

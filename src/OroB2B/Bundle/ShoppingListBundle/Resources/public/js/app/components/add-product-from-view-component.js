@@ -1,6 +1,6 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var AddProductFromViewComponent,
@@ -13,9 +13,9 @@ define(function (require) {
         _ = require('underscore');
 
     AddProductFromViewComponent = BaseComponent.extend({
-        initialize: function (options) {
+        initialize: function(options) {
             var component = this;
-            options._sourceElement.on('click', function () {
+            options._sourceElement.on('click', function() {
                 var el = $(this),
                     form = el.closest('form'),
                     url = el.data('url'),
@@ -34,14 +34,14 @@ define(function (require) {
             });
         },
 
-        validateForm: function (form) {
+        validateForm: function(form) {
             var component = this,
                 validator,
                 valid = true;
 
             if (form.data('validator')) {
                 validator = form.validate();
-                $.each(component.formElements(form), function () {
+                $.each(component.formElements(form), function() {
                     valid = validator.element(this) && valid;
                 });
             }
@@ -49,11 +49,11 @@ define(function (require) {
             return valid;
         },
 
-        formElements: function (form) {
+        formElements: function(form) {
             return form.find('input, select, textarea').not(':submit, :reset, :image');
         },
 
-        createNewShoppingList: function (url, urlOptions, formData) {
+        createNewShoppingList: function(url, urlOptions, formData) {
             var component = this,
                 dialog = new DialogWidget({
                     'url': routing.generate('orob2b_shopping_list_frontend_create'),
@@ -68,26 +68,29 @@ define(function (require) {
                     }
                 });
             dialog.render();
-            dialog.on('formSave', _.bind(function (response) {
+            dialog.on('formSave', _.bind(function(response) {
                 urlOptions.shoppingListId = response;
                 component.addProductToShoppingList(url, urlOptions, formData);
             }, this));
         },
 
-        addProductToShoppingList: function (url, urlOptions, formData) {
+        addProductToShoppingList: function(url, urlOptions, formData) {
             $.ajax({
                 type: 'POST',
                 url: routing.generate(url, urlOptions),
                 data: formData,
-                success: function (response) {
+                success: function(response) {
                     if (response && response.message) {
-                        mediator.once('page:afterChange', function () {
-                            mediator.execute('showFlashMessage', (response.successful ? 'success' : 'error'), response.message);
+                        mediator.once('page:afterChange', function() {
+                            mediator.execute(
+                                'showFlashMessage', (response.successful ? 'success' : 'error'),
+                                response.message
+                            );
                         });
                     }
                     mediator.execute('refreshPage');
                 },
-                error: function (xhr) {
+                error: function(xhr) {
                     Error.handle({}, xhr, {enforce: true});
                 }
             });
