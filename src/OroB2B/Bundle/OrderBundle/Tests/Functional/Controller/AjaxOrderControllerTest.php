@@ -6,6 +6,8 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+
 /**
  * @dbIsolation
  */
@@ -64,5 +66,28 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('subtotals', $data);
         $this->assertArrayHasKey('subtotal', $data['subtotals']);
+    }
+
+    public function testGetRelatedDataAction()
+    {
+        /** @var Order $order */
+        $order = $this->getReference('simple_order');
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_order_related_data',
+                ['accountId' => $order->getAccount()->getId(), 'accountUserId' => $order->getAccountUser()->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertCount(3, $result);
+        $this->assertArrayHasKey('billingAddress', $result);
+        $this->assertArrayHasKey('shippingAddress', $result);
+        $this->assertArrayHasKey('paymentTerm', $result);
     }
 }
