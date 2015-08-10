@@ -16,11 +16,9 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            filterNameEnding: [],
             selectors: {
                 fields: ':input',
-                filter: '',
-                filterNameEnding: ''
+                filter: ''
             }
         },
 
@@ -35,10 +33,8 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, this.options, options || {});
 
-            if (this.options.filterNameEnding.length) {
-                this.options.selectors.filterNameEnding = '[name$="' +
-                    this.options.filterNameEnding.join('"], [name$="') +
-                    '"]';
+            if ($.isArray(this.options.selectors.fields)) {
+                this.options.selectors.fields = this.options.selectors.fields.join(', ');
             }
 
             var self = this;
@@ -68,10 +64,6 @@ define(function(require) {
          */
         _getFields: function() {
             var $fields = this.$el.find(this.options.selectors.fields);
-
-            if (this.options.selectors.filterNameEnding) {
-                $fields = $fields.filter(this.options.selectors.filterNameEnding);
-            }
 
             if (this.options.selectors.filter) {
                 $fields = $fields.filter(this.options.selectors.filter);

@@ -44,25 +44,38 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
-    {% set subtotalsListenerAddress = {
-        view: 'orob2border/js/app/views/subtotals-listener-view',
-        filterNameEnding: ['[country]', '[street]', '[street2]', '[city]', '[region]', '[postalCode]']
-    } %}
-
     {% set billingAddress %}
         <div
-                data-page-component-module="oroui/js/app/components/view-component"
-                data-page-component-options="{{ subtotalsListenerAddress|json_encode }}"
-                >
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orob2border/js/app/views/subtotals-listener-view',
+                selectors: {fields: [
+                    '#' ~ form.billingAddress.country.vars.id,
+                    '#' ~ form.billingAddress.street.vars.id,
+                    '#' ~ form.billingAddress.street2.vars.id,
+                    '#' ~ form.billingAddress.city.vars.id,
+                    '#' ~ form.billingAddress.region.vars.id,
+                    '#' ~ form.billingAddress.postalCode.vars.id
+                ]}
+            }|json_encode }}">
             {{ form_widget(form.billingAddress) }}
         </div>
     {% endset %}
 
     {% set shippingAddress %}
         <div
-                data-page-component-module="oroui/js/app/components/view-component"
-                data-page-component-options="{{ subtotalsListenerAddress|json_encode }}"
-                >
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orob2border/js/app/views/subtotals-listener-view',
+                selectors: {fields: [
+                    '#' ~ form.shippingAddress.country.vars.id,
+                    '#' ~ form.shippingAddress.street.vars.id,
+                    '#' ~ form.shippingAddress.street2.vars.id,
+                    '#' ~ form.shippingAddress.city.vars.id,
+                    '#' ~ form.shippingAddress.region.vars.id,
+                    '#' ~ form.shippingAddress.postalCode.vars.id
+                ]}
+            }|json_encode }}">
             {{ form_widget(form.shippingAddress) }}
         </div>
     {% endset %}
