@@ -13,8 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-
-use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -41,7 +40,7 @@ class FrontendLineItemWidgetType extends AbstractType
     protected $shoppingListClass;
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
@@ -49,13 +48,13 @@ class FrontendLineItemWidgetType extends AbstractType
      * @param ManagerRegistry     $registry
      * @param ShoppingListManager $shoppingListManager
      * @param TokenStorage        $tokenStorage
-     * @param Translator          $translator
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         ManagerRegistry $registry,
         ShoppingListManager $shoppingListManager,
         TokenStorage $tokenStorage,
-        Translator $translator
+        TranslatorInterface $translator
     ) {
         $this->registry = $registry;
         $this->shoppingListManager = $shoppingListManager;
