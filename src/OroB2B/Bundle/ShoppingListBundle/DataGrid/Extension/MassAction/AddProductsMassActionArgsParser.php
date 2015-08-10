@@ -26,9 +26,12 @@ class AddProductsMassActionArgsParser
     {
         $productIds = [];
         if (!$this->isAllSelected() && array_key_exists('values', $this->args)) {
-            $productIds = array_map(function ($id) {
-                return (int)$id;
-            }, explode(',', $this->args['values']));
+            $productIds = array_map(
+                function ($id) {
+                    return (int) $id;
+                },
+                explode(',', $this->args['values'])
+            );
         }
 
         return $productIds;
@@ -39,7 +42,7 @@ class AddProductsMassActionArgsParser
      */
     public function getShoppingListId()
     {
-        return is_numeric($this->args['shoppingList']) ? (int)$this->args['shoppingList'] : null;
+        return is_numeric($this->args['shoppingList']) ? (int) $this->args['shoppingList'] : null;
     }
 
     /**
@@ -47,6 +50,6 @@ class AddProductsMassActionArgsParser
      */
     protected function isAllSelected()
     {
-        return (array_key_exists('inset', $this->args) && (int)$this->args['inset'] === 0);
+        return (array_key_exists('inset', $this->args) && (int) $this->args['inset'] === 0);
     }
 }

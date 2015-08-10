@@ -131,6 +131,7 @@ class AjaxLineItemController extends Controller
      *      permission="EDIT",
      *      group_name="commerce"
      * )
+     *
      * @param LineItem $lineItem
      *
      * @return array|RedirectResponse
@@ -168,6 +169,8 @@ class AjaxLineItemController extends Controller
     }
 
     /**
+     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
+     *
      * @return Response
      */
     public function getProductsAddBtnAction()

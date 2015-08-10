@@ -173,9 +173,13 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     protected $current = false;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
+
         $this->lineItems = new ArrayCollection();
     }
 
@@ -359,13 +363,13 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @param bool $isCurrent
+     * @param bool $current
      *
      * @return $this
      */
-    public function setCurrent($isCurrent)
+    public function setCurrent($current)
     {
-        $this->current = (bool) $isCurrent;
+        $this->current = (bool) $current;
 
         return $this;
     }

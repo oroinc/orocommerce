@@ -29,6 +29,7 @@ class LineItemController extends RestController implements ClassResourceInterfac
      *      permission="DELETE",
      *      group_name="commerce"
      * )
+     *
      * @param int $id
      *
      * @return Response
