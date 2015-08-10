@@ -2,22 +2,31 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderTypeTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var OrderType
-     */
+    /** @var OrderType */
     protected $type;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
+    protected $provider;
 
     protected function setUp()
     {
-        $this->type = new OrderType();
+        $this->provider = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new OrderType($this->provider);
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
@@ -28,7 +37,7 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->type->setDataClass('Order');
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()
