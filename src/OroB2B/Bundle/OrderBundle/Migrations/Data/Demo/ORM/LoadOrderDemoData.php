@@ -27,6 +27,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
      */
     protected $orders = [
         [
+            'identifier' => 'CV032342USDD',
             'billingAddress' => 'Billing Address 01',
             'shippingAddress' => 'Shipping Address 01',
             'subtotal' => 15535.88,
@@ -36,6 +37,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
             'customerNotes' => 'Please, call before delivery'
         ],
         [
+            'identifier' => 'AB10100USD',
             'billingAddress' => 'Billing Address 02',
             'shippingAddress' => 'Shipping Address 02',
             'subtotal' => 20100.00,
@@ -45,6 +47,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
             'customerNotes' => 'Please, contact sales'
         ],
         [
+            'identifier' => 'FA1000EUR',
             'billingAddress' => 'Billing Address 03',
             'shippingAddress' => 'Shipping Address 03',
             'subtotal' => 99.99,
@@ -53,6 +56,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
             'paymentTerm' => 'net 10'
         ],
         [
+            'identifier' => 'RT104568EUR',
             'billingAddress' => 'Billing Address 04',
             'shippingAddress' => 'Shipping Address 04',
             'subtotal' => 5600.50,
@@ -61,6 +65,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
             'paymentTerm' => 'net 15'
         ],
         [
+            'identifier' => 'RT104568000',
             'billingAddress' => 'Billing Address 05',
             'shippingAddress' => 'Shipping Address 05',
             'subtotal' => 7800.99,
@@ -111,6 +116,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
             $order
                 ->setOwner($user)
                 ->setAccount($accountUser->getAccount())
+                ->setIdentifier($orderData['identifier'])
                 ->setAccountUser($accountUser)
                 ->setOrganization($user->getOrganization())
                 ->setBillingAddress($billingAddress)
