@@ -5,75 +5,50 @@ namespace OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
+    /**
+     * @var array
+     */
+    protected $countries = [];
+
+    /**
+     * @var array
+     */
+    protected $regions = [];
+
     /**
      * @var array
      */
     protected $paymentTerms = [];
 
     /**
-     * @var array
+     * @var ContainerInterface
      */
-    protected $orders = [
-        [
-            'identifier' => 'CV032342USDD',
-            'billingAddress' => 'Billing Address 01',
-            'shippingAddress' => 'Shipping Address 01',
-            'subtotal' => 15535.88,
-            'currency' => 'USD',
-            'poNumber' => 'CV032342USDD',
-            'paymentTerm' => 'net 10',
-            'customerNotes' => 'Please, call before delivery'
-        ],
-        [
-            'identifier' => 'AB10100USD',
-            'billingAddress' => 'Billing Address 02',
-            'shippingAddress' => 'Shipping Address 02',
-            'subtotal' => 20100.00,
-            'currency' => 'USD',
-            'poNumber' => 'AB10100USD',
-            'paymentTerm' => 'net 15',
-            'customerNotes' => 'Please, contact sales'
-        ],
-        [
-            'identifier' => 'FA1000EUR',
-            'billingAddress' => 'Billing Address 03',
-            'shippingAddress' => 'Shipping Address 03',
-            'subtotal' => 99.99,
-            'currency' => 'EUR',
-            'poNumber' => 'FA1000EUR',
-            'paymentTerm' => 'net 10'
-        ],
-        [
-            'identifier' => 'RT104568EUR',
-            'billingAddress' => 'Billing Address 04',
-            'shippingAddress' => 'Shipping Address 04',
-            'subtotal' => 5600.50,
-            'currency' => 'EUR',
-            'poNumber' => 'RT104568EUR',
-            'paymentTerm' => 'net 15'
-        ],
-        [
-            'identifier' => 'RT104568000',
-            'billingAddress' => 'Billing Address 05',
-            'shippingAddress' => 'Shipping Address 05',
-            'subtotal' => 7800.99,
-            'currency' => 'USD',
-            'poNumber' => 'RT104568000',
-            'paymentTerm' => 'net 15'
-        ]
-    ];
+    protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     /**
      * {@inheritdoc}
@@ -82,8 +57,7 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
     {
         return [
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM\LoadOrderAddressDemoData'
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData'
         ];
     }
 
@@ -93,6 +67,15 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
      */
     public function load(ObjectManager $manager)
     {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroB2BOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
         /** @var EntityRepository $userRepository */
         $userRepository = $manager->getRepository('OroUserBundle:User');
 
@@ -101,40 +84,77 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
 
         $accountUser = $this->getAccountUser($manager);
 
-        foreach ($this->orders as $orderData) {
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+
             $order = new Order();
 
-            /** @var OrderAddress $billingAddress */
-            $billingAddress = $this->getReference($orderData['billingAddress']);
+            $billingAddress = [
+                'label' => $row['billingAddressLabel'],
+                'country' => $row['billingAddressCountry'],
+                'city' => $row['billingAddressCity'],
+                'region' => $row['billingAddressRegion'],
+                'street' => $row['billingAddressStreet'],
+                'postalCode' => $row['billingAddressPostalCode']
+            ];
 
-            /** @var OrderAddress $shippingAddress */
-            $shippingAddress = $this->getReference($orderData['shippingAddress']);
+            $shippingAddress = [
+                'label' => $row['shippingAddressLabel'],
+                'country' => $row['shippingAddressCountry'],
+                'city' => $row['shippingAddressCity'],
+                'region' => $row['shippingAddressRegion'],
+                'street' => $row['shippingAddressStreet'],
+                'postalCode' => $row['shippingAddressPostalCode']
+            ];
 
             /** @var PaymentTerm $paymentTerm */
-            $paymentTerm = $this->getReference($orderData['paymentTerm']);
+            $paymentTerm = $this->getReference($row['paymentTerm']);
 
             $order
                 ->setOwner($user)
                 ->setAccount($accountUser->getAccount())
-                ->setIdentifier($orderData['identifier'])
+                ->setIdentifier($row['identifier'])
                 ->setAccountUser($accountUser)
                 ->setOrganization($user->getOrganization())
-                ->setBillingAddress($billingAddress)
-                ->setShippingAddress($shippingAddress)
+                ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
+                ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
                 ->setPaymentTerm($paymentTerm)
                 ->setShipUntil(new \DateTime())
-                ->setCurrency($orderData['currency'])
-                ->setPoNumber($orderData['poNumber'])
-                ->setSubtotal($orderData['subtotal']);
+                ->setCurrency($row['currency'])
+                ->setPoNumber($row['poNumber'])
+                ->setSubtotal($row['subtotal']);
 
-            if (isset($orderData['customerNotes'])) {
+            if (!empty($orderData['customerNotes'])) {
                 $order->setCustomerNotes($orderData['customerNotes']);
             }
 
             $manager->persist($order);
         }
 
+        fclose($handler);
+
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param array $address
+     * @return OrderAddress
+     */
+    protected function createOrderAddress(ObjectManager $manager, array $address)
+    {
+        $orderAddress = new OrderAddress();
+        $orderAddress
+            ->setLabel($address['label'])
+            ->setCountry($this->getCountryByIso2Code($manager, $address['country']))
+            ->setCity($address['city'])
+            ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
+            ->setStreet($address['street'])
+            ->setPostalCode($address['postalCode']);
+
+        $manager->persist($orderAddress);
+
+        return $orderAddress;
     }
 
     /**
@@ -144,5 +164,33 @@ class LoadOrderDemoData extends AbstractFixture implements DependentFixtureInter
     protected function getAccountUser(ObjectManager $manager)
     {
         return $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $iso2Code
+     * @return Country|null
+     */
+    protected function getCountryByIso2Code(EntityManager $manager, $iso2Code)
+    {
+        if (!array_key_exists($iso2Code, $this->countries)) {
+            $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
+        }
+
+        return $this->countries[$iso2Code];
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $code
+     * @return Region|null
+     */
+    protected function getRegionByIso2Code(EntityManager $manager, $code)
+    {
+        if (!array_key_exists($code, $this->regions)) {
+            $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
+        }
+
+        return $this->regions[$code];
     }
 }
