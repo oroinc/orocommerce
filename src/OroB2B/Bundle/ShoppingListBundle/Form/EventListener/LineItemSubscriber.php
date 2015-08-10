@@ -58,13 +58,13 @@ class LineItemSubscriber implements EventSubscriberInterface
         $lineItem = $event->getForm()->getData();
         $data = $event->getData();
 
-        $product = empty($data['product']) ? $lineItem->getProduct() : (int)$data['product'];
-        if (!$product instanceof Product && !empty($product)) {
+        $product = $lineItem->getProduct();
+        if (!$product instanceof Product && !empty($data['product'])) {
             /** @var ProductRepository $repository */
             $repository = $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
 
             /** @var Product $product */
-            $product = $repository->find($product);
+            $product = $repository->find((int)$data['product']);
         }
 
         if (!$product || empty($data['unit']) || empty($data['quantity'])) {
