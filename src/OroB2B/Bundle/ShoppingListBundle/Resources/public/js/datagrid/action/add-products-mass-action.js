@@ -6,7 +6,7 @@ define([
     'orotranslation/js/translator',
     'oro/datagrid/action/mass-action',
     'oroui/js/mediator'
-], function (_, messenger, __, MassAction, mediator) {
+], function(_, messenger, __, MassAction, mediator) {
     'use strict';
 
     var AddProductsAction;
@@ -19,7 +19,7 @@ define([
      * @extends oro.datagrid.action.MassAction
      */
     AddProductsAction = MassAction.extend({
-        initialize: function (options) {
+        initialize: function(options) {
             AddProductsAction.__super__.initialize.apply(this, arguments);
             mediator.on('frontend:shoppinglist:products-add', this._beforeProductsAdd, this);
             mediator.on('frontend:shoppinglist:add-widget-requested', this._checkSelectionState, this);
@@ -27,11 +27,11 @@ define([
         /**
          * @param {object} eventArgs
          */
-        _beforeProductsAdd: function (eventArgs) {
+        _beforeProductsAdd: function(eventArgs) {
             this.route_parameters.shoppingList = eventArgs.shoppingListId;
             this.run();
         },
-        _checkSelectionState: function () {
+        _checkSelectionState: function() {
             var selectionState = this.datagrid.getSelectionState(),
                 models = selectionState.selectedModels,
                 length = 0,
