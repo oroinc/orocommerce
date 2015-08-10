@@ -195,10 +195,10 @@ datagrid:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
-                name:
+                sku:
                     type:      string
                     data_name: product.sku
-                sku:
+                name:
                     type:      string
                     data_name: product.sku
                 inventoryStatusName:
