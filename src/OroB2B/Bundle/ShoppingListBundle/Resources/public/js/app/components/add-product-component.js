@@ -45,9 +45,9 @@ define(function (require) {
             var value = e.target.value;
 
             if (value == "") {
-                this.shoppingListLabelSelector.parent('div').show();
+                this.shoppingListLabelSelector.parent('div').removeClass('hidden');
             } else {
-                this.shoppingListLabelSelector.parent('div').hide();
+                this.shoppingListLabelSelector.parent('div').addClass('hidden');
             }
         }
     });

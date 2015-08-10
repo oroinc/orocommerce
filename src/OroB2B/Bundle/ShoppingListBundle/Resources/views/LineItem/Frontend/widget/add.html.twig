@@ -15,7 +15,7 @@
     {% endif %}
     {{ msgArray|join(' ')|raw }}
 {% endset %}
-<div class="widget-content"
+<div class="widget-content add-product-widget"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
      data-page-component-options="{{ pageComponentOptions|merge({message: message})|json_encode }}"
 >
@@ -47,8 +47,8 @@
         </div>
 
         <div class="widget-actions">
-            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
-            <button type="submit" class="btn btn-success">{{ 'Save'|trans }}</button>
+            <button type="reset" class="btn">{{ 'orob2b.shoppinglist.lineitem.widget.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'orob2b.shoppinglist.lineitem.widget.save'|trans }}</button>
         </div>
     </form>
     {{ oro_form_js_validation(form) }}
