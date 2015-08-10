@@ -8,11 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 class OrderType extends AbstractType
 {
@@ -24,11 +25,18 @@ class OrderType extends AbstractType
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
     /**
+     * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      */
-    public function __construct(OrderAddressSecurityProvider $orderAddressSecurityProvider)
-    {
+    public function __construct(
+        SecurityFacade $securityFacade,
+        OrderAddressSecurityProvider $orderAddressSecurityProvider
+    ) {
+        $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
     }
 
@@ -53,12 +61,7 @@ class OrderType extends AbstractType
                 ]
             )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
-            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
-            ->add(
-                'paymentTerm',
-                PaymentTermSelectType::NAME,
-                ['required' => false, 'label' => 'orob2b.order.payment_term.label',]
-            );
+            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label']);
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
@@ -84,6 +87,18 @@ class OrderType extends AbstractType
                         'order' => $options['data'],
                         'required' => false,
                         'addressType' => AddressType::TYPE_SHIPPING,
+                    ]
+                );
+        }
+
+        if ($this->isOverridePaymentTermGranted()) {
+            $builder
+                ->add(
+                    'paymentTerm',
+                    PaymentTermSelectType::NAME,
+                    [
+                        'label' => 'orob2b.order.payment_term.label',
+                        'required' => false,
                     ]
                 );
         }
@@ -115,5 +130,13 @@ class OrderType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isOverridePaymentTermGranted()
+    {
+        return $this->securityFacade->isGranted('orob2b_order_payment_term_account_can_override');
     }
 }

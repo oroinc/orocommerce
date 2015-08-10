@@ -98,8 +98,7 @@
                     form_row(form.account),
                     form_row(form.accountUser),
                     form_row(form.poNumber),
-                    form_row(form.shipUntil),
-                    form_row(form.paymentTerm)
+                    form_row(form.shipUntil)
                 ]
             }]
         }
@@ -113,6 +112,17 @@
             }]
         }]) %}
     {% endif %}
+
+    {% if form.paymentTerm is defined %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.form.payment.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [form_row(form.paymentTerm)]
+            }]
+        }]) %}
+    {% endif %}
+
 
     {% if isShippingAddressGranted %}
         {% set dataBlocks = dataBlocks|merge([{
