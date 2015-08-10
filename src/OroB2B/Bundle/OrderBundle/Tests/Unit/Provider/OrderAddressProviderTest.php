@@ -112,6 +112,9 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->method($this->anything());
 
         $this->provider->getAccountAddresses(new Account(), $type);
+
+        // cache
+        $this->provider->getAccountAddresses(new Account(), $type);
     }
 
     /**
@@ -143,6 +146,9 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->with($account, $type, $this->aclHelper)
             ->will($this->returnValue($addresses));
 
+        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+
+        // cache
         $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
     }
 
@@ -194,6 +200,9 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($addresses));
 
         $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
+
+        // cache
+        $this->assertEquals($addresses, $this->provider->getAccountAddresses($account, $type));
     }
 
     /**
@@ -237,6 +246,9 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ->method($this->anything());
         }
 
+        $this->assertEquals($addresses, $this->provider->getAccountUserAddresses($accountUser, $type));
+
+        // cache
         $this->assertEquals($addresses, $this->provider->getAccountUserAddresses($accountUser, $type));
     }
 
