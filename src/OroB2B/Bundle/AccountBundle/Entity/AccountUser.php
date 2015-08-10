@@ -9,8 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 /**
  * @ORM\Entity
@@ -46,6 +48,9 @@ use Oro\Bundle\UserBundle\Entity\AbstractUser;
  *              "icon"="icon-briefcase"
  *          },
  *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="owner_id",
  *              "frontend_owner_type"="FRONTEND_ACCOUNT",
  *              "frontend_owner_field_name"="account",
  *              "frontend_owner_column_name"="account_id",
@@ -170,6 +175,21 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      * @ORM\OrderBy({"primary" = "DESC"})
      */
     protected $addresses;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $owner;
 
     /**
      * @var \DateTime $createdAt
@@ -442,7 +462,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         /** @var AbstractDefaultTypedAddress $address */
         if (!$this->getAddresses()->contains($address)) {
             $this->getAddresses()->add($address);
-            $address->setOwner($this);
+            $address->setFrontendOwner($this);
             $address->setSystemOrganization($this->getOrganization());
         }
 
@@ -517,6 +537,26 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         }
 
         return null;
+    }
+
+    /**
+     * @return User
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User $owner
+     *
+     * @return AccountUser
+     */
+    public function setOwner(User $owner)
+    {
+        $this->owner = $owner;
+
+        return $this;
     }
 
     /**

@@ -8,7 +8,9 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\UserBundle\Entity\User;
 
 abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
 {
@@ -16,6 +18,21 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      * Many-to-one relation field, relation parameters must be in specific class
      *
      * @var object
+     */
+    protected $frontendOwner;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $owner;
 
@@ -125,26 +142,46 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     }
 
     /**
-     * Set owner.
+     * Set frontend owner.
      *
-     * @param $owner
+     * @param object $frontendOwner
      * @return $this
      */
-    public function setOwner($owner = null)
+    public function setFrontendOwner($frontendOwner = null)
     {
-        $this->owner = $owner;
+        $this->frontendOwner = $frontendOwner;
 
         return $this;
     }
 
     /**
-     * Get owner.
+     * Get frontend owner.
      *
      * @return object
+     */
+    public function getFrontendOwner()
+    {
+        return $this->frontendOwner;
+    }
+
+    /**
+     * @return User
      */
     public function getOwner()
     {
         return $this->owner;
+    }
+
+    /**
+     * @param User $owner
+     *
+     * @return $this
+     */
+    public function setOwner(User $owner)
+    {
+        $this->owner = $owner;
+
+        return $this;
     }
 
     /**

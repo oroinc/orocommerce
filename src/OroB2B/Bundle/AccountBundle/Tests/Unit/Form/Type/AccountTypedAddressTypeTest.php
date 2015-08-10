@@ -135,7 +135,7 @@ class AccountTypedAddressTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         if (is_object($expectedData) && $updateOwner) {
-            $expectedData->setOwner($updateOwner);
+            $expectedData->setFrontendOwner($updateOwner);
         }
         $this->assertEquals($expectedData, $form->getData());
     }

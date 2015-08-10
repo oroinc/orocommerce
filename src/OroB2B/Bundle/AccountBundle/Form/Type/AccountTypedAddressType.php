@@ -72,7 +72,7 @@ class AccountTypedAddressType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'single_form' => true,
-                'all_addresses_property_path' => 'owner.addresses'
+                'all_addresses_property_path' => 'frontendOwner.addresses'
             ]
         );
     }

@@ -110,6 +110,7 @@ orob2b.account:
         name_prefix.label:          Name Prefix
         name_suffix.label:          Name Suffix
         organization.label:         Organization
+        frontend_owner.label:       Frontend Owner
         owner.label:                Owner
         postal_code.label:          Zip/Postal Code
         primary.label:              Primary
@@ -155,6 +156,7 @@ orob2b.account:
         name_prefix.label:   Name prefix
         name_suffix.label:   Name suffix
         organization.label:  Organization
+        frontend_owner.label: Owner
         owner.label:         Owner
         postal_code.label:   Zip/postal code
         primary.label:       Primary
