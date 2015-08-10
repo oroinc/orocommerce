@@ -79,7 +79,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
         if (!$this->securityFacade->isGranted('EDIT', $shoppingList)
-            || !$this->securityFacade->isGranted('orob2b_shopping_list_line_item_create')
+            || !$this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add')
         ) {
             return $this->generateResponse($args);
         }
