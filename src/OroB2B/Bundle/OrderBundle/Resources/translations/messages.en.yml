@@ -67,7 +67,9 @@ orob2b:
                 address_billing_allow_manual: Enter the billing address manually
 
         form:
-            select_address: Select Predefined Address
+            address:
+                choose: Select an address
+                choose_or_create: Select an existing address or enter a new address below
 
         subtotals:
             subtotal: Subtotal

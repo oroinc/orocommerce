@@ -93,18 +93,24 @@
         {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
-            'subblocks': []
-        },
-        {
+            'subblocks': [{
+                'data': [form_row(form.accountUser)]
+            }]
+        }
+    ] %}
+
+    {% if isBillingAddressGranted %}
+        {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.billing_address.label'|trans,
-            'class': 'active',
             'subblocks': [{
                 'data': [billingAddress]
             }]
-        },
-        {
+        }]) %}
+    {% endif %}
+
+    {% if isShippingAddressGranted %}
+        {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.shipping_address.label'|trans,
-            'class': 'active',
             'subblocks': [{
                 'data': [shippingAddress]
             }]
@@ -115,8 +121,8 @@
             'subblocks': [{
                 'data': [subtotals]
             }]
-        }
-    ] %}
+        }]) %}
+    {% endif %}
 
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
