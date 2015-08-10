@@ -6,6 +6,7 @@ define(function(require) {
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     /**
@@ -52,24 +53,50 @@ define(function(require) {
         formData: '',
 
         /**
+         * @property {LoadingMaskView}
+         */
+        loadingMaskView: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, this.options, options || {});
 
+            if (this.options.url.length === 0) {
+                return;
+            }
+
             this.$el = options._sourceElement;
-
             this.$form = $(this.options.selectors.form);
-
             this.$subtotals = this.$el.find(this.options.selectors.subtotals);
-
             this.template = _.template(this.$el.find(this.options.selectors.template).text());
+            this.loadingMaskView = new LoadingMaskView({container: this.$el});
+            var self = this;
 
-            this.getSubtotals(_.bind(this.render, this));
+            this.updateSubtotals();
+
+            mediator.on('order-subtotals:update', function() {
+                self.updateSubtotals();
+            });
+        },
+
+        /**
+         * Get and render subtotals
+         */
+        updateSubtotals: function() {
+            this.loadingMaskView.show();
 
             var self = this;
-            mediator.on('order-subtotals:update', function() {
-                self.getSubtotals(_.bind(self.render, self));
+            this.getSubtotals(function(subtotals) {
+
+                self.loadingMaskView.hide();
+
+                if (!subtotals) {
+                    return null;
+                }
+
+                self.render(subtotals);
             });
         },
 
@@ -82,22 +109,18 @@ define(function(require) {
             var formData = this.$form.serialize();
 
             if (formData === this.formData) {
-                return null;//nothing changed
+                callback();//nothing changed
+                return;
             }
 
             this.formData = formData;
 
             var self = this;
-            $.ajax({
-                url: this.options.url,
-                type: 'POST',
-                data: formData,
-                success: function(response) {
-                    if (formData === self.formData) {
-                        //data doesn't change after ajax call
-                        var subtotals = response.subtotals || {};
-                        callback(subtotals);
-                    }
+            $.post(this.options.url, formData, function(response) {
+                if (formData === self.formData) {
+                    //data doesn't change after ajax call
+                    var subtotals = response.subtotals || {};
+                    callback(subtotals);
                 }
             });
         },
@@ -108,12 +131,8 @@ define(function(require) {
          * @param {Object} subtotals
          */
         render: function(subtotals) {
-            if (!subtotals) {
-                return null;
-            }
-
             $.each(subtotals, function() {
-                this.formatedAmount = NumberFormatter.formatCurrency(this.amount, this.currency);
+                this.formattedAmount = NumberFormatter.formatCurrency(this.amount, this.currency);
             });
 
             this.$subtotals.html(this.template({

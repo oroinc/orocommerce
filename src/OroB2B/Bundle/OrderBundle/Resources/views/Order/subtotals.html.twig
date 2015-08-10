@@ -1,7 +1,6 @@
 <div
-        data-page-component-module="orob2border/js/app/components/subtotals-component"
-        data-page-component-options="{{ options|json_encode }}"
-        >
+    data-page-component-module="orob2border/js/app/components/subtotals-component"
+    data-page-component-options="{{ options|json_encode }}">
     <div class="subtotals-container"></div>
 
     <script type="text/html" class="subtotals-template">
@@ -10,7 +9,7 @@
                 <div class="control-group">
                     <label class="control-label"><%= subtotals.subtotal.label %></label>
                     <div class="controls">
-                        <label class="control-label"><%= subtotals.subtotal.formatedAmount %></label>
+                        <label class="control-label"><%= subtotals.subtotal.formattedAmount %></label>
                     </div>
                 </div>
             <% } %>
