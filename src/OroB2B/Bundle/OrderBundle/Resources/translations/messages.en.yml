@@ -53,6 +53,7 @@ orob2b:
         sections:
             general: General
             additional: Additional
+            subtotals: Order Totals
 
         security:
             permission:
@@ -71,6 +72,7 @@ orob2b:
             address:
                 choose: Select an address
                 choose_or_create: Select an existing address or enter a new address below
+                manual: Enter address manually
 
         subtotals:
             subtotal: Subtotal

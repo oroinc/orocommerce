@@ -51,6 +51,6 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Subtotal::TYPE_SUBTOTAL, $subtotal->getType());
         $this->assertEquals(ucfirst(Subtotal::TYPE_SUBTOTAL), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
-        $this->assertTrue(0 === $subtotal->getAmount());
+        $this->assertInternalType('float', $subtotal->getAmount());
     }
 }

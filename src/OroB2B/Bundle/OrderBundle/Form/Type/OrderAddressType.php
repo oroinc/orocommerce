@@ -13,48 +13,40 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
+use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderAddressType extends AbstractType
 {
-    const MANUAL_EDIT_ACTION = 'orob2b_order_address_%s_allow_manual';
-
     const NAME = 'orob2b_order_address_type';
 
     /** @var string */
     protected $dataClass;
 
-    /**
-     * @var AddressFormatter
-     */
+    /** @var AddressFormatter */
     protected $addressFormatter;
 
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
-    /**
-     * @var OrderAddressManager
-     */
+    /** @var OrderAddressManager */
     protected $orderAddressManager;
+
+    /** @var OrderAddressSecurityProvider */
+    protected $orderAddressSecurityProvider;
 
     /**
      * @param AddressFormatter $addressFormatter
-     * @param SecurityFacade $securityFacade
      * @param OrderAddressManager $orderAddressManager
+     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      */
     public function __construct(
         AddressFormatter $addressFormatter,
-        SecurityFacade $securityFacade,
-        OrderAddressManager $orderAddressManager
+        OrderAddressManager $orderAddressManager,
+        OrderAddressSecurityProvider $orderAddressSecurityProvider
     ) {
         $this->addressFormatter = $addressFormatter;
-        $this->securityFacade = $securityFacade;
         $this->orderAddressManager = $orderAddressManager;
+        $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
     }
 
     /**
@@ -63,27 +55,30 @@ class OrderAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $type = $options['addressType'];
+        $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
 
-        $builder
-            ->add(
-                'accountAddress',
-                'genemu_jqueryselect2_choice',
-                [
-                    'label' => false,
-                    'required' => false,
-                    'mapped' => false,
-                    'choices' => $this->getAddresses($options['order'], $type),
-                    'configs' => [
-                        'placeholder' => 'orob2b.order.form.address.' .
-                            ($this->isManualEditGranted($type) ? 'choose_or_create' : 'choose'),
-                    ],
-                ]
+        $accountAddressOptions = [
+            'label' => false,
+            'required' => false,
+            'mapped' => false,
+            'choices' => $this->getAddresses($options['order'], $type),
+            'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
+        ];
+
+        if ($isManualEditGranted) {
+            $accountAddressOptions['choices'] = array_merge(
+                $accountAddressOptions['choices'],
+                ['orob2b.order.form.address.manual']
             );
+            $accountAddressOptions['configs']['placeholder'] = 'orob2b.order.form.address.choose_or_create';
+        }
+
+        $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
 
         $builder->addEventListener(
             FormEvents::SUBMIT,
-            function (FormEvent $event) use ($type) {
-                if (!$this->isManualEditGranted($type)) {
+            function (FormEvent $event) use ($isManualEditGranted) {
+                if (!$isManualEditGranted) {
                     $event->setData(null);
                 }
 
@@ -111,10 +106,16 @@ class OrderAddressType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $isManualEditGranted = $this->isManualEditGranted($options['addressType']);
+        $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['addressType']);
 
         foreach ($view->children as $child) {
             $child->vars['disabled'] = !$isManualEditGranted;
+            $child->vars['required'] = false;
+            unset(
+                $child->vars['attr']['data-validation'],
+                $child->vars['attr']['data-required'],
+                $child->vars['label_attr']['data-required']
+            );
         }
 
         if ($view->offsetExists('accountAddress')) {
@@ -180,14 +181,5 @@ class OrderAddressType extends AbstractType
         );
 
         return $addresses;
-    }
-
-    /**
-     * @param string $type
-     * @return bool
-     */
-    protected function isManualEditGranted($type)
-    {
-        return $this->securityFacade->isGranted(sprintf(self::MANUAL_EDIT_ACTION, $type));
     }
 }

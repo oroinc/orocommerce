@@ -1,0 +1,194 @@
+frontend_shipping_not_granted:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted:
+        - [orob2b_order_address_shipping_allow_manual_backend, null, false]
+        - [orob2b_order_address_shipping_account_user_use_any_backend, null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_view_account_user_granted:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, true]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_use_account_user_granted:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_use_account_user_granted:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_user_address_granted:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, true]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_user_address_granted_with_entity:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, true]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: true
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_user_address_granted_with_entity_and_address:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, true]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: true
+    hasEntity: true
+    isAddressGranted: true
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: true
+frontend_shipping_account_user_address_granted_with_entity_and_address:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, true]
+    isGranted:
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: true
+    hasEntity: true
+    isAddressGranted: true
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: true
+frontend_shipping_account_user_address_granted_with_manual:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, false]
+        - [VIEW, AccountUserOrderClass, true]
+    isGranted:
+        - [orob2b_order_address_shipping_allow_manual, null, true]
+        - [orob2b_order_address_shipping_account_user_use_any, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: true
+    hasEntity: ~
+    isAddressGranted: true
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: true
+frontend_shipping_account_not_granted:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, true]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted: ~
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_without_entity:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, true]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted: ~
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_with_entity:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, true]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted: ~
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: true
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_with_entity_and_addresses:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, true]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted: ~
+    hasAccountAddresses: true
+    hasAccountUserAddresses: ~
+    hasEntity: true
+    isAddressGranted: true
+    isAccountAddressGranted: true
+    isAccountUserAddressGranted: ~
+frontend_shipping_account_with_manual:
+    userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
+    addressType: shipping
+    isGrantedClassPermission:
+        - [VIEW, AccountOrderClass, true]
+        - [VIEW, AccountUserOrderClass, false]
+    isGranted:
+        - [orob2b_order_address_shipping_allow_manual, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: true
+    isAccountAddressGranted: true
+    isAccountUserAddressGranted: ~

@@ -98,6 +98,14 @@ class PaymentTerm
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->label;
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -204,15 +212,5 @@ class PaymentTerm
     public function getAccounts()
     {
         return $this->accounts;
-    }
-
-    /**
-     * Convert payment term to string
-     *
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string)$this->getLabel();
     }
 }
