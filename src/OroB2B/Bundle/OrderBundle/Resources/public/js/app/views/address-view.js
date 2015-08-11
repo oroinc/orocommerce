@@ -19,6 +19,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            enterManuallyValue: '0',
             type: '',
             selectors: {
                 address: '',
@@ -27,9 +28,19 @@ define(function(require) {
         },
 
         /**
+         * @property {String}
+         */
+        ftid: '',
+
+        /**
          * @property {jQuery}
          */
         $fields: null,
+
+        /**
+         * @property {Object}
+         */
+        fieldsByName: null,
 
         /**
          * @property {LoadingMaskView}
@@ -54,10 +65,78 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$address = this.$el.find(this.options.selectors.address);
+            var self = this;
+
+            this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
+
+            this.setAddress(this.$el.find(this.options.selectors.address));
+
+            this.$fields = this.$el.find(':input[data-ftid]');
+            this.fieldsByName = {};
+            this.$fields.each(function() {
+                var $field = $(this);
+                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                self.fieldsByName[name] = $field;
+            });
 
             if (this.options.selectors.subtotalsFields.length > 0) {
                 SubtotalsListener.listen(this.$el.find(this.options.selectors.subtotalsFields.join(', ')));
+            }
+        },
+
+        /**
+         * Convert name with "_" to name with upper case, example: some_name > someName
+         *
+         * @param {String} name
+         *
+         * @returns {String}
+         */
+        normalizeName: function(name) {
+            name = name.split('_');
+            for (var i = 1, iMax = name.length; i < iMax; i++) {
+                name[i] = name[i][0].toUpperCase() + name[i].substr(1);
+            }
+            return name.join('');
+        },
+
+        /**
+         * Set new address element and bind events
+         *
+         * @param {jQuery} $address
+         */
+        setAddress: function($address) {
+            this.$address = $address;
+            this.$address.change(_.bind(this.accountAddressChange, this));
+        },
+
+        /**
+         * Implement account address change logic
+         */
+        accountAddressChange: function() {
+            if (this.$address.val() === this.options.enterManuallyValue) {
+                this.$fields.attr('disabled', false);
+            } else {
+                var address = this.$address.data('addresses')[this.$address.val()] || null;
+
+                if (address) {
+                    var self = this;
+
+                    _.each(address, function(value, name) {
+                        if (_.isObject(value)) {
+                            value = _.first(_.values(value));
+                        }
+                        var $field = self.fieldsByName[self.normalizeName(name)] || null;
+                        if ($field) {
+                            $field.val(value);
+                            if ($field.data('select2')) {
+                                $field.data('selected-data', value).change();
+                            }
+                            $field.attr('disabled', true);
+                        }
+                    });
+
+                    SubtotalsListener.updateSubtotals();
+                }
             }
         },
 
@@ -88,7 +167,7 @@ define(function(require) {
             }
 
             var $oldAddress = this.$address;
-            this.$address = $(address);
+            this.setAddress($(address));
 
             $oldAddress.parent().trigger('content:remove');
             $oldAddress.select2('destroy')
