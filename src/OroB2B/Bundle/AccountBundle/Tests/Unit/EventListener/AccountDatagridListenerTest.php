@@ -203,8 +203,13 @@ class AccountDatagridListenerTest extends WebTestCase
      * @param bool $sourceQueryFrom
      * @return array
      */
-    protected function getConfig($empty = false, $accountId = null, $accountUserId = null, $accountUserOwner = true, $sourceQueryFrom = true)
-    {
+    protected function getConfig(
+        $empty = false,
+        $accountId = null,
+        $accountUserId = null,
+        $accountUserOwner = true,
+        $sourceQueryFrom = true
+    ) {
         $config = [
             'options' => [],
             'source' => [
