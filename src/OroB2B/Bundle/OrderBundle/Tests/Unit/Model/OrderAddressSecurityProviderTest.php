@@ -79,7 +79,6 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      *
      * @param string $userClass
      * @param string $addressType
-     * @param array $isGrantedClassPermission
      * @param array|null $isGranted
      * @param bool $hasAccountAddresses
      * @param bool $hasAccountUserAddresses
@@ -91,7 +90,6 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
     public function testIsAddressGranted(
         $userClass,
         $addressType,
-        array $isGrantedClassPermission,
         $isGranted,
         $hasAccountAddresses,
         $hasAccountUserAddresses,
@@ -106,10 +104,6 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($hasAccountUserAddresses);
 
         $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
-        $this->securityFacade->expects($this->atLeastOnce())->method('isGrantedClassPermission')
-            ->with($this->isType('string'), $this->isType('string'))
-            ->will($this->returnValueMap($isGrantedClassPermission));
-
         $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
             ->will($this->returnValueMap((array)$isGranted));
 

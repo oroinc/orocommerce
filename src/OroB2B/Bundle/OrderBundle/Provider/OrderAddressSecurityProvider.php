@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -63,7 +62,9 @@ class OrderAddressSecurityProvider
      */
     public function isAccountAddressGranted($type, Account $account = null)
     {
-        $hasPermissions = $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass);
+        $hasPermissions = $this->securityFacade->isGranted(
+            $this->getClassPermission('VIEW', $this->accountAddressClass)
+        );
 
         if (!$hasPermissions) {
             return false;
@@ -88,7 +89,8 @@ class OrderAddressSecurityProvider
      */
     public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
     {
-        $hasPermissions = $this->securityFacade->isGrantedClassPermission('VIEW', $this->accountUserAddressClass)
+        $hasPermissions = $this->securityFacade
+                ->isGranted($this->getClassPermission('VIEW', $this->accountUserAddressClass))
             && $this->securityFacade->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
@@ -120,6 +122,16 @@ class OrderAddressSecurityProvider
         }
 
         return $this->getPermission(OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY);
+    }
+
+    /**
+     * @param string $permission
+     * @param string $className
+     * @return string
+     */
+    protected function getClassPermission($permission, $className)
+    {
+        return sprintf('%s;entity:%s', $permission, $className);
     }
 
     /**
