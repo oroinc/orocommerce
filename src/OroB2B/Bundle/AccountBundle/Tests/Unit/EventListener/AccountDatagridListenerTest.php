@@ -1,40 +1,31 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\EventListener;
-
-use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
-use OroB2B\Bundle\SaleBundle\EventListener\DatagridListener;
+use OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener;
+use OroB2B\Bundle\AccountBundle\SecurityFacade;
 
 /**
  * @dbIsolation
  */
-class DatagridListenerTest extends WebTestCase
+class AccountDatagridListenerTest extends WebTestCase
 {
     /**
-     * @var DatagridListener
+     * @var AccountDatagridListener
      */
     protected $listener;
 
     /**
      * @var string
      */
-    protected $quoteClass = 'OroB2B\Bundle\SaleBundle\Entity\Quote';
-
-    /**
-     * @var string
-     */
-    protected $accountUserClass = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+    protected $entityClass = 'TestEntity';
 
     /**
      * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
@@ -56,7 +47,7 @@ class DatagridListenerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityFacade = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -67,9 +58,7 @@ class DatagridListenerTest extends WebTestCase
             ->getMock()
         ;
 
-        $this->listener = new DatagridListener(
-            $this->quoteClass,
-            $this->accountUserClass,
+        $this->listener = new AccountDatagridListener(
             $this->securityFacade
         );
     }
@@ -82,15 +71,15 @@ class DatagridListenerTest extends WebTestCase
     public function testBuildBeforeFrontendQuotes(array $inputData, array $expectedData)
     {
         $this->securityFacade->expects($this->any())
-            ->method('isGrantedClassPermission')
-            ->with($inputData['permission']['permission'], $inputData['permission']['class'])
-            ->willReturn($inputData['permission']['return'])
+            ->method('isGrantedViewLocal')
+            ->with($this->entityClass)
+            ->willReturn($inputData['grantedViewLocal'])
         ;
 
         $this->securityFacade->expects($this->any())
-            ->method('isGrantedClassMask')
-            ->with($inputData['mask']['mask'], $inputData['mask']['class'])
-            ->willReturn($inputData['mask']['return'])
+            ->method('isGrantedViewAccountUser')
+            ->with($this->entityClass)
+            ->willReturn($inputData['grantedViewAccountUser'])
         ;
 
         /* @var $account Account|\PHPUnit_Framework_MockObject_MockObject */
@@ -120,7 +109,7 @@ class DatagridListenerTest extends WebTestCase
 
         $event = new BuildBefore($this->datagrid, $datagridConfig);
 
-        $this->listener->onBuildBeforeFrontendQuotes($event);
+        $this->listener->onBuildBeforeFrontendItems($event);
 
         $this->assertEquals($expectedData['config'], $datagridConfig->toArray());
     }
@@ -131,81 +120,73 @@ class DatagridListenerTest extends WebTestCase
     public function buildBeforeFrontendQuotesProvider()
     {
         return [
-            '!AccountUser::VIEW_LOCAL and !Quote::VIEW_LOCAL' => [
+            'empty root options' => [
                 'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => false,
-                    ],
-                    'mask' => [
-                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
-                        'class'   => $this->quoteClass,
-                        'return'  => false,
-                    ],
+                    'config'        => $this->getConfig(false, null, null, false),
+                    'accountId'     => null,
+                    'accountUserId' => null,
+                    'grantedViewLocal' => false,
+                    'grantedViewAccountUser' => false,
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(false, null, null, false),
+                ],
+            ],
+            'empty [source][query][from]' => [
+                'input' => [
+                    'config'        => $this->getConfig(false, null, null, true, false),
+                    'accountId'     => null,
+                    'accountUserId' => null,
+                    'grantedViewLocal' => false,
+                    'grantedViewAccountUser' => false,
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(false, null, null, true, false),
+                ],
+            ],
+            '!AccountUser::VIEW_LOCAL and !Entity::VIEW_LOCAL' => [
+                'input' => [
                     'config'        => $this->getConfig(),
                     'accountId'     => null,
                     'accountUserId' => null,
+                    'grantedViewLocal' => false,
+                    'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true),
                 ],
             ],
-            'AccountUser::VIEW_LOCAL and !Quote::VIEW_LOCAL' => [
+            'AccountUser::VIEW_LOCAL and !Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => false,
-                    ],
-                    'mask' => [
-                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
-                        'class'   => $this->quoteClass,
-                        'return'  => false,
-                    ],
+                    'config'        => $this->getConfig(),
                     'accountId'     => null,
                     'accountUserId' => null,
-                    'config'        => $this->getConfig(),
+                    'grantedViewLocal' => false,
+                    'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true),
                 ],
             ],
-            '!AccountUser::VIEW_LOCAL and Quote::VIEW_LOCAL' => [
+            '!AccountUser::VIEW_LOCAL and Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => false,
-                    ],
-                    'mask' => [
-                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
-                        'class'   => $this->quoteClass,
-                        'return'  => true,
-                    ],
+                    'config'        => $this->getConfig(),
                     'accountId'     => 2,
                     'accountUserId' => 3,
-                    'config'        => $this->getConfig(),
+                    'grantedViewLocal' => true,
+                    'grantedViewAccountUser' => false,
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true, 2, 3),
                 ],
             ],
-            'AccountUser::VIEW_LOCAL and Quote::VIEW_LOCAL' => [
+            'AccountUser::VIEW_LOCAL and Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'permission' => [
-                        'permission'    => BasicPermissionMap::PERMISSION_VIEW,
-                        'class'         => $this->accountUserClass,
-                        'return'        => true,
-                    ],
-                    'mask' => [
-                        'mask'    => EntityMaskBuilder::MASK_VIEW_LOCAL,
-                        'class'   => $this->quoteClass,
-                        'return'  => true,
-                    ],
+                    'config'        => $this->getConfig(true),
                     'accountId'     => 3,
                     'accountUserId' => 4,
-                    'config'        => $this->getConfig(true),
+                    'grantedViewLocal' => true,
+                    'grantedViewAccountUser' => true,
                 ],
                 'expected' => [
                     'config' => $this->getConfig(true, 3, 4),
@@ -216,12 +197,19 @@ class DatagridListenerTest extends WebTestCase
 
     /**
      * @param bool $empty
-     * @param int $accountId
+     * @param bool $accountId
+     * @param bool $accountUserId
+     * @param bool $accountUserOwner
+     * @param bool $sourceQueryFrom
      * @return array
      */
-    protected function getConfig($empty = false, $accountId = null, $accountUserId = null)
+    protected function getConfig($empty = false, $accountId = null, $accountUserId = null, $accountUserOwner = true, $sourceQueryFrom = true)
     {
         $config = [
+            'options' => [],
+            'source' => [
+                'query' => [],
+            ],
             'columns' => [],
             'sorters' => [
                 'columns' => [],
@@ -231,6 +219,21 @@ class DatagridListenerTest extends WebTestCase
             ],
         ];
 
+        if ($accountUserOwner) {
+            $config['options']['accountUserOwner'] = [
+                'accountUserColumn' => 'accountUserName',
+            ];
+        }
+
+        if ($sourceQueryFrom) {
+            $config['source']['query']['from'] = [
+                [
+                    'table' => $this->entityClass,
+                    'alias' => 'tableAlias',
+                ],
+            ];
+        }
+
         if (!$empty) {
             $config['columns']['accountUserName'] = true;
             $config['sorters']['columns']['accountUserName'] = true;
@@ -238,25 +241,12 @@ class DatagridListenerTest extends WebTestCase
         }
 
         if (null !== $accountId) {
-            $config = array_merge(
-                $config,
-                [
-                    'options' => [
-                        'skip_acl_check' => true,
-                    ],
-                ],
-                [
-                    'source' => [
-                        'query' => [
-                            'where' => [
-                                'and' => [
-                                    sprintf('quote.account = %d OR quote.accountUser = %d', $accountId, $accountUserId),
-                                ],
-                            ],
-                        ],
-                    ],
+            $config['options']['skip_acl_check'] = true;
+            $config['source']['query']['where'] = [
+                'and' => [
+                    sprintf('tableAlias.account = %d OR tableAlias.accountUser = %d', $accountId, $accountUserId),
                 ]
-            );
+            ];
         }
 
         return $config;

@@ -81,9 +81,10 @@ class AccountVoter extends AbstractEntityVoter
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($securityFacade->isGrantedViewBasic($class)
-            && $this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
-            return self::ACCESS_GRANTED;
+        if ($securityFacade->isGrantedViewBasic($class)) {
+            if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
+                return self::ACCESS_GRANTED;
+            }
         }
 
         if ($securityFacade->isGrantedViewLocal($class)) {
