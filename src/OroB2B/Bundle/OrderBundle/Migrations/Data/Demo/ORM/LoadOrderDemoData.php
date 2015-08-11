@@ -107,9 +107,6 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 'postalCode' => $row['shippingAddressPostalCode']
             ];
 
-            /** @var PaymentTerm $paymentTerm */
-            $paymentTerm = $this->getReference($row['paymentTerm']);
-
             $order
                 ->setOwner($user)
                 ->setAccount($accountUser->getAccount())
@@ -118,14 +115,14 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setOrganization($user->getOrganization())
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
-                ->setPaymentTerm($paymentTerm)
+                ->setPaymentTerm($this->getPaymentTerm($manager, $row['paymentTerm']))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
                 ->setSubtotal($row['subtotal']);
 
-            if (!empty($orderData['customerNotes'])) {
-                $order->setCustomerNotes($orderData['customerNotes']);
+            if (!empty($row['customerNotes'])) {
+                $order->setCustomerNotes($row['customerNotes']);
             }
 
             $manager->persist($order);
@@ -137,11 +134,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     }
 
     /**
-     * @param ObjectManager $manager
+     * @param EntityManager $manager
      * @param array $address
      * @return OrderAddress
      */
-    protected function createOrderAddress(ObjectManager $manager, array $address)
+    protected function createOrderAddress(EntityManager $manager, array $address)
     {
         $orderAddress = new OrderAddress();
         $orderAddress
@@ -192,5 +189,15 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         }
 
         return $this->regions[$code];
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $paymentTerm
+     * @return PaymentTerm
+     */
+    protected function getPaymentTerm(EntityManager $manager, $paymentTerm)
+    {
+        return $manager->getRepository('OroB2BPaymentBundle:PaymentTerm')->findOneBy(['label' => $paymentTerm]);
     }
 }
