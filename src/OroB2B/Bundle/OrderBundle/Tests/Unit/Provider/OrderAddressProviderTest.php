@@ -3,8 +3,10 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -94,7 +96,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $this->securityFacade->expects($this->any())
+        $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(
@@ -130,16 +132,10 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $addresses = [new AccountAddress()];
 
-        $this->securityFacade->expects($this->any())
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->will(
-                $this->returnValueMap(
-                    [
-                        [$expectedPermission, null, true],
-                        ['VIEW;entity:' . $this->accountAddressClass, null, false],
-                    ]
-                )
-            );
+            ->with($expectedPermission)
+            ->willReturn(true);
 
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->once())
@@ -181,7 +177,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $addresses = [new AccountAddress()];
 
-        $this->securityFacade->expects($this->any())
+        $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
             ->will(
                 $this->returnValueMap(
