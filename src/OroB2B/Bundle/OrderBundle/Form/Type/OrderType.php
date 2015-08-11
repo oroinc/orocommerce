@@ -61,7 +61,8 @@ class OrderType extends AbstractType
                 ]
             )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
-            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label']);
+            ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
+            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label']);
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
