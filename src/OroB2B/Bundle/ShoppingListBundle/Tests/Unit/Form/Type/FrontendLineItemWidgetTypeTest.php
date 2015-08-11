@@ -36,7 +36,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
     const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
-    const NEW_SHOPPING_LIST_ID = 10;
+    const NEW_SHOPPING_LIST_ID = 3;
 
     /**
      * @var FrontendLineItemWidgetType
@@ -89,6 +89,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
             [
                 1 => $this->getShoppingList(1, 'Shopping List 1'),
                 2 => $this->getShoppingList(2, 'Shopping List 2'),
+                3 => $this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'),
             ]
         );
 

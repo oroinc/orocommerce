@@ -121,9 +121,6 @@ class FrontendLineItemWidgetType extends AbstractType
             $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
-
-            // TODO: shopping list is not being set by FormEvent::setData for FormIntegrationTestCase.
-            $event->getForm()->getData()->setShoppingList($shoppingList);
         }
     }
 
