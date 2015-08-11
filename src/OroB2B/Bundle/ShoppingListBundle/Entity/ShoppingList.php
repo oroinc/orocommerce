@@ -119,7 +119,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -142,7 +142,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountUser;
 
@@ -171,11 +171,15 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      *
      * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
      */
-    protected $isCurrent = false;
+    protected $current = false;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
+
         $this->lineItems = new ArrayCollection();
     }
 
@@ -355,17 +359,17 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      */
     public function isCurrent()
     {
-        return $this->isCurrent;
+        return $this->current;
     }
 
     /**
-     * @param bool $isCurrent
+     * @param bool $current
      *
      * @return $this
      */
-    public function setCurrent($isCurrent)
+    public function setCurrent($current)
     {
-        $this->isCurrent = (bool) $isCurrent;
+        $this->current = (bool) $current;
 
         return $this;
     }

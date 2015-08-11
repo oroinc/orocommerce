@@ -9,12 +9,12 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
@@ -25,18 +25,18 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\EventListener\Form\Type\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
-class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
+class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
     const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
-    const NEW_SHOPPING_LIST_ID = 10;
+    const NEW_SHOPPING_LIST_ID = 3;
 
     /**
      * @var FrontendLineItemWidgetType
@@ -67,10 +67,14 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
             ->method('createCurrent')
             ->willReturn($this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'));
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
         $this->type = new FrontendLineItemWidgetType(
             $this->getRegistry(),
             $shoppingListManager,
-            $this->getTokenStorage()
+            $this->getTokenStorage(),
+            $translator
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
@@ -85,6 +89,7 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
             [
                 1 => $this->getShoppingList(1, 'Shopping List 1'),
                 2 => $this->getShoppingList(2, 'Shopping List 2'),
+                3 => $this->getShoppingList(self::NEW_SHOPPING_LIST_ID, 'New Shopping List'),
             ]
         );
 
@@ -301,45 +306,6 @@ class FrontendLineItemWidgetTypeTest extends FormIntegrationTestCase
         return $registry;
     }
 
-    /**
-     * @param integer $productId
-     * @param string  $unitCode
-     * @param integer $precision
-     *
-     * @return Product
-     */
-    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
-    {
-        /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
-
-        $unit = new ProductUnit();
-        $unit->setCode($unitCode);
-
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setPrecision($precision)
-            ->setUnit($unit)
-            ->setProduct($product);
-
-        return $product->addUnitPrecision($unitPrecision);
-    }
-
-    /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-        return $entity;
-    }
 
     /**
      * @return array

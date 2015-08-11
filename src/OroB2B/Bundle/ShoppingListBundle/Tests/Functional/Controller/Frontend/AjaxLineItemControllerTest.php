@@ -298,7 +298,7 @@ class AjaxLineItemControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
+        $html = html_entity_decode($crawler->html());
 
         $pattern = '/"savedId":\s*(\d+)/i';
         $this->assertRegExp($pattern, $html);

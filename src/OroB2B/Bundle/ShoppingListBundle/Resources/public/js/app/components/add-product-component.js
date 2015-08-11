@@ -1,11 +1,12 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var AddProductComponent,
         LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+        BaseComponent = require('oroui/js/app/components/base/component'),
+        _ = require('underscore');
 
     AddProductComponent = BaseComponent.extend({
         /**
@@ -29,7 +30,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
@@ -41,14 +42,24 @@ define(function (require) {
         /**
          * @param {jQuery.Event} e
          */
-        onShoppingListChange: function (e) {
+        onShoppingListChange: function(e) {
             var value = e.target.value;
 
-            if (value == "") {
-                this.shoppingListLabelSelector.parent('div').show();
+            if (value == '') {
+                this.shoppingListLabelSelector.parent('div').removeClass('hidden');
             } else {
-                this.shoppingListLabelSelector.parent('div').hide();
+                this.shoppingListLabelSelector.parent('div').addClass('hidden');
             }
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.options._sourceElement.off();
+
+            AddProductComponent.__super__.dispose.call(this);
         }
     });
 

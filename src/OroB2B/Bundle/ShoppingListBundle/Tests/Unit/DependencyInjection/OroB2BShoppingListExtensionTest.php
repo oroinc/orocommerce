@@ -40,7 +40,10 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.event_listener.datagrid.class',
             'orob2b_shopping_list.event_listener.form_view.class',
             'orob2b_shopping_list.event_listener.shopping_list_listener.class',
-            'orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class'
+            'orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class',
+
+            // Placeholders
+            'orob2b_shopping_list.placeholder.filter.class'
         ];
         $this->assertParametersLoaded($expectedParameters);
 
@@ -51,6 +54,7 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.line_item.manager.api',
             'orob2b_shopping_list.shopping_list.manager.api',
             'orob2b_shopping_list.shopping_list.manager',
+            'orob2b_shopping_list.placeholder.filter',
 
             // Listeners
             'orob2b_shopping_list.event_listener.datagrid',

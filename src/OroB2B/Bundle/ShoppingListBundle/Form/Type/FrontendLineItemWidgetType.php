@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -39,18 +40,26 @@ class FrontendLineItemWidgetType extends AbstractType
     protected $shoppingListClass;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param ManagerRegistry     $registry
      * @param ShoppingListManager $shoppingListManager
-     * @param TokenStorage $tokenStorage
+     * @param TokenStorage        $tokenStorage
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         ManagerRegistry $registry,
         ShoppingListManager $shoppingListManager,
-        TokenStorage $tokenStorage
+        TokenStorage $tokenStorage,
+        TranslatorInterface $translator
     ) {
         $this->registry = $registry;
         $this->shoppingListManager = $shoppingListManager;
         $this->accountUser = $tokenStorage->getToken()->getUser();
+        $this->translator = $translator;
     }
 
     /**
@@ -112,9 +121,6 @@ class FrontendLineItemWidgetType extends AbstractType
             $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
             $data['shoppingList'] = $shoppingList->getId();
             $event->setData($data);
-
-            // TODO: shopping list is not being set by FormEvent::setData for FormIntegrationTestCase.
-            $event->getForm()->getData()->setShoppingList($shoppingList);
         }
     }
 
@@ -142,7 +148,9 @@ class FrontendLineItemWidgetType extends AbstractType
     public function checkShoppingListLabel($data, ExecutionContextInterface $context)
     {
         if (!$data->getShoppingList()) {
-            $context->buildViolation('Shopping List label must not be empty')
+            $context->buildViolation(
+                $this->translator->trans('orob2b.shoppinglist.lineitem.new_shopping_list_label.empty')
+            )
                 ->atPath('shoppingListLabel')
                 ->addViolation();
         }

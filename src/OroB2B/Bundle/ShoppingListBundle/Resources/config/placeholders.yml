@@ -2,6 +2,7 @@
 items:
     add-products-btn:
         action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
+        applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
 
 placeholders:
     frontend_products_navButtons:

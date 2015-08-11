@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
@@ -13,7 +14,13 @@ class LineItemControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient(
+            [],
+            array_merge(
+                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
+                ['HTTP_X-CSRF-Header' => 1]
+            )
+        );
 
         $this->loadFixtures(
             [

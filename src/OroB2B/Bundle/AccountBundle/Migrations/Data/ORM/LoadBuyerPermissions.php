@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Migrations\Data\ORM;
+namespace OroB2B\Bundle\AccountBundle\Migrations\Data\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -10,13 +10,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Acl\Extension\ActionAclExtension;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const ROLE_FRONTEND_BUYER = 'ROLE_FRONTEND_BUYER';
+    const ACTION_ID = 'orob2b_product_view_products';
+    const ACCOUNT_USER_ROLE_CLASS = 'orob2b_account.entity.account_user_role.class';
 
     /**
      * @var ContainerInterface
@@ -61,15 +62,10 @@ class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureIn
         if ($aclManager->isAclEnabled()) {
             $role = $this->getBuyerRole($manager);
             $sid = $aclManager->getSid($role);
-
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof ActionAclExtension) {
-                    $oid = $aclManager->getOid('action:orob2b_product_view_products');
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->add('EXECUTE')->get();
-                    $aclManager->setPermission($sid, $oid, $mask, true);
-                }
-            }
+            $oid = $aclManager->getOid('action:' . self::ACTION_ID);
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->add('EXECUTE')->get();
+            $aclManager->setPermission($sid, $oid, $mask, true);
         }
     }
 
@@ -81,7 +77,7 @@ class LoadBuyerPermissions extends AbstractFixture implements DependentFixtureIn
     protected function getBuyerRole(ObjectManager $manager)
     {
         return $manager
-            ->getRepository($this->container->getParameter('orob2b_account.entity.account_user_role.class'))
+            ->getRepository($this->container->getParameter(self::ACCOUNT_USER_ROLE_CLASS))
             ->findOneBy(['role' => self::ROLE_FRONTEND_BUYER]);
     }
 }

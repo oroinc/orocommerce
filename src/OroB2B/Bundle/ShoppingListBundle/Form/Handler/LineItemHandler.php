@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -46,12 +47,10 @@ class LineItemHandler
      */
     public function process(LineItem $lineItem)
     {
-        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-        /** @var \PDO $connection */
-        $connection = $this->registry->getConnection();
-
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
-            $connection->beginTransaction();
+            /** @var EntityManagerInterface $manager */
+            $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+            $manager->beginTransaction();
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 /** @var LineItemRepository $lineItemRepository */
@@ -65,11 +64,11 @@ class LineItemHandler
                 }
 
                 $manager->flush();
-                $connection->commit();
+                $manager->commit();
 
                 return true;
             } else {
-                $connection->rollBack();
+                $manager->rollBack();
             }
         }
 

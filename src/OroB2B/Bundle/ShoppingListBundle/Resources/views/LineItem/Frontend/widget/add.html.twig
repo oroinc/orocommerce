@@ -2,18 +2,20 @@
 
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
-    'savedId': savedId is defined and savedId ? savedId : null
+    'savedId': savedId|default(null)
 } %}
 {% set message %}
-    {{ 'orob2b.shoppinglist.lineitem.flash.success'|trans ~ ' '}}
+    {% set msgArray = ['orob2b.shoppinglist.lineitem.flash.success'|trans] %}
     {% if shoppingListId is defined %}
-        (<a href="{{ path('orob2b_shopping_list_frontend_view', {id: shoppingListId}) }}">
-            {{ 'orob2b.shoppinglist.actions.view'|trans}}
-        </a>)
-        {% else %}
+        {% set shoppingListLink = "(<a href='%s'>%s</a>)"|format(
+            path('orob2b_shopping_list_frontend_view', {id: shoppingListId}),
+            'orob2b.shoppinglist.actions.view'|trans
+        ) %}
+        {% set msgArray = msgArray|merge([shoppingListLink]) %}
     {% endif %}
+    {{ msgArray|join(' ')|raw }}
 {% endset %}
-<div class="widget-content"
+<div class="widget-content add-product-widget"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
      data-page-component-options="{{ pageComponentOptions|merge({message: message})|json_encode }}"
 >
@@ -32,10 +34,11 @@
             {{ form_row(form.unit) }}
 
             {% set showShoppingListLabel =
-                app.request.isMethod('POST') and form.shoppingList.vars.value is empty
-                or not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null
+                    (app.request.isMethod('POST') and form.shoppingList.vars.value is empty)
+                or
+                    (not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null)
             %}
-            <div style="display: {{ showShoppingListLabel ? 'block' : 'none' }};">
+            <div{{ not showShoppingListLabel ? ' class="hidden"' }}>
                 {{ form_row(form.shoppingListLabel, {attr: {class: 'orob2b-shoppinglist-label'} }) }}
             </div>
         </fieldset>

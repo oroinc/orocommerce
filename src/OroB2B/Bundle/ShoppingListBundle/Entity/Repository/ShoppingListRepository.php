@@ -21,7 +21,7 @@ class ShoppingListRepository extends EntityRepository
         return $this->createQueryBuilder('list')
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->andWhere('list.isCurrent = 1')
+            ->andWhere('list.current = true')
             ->setParameter('accountUser', $accountUser)
             ->getQuery()->getOneOrNullResult();
     }
@@ -88,7 +88,7 @@ class ShoppingListRepository extends EntityRepository
         return $this->createQueryBuilder('list')
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->andWhere('list.isCurrent = 0')
+            ->andWhere('list.current = false')
             ->setParameter('accountUser', $accountUser)
             ->getQuery()->getResult();
     }
@@ -100,12 +100,14 @@ class ShoppingListRepository extends EntityRepository
      */
     public function findLatestForAccountUserExceptCurrent(AccountUser $accountUser)
     {
-        return $this->createQueryBuilder('list')
+        $qb = $this->createQueryBuilder('list');
+
+        return $qb
             ->select('list')
             ->where('list.accountUser = :accountUser')
-            ->andWhere('list.isCurrent = 0')
+            ->andWhere('list.current = false')
             ->setParameter('accountUser', $accountUser)
-            ->orderBy('list.id', 'DESC')
+            ->orderBy($qb->expr()->desc('list.id'))
             ->setMaxResults(1)
             ->getQuery()->getOneOrNullResult();
     }

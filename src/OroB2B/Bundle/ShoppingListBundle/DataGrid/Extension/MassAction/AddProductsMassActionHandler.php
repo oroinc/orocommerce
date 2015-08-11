@@ -78,7 +78,9 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $argsParser = new ArgsParser($args);
         $shoppingList = $this->shoppingListManager->getForCurrentUser($argsParser->getShoppingListId());
 
-        if (!$this->securityFacade->isGranted('EDIT', $shoppingList)) {
+        if (!$this->securityFacade->isGranted('EDIT', $shoppingList)
+            || !$this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add')
+        ) {
             return $this->generateResponse($args);
         }
 
@@ -96,13 +98,13 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
             $entity = $entityArray[0];
             /** @var ProductUnitPrecision $unitPrecision */
             $unitPrecision = $entity->getUnitPrecisions()->first();
-            $lineItem = (new LineItem())
+
+            $lineItems[] = (new LineItem())
                 ->setOwner($shoppingList->getOwner())
                 ->setOrganization($shoppingList->getOrganization())
                 ->setProduct($entity)
                 ->setQuantity(1)
                 ->setUnit($unitPrecision->getUnit());
-            $lineItems[] = $lineItem;
         }
 
         $addedCnt = $this->shoppingListManager
@@ -131,10 +133,8 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
 
         if ($shoppingListId && $entitiesCount > 0) {
             $link = $this->router->generate('orob2b_shopping_list_frontend_view', ['id' => $shoppingListId]);
-            $message .= $this->translator->trans(
-                'orob2b.shoppinglist.actions.add_success_message_link',
-                ['%link%' => $link]
-            );
+            $linkTitle = $this->translator->trans('orob2b.shoppinglist.actions.view');
+            $message = sprintf("%s (<a href='%s'>%s</a>).", $message, $link, $linkTitle);
         }
 
         return new MassActionResponse(

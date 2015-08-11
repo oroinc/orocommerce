@@ -34,6 +34,7 @@ class DatagridListener
             'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
             'link'  => 'add_to_shopping_list_link',
             'icon'  => 'shopping-cart',
+            'acl_resource' => 'orob2b_shopping_list_line_item_frontend_add',
             'widgetOptions' => [
                 'options' => [
                     'dialogOptions' => [

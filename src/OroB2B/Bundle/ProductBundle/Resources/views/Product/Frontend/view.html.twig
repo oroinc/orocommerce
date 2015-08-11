@@ -4,10 +4,10 @@
 
 {% block pageHeader %}
     {% set breadcrumbs = {
-    'entity': entity,
-    'indexPath': path('orob2b_product_frontend_product_index'),
-    'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-    'entityTitle': entity.sku|default('N/A'|trans)
+        'entity': entity,
+        'indexPath': path('orob2b_product_frontend_product_index'),
+        'indexLabel': 'orob2b.product.entity_plural_label'|trans,
+        'entityTitle': entity.sku|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}

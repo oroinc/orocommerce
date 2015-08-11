@@ -9,6 +9,7 @@ use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
@@ -20,6 +21,13 @@ class LineItemController extends RestController implements ClassResourceInterfac
      * @ApiDoc(
      *      description="Delete Line Item",
      *      resource=true
+     * )
+     * @Acl(
+     *      id="orob2b_shopping_list_line_item_frontend_delete",
+     *      type="entity",
+     *      class="OroB2BShoppingListBundle:LineItem",
+     *      permission="DELETE",
+     *      group_name="commerce"
      * )
      *
      * @param int $id

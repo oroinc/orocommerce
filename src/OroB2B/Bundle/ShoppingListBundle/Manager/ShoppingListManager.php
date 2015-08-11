@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -31,14 +32,24 @@ class ShoppingListManager
     protected $accountUser;
 
     /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
      * @param ManagerRegistry       $managerRegistry
      * @param TokenStorageInterface $tokenStorage
+     * @param TranslatorInterface   $translator
      */
-    public function __construct(ManagerRegistry $managerRegistry, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        TokenStorageInterface $tokenStorage,
+        TranslatorInterface $translator
+    ) {
         $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
         $this->accountUser = $tokenStorage->getToken()->getUser();
+        $this->translator = $translator;
     }
 
     /**
@@ -48,8 +59,10 @@ class ShoppingListManager
      *
      * @return ShoppingList
      */
-    public function createCurrent($label = 'Default')
+    public function createCurrent($label = '')
     {
+        $label = $label !== '' ? $label : $this->translator->trans('orob2b.shoppinglist.default.label');
+
         $shoppingList = new ShoppingList();
         $shoppingList
             ->setOwner($this->accountUser)
@@ -73,7 +86,7 @@ class ShoppingListManager
         $shoppingListRepository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
 
-        if ($currentList instanceof ShoppingList && $currentList !== $shoppingList) {
+        if ($currentList instanceof ShoppingList && $currentList->getId() !== $shoppingList->getId()) {
             $currentList->setCurrent(false);
         }
         $shoppingList->setCurrent(true);
@@ -92,9 +105,9 @@ class ShoppingListManager
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
         $repository = $this->lineItemEm->getRepository('OroB2BShoppingListBundle:LineItem');
-        $possibleDuplicate = $repository->findDuplicate($lineItem);
-        if ($possibleDuplicate instanceof LineItem && $shoppingList->getId()) {
-            $possibleDuplicate->setQuantity($possibleDuplicate->getQuantity() + $lineItem->getQuantity());
+        $duplicate = $repository->findDuplicate($lineItem);
+        if ($duplicate instanceof LineItem && $shoppingList->getId()) {
+            $duplicate->setQuantity($duplicate->getQuantity() + $lineItem->getQuantity());
         } else {
             $shoppingList->addLineItem($lineItem);
             $this->lineItemEm->persist($lineItem);

@@ -161,6 +161,7 @@ datagrid:
             entity_pagination: true
             skip_acl_check: true
         source:
+            acl_resource: orob2b_product_view_products
             type:         orm
             query:
                 select:
@@ -198,7 +199,10 @@ datagrid:
                 sku:
                     type:      string
                     data_name: product.sku
-                inventoryStatus:
+                name:
+                    type:      string
+                    data_name: product.sku
+                inventoryStatusName:
                     type:      enum
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
