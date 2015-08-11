@@ -14,8 +14,8 @@ parameters:
     #Listeners
     orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.event_listener.datagrid.class: OroB2B\Bundle\SaleBundle\EventListener\DatagridListener
-    #Handlers
-    oro_form.autocomplete.account_user.search_handler.class: OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler
+    #Voters
+    orob2b_sale.acl.voter.account.class: OroB2B\Bundle\SaleBundle\Acl\Voter\AccountVoter
 
 services:
     orob2b_sale.event_listener.entity_subscriber:
@@ -64,10 +64,12 @@ services:
         arguments:
             - @translator
 
-    oro_form.autocomplete.account_user.search_handler:
-        class: %oro_form.autocomplete.account_user.search_handler.class%
-        abstract: true
+    orob2b_sale.acl.voter.account:
+        class: %orob2b_sale.acl.voter.account.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @service_container
         calls:
-            - [initSearchIndexer, ["@oro_search.index", %oro_search.entities_config%]]
-            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
-            - [setAclHelper,["@oro_security.acl_helper"]]
+            - [setClassName, [%orob2b_sale.entity.quote.class%]]
+        tags:
+            - { name: security.voter }

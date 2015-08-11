@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -34,7 +36,8 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
 
     public function testSetDefaultOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
@@ -46,7 +49,10 @@ class AccountUserSelectTypeTest extends FormIntegrationTestCase
                     $this->assertEquals('orob2b_account_account_user', $options['autocomplete_alias']);
                     $this->assertEquals('orob2b_account_account_user_create', $options['create_form_route']);
                     $this->assertEquals(
-                        ['placeholder' => 'orob2b.account.accountuser.form.choose'],
+                        [
+                            'component' => 'autocomplete-accountuser',
+                            'placeholder' => 'orob2b.account.accountuser.form.choose',
+                        ],
                         $options['configs']
                     );
                 }

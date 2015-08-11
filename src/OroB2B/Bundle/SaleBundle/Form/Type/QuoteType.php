@@ -10,7 +10,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
 
 class QuoteType extends AbstractType
 {
@@ -43,10 +42,6 @@ class QuoteType extends AbstractType
             ->add('accountUser', AccountUserSelectType::NAME, [
                 'label'     => 'orob2b.sale.quote.account_user.label',
                 'required'  => false,
-                'configs'   => [
-                    'component' => 'account-user-autocomplete',
-                    'delimiter' => SearchHandler::DELIMITER,
-                ],
             ])
             ->add('account', AccountSelectType::NAME, [
                 'label'     => 'orob2b.sale.quote.account.label',

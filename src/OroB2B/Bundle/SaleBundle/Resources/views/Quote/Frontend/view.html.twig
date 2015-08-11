@@ -1,11 +1,12 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {'%id%': entity.qid }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
-        'indexPath': path('orob2b_sale_frontend_quote_index'),
+        'indexPath': path('orob2b_sale_quote_frontend_index'),
         'indexLabel': 'orob2b.frontend.sale.quote.entity_plural_label'|trans,
         'entityTitle': entity.qid|default('N/A'|trans)
     } %}
@@ -17,7 +18,7 @@
         {{ oro_widget_render({
             'widgetType': 'block',
             'title': 'orob2b.frontend.sale.quote.widgets.quote_information'|trans,
-            'url': path('orob2b_sale_frontend_quote_info', {'id': entity.id})
+            'url': path('orob2b_sale_quote_frontend_info', {'id': entity.id})
         }) }}
     {% endset %}
     {% set quoteProducts %}
@@ -35,12 +36,12 @@
                     <tr>
                         <td>
                             <div>
-                                {{ quoteProduct.productSku|raw }}
+                                {{ quoteProduct.productSku }}
                             </div>
                             {% if quoteProduct.isTypeNotAvailable %}
                                 <div>
                                     <div>{{ 'orob2b.frontend.sale.quoteproduct.product_replacement.label'|trans }}</div>
-                                    {{ quoteProduct.productReplacementSku|raw }}
+                                    {{ quoteProduct.productReplacementSku }}
                                 </div>
                             {% endif %}
                         </td>
@@ -125,5 +126,5 @@
         {% set data = {'dataBlocks': [generalBlock]} %}
     {% endif %}
 
-    {{ parent() }}
+    {{ UI.scrollData(id, data) }}
 {% endblock content_data %}

@@ -4,7 +4,6 @@ define(function(require) {
 
     var Select2AutocompleteAccountUserComponent;
     var $ = require('jquery');
-    var _ = require('underscore');
     var Select2AutocompleteComponent = require('oro/select2-autocomplete-component');
 
     Select2AutocompleteAccountUserComponent = Select2AutocompleteComponent.extend({
@@ -12,8 +11,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            accountSelect: '.sale-quote-account-select input[type="hidden"]',
-            defaultDelimiter: ';'
+            accountSelect: '.account-account-select input[type="hidden"]',
+            delimiter: ';'
         },
 
         /**
@@ -22,24 +21,21 @@ define(function(require) {
         $accountSelect: null,
 
         /**
-         * @property {String}
-         */
-        delimiter: null,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
+            this.options = _.defaults(options || {}, this.options);
+
             Select2AutocompleteAccountUserComponent.__super__.initialize.call(this, options);
+
             this.$accountSelect = $(this.options.accountSelect);
-            this.delimiter = options.configs.delimiter || this.options.defaultDelimiter;
         },
 
         /**
          * @inheritDoc
          */
         makeQuery: function(query) {
-            return [this.$accountSelect.val(), query].join(this.delimiter);
+            return [this.$accountSelect.val(), query].join(this.options.delimiter);
         }
     });
 

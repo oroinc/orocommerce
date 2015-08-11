@@ -144,6 +144,7 @@ datagrid:
             entityHint:        quote
             entity_pagination: true
         source:
+            acl_resource: orob2b_sale_quote_frontend_index
             type:         orm
             query:
                 select:
@@ -172,7 +173,7 @@ datagrid:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_sale_frontend_quote_view
+                route: orob2b_sale_quote_frontend_view
                 params: [ id ]
         sorters:
             columns:

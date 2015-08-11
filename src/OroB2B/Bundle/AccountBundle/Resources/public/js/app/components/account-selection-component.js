@@ -3,7 +3,7 @@
 define(function(require) {
     'use strict';
 
-    var QuoteSelectionComponent;
+    var AccountSelectionComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var $ = require('jquery');
@@ -12,13 +12,13 @@ define(function(require) {
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
 
-    QuoteSelectionComponent = BaseComponent.extend({
+    AccountSelectionComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            accountSelect: '.sale-quote-account-select input[type="hidden"]',
-            accountUserSelect: '.sale-quote-accountuser-select input[type="hidden"]',
+            accountSelect: '.account-account-select input[type="hidden"]',
+            accountUserSelect: '.account-accountuser-select input[type="hidden"]',
             accountRoute: 'orob2b_account_account_user_get_account',
             errorMessage: 'Sorry, unexpected error was occurred'
         },
@@ -111,9 +111,9 @@ define(function(require) {
 
             this.$container.off();
 
-            QuoteSelectionComponent.__super__.dispose.call(this);
+            AccountSelectionComponent.__super__.dispose.call(this);
         }
     });
 
-    return QuoteSelectionComponent;
+    return AccountSelectionComponent;
 });

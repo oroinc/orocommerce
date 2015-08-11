@@ -4,10 +4,13 @@ namespace OroB2B\Bundle\SaleBundle\EventListener;
 
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Builder;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class DatagridListener
 {
@@ -43,9 +46,39 @@ class DatagridListener
      */
     public function onBuildBeforeFrontendQuotes(BuildBefore $event)
     {
-        if (!$this->permissionShowUserColumn()) {
-            $this->removeAccountUserNameColumn($event->getConfig());
+        $config = $event->getConfig();
+
+        if ($this->permissionShowAllAccountQuotes()) {
+            $this->showAllAccountQuotes($config);
         }
+
+        if (!$this->permissionShowUserColumn()) {
+            $this->removeAccountUserNameColumn($config);
+        }
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     */
+    protected function showAllAccountQuotes(DatagridConfiguration $config)
+    {
+        $config->offsetSetByPath(Builder::DATASOURCE_SKIP_ACL_CHECK, true);
+
+        /* @var $user AccountUser */
+        $user = $this->securityFacade->getLoggedUser();
+        if (!$user instanceof AccountUser) {
+            return;
+        }
+
+        $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
+
+        $where['and'][] = sprintf(
+            'quote.account = %d OR quote.accountUser = %d',
+            $user->getAccount()->getId(),
+            $user->getId()
+        );
+
+        $config->offsetSetByPath('[source][query][where]', $where);
     }
 
     /**
@@ -58,6 +91,14 @@ class DatagridListener
             ->offsetUnsetByPath('[sorters][columns][accountUserName]')
             ->offsetUnsetByPath('[filters][columns][accountUserName]')
         ;
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function permissionShowAllAccountQuotes()
+    {
+        return $this->securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $this->quoteClass);
     }
 
     /**
