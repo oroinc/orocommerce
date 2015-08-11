@@ -50,6 +50,16 @@ define(function(require) {
             } else {
                 this.shoppingListLabelSelector.parent('div').addClass('hidden');
             }
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.options._sourceElement.off();
+
+            AddProductComponent.__super__.dispose.call(this);
         }
     });
 
