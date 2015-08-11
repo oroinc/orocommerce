@@ -199,7 +199,7 @@ services:
             - @translator
 
     orob2b_account.account_user.password_request.handler:
-        class: %orob2b_account.account_user.password_request.handler.class%security
+        class: %orob2b_account.account_user.password_request.handler.class%
         parent: orob2b_account.account_user.password.handler.abstract
 
     orob2b_account.account_user.password_reset.handler:
@@ -252,4 +252,3 @@ services:
             - @orob2b_account.security_facade
         tags:
             - { name: twig.extension }
-

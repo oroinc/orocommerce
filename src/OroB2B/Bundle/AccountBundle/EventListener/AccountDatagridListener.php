@@ -2,12 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-//use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Builder;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-//use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\SecurityFacade;
@@ -63,7 +60,6 @@ class AccountDatagridListener
         }
 
         if (null !== ($accountUserColumn = $config->offsetGetByPath(self::ACCOUNT_USER_COLUMN))) {
-
             if (!$this->permissionShowAccountUserColumn()) {
                 $this->removeAccountUserColumn($config, $accountUserColumn);
             }

@@ -91,7 +91,6 @@ class SecurityFacade
     }
 
     /**
-     *
      * @param string $class
      * @param int $mask
      * @return boolean
@@ -102,7 +101,6 @@ class SecurityFacade
             return false;
         }
 
-        /* @var $loggedUser AccountUser */
         if (null === ($loggedUser = $this->getLoggedUser())) {
             return false;
         }
