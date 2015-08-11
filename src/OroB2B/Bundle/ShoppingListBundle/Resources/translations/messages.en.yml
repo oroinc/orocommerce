@@ -11,7 +11,7 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
-        is_current.label: Current
+        current.label: Current
         default.label: Default
 
         create_new_form:
