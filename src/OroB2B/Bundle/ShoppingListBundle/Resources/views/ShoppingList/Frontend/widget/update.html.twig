@@ -1,6 +1,6 @@
 {% set pageComponentOptions = {
-'_wid': app.request.get('_wid'),
-'savedId': savedId is defined and savedId ? savedId : null
+    '_wid': app.request.get('_wid'),
+    'savedId': savedId|default(null)
 } %}
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
