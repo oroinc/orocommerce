@@ -5,7 +5,15 @@ oro_menu_config:
             route:           'orob2b_order_index'
             extras:
                 position:    10
-                routes:      ['/^orob2b_order/']
+                routes:      ['orob2b_order_index', 'orob2b_order_view', 'orob2b_order_update', 'orob2b_order_create']
+                description: 'orob2b.order.menu.orders_list.description'
+
+        frontend_orders_list:
+            label:           'orob2b.order.entity_plural_label'
+            route:           'orob2b_order_frontend_index'
+            extras:
+                position:    20
+                routes:      ['/^orob2b_order_frontend_/']
                 description: 'orob2b.order.menu.orders_list.description'
 
         shortcut_orders_list:
@@ -27,6 +35,10 @@ oro_menu_config:
                 sale_tab:
                     children:
                         orders_list: ~
+        frontend_menu:
+            children:
+                frontend_orders_list: ~
+
         shortcuts:
             children:
                 shortcut_orders_list: ~
@@ -37,3 +49,8 @@ oro_titles:
     orob2b_order_view:   '%%identifier%%'
     orob2b_order_update: '%%identifier%% - Edit'
     orob2b_order_create: 'Create Order'
+
+    orob2b_order_frontend_index:  ~
+    orob2b_order_frontend_view:   '%%identifier%%'
+    orob2b_order_frontend_update: '%%identifier%% - Edit'
+    orob2b_order_frontend_create: 'Create Order'

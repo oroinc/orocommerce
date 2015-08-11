@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,44 +19,20 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
-use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
-class AjaxOrderController extends Controller
+class AjaxOrderController extends AbstractAjaxOrderController
 {
     /**
-     * Get order subtotals
-     *
      * @Route("/subtotals", name="orob2b_order_subtotals")
      * @Method({"POST"})
      * @AclAncestor("orob2b_order_update")
      *
-     * @param Request $request
-     * @return JsonResponse
+     * {@inheritdoc}
      */
     public function subtotalsAction(Request $request)
     {
-        $orderClass = $this->getParameter('orob2b_order.entity.order.class');
-        $id = $request->get('id');
-        if ($id) {
-            /** @var Order $order */
-            $order = $this->getDoctrine()->getManagerForClass($orderClass)->find($orderClass, $id);
-        } else {
-            $order = new $orderClass();
-        }
-
-        $form = $this->createForm(OrderType::NAME, $order);
-        $form->submit($this->get('request'));
-
-        $subtotals = $this->get('orob2b_order.provider.subtotals')->getSubtotals($order);
-        $subtotals = $subtotals->map(
-            function (Subtotal $subtotal) {
-                return $subtotal->toArray();
-            }
-        )->toArray();
-
-        return new JsonResponse(['subtotals' => $subtotals]);
+        return parent::subtotalsAction($request);
     }
 
     /**
