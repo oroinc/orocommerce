@@ -98,13 +98,13 @@ datagrid:
                 rowAction:     true
 
     frontend-shopping-list-grid:
-        extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
+        extended_entity_name:  %orob2b_shopping_list.entity.shopping_list.class%
         options:
             entityHint:        shopping list
             entity_pagination: true
         source:
-            acl_resource:   orob2b_shopping_list_frontend_view
-            type:         orm
+            acl_resource:      orob2b_shopping_list_frontend_view
+            type:              orm
             query:
                 select:
                     - shopping_list.id
@@ -164,7 +164,7 @@ datagrid:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
-                acl_resource:   orob2b_shopping_list_frontend_view
+                acl_resource:  orob2b_shopping_list_frontend_view
             update:
                 type:          navigate
                 label:         oro.grid.action.update

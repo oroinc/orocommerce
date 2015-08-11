@@ -169,8 +169,6 @@ class AjaxLineItemController extends Controller
     }
 
     /**
-     * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
-     *
      * @return Response
      */
     public function getProductsAddBtnAction()
