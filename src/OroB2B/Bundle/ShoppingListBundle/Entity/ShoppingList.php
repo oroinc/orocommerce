@@ -119,7 +119,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -142,7 +142,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountUser;
 
