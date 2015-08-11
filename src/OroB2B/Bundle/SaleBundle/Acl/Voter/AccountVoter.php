@@ -2,17 +2,14 @@
 
 namespace OroB2B\Bundle\SaleBundle\Acl\Voter;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class AccountVoter extends AbstractEntityVoter
 {
@@ -71,10 +68,10 @@ class AccountVoter extends AbstractEntityVoter
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_BASIC, $class)) {
-            if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
-                return self::ACCESS_GRANTED;
-            }
+        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_BASIC, $class)
+            && $this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()
+        ) {
+            return self::ACCESS_GRANTED;
         }
 
         if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $class)) {
