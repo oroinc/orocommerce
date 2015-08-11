@@ -4,10 +4,8 @@ namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -121,7 +119,7 @@ class OrderAddressProvider
         $repository = $this->getAccountAddressRepository();
         if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
             $result = $repository->getAddressesByType($account, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
+        } elseif ($this->securityFacade->isGranted(sprintf('VIEW;entity:%s', $this->accountAddressClass))) {
             $result = $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
         }
 
