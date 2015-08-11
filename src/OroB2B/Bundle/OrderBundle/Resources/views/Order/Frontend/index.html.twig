@@ -1,0 +1,14 @@
+{% extends 'OroB2BFrontendBundle:actions:index.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set gridName = 'frontend-orders-grid' %}
+{% set pageTitle = 'orob2b.order.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_order_frontend_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_order_frontend_create'),
+            'entity_label': 'orob2b.order.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
