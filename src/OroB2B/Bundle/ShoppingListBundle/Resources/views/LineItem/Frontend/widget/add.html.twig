@@ -34,8 +34,9 @@
             {{ form_row(form.unit) }}
 
             {% set showShoppingListLabel =
-                app.request.isMethod('POST') and form.shoppingList.vars.value is empty
-                or not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null
+                    (app.request.isMethod('POST') and form.shoppingList.vars.value is empty)
+                or
+                    (not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null)
             %}
             <div{{ not showShoppingListLabel ? ' class="hidden"' }}>
                 {{ form_row(form.shoppingListLabel, {attr: {class: 'orob2b-shoppinglist-label'} }) }}
@@ -47,8 +48,8 @@
         </div>
 
         <div class="widget-actions">
-            <button type="reset" class="btn">{{ 'orob2b.shoppinglist.lineitem.widget.cancel'|trans }}</button>
-            <button type="submit" class="btn btn-success">{{ 'orob2b.shoppinglist.lineitem.widget.save'|trans }}</button>
+            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'Save'|trans }}</button>
         </div>
     </form>
     {{ oro_form_js_validation(form) }}
