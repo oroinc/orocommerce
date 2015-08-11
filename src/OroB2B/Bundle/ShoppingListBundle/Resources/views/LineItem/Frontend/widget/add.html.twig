@@ -37,7 +37,7 @@
                 app.request.isMethod('POST') and form.shoppingList.vars.value is empty
                 or not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null
             %}
-            <div style="display: {{ showShoppingListLabel ? 'block' : 'none' }};">
+            <div{{ not showShoppingListLabel ? ' class="hidden"' }}>
                 {{ form_row(form.shoppingListLabel, {attr: {class: 'orob2b-shoppinglist-label'} }) }}
             </div>
         </fieldset>

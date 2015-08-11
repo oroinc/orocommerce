@@ -1,3 +1,3 @@
-.add-product-widget .hidden {
+.add-product-widget fieldset .hidden {
     display: none;
 }
