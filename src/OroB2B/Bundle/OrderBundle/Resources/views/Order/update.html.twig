@@ -44,29 +44,98 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
+    {% set billingAddress %}
+        <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orob2border/js/app/views/subtotals-listener-view',
+                selectors: {fields: [
+                    '#' ~ form.billingAddress.country.vars.id,
+                    '#' ~ form.billingAddress.street.vars.id,
+                    '#' ~ form.billingAddress.street2.vars.id,
+                    '#' ~ form.billingAddress.city.vars.id,
+                    '#' ~ form.billingAddress.region.vars.id,
+                    '#' ~ form.billingAddress.postalCode.vars.id
+                ]}
+            }|json_encode }}">
+            {{ form_widget(form.billingAddress) }}
+        </div>
+    {% endset %}
+
+    {% set shippingAddress %}
+        <div
+            data-page-component-module="oroui/js/app/components/view-component"
+            data-page-component-options="{{ {
+                view: 'orob2border/js/app/views/subtotals-listener-view',
+                selectors: {fields: [
+                    '#' ~ form.shippingAddress.country.vars.id,
+                    '#' ~ form.shippingAddress.street.vars.id,
+                    '#' ~ form.shippingAddress.street2.vars.id,
+                    '#' ~ form.shippingAddress.city.vars.id,
+                    '#' ~ form.shippingAddress.region.vars.id,
+                    '#' ~ form.shippingAddress.postalCode.vars.id
+                ]}
+            }|json_encode }}">
+            {{ form_widget(form.shippingAddress) }}
+        </div>
+    {% endset %}
+
+    {% set subtotals %}
+        {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
+            options: {
+                url: path('orob2b_order_subtotals', {id: entity.id}),
+                selectors: {form: '#' ~ form.vars.id}
+                }
+        } only %}
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
-            'subblocks': []
-        },
-        {
-            'title': 'orob2b.order.billing_address.label'|trans,
-            'class': 'active',
             'subblocks': [{
-                'data': [form_widget(form.billingAddress)]
-            }]
-        },
-        {
-            'title': 'orob2b.order.shipping_address.label'|trans,
-            'class': 'active',
-            'subblocks': [{
-                'data': [form_widget(form.shippingAddress)]
+                'data': [
+                    form_row(form.account),
+                    form_row(form.accountUser)
+                ]
             }]
         }
     ] %}
 
-    {% set additionalData = [] %}
+    {% if isBillingAddressGranted %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.billing_address.label'|trans,
+            'subblocks': [{
+                'data': [billingAddress]
+            }]
+        }]) %}
+    {% endif %}
+
+    {% if isShippingAddressGranted %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.shipping_address.label'|trans,
+            'subblocks': [{
+                'data': [shippingAddress]
+            }]
+        }]) %}
+    {% endif %}
+
+    {% if form.paymentTerm is defined %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.form.payment.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [form_row(form.paymentTerm)]
+            }]
+        }]) %}
+    {% endif %}
+
+    {% set additionalData = [
+        form_row(form.poNumber),
+        form_row(form.shipUntil),
+        form_row(form.customerNotes)
+    ] %}
+
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
@@ -80,6 +149,14 @@
             }]
         }] ) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.order.sections.subtotals'|trans,
+        'class': 'active',
+        'subblocks': [{
+            'data': [subtotals]
+        }]
+    }]) %}
 
     {% set data = {
         'formErrors': form_errors(form),

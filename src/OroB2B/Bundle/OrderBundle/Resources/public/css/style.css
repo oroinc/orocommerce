@@ -1,0 +1,7 @@
+.subtotals-container .control-label {
+    cursor: default;
+}
+
+.subtotals-container .controls .control-label {
+    font-weight: bold !important;
+}

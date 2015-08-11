@@ -3,13 +3,15 @@
 namespace OroB2B\Bundle\OrderBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountAddressRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserAddressRepository;
 
@@ -74,6 +76,11 @@ class OrderAddressProvider
     protected $accountUserAddressClass;
 
     /**
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * @param SecurityFacade $securityFacade
      * @param ManagerRegistry $registry
      * @param AclHelper $aclHelper
@@ -98,48 +105,64 @@ class OrderAddressProvider
     /**
      * @param Account $account
      * @param string $type
-     * @return array
+     * @return AccountAddress[]
      * @throws \InvalidArgumentException
      */
     public function getAccountAddresses(Account $account, $type)
     {
-        $this->assertType($type);
+        static::assertType($type);
 
-        $repository = $this->getAccountAddressRepository();
-        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
-            return $repository->getAddressesByType($account, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
-            return $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
+        $key = $this->getCacheKey($account, $type);
+        if (array_key_exists($key, $this->cache)) {
+            return $this->cache[$key];
         }
 
-        return [];
+        $result = [];
+        $repository = $this->getAccountAddressRepository();
+        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_ADDRESS_ANY))) {
+            $result = $repository->getAddressesByType($account, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGrantedClassPermission('VIEW', $this->accountAddressClass)) {
+            $result = $repository->getDefaultAddressesByType($account, $type, $this->aclHelper);
+        }
+
+        $this->cache[$key] = $result;
+
+        return $result;
     }
 
     /**
      * @param AccountUser $accountUser
      * @param string $type
-     * @return array
+     * @return AccountUserAddress[]
      * @throws \InvalidArgumentException
      */
     public function getAccountUserAddresses(AccountUser $accountUser, $type)
     {
-        $this->assertType($type);
+        static::assertType($type);
 
-        $repository = $this->getAccountUserAddressRepository();
-        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
-            return $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
-        } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
-            return $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
+        $key = $this->getCacheKey($accountUser, $type);
+        if (array_key_exists($key, $this->cache)) {
+            return $this->cache[$key];
         }
 
-        return [];
+        $result = [];
+        $repository = $this->getAccountUserAddressRepository();
+        if ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_ANY))) {
+            $result = $repository->getAddressesByType($accountUser, $type, $this->aclHelper);
+        } elseif ($this->securityFacade->isGranted($this->getPermission($type, self::ACCOUNT_USER_ADDRESS_DEFAULT))) {
+            $result = $repository->getDefaultAddressesByType($accountUser, $type, $this->aclHelper);
+        }
+
+        $this->cache[$key] = $result;
+
+        return $result;
     }
 
     /**
      * @param string $type
      * @throws \InvalidArgumentException
      */
-    protected function assertType($type)
+    public static function assertType($type)
     {
         $supportedTypes = [self::ADDRESS_TYPE_BILLING, self::ADDRESS_TYPE_SHIPPING];
         if (!in_array($type, $supportedTypes, true)) {
@@ -179,10 +202,20 @@ class OrderAddressProvider
     protected function getPermission($type, $key)
     {
         $postfix = '';
-        if ($this->securityFacade->getLoggedUser() instanceof User) {
+        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
             $postfix = self::ADMIN_ACL_POSTFIX;
         }
 
         return $this->permissionsByType[$type][$key] . $postfix;
+    }
+
+    /**
+     * @param Account|AccountUser $object
+     * @param string $type
+     * @return string
+     */
+    protected function getCacheKey($object, $type)
+    {
+        return sprintf('%s_%s_%s', ClassUtils::getClass($object), $object->getId(), $type);
     }
 }

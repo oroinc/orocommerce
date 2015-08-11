@@ -567,7 +567,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     {
         $this->accountUser = $accountUser;
 
-        if ($accountUser->getAccount() && !$this->getAccount()) {
+        if ($accountUser && $accountUser->getAccount() && !$this->getAccount()) {
             $this->setAccount($accountUser->getAccount());
         }
 

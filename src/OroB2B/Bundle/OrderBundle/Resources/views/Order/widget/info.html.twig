@@ -28,14 +28,15 @@
             {% endif %}
             {{ UI.renderHtmlProperty('orob2b.order.account_user.label'|trans, accountUserView) }}
 
+            {% set paymentTermView = '' %}
             {% if order.paymentTerm %}
                 {% if resource_granted('VIEW', order.paymentTerm) %}
                     {% set paymentTermView = UI.renderUrl(path('orob2b_payment_term_view', {'id': order.paymentTerm.id}), order.paymentTerm.label) %}
                 {% else %}
                     {% set paymentTermView = order.paymentTerm.label|escape %}
                 {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
             {% endif %}
-            {{ UI.renderHtmlProperty('orob2b.order.payment_term.label'|trans, paymentTermView) }}
 
             {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
