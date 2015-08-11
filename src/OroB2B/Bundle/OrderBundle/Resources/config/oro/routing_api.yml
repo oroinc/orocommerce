@@ -1,7 +1,21 @@
 orob2b_order_api:
     resource: "@OroB2BOrderBundle/Controller/Api/Rest/OrderController.php"
     type:     rest
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
 
 orob2b_order_api_frontend:
     resource: "@OroB2BOrderBundle/Controller/Frontend/Api/Rest/OrderController.php"
     type:     rest
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+    options:
+        frontend: true
