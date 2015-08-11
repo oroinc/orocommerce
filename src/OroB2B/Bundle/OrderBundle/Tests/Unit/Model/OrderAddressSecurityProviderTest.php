@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Yaml\Parser;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -13,9 +14,6 @@ use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const ACCOUNT_ORDER_CLASS = 'AccountOrderClass';
-    const ACCOUNT_USER_ORDER_CLASS = 'AccountUserOrderClass';
-
     /** @var OrderAddressSecurityProvider */
     protected $provider;
 
@@ -38,8 +36,8 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new OrderAddressSecurityProvider(
             $this->securityFacade,
             $this->orderAddressProvider,
-            self::ACCOUNT_ORDER_CLASS,
-            self::ACCOUNT_USER_ORDER_CLASS
+            'AccountOrderClass',
+            'AccountUserOrderClass'
         );
     }
 
@@ -76,65 +74,44 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param bool $isGrantedViewAccount
-     * @param bool $isGrantedViewAccountUser
-     * @param bool $isGrantedUseAnyAccountUser
+     * @dataProvider permissionsDataProvider
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     *
+     * @param string $userClass
+     * @param string $addressType
+     * @param array $isGrantedClassPermission
+     * @param array|null $isGranted
+     * @param bool $hasAccountAddresses
+     * @param bool $hasAccountUserAddresses
+     * @param bool $hasEntity
      * @param bool $isAddressGranted
      * @param bool $isAccountAddressGranted
      * @param bool $isAccountUserAddressGranted
-     * @param bool $isManualEditGranted
-     * @param bool $hasAccountUserAddresses
-     * @param bool $hasAccountAddresses
-     * @param bool $hasEntity
-     *
-     * @dataProvider permissionsDataProvider
      */
     public function testIsAddressGranted(
-        $isGrantedViewAccount,
-        $isGrantedViewAccountUser,
-        $isGrantedUseAnyAccountUser,
+        $userClass,
+        $addressType,
+        array $isGrantedClassPermission,
+        $isGranted,
+        $hasAccountAddresses,
+        $hasAccountUserAddresses,
+        $hasEntity,
         $isAddressGranted,
         $isAccountAddressGranted,
-        $isAccountUserAddressGranted,
-        $isManualEditGranted = true,
-        $hasAccountUserAddresses = true,
-        $hasAccountAddresses = true,
-        $hasEntity = true
+        $isAccountUserAddressGranted
     ) {
         $this->orderAddressProvider->expects($this->any())->method('getAccountAddresses')
             ->willReturn($hasAccountAddresses);
         $this->orderAddressProvider->expects($this->any())->method('getAccountUserAddresses')
             ->willReturn($hasAccountUserAddresses);
 
+        $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
         $this->securityFacade->expects($this->atLeastOnce())->method('isGrantedClassPermission')
-            ->with($this->isType('string'), $this->isType('string'))->will(
-                $this->returnValueMap(
-                    [
-                        [
-                            'VIEW',
-                            self::ACCOUNT_ORDER_CLASS,
-                            $isGrantedViewAccount,
-                        ],
-                        [
-                            'VIEW',
-                            self::ACCOUNT_USER_ORDER_CLASS,
-                            $isGrantedViewAccountUser,
-                        ],
-                        [
-                            OrderAddressProvider::ADDRESS_SHIPPING_ACCOUNT_USER_USE_ANY,
-                            self::ACCOUNT_USER_ORDER_CLASS,
-                            $isGrantedUseAnyAccountUser,
-                        ],
-                        [
-                            OrderAddressProvider::ADDRESS_BILLING_ACCOUNT_USER_USE_ANY,
-                            self::ACCOUNT_USER_ORDER_CLASS,
-                            $isGrantedUseAnyAccountUser,
-                        ],
-                    ]
-                )
-            );
+            ->with($this->isType('string'), $this->isType('string'))
+            ->will($this->returnValueMap($isGrantedClassPermission));
+
         $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
-            ->willReturn($isManualEditGranted);
+            ->will($this->returnValueMap((array)$isGranted));
 
         $order = null;
         $account = null;
@@ -147,27 +124,15 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $isAddressGranted,
-            $this->provider->isAddressGranted($order, AddressType::TYPE_BILLING)
-        );
-        $this->assertEquals(
-            $isAddressGranted,
-            $this->provider->isAddressGranted($order, AddressType::TYPE_SHIPPING)
+            $this->provider->isAddressGranted($order, $addressType)
         );
         $this->assertEquals(
             $isAccountAddressGranted,
-            $this->provider->isAccountAddressGranted(AddressType::TYPE_BILLING, $account)
-        );
-        $this->assertEquals(
-            $isAccountAddressGranted,
-            $this->provider->isAccountAddressGranted(AddressType::TYPE_SHIPPING, $account)
+            $this->provider->isAccountAddressGranted($addressType, $account)
         );
         $this->assertEquals(
             $isAccountUserAddressGranted,
-            $this->provider->isAccountUserAddressGranted(AddressType::TYPE_BILLING, $accountUser)
-        );
-        $this->assertEquals(
-            $isAccountUserAddressGranted,
-            $this->provider->isAccountUserAddressGranted(AddressType::TYPE_SHIPPING, $accountUser)
+            $this->provider->isAccountUserAddressGranted($addressType, $accountUser)
         );
     }
 
@@ -178,177 +143,15 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function permissionsDataProvider()
     {
-        return [
-            'not granted' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-            ],
-            'view account user address granted' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-            ],
-            'use account user address granted' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-            ],
-            'account user address granted' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => true,
-            ],
-            'account address granted account user address denied' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => true,
-                'isAccountUserAddressGranted' => false,
-            ],
-            'granted' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => true,
-                'isAccountUserAddressGranted' => true,
-            ],
-            'not granted manual edit' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => false,
-            ],
-            'view account user address granted without manual permission granted' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => false,
-            ],
-            'use account user address granted without manual permission' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => false,
-            ],
-            'account user address not granted without manual permission' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => false,
-            ],
-            'account user address granted without manual permission' => [
-                'isGrantedViewAccount' => false,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => true,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => true,
-                'hasAccountAddresses' => false,
-            ],
-            'account address granted account user address granted without manual permission' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => true,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => true,
-            ],
-            'account address granted account user address denied without manual permission' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => false,
-                'isGrantedUseAnyAccountUser' => false,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => false,
-            ],
-            'denied without manual permission' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => false,
-            ],
-            'granted without manual permission with account addresses' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => true,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => false,
-                'hasAccountAddresses' => true,
-            ],
-            'granted without manual permission with account user addresses' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => true,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => true,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => true,
-                'hasAccountAddresses' => false,
-            ],
-            'denied if no account' => [
-                'isGrantedViewAccount' => true,
-                'isGrantedViewAccountUser' => true,
-                'isGrantedUseAnyAccountUser' => true,
-                'isAddressGranted' => false,
-                'isAccountAddressGranted' => false,
-                'isAccountUserAddressGranted' => false,
-                'isManualEditGranted' => false,
-                'hasAccountUserAddresses' => true,
-                'hasAccountAddresses' => true,
-                'hasEntity' => false,
-            ],
-        ];
+        $finder = new Finder();
+        $yaml = new Parser();
+        $data = [];
+
+        $finder->files()->in(__DIR__ . DIRECTORY_SEPARATOR . 'fixtures');
+        foreach ($finder as $file) {
+            $data = $data + $yaml->parse(file_get_contents($file));
+        }
+
+        return $data;
     }
 }

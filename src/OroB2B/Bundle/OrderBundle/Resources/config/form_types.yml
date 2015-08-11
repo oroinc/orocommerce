@@ -6,6 +6,7 @@ services:
     orob2b_order.form.type.order:
         class: %orob2b_order.form.type.order.class%
         arguments:
+            - @oro_security.security_facade
             - @orob2b_order.order.provider.order_address_security
         tags:
             - { name: form.type, alias: orob2b_order_type }

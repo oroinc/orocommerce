@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 
@@ -15,13 +17,20 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
     protected $provider;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
+    protected $securityFacade;
+
     protected function setUp()
     {
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->provider = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new OrderType($this->provider);
+        $this->type = new OrderType($this->securityFacade, $this->provider);
     }
 
     public function testConfigureOptions()

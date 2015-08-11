@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -32,12 +33,13 @@ class AjaxOrderController extends Controller
      * @Method({"POST"})
      * @AclAncestor("orob2b_order_update")
      *
+     * @param Request $request
      * @return JsonResponse
      */
-    public function subtotalsAction()
+    public function subtotalsAction(Request $request)
     {
         $orderClass = $this->getParameter('orob2b_order.entity.order.class');
-        $id = $this->get('request')->get('id');
+        $id = $request->get('id');
         if ($id) {
             /** @var Order $order */
             $order = $this->getDoctrine()->getManagerForClass($orderClass)->find($orderClass, $id);
@@ -48,16 +50,12 @@ class AjaxOrderController extends Controller
         $form = $this->createForm(OrderType::NAME, $order);
         $form->submit($this->get('request'));
 
-        if ($form->isValid()) {
-            $subtotals = $this->get('orob2b_order.provider.subtotals')->getSubtotals($order);
-            $subtotals = $subtotals->map(
-                function (Subtotal $subtotal) {
-                    return $subtotal->toArray();
-                }
-            )->toArray();
-        } else {
-            $subtotals = false;
-        }
+        $subtotals = $this->get('orob2b_order.provider.subtotals')->getSubtotals($order);
+        $subtotals = $subtotals->map(
+            function (Subtotal $subtotal) {
+                return $subtotal->toArray();
+            }
+        )->toArray();
 
         return new JsonResponse(['subtotals' => $subtotals]);
     }
@@ -72,38 +70,42 @@ class AjaxOrderController extends Controller
      * @ParamConverter("account", options={"id" = "accountId"})
      *
      * @param Account $account
+     * @param Request $request
      * @return JsonResponse
      */
-    public function getRelatedDataAction(Account $account)
+    public function getRelatedDataAction(Account $account, Request $request)
     {
+        $order = new Order();
+        $order->setAccount($account);
+
         /** @var AccountUser $accountUser */
         $accountUser = null;
-
-        $accountUserId = $this->get('request')->get('accountUserId');
+        $accountUserId = $request->get('accountUserId');
         if ($accountUserId) {
             $accountUserClass = $this->getParameter('orob2b_account.entity.account_user.class');
 
             $accountUser = $this->getDoctrine()
                 ->getManagerForClass($accountUserClass)
                 ->find($accountUserClass, $accountUserId);
-        }
 
-        if ($accountUser && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+            if ($accountUser
+                && $accountUser->getAccount()
+                && $accountUser->getAccount()->getId() !== $account->getId()
+            ) {
+                throw new BadRequestHttpException('AccountUser must belong to Account');
+            }
+            $order->setAccountUser($accountUser);
         }
-
-        $order = new Order();
-        $order->setAccount($account)->setAccountUser($accountUser);
 
         $paymentTerm = $this->getPaymentTermProvider()->getPaymentTerm($account);
 
         return new JsonResponse(
             [
                 'billingAddress' => $this->renderForm(
-                    $this->createPriceListForm($order, AddressType::TYPE_BILLING)->createView()
+                    $this->createAddressForm($order, AddressType::TYPE_BILLING)->createView()
                 ),
                 'shippingAddress' => $this->renderForm(
-                    $this->createPriceListForm($order, AddressType::TYPE_SHIPPING)->createView()
+                    $this->createAddressForm($order, AddressType::TYPE_SHIPPING)->createView()
                 ),
                 'paymentTerm' => $paymentTerm ? $paymentTerm->getId() : null,
             ]
@@ -115,7 +117,7 @@ class AjaxOrderController extends Controller
      * @param string $type
      * @return Form
      */
-    protected function createPriceListForm(Order $order, $type)
+    protected function createAddressForm(Order $order, $type)
     {
         return $this->createForm(
             OrderAddressType::NAME,

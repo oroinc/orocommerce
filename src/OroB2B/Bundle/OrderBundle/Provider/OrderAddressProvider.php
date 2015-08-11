@@ -7,7 +7,6 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -113,7 +112,7 @@ class OrderAddressProvider
     {
         static::assertType($type);
 
-        $key = $this->getKey($account, $type);
+        $key = $this->getCacheKey($account, $type);
         if (array_key_exists($key, $this->cache)) {
             return $this->cache[$key];
         }
@@ -141,7 +140,7 @@ class OrderAddressProvider
     {
         static::assertType($type);
 
-        $key = $this->getKey($accountUser, $type);
+        $key = $this->getCacheKey($accountUser, $type);
         if (array_key_exists($key, $this->cache)) {
             return $this->cache[$key];
         }
@@ -203,7 +202,7 @@ class OrderAddressProvider
     protected function getPermission($type, $key)
     {
         $postfix = '';
-        if ($this->securityFacade->getLoggedUser() instanceof User) {
+        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
             $postfix = self::ADMIN_ACL_POSTFIX;
         }
 
@@ -215,7 +214,7 @@ class OrderAddressProvider
      * @param string $type
      * @return string
      */
-    protected function getKey($object, $type)
+    protected function getCacheKey($object, $type)
     {
         return sprintf('%s_%s_%s', ClassUtils::getClass($object), $object->getId(), $type);
     }
