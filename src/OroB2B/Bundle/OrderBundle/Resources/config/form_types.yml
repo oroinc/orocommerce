@@ -19,6 +19,7 @@ services:
             - @oro_locale.formatter.address
             - @orob2b_order.manager.order_address
             - @orob2b_order.order.provider.order_address_security
+            - @oro_importexport.serializer
         tags:
             - { name: form.type, alias: orob2b_order_address_type }
         calls:

@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\AccountBundle\Model\ExtendAccountAddress;
 
@@ -49,6 +50,13 @@ class AccountAddress extends ExtendAccountAddress
     /**
      * @ORM\ManyToOne(targetEntity="Account", inversedBy="addresses", cascade={"persist"})
      * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $owner;
 

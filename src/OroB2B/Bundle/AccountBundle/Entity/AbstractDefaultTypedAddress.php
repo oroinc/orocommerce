@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractTypedAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
@@ -24,6 +25,13 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="system_org_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $systemOrganization;
 

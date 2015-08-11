@@ -18,6 +18,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -45,6 +46,9 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
     protected $orderAddressManager;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
+    protected $serializer;
+
     protected function setUp()
     {
         parent::setUp();
@@ -62,10 +66,15 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->serializer = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Serializer\Serializer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->formType = new OrderAddressType(
             $this->addressFormatter,
             $this->orderAddressManager,
-            $this->orderAddressSecurityProvider
+            $this->orderAddressSecurityProvider,
+            $this->serializer
         );
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
