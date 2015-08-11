@@ -14,6 +14,7 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -119,6 +120,32 @@ class OrderController extends Controller
      */
     protected function update(Order $order)
     {
+        if (!$order->getAccountUser()) {
+            $accountUser = $this->get('oro_security.security_facade')->getLoggedUser();
+            if (!$accountUser instanceof AccountUser) {
+                throw new \InvalidArgumentException('Only AccountUser can create an Order.');
+            }
+
+            $order->setAccountUser($accountUser);
+        }
+
+        if ($order->getAccount()) {
+            $paymentTerm = $this->get('orob2b_payment.provider.payment_term')->getPaymentTerm($order->getAccount());
+
+            if ($paymentTerm) {
+                $order->setPaymentTerm($paymentTerm);
+            }
+        }
+
+        //TODO: set correct owner in task BB-929
+        if (!$order->getOwner()) {
+            $user = $this->getDoctrine()->getManagerForClass('OroUserBundle:User')
+                ->getRepository('OroUserBundle:User')
+                ->findOneBy([]);
+
+            $order->setOwner($user);
+        }
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
             $this->createForm(FrontendOrderType::NAME, $order),

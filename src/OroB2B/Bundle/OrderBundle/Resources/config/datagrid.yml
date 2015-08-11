@@ -75,6 +75,9 @@ datagrid:
             update_link:
                 type: url
                 params: [ id ]
+            delete_link:
+                type: url
+                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -87,6 +90,11 @@ datagrid:
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
 
     frontend-orders-grid:
         extends: base-orders-grid
@@ -134,11 +142,15 @@ datagrid:
                 route: orob2b_order_frontend_view
             update_link:
                 route: orob2b_order_frontend_update
+            delete_link:
+                route: orob2b_api_frontend_delete_order
         actions:
             view:
                 acl_resource:  orob2b_order_frontend_view
             update:
                 acl_resource:  orob2b_order_frontend_update
+            delete:
+                acl_resource:  orob2b_order_frontend_delete
 
     orders-grid:
         extends: base-orders-grid
@@ -218,17 +230,11 @@ datagrid:
             update_link:
                 route: orob2b_order_update
             delete_link:
-                type: url
                 route: orob2b_api_delete_order
-                params: [ id ]
         actions:
             view:
                 acl_resource:  orob2b_order_view
             update:
                 acl_resource:  orob2b_order_update
             delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
                 acl_resource:  orob2b_order_delete
