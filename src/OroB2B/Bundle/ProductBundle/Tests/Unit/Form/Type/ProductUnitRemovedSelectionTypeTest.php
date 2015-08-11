@@ -20,7 +20,6 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderT
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
-
 class ProductUnitRemovedSelectTypeTest extends FormIntegrationTestCase
 {
     /**
