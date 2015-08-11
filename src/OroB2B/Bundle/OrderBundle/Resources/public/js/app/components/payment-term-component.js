@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var PaymentTermComponent;
-    var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
@@ -33,9 +32,14 @@ define(function(require) {
                 self.inputChanged = true;
             });
 
-            mediator.on('order:loaded:related-data', _.bind(this.loadedRelatedData, this));
+            mediator.on('order:loaded:related-data', this.loadedRelatedData, this);
         },
 
+        /**
+         * Set payment term value from order related data
+         *
+         * @param {Object} response
+         */
         loadedRelatedData: function(response) {
             var paymentTerm = response.paymentTerm || null;
             if (!paymentTerm || this.inputChanged) {
@@ -43,6 +47,19 @@ define(function(require) {
             }
 
             this.$input.select2('val', paymentTerm);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('order:loaded:related-data', this.loadedRelatedData, this);
+
+            PaymentTermComponent.__super__.dispose.call(this);
         }
     });
 

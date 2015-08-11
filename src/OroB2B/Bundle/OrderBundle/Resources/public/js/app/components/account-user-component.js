@@ -52,6 +52,9 @@ define(function(require) {
             this.$select.change(_.bind(this.userChanged, this));
         },
 
+        /**
+         * Load related to user data and trigger event
+         */
         userChanged: function() {
             var url = routing.generate(this.options.relatedDataRoute, {
                 accountId: this.$account.val(),
