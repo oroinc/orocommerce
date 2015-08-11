@@ -44,6 +44,12 @@
 {% block content_data %}
     {% set id = 'order-edit' %}
 
+    {% set paymentTerm %}
+        <div data-page-component-module="orob2border/js/app/components/payment-term-component">
+            {{ form_row(form.paymentTerm) }}
+        </div>
+    {% endset %}
+
     {% set billingAddress %}
         <div
             data-page-component-module="oroui/js/app/components/view-component"
@@ -108,7 +114,7 @@
                     accountUser,
                     form_row(form.poNumber),
                     form_row(form.shipUntil),
-                    form_row(form.paymentTerm)
+                    paymentTerm
                 ]
             }]
         }
