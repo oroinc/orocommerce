@@ -19,6 +19,16 @@
             'entity_label': 'orob2b.order.entity_label'|trans
         }) }}
     {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_frontend_delete_order', {'id': entity.id}),
+            'dataRedirect': path('orob2b_order_frontend_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.order.entity_label'|trans
+        }) }}
+    {% endif %}
 {% endblock navButtons %}
 
 {% block ownerLink %}
