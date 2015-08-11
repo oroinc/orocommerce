@@ -16,7 +16,10 @@
           method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
         <fieldset class="form-horizontal">
             {{ form_row(form.label, {label: 'orob2b.shoppinglist.create_new_form.input_label'|trans }) }}
-            <i>{{ 'orob2b.shoppinglist.create_new_form.comment'|trans|raw }}</i>
+            <i>
+                {{ 'orob2b.shoppinglist.create_new_form.comment'|trans }}<br/>
+                {{ 'orob2b.shoppinglist.create_new_form.comment_cancel'|trans }}
+            </i>
         </fieldset>
 
         <div class="hidden">

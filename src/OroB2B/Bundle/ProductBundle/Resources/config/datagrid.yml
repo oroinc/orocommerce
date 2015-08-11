@@ -161,6 +161,7 @@ datagrid:
             entity_pagination: true
             skip_acl_check: true
         source:
+            acl_resource: orob2b_product_view_products
             type:         orm
             query:
                 select:
