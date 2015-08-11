@@ -143,6 +143,8 @@ datagrid:
         options:
             entityHint:        quote
             entity_pagination: true
+            accountUserOwner:
+                accountUserColumn: accountUserName
         source:
             acl_resource: orob2b_sale_quote_frontend_index
             type:         orm

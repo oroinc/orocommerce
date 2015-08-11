@@ -1,15 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Acl\Voter;
+namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
-use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserOwnerInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\SecurityFacade;
 
 class AccountVoter extends AbstractEntityVoter
 {
@@ -28,7 +29,7 @@ class AccountVoter extends AbstractEntityVoter
     protected $container;
 
     /**
-     * @var Quote
+     * @var AccountOwnerInterface
      */
     protected $object;
 
@@ -44,10 +45,22 @@ class AccountVoter extends AbstractEntityVoter
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function supportsClass($class)
+    {
+        return true;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
+        if (!$object instanceof AccountUserOwnerInterface) {
+            return self::ACCESS_ABSTAIN;
+        }
+
         $this->object = $object;
 
         return parent::vote($token, $object, $attributes);
@@ -59,7 +72,7 @@ class AccountVoter extends AbstractEntityVoter
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         /* @var $securityFacade SecurityFacade */
-        $securityFacade = $this->container->get('oro_security.security_facade');
+        $securityFacade = $this->container->get('orob2b_account.security_facade');
 
         /* @var $user AccountUser */
         $user = $securityFacade->getLoggedUser();
@@ -68,13 +81,13 @@ class AccountVoter extends AbstractEntityVoter
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_BASIC, $class)
-            && $this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()
-        ) {
-            return self::ACCESS_GRANTED;
+        if ($securityFacade->isGrantedViewBasic($class)) {
+            if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
+                return self::ACCESS_GRANTED;
+            }
         }
 
-        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $class)) {
+        if ($securityFacade->isGrantedViewLocal($class)) {
             if ($user->getAccount()->getId() === $this->object->getAccount()->getId()) {
                 return self::ACCESS_GRANTED;
             }
