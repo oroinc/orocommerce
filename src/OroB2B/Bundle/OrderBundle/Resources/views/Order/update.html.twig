@@ -89,6 +89,15 @@
         } only %}
     {% endset %}
 
+    {% set accountUser %}
+        <div data-page-component-module="orob2border/js/app/components/account-user-component"
+             data-page-component-options="{{ {selectors: {
+                 account: '#' ~ form.account.vars.id
+             }}|json_encode }}">
+            {{ form_row(form.accountUser) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.general'|trans,
@@ -96,7 +105,7 @@
             'subblocks': [{
                 'data': [
                     form_row(form.account),
-                    form_row(form.accountUser),
+                    accountUser,
                     form_row(form.poNumber),
                     form_row(form.shipUntil),
                     form_row(form.paymentTerm)

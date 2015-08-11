@@ -2,3 +2,4 @@ config:
     paths:
         'orob2border/js/app/components/subtotals-component': 'bundles/orob2border/js/app/components/subtotals-component.js'
         'orob2border/js/app/views/subtotals-listener-view': 'bundles/orob2border/js/app/views/subtotals-listener-view.js'
+        'orob2border/js/app/components/account-user-component': 'bundles/orob2border/js/app/components/account-user-component.js'
