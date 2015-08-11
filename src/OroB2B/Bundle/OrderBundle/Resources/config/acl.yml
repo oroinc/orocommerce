@@ -77,3 +77,8 @@ orob2b_order_address_billing_allow_manual:
 orob2b_order_address_billing_allow_manual_backend:
     label: orob2b.order.security.permission.address_billing_allow_manual
     type: action
+
+# Can override payment term
+orob2b_order_payment_term_account_can_override:
+    label: orob2b.order.security.permission.payment_term_account_can_override
+    type: action

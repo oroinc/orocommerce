@@ -19,6 +19,14 @@ class PaymentTermTest extends EntityTestCase
         $this->assertPropertyAccessors(new PaymentTerm(), $properties);
     }
 
+    public function testToString()
+    {
+        $entity = new PaymentTerm();
+        $this->assertEmpty((string)$entity);
+        $entity->setLabel('test');
+        $this->assertEquals('test', (string)$entity);
+    }
+
     /**
      * @dataProvider relationsDataProvider
      *

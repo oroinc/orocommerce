@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
@@ -159,9 +158,9 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['shipping', 'orob2b_order_address_shipping_account_use_any', new AccountUser()],
-            ['shipping', 'orob2b_order_address_shipping_account_use_any_backend', new User()],
+            ['shipping', 'orob2b_order_address_shipping_account_use_any_backend', new \stdClass()],
             ['billing', 'orob2b_order_address_billing_account_use_any', new AccountUser()],
-            ['billing', 'orob2b_order_address_billing_account_use_any_backend', new User()],
+            ['billing', 'orob2b_order_address_billing_account_use_any_backend', new \stdClass()],
         ];
     }
 
@@ -325,7 +324,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 null,
                 [],
-                new User()
+                new \stdClass()
             ],
             [
                 'shipping',
@@ -334,7 +333,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
-                new User()
+                new \stdClass()
             ],
             [
                 'shipping',
@@ -344,7 +343,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
-                new User()
+                new \stdClass()
             ],
             [
                 'billing',
@@ -354,7 +353,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 null,
                 [],
-                new User()
+                new \stdClass()
             ],
             [
                 'billing',
@@ -363,7 +362,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getAddressesByType',
                 [new AccountUserAddress()],
-                new User()
+                new \stdClass()
             ],
             [
                 'billing',
@@ -373,7 +372,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'getDefaultAddressesByType',
                 [new AccountUserAddress()],
-                new User()
+                new \stdClass()
             ]
         ];
     }
