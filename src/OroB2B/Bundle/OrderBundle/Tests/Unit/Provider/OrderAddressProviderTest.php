@@ -96,15 +96,16 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getLoggedUser')
             ->will($this->returnValue($loggedUser));
 
-        $this->securityFacade->expects($this->once())
+        $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
-            ->with($expectedPermission)
-            ->will($this->returnValue(false));
-
-        $this->securityFacade->expects($this->once())
-            ->method('isGrantedClassPermission')
-            ->with('VIEW', $this->accountAddressClass)
-            ->will($this->returnValue(false));
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [$expectedPermission, null, false],
+                        ['VIEW;entity:' . $this->accountAddressClass, null, false],
+                    ]
+                )
+            );
 
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->never())
@@ -134,10 +135,7 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->with($expectedPermission)
-            ->will($this->returnValue(true));
-
-        $this->securityFacade->expects($this->never())
-            ->method('isGrantedClassPermission');
+            ->willReturn(true);
 
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->once())
@@ -179,15 +177,16 @@ class OrderAddressProviderTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $addresses = [new AccountAddress()];
 
-        $this->securityFacade->expects($this->once())
+        $this->securityFacade->expects($this->exactly(2))
             ->method('isGranted')
-            ->with($expectedPermission)
-            ->will($this->returnValue(false));
-
-        $this->securityFacade->expects($this->once())
-            ->method('isGrantedClassPermission')
-            ->with('VIEW', $this->accountAddressClass)
-            ->will($this->returnValue(true));
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [$expectedPermission, null, false],
+                        ['VIEW;entity:' . $this->accountAddressClass, null, true],
+                    ]
+                )
+            );
 
         $repository = $this->assertAccountAddressRepositoryCall();
         $repository->expects($this->never())
