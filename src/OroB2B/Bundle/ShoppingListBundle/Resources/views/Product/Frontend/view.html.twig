@@ -19,15 +19,13 @@
         {{ form_rest(form) }}
     </div>
 
-    <div class="btn-group">
+    <div class="btn-group" data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
         {% set commonOptions = {
             dataUrl: 'orob2b_shopping_list_frontend_add_product',
             dataUrlOptions: {
                 productId: product.id
             },
-            dataAttributes: {
-                'page-component-module': 'orob2bshoppinglist/js/app/components/add-product-from-view-component'
-            }
+            dataAttributes: {}
         } %}
         {% set options = {
             new: commonOptions,
