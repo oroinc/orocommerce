@@ -50,6 +50,7 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains($product->getSku(), $result->getContent());
+        $this->assertContains($product->getDescription(), $result->getContent());
     }
 
     /**
