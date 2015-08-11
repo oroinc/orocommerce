@@ -75,3 +75,6 @@ orob2b:
                 success: Line item has been added
             controller:
                 saved.message: Line Item Saved Successfully
+            widget:
+                cancel: Cancel
+                save: Save

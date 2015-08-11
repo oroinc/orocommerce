@@ -45,10 +45,10 @@ define(function(require) {
         onShoppingListChange: function(e) {
             var value = e.target.value;
 
-            if (value === '') {
-                this.shoppingListLabelSelector.parent('div').show();
+            if (value == '') {
+                this.shoppingListLabelSelector.parent('div').removeClass('hidden');
             } else {
-                this.shoppingListLabelSelector.parent('div').hide();
+                this.shoppingListLabelSelector.parent('div').addClass('hidden');
             }
         }
     });
