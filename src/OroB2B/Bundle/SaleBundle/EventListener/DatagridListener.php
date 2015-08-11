@@ -66,6 +66,9 @@ class DatagridListener
 
         /* @var $user AccountUser */
         $user = $this->securityFacade->getLoggedUser();
+        if (!$user instanceof AccountUser) {
+            return;
+        }
 
         $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
 
