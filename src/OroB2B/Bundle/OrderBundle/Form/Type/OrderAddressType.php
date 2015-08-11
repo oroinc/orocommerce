@@ -71,7 +71,7 @@ class OrderAddressType extends AbstractType
             'choices' => $this->getChoices($addresses),
             'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
             'attr' => [
-                'addresses' => json_encode($this->getPlainData($addresses)),
+                'data-addresses' => json_encode($this->getPlainData($addresses)),
             ],
         ];
 

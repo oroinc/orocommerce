@@ -3,27 +3,17 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
-
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ConstraintViolation;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
-use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
@@ -31,6 +21,13 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\ConstraintViolation;
 
 class OrderAddressTypeTest extends FormIntegrationTestCase
 {
@@ -125,6 +122,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $defaultData,
         array $formErrors = []
     ) {
+        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
@@ -229,6 +227,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         array $formErrors = [],
         array $groupedAddresses = []
     ) {
+        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
             ->willReturn($groupedAddresses);
         $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
@@ -347,6 +346,18 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
             );
         }
         $this->assertEquals($expectedData, $form->getData());
+
+        $this->assertTrue($form->has('accountAddress'));
+        $this->assertTrue($form->get('accountAddress')->getConfig()->hasOption('attr'));
+        $this->assertArrayHasKey('data-addresses', $form->get('accountAddress')->getConfig()->getOption('attr'));
+        $this->assertInternalType(
+            'string',
+            $form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses']
+        );
+        $this->assertInternalType(
+            'array',
+            json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
+        );
     }
 
     public function testFinishView()
