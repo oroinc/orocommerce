@@ -19,7 +19,6 @@ services:
         arguments:
             - @orob2b_order.order.provider.order_address_security
             - @oro_security.security_facade
-            - @doctrine
             - @orob2b_payment.provider.payment_term
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
