@@ -8,6 +8,7 @@ services:
         arguments:
             - @oro_security.security_facade
             - @orob2b_order.order.provider.order_address_security
+            - @orob2b_payment.provider.payment_term
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:

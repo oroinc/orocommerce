@@ -97,7 +97,12 @@ class AjaxOrderController extends Controller
             $order->setAccountUser($accountUser);
         }
 
-        $paymentTerm = $this->getPaymentTermProvider()->getPaymentTerm($account);
+        $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        $accountGroupPaymentTerm = null;
+        if ($account->getGroup()) {
+            $accountGroupPaymentTerm = $this->getPaymentTermProvider()
+                ->getAccountGroupPaymentTerm($account->getGroup());
+        }
 
         return new JsonResponse(
             [
@@ -107,7 +112,8 @@ class AjaxOrderController extends Controller
                 'shippingAddress' => $this->renderForm(
                     $this->createAddressForm($order, AddressType::TYPE_SHIPPING)->createView()
                 ),
-                'paymentTerm' => $paymentTerm ? $paymentTerm->getId() : null,
+                'accountPaymentTerm' => $accountPaymentTerm ? $accountPaymentTerm->getId() : null,
+                'accountGroupPaymentTerm' => $accountGroupPaymentTerm ? $accountGroupPaymentTerm->getId() : null,
             ]
         );
     }

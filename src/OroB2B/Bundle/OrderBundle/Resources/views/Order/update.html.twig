@@ -139,7 +139,12 @@
 
     {% if form.paymentTerm is defined %}
         {% set paymentTerm %}
-            <div data-page-component-module="orob2border/js/app/components/payment-term-component">
+            <div data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ {
+                     view: 'orob2border/js/app/views/payment-term-view',
+                     selectionTemplate: include('OroB2BOrderBundle:PaymentTerm:Autocomplete/selection.html.twig')
+                 }|json_encode }}"
+                 data-layout="separate">
                 {{ form_row(form.paymentTerm) }}
             </div>
         {% endset %}
