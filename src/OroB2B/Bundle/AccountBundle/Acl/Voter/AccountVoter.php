@@ -49,7 +49,7 @@ class AccountVoter extends AbstractEntityVoter
      */
     public function supportsClass($class)
     {
-        return is_a($class, 'OroB2B\\Bundle\\AccountBundle\\Entity\\AccountOwnerAwareInterface', true);
+        return is_a($class, 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', true);
     }
 
     /**
