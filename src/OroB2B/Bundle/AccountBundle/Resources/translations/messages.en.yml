@@ -278,4 +278,4 @@ orob2b.account:
             product_configuration_label: Product Catalog
             catalog_configuration_label: Categories
             visible.label: Visible
-            not_visible.label: Not visible
+            hidden.label: Not visible

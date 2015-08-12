@@ -10,7 +10,7 @@ class CatalogVisibilityType extends AbstractType
 {
     const NAME = 'orob2b_account_catalog_default_visibility';
     const VISIBILITY_VISIBLE = 'visible';
-    const VISIBILITY_NOT_VISIBLE = 'not_visible';
+    const VISIBILITY_HIDDEN = 'hidden';
 
     /**
      * {@inheritdoc}
@@ -21,7 +21,7 @@ class CatalogVisibilityType extends AbstractType
             [
                 'choices' => [
                     self::VISIBILITY_VISIBLE => 'orob2b.account.catalog.visibility.visible.label',
-                    self::VISIBILITY_NOT_VISIBLE => 'orob2b.account.catalog.visibility.not_visible.label',
+                    self::VISIBILITY_HIDDEN => 'orob2b.account.catalog.visibility.hidden.label',
                 ],
             ]
         );
