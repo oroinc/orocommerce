@@ -3,10 +3,10 @@
 define(function(require) {
     'use strict';
 
-    var AddProductComponent,
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        _ = require('underscore');
+    var AddProductComponent;
+    var _ = require('underscore');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     AddProductComponent = BaseComponent.extend({
         /**
@@ -45,7 +45,7 @@ define(function(require) {
         onShoppingListChange: function(e) {
             var value = e.target.value;
 
-            if (value == '') {
+            if (value === '') {
                 this.shoppingListLabelSelector.parent('div').removeClass('hidden');
             } else {
                 this.shoppingListLabelSelector.parent('div').addClass('hidden');

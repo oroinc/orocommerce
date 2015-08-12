@@ -6,12 +6,7 @@
             gridName: 'frontend-products-grid',
             actionName: 'addproducts',
     },
-    dataAttributes: {
-        'page-component-module': 'orob2bshoppinglist/js/app/components/add-products-button',
-        'page-component-options': {
-            'redirect': path('orob2b_shopping_list_frontend_index'),
-        } | json_encode
-    }
+    dataAttributes: {}
 } %}
 {% set options = {
     new: commonOptions,
@@ -20,5 +15,9 @@
     shoppingLists: shoppingLists,
     currentShoppingList: currentShoppingList
 } %}
-
-{{ buttons.createAddToShoppingListButton(options) }}
+<div class="mass-action-controls"
+     data-page-component-module="orob2bshoppinglist/js/app/components/add-products-button-component"
+     data-page-component-options="{{ {'redirect': path('orob2b_shopping_list_frontend_index')} | json_encode }}"
+        >
+    {{ buttons.createAddToShoppingListButton(options) }}
+</div>
