@@ -6,13 +6,15 @@ use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountExtension extends \Twig_Extension
 {
+    const NAME = 'account_extension';
+
     /**
      * @var AccountUserProvider
      */
     protected $securityProvider;
 
     /**
-     * @param AccountUserProvider
+     * @param AccountUserProvider $securityProvider
      */
     public function __construct(AccountUserProvider $securityProvider)
     {
@@ -43,6 +45,6 @@ class AccountExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'account_extension';
+        return self::NAME;
     }
 }
