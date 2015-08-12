@@ -62,7 +62,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'category_visibility' => [
-                            'value' => CatalogVisibilityType::VISIBILITY_VISIBLE
+                            'value' => CatalogVisibilityType::VISIBILITY_VISIBLE,
+                            'scope' => 'app'
                         ]
                     ]
                 ]
