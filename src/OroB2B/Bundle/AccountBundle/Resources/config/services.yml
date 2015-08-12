@@ -9,6 +9,9 @@ parameters:
     orob2b_account.entity.account_user_role.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserRole
     orob2b_account.entity.audit.class: OroB2B\Bundle\AccountBundle\Entity\Audit
     orob2b_account.entity.audit_field.class: OroB2B\Bundle\AccountBundle\Entity\AuditField
+    orob2b_account.entity.category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility
+    orob2b_account.entity.account_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility
+    orob2b_account.entity.account_group_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -34,6 +37,7 @@ parameters:
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
+    orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -212,6 +216,16 @@ services:
         class: %orob2b_account.event_listener.datagrid.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.websites-grid, method: onBuildBeforeWebsites }
+
+    orob2b_account.event_listener.form_view:
+        class: %orob2b_account.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 
     orob2b_account.acl.voter.account_user_role:
         class: %orob2b_account.acl.voter.account_user_role.class%
