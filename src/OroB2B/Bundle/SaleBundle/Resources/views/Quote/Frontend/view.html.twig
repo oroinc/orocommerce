@@ -17,7 +17,7 @@
         {% set formCreateOrderAction = path('orob2b_sale_quote_frontend_create_order', { 'id': entity.id }) %}
         <form id="{{ formCreateOrder.vars.id }}" name="{{ formCreateOrder.vars.name }}" action="{{ formCreateOrderAction }}" method="post">
             {{ form_widget(formCreateOrder) }}
-            <button type="submit" class="no-hash">
+            <button type="submit" class="no-hash btn">
                 <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.sale.btn.create_order'|trans }}
             </button>
         </form>

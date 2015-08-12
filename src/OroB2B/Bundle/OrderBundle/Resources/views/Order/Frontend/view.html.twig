@@ -5,6 +5,8 @@
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
+        'indexPath': path('orob2b_order_frontend_index'),
+        'indexLabel': 'orob2b.frontend.order.entity_plural_label'|trans,
         'entityTitle': entity.__toString|default('N/A'|trans)
     } %}
     {{ parent() }}
