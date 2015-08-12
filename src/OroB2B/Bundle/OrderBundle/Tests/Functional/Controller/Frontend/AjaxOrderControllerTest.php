@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
-use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+
+use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolation
@@ -32,13 +33,10 @@ class AjaxOrderControllerTest extends WebTestCase
 
     public function testNewOrderSubtotals()
     {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_order_frontend_create')
-        );
-        $result  = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
+        $result = $this->client->getResponse();
 
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertSubtotals($crawler);
     }
 
@@ -50,9 +48,9 @@ class AjaxOrderControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_order_frontend_update', ['id' => $order->getId()])
         );
-        $result  = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $result = $this->client->getResponse();
 
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertSubtotals($crawler, $order->getId());
     }
 

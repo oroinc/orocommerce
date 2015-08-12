@@ -15,6 +15,9 @@ use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
  */
 class OrderControllerTest extends WebTestCase
 {
+    const ORDER_PO_NUMBER = 'PO-NUMBER';
+    const ORDER_PO_NUMBER_UPDATED = 'PO-NUMBER-UP';
+
     /**
      * @var DateTimeFormatter
      */
@@ -37,6 +40,7 @@ class OrderControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_index'));
         $result = $this->client->getResponse();
+
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals('Orders', $crawler->filter('h1.oro-subtitle')->html());
     }
@@ -54,12 +58,12 @@ class OrderControllerTest extends WebTestCase
         $this->assertOrderSave(
             $crawler,
             [
-                'poNumber' => 'PO-NUMBER',
+                'poNumber' => self::ORDER_PO_NUMBER,
                 'shipUntil' => $date->format('Y-m-d'),
                 'customerNotes' => 'Customer Notes'
             ],
             [
-                'PO-NUMBER',
+                self::ORDER_PO_NUMBER,
                 'Customer Notes',
                 $this->dateFormatter->formatDate($date)
             ]
@@ -76,7 +80,7 @@ class OrderControllerTest extends WebTestCase
         $response = $this->requestFrontendGrid(
             'frontend-orders-grid',
             [
-                'orders-grid[_filter][poNumber][value]' => 'PO-NUMBER'
+                'orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER
             ]
         );
 
@@ -94,11 +98,11 @@ class OrderControllerTest extends WebTestCase
         $this->assertOrderSave(
             $crawler,
             [
-                'poNumber' => 'PO-NUMBER-UP'
+                'poNumber' => self::ORDER_PO_NUMBER_UPDATED
             ],
             [
                 'Customer Notes',
-                'PO-NUMBER-UP'
+                self::ORDER_PO_NUMBER_UPDATED
             ]
         );
 
@@ -112,14 +116,11 @@ class OrderControllerTest extends WebTestCase
      */
     public function testView($id)
     {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_order_frontend_view', ['id' => $id])
-        );
-
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_view', ['id' => $id]));
         $result = $this->client->getResponse();
+
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertViewPage($crawler, ['Customer Notes', 'PO-NUMBER-UP']);
+        $this->assertViewPage($crawler, ['Customer Notes', self::ORDER_PO_NUMBER_UPDATED]);
     }
 
     /**
