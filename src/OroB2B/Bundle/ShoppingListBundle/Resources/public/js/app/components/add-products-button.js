@@ -3,61 +3,71 @@
 define(function(require) {
     'use strict';
 
-    var $ = require('jquery'),
-        _ = require('underscore'),
-        mediator = require('oroui/js/mediator'),
-        DialogWidget = require('oro/dialog-widget'),
-        routing = require('routing'),
-        messenger = require('oroui/js/messenger'),
-        options = {
-            successMessage: 'orob2b.shoppinglist.menu.add_products.success.message',
-            errorMessage: 'orob2b.shoppinglist.menu.add_products.error.message',
-            redirect: '/',
-            intention: {
-                create_new: 'new'
-            }
-        };
-
-    mediator.on('frontend:shoppinglist:add-widget-requested-response', showForm, this);
-
-    function onClick(e) {
-        e.preventDefault();
-
-        if ($(e.currentTarget).data('intention') === options.intention.create_new) {
-            mediator.trigger('frontend:shoppinglist:add-widget-requested');
-        } else {
-            mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: $(this).data('shoppingListId')});
+    var AddProductsButton;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
+    var messenger = require('oroui/js/messenger');
+    var DialogWidget = require('oro/dialog-widget');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var options = {
+        successMessage: 'orob2b.shoppinglist.menu.add_products.success.message',
+        errorMessage: 'orob2b.shoppinglist.menu.add_products.error.message',
+        redirect: '/',
+        intention: {
+            create_new: 'new'
         }
-    }
-
-    function showForm(selections) {
-        if (!selections.cnt) {
-            messenger.notificationFlashMessage('warning', selections.reason);
-            return;
-        }
-        var dialog = new DialogWidget({
-            'url': routing.generate('orob2b_shopping_list_frontend_create'),
-            'title': 'Create new Shopping List',
-            'regionEnabled': false,
-            'incrementalPosition': false,
-            'dialogOptions': {
-                'modal': true,
-                'resizable': false,
-                'width': '460',
-                'autoResize': true
-            }
-        });
-        dialog.render();
-        dialog.on('formSave', _.bind(function(response) {
-            mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: response});
-            $('.btn[data-intention="current"]').data('shoppingListId', response);
-        }, this));
-    }
-
-    return function(additionalOptions) {
-        _.extend(options, additionalOptions || {});
-        var button;
-        button = options._sourceElement;
-        button.click($.proxy(onClick, null));
     };
+    AddProductsButton = BaseComponent.extend({
+        initialize: function(additionalOptions) {
+            _.extend(options, additionalOptions || {});
+            mediator.on('frontend:shoppinglist:add-widget-requested-response', this.showForm, this);
+            options._sourceElement.find('.grid-control').click($.proxy(this.onClick, null));
+        },
+        onClick: function(e) {
+            e.preventDefault();
+
+            if ($(e.currentTarget).data('intention') === options.intention.create_new) {
+                mediator.trigger('frontend:shoppinglist:add-widget-requested');
+            } else {
+                mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: $(this).data('id')});
+            }
+        },
+        showForm: function(selections) {
+            if (!selections.cnt) {
+                messenger.notificationFlashMessage('warning', selections.reason);
+                return;
+            }
+            var dialog = new DialogWidget({
+                'url': routing.generate('orob2b_shopping_list_frontend_create'),
+                'title': 'Create new Shopping List',
+                'regionEnabled': false,
+                'incrementalPosition': false,
+                'dialogOptions': {
+                    'modal': true,
+                    'resizable': false,
+                    'width': '460',
+                    'autoResize': true
+                }
+            });
+            dialog.render();
+            dialog.on('formSave', _.bind(function(response) {
+                mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: response});
+                $('.btn[data-intention="current"]').data('id', response);
+            }, this));
+        },
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+            
+            this.options._sourceElement.find('.grid-control').off();
+            mediator.off('frontend:shoppinglist:add-widget-requested-response', this.showForm, this);
+            AddProductsButton.__super__.dispose.call(this);
+        }
+    });
+
+    return AddProductsButton;
 });
+
