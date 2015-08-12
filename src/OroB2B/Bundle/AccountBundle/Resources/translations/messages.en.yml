@@ -14,6 +14,7 @@ orob2b.account:
     form.choose: 'Choose an account...'
     form.choose_parent: 'Choose Parent...'
     address_book.label: 'Address Book'
+    owner.label: 'Owner'
 
     address:
         add: 'Add Address'
@@ -224,6 +225,7 @@ orob2b.account:
             account.title: 'Account'
             account_users.title: 'Account Users'
         fields:
+            default_account_owner.label: 'Default Account Owner'
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'

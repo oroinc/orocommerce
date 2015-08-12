@@ -86,7 +86,7 @@ class Account extends ExtendAccount
      * @var Collection
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountAddress",
-     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
      */

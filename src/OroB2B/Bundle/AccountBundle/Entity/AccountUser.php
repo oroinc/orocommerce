@@ -168,7 +168,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress",
-     *      mappedBy="owner",
+     *      mappedBy="frontendOwner",
      *      cascade={"all"},
      *      orphanRemoval=true
      * )
@@ -273,6 +273,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
             $this->account = new Account();
             $this->account->setOrganization($this->organization);
             $this->account->setName(sprintf('%s %s', $this->firstName, $this->lastName));
+
+            if ($this->getOwner()) {
+                $this->account->setOwner($this->getOwner());
+            }
         }
     }
 

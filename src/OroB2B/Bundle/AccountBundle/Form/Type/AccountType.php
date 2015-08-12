@@ -76,6 +76,7 @@ class AccountType extends AbstractType
         $resolver->setDefaults([
             'cascade_validation' => true,
             'intention'          => 'account',
+            'ownership_disabled' => true
         ]);
     }
 
