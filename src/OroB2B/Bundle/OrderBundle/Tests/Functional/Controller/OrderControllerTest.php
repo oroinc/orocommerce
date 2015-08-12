@@ -108,7 +108,7 @@ class OrderControllerTest extends WebTestCase
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_order_type[owner]' => $owner->getId(),
+                'orob2b_order_order[owner]' => $owner->getId(),
             ]
         );
 

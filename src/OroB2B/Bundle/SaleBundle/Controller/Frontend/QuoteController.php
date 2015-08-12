@@ -64,19 +64,21 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/create_order/{id}", name="orob2b_sale_frontend_quote_create_order", requirements={"id"="\d+"})
+     * @Route("/create_order/{id}", name="orob2b_sale_quote_frontend_create_order", requirements={"id"="\d+"})
      * @Acl(
-     *      id="orob2b_sale_frontend_quote_create_order",
+     *      id="orob2b_sale_quote_frontend_create_order",
      *      type="entity",
-     *      class="OroB2BSaleBundle:Quote",
-     *      permission="VIEW"
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="CREATE",
+     *      group_name="commerce"
      * )
      * @Template("OroB2BSaleBundle:Quote/Frontend:view.html.twig")
+     *
      * @param Request $request
      * @param Quote $quote
-     * @return RedirectResponse
+     * @return array|RedirectResponse
      */
-    public function createQuoteAction(Request $request, Quote $quote)
+    public function createOrderAction(Request $request, Quote $quote)
     {
         return $this->createOrder($request, $quote);
     }
@@ -92,7 +94,7 @@ class QuoteController extends Controller
         $handler = new QuoteCreateOrderHandler(
             $form,
             $request,
-            $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList'),
+            $this->getDoctrine()->getManagerForClass('OroB2BSaleBundle:Quote'),
             $this->getUser()
         );
 
@@ -102,13 +104,13 @@ class QuoteController extends Controller
                 $form,
                 function (Quote $quote) {
                     return [
-                        'route'         => 'orob2b_sale_frontend_quote_view',
+                        'route'         => 'orob2b_sale_quote_frontend_view',
                         'parameters'    => ['id' => $quote->getId()],
                     ];
                 },
                 function () use ($handler) {
                     return [
-                        'route'         => 'orob2b_order_frontend_order_view',
+                        'route'         => 'orob2b_order_frontend_view',
                         'parameters'    => ['id' => $handler->getOrder()->getId()],
                     ];
                 },

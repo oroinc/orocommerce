@@ -52,11 +52,3 @@ services:
         class: %orob2b_order.formatter.order_product_item.class%
         arguments:
             - @translator
-
-    oro_form.autocomplete.account_user.search_handler:
-        class: %oro_form.autocomplete.account_user.search_handler.class%
-        abstract: true
-        calls:
-            - [initSearchIndexer, ["@oro_search.index", %oro_search.entities_config%]]
-            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
-            - [setAclHelper,["@oro_security.acl_helper"]]

@@ -8,7 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
-use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
 
 class OrderType extends AbstractType
 {
@@ -38,16 +37,12 @@ class OrderType extends AbstractType
                 'label'     => 'orob2b.order.owner.label',
                 'required'  => true,
             ])
-            ->add('accountUser', AccountUserSelectType::NAME, [
-                'label'     => 'orob2b.order.account_user.label',
-                'required'  => false,
-                'configs'   => [
-                    'component' => 'account-user-autocomplete',
-                    'delimiter' => SearchHandler::DELIMITER,
-                ],
-            ])
             ->add('account', AccountSelectType::NAME, [
                 'label'     => 'orob2b.order.account.label',
+                'required'  => false,
+            ])
+            ->add('accountUser', AccountUserSelectType::NAME, [
+                'label'     => 'orob2b.order.account_user.label',
                 'required'  => false,
             ])
             ->add(

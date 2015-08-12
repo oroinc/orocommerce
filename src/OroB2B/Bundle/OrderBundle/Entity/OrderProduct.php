@@ -79,7 +79,7 @@ class OrderProduct implements ProductHolderInterface
      */
     public function __construct()
     {
-        $this->orderProductItems   = new ArrayCollection();
+        $this->orderProductItems = new ArrayCollection();
     }
 
     /**

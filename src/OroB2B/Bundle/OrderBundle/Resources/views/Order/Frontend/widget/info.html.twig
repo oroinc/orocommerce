@@ -6,7 +6,7 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.frontend.order.id.label'|trans, entity.id) }}
             {{ UI.renderProperty('orob2b.frontend.order.identifier.label'|trans, entity.identifier) }}
-            {% if class_granted_mask('VIEW_LOCAL', entity) and class_granted_permission('VIEW', entity.accountUser) %}
+            {% if account_granted_view_account_user(entity) %}
                 {{ UI.renderHtmlProperty('orob2b.frontend.order.account_user.label'|trans, entity.accountUser) }}
             {% endif %}
         </div>

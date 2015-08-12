@@ -1,5 +1,3 @@
 config:
     paths:
         'orob2border/js/app/components/order-orderproductitem-selection-component': 'bundles/orob2border/js/app/components/order-orderproductitem-selection-component.js'
-        'orob2border/js/app/components/order-order-selection-component': 'bundles/orob2border/js/app/components/order-order-selection-component.js'
-        'oro/select2-account-user-autocomplete-component': 'bundles/orob2border/js/app/components/order-select2-autocomplete-accountuser-component.js'

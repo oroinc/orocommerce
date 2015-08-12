@@ -11,6 +11,8 @@ datagrid:
                 select:
                     - order1.id
                     - order1.identifier
+                    - orderAccount.name as accountName
+                    - orderAccountUser.username as accountUserName
                     - order1.createdAt
                     - order1.updatedAt
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
@@ -19,6 +21,8 @@ datagrid:
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
+                        - { join: order1.account, alias: orderAccount }
+                        - { join: order1.accountUser, alias: orderAccountUser }
         columns:
             id:
                 label:         orob2b.order.id.label
@@ -26,6 +30,10 @@ datagrid:
                 label:         orob2b.order.identifier.label
             owner:
                 label:         orob2b.order.owner.label
+            accountName:
+                label:         orob2b.order.account.label
+            accountUserName:
+                label:         orob2b.order.account_user.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -54,6 +62,10 @@ datagrid:
                     data_name: order1.identifier
                 owner:
                     data_name: owner
+                accountName:
+                    data_name: accountName
+                accountUserName:
+                    data_name: accountUserName
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -71,6 +83,21 @@ datagrid:
                 owner:
                     type:      string
                     data_name: owner
+                accountName:
+                    type:      entity
+                    data_name: accountName
+                    options:
+                        field_options:
+                            property:   name
+                            class:      %orob2b_account.entity.account.class%
+                            multiple:   false
+                accountUserName:
+                    type:      entity
+                    data_name: accountUserName
+                    options:
+                        field_options:
+                            class:      %orob2b_account.entity.account_user.class%
+                            multiple:   false
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
@@ -103,22 +130,30 @@ datagrid:
         options:
             entityHint:        order
             entity_pagination: true
+            accountUserOwner:
+                accountUserColumn: accountUserName
         source:
-            acl_resource: orob2b_order_frontend_order_view
+            acl_resource: orob2b_order_frontend_index
             type:         orm
             query:
                 select:
                     - order1.id
                     - order1.identifier
+                    - orderAccountUser.username as accountUserName
                     - order1.createdAt
                     - order1.updatedAt
                 from:
                     - { table: %orob2b_order.entity.order.class%, alias: order1 }
+                join:
+                    left:
+                        - { join: order1.accountUser, alias: orderAccountUser }
         columns:
             id:
                 label:         orob2b.frontend.order.id.label
             identifier:
                 label:         orob2b.frontend.order.identifier.label
+            accountUserName:
+                label:         orob2b.frontend.order.account_user.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -129,7 +164,7 @@ datagrid:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_order_frontend_order_view
+                route: orob2b_order_frontend_view
                 params: [ id ]
         sorters:
             columns:
@@ -137,6 +172,8 @@ datagrid:
                     data_name: order1.id
                 identifier:
                     data_name: order1.identifier
+                accountUserName:
+                    data_name: accountUserName
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -151,6 +188,13 @@ datagrid:
                 identifier:
                     type:      string
                     data_name: order1.identifier
+                accountUserName:
+                    type:      entity
+                    data_name: order1.accountUser
+                    options:
+                        field_options:
+                            class:      %orob2b_account.entity.account_user.class%
+                            multiple:   false
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
@@ -163,5 +207,4 @@ datagrid:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_order_frontend_order_view
                 rowAction:     true
