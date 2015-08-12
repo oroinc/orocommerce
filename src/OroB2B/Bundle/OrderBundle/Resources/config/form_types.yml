@@ -1,5 +1,6 @@
 parameters:
     orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
+    orob2b_order.form.type.frontend.order.class: OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType
     orob2b_order.form.type.order_address.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType
 
 services:
@@ -11,6 +12,17 @@ services:
             - @orob2b_payment.provider.payment_term
         tags:
             - { name: form.type, alias: orob2b_order_type }
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
+
+    orob2b_order.form.type.frontend.order:
+        class: %orob2b_order.form.type.frontend.order.class%
+        arguments:
+            - @orob2b_order.order.provider.order_address_security
+            - @oro_security.security_facade
+            - @orob2b_payment.provider.payment_term
+        tags:
+            - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
 

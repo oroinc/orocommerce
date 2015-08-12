@@ -11,6 +11,7 @@ orob2b:
         organization.label: Organization
         currency.label: Currency
         customer_notes.label: Customer Notes
+        customer_notes.frontend.label: Notes
         po_number.label: PO Number
         ship_until.label: Do Not Ship Later Than
         subtotal.label: Subtotal
