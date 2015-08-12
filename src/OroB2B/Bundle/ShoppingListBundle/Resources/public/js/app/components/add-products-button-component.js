@@ -14,7 +14,7 @@ define(function(require) {
     var options = {
         successMessage: 'orob2b.shoppinglist.menu.add_products.success.message',
         errorMessage: 'orob2b.shoppinglist.menu.add_products.error.message',
-        redirect: '/',
+        redirect: 'orob2b_product_frontend_product_index',
         intention: {
             create_new: 'new'
         }
