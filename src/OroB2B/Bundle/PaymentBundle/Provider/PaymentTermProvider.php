@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Provider;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 
@@ -36,14 +37,31 @@ class PaymentTermProvider
      */
     public function getPaymentTerm(Account $account)
     {
-        $repository = $this->getPaymentTermRepository();
-        $paymentTerm = $repository->getOnePaymentTermByAccount($account);
+        $paymentTerm = $this->getAccountPaymentTerm($account);
 
         if (!$paymentTerm && $account->getGroup()) {
-            $paymentTerm = $repository->getOnePaymentTermByAccountGroup($account->getGroup());
+            $paymentTerm = $this->getAccountGroupPaymentTerm($account->getGroup());
         }
 
         return $paymentTerm;
+    }
+
+    /**
+     * @param Account $account
+     * @return PaymentTerm|null
+     */
+    public function getAccountPaymentTerm(Account $account)
+    {
+        return $this->getPaymentTermRepository()->getOnePaymentTermByAccount($account);
+    }
+
+    /**
+     * @param AccountGroup $account
+     * @return PaymentTerm|null
+     */
+    public function getAccountGroupPaymentTerm(AccountGroup $accountGroup)
+    {
+        return $this->getPaymentTermRepository()->getOnePaymentTermByAccountGroup($accountGroup);
     }
 
     /**
