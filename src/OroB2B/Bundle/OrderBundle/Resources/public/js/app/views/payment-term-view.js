@@ -72,7 +72,9 @@ define(function(require) {
 
         configureInput: function() {
             var self = this;
-            this.$input.data('pageComponentOptions').configs.formatSelection = function(data) {
+
+            var configs = this.$input.data('pageComponentOptions').configs;
+            configs.selection_template = configs.result_template = function(data) {
                 data.isAccountDefault = data.id === self.accountPaymentTerm;
                 data.isAccountGroupDefault = data.id === self.accountGroupPaymentTerm;
 
