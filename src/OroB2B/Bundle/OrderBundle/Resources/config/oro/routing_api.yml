@@ -5,3 +5,5 @@ orob2b_order_api:
 orob2b_order_api_frontend:
     resource: "@OroB2BOrderBundle/Controller/Frontend/Api/Rest/OrderController.php"
     type:     rest
+    options:
+        frontend: true
