@@ -9,7 +9,7 @@ define(function(require) {
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var messenger = require('oroui/js/messenger');
-    var DialogWidget = require('oro/dialog-widget');
+    var ShoppingListWidgetComponent = require('orob2bshoppinglist/js/app/components/shopping-list-widget-component');
     var BaseComponent = require('oroui/js/app/components/base/component');
     var options = {
         successMessage: 'orob2b.shoppinglist.menu.add_products.success.message',
@@ -39,18 +39,7 @@ define(function(require) {
                 messenger.notificationFlashMessage('warning', selections.reason);
                 return;
             }
-            var dialog = new DialogWidget({
-                'url': routing.generate('orob2b_shopping_list_frontend_create'),
-                'title': 'Create new Shopping List',
-                'regionEnabled': false,
-                'incrementalPosition': false,
-                'dialogOptions': {
-                    'modal': true,
-                    'resizable': false,
-                    'width': '460',
-                    'autoResize': true
-                }
-            });
+            var dialog = ShoppingListWidgetComponent.createDialog();
             dialog.render();
             dialog.on('formSave', _.bind(function(response) {
                 mediator.trigger('frontend:shoppinglist:products-add', {shoppingListId: response});
@@ -62,6 +51,7 @@ define(function(require) {
                 return;
             }
 
+            ShoppingListWidgetComponent.dispose();
             options._sourceElement.find('.grid-control').off();
             mediator.off('frontend:shoppinglist:add-widget-requested-response', this.showForm, this);
             AddProductsButtonComponent.__super__.dispose.call(this);

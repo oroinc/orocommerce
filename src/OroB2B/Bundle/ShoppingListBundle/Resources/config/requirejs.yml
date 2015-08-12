@@ -4,3 +4,4 @@ config:
         'orob2bshoppinglist/js/app/components/add-product-component': 'bundles/orob2bshoppinglist/js/app/components/add-product-component.js'
         'orob2bshoppinglist/js/app/components/add-products-button-component': 'bundles/orob2bshoppinglist/js/app/components/add-products-button-component.js'
         'orob2bshoppinglist/js/app/components/add-product-from-view-component': 'bundles/orob2bshoppinglist/js/app/components/add-product-from-view-component.js'
+        'orob2bshoppinglist/js/app/components/shopping-list-widget-component': 'bundles/orob2bshoppinglist/js/app/components/shopping-list-widget-component.js'

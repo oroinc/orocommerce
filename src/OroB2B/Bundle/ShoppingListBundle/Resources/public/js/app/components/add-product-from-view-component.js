@@ -5,7 +5,7 @@ define(function(require) {
 
     var AddProductFromViewComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var DialogWidget = require('oro/dialog-widget');
+    var ShoppingListWidgetComponent = require('orob2bshoppinglist/js/app/components/shopping-list-widget-component');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
     var Error = require('oroui/js/error');
@@ -62,18 +62,7 @@ define(function(require) {
 
         createNewShoppingList: function(url, urlOptions, formData) {
             var component = this;
-            var dialog = new DialogWidget({
-                'url': routing.generate('orob2b_shopping_list_frontend_create'),
-                'title': 'Create new Shopping List',
-                'regionEnabled': false,
-                'incrementalPosition': false,
-                'dialogOptions': {
-                    'modal': true,
-                    'resizable': false,
-                    'width': '460',
-                    'autoResize': true
-                }
-            });
+            var dialog = ShoppingListWidgetComponent.createDialog();
             dialog.render();
             dialog.on('formSave', _.bind(function(response) {
                 urlOptions.shoppingListId = response;
@@ -109,6 +98,7 @@ define(function(require) {
             }
 
             options._sourceElement.off();
+            ShoppingListWidgetComponent.dispose();
 
             AddProductFromViewComponent.__super__.dispose.call(this);
         }
