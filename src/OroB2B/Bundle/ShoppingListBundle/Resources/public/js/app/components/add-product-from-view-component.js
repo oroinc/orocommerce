@@ -48,7 +48,7 @@ define(function(require) {
 
             if (form.data('validator')) {
                 validator = form.validate();
-                $.each(component.formElements(form), function () {
+                $.each(component.formElements(form), function() {
                     valid = validator.element(this) && valid;
                 });
             }

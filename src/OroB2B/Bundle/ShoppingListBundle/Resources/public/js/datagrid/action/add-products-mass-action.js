@@ -32,10 +32,10 @@ define([
             this.run();
         },
         _checkSelectionState: function() {
-            var selectionState = this.datagrid.getSelectionState(),
-                models = selectionState.selectedModels,
-                length = 0,
-                reason;
+            var selectionState = this.datagrid.getSelectionState();
+            var models = selectionState.selectedModels;
+            var length = 0;
+            var reason;
 
             for (var key in models) {
                 if (models.hasOwnProperty(key)) {
