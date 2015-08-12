@@ -12,8 +12,9 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserOwnerInterface;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
@@ -48,7 +49,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Order extends ExtendOrder implements OrganizationAwareInterface
+class Order extends ExtendOrder implements OrganizationAwareInterface, AccountUserOwnerInterface
 {
     /**
      * @ORM\Id

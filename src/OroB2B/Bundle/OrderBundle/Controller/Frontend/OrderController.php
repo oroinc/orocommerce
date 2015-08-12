@@ -15,10 +15,16 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 class OrderController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_order_frontend_order_index")
+     * @Route("/", name="orob2b_order_frontend_index")
      * @Template("OroB2BOrderBundle:Order/Frontend:index.html.twig")
      *
-     * @AclAncestor("orob2b_order_frontend_order_view")
+     * @Acl(
+     *      id="orob2b_order_frontend_index",
+     *      type="entity",
+     *      class="OroB2BOrderBundle:Order",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      *
      * @return array
      */
@@ -30,14 +36,14 @@ class OrderController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_order_frontend_order_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="orob2b_order_frontend_view", requirements={"id"="\d+"})
      * @Template("OroB2BOrderBundle:Order/Frontend:view.html.twig")
      *
-     * Acl(
-     *      id="orob2b_order_frontend_order_view",
+     * @Acl(
+     *      id="orob2b_order_frontend_view",
      *      type="entity",
      *      class="OroB2BOrderBundle:Order",
-     *      permission="VIEW",
+     *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
      *
@@ -52,10 +58,10 @@ class OrderController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_order_frontend_order_info", requirements={"id"="\d+"})
+     * @Route("/info/{id}", name="orob2b_order_frontend_info", requirements={"id"="\d+"})
      * @Template("OroB2BOrderBundle:Order/Frontend/widget:info.html.twig")
      *
-     * @AclAncestor("orob2b_order_frontend_order_view")
+     * @AclAncestor("orob2b_order_frontend_view")
      *
      * @param Order $entity
      * @return array

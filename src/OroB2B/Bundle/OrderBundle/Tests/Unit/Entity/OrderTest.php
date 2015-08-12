@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -41,7 +41,7 @@ class OrderTest extends AbstractTest
 
         $this->assertSame('', (string)$order);
 
-        $order->setSku(123);
+        $this->setProperty($order, 'id', 123);
 
         $this->assertSame('123', (string)$order);
     }

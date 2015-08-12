@@ -177,7 +177,7 @@ class LoadOrderDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Product[]
+     * @return Product[]
      */
     protected function getProducts(ObjectManager $manager)
     {
@@ -192,7 +192,7 @@ class LoadOrderDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Quote[]
+     * @return Quote[]
      */
     protected function getQuotes(ObjectManager $manager)
     {

@@ -51,14 +51,8 @@
                 'title': '',
                 'data': [
                     form_row(form.owner),
-                    form_row(
-                        form.accountUser,
-                        {attr: (attr is defined ? attr : [])|merge({class: 'order-order-accountuser-select'})}
-                    ),
-                    form_row(
-                        form.account,
-                        {attr: (attr is defined ? attr : [])|merge({class: 'order-order-account-select'})}
-                    )
+                    form_row(form.account),
+                    form_row(form.accountUser)
                 ]
             }]
         },
@@ -84,7 +78,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="order-order-form" data-page-component-module="orob2border/js/app/components/order-order-selection-component">
+    <div class="order-order-form" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
         {{ parent() }}
     </div>
 {% endblock content_data %}
