@@ -81,7 +81,6 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     public function load(ObjectManager $manager)
     {
         foreach ($this->items as $item) {
-
             /* @var $owner AccountUser */
             $owner = $this->getReference($item['owner']);
 

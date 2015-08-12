@@ -13,6 +13,8 @@ use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class OrderControllerTest extends WebTestCase
 {
@@ -27,6 +29,50 @@ class OrderControllerTest extends WebTestCase
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
         ]);
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider viewProvider
+     */
+    public function testView(array $inputData, array $expectedData)
+    {
+        $this->initClient([], array_merge(
+            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
+            ['HTTP_X-CSRF-Header' => 1]
+        ));
+
+        /* @var $order Order */
+        $order = $this->getReference($inputData['identifier']);
+
+        $crawler = $this->client->request('GET', $this->getUrl(
+            'orob2b_order_frontend_view',
+            ['id' => $order->getId()]
+        ));
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $controls = $crawler->filter('.control-group');
+
+        $this->assertEquals(count($expectedData['columns']), count($controls));
+
+        /* @var $translator TranslatorInterface */
+        $translator = $this->getContainer()->get('translator');
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+        foreach ($controls as $key => $control) {
+            /* @var $control \DOMElement */
+            $column = $expectedData['columns'][$key];
+
+            $label = $translator->trans($column['label']);
+            $property = (string)$accessor->getValue($order, $column['property']) ?: $translator->trans('N/A');
+
+            $this->assertContains($label, $control->textContent);
+            $this->assertContains($property, $control->textContent);
+        }
     }
 
     /**
@@ -73,50 +119,6 @@ class OrderControllerTest extends WebTestCase
                 $this->assertArrayHasKey($key, $data[$i]);
                 $this->assertEquals($value, $data[$i][$key]);
             }
-        }
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider viewProvider
-     */
-    public function testView(array $inputData, array $expectedData)
-    {
-        $this->initClient([], array_merge(
-            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
-
-        /* @var $order Order */
-        $order = $this->getReference($inputData['identifier']);
-
-        $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_order_frontend_view',
-            ['id' => $order->getId()]
-        ));
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $controls = $crawler->filter('.control-group');
-
-        $this->assertEquals(count($expectedData['columns']), count($controls));
-
-        /* @var $translator TranslatorInterface */
-        $translator = $this->getContainer()->get('translator');
-
-        $accessor = PropertyAccess::createPropertyAccessor();
-        foreach ($controls as $key => $control) {
-            /* @var $control \DOMElement */
-            $column = $expectedData['columns'][$key];
-
-            $label = $translator->trans($column['label']);
-            $property = (string)$accessor->getValue($order, $column['property']) ?: $translator->trans('N/A');
-
-            $this->assertContains($label, $control->textContent);
-            $this->assertContains($property, $control->textContent);
         }
     }
 

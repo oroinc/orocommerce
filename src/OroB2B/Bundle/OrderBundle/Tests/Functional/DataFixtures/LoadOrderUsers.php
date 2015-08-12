@@ -74,34 +74,14 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
     /**
      * @var array
      */
-    protected $accounts = [
-        [
-            'name' => self::ACCOUNT1,
-        ],
-        [
-            'name' => self::ACCOUNT2,
-        ],
-    ];
-
-    /**
-     * @var array
-     */
     protected $accountUsers = [
         [
-            'email'     => self::ACCOUNT1_USER1,
+            'email'     => self::ACCOUNT2_USER1,
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
-            'password'  => self::ACCOUNT1_USER1,
-            'account'   => self::ACCOUNT1,
+            'password'  => self::ACCOUNT2_USER1,
+            'account'   => self::ACCOUNT2,
             'role'      => self::ROLE1,
-        ],
-        [
-            'email'     => self::ACCOUNT1_USER2,
-            'firstname' => 'User2FN',
-            'lastname'  => 'User2LN',
-            'password'  => self::ACCOUNT1_USER2,
-            'account'   => self::ACCOUNT1,
-            'role'      => self::ROLE2,
         ],
         [
             'email'     => self::ACCOUNT1_USER3,
@@ -112,12 +92,32 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
             'role'      => self::ROLE3,
         ],
         [
-            'email'     => self::ACCOUNT2_USER1,
+            'email'     => self::ACCOUNT1_USER2,
+            'firstname' => 'User2FN',
+            'lastname'  => 'User2LN',
+            'password'  => self::ACCOUNT1_USER2,
+            'account'   => self::ACCOUNT1,
+            'role'      => self::ROLE2,
+        ],
+        [
+            'email'     => self::ACCOUNT1_USER1,
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
-            'password'  => self::ACCOUNT2_USER1,
-            'account'   => self::ACCOUNT2,
+            'password'  => self::ACCOUNT1_USER1,
+            'account'   => self::ACCOUNT1,
             'role'      => self::ROLE1,
+        ],
+    ];
+
+    /**
+     * @var array
+     */
+    protected $accounts = [
+        [
+            'name' => self::ACCOUNT1,
+        ],
+        [
+            'name' => self::ACCOUNT2,
         ],
     ];
 
@@ -188,6 +188,41 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
+    protected function loadUsers(ObjectManager $manager)
+    {
+        /* @var $userManager UserManager */
+        $userManager = $this->container->get('oro_user.manager');
+
+        $defaultUser = $this->getUser($manager);
+
+        $businessUnit = $defaultUser->getOwner();
+        $organization = $defaultUser->getOrganization();
+
+        foreach ($this->users as $item) {
+            /* @var $user User */
+            $user = $userManager->createUser();
+
+            $user
+                ->setFirstName($item['firstname'])
+                ->setLastName($item['lastname'])
+                ->setEmail($item['email'])
+                ->setBusinessUnits($defaultUser->getBusinessUnits())
+                ->setOwner($businessUnit)
+                ->setOrganization($organization)
+                ->addOrganization($organization)
+                ->setUsername($item['username'])
+                ->setPlainPassword($item['password'])
+                ->setEnabled(true)
+            ;
+            $userManager->updateUser($user);
+
+            $this->setReference($user->getUsername(), $user);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
     protected function loadRoles(ObjectManager $manager)
     {
         /* @var $aclManager AclManager */
@@ -215,6 +250,41 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
+    protected function loadAccountUsers(ObjectManager $manager)
+    {
+        /* @var $userManager AccountUserManager */
+        $userManager = $this->container->get('orob2b_account_user.manager');
+
+        $defaultUser = $this->getUser($manager);
+        $organization = $defaultUser->getOrganization();
+
+        foreach ($this->accountUsers as $item) {
+            /* @var $accountUser AccountUser */
+            $accountUser = $userManager->createUser();
+
+            $accountUser
+                ->setFirstName($item['firstname'])
+                ->setLastName($item['lastname'])
+                ->setEmail($item['email'])
+                ->setAccount($this->getReference($item['account']))
+                ->setConfirmed(true)
+                ->setOrganization($organization)
+                ->addOrganization($organization)
+                ->addRole($this->getReference($item['role']))
+                ->setSalt('')
+                ->setPlainPassword($item['password'])
+                ->setEnabled(true)
+            ;
+
+            $userManager->updateUser($accountUser);
+
+            $this->setReference($item['email'], $accountUser);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
     protected function loadAccounts(ObjectManager $manager)
     {
         $defaultUser = $this->getUser($manager);
@@ -235,76 +305,6 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
     }
 
     /**
-     * @param ObjectManager $manager
-     */
-    protected function loadAccountUsers(ObjectManager $manager)
-    {
-        /* @var $userManager AccountUserManager */
-        $userManager = $this->container->get('orob2b_account_user.manager');
-
-        $defaultUser = $this->getUser($manager);
-        $organization = $defaultUser->getOrganization();
-
-        foreach ($this->accountUsers as $item) {
-            /* @var $accountUser AccountUser */
-            $accountUser = $userManager->createUser();
-
-            $accountUser
-                ->setEmail($item['email'])
-                ->setAccount($this->getReference($item['account']))
-                ->setFirstName($item['firstname'])
-                ->setLastName($item['lastname'])
-                ->setConfirmed(true)
-                ->setOrganization($organization)
-                ->addOrganization($organization)
-                ->addRole($this->getReference($item['role']))
-                ->setSalt('')
-                ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
-
-            $userManager->updateUser($accountUser);
-
-            $this->setReference($item['email'], $accountUser);
-        }
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function loadUsers(ObjectManager $manager)
-    {
-        /* @var $userManager UserManager */
-        $userManager = $this->container->get('oro_user.manager');
-
-        $defaultUser = $this->getUser($manager);
-
-        $businessUnit = $defaultUser->getOwner();
-        $organization = $defaultUser->getOrganization();
-
-        foreach ($this->users as $item) {
-            /* @var $user User */
-            $user = $userManager->createUser();
-
-            $user
-                ->setEmail($item['email'])
-                ->setFirstName($item['firstname'])
-                ->setLastName($item['lastname'])
-                ->setBusinessUnits($defaultUser->getBusinessUnits())
-                ->setOwner($businessUnit)
-                ->setOrganization($organization)
-                ->addOrganization($organization)
-                ->setUsername($item['username'])
-                ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
-            $userManager->updateUser($user);
-
-            $this->setReference($user->getUsername(), $user);
-        }
-    }
-
-    /**
      * @param AclManager $aclManager
      * @param AccountUserRole $role
      * @param string $className
@@ -321,6 +321,7 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
             foreach ($aclManager->getAllExtensions() as $extension) {
                 if ($extension instanceof EntityAclExtension) {
                     $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+
                     $oid = $aclManager->getOid('entity:' . $className);
                     $builder = $aclManager->getMaskBuilder($oid);
                     $mask = $builder->reset()->get();
