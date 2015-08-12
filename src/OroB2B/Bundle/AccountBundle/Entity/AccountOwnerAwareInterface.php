@@ -2,18 +2,15 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
 interface AccountOwnerAwareInterface
 {
     /**
-     * @return Account
+     * @return \OroB2B\Bundle\AccountBundle\Entity\Account
      */
     public function getAccount();
 
     /**
-     * @return AccountUser
+     * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser
      */
     public function getAccountUser();
 }
