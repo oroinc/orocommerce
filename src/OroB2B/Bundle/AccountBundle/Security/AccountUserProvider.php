@@ -7,14 +7,14 @@ use Symfony\Component\Security\Core\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\SecurityFacade as BaseSecurityFacade;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserProvider
 {
     /**
-     * @var BaseSecurityFacade
+     * @var SecurityFacade
      */
     protected $securityFacade;
 
@@ -29,10 +29,10 @@ class AccountUserProvider
     protected $accountUserClass;
 
     /**
-     * @param BaseSecurityFacade $securityFacade
+     * @param SecurityFacade $securityFacade
      * @param AclManager $aclManager
      */
-    public function __construct(BaseSecurityFacade $securityFacade, AclManager $aclManager)
+    public function __construct(SecurityFacade $securityFacade, AclManager $aclManager)
     {
         $this->securityFacade = $securityFacade;
         $this->aclManager = $aclManager;
