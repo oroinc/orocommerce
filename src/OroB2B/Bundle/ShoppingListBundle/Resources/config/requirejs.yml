@@ -2,5 +2,5 @@ config:
     paths:
         'oro/datagrid/action/add-products-mass-action': 'bundles/orob2bshoppinglist/js/datagrid/action/add-products-mass-action.js'
         'orob2bshoppinglist/js/app/components/add-product-component': 'bundles/orob2bshoppinglist/js/app/components/add-product-component.js'
-        'orob2bshoppinglist/js/app/components/add-products-button': 'bundles/orob2bshoppinglist/js/app/components/add-products-button.js'
+        'orob2bshoppinglist/js/app/components/add-products-button-component': 'bundles/orob2bshoppinglist/js/app/components/add-products-button-component.js'
         'orob2bshoppinglist/js/app/components/add-product-from-view-component': 'bundles/orob2bshoppinglist/js/app/components/add-product-from-view-component.js'

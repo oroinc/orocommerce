@@ -3,7 +3,7 @@
 define(function(require) {
     'use strict';
 
-    var AddProductsButton;
+    var AddProductsButtonComponent;
     var $ = require('jquery');
     var _ = require('underscore');
     var routing = require('routing');
@@ -19,7 +19,7 @@ define(function(require) {
             create_new: 'new'
         }
     };
-    AddProductsButton = BaseComponent.extend({
+    AddProductsButtonComponent = BaseComponent.extend({
         initialize: function(additionalOptions) {
             _.extend(options, additionalOptions || {});
             mediator.on('frontend:shoppinglist:add-widget-requested-response', this.showForm, this);
@@ -61,13 +61,13 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
-            
-            this.options._sourceElement.find('.grid-control').off();
+
+            options._sourceElement.find('.grid-control').off();
             mediator.off('frontend:shoppinglist:add-widget-requested-response', this.showForm, this);
-            AddProductsButton.__super__.dispose.call(this);
+            AddProductsButtonComponent.__super__.dispose.call(this);
         }
     });
 
-    return AddProductsButton;
+    return AddProductsButtonComponent;
 });
 
