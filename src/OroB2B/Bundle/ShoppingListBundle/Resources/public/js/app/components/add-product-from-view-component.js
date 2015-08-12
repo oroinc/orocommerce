@@ -108,6 +108,8 @@ define(function(require) {
                 return;
             }
 
+            options._sourceElement.off();
+
             AddProductFromViewComponent.__super__.dispose.call(this);
         }
     });
