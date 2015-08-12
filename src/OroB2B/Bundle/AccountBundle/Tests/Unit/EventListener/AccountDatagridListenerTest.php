@@ -10,7 +10,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener;
-use OroB2B\Bundle\AccountBundle\SecurityFacade;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 /**
  * @dbIsolation
@@ -28,9 +28,9 @@ class AccountDatagridListenerTest extends WebTestCase
     protected $entityClass = 'TestEntity';
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccountUserProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $securityProvider;
 
     /**
      * @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -47,7 +47,7 @@ class AccountDatagridListenerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->securityFacade = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\SecurityFacade')
+        $this->securityProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
             ->disableOriginalConstructor()
             ->getMock()
         ;
@@ -59,7 +59,7 @@ class AccountDatagridListenerTest extends WebTestCase
         ;
 
         $this->listener = new AccountDatagridListener(
-            $this->securityFacade
+            $this->securityProvider
         );
     }
 
@@ -68,41 +68,23 @@ class AccountDatagridListenerTest extends WebTestCase
      * @param array $expectedData
      * @dataProvider buildBeforeFrontendQuotesProvider
      */
-    public function testBuildBeforeFrontendQuotes(array $inputData, array $expectedData)
+    public function testBuildBeforeFrontendItems(array $inputData, array $expectedData)
     {
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('isGrantedViewLocal')
             ->with($this->entityClass)
             ->willReturn($inputData['grantedViewLocal'])
         ;
 
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('isGrantedViewAccountUser')
             ->with($this->entityClass)
             ->willReturn($inputData['grantedViewAccountUser'])
         ;
 
-        /* @var $account Account|\PHPUnit_Framework_MockObject_MockObject */
-        $account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
-        $account->expects($this->any())
-            ->method('getId')
-            ->willReturn($inputData['accountId'])
-        ;
-
-        /* @var $user AccountUser|\PHPUnit_Framework_MockObject_MockObject */
-        $user = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
-        $user->expects($this->any())
-            ->method('getAccount')
-            ->willReturn($account)
-        ;
-        $user->expects($this->any())
-            ->method('getId')
-            ->willReturn($inputData['accountUserId'])
-        ;
-
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('getLoggedUser')
-            ->willReturn($user)
+            ->willReturn($inputData['user'])
         ;
 
         $datagridConfig = DatagridConfiguration::create($inputData['config']);
@@ -120,11 +102,21 @@ class AccountDatagridListenerTest extends WebTestCase
     public function buildBeforeFrontendQuotesProvider()
     {
         return [
+            '!AccountUser' => [
+                'input' => [
+                    'user' => null,
+                    'config' => $this->getConfig(),
+                    'grantedViewLocal' => false,
+                    'grantedViewAccountUser' => false,
+                ],
+                'expected' => [
+                    'config' => $this->getConfig(),
+                ],
+            ],
             'empty root options' => [
                 'input' => [
-                    'config'        => $this->getConfig(false, null, null, false),
-                    'accountId'     => null,
-                    'accountUserId' => null,
+                    'user' => $this->getAccountUser(),
+                    'config' => $this->getConfig(false, null, null, false),
                     'grantedViewLocal' => false,
                     'grantedViewAccountUser' => false,
                 ],
@@ -134,9 +126,8 @@ class AccountDatagridListenerTest extends WebTestCase
             ],
             'empty [source][query][from]' => [
                 'input' => [
-                    'config'        => $this->getConfig(false, null, null, true, false),
-                    'accountId'     => null,
-                    'accountUserId' => null,
+                    'user' => $this->getAccountUser(),
+                    'config' => $this->getConfig(false, null, null, true, false),
                     'grantedViewLocal' => false,
                     'grantedViewAccountUser' => false,
                 ],
@@ -146,9 +137,8 @@ class AccountDatagridListenerTest extends WebTestCase
             ],
             '!AccountUser::VIEW_LOCAL and !Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'config'        => $this->getConfig(),
-                    'accountId'     => null,
-                    'accountUserId' => null,
+                    'user' => $this->getAccountUser(),
+                    'config' => $this->getConfig(),
                     'grantedViewLocal' => false,
                     'grantedViewAccountUser' => false,
                 ],
@@ -158,9 +148,8 @@ class AccountDatagridListenerTest extends WebTestCase
             ],
             'AccountUser::VIEW_LOCAL and !Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'config'        => $this->getConfig(),
-                    'accountId'     => null,
-                    'accountUserId' => null,
+                    'user' => $this->getAccountUser(),
+                    'config' => $this->getConfig(),
                     'grantedViewLocal' => false,
                     'grantedViewAccountUser' => false,
                 ],
@@ -170,9 +159,8 @@ class AccountDatagridListenerTest extends WebTestCase
             ],
             '!AccountUser::VIEW_LOCAL and Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'config'        => $this->getConfig(),
-                    'accountId'     => 2,
-                    'accountUserId' => 3,
+                    'user' => $this->getAccountUser(3, 2),
+                    'config' => $this->getConfig(),
                     'grantedViewLocal' => true,
                     'grantedViewAccountUser' => false,
                 ],
@@ -182,9 +170,8 @@ class AccountDatagridListenerTest extends WebTestCase
             ],
             'AccountUser::VIEW_LOCAL and Entity::VIEW_LOCAL' => [
                 'input' => [
-                    'config'        => $this->getConfig(true),
-                    'accountId'     => 3,
-                    'accountUserId' => 4,
+                    'user' => $this->getAccountUser(4, 3),
+                    'config' => $this->getConfig(true),
                     'grantedViewLocal' => true,
                     'grantedViewAccountUser' => true,
                 ],
@@ -193,6 +180,34 @@ class AccountDatagridListenerTest extends WebTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param int $id
+     * @param int $accountId
+     * @return AccountUser|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getAccountUser($id = null, $accountId = null)
+    {
+        /* @var $account Account|\PHPUnit_Framework_MockObject_MockObject */
+        $account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
+        $account->expects($this->any())
+            ->method('getId')
+            ->willReturn($accountId)
+        ;
+
+        /* @var $user AccountUser|\PHPUnit_Framework_MockObject_MockObject */
+        $user = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
+        $user->expects($this->any())
+            ->method('getAccount')
+            ->willReturn($account)
+        ;
+        $user->expects($this->any())
+            ->method('getId')
+            ->willReturn($id)
+        ;
+
+        return $user;
     }
 
     /**

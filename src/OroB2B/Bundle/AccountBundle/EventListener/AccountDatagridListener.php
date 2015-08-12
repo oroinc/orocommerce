@@ -7,12 +7,12 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\SecurityFacade;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountDatagridListener
 {
-    const ROOT_OPTIONS          = '[options][accountUserOwner]';
-    const ACCOUNT_USER_COLUMN   = '[options][accountUserOwner][accountUserColumn]';
+    const ROOT_OPTIONS = '[options][accountUserOwner]';
+    const ACCOUNT_USER_COLUMN = '[options][accountUserOwner][accountUserColumn]';
 
     /**
      * @var string
@@ -25,16 +25,16 @@ class AccountDatagridListener
     protected $entityAlias;
 
     /**
-     * @var SecurityFacade
+     * @var AccountUserProvider
      */
-    protected $securityFacade;
+    protected $securityProvider;
 
     /**
-     * @param SecurityFacade $securityFacade
+     * @param AccountUserProvider $securityProvider
      */
-    public function __construct(SecurityFacade $securityFacade)
+    public function __construct(AccountUserProvider $securityProvider)
     {
-        $this->securityFacade = $securityFacade;
+        $this->securityProvider = $securityProvider;
     }
 
     /**
@@ -42,9 +42,13 @@ class AccountDatagridListener
      */
     public function onBuildBeforeFrontendItems(BuildBefore $event)
     {
+        if (!$this->getUser() instanceof AccountUser) {
+            return;
+        }
+
         $config = $event->getConfig();
 
-        if (null === ($config->offsetGetByPath(self::ROOT_OPTIONS))) {
+        if (null === $config->offsetGetByPath(self::ROOT_OPTIONS)) {
             return;
         }
 
@@ -52,8 +56,10 @@ class AccountDatagridListener
             return;
         }
 
-        $this->entityClass = $from[0]['table'];
-        $this->entityAlias = $from[0]['alias'];
+        $fromFirst = reset($from);
+
+        $this->entityClass = $fromFirst['table'];
+        $this->entityAlias = $fromFirst['alias'];
 
         if ($this->permissionShowAllAccountItems()) {
             $this->showAllAccountItems($config);
@@ -73,8 +79,7 @@ class AccountDatagridListener
     {
         $config->offsetSetByPath(Builder::DATASOURCE_SKIP_ACL_CHECK, true);
 
-        /* @var $user AccountUser */
-        $user = $this->securityFacade->getLoggedUser();
+        $user = $this->getUser();
 
         $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
 
@@ -102,11 +107,19 @@ class AccountDatagridListener
     }
 
     /**
+     * @return AccountUser
+     */
+    protected function getUser()
+    {
+        return $this->securityProvider->getLoggedUser();
+    }
+
+    /**
      * @return boolean
      */
     protected function permissionShowAllAccountItems()
     {
-        return $this->securityFacade->isGrantedViewLocal($this->entityClass);
+        return $this->securityProvider->isGrantedViewLocal($this->entityClass);
     }
 
     /**
@@ -114,6 +127,6 @@ class AccountDatagridListener
      */
     protected function permissionShowAccountUserColumn()
     {
-        return $this->securityFacade->isGrantedViewAccountUser($this->entityClass);
+        return $this->securityProvider->isGrantedViewAccountUser($this->entityClass);
     }
 }

@@ -1,5 +1,5 @@
 parameters:
-    orob2b_account.security_facade.class: OroB2B\Bundle\AccountBundle\SecurityFacade
+    orob2b_account.security.account_user_provider.class: OroB2B\Bundle\AccountBundle\Security\AccountUserProvider
 
     orob2b_account.entity.account.class: OroB2B\Bundle\AccountBundle\Entity\Account
     orob2b_account.entity.account_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountAddress
@@ -37,15 +37,15 @@ parameters:
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    #TWig
-    orob2b_account.twig.security_extension.class: OroB2B\Bundle\AccountBundle\Twig\SecurityExtension
+    #Twig
+    orob2b_account.twig.account_extension.class: OroB2B\Bundle\AccountBundle\Twig\AccountExtension
     #Voters
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
 
 services:
-    orob2b_account.security_facade:
-        class: %orob2b_account.security_facade.class%
+    orob2b_account.security.account_user_provider:
+        class: %orob2b_account.security.account_user_provider.class%
         arguments:
             - @oro_security.security_facade
             - @oro_security.acl.manager
@@ -63,7 +63,7 @@ services:
     orob2b_account.event_listener.account_datagrid:
         class: %orob2b_account.event_listener.account_datagrid.class%
         arguments:
-            - @orob2b_account.security_facade
+            - @orob2b_account.security.account_user_provider
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
 
@@ -247,8 +247,8 @@ services:
             - @doctrine.orm.entity_manager
 
     orob2b_account.twig.security_extension:
-        class: %orob2b_account.twig.security_extension.class%
+        class: %orob2b_account.twig.account_extension.class%
         arguments:
-            - @orob2b_account.security_facade
+            - @orob2b_account.security.account_user_provider
         tags:
             - { name: twig.extension }

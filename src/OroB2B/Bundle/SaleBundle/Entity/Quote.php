@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserOwnerInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -47,7 +47,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *      }
  * )
  */
-class Quote extends ExtendQuote implements AccountUserOwnerInterface
+class Quote extends ExtendQuote implements AccountOwnerAwareInterface
 {
     /**
      * @var int

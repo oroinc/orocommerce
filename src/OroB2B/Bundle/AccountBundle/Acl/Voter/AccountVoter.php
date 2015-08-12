@@ -8,9 +8,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserOwnerInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\SecurityFacade;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountVoter extends AbstractEntityVoter
 {
@@ -29,7 +29,7 @@ class AccountVoter extends AbstractEntityVoter
     protected $container;
 
     /**
-     * @var AccountOwnerInterface
+     * @var AccountOwnerAwareInterface
      */
     protected $object;
 
@@ -49,7 +49,7 @@ class AccountVoter extends AbstractEntityVoter
      */
     public function supportsClass($class)
     {
-        return true;
+        return is_a($class, 'OroB2B\\Bundle\\AccountBundle\\Entity\\AccountOwnerAwareInterface', true);
     }
 
     /**
@@ -57,10 +57,6 @@ class AccountVoter extends AbstractEntityVoter
      */
     public function vote(TokenInterface $token, $object, array $attributes)
     {
-        if (!$object instanceof AccountUserOwnerInterface) {
-            return self::ACCESS_ABSTAIN;
-        }
-
         $this->object = $object;
 
         return parent::vote($token, $object, $attributes);
@@ -71,23 +67,23 @@ class AccountVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        /* @var $securityFacade SecurityFacade */
-        $securityFacade = $this->container->get('orob2b_account.security_facade');
+        /* @var $securityProvider AccountUserProvider */
+        $securityProvider = $this->container->get('orob2b_account.security.account_user_provider');
 
         /* @var $user AccountUser */
-        $user = $securityFacade->getLoggedUser();
+        $user = $securityProvider->getLoggedUser();
 
         if (!$user instanceof AccountUser) {
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($securityFacade->isGrantedViewBasic($class)) {
+        if ($securityProvider->isGrantedViewBasic($class)) {
             if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
                 return self::ACCESS_GRANTED;
             }
         }
 
-        if ($securityFacade->isGrantedViewLocal($class)) {
+        if ($securityProvider->isGrantedViewLocal($class)) {
             if ($user->getAccount()->getId() === $this->object->getAccount()->getId()) {
                 return self::ACCESS_GRANTED;
             }

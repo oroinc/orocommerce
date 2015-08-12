@@ -9,9 +9,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserOwnerInterface;
-use OroB2B\Bundle\AccountBundle\SecurityFacade;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,9 +26,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccountUserProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $securityProvider;
 
     /**
      * {@inheritdoc}
@@ -39,7 +39,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\SecurityFacade')
+        $this->securityProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -47,16 +47,22 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->expects($this->any())
             ->method('get')
-            ->with('orob2b_account.security_facade')
-            ->willReturn($this->securityFacade)
+            ->with('orob2b_account.security.account_user_provider')
+            ->willReturn($this->securityProvider)
         ;
 
         $this->voter = new AccountVoter($this->doctrineHelper, $container);
     }
 
-    public function testSupportsClass()
+    /**
+     * @param string $class
+     * @param bool $supports
+     *
+     * @dataProvider supportsClassProvider
+     */
+    public function testSupportsClass($class, $supports)
     {
-        $this->assertTrue($this->voter->supportsClass('stdClass'));
+        $this->assertEquals($supports, $this->voter->supportsClass($class));
     }
 
     /**
@@ -92,18 +98,18 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->with($object, false)
             ->willReturn($inputData['objectId']);
 
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('getLoggedUser')
             ->willReturn($inputData['user'])
         ;
 
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('isGrantedViewBasic')
             ->with($class)
             ->willReturn($inputData['grantedViewBasic'])
         ;
 
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('isGrantedViewLocal')
             ->with($class)
             ->willReturn($inputData['grantedViewLocal'])
@@ -117,6 +123,23 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             $expectedResult,
             $this->voter->vote($token, $object, ['ACCOUNT_VIEW'])
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function supportsClassProvider()
+    {
+        return [
+            'supported class'  => [
+                $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'),
+                true,
+            ],
+            'not supported class'  => [
+                'stdClass',
+                false,
+            ],
+        ];
     }
 
     /**
@@ -221,8 +244,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function getObject($id, $accountUserId = null, $accountId = null)
     {
-        /* @var $object AccountUserOwnerInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $object = $this->getMockEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUserOwnerInterface', $id);
+        /* @var $object AccountOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $object = $this->getMockEntity('OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', $id);
 
         if ($accountUserId) {
             $object->expects($this->any())

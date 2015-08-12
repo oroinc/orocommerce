@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle;
+namespace OroB2B\Bundle\AccountBundle\Security;
 
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Util\ClassUtils;
@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade as BaseSecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class SecurityFacade
+class AccountUserProvider
 {
     /**
      * @var BaseSecurityFacade

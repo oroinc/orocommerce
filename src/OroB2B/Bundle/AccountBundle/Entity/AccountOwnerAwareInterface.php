@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Entity;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-interface AccountUserOwnerInterface
+interface AccountOwnerAwareInterface
 {
     /**
      * @return Account
