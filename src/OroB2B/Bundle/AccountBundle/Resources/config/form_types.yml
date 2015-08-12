@@ -8,7 +8,6 @@ parameters:
 
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
-    orob2b_account.form.type.user_select.class: OroB2B\Bundle\AccountBundle\Form\Type\UserSelectType
 
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
@@ -139,11 +138,3 @@ services:
         class: %orob2b_account.form.extension.oro_acl_access_level_selector.class%
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
-
-    orob2b_account.form.type.user_select:
-        class: %orob2b_account.form.type.user_select.class%
-        arguments:
-            - @doctrine
-            - %oro_user.entity.class%
-        tags:
-            - { name: form.type, alias: orob2b_account_user_select }

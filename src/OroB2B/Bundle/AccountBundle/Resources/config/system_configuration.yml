@@ -11,7 +11,7 @@ oro_system_configuration:
         oro_b2b_account.default_account_owner:
             ui_only: true
             data_type: string
-            type: orob2b_account_user_select
+            type: oro_user_select
             priority: 110
             options:
                 label: orob2b.account.system_configuration.fields.default_account_owner.label
