@@ -419,6 +419,9 @@ datagrid:
                 acl_resource:  orob2b_account_account_user_view
                 rowAction:     true
 
+    account-account-user-select-grid:
+        extends:  account-account-user-grid-base
+
     account-account-user-roles-grid:
         options:
             entityHint: role

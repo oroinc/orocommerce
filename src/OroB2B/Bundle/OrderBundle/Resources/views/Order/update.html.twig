@@ -53,14 +53,20 @@
         } only %}
     {% endset %}
 
+    {% set ownerSelectors %}
+        <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+            {{ form_row(form.account) }}
+            {{ form_row(form.accountUser) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.general'|trans,
             'class': 'active',
             'subblocks': [{
                 'data': [
-                    form_row(form.account),
-                    form_row(form.accountUser)
+                    ownerSelectors
                 ]
             }]
         }

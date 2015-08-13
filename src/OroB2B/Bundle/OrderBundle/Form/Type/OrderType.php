@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -50,12 +51,9 @@ class OrderType extends AbstractType
 
         $builder
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
-            // @todo: user selector
             ->add(
                 'accountUser',
-                'entity',
-                [
-                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+                AccountUserSelectType::NAME, [
                     'label' => 'orob2b.order.account_user.label',
                     'required' => false,
                 ]

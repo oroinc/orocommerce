@@ -6,6 +6,22 @@
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.sale.quote.id.label'|trans, entity.id) }}
             {{ UI.renderProperty('orob2b.sale.quote.qid.label'|trans, entity.qid) }}
+            {% if entity.accountUser %}
+                {% if resource_granted('VIEW', entity.accountUser) %}
+                    {% set accountUserView = UI.renderUrl(path('orob2b_account_account_user_view', {'id': entity.accountUser.id}), entity.accountUser.username) %}
+                {% else %}
+                    {% set accountUserView = entity.accountUser|escape %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.sale.quote.account_user.label'|trans, accountUserView) }}
+            {% endif %}
+            {% if entity.account %}
+                {% if resource_granted('VIEW', entity.account) %}
+                    {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account.name) %}
+                {% else %}
+                    {% set accountView = entity.account.name|escape %}
+                {% endif %}
+                {{ UI.renderHtmlProperty('orob2b.sale.quote.account.label'|trans, accountView) }}
+            {% endif %}
             {{ UI.renderProperty('orob2b.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {% if entity.request %}
                 {%  if resource_granted('VIEW', entity.request) %}
