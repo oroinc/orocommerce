@@ -61,6 +61,7 @@ orob2b.account:
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
+        form.choose:                 'Choose an account user...'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
 

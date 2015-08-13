@@ -6,12 +6,12 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -19,13 +19,13 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
+use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -69,13 +69,23 @@ class QuoteTypeTest extends AbstractTest
 
     /**
      * @param int $ownerId
+     * @param int $accountUserId
+     * @param int $accountId
      * @param QuoteProduct[] $items
      * @return Quote
      */
-    protected function getQuote($ownerId, array $items = [])
+    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [])
     {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
+
+        if (null !== $accountUserId) {
+            $quote->setAccountUser($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $accountUserId));
+        }
+
+        if (null !== $accountId) {
+            $quote->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId));
+        }
 
         foreach ($items as $item) {
             $quote->addQuoteProduct($item);
@@ -103,6 +113,8 @@ class QuoteTypeTest extends AbstractTest
                 'isValid'       => true,
                 'submittedData' => [
                     'owner' => 1,
+                    'accountUser' => 1,
+                    'account' => 2,
                     'quoteProducts' => [
                         [
                             'product'   => 2,
@@ -123,7 +135,7 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuote(1, [$quoteProduct]),
+                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct]),
             ],
         ];
     }
@@ -146,12 +158,28 @@ class QuoteTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $userSelectType = new EntityType(
+        $userSelectType = new StubEntityType(
             [
                 1 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 1),
                 2 => $this->getEntity('Oro\Bundle\UserBundle\Entity\User', 2),
             ],
             'oro_user_select'
+        );
+
+        $accountSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
+            ],
+            AccountSelectType::NAME
+        );
+
+        $accountUserSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
+            ],
+            AccountUserSelectType::NAME
         );
 
         $priceType                  = $this->preparePriceType();
@@ -191,6 +219,8 @@ class QuoteTypeTest extends AbstractTest
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
+                    $accountSelectType->getName()               => $accountSelectType,
+                    $accountUserSelectType->getName()           => $accountUserSelectType,
                 ],
                 []
             ),
