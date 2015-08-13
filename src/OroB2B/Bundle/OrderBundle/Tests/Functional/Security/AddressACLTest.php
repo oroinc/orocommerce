@@ -23,7 +23,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 class AddressACLTest extends WebTestCase
 {
     const BILLING_ADDRESS = 'billingAddress';
-    const SHIPPING_ADDRESS = 'billingAddress';
+    const SHIPPING_ADDRESS = 'shippingAddress';
 
     const COMPANY_BILLING_DEFAULT_BILLING = '2413 Capitol Avenue, ROMNEY IN US 47981';
     const COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING = '1215 Caldwell Road, ROCHESTER NY US 14608';
@@ -115,12 +115,10 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -224,7 +222,6 @@ class AddressACLTest extends WebTestCase
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -245,7 +242,6 @@ class AddressACLTest extends WebTestCase
                 'expected' => [
                     'account' => [],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -300,7 +296,6 @@ class AddressACLTest extends WebTestCase
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -365,7 +360,6 @@ class AddressACLTest extends WebTestCase
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -388,7 +382,6 @@ class AddressACLTest extends WebTestCase
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -408,7 +401,6 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
@@ -429,7 +421,6 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
@@ -450,12 +441,10 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -475,12 +464,10 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -500,7 +487,6 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
@@ -523,7 +509,6 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
@@ -546,12 +531,10 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -571,12 +554,10 @@ class AddressACLTest extends WebTestCase
                 ],
                 'expected' => [
                     'account' => [
-                        self::COMPANY_BILLING_DEFAULT_BILLING,
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
                     'accountUser' => [
-                        self::USER_BILLING_DEFAULT_BILLING,
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
