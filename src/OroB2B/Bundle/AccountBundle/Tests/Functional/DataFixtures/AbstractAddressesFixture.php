@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -48,5 +49,14 @@ abstract class AbstractAddressesFixture extends AbstractFixture
 
         $manager->persist($address);
         $this->addReference($addressData['label'], $address);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return \Oro\Bundle\OrganizationBundle\Entity\Organization
+     */
+    protected function getOrganization(ObjectManager $manager)
+    {
+        return $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
     }
 }

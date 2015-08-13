@@ -62,16 +62,16 @@ class OrderAddressSecurityProvider
      */
     public function isAccountAddressGranted($type, Account $account = null)
     {
+        if ($this->isManualEditGranted($type)) {
+            return true;
+        }
+
         $hasPermissions = $this->securityFacade->isGranted(
             $this->getClassPermission('VIEW', $this->accountAddressClass)
         );
 
         if (!$hasPermissions) {
             return false;
-        }
-
-        if ($this->isManualEditGranted($type)) {
-            return true;
         }
 
         if (!$account) {
@@ -89,16 +89,16 @@ class OrderAddressSecurityProvider
      */
     public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
     {
+        if ($this->isManualEditGranted($type)) {
+            return true;
+        }
+
         $hasPermissions = $this->securityFacade
                 ->isGranted($this->getClassPermission('VIEW', $this->accountUserAddressClass))
             && $this->securityFacade->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
             return false;
-        }
-
-        if ($this->isManualEditGranted($type)) {
-            return true;
         }
 
         if (!$accountUser) {
