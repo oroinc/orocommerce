@@ -1,8 +1,10 @@
 <?php
+
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 
 class CategoryEditSubscriber implements EventSubscriberInterface
 {
@@ -19,6 +21,8 @@ class CategoryEditSubscriber implements EventSubscriberInterface
      */
     public function onCategoryEdit(CategoryEditEvent $event)
     {
-        var_dump($event); die();
+        /**
+         * TODO: implement
+         */
     }
 }
