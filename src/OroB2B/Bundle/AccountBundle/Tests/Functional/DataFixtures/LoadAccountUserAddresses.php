@@ -90,6 +90,7 @@ class LoadAccountUserAddresses extends AbstractAddressesFixture implements Depen
     {
         foreach ($this->addresses as $addressData) {
             $address = new AccountUserAddress();
+            $address->setSystemOrganization($this->getOrganization($manager));
             $address->setFrontendOwner($this->getReference($addressData['account_user']));
             $this->addAddress($manager, $addressData, $address);
         }
