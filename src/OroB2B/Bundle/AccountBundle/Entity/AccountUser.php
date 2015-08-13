@@ -164,7 +164,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     protected $birthday;
 
     /**
-     * @var Collection
+     * @var Collection|AccountUserAddress[]
      *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress",
@@ -274,8 +274,8 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
             $this->account->setOrganization($this->organization);
             $this->account->setName(sprintf('%s %s', $this->firstName, $this->lastName));
 
-            if ($this->getOwner()) {
-                $this->account->setOwner($this->getOwner());
+            if ($this->getOwner() && !$this->account->getOwner()) {
+                $this->account->setOwner($this->getOwner(), false);
             }
         }
     }
@@ -468,6 +468,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
             $this->getAddresses()->add($address);
             $address->setFrontendOwner($this);
             $address->setSystemOrganization($this->getOrganization());
+
+            if ($this->getOwner()) {
+                $address->setOwner($this->getOwner());
+            }
         }
 
         return $this;
@@ -559,6 +563,10 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     public function setOwner(User $owner)
     {
         $this->owner = $owner;
+
+        foreach ($this->addresses as $accountUserAddress) {
+            $accountUserAddress->setOwner($owner);
+        }
 
         return $this;
     }

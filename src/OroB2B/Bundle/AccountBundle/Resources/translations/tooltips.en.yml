@@ -1,4 +1,4 @@
-orob2b.account.system_configuration.fields.default_account_owner.tooltip: 'User that will be used for AccountUsers registered on Frontend'
+orob2b.account.system_configuration.fields.default_account_owner.tooltip: 'Default owner User for Accounts. Will be also used as owner for Account Users registered on frontend'
 orob2b.account.system_configuration.fields.registration_allowed.tooltip: 'Allow account users registration'
 orob2b.account.system_configuration.fields.confirmation_required.tooltip: 'Send confirmation email'
 orob2b.account.system_configuration.fields.send_password_in_welcome_email.tooltip: 'Allow to send plain text password in welcome emails, if it known'

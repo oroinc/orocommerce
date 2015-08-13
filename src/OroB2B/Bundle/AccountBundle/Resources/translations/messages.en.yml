@@ -64,6 +64,7 @@ orob2b.account:
         has_role.label:              'Has Role'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
+        owner.label:                 'Owner'
 
         profile:
             registration.title: 'Registration'
@@ -111,6 +112,7 @@ orob2b.account:
         name_prefix.label:          Name Prefix
         name_suffix.label:          Name Suffix
         organization.label:         Organization
+        system_organization.label:  System Organization
         frontend_owner.label:       Frontend Owner
         owner.label:                Owner
         postal_code.label:          Zip/Postal Code
@@ -157,6 +159,7 @@ orob2b.account:
         name_prefix.label:   Name prefix
         name_suffix.label:   Name suffix
         organization.label:  Organization
+        system_organization.label: System Organization
         frontend_owner.label: Owner
         owner.label:         Owner
         postal_code.label:   Zip/postal code

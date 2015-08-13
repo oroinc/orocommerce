@@ -83,7 +83,7 @@ class Account extends ExtendAccount
     protected $children;
 
     /**
-     * @var Collection
+     * @var Collection|AccountAddress[]
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountAddress",
      *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
@@ -101,6 +101,8 @@ class Account extends ExtendAccount
     protected $group;
 
     /**
+     * @var Collection|AccountUser[]
+     *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser",
      *      mappedBy="account",
@@ -213,6 +215,10 @@ class Account extends ExtendAccount
             $this->getAddresses()->add($address);
             $address->setFrontendOwner($this);
             $address->setSystemOrganization($this->getOrganization());
+
+            if ($this->getOwner()) {
+                $address->setOwner($this->getOwner());
+            }
         }
 
         return $this;
@@ -370,6 +376,10 @@ class Account extends ExtendAccount
     {
         if (!$this->hasUser($accountUser)) {
             $accountUser->setAccount($this);
+            if ($this->getOwner()) {
+                $accountUser->setOwner($this->getOwner());
+            }
+
             $this->users->add($accountUser);
         }
 
@@ -410,12 +420,23 @@ class Account extends ExtendAccount
 
     /**
      * @param User $owner
+     * @param bool $force
      *
      * @return Account
      */
-    public function setOwner(User $owner)
+    public function setOwner(User $owner, $force = true)
     {
         $this->owner = $owner;
+
+        if ($force) {
+            foreach ($this->users as $accountUser) {
+                $accountUser->setOwner($owner);
+            }
+
+            foreach ($this->addresses as $accountAddress) {
+                $accountAddress->setOwner($owner);
+            }
+        }
 
         return $this;
     }
