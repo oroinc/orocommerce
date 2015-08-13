@@ -565,10 +565,41 @@ datagrid:
             name:
                 label: orob2b.account.name.label
             visibility:
-                label: orob2b.account.catalog.visibility.grid.column_label
+                label: orob2b.account.catalog.visibility.grid.account_column_label
                 frontend_type: select
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
+        options:
+            #cellSelection:
+            #    dataField: id
+            #    columnName:
+            #        - visibility
+            #    selector: '#account-category-visibility-changeset'
+        properties:
+            id: ~
+
+    accountgroup-category-visibility-grid:
+        source:
+            type:              orm
+            query:
+                select:
+                    - accountGroup.id
+                    - accountGroup.name
+                from:
+                    - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
+                join:
+                    left:
+                        - { join: %orob2b_account.entity.account_group_category_visibility.class%, alias: accountGroupCategoryVisibility, conditionType: WITH, condition: 'accountGroupCategoryVisibility.accountGroup = accountGroup AND accountGroupCategoryVisibility.category = :category_id' }
+            bind_parameters:
+                - category_id
+        columns:
+            name:
+                label: orob2b.account.name.label
+            visibility:
+                label: orob2b.account.catalog.visibility.grid.accountgroup_column_label
+                frontend_type: select
+                editable: true
+                choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')
         options:
             #cellSelection:
             #    dataField: id
