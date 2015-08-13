@@ -546,3 +546,34 @@ datagrid:
                 selectors:
                     included: '#roleAppendUsers'
                     excluded: '#roleRemoveUsers'
+
+    account-category-visibility-grid:
+        source:
+            type:              orm
+            query:
+                select:
+                    - account.id
+                    - account.name
+                from:
+                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                join:
+                    left:
+                        - { join: %orob2b_account.entity.account_category_visibility.class%, alias: accountCategoryVisibility, conditionType: WITH, condition: 'accountCategoryVisibility.account = account AND accountCategoryVisibility.category = :category_id' }
+            bind_parameters:
+                - category_id
+        columns:
+            name:
+                label: orob2b.account.name.label
+            visibility:
+                label: orob2b.account.catalog.visibility.grid.column_label
+                frontend_type: select
+                editable: true
+                choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
+        options:
+            #cellSelection:
+            #    dataField: id
+            #    columnName:
+            #        - visibility
+            #    selector: '#account-category-visibility-changeset'
+        properties:
+            id: ~

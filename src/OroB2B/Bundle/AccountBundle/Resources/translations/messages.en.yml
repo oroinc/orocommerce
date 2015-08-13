@@ -273,6 +273,8 @@ orob2b.account:
 
     catalog:
         visibility:
+            grid:
+                column_label: Visibility to accounts
             label: Default Visibility to Accounts
             form_label: Visibility
             product_configuration_label: Product Catalog
