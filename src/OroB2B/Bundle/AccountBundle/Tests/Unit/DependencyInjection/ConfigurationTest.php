@@ -44,6 +44,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => 1,
+                        'default_account_owner' => [
+                            'value' => 1,
+                            'scope' => 'app'
+                        ],
                         'registration_allowed' => [
                             'value' => true,
                             'scope' => 'app'

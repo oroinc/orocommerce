@@ -45,7 +45,11 @@ class AccountAddressRepositoryTest extends WebTestCase
         $account = $this->getReference($accountReference);
 
         /** @var AccountAddress[] $actual */
-        $actual = $this->repository->getAddressesByType($account, $type);
+        $actual = $this->repository->getAddressesByType(
+            $account,
+            $type,
+            $this->getContainer()->get('oro_security.acl_helper')
+        );
         $this->assertCount(count($expectedAddressReferences), $actual);
         $addressIds = [];
         foreach ($actual as $address) {
@@ -94,7 +98,11 @@ class AccountAddressRepositoryTest extends WebTestCase
         $account = $this->getReference($accountReference);
 
         /** @var AccountAddress[] $actual */
-        $actual = $this->repository->getDefaultAddressesByType($account, $type);
+        $actual = $this->repository->getDefaultAddressesByType(
+            $account,
+            $type,
+            $this->getContainer()->get('oro_security.acl_helper')
+        );
         $this->assertCount(1, $actual);
         $this->assertEquals($this->getReference($expectedAddressReference)->getId(), $actual[0]->getId());
     }

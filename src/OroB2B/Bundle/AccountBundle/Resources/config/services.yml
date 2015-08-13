@@ -35,6 +35,7 @@ parameters:
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
+    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
 services:
     orob2b_account.account_tree_handler:
         class: %orob2b_account.account_tree_handler.class%
@@ -204,3 +205,12 @@ services:
         arguments:
             - %orob2b_account.entity.account_user_address.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_account.event_listener.system_config:
+        class: %orob2b_account.event_listener.system_config.class%
+        arguments:
+            - @doctrine
+            - %oro_user.entity.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }

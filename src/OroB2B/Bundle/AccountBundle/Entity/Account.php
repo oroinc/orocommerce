@@ -7,7 +7,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Model\ExtendAccount;
 
@@ -28,9 +30,9 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccount;
  *              "icon"="icon-user"
  *          },
  *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="organization",
- *              "owner_column_name"="organization_id",
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="owner_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -81,10 +83,10 @@ class Account extends ExtendAccount
     protected $children;
 
     /**
-     * @var Collection
+     * @var Collection|AccountAddress[]
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountAddress",
-     *    mappedBy="owner", cascade={"all"}, orphanRemoval=true
+     *    mappedBy="frontendOwner", cascade={"all"}, orphanRemoval=true
      * )
      * @ORM\OrderBy({"primary" = "DESC"})
      */
@@ -99,6 +101,8 @@ class Account extends ExtendAccount
     protected $group;
 
     /**
+     * @var Collection|AccountUser[]
+     *
      * @ORM\OneToMany(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser",
      *      mappedBy="account",
@@ -106,6 +110,21 @@ class Account extends ExtendAccount
      * )
      **/
     protected $users;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
+     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $owner;
 
     /**
      * @var Organization
@@ -194,8 +213,12 @@ class Account extends ExtendAccount
         /** @var AbstractDefaultTypedAddress $address */
         if (!$this->getAddresses()->contains($address)) {
             $this->getAddresses()->add($address);
-            $address->setOwner($this);
+            $address->setFrontendOwner($this);
             $address->setSystemOrganization($this->getOrganization());
+
+            if ($this->getOwner()) {
+                $address->setOwner($this->getOwner());
+            }
         }
 
         return $this;
@@ -353,6 +376,10 @@ class Account extends ExtendAccount
     {
         if (!$this->hasUser($accountUser)) {
             $accountUser->setAccount($this);
+            if ($this->getOwner()) {
+                $accountUser->setOwner($this->getOwner());
+            }
+
             $this->users->add($accountUser);
         }
 
@@ -381,6 +408,37 @@ class Account extends ExtendAccount
     public function getUsers()
     {
         return $this->users;
+    }
+
+    /**
+     * @return User
+     */
+    public function getOwner()
+    {
+        return $this->owner;
+    }
+
+    /**
+     * @param User $owner
+     * @param bool $force
+     *
+     * @return Account
+     */
+    public function setOwner(User $owner, $force = true)
+    {
+        $this->owner = $owner;
+
+        if ($force) {
+            foreach ($this->users as $accountUser) {
+                $accountUser->setOwner($owner);
+            }
+
+            foreach ($this->addresses as $accountAddress) {
+                $accountAddress->setOwner($owner);
+            }
+        }
+
+        return $this;
     }
 
     /**

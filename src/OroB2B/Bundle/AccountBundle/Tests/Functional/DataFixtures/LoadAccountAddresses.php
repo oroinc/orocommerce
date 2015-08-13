@@ -90,8 +90,8 @@ class LoadAccountAddresses extends AbstractAddressesFixture implements Dependent
     {
         foreach ($this->addresses as $addressData) {
             $address = new AccountAddress();
-            $address->setOwner($this->getReference($addressData['account']));
             $address->setSystemOrganization($this->getOrganization($manager));
+            $address->setFrontendOwner($this->getReference($addressData['account']));
             $this->addAddress($manager, $addressData, $address);
         }
 

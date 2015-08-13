@@ -9,11 +9,11 @@ use Doctrine\ORM\QueryBuilder;
 abstract class AbstractDefaultTypedAddressRepository extends EntityRepository
 {
     /**
-     * @param object $owner
+     * @param object $frontendOwner
      * @param string $type
      * @return QueryBuilder
      */
-    public function getAddressesByTypeQueryBuilder($owner, $type)
+    public function getAddressesByTypeQueryBuilder($frontendOwner, $type)
     {
         $qb = $this->createQueryBuilder('a');
         $qb
@@ -24,18 +24,18 @@ abstract class AbstractDefaultTypedAddressRepository extends EntityRepository
                 $qb->expr()->eq('IDENTITY(types.type)', ':type')
             )
             ->setParameter('type', $type)
-            ->andWhere($qb->expr()->eq('a.owner', ':owner'))
-            ->setParameter('owner', $owner);
+            ->andWhere($qb->expr()->eq('a.frontendOwner', ':frontendOwner'))
+            ->setParameter('frontendOwner', $frontendOwner);
 
         return $qb;
     }
 
     /**
-     * @param object $owner
+     * @param object $frontendOwner
      * @param string|null $type
      * @return QueryBuilder
      */
-    public function getDefaultAddressesQueryBuilder($owner, $type = null)
+    public function getDefaultAddressesQueryBuilder($frontendOwner, $type = null)
     {
         $qb = $this->createQueryBuilder('a');
         $joinConditions = $qb->expr()->andX($qb->expr()->eq('types.default', ':isDefault'));
@@ -47,8 +47,8 @@ abstract class AbstractDefaultTypedAddressRepository extends EntityRepository
         $qb
             ->innerJoin('a.types', 'types', Join::WITH, $joinConditions)
             ->setParameter('isDefault', true)
-            ->andWhere($qb->expr()->eq('a.owner', ':owner'))
-            ->setParameter('owner', $owner);
+            ->andWhere($qb->expr()->eq('a.frontendOwner', ':frontendOwner'))
+            ->setParameter('frontendOwner', $frontendOwner);
 
         return $qb;
     }
