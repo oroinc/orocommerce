@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
 use OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter;
 
-class OrderProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
+class OrderProductFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderProductFormatter
@@ -97,18 +97,18 @@ class OrderProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($expectedData['formattedUnits']))
         ;
 
+        $this->productUnitLabelFormatter->expects($this->once())
+            ->method('format')
+            ->with($inputData['unitCode'])
+            ->will($this->returnValue($expectedData['formattedUnit']))
+        ;
+
         $price = $inputData['price'] ?: new Price();
 
         $this->numberFormatter->expects($price ? $this->once() : $this->never())
             ->method('formatCurrency')
             ->with($price->getValue(), $price->getCurrency())
             ->will($this->returnValue($expectedData['formattedPrice']))
-        ;
-
-        $this->productUnitLabelFormatter->expects($this->once())
-            ->method('format')
-            ->with($inputData['unitCode'])
-            ->will($this->returnValue($expectedData['formattedUnit']))
         ;
 
         $this->translator->expects($this->once())
