@@ -3,6 +3,15 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
+
+use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\ConstraintViolation;
+
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
@@ -14,6 +23,7 @@ use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
@@ -21,13 +31,6 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStub;
-use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
-use Symfony\Component\Form\FormError;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ConstraintViolation;
 
 class OrderAddressTypeTest extends FormIntegrationTestCase
 {
