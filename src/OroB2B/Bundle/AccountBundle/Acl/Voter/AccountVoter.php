@@ -1,15 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Acl\Voter;
+namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
-use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountVoter extends AbstractEntityVoter
 {
@@ -28,7 +29,7 @@ class AccountVoter extends AbstractEntityVoter
     protected $container;
 
     /**
-     * @var Quote
+     * @var AccountOwnerAwareInterface
      */
     protected $object;
 
@@ -41,6 +42,14 @@ class AccountVoter extends AbstractEntityVoter
         parent::__construct($doctrineHelper);
 
         $this->container = $container;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function supportsClass($class)
+    {
+        return is_a($class, 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', true);
     }
 
     /**
@@ -58,23 +67,23 @@ class AccountVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
-        /* @var $securityFacade SecurityFacade */
-        $securityFacade = $this->container->get('oro_security.security_facade');
+        /* @var $securityProvider AccountUserProvider */
+        $securityProvider = $this->container->get('orob2b_account.security.account_user_provider');
 
         /* @var $user AccountUser */
-        $user = $securityFacade->getLoggedUser();
+        $user = $securityProvider->getLoggedUser();
 
         if (!$user instanceof AccountUser) {
             return self::ACCESS_ABSTAIN;
         }
 
-        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_BASIC, $class)
-            && $this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()
-        ) {
-            return self::ACCESS_GRANTED;
+        if ($securityProvider->isGrantedViewBasic($class)) {
+            if ($this->object->getAccountUser() && $user->getId() === $this->object->getAccountUser()->getId()) {
+                return self::ACCESS_GRANTED;
+            }
         }
 
-        if ($securityFacade->isGrantedClassMask(EntityMaskBuilder::MASK_VIEW_LOCAL, $class)) {
+        if ($securityProvider->isGrantedViewLocal($class)) {
             if ($user->getAccount()->getId() === $this->object->getAccount()->getId()) {
                 return self::ACCESS_GRANTED;
             }

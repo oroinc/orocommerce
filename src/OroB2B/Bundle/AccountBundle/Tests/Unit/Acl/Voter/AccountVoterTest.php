@@ -1,19 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Acl\Voter;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Acl\Voter\AccountVoter;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 class AccountVoterTest extends \PHPUnit_Framework_TestCase
 {
@@ -28,9 +26,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccountUserProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $securityFacade;
+    protected $securityProvider;
 
     /**
      * {@inheritdoc}
@@ -41,7 +39,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->securityProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -49,8 +47,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->expects($this->any())
             ->method('get')
-            ->with('oro_security.security_facade')
-            ->willReturn($this->securityFacade)
+            ->with('orob2b_account.security.account_user_provider')
+            ->willReturn($this->securityProvider)
         ;
 
         $this->voter = new AccountVoter($this->doctrineHelper, $container);
@@ -58,15 +56,13 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $class
-     * @param string $actualClass
-     * @param bool $expected
+     * @param bool $supports
      *
      * @dataProvider supportsClassProvider
      */
-    public function testSupportsClass($class, $actualClass, $expected)
+    public function testSupportsClass($class, $supports)
     {
-        $this->voter->setClassName($actualClass);
-        $this->assertEquals($expected, $this->voter->supportsClass($class));
+        $this->assertEquals($supports, $this->voter->supportsClass($class));
     }
 
     /**
@@ -88,7 +84,6 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testVote(array $inputData, $expectedResult)
     {
-        /* @var $object Quote */
         $object = $inputData['object'];
         $class  = get_class($object);
 
@@ -100,18 +95,23 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->any())
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
-            ->willReturn($object->getId());
+            ->willReturn($inputData['objectId']);
 
-        $this->securityFacade->expects($this->any())
+        $this->securityProvider->expects($this->any())
             ->method('getLoggedUser')
             ->willReturn($inputData['user'])
         ;
 
-        $this->securityFacade->expects($this->any())
-            ->method('isGrantedClassMask')
-            ->will($this->returnCallback(function ($mask) use ($inputData) {
-                return $mask === $inputData['grantedMask'];
-            }))
+        $this->securityProvider->expects($this->any())
+            ->method('isGrantedViewBasic')
+            ->with($class)
+            ->willReturn($inputData['grantedViewBasic'])
+        ;
+
+        $this->securityProvider->expects($this->any())
+            ->method('isGrantedViewLocal')
+            ->with($class)
+            ->willReturn($inputData['grantedViewLocal'])
         ;
 
         $this->voter->setClassName($class);
@@ -130,8 +130,14 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function supportsClassProvider()
     {
         return [
-            'supported class' => ['stdClass', 'stdClass', true],
-            'not supported class' => ['NotSupportedClass', 'stdClass', false]
+            'supported class'  => [
+                $this->getMock('OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'),
+                true,
+            ],
+            'not supported class'  => [
+                'stdClass',
+                false,
+            ],
         ];
     }
 
@@ -156,51 +162,73 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         return [
+            '!Entity' => [
+                'input' => [
+                    'objectId'      => 1,
+                    'object'        => new \stdClass(),
+                    'user'          => null,
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                ],
+                'expected' => AccountVoter::ACCESS_ABSTAIN,
+            ],
             '!AccountUser' => [
                 'input' => [
-                    'object'        => $this->getQuote(2),
+                    'objectId'      => 2,
+                    'object'        => $this->getObject(2),
                     'user'          => new \stdClass(),
-                    'grantedMask'   => null,
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
-            'Quote::VIEW_BASIC and different users' => [
+            'Entity::VIEW_BASIC and different users' => [
                 'input' => [
-                    'object'        => $this->getQuote(1, 1),
+                    'objectId'      => 1,
+                    'object'        => $this->getObject(1, 1),
                     'user'          => $this->getAccountUser(2),
-                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_BASIC,
+                    'grantedViewBasic' => true,
+                    'grantedViewLocal' => false,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
-            'Quote::VIEW_BASIC and equal users' => [
+            'Entity::VIEW_BASIC and equal users' => [
                 'input' => [
-                    'object'        => $this->getQuote(2, 3),
+                    'objectId'      => 2,
+                    'object'        => $this->getObject(2, 3),
                     'user'          => $this->getAccountUser(3),
-                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_BASIC,
+                    'grantedViewBasic' => true,
+                    'grantedViewLocal' => false,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
-            'Quote::VIEW_LOCAL, different accounts and different users' => [
+            'Entity::VIEW_LOCAL, different accounts and different users' => [
                 'input' => [
-                    'object'        => $this->getQuote(4, 5, 6),
+                    'objectId'      => 4,
+                    'object'        => $this->getObject(4, 5, 6),
                     'user'          => $this->getAccountUser(7, 8),
-                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                    'grantedViewBasic' => false,
+                    'grantedViewLocal' => true,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
-            'Quote::VIEW_LOCAL, equal accounts and different users' => [
+            'Entity::VIEW_LOCAL, equal accounts and different users' => [
                 'input' => [
-                    'object'        => $this->getQuote(9, 10, 11),
+                    'objectId'      => 9,
+                    'object'        => $this->getObject(9, 10, 11),
                     'user'          => $this->getAccountUser(12, 11),
-                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                    'grantedViewBasic' => false,
+                    'grantedViewLocal' => true,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
-            'Quote::VIEW_LOCAL, different accounts and equal users' => [
+            'Entity::VIEW_LOCAL, different accounts and equal users' => [
                 'input' => [
-                    'object'        => $this->getQuote(13, 14, 15),
+                    'objectId'      => 13,
+                    'object'        => $this->getObject(13, 14, 15),
                     'user'          => $this->getAccountUser(14, 17),
-                    'grantedMask'   => EntityMaskBuilder::MASK_VIEW_LOCAL,
+                    'grantedViewBasic' => false,
+                    'grantedViewLocal' => true,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -211,22 +239,28 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @param int $accountUserId
      * @param int $accountId
-     * @return Quote
+     * @return AccountOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getQuote($id, $accountUserId = null, $accountId = null)
+    protected function getObject($id, $accountUserId = null, $accountId = null)
     {
-        /* @var $quote Quote */
-        $quote = $this->getEntity('OroB2B\Bundle\SaleBundle\Entity\Quote', $id);
+        /* @var $object AccountOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $object = $this->getMockEntity('OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface', $id);
 
         if ($accountUserId) {
-            $quote->setAccountUser($this->getAccountUser($accountUserId, $accountId));
+            $object->expects($this->any())
+                ->method('getAccountUser')
+                ->willReturn($this->getAccountUser($accountUserId, $accountId))
+            ;
 
             if ($accountId) {
-                $quote->setAccount($this->getAccount($accountId));
+                $object->expects($this->any())
+                    ->method('getAccount')
+                    ->willReturn($this->getAccount($accountId))
+                ;
             }
         }
 
-        return $quote;
+        return $object;
     }
 
     /**
@@ -275,6 +309,36 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             $method = $reflectionClass->getProperty($primaryKey);
             $method->setAccessible(true);
             $method->setValue($entities[$className][$id], $id);
+        }
+
+        return $entities[$className][$id];
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockEntity($className, $id)
+    {
+        static $entities = [];
+
+        if (!isset($entities[$className])) {
+            $entities[$className] = [];
+        }
+
+        if (!isset($entities[$className][$id])) {
+            $mock = $this->getMockBuilder($className)
+                ->disableOriginalConstructor()
+                ->getMock()
+            ;
+
+            $mock->expects($this->any())
+                ->method('getId')
+                ->willReturn($id)
+            ;
+
+            $entities[$className][$id] = $mock;
         }
 
         return $entities[$className][$id];
