@@ -62,7 +62,10 @@ class FormViewListener
         if ($category) {
             $template = $event->getEnvironment()->render(
                 'OroB2BAccountBundle:Category:account_category_visibility_edit.html.twig',
-                ['entity' => $category]
+                [
+                    'entity' => $category,
+                    'form' => $event->getFormView(),
+                ]
             );
             $this->addAccountCategoryVisibilityBlock($event->getScrollData(), $template);
         }

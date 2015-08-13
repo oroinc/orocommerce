@@ -21,6 +21,7 @@ parameters:
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
     orob2b_account.form.type.typed_address_with_default.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType
     orob2b_account.form.extension.oro_acl_access_level_selector.class: OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension
+    orob2b_account.form.extension.category_type.class: OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension
 
     orob2b_account.form.type.catalog_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType
 
@@ -146,6 +147,11 @@ services:
         class: %orob2b_account.form.extension.oro_acl_access_level_selector.class%
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
+
+    orob2b_account.form.extension.category_type:
+        class: %orob2b_account.form.extension.category_type.class%
+        tags:
+            - { name: form.type_extension, alias: orob2b_catalog_category }
 
     orob2b_account.form.type.catalog_visibility:
         class: %orob2b_account.form.type.catalog_visibility.class%
