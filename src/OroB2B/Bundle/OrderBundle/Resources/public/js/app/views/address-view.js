@@ -71,13 +71,15 @@ define(function(require) {
 
             this.setAddress(this.$el.find(this.options.selectors.address));
 
-            this.$fields = this.$el.find(':input[data-ftid]');
+            this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
                 var $field = $(this);
                 var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
+
+            this.accountAddressChange();
 
             if (this.options.selectors.subtotalsFields.length > 0) {
                 SubtotalsListener.listen(this.$el.find(this.options.selectors.subtotalsFields.join(', ')));
@@ -113,11 +115,18 @@ define(function(require) {
          * Implement account address change logic
          */
         accountAddressChange: function() {
-            if (this.$address.val() === this.options.enterManuallyValue) {
-                this.$fields.attr('disabled', false);
-            } else {
-                var address = this.$address.data('addresses')[this.$address.val()] || null;
+            if (this.$address.val() !== this.options.enterManuallyValue) {
+                this.$fields.each(function() {
+                    var $field = $(this);
 
+                    if ($field.data('select2')) {
+                        $field.select2('readonly', true);
+                    } else {
+                        $field.attr('readonly', true);
+                    }
+                });
+
+                var address = this.$address.data('addresses')[this.$address.val()] || null;
                 if (address) {
                     var self = this;
 
@@ -131,12 +140,21 @@ define(function(require) {
                             if ($field.data('select2')) {
                                 $field.data('selected-data', value).change();
                             }
-                            $field.attr('disabled', true);
                         }
                     });
 
                     SubtotalsListener.updateSubtotals();
                 }
+            } else {
+                this.$fields.each(function() {
+                    var $field = $(this);
+
+                    if ($field.data('select2')) {
+                        $field.select2('readonly', false);
+                    } else {
+                        $field.attr('readonly', false);
+                    }
+                });
             }
         },
 
