@@ -328,15 +328,17 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         }
 
         if (!isset($entities[$className][$id])) {
-            $entities[$className][$id] = $this->getMockBuilder($className)
+            $mock = $this->getMockBuilder($className)
                 ->disableOriginalConstructor()
                 ->getMock()
             ;
 
-            $entities[$className][$id]->expects($this->any())
+            $mock->expects($this->any())
                 ->method('getId')
                 ->willReturn($id)
             ;
+
+            $entities[$className][$id] = $mock;
         }
 
         return $entities[$className][$id];
