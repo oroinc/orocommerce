@@ -84,7 +84,6 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testVote(array $inputData, $expectedResult)
     {
-        /* @var $object Quote */
         $object = $inputData['object'];
         $class  = get_class($object);
 
@@ -240,7 +239,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      * @param int $id
      * @param int $accountUserId
      * @param int $accountId
-     * @return AccountUserOwnerInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return AccountOwnerAwareInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getObject($id, $accountUserId = null, $accountId = null)
     {
