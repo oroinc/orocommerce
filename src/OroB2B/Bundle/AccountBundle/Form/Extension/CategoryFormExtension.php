@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
+use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -22,7 +23,7 @@ class CategoryFormExtension extends AbstractTypeExtension
     protected $categoryVisibilityRepository;
 
     /**
-     * @param ManagerRegistry   $registry
+     * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
@@ -52,9 +53,23 @@ class CategoryFormExtension extends AbstractTypeExtension
                     'mapped' => false,
                     'label' => 'orob2b.account.categoryvisibility.entity_label',
                     'enum_code' => 'category_visibility',
-                    'configs'   => [
+                    'configs' => [
                         'allowClear' => false,
                     ]
+                ]
+            )
+            ->add(
+                'visibilityForAccount',
+                EntityChangesetType::NAME,
+                [
+                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\Account'
+                ]
+            )
+            ->add(
+                'visibilityForAccountGroup',
+                EntityChangesetType::NAME,
+                [
+                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup'
                 ]
             );
 
