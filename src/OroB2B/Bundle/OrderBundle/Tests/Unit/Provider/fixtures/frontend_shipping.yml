@@ -115,7 +115,7 @@ frontend_shipping_account_user_address_granted_with_manual:
     hasAccountUserAddresses: true
     hasEntity: ~
     isAddressGranted: true
-    isAccountAddressGranted: ~
+    isAccountAddressGranted: true
     isAccountUserAddressGranted: true
 frontend_shipping_account_not_granted:
     userClass: OroB2B\Bundle\AccountBundle\Entity\AccountUser
@@ -177,4 +177,4 @@ frontend_shipping_account_with_manual:
     hasEntity: ~
     isAddressGranted: true
     isAccountAddressGranted: true
-    isAccountUserAddressGranted: ~
+    isAccountUserAddressGranted: true

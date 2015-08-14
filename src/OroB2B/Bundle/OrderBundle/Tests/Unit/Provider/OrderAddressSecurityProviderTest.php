@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
