@@ -140,7 +140,10 @@ class QuoteControllerTest extends WebTestCase
         /* @var $quote Quote */
         $quote = $this->getReference($inputData['qid']);
 
-        $this->client->request('POST', $this->getUrl('orob2b_sale_quote_frontend_create_order', ['id' => $quote->getId()]));
+        $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_sale_quote_frontend_create_order', ['id' => $quote->getId()])
+        );
 
         $this->client->followRedirects(true);
 

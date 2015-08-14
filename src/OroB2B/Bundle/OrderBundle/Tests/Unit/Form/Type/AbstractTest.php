@@ -34,12 +34,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var OrderProductFormatter/\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderProductFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $orderProductFormatter;
 
     /**
-     * @var OrderProductItemFormatter/\PHPUnit_Framework_MockObject_MockObject
+     * @var OrderProductItemFormatter|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $orderProductItemFormatter;
 
@@ -111,8 +111,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function getValidators()
     {
         $uniqueEntityConstraint = new DoctrineConstraints\UniqueEntity(['fields' => []]);
-        /* @var $uniqueEntityValidator DoctrineConstraints\UniqueEntityValidator|\PHPUnit_Framework_MockObject_MockObject */
-        $uniqueEntityValidator =
+        /* @var $uniqueEntity DoctrineConstraints\UniqueEntityValidator|\PHPUnit_Framework_MockObject_MockObject */
+        $uniqueEntity =
             $this->getMockBuilder('Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator')
             ->disableOriginalConstructor()
             ->getMock();
@@ -120,18 +120,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $productUnitHolderConstraint = new ProductConstraints\ProductUnitHolder();
         return [
             $productUnitHolderConstraint->validatedBy() => new ProductConstraints\ProductUnitHolderValidator(),
-            $uniqueEntityConstraint->validatedBy() => $uniqueEntityValidator,
+            $uniqueEntityConstraint->validatedBy() => $uniqueEntity,
         ];
-    }
-    /**
-     * @return OrderProductItemType
-     */
-    protected function prepareOrderProductItemType()
-    {
-        $orderProductItemType = new OrderProductItemType($this->orderProductItemFormatter);
-        $orderProductItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderProductItem');
-
-        return $orderProductItemType;
     }
 
     /**
@@ -143,6 +133,17 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $price->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
 
         return $price;
+    }
+
+    /**
+     * @return OrderProductItemType
+     */
+    protected function prepareOrderProductItemType()
+    {
+        $orderProductItemType = new OrderProductItemType($this->orderProductItemFormatter);
+        $orderProductItemType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderProductItem');
+
+        return $orderProductItemType;
     }
 
     /**
@@ -172,6 +173,17 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @return ProductUnitPrecision[]
+     */
+    protected function getProductUnitPrecisions()
+    {
+        return [
+            (new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('kg')),
+            (new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item')),
+        ];
+    }
+
+    /**
      * @param array $codes
      * @return ProductUnit[]
      */
@@ -184,17 +196,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $res;
-    }
-
-    /**
-     * @return ProductUnitPrecision[]
-     */
-    protected function getProductUnitPrecisions()
-    {
-        return [
-            (new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('kg')),
-            (new ProductUnitPrecision())->setUnit((new ProductUnit())->setCode('item')),
-        ];
     }
 
     /**
@@ -211,6 +212,28 @@ abstract class AbstractTest extends FormIntegrationTestCase
         );
 
         return $productUnitSelectionType;
+    }
+
+    /**
+     * @param string $className
+     * @param array $fields
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockEntity($className, array $fields = [])
+    {
+        $mock = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        foreach ($fields as $method => $value) {
+            $mock->expects($this->any())
+                ->method($method)
+                ->will($this->returnValue($value))
+            ;
+        }
+
+        return $mock;
     }
 
     /**
@@ -236,28 +259,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $entities[$className][$id];
-    }
-
-    /**
-     * @param string $className
-     * @param array $fields
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMockEntity($className, array $fields = [])
-    {
-        $mock = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        foreach ($fields as $method => $value) {
-            $mock->expects($this->any())
-                ->method($method)
-                ->will($this->returnValue($value))
-            ;
-        }
-
-        return $mock;
     }
 
     /**

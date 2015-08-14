@@ -160,6 +160,16 @@ class OrderProductItemTypeTest extends AbstractTest
     }
 
     /**
+     * @param float $value
+     * @param string $currency
+     * @return Price
+     */
+    protected function createPrice($value, $currency)
+    {
+        return Price::create($value, $currency);
+    }
+
+    /**
      * @param int $id
      * @param ProductUnit[] $productUnits
      * @param string $unitCode
@@ -187,11 +197,6 @@ class OrderProductItemTypeTest extends AbstractTest
         ;
         $item
             ->expects($this->any())
-            ->method('getOrderProduct')
-            ->will($this->returnValue((new OrderProduct())->setProduct($product)))
-        ;
-        $item
-            ->expects($this->any())
             ->method('getProductUnit')
             ->will($this->returnValue($productUnit))
         ;
@@ -200,18 +205,13 @@ class OrderProductItemTypeTest extends AbstractTest
             ->method('getProductUnitCode')
             ->will($this->returnValue($unitCode))
         ;
+        $item
+            ->expects($this->any())
+            ->method('getOrderProduct')
+            ->will($this->returnValue((new OrderProduct())->setProduct($product)))
+        ;
 
         return $item;
-    }
-
-    /**
-     * @param float $value
-     * @param string $currency
-     * @return Price
-     */
-    protected function createPrice($value, $currency)
-    {
-        return Price::create($value, $currency);
     }
 
     /**

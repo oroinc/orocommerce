@@ -291,7 +291,8 @@ class OrderProductTypeTest extends AbstractTest
      * @param string $productSku
      * @return OrderProduct|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createOrderProduct($id, Product $product = null, $productSku = null) {
+    protected function createOrderProduct($id, Product $product = null, $productSku = null)
+    {
         /* @var $orderProduct OrderProduct|\PHPUnit_Framework_MockObject_MockObject */
         $orderProduct = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderProduct');
         $orderProduct

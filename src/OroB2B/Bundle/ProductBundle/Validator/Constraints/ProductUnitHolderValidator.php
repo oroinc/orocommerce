@@ -6,7 +6,6 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ProductBundle\Entity;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class ProductUnitHolderValidator extends ConstraintValidator
@@ -14,7 +13,7 @@ class ProductUnitHolderValidator extends ConstraintValidator
     /**
      * {@inheritdoc}
      *
-     * @param ProductUnitHolderInterface $productProductItem
+     * @param ProductUnitHolderInterface $productUnitHolder
      * @param ProductUnitHolder $constraint
      */
     public function validate($productUnitHolder, Constraint $constraint)

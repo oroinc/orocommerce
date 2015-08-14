@@ -70,7 +70,7 @@ class OrderProduct implements ProductHolderInterface
     /**
      * @var Collection|OrderProductItem[]
      *
-     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderProductItem", mappedBy="orderProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="OrderProductItem", mappedBy="orderProduct", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $orderProductItems;
 
