@@ -2,14 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
@@ -17,8 +15,9 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 

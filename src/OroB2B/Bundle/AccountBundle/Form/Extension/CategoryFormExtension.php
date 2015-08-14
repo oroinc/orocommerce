@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository;
