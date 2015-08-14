@@ -107,15 +107,18 @@ class CategoryFormExtension extends AbstractTypeExtension
         $accountCategoryVisibilityData = [];
         foreach ($accountCategoryVisibilities as $accountCategoryVisibility) {
             if ($accountCategoryVisibility instanceof AccountCategoryVisibility) {
-                array_push($accountCategoryVisibilityData, [
+                $accountCategoryVisibilityData[$accountCategoryVisibility->getAccount()->getId()] = [
                     'entity' => $accountCategoryVisibility->getAccount(),
                     'data' => [
                         'visibility' => $accountCategoryVisibility->getVisibility()->getId()
                     ]
-                ]);
+                ];
             }
         }
         if ($categoryVisibility instanceof CategoryVisibility) {
+            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility);
+        }
+        if (count($accountCategoryVisibilityData) > 0) {
             $event->getForm()->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
         }
     }
