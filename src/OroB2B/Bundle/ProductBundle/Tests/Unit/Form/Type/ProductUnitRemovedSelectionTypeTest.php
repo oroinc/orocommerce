@@ -20,7 +20,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderT
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
-class ProductUnitRemovedSelectTypeTest extends FormIntegrationTestCase
+class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var ProductUnitRemovedSelectionType
@@ -174,7 +174,7 @@ class ProductUnitRemovedSelectTypeTest extends FormIntegrationTestCase
         $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
             ->expects(static::any())
-            ->method('getId')
+            ->method('getEntityIdentifier')
             ->willReturn($id)
         ;
         $productUnitHolder

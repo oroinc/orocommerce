@@ -9,9 +9,9 @@ interface ProductUnitHolderInterface
     /**
      * Get id
      *
-     * @return integer
+     * @return mixed
      */
-    public function getId();
+    public function getEntityIdentifier();
 
     /**
      * Get productHolder

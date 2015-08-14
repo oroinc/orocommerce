@@ -33,12 +33,17 @@ OroB2B\Bundle\OrderBundle\Entity\OrderProductItem:
         orderProduct:
             - NotBlank: ~
         quantity:
+            - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
-        productUnit:
+        priceType:
             - NotBlank: ~
+        productUnit:
+            - NotBlank:
+                message: 'orob2b.order.orderproductitem.product_unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
         price:
+            - NotBlank: ~
             - Valid: ~

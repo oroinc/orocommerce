@@ -124,6 +124,14 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
      * @return array
      */
     public static function getTypes()

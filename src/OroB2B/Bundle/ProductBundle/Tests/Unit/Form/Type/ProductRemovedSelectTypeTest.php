@@ -160,7 +160,7 @@ class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
         $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
         $productHolder
             ->expects(static::any())
-            ->method('getId')
+            ->method('getEntityIdentifier')
             ->willReturn($id)
         ;
         $productHolder

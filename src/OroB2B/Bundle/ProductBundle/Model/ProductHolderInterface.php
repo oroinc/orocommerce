@@ -9,17 +9,9 @@ interface ProductHolderInterface
     /**
      * Get id
      *
-     * @return integer
+     * @return mixed
      */
-    public function getId();
-
-    /**
-     * Set product
-     *
-     * @param Product $product
-     * @return ProductHolderInterface
-     */
-    public function setProduct(Product $product = null);
+    public function getEntityIdentifier();
 
     /**
      * Get product
@@ -27,14 +19,6 @@ interface ProductHolderInterface
      * @return Product
      */
     public function getProduct();
-
-    /**
-     * Set productSku
-     *
-     * @param string $productSku
-     * @return ProductHolderInterface
-     */
-    public function setProductSku($productSku);
 
     /**
      * Get productSku

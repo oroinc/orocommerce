@@ -40,7 +40,7 @@ class OrderProduct implements ProductHolderInterface
     /**
      * @var Order
      *
-     * @ORM\ManyToOne(targetEntity="Order", inversedBy="orderProducts")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\OrderBundle\Entity\Order", inversedBy="orderProducts")
      * @ORM\JoinColumn(name="order_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $order;
@@ -70,7 +70,7 @@ class OrderProduct implements ProductHolderInterface
     /**
      * @var Collection|OrderProductItem[]
      *
-     * @ORM\OneToMany(targetEntity="OrderProductItem", mappedBy="orderProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderProductItem", mappedBy="orderProduct", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $orderProductItems;
 
@@ -80,6 +80,14 @@ class OrderProduct implements ProductHolderInterface
     public function __construct()
     {
         $this->orderProductItems = new ArrayCollection();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
     }
 
     /**

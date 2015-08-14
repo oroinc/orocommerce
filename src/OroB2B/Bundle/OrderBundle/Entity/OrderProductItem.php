@@ -117,6 +117,14 @@ class OrderProductItem implements ProductUnitHolderInterface
     /**
      * {@inheritdoc}
      */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getProductHolder()
     {
         return $this->getOrderProduct();
