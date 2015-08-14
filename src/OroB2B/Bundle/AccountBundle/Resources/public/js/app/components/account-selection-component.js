@@ -78,6 +78,10 @@ define(function(require) {
         onAccountUserChanged: function(e) {
             var accountUserId = this.$accountUserSelect.val();
             if (!accountUserId) {
+                mediator.trigger('account-account-user:change', {
+                    accountId: this.$accountSelect.val(),
+                    accountUserId: accountUserId
+                });
                 return;
             }
 
