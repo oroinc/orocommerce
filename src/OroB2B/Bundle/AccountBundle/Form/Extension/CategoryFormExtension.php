@@ -89,7 +89,7 @@ class CategoryFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $categoryVisibility = $this->categoryVisibilityRepository->findOneByCategory($category);
+        $categoryVisibility = $this->categoryVisibilityRepository->findOneBy(['category' => $category]);
 
         if ($categoryVisibility instanceof CategoryVisibility) {
             $event->getForm()->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
