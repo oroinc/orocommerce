@@ -57,10 +57,10 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $category = $event->getCategory();
         $accountChangeSet = $event->getForm()->get('visibilityForAccount')->getData();
         $accountGroupChangeSet = $event->getForm()->get('visibilityForAccountGroup')->getData();
-        $categoryVisibility = $event->getForm()->get('categoryVisibility')->getData();
+        $visibilityEnum = $event->getForm()->get('categoryVisibility')->getData();
 
-        if ($categoryVisibility) {
-            $this->processCategoryVisibility($category, $categoryVisibility);
+        if ($visibilityEnum) {
+            $this->processCategoryVisibility($category, $visibilityEnum);
         }
 
         foreach ($accountChangeSet as $item) {
@@ -82,9 +82,9 @@ class CategoryEditSubscriber implements EventSubscriberInterface
 
     /**
      * @param Category          $category
-     * @param AbstractEnumValue $visibility
+     * @param AbstractEnumValue $visibilityEnum
      */
-    protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibility)
+    protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibilityEnum)
     {
         $categoryVisibility = $this
             ->doctrineHelper
@@ -96,7 +96,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             $categoryVisibility->setCategory($category);
         }
 
-        $this->applyVisibility($categoryVisibility, 'category_visibility', $visibility->getId());
+        $this->applyVisibility($categoryVisibility, 'category_visibility', $visibilityEnum->getId());
     }
 
     /**
