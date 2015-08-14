@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\EventListener\FormViewListener;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -13,6 +11,9 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
+
+use OroB2B\Bundle\AccountBundle\EventListener\FormViewListener;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 {

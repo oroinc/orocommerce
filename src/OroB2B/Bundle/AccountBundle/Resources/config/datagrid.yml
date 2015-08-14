@@ -565,7 +565,7 @@ datagrid:
             name:
                 label: orob2b.account.name.label
             visibility:
-                label: orob2b.account.catalog.visibility.grid.account_column_label
+                label: orob2b.account.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
@@ -596,7 +596,7 @@ datagrid:
             name:
                 label: orob2b.account.name.label
             visibility:
-                label: orob2b.account.catalog.visibility.grid.accountgroup_column_label
+                label: orob2b.account.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')

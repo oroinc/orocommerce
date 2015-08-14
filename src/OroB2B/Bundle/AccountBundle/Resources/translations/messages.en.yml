@@ -179,7 +179,7 @@ orob2b.account:
         region_code.label:       State ISO code
 
     accountcategoryvisibility:
-        entity_label: Account Category Visibility
+        entity_label: Visible to Selected Accounts
         entity_plural_label: Account Category Visibilities
         id.label: ID
         account.label: Account
@@ -187,7 +187,7 @@ orob2b.account:
         visibility.label: Visibility
 
     accountgroupcategoryvisibility:
-        entity_label: Account Group Category Visibility
+        entity_label: Visible to Selected Account Groups
         entity_plural_label: Account Group Category Visibilities
         id.label: ID
         account_group.label: Account Group
@@ -200,6 +200,15 @@ orob2b.account:
         id.label: ID
         category.label: Category
         visibility.label: Visibility
+
+    catalog:
+        visibility:
+            label: Default Visibility to Accounts
+            form_label: Visibility
+            product_configuration_label: Product Catalog
+            catalog_configuration_label: Categories
+            visible.label: Visible
+            hidden.label: Hidden
 
     menu:
         account_tab.label: 'Accounts'
@@ -270,15 +279,3 @@ orob2b.account:
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
-
-    catalog:
-        visibility:
-            grid:
-                account_column_label: Visibility to accounts
-                accountgroup_column_label: Visibility to account groups
-            label: Default Visibility to Accounts
-            form_label: Visibility
-            product_configuration_label: Product Catalog
-            catalog_configuration_label: Categories
-            visible.label: Visible
-            hidden.label: Hidden
