@@ -83,6 +83,7 @@ class CategoryFormExtension extends AbstractTypeExtension
     {
         /** @var Category|null $category */
         $category = $event->getData();
+
         if (!$category || !$category->getId()) {
             return;
         }
@@ -90,7 +91,7 @@ class CategoryFormExtension extends AbstractTypeExtension
         $categoryVisibility = $this->categoryVisibilityRepository->findOneByCategory($category);
 
         if ($categoryVisibility instanceof CategoryVisibility) {
-            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility);
+            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
         }
     }
 }

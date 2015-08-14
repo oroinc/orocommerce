@@ -78,7 +78,7 @@ class CategoryController extends Controller
      */
     protected function update(Category $category)
     {
-        $form = $this->createForm(CategoryType::NAME);
+        $form = $this->createForm(CategoryType::NAME, $category);
         $handler = new CategoryHandler(
             $form,
             $this->getRequest(),

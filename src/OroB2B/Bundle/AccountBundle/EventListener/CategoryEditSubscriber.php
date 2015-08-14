@@ -95,7 +95,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             $categoryVisibility->setCategory($category);
         }
 
-        $this->applyVisibility($categoryVisibility, 'category_visibility', $visibility);
+        $this->applyVisibility($categoryVisibility, 'category_visibility', $visibility->getId());
     }
 
     /**
