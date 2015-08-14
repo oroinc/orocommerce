@@ -12,9 +12,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
@@ -34,19 +34,25 @@ class OrderAddressType extends AbstractType
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
+    /** @var Serializer */
+    protected $serializer;
+
     /**
      * @param AddressFormatter $addressFormatter
      * @param OrderAddressManager $orderAddressManager
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
+     * @param Serializer $serializer
      */
     public function __construct(
         AddressFormatter $addressFormatter,
         OrderAddressManager $orderAddressManager,
-        OrderAddressSecurityProvider $orderAddressSecurityProvider
+        OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        Serializer $serializer
     ) {
         $this->addressFormatter = $addressFormatter;
         $this->orderAddressManager = $orderAddressManager;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
+        $this->serializer = $serializer;
     }
 
     /**
@@ -56,13 +62,17 @@ class OrderAddressType extends AbstractType
     {
         $type = $options['addressType'];
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
+        $addresses = $this->orderAddressManager->getGroupedAddresses($options['order'], $type);
 
         $accountAddressOptions = [
             'label' => false,
             'required' => false,
             'mapped' => false,
-            'choices' => $this->getAddresses($options['order'], $type),
+            'choices' => $this->getChoices($addresses),
             'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
+            'attr' => [
+                'data-addresses' => json_encode($this->getPlainData($addresses)),
+            ],
         ];
 
         if ($isManualEditGranted) {
@@ -160,15 +170,12 @@ class OrderAddressType extends AbstractType
     }
 
     /**
-     * @param Order $order
-     * @param string $type
+     * @param array $addresses
      *
      * @return array
      */
-    protected function getAddresses(Order $order, $type)
+    protected function getChoices(array $addresses = [])
     {
-        $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
-
         array_walk_recursive(
             $addresses,
             function (&$item) {
@@ -181,5 +188,26 @@ class OrderAddressType extends AbstractType
         );
 
         return $addresses;
+    }
+
+    /**
+     * @param array $addresses
+     *
+     * @return array
+     */
+    protected function getPlainData(array $addresses = [])
+    {
+        $data = [];
+
+        array_walk_recursive(
+            $addresses,
+            function ($item, $key) use (&$data) {
+                if ($item instanceof AbstractAddress) {
+                    $data[$key] = $this->serializer->normalize($item);
+                }
+            }
+        );
+
+        return $data;
     }
 }

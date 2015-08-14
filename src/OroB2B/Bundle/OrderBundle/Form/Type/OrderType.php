@@ -15,6 +15,7 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderType extends AbstractType
 {
@@ -26,19 +27,25 @@ class OrderType extends AbstractType
     /** @var OrderAddressSecurityProvider */
     protected $orderAddressSecurityProvider;
 
+    /** @var PaymentTermProvider */
+    protected $paymentTermProvider;
+
     /** @var SecurityFacade */
     protected $securityFacade;
 
     /**
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
+     * @param PaymentTermProvider $paymentTermProvider
      */
     public function __construct(
         SecurityFacade $securityFacade,
-        OrderAddressSecurityProvider $orderAddressSecurityProvider
+        OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        PaymentTermProvider $paymentTermProvider
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
+        $this->paymentTermProvider = $paymentTermProvider;
     }
 
     /**
@@ -53,7 +60,8 @@ class OrderType extends AbstractType
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
             ->add(
                 'accountUser',
-                AccountUserSelectType::NAME, [
+                AccountUserSelectType::NAME,
+                [
                     'label' => 'orob2b.order.account_user.label',
                     'required' => false,
                 ]
@@ -98,6 +106,10 @@ class OrderType extends AbstractType
                     [
                         'label' => 'orob2b.order.payment_term.label',
                         'required' => false,
+                        'attr' => [
+                            'data-account-payment-term' => $this->getAccountPaymentTermId($order),
+                            'data-account-group-payment-term' => $this->getAccountGroupPaymentTermId($order),
+                        ],
                     ]
                 );
         }
@@ -137,5 +149,35 @@ class OrderType extends AbstractType
     protected function isOverridePaymentTermGranted()
     {
         return $this->securityFacade->isGranted('orob2b_order_payment_term_account_can_override');
+    }
+
+    /**
+     * @param Order $order
+     * @return int|null
+     */
+    protected function getAccountPaymentTermId(Order $order)
+    {
+        $account = $order->getAccount();
+        if (!$account) {
+            return null;
+        }
+
+        $paymentTerm = $this->paymentTermProvider->getAccountPaymentTerm($account);
+        return $paymentTerm ? $paymentTerm->getId() : null;
+    }
+
+    /**
+     * @param Order $order
+     * @return int|null
+     */
+    protected function getAccountGroupPaymentTermId(Order $order)
+    {
+        $account = $order->getAccount();
+        if (!$account || !$account->getGroup()) {
+            return null;
+        }
+
+        $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
+        return $paymentTerm ? $paymentTerm->getId() : null;
     }
 }

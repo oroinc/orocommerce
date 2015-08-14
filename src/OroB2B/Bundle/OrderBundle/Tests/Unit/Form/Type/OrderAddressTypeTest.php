@@ -19,6 +19,7 @@ use Oro\Bundle\AddressBundle\Form\Type\AddressType;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\AddressBundle\Form\Type\RegionType;
 use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -45,6 +46,9 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressManager */
     protected $orderAddressManager;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|Serializer */
+    protected $serializer;
+
     protected function setUp()
     {
         parent::setUp();
@@ -62,10 +66,15 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->serializer = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Serializer\Serializer')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->formType = new OrderAddressType(
             $this->addressFormatter,
             $this->orderAddressManager,
-            $this->orderAddressSecurityProvider
+            $this->orderAddressSecurityProvider,
+            $this->serializer
         );
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderAddress');
     }
@@ -116,6 +125,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         $defaultData,
         array $formErrors = []
     ) {
+        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->orderAddressSecurityProvider->expects($this->once())->method('isManualEditGranted')->willReturn(true);
 
@@ -220,6 +230,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         array $formErrors = [],
         array $groupedAddresses = []
     ) {
+        $this->serializer->expects($this->any())->method('normalize')->willReturn(['a_1' => ['street' => 'street']]);
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')
             ->willReturn($groupedAddresses);
         $this->orderAddressManager->expects($this->any())->method('getEntityByIdentifier')
@@ -338,6 +349,18 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
             );
         }
         $this->assertEquals($expectedData, $form->getData());
+
+        $this->assertTrue($form->has('accountAddress'));
+        $this->assertTrue($form->get('accountAddress')->getConfig()->hasOption('attr'));
+        $this->assertArrayHasKey('data-addresses', $form->get('accountAddress')->getConfig()->getOption('attr'));
+        $this->assertInternalType(
+            'string',
+            $form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses']
+        );
+        $this->assertInternalType(
+            'array',
+            json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
+        );
     }
 
     public function testFinishView()

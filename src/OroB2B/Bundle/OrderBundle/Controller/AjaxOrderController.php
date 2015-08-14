@@ -6,10 +6,8 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -38,41 +36,43 @@ class AjaxOrderController extends AbstractAjaxOrderController
     /**
      * Get order related data
      *
-     * @Route("/related-data/{accountId}", name="orob2b_order_related_data", requirements={"accountId"="\d+"})
+     * @Route("/related-data", name="orob2b_order_related_data")
      * @Method({"GET"})
      * @AclAncestor("orob2b_order_update")
      *
-     * @ParamConverter("account", options={"id" = "accountId"})
-     *
-     * @param Account $account
      * @param Request $request
      * @return JsonResponse
      */
-    public function getRelatedDataAction(Account $account, Request $request)
+    public function getRelatedDataAction(Request $request)
     {
         $order = new Order();
-        $order->setAccount($account);
 
         /** @var AccountUser $accountUser */
         $accountUser = null;
+        /** @var Account $account */
+        $account = null;
         $accountUserId = $request->get('accountUserId');
         if ($accountUserId) {
             $accountUserClass = $this->getParameter('orob2b_account.entity.account_user.class');
 
-            $accountUser = $this->getDoctrine()
-                ->getManagerForClass($accountUserClass)
-                ->find($accountUserClass, $accountUserId);
-
-            if ($accountUser
-                && $accountUser->getAccount()
-                && $accountUser->getAccount()->getId() !== $account->getId()
-            ) {
-                throw new BadRequestHttpException('AccountUser must belong to Account');
-            }
+            $accountUser = $this->findEntity($accountUserClass, $accountUserId);
             $order->setAccountUser($accountUser);
+            $account = $accountUser->getAccount();
         }
 
-        $paymentTerm = $this->getPaymentTermProvider()->getPaymentTerm($account);
+        $accountId = $request->get('accountId');
+        if ($accountId && !$account) {
+            $accountClass = $this->getParameter('orob2b_account.entity.account.class');
+            $account = $this->findEntity($accountClass, $accountId);
+        }
+        $order->setAccount($account);
+
+        $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        $accountGroupPaymentTerm = null;
+        if ($account->getGroup()) {
+            $accountGroupPaymentTerm = $this->getPaymentTermProvider()
+                ->getAccountGroupPaymentTerm($account->getGroup());
+        }
 
         return new JsonResponse(
             [
@@ -82,7 +82,8 @@ class AjaxOrderController extends AbstractAjaxOrderController
                 'shippingAddress' => $this->renderForm(
                     $this->createAddressForm($order, AddressType::TYPE_SHIPPING)->createView()
                 ),
-                'paymentTerm' => $paymentTerm ? $paymentTerm->getId() : null,
+                'accountPaymentTerm' => $accountPaymentTerm ? $accountPaymentTerm->getId() : null,
+                'accountGroupPaymentTerm' => $accountGroupPaymentTerm ? $accountGroupPaymentTerm->getId() : null,
             ]
         );
     }
@@ -116,5 +117,23 @@ class AjaxOrderController extends AbstractAjaxOrderController
     protected function getPaymentTermProvider()
     {
         return $this->get('orob2b_payment.provider.payment_term');
+    }
+
+    /**
+     * @param string $entityClass
+     * @param int $id
+     * @return object
+     */
+    protected function findEntity($entityClass, $id)
+    {
+        $entity = $this->getDoctrine()
+            ->getManagerForClass($entityClass)
+            ->find($entityClass, $id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException();
+        }
+
+        return $entity;
     }
 }

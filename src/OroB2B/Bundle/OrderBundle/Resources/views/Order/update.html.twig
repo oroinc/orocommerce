@@ -54,9 +54,11 @@
     {% endset %}
 
     {% set ownerSelectors %}
-        <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
-            {{ form_row(form.account) }}
-            {{ form_row(form.accountUser) }}
+        <div data-page-component-module="orob2border/js/app/components/related-data-component">
+            <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+                {{ form_row(form.account) }}
+                {{ form_row(form.accountUser) }}
+            </div>
         </div>
     {% endset %}
 
@@ -77,15 +79,19 @@
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
-                    view: 'orob2border/js/app/views/subtotals-listener-view',
-                    selectors: {fields: [
+                    view: 'orob2border/js/app/views/address-view',
+                    type: 'billing',
+                    selectors: {
+                        address: '#' ~ form.billingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
                         '#' ~ form.billingAddress.country.vars.id,
                         '#' ~ form.billingAddress.street.vars.id,
                         '#' ~ form.billingAddress.street2.vars.id,
                         '#' ~ form.billingAddress.city.vars.id,
                         '#' ~ form.billingAddress.region.vars.id,
                         '#' ~ form.billingAddress.postalCode.vars.id
-                    ]}
+                        ]
+                    }
                 }|json_encode }}">
                 {{ form_widget(form.billingAddress) }}
             </div>
@@ -103,15 +109,19 @@
             <div
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
-                    view: 'orob2border/js/app/views/subtotals-listener-view',
-                    selectors: {fields: [
+                    view: 'orob2border/js/app/views/address-view',
+                    type: 'shipping',
+                    selectors: {
+                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
                         '#' ~ form.shippingAddress.country.vars.id,
                         '#' ~ form.shippingAddress.street.vars.id,
                         '#' ~ form.shippingAddress.street2.vars.id,
                         '#' ~ form.shippingAddress.city.vars.id,
                         '#' ~ form.shippingAddress.region.vars.id,
                         '#' ~ form.shippingAddress.postalCode.vars.id
-                    ]}
+                        ]
+                    }
                 }|json_encode }}">
                 {{ form_widget(form.shippingAddress) }}
             </div>
@@ -125,11 +135,22 @@
     {% endif %}
 
     {% if form.paymentTerm is defined %}
+        {% set paymentTerm %}
+            <div data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ {
+                     view: 'orob2border/js/app/views/payment-term-view',
+                     selectionTemplate: include('OroB2BOrderBundle:PaymentTerm:Autocomplete/selection.html.twig')
+                 }|json_encode }}"
+                 data-layout="separate">
+                {{ form_row(form.paymentTerm) }}
+            </div>
+        {% endset %}
+
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.form.payment.label'|trans,
             'class': 'active',
             'subblocks': [{
-                'data': [form_row(form.paymentTerm)]
+                'data': [paymentTerm]
             }]
         }]) %}
     {% endif %}

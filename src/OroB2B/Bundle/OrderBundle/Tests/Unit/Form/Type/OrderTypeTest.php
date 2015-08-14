@@ -8,6 +8,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,6 +17,9 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|OrderAddressSecurityProvider */
     protected $provider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|PaymentTermProvider */
+    protected $paymentTermProvider;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
@@ -30,7 +34,11 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new OrderType($this->securityFacade, $this->provider);
+        $this->paymentTermProvider = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new OrderType($this->securityFacade, $this->provider, $this->paymentTermProvider);
     }
 
     public function testConfigureOptions()
