@@ -150,6 +150,8 @@ services:
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
+        arguments:
+            - @doctrine
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
 
