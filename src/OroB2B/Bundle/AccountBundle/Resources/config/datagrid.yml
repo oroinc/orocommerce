@@ -473,8 +473,17 @@ datagrid:
                         END) as hasRole
                 from:
                     - { table: %orob2b_account.entity.account_user.class%, alias: user }
+                where:
+                    or:
+                        - (:account IS NOT NULL AND :account != '' AND user.account = :account)
+                        - (:account IS NULL OR :account = '')
             bind_parameters:
-                - role
+                -
+                    name: role
+                    path: _parameters.role
+                -
+                    name: account
+                    path: _parameters.account
         properties:
             id: ~
         columns:

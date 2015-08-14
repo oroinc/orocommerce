@@ -8,13 +8,21 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository")
- * @ORM\Table(name="orob2b_account_user_role")
+ * @ORM\Table(name="orob2b_account_user_role",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_account_user_role_account_id_label_idx", columns={
+ *              "account_id",
+ *              "label"
+ *          })
+ *      }
+ * )
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -22,7 +30,14 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
+ *          },
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_field_name"="account",
+ *              "frontend_owner_column_name"="account_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -49,6 +64,22 @@ class AccountUserRole extends AbstractRole
      * @ORM\Column(type="string", length=64, unique=true, nullable=false)
      */
     protected $role;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $account;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
 
     /**
      * @var string
@@ -167,5 +198,43 @@ class AccountUserRole extends AbstractRole
     public function getWebsites()
     {
         return $this->websites;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return AccountUserRole
+     */
+    public function setAccount($account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param Organization $organization
+     * @return AccountUserRole
+     */
+    public function setOrganization($organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
     }
 }

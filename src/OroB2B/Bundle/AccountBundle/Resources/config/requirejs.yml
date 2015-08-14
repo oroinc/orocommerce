@@ -5,3 +5,4 @@ config:
         'orob2baccount/js/app/components/password-generate': 'bundles/orob2baccount/js/app/components/password-generate.js'
         'orob2baccount/js/app/components/account-address-component': 'bundles/orob2baccount/js/app/components/account-address-component.js'
         'orob2baccount/js/app/components/account-address-book-component': 'bundles/orob2baccount/js/app/components/account-address-book-component.js'
+        'orob2baccount/js/app/components/account-user-role-component': 'bundles/orob2baccount/js/app/components/account-user-role-component.js'
