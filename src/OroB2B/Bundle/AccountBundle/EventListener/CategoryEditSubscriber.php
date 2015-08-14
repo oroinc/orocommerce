@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -12,6 +13,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -56,6 +58,9 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $category = $event->getCategory();
         $accountChangeSet = $event->getForm()->get('visibilityForAccount')->getData();
         $accountGroupChangeSet = $event->getForm()->get('visibilityForAccountGroup')->getData();
+        $categoryVisibility = $event->getForm()->get('categoryVisibility')->getData();
+
+        $this->processCategoryVisibility($category, $categoryVisibility);
 
         foreach ($accountChangeSet as $item) {
             /** @var Account $account */
@@ -72,6 +77,25 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         foreach ($this->entityManagers as $em) {
             $em->flush();
         }
+    }
+
+    /**
+     * @param Category          $category
+     * @param AbstractEnumValue $visibility
+     */
+    protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibility)
+    {
+        $categoryVisibility = $this
+            ->doctrineHelper
+            ->getEntityRepository('OroB2BAccountBundle:CategoryVisibility')
+            ->findOneBy(['category' => $category]);
+
+        if (!$categoryVisibility) {
+            $categoryVisibility = new CategoryVisibility();
+            $categoryVisibility->setCategory($category);
+        }
+
+        $this->applyVisibility($categoryVisibility, 'category_visibility', $visibility);
     }
 
     /**
@@ -117,9 +141,9 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param AccountCategoryVisibility|AccountGroupCategoryVisibility $visibilityEntity
-     * @param string                                                   $enumCode
-     * @param string                                                   $visibilityCode
+     * @param object $visibilityEntity
+     * @param string $enumCode
+     * @param string $visibilityCode
      */
     protected function applyVisibility($visibilityEntity, $enumCode, $visibilityCode)
     {
