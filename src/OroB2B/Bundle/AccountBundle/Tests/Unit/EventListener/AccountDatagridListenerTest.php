@@ -264,7 +264,7 @@ class AccountDatagridListenerTest extends WebTestCase
             $config['options']['skip_acl_check'] = true;
             $config['source']['query']['where'] = [
                 'and' => [
-                    sprintf('tableAlias.account = %d OR tableAlias.accountUser = %d', $accountId, $accountUserId),
+                    sprintf('(tableAlias.account = %d OR tableAlias.accountUser = %d)', $accountId, $accountUserId),
                 ]
             ];
         }
