@@ -36,6 +36,9 @@ class ProductUnitSelectionType extends AbstractType
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $labelSuffix = $options['compact'] ? '.short' : '.full';
