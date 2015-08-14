@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,6 +12,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -66,6 +66,7 @@ class CategoryFormExtension extends AbstractTypeExtension
                     'enum_code' => 'category_visibility',
                     'configs' => [
                         'allowClear' => false,
+                        'placeholder' => 'orob2b.account.categoryvisibility.default.label'
                     ]
                 ]
             )
@@ -99,25 +100,42 @@ class CategoryFormExtension extends AbstractTypeExtension
             return;
         }
 
+        $this->setCategoryVisibility($event, $category);
+        $this->setAccountCategoryVisibility($event, $category);
+    }
+
+    /**
+     * @param FormEvent $event
+     * @param Category  $category
+     */
+    protected function setCategoryVisibility(FormEvent $event, Category $category)
+    {
         $categoryVisibility = $this->categoryVisibilityRepository->findOneBy(['category' => $category]);
 
-        $accountCategoryVisibilities = $this
-            ->accountCategoryVisibilityRepository
-            ->findBy(['category' => $category]);
-        $accountCategoryVisibilityData = [];
-        foreach ($accountCategoryVisibilities as $accountCategoryVisibility) {
-            if ($accountCategoryVisibility instanceof AccountCategoryVisibility) {
-                $accountCategoryVisibilityData[$accountCategoryVisibility->getAccount()->getId()] = [
-                    'entity' => $accountCategoryVisibility->getAccount(),
-                    'data' => [
-                        'visibility' => $accountCategoryVisibility->getVisibility()->getId()
-                    ]
-                ];
-            }
-        }
         if ($categoryVisibility instanceof CategoryVisibility) {
-            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility);
+            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
         }
+    }
+
+    /**
+     * @param FormEvent $event
+     * @param Category  $category
+     */
+    protected function setAccountCategoryVisibility(FormEvent $event, Category $category)
+    {
+        $accountCategoryVisibilities = $this->accountCategoryVisibilityRepository->findBy(['category' => $category]);
+
+        $accountCategoryVisibilityData = [];
+        /** @var AccountCategoryVisibility $accountCategoryVisibility */
+        foreach ($accountCategoryVisibilities as $accountCategoryVisibility) {
+            $accountCategoryVisibilityData[$accountCategoryVisibility->getAccount()->getId()] = [
+                'entity' => $accountCategoryVisibility->getAccount(),
+                'data'   => [
+                    'visibility' => $accountCategoryVisibility->getVisibility()->getId()
+                ]
+            ];
+        }
+
         if (count($accountCategoryVisibilityData) > 0) {
             $event->getForm()->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
         }
