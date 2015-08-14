@@ -60,7 +60,8 @@ class OrderType extends AbstractType
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
             ->add(
                 'accountUser',
-                AccountUserSelectType::NAME, [
+                AccountUserSelectType::NAME,
+                [
                     'label' => 'orob2b.order.account_user.label',
                     'required' => false,
                 ]
