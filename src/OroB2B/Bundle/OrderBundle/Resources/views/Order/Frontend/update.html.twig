@@ -44,50 +44,6 @@
 {% block content_data %}
     {% set id = 'frontend-order-edit' %}
 
-    {% set billingAddress %}
-        <div
-            data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ {
-                view: 'orob2border/js/app/views/address-view',
-                type: 'billing',
-                selectors: {
-                    address: '#' ~ form.billingAddress.accountAddress.vars.id,
-                    subtotalsFields: [
-                    '#' ~ form.billingAddress.country.vars.id,
-                    '#' ~ form.billingAddress.street.vars.id,
-                    '#' ~ form.billingAddress.street2.vars.id,
-                    '#' ~ form.billingAddress.city.vars.id,
-                    '#' ~ form.billingAddress.region.vars.id,
-                    '#' ~ form.billingAddress.postalCode.vars.id
-                    ]
-                }
-            }|json_encode }}">
-            {{ form_widget(form.billingAddress) }}
-        </div>
-    {% endset %}
-
-    {% set shippingAddress %}
-        <div
-            data-page-component-module="oroui/js/app/components/view-component"
-            data-page-component-options="{{ {
-                view: 'orob2border/js/app/views/address-view',
-                type: 'shipping',
-                selectors: {
-                    address: '#' ~ form.shippingAddress.accountAddress.vars.id,
-                    subtotalsFields: [
-                    '#' ~ form.shippingAddress.country.vars.id,
-                    '#' ~ form.shippingAddress.street.vars.id,
-                    '#' ~ form.shippingAddress.street2.vars.id,
-                    '#' ~ form.shippingAddress.city.vars.id,
-                    '#' ~ form.shippingAddress.region.vars.id,
-                    '#' ~ form.shippingAddress.postalCode.vars.id
-                    ]
-                }
-            }|json_encode }}">
-            {{ form_widget(form.shippingAddress) }}
-        </div>
-    {% endset %}
-
     {% set subtotals %}
         {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
             options: {
@@ -100,6 +56,27 @@
     {% set dataBlocks = [] %}
 
     {% if isBillingAddressGranted %}
+        {% set billingAddress %}
+            <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ {
+                    view: 'orob2border/js/app/views/address-view',
+                    type: 'billing',
+                    selectors: {
+                        address: '#' ~ form.billingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
+                        '#' ~ form.billingAddress.country.vars.id,
+                        '#' ~ form.billingAddress.street.vars.id,
+                        '#' ~ form.billingAddress.street2.vars.id,
+                        '#' ~ form.billingAddress.city.vars.id,
+                        '#' ~ form.billingAddress.region.vars.id,
+                        '#' ~ form.billingAddress.postalCode.vars.id
+                        ]
+                    }
+                }|json_encode }}">
+                {{ form_widget(form.billingAddress) }}
+            </div>
+        {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.billing_address.label'|trans,
             'subblocks': [{
@@ -109,6 +86,27 @@
     {% endif %}
 
     {% if isShippingAddressGranted %}
+        {% set shippingAddress %}
+            <div
+                data-page-component-module="oroui/js/app/components/view-component"
+                data-page-component-options="{{ {
+                    view: 'orob2border/js/app/views/address-view',
+                    type: 'shipping',
+                    selectors: {
+                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        subtotalsFields: [
+                        '#' ~ form.shippingAddress.country.vars.id,
+                        '#' ~ form.shippingAddress.street.vars.id,
+                        '#' ~ form.shippingAddress.street2.vars.id,
+                        '#' ~ form.shippingAddress.city.vars.id,
+                        '#' ~ form.shippingAddress.region.vars.id,
+                        '#' ~ form.shippingAddress.postalCode.vars.id
+                        ]
+                    }
+                }|json_encode }}">
+                {{ form_widget(form.shippingAddress) }}
+            </div>
+        {% endset %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.shipping_address.label'|trans,
             'subblocks': [{

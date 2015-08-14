@@ -50,7 +50,7 @@ oro_titles:
     orob2b_order_update: '%%identifier%% - Edit'
     orob2b_order_create: 'Create Order'
 
-    orob2b_order_frontend_index:  ~
+    orob2b_order_frontend_index:  'orob2b.order.entity_plural_label'
     orob2b_order_frontend_view:   '%%identifier%%'
     orob2b_order_frontend_update: '%%identifier%% - Edit'
     orob2b_order_frontend_create: 'Create Order'
