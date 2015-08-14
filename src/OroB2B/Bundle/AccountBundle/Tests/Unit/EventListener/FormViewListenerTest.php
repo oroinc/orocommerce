@@ -41,19 +41,38 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = $listener;
     }
 
+    public function testOnCategoryEditNoRequest()
+    {
+        $event = $this->getBeforeListRenderEvent();
+        $event->expects($this->never())
+            ->method('getScrollData');
+
+        $this->doctrineHelper->expects($this->never())
+            ->method('getEntityReference');
+
+        $this->listener->setRequest(null);
+        $this->listener->onCategoryEdit($event);
+    }
+
     public function testOnCategoryEdit()
     {
         $event = $this->getBeforeListRenderEvent();
+        $event->expects($this->once())
+            ->method('getScrollData')
+            ->willReturn($this->getScrollData());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->with('OroB2BCatalogBundle:Category')
+            ->willReturn(new Category());
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMockBuilder('\Twig_Environment')
             ->disableOriginalConstructor()
             ->getMock();
-
         $env->expects($this->once())
             ->method('render')
             ->willReturn('');
-
         $event->expects($this->once())
             ->method('getEnvironment')
             ->willReturn($env);
@@ -70,10 +89,6 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $helper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $helper->expects($this->once())
-            ->method('getEntityReference')
-            ->with('OroB2BCatalogBundle:Category')
-            ->willReturn(new Category());
 
         return $helper;
     }
@@ -87,10 +102,6 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $event->expects($this->once())
-            ->method('getScrollData')
-            ->willReturn($this->getScrollData());
 
         return $event;
     }
