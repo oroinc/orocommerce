@@ -570,11 +570,11 @@ datagrid:
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
         options:
-            #cellSelection:
-            #    dataField: id
-            #    columnName:
-            #        - visibility
-            #    selector: '#account-category-visibility-changeset'
+            cellSelection:
+                dataField: id
+                columnName:
+                    - visibility
+                selector: '#account-category-visibility-changeset'
         properties:
             id: ~
 
@@ -601,10 +601,10 @@ datagrid:
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')
         options:
-            #cellSelection:
-            #    dataField: id
-            #    columnName:
-            #        - visibility
-            #    selector: '#account-category-visibility-changeset'
+            cellSelection:
+                dataField: id
+                columnName:
+                    - visibility
+                selector: '#accountgroup-category-visibility-changeset'
         properties:
             id: ~

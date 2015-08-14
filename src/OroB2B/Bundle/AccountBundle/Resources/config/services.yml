@@ -291,5 +291,6 @@ services:
 
     orob2b_account.event_subscriber.category_edit:
         class: %orob2b_account.event_subscriber.category_edit.class%
+        arguments: [@oro_entity.doctrine_helper, @oro_entity_extend.enum_value_provider]
         tags:
             - { name: kernel.event_subscriber }
