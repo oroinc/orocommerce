@@ -2,34 +2,44 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 
 class CategoryFormExtension extends AbstractTypeExtension
 {
-    /**
-     * @var CategoryVisibilityRepository
-     */
+    /** @var EntityRepository */
     protected $categoryVisibilityRepository;
+    /** @var EntityRepository */
+    protected $accountCategoryVisibilityRepository;
+    /** @var EntityRepository */
+    protected $accountGroupCategoryVisibilityRepository;
 
     /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
-        $this->categoryVisibilityRepository = $registry->getManagerForClass('OroB2BAccountBundle:CategoryVisibility')
+        $this->categoryVisibilityRepository = $registry
+            ->getManagerForClass('OroB2BAccountBundle:CategoryVisibility')
             ->getRepository('OroB2BAccountBundle:CategoryVisibility');
+        $this->accountCategoryVisibilityRepository = $registry
+            ->getManagerForClass('OroB2BAccountBundle:AccountCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
+        $this->accountGroupCategoryVisibilityRepository = $registry
+            ->getManagerForClass('OroB2BAccountBundle:AccountGroupCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
     }
 
     /**
@@ -91,8 +101,22 @@ class CategoryFormExtension extends AbstractTypeExtension
 
         $categoryVisibility = $this->categoryVisibilityRepository->findOneBy(['category' => $category]);
 
+        $accountCategoryVisibilities = $this
+            ->accountCategoryVisibilityRepository
+            ->findBy(['category' => $category]);
+        $accountCategoryVisibilityData = [];
+        foreach ($accountCategoryVisibilities as $accountCategoryVisibility) {
+            if ($accountCategoryVisibility instanceof AccountCategoryVisibility) {
+                array_push($accountCategoryVisibilityData, [
+                    'entity' => $accountCategoryVisibility->getAccount(),
+                    'data' => [
+                        'visibility' => $accountCategoryVisibility->getVisibility()->getId()
+                    ]
+                ]);
+            }
+        }
         if ($categoryVisibility instanceof CategoryVisibility) {
-            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
+            $event->getForm()->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
         }
     }
 }

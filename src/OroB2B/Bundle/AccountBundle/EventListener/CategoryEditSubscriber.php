@@ -59,7 +59,9 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $accountGroupChangeSet = $event->getForm()->get('visibilityForAccountGroup')->getData();
         $categoryVisibility = $event->getForm()->get('categoryVisibility')->getData();
 
-        $this->processCategoryVisibility($category, $categoryVisibility);
+        if ($categoryVisibility) {
+            $this->processCategoryVisibility($category, $categoryVisibility);
+        }
 
         foreach ($accountChangeSet as $item) {
             /** @var Account $account */
