@@ -10,6 +10,7 @@ define(function(require) {
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
     var messenger = require('oroui/js/messenger');
 
     AccountSelectionComponent = BaseComponent.extend({
@@ -62,6 +63,11 @@ define(function(require) {
          */
         onAccountChanged: function(e) {
             this.$accountUserSelect.select2('val', '');
+
+            mediator.trigger('account-account-user:change', {
+                accountId: this.$accountSelect.val(),
+                accountUserId: this.$accountUserSelect.val()
+            });
         },
 
         /**
@@ -83,11 +89,12 @@ define(function(require) {
                     self.loadingMask.show();
                 },
                 success: function(response) {
-                    if (response.accountId) {
-                        self.$accountSelect.select2('val', response.accountId);
-                    } else {
-                        self.$accountSelect.select2('val', '');
-                    }
+                    self.$accountSelect.select2('val', response.accountId || '');
+
+                    mediator.trigger('account-account-user:change', {
+                        accountId: self.$accountSelect.val(),
+                        accountUserId: accountUserId
+                    });
                 },
                 complete: function() {
                     self.loadingMask.hide();
