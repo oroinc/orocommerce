@@ -62,9 +62,6 @@ define(function(require) {
         handleLayoutInit: function() {
             var self = this;
 
-            this.accountPaymentTerm = this.parseInt(this.$input.data('account-payment-term'));
-            this.accountGroupPaymentTerm = this.parseInt(this.$input.data('account-group-payment-term'));
-
             this.$input.change(function() {
                 self.inputChanged = true;
             });
@@ -72,6 +69,9 @@ define(function(require) {
 
         configureInput: function() {
             var self = this;
+
+            this.accountPaymentTerm = this.parseInt(this.$input.data('account-payment-term'));
+            this.accountGroupPaymentTerm = this.parseInt(this.$input.data('account-group-payment-term'));
 
             var configs = this.$input.data('pageComponentOptions').configs;
             configs.selection_template = configs.result_template = function(data) {
@@ -92,6 +92,10 @@ define(function(require) {
          * @param {Object} response
          */
         loadedRelatedData: function(response) {
+
+            this.accountPaymentTerm = this.parseInt(response.accountPaymentTerm || null);
+            this.accountGroupPaymentTerm = this.parseInt(response.accountGroupPaymentTerm || null);
+
             var paymentTermKeys = ['accountPaymentTerm', 'accountGroupPaymentTerm'];
             var paymentTerm;
             for (var i = 0, iMax = paymentTermKeys.length; i < iMax; i++) {
@@ -102,7 +106,7 @@ define(function(require) {
             }
 
             if (!paymentTerm || this.inputChanged) {
-                return;
+                paymentTerm = this.$input.val();
             }
 
             this.$input.select2('val', paymentTerm);

@@ -151,6 +151,7 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('username', 'string', ['length' => 255]);
@@ -222,6 +223,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
@@ -411,8 +413,9 @@ class OroB2BAccountBundleInstaller implements
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
@@ -458,6 +461,12 @@ class OroB2BAccountBundleInstaller implements
     protected function addOroB2BAccountUserForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
             ['organization_id'],
@@ -512,6 +521,12 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $table,
             ['parent_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -577,7 +592,7 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
-            ['owner_id'],
+            ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -592,6 +607,12 @@ class OroB2BAccountBundleInstaller implements
             ['country_code'],
             ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
@@ -670,9 +691,10 @@ class OroB2BAccountBundleInstaller implements
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
-        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -708,7 +730,7 @@ class OroB2BAccountBundleInstaller implements
         );
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
-            ['owner_id'],
+            ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -717,6 +739,12 @@ class OroB2BAccountBundleInstaller implements
             ['country_code'],
             ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),

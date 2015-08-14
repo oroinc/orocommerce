@@ -132,7 +132,6 @@ class AccountControllerTest extends WebTestCase
                 'orob2b_account_type[parent]' => $parent->getId(),
                 'orob2b_account_type[group]' => $group->getId(),
                 'orob2b_account_type[internal_rating]' => $internalRating->getId(),
-
             ]
         );
 

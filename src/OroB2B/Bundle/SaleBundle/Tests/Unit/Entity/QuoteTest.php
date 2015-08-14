@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -18,6 +20,8 @@ class QuoteTest extends AbstractTest
             ['id', '123'],
             ['qid', 'QID-123456'],
             ['owner', new User()],
+            ['accountUser', new AccountUser()],
+            ['account', new Account()],
             ['organization', new Organization()],
             ['validUntil', $now, false],
             ['createdAt', $now, false],

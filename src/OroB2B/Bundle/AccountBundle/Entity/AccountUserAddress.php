@@ -28,12 +28,12 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccountUserAddress;
  *              "immutable"=true
  *          },
  *          "ownership"={
- *              "owner_type"="ORGANIZATION",
- *              "owner_field_name"="systemOrganization",
- *              "owner_column_name"="system_org_id",
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="owner",
- *              "frontend_owner_column_name"="owner_id",
+ *              "frontend_owner_field_name"="frontendOwner",
+ *              "frontend_owner_column_name"="frontend_owner_id",
  *              "organization_field_name"="systemOrganization",
  *              "organization_column_name"="system_org_id"
  *          },
@@ -53,7 +53,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
      *      inversedBy="addresses",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="owner_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
@@ -62,7 +62,7 @@ class AccountUserAddress extends ExtendAccountUserAddress
      *      }
      * )
      */
-    protected $owner;
+    protected $frontendOwner;
 
     /**
      * @var Collection|AccountUserAddressToAddressType[]
