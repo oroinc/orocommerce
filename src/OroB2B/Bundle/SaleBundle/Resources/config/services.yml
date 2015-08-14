@@ -1,16 +1,18 @@
 parameters:
-    orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
     orob2b_sale.entity.quote.class: OroB2B\Bundle\SaleBundle\Entity\Quote
     orob2b_sale.entity.quote_product.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProduct
     orob2b_sale.entity.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer
     orob2b_sale.entity.quote_product_request.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
     #Validators
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
     #Twig extensions
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
+    #Listeners
+    orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
 
 services:
     orob2b_sale.event_listener.entity_subscriber:

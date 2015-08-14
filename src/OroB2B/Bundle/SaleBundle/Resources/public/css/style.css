@@ -268,3 +268,11 @@
 .sale-quoteproductrequest-collection .controls {
     margin-left: 125px !important;
 }
+
+.sale-quote-form .account-accountuser-select .entity-select-btn {
+    display: none;
+}
+
+.sale-quote-form .account-accountuser-select .select2-container {
+    width: 257px !important;
+}

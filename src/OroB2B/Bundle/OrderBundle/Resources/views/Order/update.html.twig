@@ -53,11 +53,9 @@
         } only %}
     {% endset %}
 
-    {% set accountUser %}
-        <div data-page-component-module="orob2border/js/app/components/account-user-component"
-             data-page-component-options="{{ {selectors: {
-                 account: '#' ~ form.account.vars.id
-             }}|json_encode }}">
+    {% set ownerSelectors %}
+        <div data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+            {{ form_row(form.account) }}
             {{ form_row(form.accountUser) }}
         </div>
     {% endset %}
@@ -68,8 +66,7 @@
             'class': 'active',
             'subblocks': [{
                 'data': [
-                    form_row(form.account),
-                    accountUser
+                    ownerSelectors
                 ]
             }]
         }

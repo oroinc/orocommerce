@@ -44,7 +44,7 @@ class AjaxAccountUserController extends Controller
 
         return new JsonResponse($response);
     }
-    
+
     /**
      * Send confirmation email
      *
@@ -108,6 +108,22 @@ class AjaxAccountUserController extends Controller
         $disableMessage = $this->get('translator')->trans('orob2b.account.controller.accountuser.disabled.message');
 
         return $this->enableTrigger($accountUser, false, $disableMessage);
+    }
+
+    /**
+     * @Route("/get-account/{id}",
+     *      name="orob2b_account_account_user_get_account",
+     *      requirements={"id"="\d+"})
+     * @AclAncestor("orob2b_account_account_user_view")
+     *
+     * @param AccountUser $accountUser
+     * @return JsonResponse
+     */
+    public function getAccountIdAction(AccountUser $accountUser)
+    {
+        return new JsonResponse([
+            'accountId' => $accountUser->getAccount() ? $accountUser->getAccount()->getId() : null
+        ]);
     }
 
     /**

@@ -48,9 +48,11 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
         $manager->persist($firstLevelGroup);
         $manager->persist($secondLevelGroup);
 
+        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
+
         // create accounts
         foreach ($accountUsers as $index => $accountUser) {
-            $account = $accountUser->getAccount();
+            $account = $accountUser->getAccount()->setOwner($user);
             switch ($index % 3) {
                 case 0:
                     $account->setGroup($rootGroup);

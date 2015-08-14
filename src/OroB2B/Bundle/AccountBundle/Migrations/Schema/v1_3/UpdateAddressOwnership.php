@@ -15,7 +15,14 @@ class UpdateAddressOwnership implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_account_address');
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['system_org_id'],
@@ -24,7 +31,14 @@ class UpdateAddressOwnership implements Migration
         );
 
         $table = $schema->getTable('orob2b_account_user_address');
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['system_org_id'],
