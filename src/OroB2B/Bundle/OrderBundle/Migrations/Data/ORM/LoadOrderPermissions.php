@@ -10,7 +10,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -74,20 +73,19 @@ class LoadOrderPermissions extends AbstractFixture implements
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
             $className = $this->container->getParameter('orob2b_order.entity.order.class');
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
 
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
+            $oid = $aclManager->getOid('entity:' . $className);
+            $aclManager->getExtensionSelector()->select($oid);
+
+            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->get();
+            foreach ($allowedAcls as $acl) {
+                $mask = $builder->add($acl)->get();
             }
+            $aclManager->setPermission($sid, $oid, $mask);
+
+            $chainMetadataProvider->stopProviderEmulation();
         }
     }
 

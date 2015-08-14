@@ -21,6 +21,9 @@ OroB2B\Bundle\OrderBundle\Entity\OrderProduct:
         productSku:
             - NotBlank:
                 groups: [ Import ]
+            - Length:
+                max: 255
+                groups: [ Import ]
         orderProductItems:
             - OroB2B\Bundle\OrderBundle\Validator\Constraints\Count:
                 minMessage: 'orob2b.order.orderproduct.order_product_items.blank'

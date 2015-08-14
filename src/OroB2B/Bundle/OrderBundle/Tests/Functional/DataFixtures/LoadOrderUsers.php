@@ -318,21 +318,19 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
 
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+            $oid = $aclManager->getOid('entity:' . $className);
+            $aclManager->getExtensionSelector()->select($oid);
 
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
+            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->get();
+            foreach ($allowedAcls as $acl) {
+                $mask = $builder->add($acl)->get();
             }
+            $aclManager->setPermission($sid, $oid, $mask);
+
+            $chainMetadataProvider->stopProviderEmulation();
         }
     }
 }
