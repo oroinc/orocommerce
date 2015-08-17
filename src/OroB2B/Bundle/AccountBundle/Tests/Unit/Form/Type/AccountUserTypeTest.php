@@ -17,6 +17,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType ;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
@@ -73,7 +74,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         );
 
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
-        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), 'orob2b_account_select');
+        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
 
         return [
             new PreloadedExtension(
