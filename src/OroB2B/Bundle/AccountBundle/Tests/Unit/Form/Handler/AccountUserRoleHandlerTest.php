@@ -490,7 +490,6 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $role4->setAccount(new Account());
         $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
 
-
         return [
             'set account for role without account (assigned users should be removed except appendUsers)'      => [
                 'role'                     => $role1,

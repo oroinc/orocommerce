@@ -198,10 +198,10 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * @param Account $account
+     * @param Account|null $account
      * @return AccountUserRole
      */
-    public function setAccount($account)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
 
