@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -102,6 +103,7 @@ class CategoryFormExtension extends AbstractTypeExtension
 
         $this->setCategoryVisibility($event, $category);
         $this->setAccountCategoryVisibility($event, $category);
+        $this->setAccountGroupCategoryVisibility($event, $category);
     }
 
     /**
@@ -138,6 +140,31 @@ class CategoryFormExtension extends AbstractTypeExtension
 
         if (count($accountCategoryVisibilityData) > 0) {
             $event->getForm()->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     * @param Category  $category
+     */
+    protected function setAccountGroupCategoryVisibility(FormEvent $event, Category $category)
+    {
+        $accountGroupCategoryVisibilities = $this->accountGroupCategoryVisibilityRepository
+            ->findBy(['category' => $category]);
+
+        $accountGroupCategoryVisibilityData = [];
+        /** @var AccountGroupCategoryVisibility $accountGroupCategoryVisibility */
+        foreach ($accountGroupCategoryVisibilities as $accountGroupCategoryVisibility) {
+            $accountGroupCategoryVisibilityData[$accountGroupCategoryVisibility->getAccountGroup()->getId()] = [
+                'entity' => $accountGroupCategoryVisibility->getAccountGroup(),
+                'data'   => [
+                    'visibility' => $accountGroupCategoryVisibility->getVisibility()->getId()
+                ]
+            ];
+        }
+
+        if (count($accountGroupCategoryVisibilityData) > 0) {
+            $event->getForm()->get('visibilityForAccountGroup')->setData($accountGroupCategoryVisibilityData);
         }
     }
 }
