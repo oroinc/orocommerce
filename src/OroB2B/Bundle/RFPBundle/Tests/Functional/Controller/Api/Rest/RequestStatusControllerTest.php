@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Api\Rest;
 
+use FOS\RestBundle\Util\Codes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
@@ -37,7 +38,10 @@ class RequestStatusControllerTest extends WebTestCase
             'DELETE',
             $this->getUrl('orob2b_api_rfp_delete_request_status', ['id' => $requestStatus->getId()])
         );
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 204);
+
+        $result = $this->getJsonResponseContent($this->client->getResponse(), Codes::HTTP_OK);
+        $this->assertNotEmpty($result);
+        $this->assertEquals('Request Status deleted', $result['message']);
 
         $entityManager->clear();
 
@@ -48,7 +52,10 @@ class RequestStatusControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_api_rfp_restore_request_status', ['id' => $requestStatus->getId()])
         );
-        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $result = $this->getJsonResponseContent($this->client->getResponse(), Codes::HTTP_OK);
+        $this->assertNotEmpty($result);
+        $this->assertEquals('Request Status restored', $result['message']);
+
 
         $entityManager->clear();
 
