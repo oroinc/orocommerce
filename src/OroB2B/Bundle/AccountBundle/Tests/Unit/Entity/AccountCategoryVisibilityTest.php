@@ -17,13 +17,16 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessors()
     {
+        $entity = new AccountCategoryVisibility();
+
         $this->assertPropertyAccessors(
-            new AccountCategoryVisibility(),
+            $entity,
             [
                 ['id', 1],
                 ['category', new Category()],
                 ['account', new Account()],
             ]
         );
+        $this->assertEquals(AccountCategoryVisibility::PARENT_CATEGORY, $entity->getDefault());
     }
 }

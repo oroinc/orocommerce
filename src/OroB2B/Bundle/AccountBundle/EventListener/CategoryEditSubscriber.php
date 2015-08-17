@@ -157,10 +157,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             $em = $this->entityManagers->offsetGet($entityClass);
         }
 
-        if (in_array($visibilityCode, [
-            AccountCategoryVisibility::PARENT_CATEGORY,
-            AccountGroupCategoryVisibility::PARENT_CATEGORY
-        ])) {
+        if ($visibilityCode === $visibilityEntity->getDefault()) {
             if ($visibilityEntity->getVisibility()) {
                 $em->remove($visibilityEntity);
             }

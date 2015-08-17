@@ -14,7 +14,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @ORM\Table(name="orob2b_acc_grp_ctgr_visibility")
  * @Config
  */
-class AccountGroupCategoryVisibility extends ExtendAccountGroupCategoryVisibility
+class AccountGroupCategoryVisibility extends ExtendAccountGroupCategoryVisibility implements DefaultVisibilityInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CONFIG = 'config';
@@ -92,5 +92,13 @@ class AccountGroupCategoryVisibility extends ExtendAccountGroupCategoryVisibilit
         $this->accountGroup = $accountGroup;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefault()
+    {
+        return self::PARENT_CATEGORY;
     }
 }

@@ -17,6 +17,8 @@ class AccountGroupCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessors()
     {
+        $entity = new AccountGroupCategoryVisibility();
+
         $this->assertPropertyAccessors(
             new AccountGroupCategoryVisibility(),
             [
@@ -25,5 +27,6 @@ class AccountGroupCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['accountGroup', new AccountGroup()],
             ]
         );
+        $this->assertEquals(AccountGroupCategoryVisibility::PARENT_CATEGORY, $entity->getDefault());
     }
 }

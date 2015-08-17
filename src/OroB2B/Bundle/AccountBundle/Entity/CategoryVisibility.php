@@ -14,7 +14,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @ORM\Table(name="orob2b_category_visibility")
  * @Config
  */
-class CategoryVisibility extends ExtendCategoryVisibility
+class CategoryVisibility extends ExtendCategoryVisibility implements DefaultVisibilityInterface
 {
     const CONFIG = 'config';
     const VISIBLE = 'visible';
@@ -63,5 +63,13 @@ class CategoryVisibility extends ExtendCategoryVisibility
         $this->category = $category;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefault()
+    {
+        return self::CONFIG;
     }
 }
