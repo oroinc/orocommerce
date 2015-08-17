@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -35,9 +34,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_ACCOUNT",
  *              "frontend_owner_field_name"="account",
- *              "frontend_owner_column_name"="account_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "frontend_owner_column_name"="account_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -72,14 +69,6 @@ class AccountUserRole extends AbstractRole
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $account;
-
-    /**
-     * @var Organization
-     *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $organization;
 
     /**
      * @var string
@@ -215,25 +204,6 @@ class AccountUserRole extends AbstractRole
     public function setAccount($account)
     {
         $this->account = $account;
-
-        return $this;
-    }
-
-    /**
-     * @return Organization
-     */
-    public function getOrganization()
-    {
-        return $this->organization;
-    }
-
-    /**
-     * @param Organization $organization
-     * @return AccountUserRole
-     */
-    public function setOrganization($organization)
-    {
-        $this->organization = $organization;
 
         return $this;
     }
