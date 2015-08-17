@@ -374,6 +374,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
      * @param AccountUser[]   $assignedUsers
      * @param AccountUser[]   $expectedUsersWithRole
      * @param AccountUser[]   $expectedUsersWithoutRole
+     * @param bool            $changeAccountProcessed
      * @dataProvider processWithAccountProvider
      */
     public function testProcessWithAccount(
@@ -383,7 +384,8 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         array $removedUsers,
         array $assignedUsers,
         array $expectedUsersWithRole,
-        array $expectedUsersWithoutRole
+        array $expectedUsersWithoutRole,
+        $changeAccountProcessed = true
     ) {
         // Array of persisted users
         /** @var AccountUser[] $persistedUsers */
@@ -438,7 +440,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(get_class($role))
             ->willReturn($objectManager);
 
-        $this->roleRepository->expects($this->once())
+        $this->roleRepository->expects($changeAccountProcessed ? $this->once() : $this->never())
             ->method('getAssignedUsers')
             ->with($role)
             ->willReturn($assignedUsers);
@@ -469,18 +471,30 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function processWithAccountProvider()
     {
+        $newAccount1 = new Account();
         $role1 = new AccountUserRole('test role1');
         $role1->setAccount(null);
-        $users1 = $this->createUsersWithRole($role1, 6);
+        $users1 = $this->createUsersWithRole($role1, 6, $newAccount1);
 
+        $newAccount2 = new Account();
         $role2 = new AccountUserRole('test role2');
         $role2->setAccount(new Account());
-        $users2 = $this->createUsersWithRole($role2, 6);
+        $users2 = $this->createUsersWithRole($role2, 6, $newAccount2);
+
+        $role3 = new AccountUserRole('test role3');
+        $role3->setAccount(new Account());
+        $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
+
+        $newAccount4 = new Account();
+        $role4 = new AccountUserRole('test role2');
+        $role4->setAccount(new Account());
+        $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
+
 
         return [
             'set account for role without account (assigned users should be removed except appendUsers)'      => [
                 'role'                     => $role1,
-                'newAccount'               => new Account(),
+                'newAccount'               => $newAccount1,
                 'appendUsers'              => [$users1[0], $users1[4], $users1[5]],
                 'removedUsers'             => [$users1[2], $users1[3]],
                 'assignedUsers'            => [$users1[0], $users1[1], $users1[2], $users1[3]],
@@ -489,40 +503,42 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'set another account for role with account (assigned users should be removed except appendUsers)' => [
                 'role'                     => $role2,
-                'newAccount'               => new Account(),
+                'newAccount'               => $newAccount2,
                 'appendUsers'              => [$users2[0], $users2[4], $users2[5]],
                 'removedUsers'             => [$users2[2], $users2[3]],
                 'assignedUsers'            => [$users2[0], $users2[1], $users2[2], $users2[3]],
                 'expectedUsersWithRole'    => [$users2[4], $users2[5]], // $users0 not changed, because already has role
                 'expectedUsersWithoutRole' => [$users2[1], $users2[2], $users2[3]],
             ],
-            'remove account for role with account (assigned users should not be removed)'                     => [
-                'role'                     => $role2,
-                'newAccount'               => new Account(),
-                'appendUsers'              => [$users2[0], $users2[4], $users2[5]],
-                'removedUsers'             => [$users2[2], $users2[3]],
-                'assignedUsers'            => [$users2[0], $users2[1], $users2[2], $users2[3]],
-                'expectedUsersWithRole'    => [$users2[4], $users2[5]],
-                'expectedUsersWithoutRole' => [$users2[2], $users2[3]],
-            ],
             'add/remove users for role with account (account not changed)'                                    => [
-                'role'                     => $role2,
-                'newAccount'               => $role2->getAccount(),
-                'appendUsers'              => [$users2[4], $users2[5]],
-                'removedUsers'             => [$users2[2], $users2[3]],
-                'assignedUsers'            => [$users2[0], $users2[1], $users2[2], $users2[3]],
-                'expectedUsersWithRole'    => [$users2[4], $users2[5]],
-                'expectedUsersWithoutRole' => [$users2[2], $users2[3]],
+                'role'                     => $role3,
+                'newAccount'               => $role3->getAccount(),
+                'appendUsers'              => [$users3[4], $users3[5]],
+                'removedUsers'             => [$users3[2], $users3[3]],
+                'assignedUsers'            => [$users3[0], $users3[1], $users3[2], $users3[3]],
+                'expectedUsersWithRole'    => [$users3[4], $users3[5]],
+                'expectedUsersWithoutRole' => [$users3[2], $users3[3]],
+                'changeAccountProcessed'   => false,
+            ],
+            'remove account for role with account (assigned users should not be removed)'                     => [
+                'role'                     => $role4,
+                'newAccount'               => $newAccount4,
+                'appendUsers'              => [$users4[0], $users4[4], $users4[5]],
+                'removedUsers'             => [$users4[2], $users4[3]],
+                'assignedUsers'            => [$users4[0], $users4[1], $users4[2], $users4[3]],
+                'expectedUsersWithRole'    => [$users4[4], $users4[5]],
+                'expectedUsersWithoutRole' => [$users4[2], $users4[3]],
             ],
         ];
     }
 
     /**
      * @param AccountUserRole $role
-     * @param                 $numberOfUsers
-     * @return AccountUser[]
+     * @param int             $numberOfUsers
+     * @param Account         $account
+     * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser[]
      */
-    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers)
+    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null)
     {
         /** @var AccountUser[] $users */
         $users = [];
@@ -530,6 +546,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             $user = new AccountUser();
             $user->setUsername('user' . $i . $role->getRole());
             $user->setRoles([$role]);
+            $user->setAccount($account);
             $users[] = $user;
         }
 
