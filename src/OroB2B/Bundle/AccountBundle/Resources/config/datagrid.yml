@@ -569,6 +569,26 @@ datagrid:
                 frontend_type: select
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
+        sorters:
+            columns:
+                name:
+                    data_name: account.name
+                visibility:
+                    data_name: accountCategoryVisibility.visibility
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: account.name
+                visibility:
+                    type: choice
+                    data_name: accountCategoryVisibility.visibility
+                    options:
+                        field_options:
+                            multiple: true
+                            choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
         options:
             cellSelection:
                 dataField: id
@@ -600,6 +620,26 @@ datagrid:
                 frontend_type: select
                 editable: true
                 choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')
+        sorters:
+            columns:
+                name:
+                    data_name: accountGroup.name
+                visibility:
+                    data_name: accountGroupCategoryVisibility.visibility
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: accountGroup.name
+                visibility:
+                    type: choice
+                    data_name: accountGroupCategoryVisibility.visibility
+                    options:
+                        field_options:
+                            multiple: true
+                            choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')
         options:
             cellSelection:
                 dataField: id
