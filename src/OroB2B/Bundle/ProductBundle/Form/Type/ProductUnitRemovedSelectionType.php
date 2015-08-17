@@ -105,7 +105,7 @@ class ProductUnitRemovedSelectionType extends AbstractType
             'compact' => $this->options['compact'],
         ];
 
-        if ($productUnitHolder && null !== $productUnitHolder->getId()) {
+        if ($productUnitHolder && null !== $productUnitHolder->getEntityIdentifier()) {
             $product = $productUnitHolder->getProductHolder()->getProduct();
             if ($product) {
                 foreach ($product->getUnitPrecisions() as $unitPrecision) {

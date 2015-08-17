@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 
@@ -81,7 +81,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     public function load(ObjectManager $manager)
     {
         foreach ($this->items as $item) {
-            /* @var $owner AccountUser */
+            /* @var $owner User */
             $owner = $this->getReference($item['owner']);
 
             $order = new Order();
@@ -99,7 +99,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
             }
 
             $manager->persist($order);
-            $manager->flush($order);
+            // flush to override auto generated identifier
+            $manager->flush();
 
             $order->setIdentifier($item['identifier']);
 

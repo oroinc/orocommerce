@@ -5,12 +5,10 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
@@ -172,6 +170,7 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
     {
         $userManager = $this->container->get('oro_user.manager');
 
+        /** @var User $user */
         $user = $userManager->createUser();
         $user->setUsername($name)
             ->setPlainPassword('simple_password')
@@ -262,6 +261,9 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
             /* @var $accountUser AccountUser */
             $accountUser = $userManager->createUser();
 
+            /** @var AccountUserRole $role */
+            $role = $this->getReference($item['role']);
+
             $accountUser
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
@@ -270,7 +272,7 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
                 ->setConfirmed(true)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
-                ->addRole($this->getReference($item['role']))
+                ->addRole($role)
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true)
@@ -318,21 +320,19 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
 
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+            $oid = $aclManager->getOid('entity:' . $className);
+            $aclManager->getExtensionSelector()->select($oid);
 
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
+            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->get();
+            foreach ($allowedAcls as $acl) {
+                $mask = $builder->add($acl)->get();
             }
+            $aclManager->setPermission($sid, $oid, $mask);
+
+            $chainMetadataProvider->stopProviderEmulation();
         }
     }
 }

@@ -79,9 +79,11 @@ class OrderProductType extends AbstractType
             }
         }
 
-        $componentOptions = [
-            'units' => $units,
-        ];
+        $componentOptions = ['units' => $units];
+
+        if (array_key_exists('componentOptions', $view->vars)) {
+            $componentOptions = array_merge($view->vars['componentOptions'], $componentOptions);
+        }
 
         $view->vars['componentOptions'] = $componentOptions;
     }

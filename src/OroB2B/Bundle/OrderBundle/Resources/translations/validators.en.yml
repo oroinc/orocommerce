@@ -7,5 +7,5 @@ orob2b:
                 blank: 'Please add one or more items.'
 
         orderproductitem:
-            unit:
+            product_unit:
                 blank: 'Please choose existing Unit.'

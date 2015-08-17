@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\DBAL\DBALException;
+
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use Oro\Bundle\UserBundle\Entity\User;
@@ -158,6 +160,27 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
                 'expected'  => $order,
             ],
         ];
+    }
+
+    public function testProcessInvalid()
+    {
+        $data = new Quote();
+        $data->setOwner($this->getAdminUser());
+
+        $this->form->expects($this->once())->method('setData')->with($data);
+        $this->request->setMethod('POST');
+        $this->form->expects($this->once())->method('submit')->with($this->request);
+        $this->form->expects($this->once())->method('isValid')->willReturn(true);
+        $this->manager->expects($this->once())->method('persist');
+
+        $exception = new DBALException();
+
+        $this->manager->expects($this->once())
+            ->method('flush')
+            ->will($this->throwException($exception));
+
+        $this->assertFalse($this->handler->process($data));
+        $this->assertSame($exception, $this->handler->getException());
     }
 
     /**

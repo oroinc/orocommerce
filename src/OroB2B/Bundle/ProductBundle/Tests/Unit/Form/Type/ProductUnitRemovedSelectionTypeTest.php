@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,7 +21,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderT
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
-class ProductUnitRemovedSelectTypeTest extends FormIntegrationTestCase
+class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 {
     /**
      * @var ProductUnitRemovedSelectionType
@@ -135,28 +136,54 @@ class ProductUnitRemovedSelectTypeTest extends FormIntegrationTestCase
      */
     public function preSetDataProvider()
     {
+        $precision = new ProductUnitPrecision();
+        $unit = new ProductUnit();
+        $unit->setCode('code');
+        $precision->setUnit($unit);
+
         return [
             'empty item' => [
                 'productHolder' => null,
-                'expectedData'  => [
-                    'empty_value'   => null,
-                    'required'      => true,
+                'expectedData' => [
+                    'empty_value' => null,
+                    'required' => true,
                 ],
             ],
-
             'filled item' => [
-                'productHolder' => $this->createProductUnitHolder(1, 'sku', new ProductUnit()),
-                'expectedData'  => [
-                    'empty_value'   => null,
-                    'required'      => true,
+                'productHolder' => $this->createProductUnitHolder(
+                    1,
+                    'sku',
+                    new ProductUnit(),
+                    $this->createProductHolder(1, 'sku', null)
+                ),
+                'expectedData' => [
+                    'empty_value' => null,
+                    'required' => true,
                 ],
             ],
-
+            'existing product' => [
+                'productHolder' => $this->createProductUnitHolder(
+                    1,
+                    'sku',
+                    new ProductUnit(),
+                    $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                ),
+                'expectedData' => [
+                    'empty_value' => 'orob2b.product.productunit.removed:sku',
+                    'required' => true,
+                    'choices' => ['code']
+                ],
+            ],
             'deleted product' => [
-                'productHolder' => $this->createProductUnitHolder(1, 'sku', null),
-                'expectedData'  => [
-                    'empty_value'   => 'orob2b.product.productunit.removed:sku',
-                    'required'      => true,
+                'productHolder' => $this->createProductUnitHolder(
+                    1,
+                    'sku',
+                    null,
+                    $this->createProductHolder(1, 'sku', null)
+                ),
+                'expectedData' => [
+                    'empty_value' => 'orob2b.product.productunit.removed:sku',
+                    'required' => true,
                 ],
             ],
         ];
@@ -166,32 +193,33 @@ class ProductUnitRemovedSelectTypeTest extends FormIntegrationTestCase
      * @param int $id
      * @param $productUnitCode
      * @param ProductUnit $productUnit
+     * @param ProductHolderInterface $productHolder
      * @return ProductUnitHolderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createProductUnitHolder($id, $productUnitCode, ProductUnit $productUnit = null)
-    {
+    protected function createProductUnitHolder(
+        $id,
+        $productUnitCode,
+        ProductUnit $productUnit = null,
+        ProductHolderInterface $productHolder = null
+    ) {
         /* @var $productUmitHolder \PHPUnit_Framework_MockObject_MockObject|ProductUnitHolderInterface */
         $productUnitHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface');
         $productUnitHolder
             ->expects(static::any())
-            ->method('getId')
-            ->willReturn($id)
-        ;
+            ->method('getEntityIdentifier')
+            ->willReturn($id);
         $productUnitHolder
             ->expects(static::any())
             ->method('getProductUnit')
-            ->willReturn($productUnit)
-        ;
+            ->willReturn($productUnit);
         $productUnitHolder
             ->expects(static::any())
             ->method('getProductUnitCode')
-            ->willReturn($productUnitCode)
-        ;
+            ->willReturn($productUnitCode);
         $productUnitHolder
             ->expects(static::any())
             ->method('getProductHolder')
-            ->willReturn($this->createProductHolder($id, 'sku', null))
-        ;
+            ->willReturn($productHolder);
 
         return $productUnitHolder;
     }

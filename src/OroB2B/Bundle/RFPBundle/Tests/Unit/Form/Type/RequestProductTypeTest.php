@@ -172,7 +172,7 @@ class RequestProductTypeTest extends AbstractTest
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType($this->translator);
+        $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [

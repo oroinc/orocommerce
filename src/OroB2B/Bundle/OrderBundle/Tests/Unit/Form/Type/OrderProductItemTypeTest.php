@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,14 +15,14 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemoved
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
+use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
+use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemType;
 
-class QuoteProductOfferTypeTest extends AbstractTest
+class OrderProductItemTypeTest extends AbstractTest
 {
     /**
-     * @var QuoteProductOfferType
+     * @var OrderProductItemType
      */
     protected $formType;
 
@@ -33,8 +33,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
     {
         parent::setUp();
 
-        $this->formType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
-        $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        $this->formType = new OrderProductItemType($this->orderProductItemFormatter);
+        $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderProductItem');
     }
 
     public function testConfigureOptions()
@@ -44,8 +44,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
-                'intention'     => 'sale_quote_product_offer',
+                'data_class'    => 'OroB2B\Bundle\OrderBundle\Entity\OrderProductItem',
+                'intention'     => 'order_order_product_item',
                 'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ])
         ;
@@ -55,11 +55,13 @@ class QuoteProductOfferTypeTest extends AbstractTest
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
+        $this->assertEquals('orob2b_order_order_product_item', $this->formType->getName());
     }
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
@@ -67,39 +69,39 @@ class QuoteProductOfferTypeTest extends AbstractTest
             'empty form' => [
                 'isValid'       => false,
                 'submittedData' => [],
-                'expectedData'  => $this->getQuoteProductOffer(1),
-                'defaultData'   => $this->getQuoteProductOffer(1),
+                'expectedData'  => $this->getOrderProductItem(1),
+                'defaultData'   => $this->getOrderProductItem(1),
             ],
-            'empty quote product' => [
+            'empty order product' => [
                 'isValid'       => false,
                 'submittedData' => [
                     'quantity'      => 88,
                     'productUnit'   => 'kg',
-                    'priceType'     => self::QPO_PRICE_TYPE1,
+                    'priceType'     => self::OPI_PRICE_TYPE1,
                     'price'         => [
                         'value'     => 99,
                         'currency'  => 'EUR',
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(2, 88, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(99, 'EUR'))
-                    ->setQuoteProduct(null),
-                'defaultData'   => $this->getQuoteProductOffer(2)
-                    ->setQuoteProduct(null),
+                    ->getOrderProductItem(2, 88, 'kg', self::OPI_PRICE_TYPE1, $this->createPrice(99, 'EUR'))
+                    ->setOrderProduct(null),
+                'defaultData'   => $this->getOrderProductItem(2)
+                    ->setOrderProduct(null),
             ],
             'empty quantity' => [
                 'isValid'       => false,
                 'submittedData' => [
                     'productUnit'   => 'kg',
-                    'priceType'     => self::QPO_PRICE_TYPE1,
+                    'priceType'     => self::OPI_PRICE_TYPE1,
                     'price'         => [
                         'value'     => 11,
                         'currency'  => 'EUR',
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(3, null, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
-                'defaultData'   => $this->getQuoteProductOffer(3),
+                    ->getOrderProductItem(3, null, 'kg', self::OPI_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
+                'defaultData'   => $this->getOrderProductItem(3),
             ],
             'empty price type' => [
                 'isValid'       => false,
@@ -111,58 +113,68 @@ class QuoteProductOfferTypeTest extends AbstractTest
                         'currency'  => 'EUR',
                     ],
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(4, 88, 'kg', null, $this->createPrice(99, 'EUR')),
-                'defaultData'   => $this->getQuoteProductOffer(4),
+                'expectedData'  => $this->getOrderProductItem(4, 88, 'kg', null, $this->createPrice(99, 'EUR')),
+                'defaultData'   => $this->getOrderProductItem(4),
             ],
             'empty product unit' => [
                 'isValid'       => false,
                 'submittedData' => [
                     'quantity'      => 22,
-                    'priceType'     => self::QPO_PRICE_TYPE1,
+                    'priceType'     => self::OPI_PRICE_TYPE1,
                     'price'         => [
                         'value'     => 33,
                         'currency'  => 'EUR',
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(5, 22, null, self::QPO_PRICE_TYPE1, $this->createPrice(33, 'EUR')),
-                'defaultData'   => $this->getQuoteProductOffer(5),
+                    ->getOrderProductItem(5, 22, null, self::OPI_PRICE_TYPE1, $this->createPrice(33, 'EUR')),
+                'defaultData'   => $this->getOrderProductItem(5),
             ],
             'empty price' => [
                 'isValid'       => false,
                 'submittedData' => [
                     'quantity'      => 44,
                     'productUnit'   => 'kg',
-                    'priceType'     => self::QPO_PRICE_TYPE1,
+                    'priceType'     => self::OPI_PRICE_TYPE1,
                 ],
-                'expectedData'  => $this->getQuoteProductOffer(6, 44, 'kg', self::QPO_PRICE_TYPE1),
-                'defaultData'   => $this->getQuoteProductOffer(6),
+                'expectedData'  => $this->getOrderProductItem(6, 44, 'kg', self::OPI_PRICE_TYPE1),
+                'defaultData'   => $this->getOrderProductItem(6),
             ],
             'valid data' => [
                 'isValid'       => true,
                 'submittedData' => [
                     'quantity'      => 11,
                     'productUnit'   => 'kg',
-                    'priceType'     => self::QPO_PRICE_TYPE1,
+                    'priceType'     => self::OPI_PRICE_TYPE1,
                     'price'         => [
                         'value'     => 22,
                         'currency'  => 'EUR',
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(7, 11, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(22, 'EUR')),
-                'defaultData'   => $this->getQuoteProductOffer(7),
+                    ->getOrderProductItem(7, 11, 'kg', self::OPI_PRICE_TYPE1, $this->createPrice(22, 'EUR')),
+                'defaultData'   => $this->getOrderProductItem(7),
             ],
         ];
+    }
+
+    /**
+     * @param float $value
+     * @param string $currency
+     * @return Price
+     */
+    protected function createPrice($value, $currency)
+    {
+        return Price::create($value, $currency);
     }
 
     /**
      * @param int $id
      * @param ProductUnit[] $productUnits
      * @param string $unitCode
-     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer
+     * @return OrderProductItem|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function createQuoteProductOffer($id, array $productUnits = [], $unitCode = null)
+    protected function createOrderProductItem($id, array $productUnits = [], $unitCode = null)
     {
         $productUnit = null;
 
@@ -175,17 +187,12 @@ class QuoteProductOfferTypeTest extends AbstractTest
             }
         }
 
-        /* @var $item \PHPUnit_Framework_MockObject_MockObject|QuoteProductOffer */
-        $item = $this->getMock('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
+        /* @var $item OrderProductItem|\PHPUnit_Framework_MockObject_MockObject */
+        $item = $this->getMock('OroB2B\Bundle\OrderBundle\Entity\OrderProductItem');
         $item
             ->expects($this->any())
             ->method('getId')
             ->will($this->returnValue($id))
-        ;
-        $item
-            ->expects($this->any())
-            ->method('getQuoteProduct')
-            ->will($this->returnValue((new QuoteProduct())->setProduct($product)))
         ;
         $item
             ->expects($this->any())
@@ -197,18 +204,13 @@ class QuoteProductOfferTypeTest extends AbstractTest
             ->method('getProductUnitCode')
             ->will($this->returnValue($unitCode))
         ;
+        $item
+            ->expects($this->any())
+            ->method('getOrderProduct')
+            ->will($this->returnValue((new OrderProduct())->setProduct($product)))
+        ;
 
         return $item;
-    }
-
-    /**
-     * @param float $value
-     * @param string $currency
-     * @return Price
-     */
-    protected function createPrice($value, $currency)
-    {
-        return Price::create($value, $currency);
     }
 
     /**

@@ -7,6 +7,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class OrderProductItemTest extends AbstractTest
 {
@@ -21,9 +22,18 @@ class OrderProductItemTest extends AbstractTest
             ['price', new Price()],
             ['priceType', OrderProductItem::PRICE_TYPE_UNIT],
             ['fromQuote', true],
+            ['quoteProductOffer', new QuoteProductOffer()]
         ];
 
         static::assertPropertyAccessors(new OrderProductItem(), $properties);
+    }
+
+    public function testEntityIdentifier()
+    {
+        $item = new OrderProductItem();
+        $value = 321;
+        $this->setProperty($item, 'id', $value);
+        $this->assertEquals($value, $item->getEntityIdentifier());
     }
 
     public function testPostLoad()
@@ -37,6 +47,15 @@ class OrderProductItemTest extends AbstractTest
         $item->postLoad();
 
         static::assertEquals(Price::create(10, 'USD'), $item->getPrice());
+    }
+
+    public function testPrePersist()
+    {
+        $item = new OrderProductItem();
+        $this->assertNull($item->isFromQuote());
+
+        $item->prePersist();
+        $this->assertFalse($item->isFromQuote());
     }
 
     public function testUpdatePrice()

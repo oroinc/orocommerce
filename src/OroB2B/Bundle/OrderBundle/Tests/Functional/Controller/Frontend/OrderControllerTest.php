@@ -13,8 +13,6 @@ use OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 /**
  * @dbIsolation
- *
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class OrderControllerTest extends WebTestCase
 {
@@ -124,6 +122,8 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function indexProvider()
     {

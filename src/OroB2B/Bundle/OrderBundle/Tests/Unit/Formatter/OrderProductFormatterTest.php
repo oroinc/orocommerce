@@ -15,7 +15,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
 use OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter;
 
-class OrderProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
+class OrderProductFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var OrderProductFormatter
@@ -91,24 +91,25 @@ class OrderProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
             ->setPrice($inputData['price'])
         ;
 
-        $this->productUnitValueFormatter->expects($inputData['unit'] ? $this->once() : $this->never())
+        $this->productUnitValueFormatter
+            ->expects($inputData['unit'] && $inputData['quantity'] ? $this->once() : $this->never())
             ->method('format')
             ->with($inputData['quantity'], $inputData['unitCode'])
             ->will($this->returnValue($expectedData['formattedUnits']))
-        ;
-
-        $price = $inputData['price'] ?: new Price();
-
-        $this->numberFormatter->expects($price ? $this->once() : $this->never())
-            ->method('formatCurrency')
-            ->with($price->getValue(), $price->getCurrency())
-            ->will($this->returnValue($expectedData['formattedPrice']))
         ;
 
         $this->productUnitLabelFormatter->expects($this->once())
             ->method('format')
             ->with($inputData['unitCode'])
             ->will($this->returnValue($expectedData['formattedUnit']))
+        ;
+
+        $price = $inputData['price'] ?: new Price();
+
+        $this->numberFormatter->expects($inputData['price'] ? $this->once() : $this->never())
+            ->method('formatCurrency')
+            ->with($price->getValue(), $price->getCurrency())
+            ->will($this->returnValue($expectedData['formattedPrice']))
         ;
 
         $this->translator->expects($this->once())
@@ -155,6 +156,21 @@ class OrderProductTypeFormatterTest extends \PHPUnit_Framework_TestCase
                 'expectedData' => [
                     'formattedUnits'    => '17 kilogram',
                     'formattedPrice'    => '12.00 USD',
+                    'formattedUnit'     => 'kilogram',
+                    'transConstant'     => 'orob2b.order.orderproductitem.item',
+                ],
+            ],
+            'defaults' => [
+                'inputData' => [
+                    'item'      => (new OrderProductItem())->setProductUnit(new ProductUnit()),
+                    'quantity'  => null,
+                    'unitCode'  => null,
+                    'price'     => null,
+                    'unit'      => (new ProductUnit())->setCode('kg'),
+                ],
+                'expectedData' => [
+                    'formattedUnits'    => '',
+                    'formattedPrice'    => '',
                     'formattedUnit'     => 'kilogram',
                     'transConstant'     => 'orob2b.order.orderproductitem.item',
                 ],

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
@@ -90,13 +92,10 @@ class QuoteController extends Controller
      */
     protected function createOrder(Request $request, Quote $quote)
     {
+        /** @var ObjectManager $em */
+        $em = $this->getDoctrine()->getManagerForClass('OroB2BSaleBundle:Quote');
         $form = $this->getCreateOrderForm($quote);
-        $handler = new QuoteCreateOrderHandler(
-            $form,
-            $request,
-            $this->getDoctrine()->getManagerForClass('OroB2BSaleBundle:Quote'),
-            $this->getUser()
-        );
+        $handler = new QuoteCreateOrderHandler($form, $request, $em, $this->getUser());
 
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate(

@@ -54,9 +54,9 @@
                         <td>
                             <div>
                                 {% if orderProduct.product %}
-                                    <a href="{{ path('orob2b_product_view', { id: orderProduct.product.id }) }}">{{ orderProduct.product|raw }}</a>
+                                    <a href="{{ path('orob2b_product_view', { id: orderProduct.product.id }) }}">{{ orderProduct.product }}</a>
                                 {% else %}
-                                    {{ orderProduct.productSku|raw }}
+                                    {{ orderProduct.productSku }}
                                 {% endif %}
                             </div>
                         </td>

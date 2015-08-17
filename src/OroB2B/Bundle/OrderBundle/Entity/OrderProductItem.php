@@ -46,7 +46,7 @@ class OrderProductItem implements ProductUnitHolderInterface
     /**
      * @var OrderProduct
      *
-     * @ORM\ManyToOne(targetEntity="OrderProduct")
+     * @ORM\ManyToOne(targetEntity="OrderProduct", inversedBy="orderProductItems")
      * @ORM\JoinColumn(name="order_product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $orderProduct;
@@ -113,6 +113,14 @@ class OrderProductItem implements ProductUnitHolderInterface
      * @ORM\JoinColumn(name="quote_product_offer_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quoteProductOffer;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
 
     /**
      * {@inheritdoc}
@@ -334,7 +342,7 @@ class OrderProductItem implements ProductUnitHolderInterface
      *
      * @return bool
      */
-    public function getFromQuote()
+    public function isFromQuote()
     {
         return $this->fromQuote;
     }

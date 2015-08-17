@@ -26,6 +26,14 @@ class OrderProductTest extends AbstractTest
         ]);
     }
 
+    public function testEntityIdentifier()
+    {
+        $product = new OrderProduct();
+        $value = 321;
+        $this->setProperty($product, 'id', $value);
+        $this->assertEquals($value, $product->getEntityIdentifier());
+    }
+
     public function testSetProduct()
     {
         $product = new OrderProduct();

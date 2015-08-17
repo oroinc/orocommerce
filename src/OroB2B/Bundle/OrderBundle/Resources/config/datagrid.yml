@@ -12,7 +12,7 @@ datagrid:
                     - order1.id
                     - order1.identifier
                     - orderAccount.name as accountName
-                    - orderAccountUser.username as accountUserName
+                    - CONCAT(orderAccountUser.firstName, ' ', orderAccountUser.lastName) as accountUserName
                     - order1.createdAt
                     - order1.updatedAt
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
@@ -84,20 +84,11 @@ datagrid:
                     type:      string
                     data_name: owner
                 accountName:
-                    type:      entity
+                    type:      string
                     data_name: accountName
-                    options:
-                        field_options:
-                            property:   name
-                            class:      %orob2b_account.entity.account.class%
-                            multiple:   false
                 accountUserName:
-                    type:      entity
+                    type:      string
                     data_name: accountUserName
-                    options:
-                        field_options:
-                            class:      %orob2b_account.entity.account_user.class%
-                            multiple:   false
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt
@@ -139,7 +130,7 @@ datagrid:
                 select:
                     - order1.id
                     - order1.identifier
-                    - orderAccountUser.username as accountUserName
+                    - CONCAT(orderAccountUser.firstName, ' ', orderAccountUser.lastName) as accountUserName
                     - order1.createdAt
                     - order1.updatedAt
                 from:
@@ -189,12 +180,8 @@ datagrid:
                     type:      string
                     data_name: order1.identifier
                 accountUserName:
-                    type:      entity
+                    type:      string
                     data_name: order1.accountUser
-                    options:
-                        field_options:
-                            class:      %orob2b_account.entity.account_user.class%
-                            multiple:   false
                 createdAt:
                     type:      datetime
                     data_name: order1.createdAt

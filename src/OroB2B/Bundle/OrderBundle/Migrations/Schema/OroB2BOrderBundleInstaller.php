@@ -105,6 +105,7 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
+        $table->addIndex(['created_at'], 'orob2b_order_created_at_index');
     }
 
     /**

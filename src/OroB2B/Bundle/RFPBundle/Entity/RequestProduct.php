@@ -83,6 +83,14 @@ class RequestProduct implements ProductHolderInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
      * Get id
      *
      * @return integer

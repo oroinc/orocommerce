@@ -85,7 +85,7 @@ class ProductRemovedSelectType extends AbstractType
         /* @var $productHolder ProductHolderInterface */
         $productHolder = $form ? $form->getData() : null;
 
-        if (!$productHolder || !$productHolder instanceof ProductHolderInterface || null === $productHolder->getId()) {
+        if (!$productHolder instanceof ProductHolderInterface || !$productHolder->getEntityIdentifier()) {
             return;
         }
 

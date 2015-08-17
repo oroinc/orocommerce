@@ -29,7 +29,7 @@ class OrderProductItemCollectionTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver OptionsResolver\PHPUnit_Framework_MockObject_MockObject */
+        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
