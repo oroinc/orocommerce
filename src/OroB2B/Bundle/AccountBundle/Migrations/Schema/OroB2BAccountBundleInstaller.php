@@ -27,7 +27,6 @@ class OroB2BAccountBundleInstaller implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
-
     const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
     const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
     const ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'orob2b_acc_user_access_role';
@@ -270,7 +269,6 @@ class OroB2BAccountBundleInstaller implements
         $table->setPrimaryKey(['account_user_id', 'account_user_role_id']);
     }
 
-
     /**
      * Create orob2b_account_group table
      *
@@ -495,7 +493,6 @@ class OroB2BAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
-
 
     /**
      * Add orob2b_account foreign keys.

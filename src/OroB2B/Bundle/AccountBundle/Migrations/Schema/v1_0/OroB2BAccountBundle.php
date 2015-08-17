@@ -49,10 +49,10 @@ class OroB2BAccountBundle implements
     /** @var NoteExtension */
     protected $noteExtension;
 
-    /** @var  AttachmentExtension */
+    /** @var AttachmentExtension */
     protected $attachmentExtension;
 
-    /** @var  ExtendExtension */
+    /** @var ExtendExtension */
     protected $extendExtension;
 
     /** @var ActivityExtension */
@@ -256,7 +256,6 @@ class OroB2BAccountBundle implements
         $table->setPrimaryKey(['account_user_id', 'account_user_role_id']);
     }
 
-
     /**
      * Create orob2b_account_group table
      *
@@ -365,7 +364,6 @@ class OroB2BAccountBundle implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
-
 
     /**
      * Add orob2b_account foreign keys.
