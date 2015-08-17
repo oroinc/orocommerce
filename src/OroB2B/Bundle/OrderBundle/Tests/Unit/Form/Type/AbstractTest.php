@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints as DoctrineConstraints;
 use Symfony\Component\Form\FormTypeInterface;
+
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 

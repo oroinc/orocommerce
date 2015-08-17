@@ -20,9 +20,6 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- */
 class QuoteProductRequestTypeTest extends AbstractTest
 {
     /**

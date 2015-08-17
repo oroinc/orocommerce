@@ -119,7 +119,7 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($property, $control->textContent);
         }
 
-        $createOrderButton = (1 === count($crawler->selectButton('Accept and Submit to Order')));
+        $createOrderButton = (bool)$crawler->selectButton('Accept and Submit to Order')->count();
 
         $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
@@ -153,6 +153,8 @@ class QuoteControllerTest extends WebTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function indexProvider()
     {

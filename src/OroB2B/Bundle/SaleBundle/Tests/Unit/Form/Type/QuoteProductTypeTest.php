@@ -30,9 +30,6 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- */
 class QuoteProductTypeTest extends AbstractTest
 {
     /**
@@ -224,6 +221,8 @@ class QuoteProductTypeTest extends AbstractTest
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
@@ -519,8 +518,8 @@ class QuoteProductTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($this->translator);
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($this->translator);
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
 
         return [
             new PreloadedExtension(

@@ -10,7 +10,6 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -171,6 +170,7 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
     {
         $userManager = $this->container->get('oro_user.manager');
 
+        /** @var User $user */
         $user = $userManager->createUser();
         $user->setUsername($name)
             ->setPlainPassword('simple_password')
@@ -261,6 +261,9 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
             /* @var $accountUser AccountUser */
             $accountUser = $userManager->createUser();
 
+            /** @var AccountUserRole $role */
+            $role = $this->getReference($item['role']);
+
             $accountUser
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
@@ -269,7 +272,7 @@ class LoadOrderUsers extends AbstractFixture implements FixtureInterface
                 ->setConfirmed(true)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
-                ->addRole($this->getReference($item['role']))
+                ->addRole($role)
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true)

@@ -253,7 +253,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             ;
 
             foreach ($item['roles'] as $role) {
-                $accountUser->addRole($this->getReference($role));
+                /** @var AccountUserRole $roleEntity */
+                $roleEntity = $this->getReference($role);
+                $accountUser->addRole($roleEntity);
             }
 
             $userManager->updateUser($accountUser);

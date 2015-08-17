@@ -19,9 +19,6 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemType;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- */
 class OrderProductItemTypeTest extends AbstractTest
 {
     /**
@@ -63,6 +60,8 @@ class OrderProductItemTypeTest extends AbstractTest
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {

@@ -28,9 +28,6 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderProductType;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemCollectionType;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- */
 class OrderProductTypeTest extends AbstractTest
 {
     /**
@@ -113,6 +110,29 @@ class OrderProductTypeTest extends AbstractTest
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider finishViewProvider
+     */
+    public function testFinishViewWithPassedOptions(array $inputData, array $expectedData)
+    {
+        $view = new FormView();
+
+        $view->vars = $inputData;
+        $view->vars['componentOptions'] = ['componentOption' => true];
+
+        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $this->formType->finishView($view, $form, []);
+
+        $expectedData['componentOptions'] = array_merge($expectedData['componentOptions'], ['componentOption' => true]);
+
+        $this->assertEquals($expectedData, $view->vars);
+    }
+
+    /**
      * @return array
      */
     public function finishViewProvider()
@@ -182,6 +202,8 @@ class OrderProductTypeTest extends AbstractTest
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
@@ -321,7 +343,7 @@ class OrderProductTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $orderProductItemType       = $this->prepareOrderProductItemType($this->translator);
+        $orderProductItemType       = $this->prepareOrderProductItemType();
 
         return [
             new PreloadedExtension(
