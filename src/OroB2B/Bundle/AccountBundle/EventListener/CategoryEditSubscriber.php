@@ -149,8 +149,6 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     protected function applyVisibility($visibilityEntity, $enumCode, $visibilityCode)
     {
         $entityClass = get_class($visibilityEntity);
-        $visibility = $this->enumValueProvider->getEnumValueByCode($enumCode, $visibilityCode);
-        $visibilityEntity->setVisibility($visibility);
 
         if (!$this->entityManagers->offsetExists($entityClass)) {
             $em = $this->doctrineHelper->getEntityManager($visibilityEntity);
@@ -159,6 +157,18 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             $em = $this->entityManagers->offsetGet($entityClass);
         }
 
-        $em->persist($visibilityEntity);
+        if (in_array($visibilityCode, [
+            AccountCategoryVisibility::PARENT_CATEGORY,
+            AccountGroupCategoryVisibility::PARENT_CATEGORY
+        ])) {
+            if ($visibilityEntity->getVisibility()) {
+                $em->remove($visibilityEntity);
+            }
+        } else {
+            $visibility = $this->enumValueProvider->getEnumValueByCode($enumCode, $visibilityCode);
+            $visibilityEntity->setVisibility($visibility);
+
+            $em->persist($visibilityEntity);
+        }
     }
 }
