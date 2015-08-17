@@ -195,7 +195,7 @@ orob2b.account:
         visibility.label: Visibility
 
     categoryvisibility:
-        entity_label: Visibility To All Accounts
+        entity_label: Visible to All Accounts
         entity_plural_label: Category Visibilities
         id.label: ID
         category.label: Category
