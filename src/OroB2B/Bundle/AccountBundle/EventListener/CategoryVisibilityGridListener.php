@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
+use Doctrine\ORM\Query\Expr\Andx;
+use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\Query\Parameter;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
@@ -26,12 +28,21 @@ class CategoryVisibilityGridListener
             /** @var OrmDatasource $dataSource */
             $dataSource = $event->getDatagrid()->getDatasource();
 
-            $dataSource->getQueryBuilder()->orWhere(
-                $dataSource->getQueryBuilder()->expr()->isNull(
-                    $this->getFieldAlias($event->getDatagrid()->getName())
-                )
+            $parts = $dataSource->getQueryBuilder()->getDQLPart('where')->getParts();
+            foreach ($parts as $id => $part) {
+                if (preg_match('/visibility/', $part)) {
+                    unset($parts[$id]);
+                }
+            }
+            $parts[] = $dataSource->getQueryBuilder()->expr()->isNull(
+                $this->getFieldAlias($event->getDatagrid()->getName())
             );
-
+            $dataSource->getQueryBuilder()->orWhere(
+                call_user_func_array([
+                    $dataSource->getQueryBuilder()->expr(),
+                    'andX'
+                ], $parts)
+            );
             $event->getQuery()->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
         }
     }
