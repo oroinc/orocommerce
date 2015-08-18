@@ -24,27 +24,29 @@ class CategoryVisibilityGridListener
             return;
         }
 
-        if ($this->isFilteredByParent($event->getDatagrid()->getParameters())) {
-            /** @var OrmDatasource $dataSource */
-            $dataSource = $event->getDatagrid()->getDatasource();
-
-            $parts = $dataSource->getQueryBuilder()->getDQLPart('where')->getParts();
-            foreach ($parts as $id => $part) {
-                if (preg_match('/visibility/', $part)) {
-                    unset($parts[$id]);
-                }
-            }
-            $parts[] = $dataSource->getQueryBuilder()->expr()->isNull(
-                $this->getFieldAlias($event->getDatagrid()->getName())
-            );
-            $dataSource->getQueryBuilder()->orWhere(
-                call_user_func_array([
-                    $dataSource->getQueryBuilder()->expr(),
-                    'andX'
-                ], $parts)
-            );
-            $event->getQuery()->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
+        if (!$this->isFilteredByParent($event->getDatagrid()->getParameters())) {
+            return;
         }
+
+        /** @var OrmDatasource $dataSource */
+        $dataSource = $event->getDatagrid()->getDatasource();
+
+        $parts = $dataSource->getQueryBuilder()->getDQLPart('where')->getParts();
+        foreach ($parts as $id => $part) {
+            if (preg_match('/visibility/', $part)) {
+                unset($parts[$id]);
+            }
+        }
+        $parts[] = $dataSource->getQueryBuilder()->expr()->isNull(
+            $this->getFieldAlias($event->getDatagrid()->getName())
+        );
+        $dataSource->getQueryBuilder()->orWhere(
+            call_user_func_array([
+                $dataSource->getQueryBuilder()->expr(),
+                'andX'
+            ], $parts)
+        );
+        $event->getQuery()->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
     }
 
     /**
