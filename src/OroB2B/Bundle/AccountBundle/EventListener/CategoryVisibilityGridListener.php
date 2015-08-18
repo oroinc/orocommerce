@@ -30,8 +30,9 @@ class CategoryVisibilityGridListener
         $dataSource = $event->getDatagrid()->getDatasource();
 
         $parts = $dataSource->getQueryBuilder()->getDQLPart('where')->getParts();
+        $regexp = implode('|', $this->getFieldAliases());
         foreach ($parts as $id => $part) {
-            if (preg_match('/visibility/', $part)) {
+            if (preg_match(sprintf('/%s/', $regexp), $part)) {
                 unset($parts[$id]);
             }
         }
@@ -93,12 +94,23 @@ class CategoryVisibilityGridListener
     {
         switch ($gridName) {
             case 'account-category-visibility-grid':
-                $alias = 'accountCategoryVisibility.id';
+                $alias = 'accountCategoryVisibility.visibility';
                 break;
             default:
-                $alias = 'accountGroupCategoryVisibility.id';
+                $alias = 'accountGroupCategoryVisibility.visibility';
         }
 
         return $alias;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getFieldAliases()
+    {
+        return [
+            'accountCategoryVisibility.visibility',
+            'accountGroupCategoryVisibility.visibility'
+        ];
     }
 }
