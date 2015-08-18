@@ -28,7 +28,6 @@ class CategoryVisibilityGridListener
 
         /** @var OrmDatasource $dataSource */
         $dataSource = $event->getDatagrid()->getDatasource();
-
         $parts = $dataSource->getQueryBuilder()->getDQLPart('where')->getParts();
         $regexp = implode('|', $this->getFieldAliases());
         foreach ($parts as $id => $part) {
