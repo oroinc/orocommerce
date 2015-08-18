@@ -140,6 +140,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     protected $organization;
 
     /**
+     * @todo remove this as it lead to circular dependency
      * @var Quote
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\Quote")
@@ -148,11 +149,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     protected $quote;
 
     /**
-     * @var Collection|OrderProduct[]
+     * @var Collection|OrderLineItem[]
      *
-     * @ORM\OneToMany(targetEntity="OrderProduct", mappedBy="order", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderLineItem",
+     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
+     * )
      */
-    protected $orderProducts;
+    protected $lineItems;
 
     /**
      * Constructor
@@ -161,7 +164,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     {
         parent::__construct();
 
-        $this->orderProducts = new ArrayCollection();
+        $this->lineItems = new ArrayCollection();
     }
 
     /**
@@ -340,31 +343,40 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     }
 
     /**
-     * Add orderProducts
+     * @param OrderLineItem $lineItem
+     * @return bool
+     */
+    public function hasLineItem(OrderLineItem $lineItem)
+    {
+        return $this->lineItems->contains($lineItem);
+    }
+
+    /**
+     * Add line item
      *
-     * @param OrderProduct $orderProduct
+     * @param OrderLineItem $lineItem
      * @return Order
      */
-    public function addOrderProduct(OrderProduct $orderProduct)
+    public function addLineItem(OrderLineItem $lineItem)
     {
-        if (!$this->orderProducts->contains($orderProduct)) {
-            $this->orderProducts[] = $orderProduct;
-            $orderProduct->setOrder($this);
+        if (!$this->hasLineItem($lineItem)) {
+            $this->lineItems[] = $lineItem;
+            $lineItem->setOrder($this);
         }
 
         return $this;
     }
 
     /**
-     * Remove orderProducts
+     * Remove line item
      *
-     * @param OrderProduct $orderProduct
+     * @param OrderLineItem $lineItem
      * @return Order
      */
-    public function removeOrderProduct(OrderProduct $orderProduct)
+    public function removeLineItem(OrderLineItem $lineItem)
     {
-        if ($this->orderProducts->contains($orderProduct)) {
-            $this->orderProducts->removeElement($orderProduct);
+        if ($this->hasLineItem($lineItem)) {
+            $this->lineItems->removeElement($lineItem);
         }
 
         return $this;
@@ -375,9 +387,9 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
      *
      * @return Collection|OrderProduct[]
      */
-    public function getOrderProducts()
+    public function getLineItems()
     {
-        return $this->orderProducts;
+        return $this->lineItems;
     }
 
     /**

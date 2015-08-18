@@ -7,9 +7,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-class OrderProductItemCollectionType extends AbstractType
+class OrderLineItemsCollectionType extends AbstractType
 {
-    const NAME = 'orob2b_order_order_product_item_collection';
+    const NAME = 'orob2b_order_line_items_collection';
 
     /**
      * {@inheritdoc}
@@ -24,12 +24,15 @@ class OrderProductItemCollectionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'type'                  => OrderProductItemType::NAME,
-            'show_form_when_empty'  => false,
-            'error_bubbling'        => false,
-            'prototype_name'        => '__nameorderproductitem__',
-        ]);
+        $resolver->setDefaults(
+            [
+                'type' => OrderLineItemType::NAME,
+                'show_form_when_empty' => false,
+                'error_bubbling' => false,
+                'cascade_validation' => true,
+                'prototype_name' => '__nameorderlineitem__',
+            ]
+        );
     }
 
     /**

@@ -1,63 +1,63 @@
-.order-orderproduct-collection-table {
+.order-orderlineitem-collection-table {
     margin-left: 90px;
 }
 
-.order-orderproduct-collection-table label {
+.order-orderlineitem-collection-table label {
     text-transform: none !important;
 }
 
-.order-orderproduct-collection-table-view {
+.order-orderlineitem-collection-table-view {
     margin-left: inherit;
 }
 
-.order-orderproduct-collection-table-view > tbody > tr > td {
+.order-orderlineitem-collection-table-view > tbody > tr > td {
     vertical-align: top;
 }
 
-.order-orderproduct-collection-table > tbody > tr > td,
-.order-orderproduct-collection-table th {
+.order-orderlineitem-collection-table > tbody > tr > td,
+.order-orderlineitem-collection-table th {
     border: 1px solid #e5e5e5;
     padding: 10px;
     vertical-align: top;
 }
 
-.order-orderproduct-collection .btn.add-list-item {
+.order-orderlineitem-collection .btn.add-list-item {
     margin-left: 90px;
     margin-top: 7px;
 }
 
-.order-orderproduct-collection .row-oro.oro-multiselect-holder {
+.order-orderlineitem-collection .row-oro.oro-multiselect-holder {
     margin-bottom: 0;
 }
 
-.order-orderproduct-collection .btn.removeRow {
+.order-orderlineitem-collection .btn.removeRow {
     position: absolute;
     width: 28px;
     top: 11px;
     left: 388px;
 }
 
-.order-orderproduct-widget.control-group {
+.order-orderlineitem-widget.control-group {
     max-width: none;
 }
 
-.order-orderproduct-widget.control-group .controls {
+.order-orderlineitem-widget.control-group .controls {
     float: left;
     margin-left: 10px;
 }
 
-.order-orderproduct-widget .selector {
+.order-orderlineitem-widget .selector {
     margin-left: 0;
 }
 
-.order-orderproduct-widget .btn.removeRow {
+.order-orderlineitem-widget .btn.removeRow {
     position: absolute;
     width: 28px;
     right: -5px;
     left: auto;
 }
 
-.order-orderproductitem-collection .btn.removeRow {
+.order-orderlineitem-collection .btn.removeRow {
     position: absolute;
     width: 28px;
     right: 0;
@@ -65,93 +65,93 @@
     left: auto;
 }
 
-.order-orderproductitem-collection {
+.order-orderlineitem-collection {
     float: left;
     width: 100%;
 }
 
-.order-orderproductitem-collection .btn.add-list-item {
+.order-orderlineitem-collection .btn.add-list-item {
     margin-top: 1px;
 }
 
-.order-orderproductitem-collection > div > div > div {
+.order-orderlineitem-collection > div > div > div {
     padding-right: 14px;
 }
 
-.order-orderproductitem-widget {
+.order-orderlineitem-widget {
     margin-right: 15px;
 }
 
-.order-orderproductitem-widget td {
+.order-orderlineitem-widget td {
     width: 150px;
     vertical-align: top;
     padding-bottom: 4px;
 }
 
-.order-orderproductitem-widget-quantity {
+.order-orderlineitem-widget-quantity {
     padding-top: 5px;
 }
 
-.order-orderproductitem-widget-more {
+.order-orderlineitem-widget-more {
     padding-top: 10px;
 }
 
-.order-orderproductitem-widget-pricetype > div {
+.order-orderlineitem-widget-pricetype > div {
     margin-bottom: -10px;
 }
 
-.order-orderproductitem-widget-productunit {
+.order-orderlineitem-widget-productunit {
     padding-top: 5px;
 }
 
-.order-orderproductitem-widget-price {
+.order-orderlineitem-widget-price {
     padding-top: 5px;
 }
 
-.order-orderproductitem-widget td span.validation-failed {
+.order-orderlineitem-widget td span.validation-failed {
     padding-top: 2px;
 }
 
-.order-orderproductitem-widget input[type="number"],
-.order-orderproductitem-widget input[type="text"] {
+.order-orderlineitem-widget input[type="number"],
+.order-orderlineitem-widget input[type="text"] {
     width: 120px !important;
 }
 
-.order-orderproductitem-widget select {
+.order-orderlineitem-widget select {
     width: 120px !important;
     height: 20px;
     margin: 0;
 }
 
-.order-orderproduct-product {
+.order-orderlineitem-product {
     padding: 0;
     vertical-align: top;
 }
 
-.order-orderproduct-product-select button {
+.order-orderlineitem-product-select button {
     float: none;
 }
 
-.order-orderproducts-info.control-group {
+.order-orderlineitems-info.control-group {
     max-width: none;
 }
 
-.order-orderproductitems-info {
+.order-orderlineitems-info {
     padding: 5px 0 0 10px;
 }
 
-.order-orderproductitems-info > table {
+.order-orderlineitems-info > table {
     margin-bottom: 10px;
     width: 100%;
 }
 
-.order-orderproductitems-info > table th,
-.order-orderproductitems-info > table td {
+.order-orderlineitems-info > table th,
+.order-orderlineitems-info > table td {
     padding: 10px;
     border: 1px solid #e5e5e5;
 }
 
-.order-orderproductitem-collection .oro-item-collection > div {
+.order-orderlineitem-collection .oro-item-collection > div {
     border: 1px solid #e6e6e6 !important;
     background: #f8f8f8 !important;
     border-radius: 4px !important;
@@ -161,94 +161,94 @@
     margin-bottom: 7px;
 }
 
-.order-orderproductitem-collection .oro-item-collection > div > table {
+.order-orderlineitem-collection .oro-item-collection > div > table {
     margin-top: 7px;
     margin-bottom: 7px;
 }
 
-.order-orderproductitem-widget-last-line td {
+.order-orderlineitem-widget-last-line td {
     width: 280px;
 }
 
-.order-orderproductitem-widget-last-line label {
+.order-orderlineitem-widget-last-line label {
     width: auto !important;
 }
 
-.order-orderproductitem-widget-last-line input,
-.order-orderproductitem-widget-last-line select {
+.order-orderlineitem-widget-last-line input,
+.order-orderlineitem-widget-last-line select {
     max-width: 180px !important;
 }
 
-.order-orderproductitem-widget .validate-group {
+.order-orderlineitem-widget .validate-group {
     min-width: 145px;
 }
 
-.order-orderproduct-table-column-1 {
+.order-orderlineitem-table-column-1 {
     vertical-align: top;
     min-width: 330px;
     width: 330px;
 }
 
-.order-orderproduct-table-column-2 {
+.order-orderlineitem-table-column-2 {
     vertical-align: top;
     min-width: 260px;
     width: 260px;
 }
 
-.order-orderproduct-table-column-3 {
+.order-orderlineitem-table-column-3 {
     min-width: 800px;
     width: 800px;
 }
 
-.order-orderproduct-collection .oro-item-collection>div {
+.order-orderlineitem-collection .oro-item-collection>div {
     margin-top: -1px !important;
 }
 
-.order-orderproductitem-widget input[type="checkbox"],
-.order-orderproductitem-widget input[type="radio"] {
+.order-orderlineitem-widget input[type="checkbox"],
+.order-orderlineitem-widget input[type="radio"] {
     margin-top: 0 !important;
 }
 
-.order-orderproductitem-collection .btn.add-list-item {
+.order-orderlineitem-collection .btn.add-list-item {
   margin-left: 676px;
   position: absolute;
 }
 
-.order-orderproductitem-widget .control-group {
+.order-orderlineitem-widget .control-group {
     margin: 0;
 }
 
-.order-orderproduct-notes .control-group {
+.order-orderlineitem-notes .control-group {
     max-width: none;
     margin-top: 15px;
 }
 
-.order-orderproduct-notes .control-group textarea {
+.order-orderlineitem-notes .control-group textarea {
     width: 98%;
 }
 
-.order-orderproduct-remove-notes-btn {
+.order-orderlineitem-remove-notes-btn {
     float: right;
 }
 
-.order-orderproduct-notes-seller {
+.order-orderlineitem-notes-seller {
     display: none;
 }
 
-.order-orderproduct-notes-seller-active .order-orderproduct-notes-seller {
+.order-orderlineitem-notes-seller-active .order-orderlineitem-notes-seller {
     display: block;
 }
 
-.order-orderproduct-notes-seller-active .order-orderproduct-add-notes-btn {
+.order-orderlineitem-notes-seller-active .order-orderlineitem-add-notes-btn {
     visibility: hidden;
     margin-top: 1px;
 }
 
-.order-orderproductrequest-collection label {
+.order-orderlineitemrequest-collection label {
     width: 115px !important;
 }
 
-.order-orderproductrequest-collection .controls {
+.order-orderlineitemrequest-collection .controls {
     margin-left: 125px !important;
 }
 

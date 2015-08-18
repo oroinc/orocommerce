@@ -46,10 +46,11 @@ class OrderType extends AbstractType
                 'required'  => false,
             ])
             ->add(
-                'orderProducts',
-                OrderProductCollectionType::NAME,
+                'lineItems',
+                OrderLineItemsCollectionType::NAME,
                 [
-                    'add_label' => 'orob2b.order.orderproduct.add_label',
+                    'add_label' => 'orob2b.order.orderlineitem.add_label',
+                    'cascade_validation' => true
                 ]
             )
         ;

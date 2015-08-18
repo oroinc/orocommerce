@@ -8,33 +8,24 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
             - NotBlank: ~
         organization:
             - NotBlank: ~
-        orderProducts:
+        lineItems:
             - Valid: ~
 
-OroB2B\Bundle\OrderBundle\Entity\OrderProduct:
+OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
+    constraints:
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder: ~
     properties:
         order:
             - NotBlank: ~
         product:
             - NotBlank:
-                message: 'orob2b.order.orderproduct.product.blank'
+                message: 'orob2b.order.orderlineitem.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]
             - Length:
                 max: 255
                 groups: [ Import ]
-        orderProductItems:
-            - OroB2B\Bundle\OrderBundle\Validator\Constraints\Count:
-                minMessage: 'orob2b.order.orderproduct.order_product_items.blank'
-            - Valid: ~
-
-OroB2B\Bundle\OrderBundle\Entity\OrderProductItem:
-    constraints:
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder: ~
-    properties:
-        orderProduct:
-            - NotBlank: ~
         quantity:
             - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
@@ -43,7 +34,7 @@ OroB2B\Bundle\OrderBundle\Entity\OrderProductItem:
             - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.order.orderproductitem.product_unit.blank'
+                message: 'orob2b.order.orderlineitem.product_unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]

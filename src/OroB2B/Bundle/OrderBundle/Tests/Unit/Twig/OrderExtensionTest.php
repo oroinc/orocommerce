@@ -69,6 +69,6 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->with(new OrderProductItem())
         ;
 
-        $this->extension->formatProductItem(new OrderProductItem());
+        $this->extension->formatLineItem(new OrderProductItem());
     }
 }

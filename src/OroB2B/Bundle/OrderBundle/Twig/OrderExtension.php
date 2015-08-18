@@ -2,25 +2,24 @@
 
 namespace OroB2B\Bundle\OrderBundle\Twig;
 
-use OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\Formatter\OrderLineItemFormatter;
 
 class OrderExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_order_order';
 
     /**
-     * @var OrderProductFormatter
+     * @var OrderLineItemFormatter
      */
-    protected $orderProductFormatter;
+    protected $formatter;
 
     /**
-     * @param OrderProductFormatter $orderProductFormatter
+     * @param OrderLineItemFormatter $formatter
      */
-    public function __construct(OrderProductFormatter $orderProductFormatter)
+    public function __construct(OrderLineItemFormatter $formatter)
     {
-        $this->orderProductFormatter = $orderProductFormatter;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -30,20 +29,20 @@ class OrderExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFilter(
-                'orob2b_format_order_product_item',
-                [$this, 'formatProductItem'],
+                'orob2b_format_order_line_item',
+                [$this, 'formatLineItem'],
                 ['is_safe' => ['html']]
             ),
         ];
     }
 
     /**
-     * @param OrderProductItem $item
+     * @param OrderLineItem $item
      * @return string
      */
-    public function formatProductItem(OrderProductItem $item)
+    public function formatLineItem(OrderLineItem $item)
     {
-        return $this->orderProductFormatter->formatItem($item);
+        return $this->formatter->formatItem($item);
     }
 
     /**

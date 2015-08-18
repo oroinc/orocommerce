@@ -1,9 +1,7 @@
 parameters:
     orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
-    orob2b_order.form.type.order_product.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductType
-    orob2b_order.form.type.order_product_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemType
-    orob2b_order.form.type.order_product_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductCollectionType
-    orob2b_order.form.type.order_product_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderProductItemCollectionType
+    orob2b_order.form.type.order_line_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType
+    orob2b_order.form.type.order_line_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType
 
 services:
     # Order form types
@@ -14,31 +12,17 @@ services:
         tags:
             - { name: form.type, alias: orob2b_order_order }
 
-    orob2b_order.form.type.order_product:
-        class: %orob2b_order.form.type.order_product.class%
+    orob2b_order.form.type.order_line_item:
+        class: %orob2b_order.form.type.order_line_item.class%
         arguments:
+            - @orob2b_order.formatter.order_line_item
             - @orob2b_product.formatter.product_unit_label
-            - @orob2b_order.formatter.order_product
         calls:
-            - [setDataClass, [%orob2b_order.entity.order_product.class%]]
+            - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
         tags:
-            - { name: form.type, alias: orob2b_order_order_product }
+            - { name: form.type, alias: "orob2b_order_line_item" }
 
-    orob2b_order.form.type.order_product_item:
-        class: %orob2b_order.form.type.order_product_item.class%
-        arguments:
-            - @orob2b_order.formatter.order_product_item
-        calls:
-            - [setDataClass, [%orob2b_order.entity.order_product_item.class%]]
+    orob2b_order.form.type.order_line_item_collection:
+        class: %orob2b_order.form.type.order_line_item_collection.class%
         tags:
-            - { name: form.type, alias: orob2b_order_order_product_item }
-
-    orob2b_order.form.type.order_product_collection:
-        class: %orob2b_order.form.type.order_product_collection.class%
-        tags:
-            - { name: form.type, alias: orob2b_order_order_product_collection }
-
-    orob2b_order.form.type.order_product_item_collection:
-        class: %orob2b_order.form.type.order_product_item_collection.class%
-        tags:
-            - { name: form.type, alias: orob2b_order_order_product_item_collection }
+            - { name: form.type, alias: "orob2b_order_line_items_collection" }

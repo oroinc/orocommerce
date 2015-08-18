@@ -25,11 +25,11 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            order_products: 'Line Items'
+            order_line_items: 'Line Items'
 
-        orderproduct:
-            entity_label: 'Order Product'
-            entity_plural_label: 'Order Products'
+        orderlineitem:
+            entity_label: 'Order Line Item'
+            entity_plural_label: 'Order Line Items'
             add_label: 'Add Product'
             id.label: 'ID'
             product.label: 'Product'
@@ -39,33 +39,26 @@ orob2b:
             order_product_requests.label: 'Order Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            column:
-                product: 'Product'
-                order_product_items: 'Items'
-
-        orderproductitem:
+            product_unit.empty: 'Choose Unit...'
+            column_summary: 'Summary'
             item: '{units}, {price} per {unit}'
             item_bundled: '{units}, {price} for every {units}'
-            entity_label: 'Order Product Item'
-            entity_plural_label: 'Order Product Items'
-            add_label: 'Add Item'
-            id.label: 'ID'
             quantity.label: 'Quantity'
             product_unit.label: 'Product Unit'
             product_unit_code.label: 'Product Unit Code'
             price.label: 'Price'
             value.label: 'Price Value'
             currency.label: 'Price Currency'
-            order_product.label: 'Order Product'
             quote_product_offer.label: 'Quote Product Offer'
-            from_quote.label: 'Created from Quote'
+            fromExternalSource.label: 'Created from External Source'
+            ship_by.label: 'Ship By'
             price_type:
                 label: 'Price Type'
                 bundled: 'bundled item'
                 unit: 'at unit price of'
 
-            product_unit.empty: 'Choose Unit...'
-            column_summary: 'Summary'
+            column:
+                product: 'Product'
 
         btn:
             add_seller_notes: 'Add Notes'
@@ -88,14 +81,12 @@ orob2b:
                 general: General
                 line_items: Line Items
 
-            orderproduct:
+            orderlineitem:
                 comment.label: Seller Notes
+                quantity.label: Quantity
+                price.label: Price
+                column_summary: Summary
                 column:
                     product: Product
                     type: Type
                     order_product_items: Items
-
-            orderproductitem:
-                quantity.label: Quantity
-                price.label: Price
-                column_summary: Summary

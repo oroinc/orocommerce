@@ -6,11 +6,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 
-class OrderProductFormatter
+class OrderLineItemFormatter
 {
     /**
      * @var TranslatorInterface
@@ -51,17 +51,15 @@ class OrderProductFormatter
     }
 
     /**
-     * @param OrderProductItem $item
+     * @param OrderLineItem $item
      * @return string
      */
-    public function formatItem(OrderProductItem $item)
+    public function formatItem(OrderLineItem $item)
     {
-        switch ($item->getPriceType()) {
-            case OrderProductItem::PRICE_TYPE_BUNDLED:
-                $transConstant = 'orob2b.order.orderproductitem.item_bundled';
-                break;
-            default:
-                $transConstant = 'orob2b.order.orderproductitem.item';
+        if ($item->getPriceType() === OrderLineItem::PRICE_TYPE_BUNDLED) {
+            $transConstant = 'orob2b.order.orderlineitem.item_bundled';
+        } else {
+            $transConstant = 'orob2b.order.orderlineitem.item';
         }
 
         $str = $this->translator->trans(
@@ -77,11 +75,37 @@ class OrderProductFormatter
     }
 
     /**
-     * @param OrderProductItem $item
+     * @param string $priceTypeLabel
+     * @return string
+     */
+    public function formatPriceTypeLabel($priceTypeLabel)
+    {
+        $translationKey = sprintf('orob2b.order.orderlineitem.price_type.%s', $priceTypeLabel);
+
+        return $this->translator->trans($translationKey);
+    }
+
+    /**
+     * @param array $types
+     * @return array
+     */
+    public function formatPriceTypeLabels(array $types)
+    {
+        $res = [];
+
+        foreach ($types as $key => $value) {
+            $res[$key] = $this->formatPriceTypeLabel($value);
+        }
+
+        return $res;
+    }
+
+    /**
+     * @param OrderLineItem $item
      * @param string $default
      * @return string
      */
-    protected function formatProductUnit(OrderProductItem $item, $default = '')
+    protected function formatProductUnit(OrderLineItem $item, $default = '')
     {
         if (!$item->getProductUnit()) {
             return sprintf('%s %s', $item->getQuantity(), $item->getProductUnitCode());
@@ -93,11 +117,11 @@ class OrderProductFormatter
     }
 
     /**
-     * @param OrderProductItem $item
+     * @param OrderLineItem $item
      * @param string $default
      * @return string
      */
-    protected function formatPrice(OrderProductItem $item, $default = '')
+    protected function formatPrice(OrderLineItem $item, $default = '')
     {
         if ($item->getPrice()) {
             return $this->numberFormatter->formatCurrency(
@@ -110,10 +134,10 @@ class OrderProductFormatter
     }
 
     /**
-     * @param OrderProductItem $item
+     * @param OrderLineItem $item
      * @return string
      */
-    protected function formatUnitCode(OrderProductItem $item)
+    protected function formatUnitCode(OrderLineItem $item)
     {
         $unit = $this->productUnitLabelFormatter->format($item->getProductUnitCode());
 

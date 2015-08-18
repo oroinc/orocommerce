@@ -1,13 +1,12 @@
 parameters:
     orob2b_order.entity.order.class: OroB2B\Bundle\OrderBundle\Entity\Order
+    orob2b_order.entity.order_line_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderLineItem
+
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
-    orob2b_order.entity.order_product.class: OroB2B\Bundle\OrderBundle\Entity\OrderProduct
-    orob2b_order.entity.order_product_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderProductItem
     #Formatters
-    orob2b_order.formatter.order_product.class: OroB2B\Bundle\OrderBundle\Formatter\OrderProductFormatter
-    orob2b_order.formatter.order_product_item.class: OroB2B\Bundle\OrderBundle\Formatter\OrderProductItemFormatter
+    orob2b_order.formatter.order_line_item.class: OroB2B\Bundle\OrderBundle\Formatter\OrderLineItemFormatter
     #Twig extensions
     orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
 
@@ -31,19 +30,14 @@ services:
     orob2b_order.twig.order:
         class: %orob2b_order.twig.order.class%
         arguments:
-            - @orob2b_order.formatter.order_product
+            - @orob2b_order.formatter.order_line_item
         tags:
             - { name: twig.extension }
 
-    orob2b_order.formatter.order_product:
-        class: %orob2b_order.formatter.order_product.class%
+    orob2b_order.formatter.order_line_item:
+        class: %orob2b_order.formatter.order_line_item.class%
         arguments:
             - @translator
             - @oro_locale.formatter.number
             - @orob2b_product.formatter.product_unit_value
             - @orob2b_product.formatter.product_unit_label
-
-    orob2b_order.formatter.order_product_item:
-        class: %orob2b_order.formatter.order_product_item.class%
-        arguments:
-            - @translator

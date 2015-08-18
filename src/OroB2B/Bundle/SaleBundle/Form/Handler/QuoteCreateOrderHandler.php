@@ -10,8 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
-use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteCreateOrderHandler
@@ -104,32 +103,26 @@ class QuoteCreateOrderHandler
     protected function onSuccess(Quote $entity)
     {
         $order = new Order();
-        $order
-            ->setOwner($entity->getOwner())
+        $order->setOwner($entity->getOwner())
             ->setQuote($entity)
             ->setAccountUser($this->user)
-            ->setAccount($this->user->getAccount())
-        ;
+            ->setAccount($this->user->getAccount());
 
         foreach ($entity->getQuoteProducts() as $quoteProduct) {
-            $orderProduct = new OrderProduct();
-            $orderProduct
-                ->setProduct($quoteProduct->getProduct())
-                ->setComment($quoteProduct->getComment())
-            ;
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                $orderProductItem = new OrderProductItem();
-                $orderProductItem
-                    ->setFromQuote(true)
+                $lineItem = new OrderLineItem();
+                $lineItem->setProduct($quoteProduct->getProduct())
+                    ->setComment($quoteProduct->getComment());
+
+                $lineItem->setFromExternalSource(true)
                     ->setQuantity($quoteProductOffer->getQuantity())
                     ->setPrice($quoteProductOffer->getPrice())
                     ->setProductUnit($quoteProductOffer->getProductUnit())
                     ->setQuoteProductOffer($quoteProductOffer)
-                    ->setPriceType($quoteProductOffer->getPriceType())
-                ;
-                $orderProduct->addOrderProductItem($orderProductItem);
+                    ->setPriceType($quoteProductOffer->getPriceType());
+
+                $order->addLineItem($lineItem);
             }
-            $order->addOrderProduct($orderProduct);
         }
 
         try {
