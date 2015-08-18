@@ -111,6 +111,14 @@ class OrderLineItemType extends AbstractType
                 ]
             )
             ->add(
+                'productSku',
+                'text',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.product.sku.label'
+                ]
+            )
+            ->add(
                 'freeFormProduct',
                 'text',
                 [

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -44,7 +45,18 @@ class OrderType extends AbstractType
             ->add('accountUser', AccountUserSelectType::NAME, [
                 'label'     => 'orob2b.order.account_user.label',
                 'required'  => false,
+                'attr' => [
+                    'class' => 'order-order-accountuser-select' //TODO remove this after related entity selection fix
+                ]
             ])
+            ->add(
+                'priceList',
+                PriceListSelectType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'orob2b.order.price_list.label'
+                ]
+            )
             ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,

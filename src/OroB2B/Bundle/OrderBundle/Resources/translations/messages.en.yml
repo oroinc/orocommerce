@@ -11,6 +11,7 @@ orob2b:
         quote.label: 'Quote'
         account.label: 'Account'
         account_user.label: 'Account User'
+        price_list.label: 'Price List'
 
         menu:
             sales_tab.label: Sales

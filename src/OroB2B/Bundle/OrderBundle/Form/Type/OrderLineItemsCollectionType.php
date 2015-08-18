@@ -31,6 +31,8 @@ class OrderLineItemsCollectionType extends AbstractType
                 'error_bubbling' => false,
                 'cascade_validation' => true,
                 'prototype_name' => '__nameorderlineitem__',
+                'prototype' => true,
+                'handle_primary' => false
             ]
         );
     }

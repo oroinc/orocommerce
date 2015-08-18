@@ -29,6 +29,8 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterface, ProductUnitHolderInterface
 {
