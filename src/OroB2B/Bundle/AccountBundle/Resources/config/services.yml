@@ -38,7 +38,8 @@ parameters:
     orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
-
+    orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
+    orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
     orob2b_account.event_subscriber.category_edit.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryEditSubscriber
 
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
@@ -294,3 +295,15 @@ services:
         arguments: [@oro_entity.doctrine_helper, @oro_entity_extend.enum_value_provider]
         tags:
             - { name: kernel.event_subscriber }
+
+    orob2b_account.twig.security_extension:
+        class: %orob2b_account.twig.account_extension.class%
+        arguments:
+            - @orob2b_account.security.account_user_provider
+        tags:
+            - { name: twig.extension }
+
+    orob2b_account.event_listener.category_visibility_grid_listener:
+        class: %orob2b_account.event_listener.category_visibility_grid_listener.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before, method: onResultBefore }
