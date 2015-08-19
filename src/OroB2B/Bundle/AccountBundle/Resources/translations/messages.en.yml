@@ -14,6 +14,7 @@ orob2b.account:
     form.choose: 'Choose an account...'
     form.choose_parent: 'Choose Parent...'
     address_book.label: 'Address Book'
+    owner.label: 'Owner'
 
     address:
         add: 'Add Address'
@@ -64,6 +65,7 @@ orob2b.account:
         form.choose:                 'Choose an account user...'
         addresses.label:             'Addresses'
         address_book.label:          'Address Book'
+        owner.label:                 'Owner'
 
         profile:
             registration.title: 'Registration'
@@ -103,16 +105,18 @@ orob2b.account:
         entity_description:         Represent account user's address
         entity_label:               Account User Address
         entity_plural_label:        Account User Addresses
-        first_name.label:           First name
+        first_name.label:           First Name
         id.label:                   Id
         label.label:                Label
-        last_name.label:            Last name
-        middle_name.label:          Middle name
-        name_prefix.label:          Name prefix
-        name_suffix.label:          Name suffix
+        last_name.label:            Last Name
+        middle_name.label:          Middle Name
+        name_prefix.label:          Name Prefix
+        name_suffix.label:          Name Suffix
         organization.label:         Organization
+        system_organization.label:  System Organization
+        frontend_owner.label:       Frontend Owner
         owner.label:                Owner
-        postal_code.label:          Zip/postal code
+        postal_code.label:          Zip/Postal Code
         primary.label:              Primary
         region.label:               State
         region_text.label:          State
@@ -156,6 +160,8 @@ orob2b.account:
         name_prefix.label:   Name prefix
         name_suffix.label:   Name suffix
         organization.label:  Organization
+        system_organization.label: System Organization
+        frontend_owner.label: Owner
         owner.label:         Owner
         postal_code.label:   Zip/postal code
         primary.label:       Primary
@@ -223,6 +229,7 @@ orob2b.account:
             account.title: 'Account'
             account_users.title: 'Account Users'
         fields:
+            default_account_owner.label: 'Default Account Owner'
             registration_allowed.label: 'Registration Allowed'
             confirmation_required.label: 'Confirmation Required'
             send_password_in_welcome_email.label: 'Send plain text password in welcome emails'

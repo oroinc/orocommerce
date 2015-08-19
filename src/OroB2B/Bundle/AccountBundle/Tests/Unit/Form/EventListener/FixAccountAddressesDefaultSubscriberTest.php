@@ -22,7 +22,7 @@ class FixAccountAddressesDefaultSubscriberTest extends \PHPUnit_Framework_TestCa
      */
     protected function setUp()
     {
-        $this->subscriber = new FixAccountAddressesDefaultSubscriber('owner.addresses');
+        $this->subscriber = new FixAccountAddressesDefaultSubscriber('frontendOwner.addresses');
     }
 
     public function testGetSubscribedEvents()

@@ -114,24 +114,24 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
 
-            this.$container = options._sourceElement;
+            this.$el = options._sourceElement;
 
             this.typeOffer = options.typeOffer;
             this.typeReplacement = options.typeReplacement;
 
-            this.loadingMask = new LoadingMaskView({container: this.$container});
+            this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.$productSelect = this.$container.find(this.options.productSelect);
-            this.$productReplacementSelect = this.$container.find(this.options.productReplacementSelect);
-            this.$typeSelect = this.$container.find(this.options.typeSelect);
-            this.$addItemButton = this.$container.find(this.options.addItemButton);
-            this.$itemsCollectionContainer = this.$container.find(this.options.itemsCollectionContainer);
-            this.$itemsContainer = this.$container.find(this.options.itemsContainer);
-            this.$productReplacementContainer = this.$container.find(this.options.productReplacementContainer);
-            this.$sellerNotesContainer = this.$container.find(this.options.sellerNotesContainer);
-            this.$requestsOnlyContainer = this.$container.find(this.options.requestsOnlyContainer);
+            this.$productSelect = this.$el.find(this.options.productSelect);
+            this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
+            this.$typeSelect = this.$el.find(this.options.typeSelect);
+            this.$addItemButton = this.$el.find(this.options.addItemButton);
+            this.$itemsCollectionContainer = this.$el.find(this.options.itemsCollectionContainer);
+            this.$itemsContainer = this.$el.find(this.options.itemsContainer);
+            this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
+            this.$sellerNotesContainer = this.$el.find(this.options.sellerNotesContainer);
+            this.$requestsOnlyContainer = this.$el.find(this.options.requestsOnlyContainer);
 
-            this.$container
+            this.$el
                 .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
                 .on('change', this.options.productReplacementSelect, _.bind(this.onProductChanged, this))
                 .on('change', this.options.typeSelect, _.bind(this.onTypeChanged, this))
@@ -229,7 +229,7 @@ define(function(require) {
 
             var units = data || {};
 
-            var widgets = self.$container.find(self.options.itemWidget);
+            var widgets = self.$el.find(self.options.itemWidget);
 
             $.each(widgets, function(index, widget) {
                 var select = $(widget).find(self.options.unitsSelect);
@@ -257,7 +257,7 @@ define(function(require) {
             });
 
             if (force) {
-                this.$container.find('select').uniform('update');
+                this.$el.find('select').uniform('update');
             }
         },
 
@@ -299,7 +299,7 @@ define(function(require) {
                 return;
             }
 
-            this.$container.off();
+            this.$el.off();
 
             QuoteProductItemSelectionComponent.__super__.dispose.call(this);
         }

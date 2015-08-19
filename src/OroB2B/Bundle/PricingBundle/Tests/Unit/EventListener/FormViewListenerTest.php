@@ -4,30 +4,20 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FormViewListenerTest extends \PHPUnit_Framework_TestCase
+class FormViewListenerTest extends FormViewListenerTestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrineHelper;
-
     /**
      * @var FormViewListener
      */
@@ -35,18 +25,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
-
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
 
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
     }

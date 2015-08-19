@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -68,7 +69,8 @@ class AccountUserTest extends AbstractUserTest
         $user = $this->getUser();
         $user->setOrganization($organization)
             ->setFirstName('John')
-            ->setLastName('Doe');
+            ->setLastName('Doe')
+            ->setOwner(new User());
         $this->assertEmpty($user->getAccount());
 
         // createAccount is triggered on prePersist event

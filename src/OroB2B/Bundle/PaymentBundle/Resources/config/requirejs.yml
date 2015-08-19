@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oro/datagrid/action/payment-delete-action': 'bundles/orob2bpayment/js/datagrid/action/payment-delete-action.js'

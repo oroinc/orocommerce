@@ -29,6 +29,7 @@ class LoadPaymentTermData extends AbstractFixture
             $paymentTerm->setLabel($paymentTermLabel);
 
             $manager->persist($paymentTerm);
+            $this->addReference($paymentTermLabel, $paymentTerm);
         }
 
         $manager->flush();
