@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {"%identifier%": entity.identifier|default('N/A'|trans)} }) %}
 
@@ -49,7 +50,7 @@
             options: {
                 url: path('orob2b_order_subtotals', {id: entity.id}),
                 selectors: {form: '#' ~ form.vars.id}
-                }
+            }
         } only %}
     {% endset %}
 
@@ -70,7 +71,8 @@
             'subblocks': [{
                 'data': [
                     ownerSelectors,
-                    form_row(form.priceList)
+                    form_row(form.priceList),
+                    UI.renderProperty('orob2b.order.currency.label'|trans, entity.currency)
                 ]
             }]
         },
