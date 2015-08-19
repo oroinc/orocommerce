@@ -14,6 +14,7 @@ parameters:
     orob2b_account.entity.pinbar_tab.class: OroB2B\Bundle\AccountBundle\Entity\PinbarTab
     orob2b_account.entity.sidebar_state.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarState
     orob2b_account.entity.widget.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarWidget
+    orob2b_account.entity.page_state.class: OroB2B\Bundle\AccountBundle\Entity\PageState
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -275,6 +276,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
     orob2b_account.item.builder.pinbar:
         class: %orob2b_account.item.builder.pinbar.class%
         arguments:

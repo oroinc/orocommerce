@@ -15,3 +15,6 @@ oro_entity:
         OroB2B\Bundle\AccountBundle\Entity\PinbarTab:
             alias:        account_user_pinbar_tab
             plural_alias: account_user_pinbar_tabs
+        OroB2B\Bundle\AccountBundle\Entity\PageState:
+            alias:        account_user_page_state
+            plural_alias: account_user_page_states
