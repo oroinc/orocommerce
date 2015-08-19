@@ -5,3 +5,11 @@
 .subtotals-container .controls .control-label {
     font-weight: bold !important;
 }
+
+.order-order-accountuser-select .entity-select-btn {
+    display: none;
+}
+
+.order-order-accountuser-select .select2-container {
+    width: 257px !important;
+}

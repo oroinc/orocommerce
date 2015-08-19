@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -14,6 +16,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -238,6 +241,33 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
     protected $accountUser;
+
+    /**
+     * @var Collection|OrderLineItem[]
+     *
+     * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderLineItem",
+     *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
+     * )
+     */
+    protected $lineItems;
+
+    /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $priceList;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->lineItems = new ArrayCollection();
+    }
 
     /**
      * @return int
@@ -589,6 +619,75 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
     public function setAccount($account)
     {
         $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     * @return bool
+     */
+    public function hasLineItem(OrderLineItem $lineItem)
+    {
+        return $this->lineItems->contains($lineItem);
+    }
+
+    /**
+     * Add line item
+     *
+     * @param OrderLineItem $lineItem
+     * @return Order
+     */
+    public function addLineItem(OrderLineItem $lineItem)
+    {
+        if (!$this->hasLineItem($lineItem)) {
+            $this->lineItems[] = $lineItem;
+            $lineItem->setOrder($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove line item
+     *
+     * @param OrderLineItem $lineItem
+     * @return Order
+     */
+    public function removeLineItem(OrderLineItem $lineItem)
+    {
+        if ($this->hasLineItem($lineItem)) {
+            $this->lineItems->removeElement($lineItem);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get orderProducts
+     *
+     * @return Collection|OrderLineItem[]
+     */
+    public function getLineItems()
+    {
+        return $this->lineItems;
+    }
+
+    /**
+     * @return PriceList
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return Order
+     */
+    public function setPriceList(PriceList $priceList = null)
+    {
+        $this->priceList = $priceList;
 
         return $this;
     }

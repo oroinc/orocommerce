@@ -2,6 +2,8 @@ parameters:
     orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
     orob2b_order.form.type.frontend.order.class: OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType
     orob2b_order.form.type.order_address.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType
+    orob2b_order.form.type.order_line_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType
+    orob2b_order.form.type.order_line_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType
 
 services:
     orob2b_order.form.type.order:
@@ -37,3 +39,18 @@ services:
             - { name: form.type, alias: orob2b_order_address_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order_address.class%]]
+
+    orob2b_order.form.type.order_line_item:
+        class: %orob2b_order.form.type.order_line_item.class%
+        arguments:
+            - @orob2b_order.formatter.order_line_item
+            - @orob2b_product.formatter.product_unit_label
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
+        tags:
+            - { name: form.type, alias: "orob2b_order_line_item" }
+
+    orob2b_order.form.type.order_line_item_collection:
+        class: %orob2b_order.form.type.order_line_item_collection.class%
+        tags:
+            - { name: form.type, alias: "orob2b_order_line_items_collection" }

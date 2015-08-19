@@ -1,0 +1,11 @@
+orob2b:
+    order:
+        orderproduct:
+            product:
+                blank: 'Please choose existing Product.'
+            order_product_items:
+                blank: 'Please add one or more items.'
+
+        orderproductitem:
+            product_unit:
+                blank: 'Please choose existing Unit.'

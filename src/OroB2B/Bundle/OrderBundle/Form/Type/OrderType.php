@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,10 +11,12 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class OrderType extends AbstractType
 {
@@ -64,11 +65,31 @@ class OrderType extends AbstractType
                 [
                     'label' => 'orob2b.order.account_user.label',
                     'required' => false,
+                    //TODO remove this after related entity selection fix
+                    'attr' => [
+                        'class' => 'order-order-accountuser-select'
+                    ]
                 ]
             )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
             ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
-            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label']);
+            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label'])
+            ->add(
+                'priceList',
+                PriceListSelectType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'orob2b.order.price_list.label',
+                ]
+            )
+            ->add(
+                'lineItems',
+                OrderLineItemsCollectionType::NAME,
+                [
+                    'add_label' => 'orob2b.order.orderlineitem.add_label',
+                    'cascade_validation' => true,
+                ]
+            );
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
@@ -123,6 +144,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
+                'intention' => 'order',
             ]
         );
     }
@@ -163,6 +185,7 @@ class OrderType extends AbstractType
         }
 
         $paymentTerm = $this->paymentTermProvider->getAccountPaymentTerm($account);
+
         return $paymentTerm ? $paymentTerm->getId() : null;
     }
 
@@ -178,6 +201,7 @@ class OrderType extends AbstractType
         }
 
         $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
+
         return $paymentTerm ? $paymentTerm->getId() : null;
     }
 }

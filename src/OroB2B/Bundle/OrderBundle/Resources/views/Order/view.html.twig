@@ -50,6 +50,48 @@
         }
     ] %}
 
+    {% if entity.lineItems|length %}
+        {% set lineItems %}
+            <div class="order-orderproducts-info control-group">
+                <table class="order-orderproduct-collection-table order-orderproduct-collection-table-view">
+                    <thead>
+                    <tr>
+                        <th>{{ 'orob2b.order.orderlineitem.column.product'|trans }}</th>
+                        <th>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
+                        <th>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
+                        <th>{{ 'orob2b.order.orderlineitem.column_summary'|trans }}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for lineItem in entity.lineItems %}
+                        <tr>
+                            <td>
+                                <div>
+                                    {{ lineItem.productSku }}
+                                </div>
+                            </td>
+                            <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
+                            <td>{{ lineItem.price|oro_format_price }}</td>
+                            <td>
+                                {{ lineItem|orob2b_format_order_line_item }}
+
+                                {% if lineItem.comment is not empty %}
+                                    {{ UI.renderProperty('orob2b.order.orderlineitem.comment.label'|trans, lineItem.comment) }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge({
+            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'subblocks': [{'data' : [lineItems]}]
+        }) %}
+    {% endif %}
+
     {% set id = 'order-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 

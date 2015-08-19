@@ -69,7 +69,17 @@
             'class': 'active',
             'subblocks': [{
                 'data': [
-                    ownerSelectors
+                    ownerSelectors,
+                    form_row(form.priceList)
+                ]
+            }]
+        },
+        {
+            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'subblocks': [{
+                'title': '',
+                'data': [
+                    form_widget(form.lineItems)
                 ]
             }]
         }
