@@ -1,0 +1,24 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroAddressBundle::macros.html.twig' as address %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.order.id.label'|trans, order.id) }}
+            {{ UI.renderProperty('orob2b.order.identifier.label'|trans, order.identifier) }}
+            {{ UI.renderProperty('orob2b.order.po_number.label'|trans, order.poNumber) }}
+            {{ UI.renderProperty('orob2b.order.currency.label'|trans, order.currency) }}
+            {{ UI.renderProperty('orob2b.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
+            {{ UI.renderProperty('orob2b.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
+        </div>
+        <div class="responsive-block">
+            {{ UI.renderHtmlProperty('orob2b.order.billing_address.label'|trans, address.renderAddress(order.billingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress)) }}
+            {{ UI.renderHtmlProperty('orob2b.order.customer_notes.frontend.label'|trans, order.customerNotes) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(order) }}
+        </div>
+    </div>
+</div>

@@ -93,9 +93,9 @@ class AccountUserAddressController extends Controller
             }
         }
 
-        if (!$address->getOwner()) {
+        if (!$address->getFrontendOwner()) {
             $accountUser->addAddress($address);
-        } elseif ($address->getOwner()->getId() !== $accountUser->getId()) {
+        } elseif ($address->getFrontendOwner()->getId() !== $accountUser->getId()) {
             throw new BadRequestHttpException('Address must belong to AccountUser');
         }
 

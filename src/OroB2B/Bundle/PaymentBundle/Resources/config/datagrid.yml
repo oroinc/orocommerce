@@ -31,6 +31,9 @@ datagrid:
                 type: url
                 route: orob2b_api_delete_paymentterm
                 params: [ id ]
+            payment_delete_message:
+                type: twig
+                template: 'OroB2BPaymentBundle:PaymentTerm:deleteMessageDatagrid.html.twig'
         sorters:
             columns:
                 label:
@@ -57,7 +60,7 @@ datagrid:
                 icon:          edit
                 acl_resource:  orob2b_payment_term_update
             delete:
-                type:          delete
+                type:          payment-delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash

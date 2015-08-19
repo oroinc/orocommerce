@@ -10,23 +10,23 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 class AccountTypedAddress extends AccountAddress
 {
     /** @var TypedAddressOwner */
-    protected $owner;
+    protected $frontendOwner;
 
     /**
      * @return TypedAddressOwner
      */
-    public function getOwner()
+    public function getFrontendOwner()
     {
-        return $this->owner;
+        return $this->frontendOwner;
     }
 
     /**
-     * @param Account $owner
+     * @param Account $frontendOwner
      * @return AccountTypedAddress
      */
-    public function setOwner(Account $owner)
+    public function setFrontendOwner(Account $frontendOwner)
     {
-        $this->owner = $owner;
+        $this->frontendOwner = $frontendOwner;
 
         return $this;
     }

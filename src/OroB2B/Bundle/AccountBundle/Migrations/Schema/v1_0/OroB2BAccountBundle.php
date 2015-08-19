@@ -44,7 +44,7 @@ class OroB2BAccountBundle implements
     const ORO_EMAIL = 'oro_email';
     const ORO_CALENDAR_EVENT = 'oro_calendar_event';
     const ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'orob2b_account_user_address';
-    const ORO_B2B_ACCOUNT_USER_ADR_ADR_TYPE_TABLE_NAME = 'orob2b_acc_user_adr_adr_type';
+    const ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'orob2b_acc_usr_adr_to_adr_type';
 
     /** @var NoteExtension */
     protected $noteExtension;
@@ -114,7 +114,7 @@ class OroB2BAccountBundle implements
         $this->createOroB2BAccountAddressTable($schema);
         $this->createOroB2BAccountAdrAdrTypeTable($schema);
         $this->createOroB2BAccountUserAddressTable($schema);
-        $this->createOroB2BAccUserAdrAdrTypeTable($schema);
+        $this->createOroB2BAccUsrAdrToAdrTypeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -125,7 +125,7 @@ class OroB2BAccountBundle implements
         $this->addOroB2BAccountAddressForeignKeys($schema);
         $this->addOroB2BAccountAdrAdrTypeForeignKeys($schema);
         $this->addOroB2BAccountUserAddressForeignKeys($schema);
-        $this->addOroB2BAccUserAdrAdrTypeForeignKeys($schema);
+        $this->addOroB2BAccUsrAdrToAdrTypeForeignKeys($schema);
     }
 
     /**
@@ -447,7 +447,7 @@ class OroB2BAccountBundle implements
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
@@ -495,7 +495,7 @@ class OroB2BAccountBundle implements
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
-            ['owner_id'],
+            ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -545,7 +545,7 @@ class OroB2BAccountBundle implements
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
-        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -581,7 +581,7 @@ class OroB2BAccountBundle implements
         );
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
-            ['owner_id'],
+            ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -594,13 +594,13 @@ class OroB2BAccountBundle implements
     }
 
     /**
-     * Create orob2b_acc_user_adr_adr_type table
+     * Create orob2b_account_adr_to_adr_type table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BAccUserAdrAdrTypeTable(Schema $schema)
+    protected function createOroB2BAccUsrAdrToAdrTypeTable(Schema $schema)
     {
-        $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADR_ADR_TYPE_TABLE_NAME);
+        $table = $schema->createTable(static::ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('type_name', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
@@ -610,13 +610,13 @@ class OroB2BAccountBundle implements
     }
 
     /**
-     * Add orob2b_acc_user_adr_adr_type foreign keys.
+     * Add orob2b_account_adr_to_adr_type foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BAccUserAdrAdrTypeForeignKeys(Schema $schema)
+    protected function addOroB2BAccUsrAdrToAdrTypeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADR_ADR_TYPE_TABLE_NAME);
+        $table = $schema->getTable(static::ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ADDRESS_TYPE_TABLE_NAME),
             ['type_name'],

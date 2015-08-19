@@ -7,11 +7,17 @@ oro_menu_config:
                 position: 60
 
         sale_quote_list:
-            label: 'orob2b.sale.quote.entity_plural_label'
-            route: orob2b_sale_quote_index
+            label: 'orob2b.frontend.sale.quote.entity_plural_label'
+            route: 'orob2b_sale_quote_index'
             extras:
                 position: 61
                 routes: ['/^orob2b_sale/']
+
+        sale_quote_frontend_list:
+            label: 'orob2b.frontend.sale.quote.entity_plural_label'
+            route: 'orob2b_sale_quote_frontend_index'
+            extras:
+                routes: ['/^orob2b_sale_quote_frontend/']
 
     tree:
         application_menu:
@@ -19,9 +25,15 @@ oro_menu_config:
                 sale_tab:
                     children:
                         sale_quote_list: ~
+        frontend_menu:
+            children:
+                sale_quote_frontend_list: ~
 
 oro_titles:
     orob2b_sale_quote_index: ~
     orob2b_sale_quote_view:   '%%id%%'
     orob2b_sale_quote_update: '%%id%% - oro.ui.edit'
     orob2b_sale_quote_create: 'oro.ui.create_entity'
+
+    orob2b_sale_quote_frontend_index: ~
+    orob2b_sale_quote_frontend_view:  '%%id%%'

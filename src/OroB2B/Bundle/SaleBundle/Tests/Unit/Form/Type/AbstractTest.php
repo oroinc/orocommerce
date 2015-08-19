@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
