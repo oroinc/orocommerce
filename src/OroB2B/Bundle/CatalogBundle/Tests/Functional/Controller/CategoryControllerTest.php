@@ -54,9 +54,9 @@ class CategoryControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals("Categories", $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals('Categories', $crawler->filter('h1.oro-subtitle')->html());
         $this->assertContains(
-            "Please select a category on the left or create new one.",
+            'Please select a category on the left or create new one.',
             $crawler->filter('.content .text-center')->html()
         );
     }
@@ -169,7 +169,7 @@ class CategoryControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Category has been saved", $crawler->html());
+        $this->assertContains('Category has been saved', $crawler->html());
 
         return $this->getCategoryIdByUri($this->client->getRequest()->getRequestUri());
     }
@@ -218,11 +218,11 @@ class CategoryControllerTest extends WebTestCase
 
         $crfToken = $this->getContainer()->get('form.csrf_provider')->generateCsrfToken('category');
         $parameters = [
-            'input_action'        => 'save_and_stay',
+            'input_action' => 'save_and_stay',
             'orob2b_catalog_category' => [
                 '_token' => $crfToken,
-                'appendProducts'  => $appendProduct->getId(),
-                'removeProducts'  => $testProductOne->getId(),
+                'appendProducts' => $appendProduct->getId(),
+                'removeProducts' => $testProductOne->getId(),
             ]
         ];
         $parameters['orob2b_catalog_category']['titles']['values']['default'] = $newTitle;
@@ -237,7 +237,7 @@ class CategoryControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Category has been saved", $crawler->html());
+        $this->assertContains('Category has been saved', $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();

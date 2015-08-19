@@ -90,8 +90,8 @@ class AccountUserRoleControllerTest extends WebTestCase
             'input_action'        => '',
             'orob2b_account_account_user_role' => [
                 '_token' => $token,
-                'label'  => self::UPDATED_TEST_ROLE,
-                'appendUsers'    => $accountUser->getId(),
+                'label' => self::UPDATED_TEST_ROLE,
+                'appendUsers' => $accountUser->getId(),
             ]
         ]);
         $result = $this->client->getResponse();
