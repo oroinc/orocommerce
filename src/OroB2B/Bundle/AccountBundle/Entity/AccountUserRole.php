@@ -26,6 +26,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "activity"={
+ *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
  *          }
  *      }
  * )
