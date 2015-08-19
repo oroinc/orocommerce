@@ -54,12 +54,11 @@ class CategoryVisibilityGridListener
      */
     protected function isFilteredByParent(ParameterBag $params)
     {
-        if (!$params->get('f') && !$params->get('_filter')) {
+        if (!$params->get('_filter')) {
             return false;
         }
 
-        $configKey = !is_null($params->get('f')) ? 'f' : '_filter';
-        foreach ($params->get($configKey)['visibility']['value'] as $value) {
+        foreach ($params->get('_filter')['visibility']['value'] as $value) {
             if (in_array($value, [
                 AccountCategoryVisibility::PARENT_CATEGORY,
                 AccountGroupCategoryVisibility::PARENT_CATEGORY
