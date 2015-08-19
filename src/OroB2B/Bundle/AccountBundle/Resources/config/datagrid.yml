@@ -546,3 +546,8 @@ datagrid:
                 selectors:
                     included: '#roleAppendUsers'
                     excluded: '#roleRemoveUsers'
+#Frontend:
+    frontend-account-account-user-grid:
+        extends: account-account-user-grid
+        source:
+            acl_resource: orob2b_account_frontend_account_user_view

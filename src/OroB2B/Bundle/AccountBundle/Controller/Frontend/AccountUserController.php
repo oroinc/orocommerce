@@ -8,7 +8,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
@@ -17,6 +18,41 @@ use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class AccountUserController extends Controller
 {
+    /**
+     * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_view",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUser",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
+     *
+     * @param AccountUser $accountUser
+     * @return array
+     */
+    public function viewAction(AccountUser $accountUser)
+    {
+        return [
+            'entity' => $accountUser
+        ];
+    }
+
+    /**
+     * @Route("/", name="orob2b_account_frontend_account_user_index")
+     * @Template("OroB2BAccountBundle:AccountUser/Frontend:index.html.twig")
+     * @AclAncestor("orob2b_account_frontend_account_user_view")
+     *
+     * @return array
+     */
+    public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user.class')
+        ];
+    }
+
     /**
      * Create account user form
      *

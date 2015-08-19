@@ -89,6 +89,14 @@ oro_menu_config:
             extras:
                 position: 10
 
+        frontend_account_users:
+            label: 'orob2b.account.accountuser.entity_plural_label'
+            route: 'orob2b_account_frontend_account_user_index'
+            extras:
+                position: 10
+                description: 'orob2b.account.menu.account_users.description'
+
+
     tree:
         application_menu:
             children:
@@ -98,9 +106,12 @@ oro_menu_config:
                         account_group_list: ~
                         account_users: ~
                         account_user_roles: ~
-
         frontend_menu:
             type: application_menu
+            children:
+                account_tab:
+                    children:
+                       frontend_account_users: ~
 
         account_usermenu:
             children:
