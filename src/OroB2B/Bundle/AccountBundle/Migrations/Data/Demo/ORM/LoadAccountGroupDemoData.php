@@ -9,6 +9,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class LoadAccountGroupDemoData extends AbstractFixture
 {
+    const ACCOUNT_GROUP_REFERENCE_PREFIX = 'account_group_demo_data';
+
     /**
      * @var array
      */
@@ -27,6 +29,7 @@ class LoadAccountGroupDemoData extends AbstractFixture
             $accountGroup = new AccountGroup();
             $accountGroup->setName($groupName);
             $manager->persist($accountGroup);
+            $this->addReference(static::ACCOUNT_GROUP_REFERENCE_PREFIX . $accountGroup->getName(), $accountGroup);
         }
 
         $manager->flush();

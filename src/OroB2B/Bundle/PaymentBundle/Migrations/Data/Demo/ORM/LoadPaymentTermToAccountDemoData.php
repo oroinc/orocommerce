@@ -15,7 +15,7 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /** @var  ContainerInterface */
+    /** @var ContainerInterface */
     protected $container;
 
     /**
@@ -37,7 +37,6 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
         $this->container = $container;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -51,10 +50,11 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
         $accountsAll = $accountRepository->findAll();
 
         foreach ($accountsAll as $account) {
-            /** @var PaymentTerm $paymentTerm */
-            if ($account->getGroup()->getName() == 'First') {
+            if ($account->getGroup()->getName() === 'First') {
                 continue;
             }
+
+            /** @var PaymentTerm $paymentTerm */
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
             $paymentTerm->addAccount($account);
         }

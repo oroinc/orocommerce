@@ -4,12 +4,10 @@ namespace OroB2B\Bundle\PaymentBundle\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 
 class AccountFormExtension extends AbstractPaymentTermExtension
 {
@@ -19,38 +17,26 @@ class AccountFormExtension extends AbstractPaymentTermExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $account = $builder->getData();
-        $customOptions = [
-            'label' => 'orob2b.payment.paymentterm.entity_label',
-            'required' => false,
-            'mapped' => false,
-        ];
 
         if ($account->getGroup()) {
-            $paymentTermByAccountGroup =
-                $this->getPaymentTermRepository()->getOnePaymentTermByAccountGroup($account->getGroup());
+            $paymentTermByAccountGroup = $this->getPaymentTermRepository()
+                ->getOnePaymentTermByAccountGroup($account->getGroup());
 
             if ($paymentTermByAccountGroup) {
-                $customOptions['configs']['placeholder'] = $this->translator->trans(
+                $placeholder = $this->translator->trans(
                     'orob2b.payment.account.payment_term_defined_in_group',
                     [
-                        '%payment_term%' => $paymentTermByAccountGroup->getLabel()
+                        '{{ payment_term }}' => $paymentTermByAccountGroup->getLabel()
                     ]
                 );
             } else {
-                $customOptions['configs']['placeholder'] = $this->translator->trans(
-                    'orob2b.payment.account.payment_term_non_defined_in_group'
-                );
+                $placeholder = $this->translator->trans('orob2b.payment.account.payment_term_non_defined_in_group');
             }
+
+            $options['paymentTermOptions']['configs']['placeholder'] = $placeholder;
         }
 
-        $builder->add(
-            'paymentTerm',
-            PaymentTermSelectType::NAME,
-            $customOptions
-        );
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
+        parent::buildForm($builder, $options);
     }
 
     /**
@@ -60,8 +46,6 @@ class AccountFormExtension extends AbstractPaymentTermExtension
     {
         /** @var Account|null $account */
         $account = $event->getData();
-
-        $form = $event->getForm();
         if (!$account || !$account->getId()) {
             return;
         }

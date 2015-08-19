@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -16,12 +17,13 @@ class PaymentTermRepository extends EntityRepository
      */
     public function getOnePaymentTermByAccountGroup(AccountGroup $accountGroup)
     {
-        return $this->createQueryBuilder('paymentTerm')
-            ->innerJoin('paymentTerm.accountGroups', 'accountGroup')
-            ->andWhere('accountGroup = :accountGroup')
-            ->setParameter('accountGroup', $accountGroup)
-            ->getQuery()
-            ->getOneOrNullResult();
+        $qb = $this->createQueryBuilder('paymentTerm');
+
+        $qb->innerJoin('paymentTerm.accountGroups', 'accountGroup')
+            ->andWhere($qb->expr()->eq('accountGroup', ':accountGroup'))
+            ->setParameter('accountGroup', $accountGroup);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -30,16 +32,16 @@ class PaymentTermRepository extends EntityRepository
      */
     public function getOnePaymentTermByAccount(Account $account)
     {
-        return $this->createQueryBuilder('paymentTerm')
-            ->innerJoin('paymentTerm.accounts', 'account')
+        $qb = $this->createQueryBuilder('paymentTerm');
+        $qb->innerJoin('paymentTerm.accounts', 'account')
             ->andWhere('account = :account')
-            ->setParameter('account', $account)
-            ->getQuery()
-            ->getOneOrNullResult();
+            ->setParameter('account', $account);
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * @param AccountGroup    $accountGroup
+     * @param AccountGroup $accountGroup
      * @param PaymentTerm|null $paymentTerm
      */
     public function setPaymentTermToAccountGroup(AccountGroup $accountGroup, PaymentTerm $paymentTerm = null)

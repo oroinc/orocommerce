@@ -1,4 +1,3 @@
-{% import 'OroUIBundle::macros.html.twig' as ui %}
 {% set paymentTermId = record.getValue('id') %}
-{% set message = getPaymentTermDeleteMessageDatagrid(paymentTermId) %}
+{% set message = get_payment_term_delete_message_datagrid(paymentTermId) %}
 {{ message|raw }}
