@@ -89,9 +89,9 @@ class AccountAddressController extends Controller
             $address->setPrimary(true);
         }
 
-        if (!$address->getOwner()) {
+        if (!$address->getFrontendOwner()) {
             $account->addAddress($address);
-        } elseif ($address->getOwner()->getId() != $account->getId()) {
+        } elseif ($address->getFrontendOwner()->getId() !== $account->getId()) {
             throw new BadRequestHttpException('Address must belong to Account');
         }
 

@@ -84,7 +84,7 @@ class AccountDatagridListener
         $where = $config->offsetGetByPath('[source][query][where]', ['and' => []]);
 
         $where['and'][] = sprintf(
-            '%s.account = %d OR %s.accountUser = %d',
+            '(%s.account = %d OR %s.accountUser = %d)',
             $this->entityAlias,
             $user->getAccount()->getId(),
             $this->entityAlias,

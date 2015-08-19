@@ -10,6 +10,7 @@ define(function(require) {
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var routing = require('routing');
+    var mediator = require('oroui/js/mediator');
     var messenger = require('oroui/js/messenger');
 
     AccountSelectionComponent = BaseComponent.extend({
@@ -22,11 +23,6 @@ define(function(require) {
             accountRoute: 'orob2b_account_account_user_get_account',
             errorMessage: 'Sorry, unexpected error was occurred'
         },
-
-        /**
-         * @property {Object}
-         */
-        $container: null,
 
         /**
          * @property {Object}
@@ -48,13 +44,13 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.$container = options._sourceElement;
-            this.loadingMask = new LoadingMaskView({container: this.$container});
+            this.$el = options._sourceElement;
+            this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.$accountSelect = this.$container.find(this.options.accountSelect);
-            this.$accountUserSelect = this.$container.find(this.options.accountUserSelect);
+            this.$accountSelect = this.$el.find(this.options.accountSelect);
+            this.$accountUserSelect = this.$el.find(this.options.accountUserSelect);
 
-            this.$container
+            this.$el
                 .on('change', this.options.accountSelect, _.bind(this.onAccountChanged, this))
                 .on('change', this.options.accountUserSelect, _.bind(this.onAccountUserChanged, this))
             ;
@@ -67,6 +63,11 @@ define(function(require) {
          */
         onAccountChanged: function(e) {
             this.$accountUserSelect.select2('val', '');
+
+            mediator.trigger('account-account-user:change', {
+                accountId: this.$accountSelect.val(),
+                accountUserId: this.$accountUserSelect.val()
+            });
         },
 
         /**
@@ -77,6 +78,10 @@ define(function(require) {
         onAccountUserChanged: function(e) {
             var accountUserId = this.$accountUserSelect.val();
             if (!accountUserId) {
+                mediator.trigger('account-account-user:change', {
+                    accountId: this.$accountSelect.val(),
+                    accountUserId: accountUserId
+                });
                 return;
             }
 
@@ -88,11 +93,12 @@ define(function(require) {
                     self.loadingMask.show();
                 },
                 success: function(response) {
-                    if (response.accountId) {
-                        self.$accountSelect.select2('val', response.accountId);
-                    } else {
-                        self.$accountSelect.select2('val', '');
-                    }
+                    self.$accountSelect.select2('val', response.accountId || '');
+
+                    mediator.trigger('account-account-user:change', {
+                        accountId: self.$accountSelect.val(),
+                        accountUserId: accountUserId
+                    });
                 },
                 complete: function() {
                     self.loadingMask.hide();
@@ -109,7 +115,7 @@ define(function(require) {
                 return;
             }
 
-            this.$container.off();
+            this.$el.off();
 
             AccountSelectionComponent.__super__.dispose.call(this);
         }
