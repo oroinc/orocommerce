@@ -562,12 +562,13 @@
     <target name="run-phpcpd">
         <exec dir="${basedir}" executable="phpcpd" failonerror="true">
             <arg line="--min-lines 25 --log-pmd ${reportdir}/phpcpd.xml --verbose"/>
-            <arg line="--exclude=SaleBundle/Migrations/Schema"/>
-            <arg line="--exclude=ProductBundle/Migrations/Schema"/>
             <arg line="--exclude=AccountBundle/Migrations/Schema"/>
+            <arg line="--exclude=PaymentBundle/Migrations/Schema"/>
             <arg line="--exclude=PricingBundle/Migrations/Schema"/>
-            <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
+            <arg line="--exclude=ProductBundle/Migrations/Schema"/>
             <arg line="--exclude=RFPBundle/Migrations/Schema"/>
+            <arg line="--exclude=SaleBundle/Migrations/Schema"/>
+            <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

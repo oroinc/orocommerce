@@ -284,7 +284,7 @@ datagrid:
                     included: '#groupAppendAccounts'
                     excluded: '#groupRemoveAccounts'
 
-    account-account-user-select-grid:
+    account-account-user-grid-base:
         entity_name: %orob2b_account.entity.account_user.class%
         options:
             entityHint:        account user
@@ -366,33 +366,9 @@ datagrid:
                 confirmed:
                     type:      boolean
                     data_name: accountUser.confirmed
-        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
 
     account-account-user-grid:
-        extends: account-account-user-select-grid
-        options:
-            entity_pagination: true
-        properties:
-            view_link:
-                type:   url
-                route:  orob2b_account_account_user_view
-                params: [ id ]
-            update_link:
-                type:   url
-                route:  orob2b_account_account_user_update
-                params: [ id ]
-            delete_link:
-                type:   url
-                route:  orob2b_api_account_delete_account_user
-                params: [ id ]
-            enable_link:
-                type:   url
-                route:  orob2b_account_account_user_enable
-                params: [ id ]
-            disable_link:
-                type:   url
-                route:  orob2b_account_account_user_disable
-                params: [ id ]
+        extends: account-account-user-grid-base
         actions:
             enable:
                 type:         ajax
@@ -424,6 +400,27 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_account_account_user_delete
         action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
+
+    account-user-by-account-grid:
+        extends:  account-account-user-grid-base
+        source:
+            query:
+                where:
+                    and:
+                        - IDENTITY(accountUser.account) = :account_id
+            bind_parameters:
+                - account_id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_account_account_user_view
+                rowAction:     true
+
+    account-account-user-select-grid:
+        extends:  account-account-user-grid-base
 
     account-account-user-roles-grid:
         options:

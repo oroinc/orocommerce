@@ -28,6 +28,10 @@
     {% endif %}
 {% endblock navButtons %}
 
+{% block ownerLink %}
+    {# Backend owner must be hidden on frontend  #}
+{% endblock ownerLink %}
+
 {% block content_data %}
     {% set accountUserInformationWidget %}
         {% include 'OroB2BAccountBundle:AccountUser/widget:info.html.twig' %}
