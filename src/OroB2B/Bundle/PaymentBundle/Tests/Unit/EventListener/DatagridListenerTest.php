@@ -25,10 +25,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             'query' => [
                 'select' => [
                     'payment_term.label as payment_term_label',
-                    'payment_term_group.label as payment_term_group_label',
-                    // @codingStandardsIgnoreStart
-                    '(CASE WHEN payment_term.id IS NOT NULL THEN payment_term.id ELSE payment_term_group.id END) as payment_term_for_filter'
-                    // @codingStandardsIgnoreEnd
+                    'payment_term_group.label as payment_term_group_label'
                 ],
                 'join' => [
                     'left' => [
@@ -67,7 +64,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             'columns' => [
                 DatagridListener::PAYMENT_TERM_LABEL_ALIAS=> [
                     'type' => 'entity',
-                    'data_name' => 'payment_term_for_filter',
+                    'data_name' => 'CAST(payment_term_for_filter as integer)',
                     'options' => [
                         'field_type' => 'entity',
                         'field_options' => [
@@ -87,7 +84,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         'source' => [
             'query' => [
                 'select' => [
-                    "payment_term.label as payment_term_label"
+                    'payment_term.label as payment_term_label'
                 ],
                 'join' => [
                     'left' => [
@@ -152,6 +149,10 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBeforeAccounts($event);
 
         $expected = $this->expectedTemplateForAccount;
+        $expected['source']['query']['select'][] =
+            '(CASE WHEN payment_term.id IS NOT NULL THEN payment_term.id ELSE payment_term_group.id END)' .
+            ' as payment_term_for_filter';
+
         $this->assertEquals($expected, $config->toArray());
     }
 
@@ -164,7 +165,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event = new BuildBefore($datagrid, $config);
         $this->listener->onBuildBeforeAccountGroups($event);
 
-        $expected = $this->expectedTemplateForAccountGroup;
-        $this->assertEquals($expected, $config->toArray());
+        $this->assertEquals($this->expectedTemplateForAccountGroup, $config->toArray());
     }
 }

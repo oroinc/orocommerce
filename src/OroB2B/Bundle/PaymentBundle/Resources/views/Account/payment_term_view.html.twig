@@ -2,19 +2,26 @@
 
 <div class="row-fluid form-horizontal">
     <div class="responsive-block">
-        {% if paymentTerm %}
-            {% if is_granted('VIEW', paymentTerm) %}
-                {% set paymentTermData %}
-                    <a href="{{ path('orob2b_payment_term_view', {id: paymentTerm.id}) }}">
-                        {{ paymentTerm.label }}
+        {% if paymentTermData.paymentTerm %}
+            {% if is_granted('VIEW', paymentTermData.paymentTerm) %}
+                {% set link %}
+                    <a href="{{ path('orob2b_payment_term_view', {id: paymentTermData.paymentTerm.id}) }}">
+                        {{ paymentTermData.paymentTerm.label }}
                     </a>
                 {% endset %}
-                {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, paymentTermData) }}
+                {% if paymentTermData.defineToTheGroup %}
+                    {{ UI.renderHtmlProperty(
+                        'orob2b.payment.paymentterm.entity_label'|trans,
+                        'orob2b.payment.account.payment_term_defined_in_group'|trans({'{{ payment_term }}': link})
+                    ) }}
+                {% else %}
+                    {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, link) }}
+                {% endif %}
             {% else %}
-                {{ UI.renderProperty('orob2b.payment.paymentterm.entity_label'|trans, paymentTermData.label) }}
+                {{ UI.renderProperty('orob2b.payment.paymentterm.entity_label'|trans, paymentTermData.paymentTermLabel) }}
             {% endif %}
-        {%  else %}
-            {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, 'N/A'|trans) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, paymentTermData.empty) }}
         {% endif %}
     </div>
 </div>

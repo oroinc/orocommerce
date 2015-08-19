@@ -17,14 +17,17 @@ orob2b:
             account_groups.label: 'Account Group'
             accounts.label: 'Account'
 
+            has_payment_term.label: Has Payment Term
+
         account:
-            payment_term_defined_in_group: 'Defined for the group (%payment_term%)'
+            payment_term_defined_in_group: 'Defined for the group ({{ payment_term }})'
             payment_term_non_defined_in_group: 'Defined for the group'
 
         controller:
-            paymentterm.saved.message: Payment term has been saved
-            paymentterm.delete.with_two_url.message: It is currently being used by some %accounts% and %account_groups%.
-            paymentterm.delete.with_url.message: ' It is currently being used by some %url%.'
+            paymentterm:
+                saved.message: 'Payment term has been saved'
+                delete.with_two_url.message: 'It is currently being used by some {{ accounts }} and {{ account_groups }}.'
+                delete.with_url.message: ' It is currently being used by some {{ url }}.'
 
         sections:
             general_information: General information

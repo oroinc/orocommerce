@@ -11,6 +11,9 @@ services:
         arguments: [%orob2b_payment.entity.payment_term.class%]
         tags:
             - { name: form.type, alias: orob2b_payment_term }
+        calls:
+            - [setAccountClass, [%orob2b_account.entity.account.class%]]
+            - [setAccountGroupClass, [%orob2b_account.entity.account_group.class%]]
 
     orob2b_payment.form.type.payment_term_select:
         class: %orob2b_payment.form.type.payment_term_select.class%
@@ -20,8 +23,9 @@ services:
     orob2b_payment.form.extension.abstract:
         class: %orob2b_payment.form.extension.abstract.class%
         arguments:
-            - @doctrine
+            - @oro_entity.doctrine_helper
             - @translator
+            - %orob2b_payment.entity.payment_term.class%
         abstract: true
 
     orob2b_payment.form.extension.account_type:

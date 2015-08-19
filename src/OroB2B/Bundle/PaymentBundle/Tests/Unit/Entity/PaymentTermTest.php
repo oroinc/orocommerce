@@ -2,13 +2,16 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
-class PaymentTermTest extends EntityTestCase
+class PaymentTermTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $properties = [
@@ -16,7 +19,7 @@ class PaymentTermTest extends EntityTestCase
             ['label', 'net 10']
         ];
 
-        $this->assertPropertyAccessors(new PaymentTerm(), $properties);
+        $this->assertPropertyAccessors($this->createPaymentTerm(), $properties);
     }
 
     public function testToString()
@@ -27,35 +30,12 @@ class PaymentTermTest extends EntityTestCase
         $this->assertEquals('test', (string)$entity);
     }
 
-    /**
-     * @dataProvider relationsDataProvider
-     *
-     * @param Account|AccountGroup $entity
-     * @param string $getCollectionMethod
-     * @param string $addMethod
-     * @param string $removeMethod
-     */
-    public function testRelations($entity, $getCollectionMethod, $addMethod, $removeMethod)
+    public function testRelations()
     {
-        $paymentTerm = $this->createPaymentTerm();
-
-        $this->assertInstanceOf(
-            'Doctrine\Common\Collections\ArrayCollection',
-            $paymentTerm->$getCollectionMethod()
-        );
-        $this->assertCount(0, $paymentTerm->$getCollectionMethod());
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm',
-            $paymentTerm->$addMethod($entity)
-        );
-        $this->assertCount(1, $paymentTerm->$getCollectionMethod());
-
-        $paymentTerm->$addMethod($entity);
-        $this->assertCount(1, $paymentTerm->$getCollectionMethod());
-
-        $paymentTerm->$removeMethod($entity);
-        $this->assertCount(0, $paymentTerm->$getCollectionMethod());
+        static::assertPropertyCollections($this->createPaymentTerm(), [
+            ['accounts', new Account()],
+            ['accountGroups', new AccountGroup()]
+        ]);
     }
 
     /**

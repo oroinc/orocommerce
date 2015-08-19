@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
@@ -16,20 +16,25 @@ use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
 {
     /**
-     * @var ManagerRegistry
+     * @var DoctrineHelper
      */
-    protected $registry;
+    protected $doctrineHelper;
 
-    /** @var  TranslatorInterface */
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param DoctrineHelper $doctrineHelper
+     * @param TranslatorInterface $translator
+     * @param string $paymentTermClass
      */
-    public function __construct(ManagerRegistry $registry, TranslatorInterface $translator)
+    public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator, $paymentTermClass)
     {
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
         $this->translator = $translator;
+        $this->paymentTermClass = $paymentTermClass;
     }
 
     /**
@@ -37,14 +42,18 @@ abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $options = array_replace_recursive([
+            'paymentTermOptions' => [
+                'label'    => 'orob2b.payment.paymentterm.entity_label',
+                'required' => false,
+                'mapped'   => false,
+            ]
+        ], $options);
+
         $builder->add(
             'paymentTerm',
             PaymentTermSelectType::NAME,
-            [
-                'label' => 'orob2b.payment.paymentterm.entity_label',
-                'required' => false,
-                'mapped' => false,
-            ]
+            $options['paymentTermOptions']
         );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
@@ -66,7 +75,6 @@ abstract class AbstractPaymentTermExtension extends AbstractTypeExtension
      */
     protected function getPaymentTermRepository()
     {
-        return $this->registry->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
-            ->getRepository('OroB2BPaymentBundle:PaymentTerm');
+        return $this->doctrineHelper->getEntityRepository($this->paymentTermClass);
     }
 }

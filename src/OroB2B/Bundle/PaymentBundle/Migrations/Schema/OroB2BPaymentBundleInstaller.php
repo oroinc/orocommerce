@@ -14,9 +14,9 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
     /**
      * Table name for PaymentTerm
      */
-    const TABLE_NAME                           = 'orob2b_payment_term';
-    const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'orob2b_payment_t_to_account';
-    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'orob2b_payment_term_to_c_group';
+    const TABLE_NAME                          = 'orob2b_payment_term';
+    const PAYMENT_TERM_TO_ACCOUNT_TABLE       = 'orob2b_payment_term_to_account';
+    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'orob2b_payment_term_to_acc_grp';
     const ACCOUNT_TABLE                       = 'orob2b_account';
     const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
 
@@ -83,15 +83,13 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('payment_term_id', 'integer', []);
         $table->addColumn('account_id', 'integer', []);
         $table->setPrimaryKey(['payment_term_id', 'account_id']);
-        $table->addUniqueIndex(['account_id'], 'UNIQ_BF9D98859395C3F3');
-        $table->addIndex(['payment_term_id'], 'IDX_BF9D988517653B16');
+        $table->addUniqueIndex(['account_id']);
 
         $table = $schema->createTable(static::PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE);
         $table->addColumn('payment_term_id', 'integer', []);
         $table->addColumn('account_group_id', 'integer', []);
         $table->setPrimaryKey(['payment_term_id', 'account_group_id']);
-        $table->addUniqueIndex(['account_group_id'], 'UNIQ_A94D3ED6D2919A68');
-        $table->addIndex(['payment_term_id'], 'IDX_A94D3ED617653B16');
+        $table->addUniqueIndex(['account_group_id']);
     }
 
     /**

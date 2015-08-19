@@ -30,13 +30,20 @@ class FormViewListener
     protected $request;
 
     /**
-     * @param TranslatorInterface $translator
-     * @param DoctrineHelper $doctrineHelper
+     * @var string
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
+    protected $paymentTermClass;
+
+    /**
+     * @param TranslatorInterface $translator
+     * @param DoctrineHelper      $doctrineHelper
+     * @param string              $paymentTermClass
+     */
+    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper, $paymentTermClass)
     {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->paymentTermClass = $paymentTermClass;
     }
 
     /**
@@ -52,22 +59,52 @@ class FormViewListener
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
 
-        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByAccount($account);
+        $paymentTermRepository = $this->getPaymentTermRepository();
+        $paymentTerm = $paymentTermRepository->getOnePaymentTermByAccount($account);
+
         if ($paymentTerm) {
+            $paymentTermData = [
+                'paymentTerm' => $paymentTerm,
+                'paymentTermLabel' => $paymentTerm->getLabel(),
+                'empty' => $this->translator->trans('N/A'),
+                'defineToTheGroup' => false
+            ];
             $template = $event->getEnvironment()->render(
                 'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
-                ['paymentTerm' => $paymentTerm]
+                ['paymentTermData' => $paymentTermData]
             );
+
         } else {
             $accountGroupPaymentTerm = null;
+
+            $paymentTermLabelForAccount = $this->translator->trans(
+                'orob2b.payment.account.payment_term_non_defined_in_group'
+            );
+
             if ($account->getGroup()) {
-                $accountGroupPaymentTerm =
-                    $this->getPaymentRepository()->getOnePaymentTermByAccountGroup($account->getGroup());
+                $accountGroupPaymentTerm = $paymentTermRepository
+                    ->getOnePaymentTermByAccountGroup($account->getGroup());
+
+                if ($accountGroupPaymentTerm) {
+                    $paymentTermLabelForAccount = $this->translator->trans(
+                        'orob2b.payment.account.payment_term_defined_in_group',
+                        [
+                            '{{ payment_term }}' => $accountGroupPaymentTerm->getLabel()
+                        ]
+                    );
+                }
             }
 
+            $paymentTermData = [
+                'paymentTerm' => $accountGroupPaymentTerm,
+                'paymentTermLabel' => $paymentTermLabelForAccount,
+                'empty' => $paymentTermLabelForAccount,
+                'defineToTheGroup' => true
+            ];
+
             $template = $event->getEnvironment()->render(
-                'OroB2BPaymentBundle:Account:payment_term_for_account_view.html.twig',
-                ['accountGroupPaymentTerm' => $accountGroupPaymentTerm]
+                'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
+                ['paymentTermData' => $paymentTermData]
             );
         }
         $event->getScrollData()->addSubBlockData(0, 0, $template);
@@ -85,11 +122,18 @@ class FormViewListener
         $groupId = $this->request->get('id');
         /** @var AccountGroup $group */
         $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
-        $paymentTerm = $this->getPaymentRepository()->getOnePaymentTermByAccountGroup($group);
+        $paymentTermRepository = $this->getPaymentTermRepository();
+        $paymentTerm  = $paymentTermRepository->getOnePaymentTermByAccountGroup($group);
 
+        $paymentTermData = [
+            'paymentTerm' => $paymentTerm,
+            'paymentTermLabel' => ($paymentTerm) ? $paymentTerm->getLabel() : null,
+            'empty' => $this->translator->trans('N/A'),
+            'defineToTheGroup' => false
+        ];
         $template = $event->getEnvironment()->render(
             'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
-            ['paymentTerm' => $paymentTerm]
+            ['paymentTermData' => $paymentTermData]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
@@ -100,12 +144,11 @@ class FormViewListener
     public function onEntityEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BPaymentBundle:Account:payment_term_update.html.twig',
+            'OroB2BPaymentBundle:Account/Form:payment_term_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
-
 
     /**
      * @param Request $request
@@ -118,8 +161,8 @@ class FormViewListener
     /**
      * @return PaymentTermRepository
      */
-    private function getPaymentRepository()
+    public function getPaymentTermRepository()
     {
-        return $this->doctrineHelper->getEntityRepository('OroB2BPaymentBundle:PaymentTerm');
+        return $this->doctrineHelper->getEntityRepository($this->paymentTermClass);
     }
 }

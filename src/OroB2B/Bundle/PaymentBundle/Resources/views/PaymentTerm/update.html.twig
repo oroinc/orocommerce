@@ -18,7 +18,7 @@
             'dataId': entityId,
             'id': 'btn-remove-payment_term',
             'entity_label': 'orob2b.payment.paymentterm.entity_label'|trans,
-            'dataMessage': getPaymentTermDeleteMessageText(entity)
+            'dataMessage': get_payment_term_delete_message(entity)
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
@@ -54,9 +54,39 @@
             'title': '',
             'data': [
                 form_row(form.label),
+                form_widget(form.appendAccounts, {'id': 'paymentTermAppendAccounts'}),
+                form_widget(form.removeAccounts, {'id': 'paymentTermRemoveAccounts'}),
+                form_widget(form.appendAccountGroups, {'id': 'paymentTermAppendAccountGroups'}),
+                form_widget(form.removeAccountGroups, {'id': 'paymentTermRemoveAccountGroups'}),
             ]
         }]
     }] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.account.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('payment-term-select-accounts-grid', {payment_term_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.account.accountgroup.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('payment-term-select-account-groups-grid', {payment_term_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
 
     {% set data = {
         'formErrors': form_errors(form)? form_errors(form) : null,

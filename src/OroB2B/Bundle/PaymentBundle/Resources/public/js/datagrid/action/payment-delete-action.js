@@ -31,6 +31,7 @@ define([
 
             DeleteAction.__super__.initialize.apply(this, arguments);
         },
+
         /**
          * Get view for confirm modal
          *
@@ -51,8 +52,6 @@ define([
             return this.confirmModal;
         }
     });
-
-
 
     return PaymentDeleteAction;
 });

@@ -44,6 +44,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
+            - %orob2b_payment.entity.payment_term.class%
         calls:
             - [setRequest, ["@?request="]]
         tags:

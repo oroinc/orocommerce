@@ -6,27 +6,25 @@ use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {
-    const ACCOUNT_GROUP_GRID_NAME = 'account-groups-grid';
-    const ACCOUNT_GRID_NAME = 'account-accounts-grid';
-    const ACCOUNT_GROUP_GRID_ROUTE = 'orob2b_account_group_index';
-    const ACCOUNT_GRID_ROUTE = 'orob2b_account_index';
+    const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'orob2b_payment_term_delete_message';
 
     /** @var  DeleteMessageTextGenerator */
     protected $deleteMessageGenerator;
 
+    /**
+     * @param DeleteMessageTextGenerator $deleteMessageGenerator
+     */
     public function __construct(DeleteMessageTextGenerator $deleteMessageGenerator)
     {
         $this->deleteMessageGenerator = $deleteMessageGenerator;
     }
 
     /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
+     * {@inheritdoc}
      */
     public function getName()
     {
-        return 'orob2b_payment_term_delete_message';
+        return static::DELETE_MESSAGE_TEXT_EXTENSION_NAME;
     }
 
     /**
@@ -35,8 +33,8 @@ class DeleteMessageTextExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('getPaymentTermDeleteMessageText', [$this, 'getDeleteMessageText']),
-            new \Twig_SimpleFunction('getPaymentTermDeleteMessageDatagrid', [$this, 'getDeleteMessageDatagrid']),
+            new \Twig_SimpleFunction('get_payment_term_delete_message', [$this, 'getDeleteMessageText']),
+            new \Twig_SimpleFunction('get_payment_term_delete_message_datagrid', [$this, 'getDeleteMessageDatagrid']),
         ];
     }
 
@@ -49,6 +47,10 @@ class DeleteMessageTextExtension extends \Twig_Extension
         return $this->deleteMessageGenerator->getDeleteMessageText($paymentTerm);
     }
 
+    /**
+     * @param $paymentTermId
+     * @return string
+     */
     public function getDeleteMessageDatagrid($paymentTermId)
     {
         return $this->deleteMessageGenerator->getDeleteMessageTextForDataGrid($paymentTermId);

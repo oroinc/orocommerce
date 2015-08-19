@@ -13,7 +13,7 @@ class PaymentDeleteAction extends AbstractAction
     protected $requiredOptions = ['link'];
 
     /**
-     * @param ActionConfiguration $options
+     * {@inheritDoc}
      */
     public function setOptions(ActionConfiguration $options)
     {
@@ -21,6 +21,6 @@ class PaymentDeleteAction extends AbstractAction
             $options['confirmation'] = true;
         }
 
-        parent::setOptions($options);
+        return parent::setOptions($options);
     }
 }
