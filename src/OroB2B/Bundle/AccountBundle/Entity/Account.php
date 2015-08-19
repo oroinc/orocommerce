@@ -44,6 +44,8 @@ use OroB2B\Bundle\AccountBundle\Model\ExtendAccount;
  *          }
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Account extends ExtendAccount
 {
@@ -125,6 +127,14 @@ class Account extends ExtendAccount
         $this->children = new ArrayCollection();
         $this->addresses = new ArrayCollection();
         $this->users = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getName();
     }
 
     /**

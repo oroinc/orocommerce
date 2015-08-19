@@ -1,4 +1,6 @@
 parameters:
+    orob2b_account.security.account_user_provider.class: OroB2B\Bundle\AccountBundle\Security\AccountUserProvider
+
     orob2b_account.entity.account.class: OroB2B\Bundle\AccountBundle\Entity\Account
     orob2b_account.entity.account_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountAddress
     orob2b_account.entity.account_group.class: OroB2B\Bundle\AccountBundle\Entity\AccountGroup
@@ -12,6 +14,7 @@ parameters:
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_account.form.autocomplete.parent_account.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler
+    orob2b_account.form.autocomplete.account_account_user.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler
 
     orob2b_account.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -26,16 +29,44 @@ parameters:
     orob2b_account.account_user.password.handler.abstract.class: OroB2B\Bundle\AccountBundle\Form\Handler\AbstractAccountUserPasswordHandler
     orob2b_account.account_user.password_request.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordRequestHandler
     orob2b_account.account_user.password_reset.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler
-
+    #Listeners
     orob2b_account.event_listener.datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListener
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
+    orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
 
-    orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    #Twig
+    orob2b_account.twig.account_extension.class: OroB2B\Bundle\AccountBundle\Twig\AccountExtension
+    #Voters
+    orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
+    orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
 
 services:
+    orob2b_account.security.account_user_provider:
+        class: %orob2b_account.security.account_user_provider.class%
+        arguments:
+            - @oro_security.security_facade
+            - @oro_security.acl.manager
+        calls:
+            - [setAccountUserClass, [%orob2b_account.entity.account_user.class%]]
+
+    orob2b_account.acl.voter.account:
+        class: %orob2b_account.acl.voter.account.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @service_container
+        tags:
+            - { name: security.voter }
+
+    orob2b_account.event_listener.account_datagrid:
+        class: %orob2b_account.event_listener.account_datagrid.class%
+        arguments:
+            - @orob2b_account.security.account_user_provider
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
+
     orob2b_account.account_tree_handler:
         class: %orob2b_account.account_tree_handler.class%
         arguments:
@@ -82,6 +113,16 @@ services:
             - ["name"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_parent, acl_resource: orob2b_account_view }
+        lazy: true
+
+    orob2b_account.form.autocomplete.account_user_account.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        class: %orob2b_account.form.autocomplete.account_account_user.search_handler.class%
+        arguments:
+            - %orob2b_account.entity.account_user.class%
+            - ["firstname", "lastname"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_account_user, acl_resource: orob2b_account_account_user_view }
         lazy: true
 
     orob2b_account.account_user.manager.api:
@@ -204,3 +245,10 @@ services:
         arguments:
             - %orob2b_account.entity.account_user_address.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_account.twig.security_extension:
+        class: %orob2b_account.twig.account_extension.class%
+        arguments:
+            - @orob2b_account.security.account_user_provider
+        tags:
+            - { name: twig.extension }
