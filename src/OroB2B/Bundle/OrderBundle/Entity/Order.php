@@ -162,7 +162,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
      * @var PriceList
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
-     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET SET NULL")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $priceList;
 

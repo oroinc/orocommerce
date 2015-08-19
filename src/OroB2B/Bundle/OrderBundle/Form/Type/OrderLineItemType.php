@@ -14,9 +14,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Formatter\OrderLineItemFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType as ProductUnitRemovedSelectionType;
-// TODO fix this to original removed type
-//use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class OrderLineItemType extends AbstractType
@@ -136,7 +134,7 @@ class OrderLineItemType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitRemovedSelectionType::NAME,
+                ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.product.productunit.entity_label',
                     'required' => true,
