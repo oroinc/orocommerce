@@ -75,3 +75,9 @@ orob2b_account_frontend_account_user_datagrid_index:
         gridName: '[\w\:-]+'
     options:
         frontend: true
+
+orob2b_account_pinbar_help:
+    pattern: /pinbar/help
+    defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
+    options:
+        frontend: true

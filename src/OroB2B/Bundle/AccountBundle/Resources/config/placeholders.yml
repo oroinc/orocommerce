@@ -9,6 +9,26 @@ placeholders:
                 order: 50
             account_menu_user:
                 order: 50
+    dots_menu:
+        items:
+            account_dots_menu:
+                order: 100
+    pin_tabs_list:
+        items:
+            account_pin_tabs_list:
+                order: 100
+    pin_button:
+        items:
+            account_pin_button:
+                order: 100
+    right_panel:
+        items:
+            frontend_sidebar:
+                order: 200
+    left_panel:
+        items:
+            frontend_sidebar:
+                order: 200
 
 items:
     frontend_menu:
@@ -20,3 +40,16 @@ items:
     account_menu_user:
         template: OroB2BAccountBundle:Menu:menuProfile.html.twig
         applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    account_dots_menu:
+        template: OroB2BAccountBundle:ApplicationMenu:dotsMenu.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    account_pin_tabs_list:
+        template: OroB2BAccountBundle:Menu:pinTabsList.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    account_pin_button:
+        template: OroB2BAccountBundle:ApplicationMenu:pinButton.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    frontend_sidebar:
+        template: OroB2BAccountBundle:Sidebar:sidebar.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+
