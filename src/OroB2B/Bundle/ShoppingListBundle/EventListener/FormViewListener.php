@@ -97,7 +97,7 @@ class FormViewListener
 
         $lineItem = (new LineItem())
             ->setProduct($product)
-            ->setOwner($accountUser)
+            ->setAccountUser($accountUser)
             ->setOrganization($accountUser->getOrganization());
 
         /** @var ShoppingListRepository $shoppingListRepository */

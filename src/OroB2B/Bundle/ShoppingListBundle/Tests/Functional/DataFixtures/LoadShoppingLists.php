@@ -53,7 +53,6 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name, $isCurrent = false)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
         $shoppingList->setAccount($accountUser->getAccount());

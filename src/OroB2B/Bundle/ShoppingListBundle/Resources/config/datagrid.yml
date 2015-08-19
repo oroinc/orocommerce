@@ -29,8 +29,6 @@ datagrid:
                 label:         orob2b.shoppinglist.label.label
             notes:
                 label:         orob2b.shoppinglist.notes.label
-            owner:
-                label:         orob2b.shoppinglist.owner.label
             account_user:
                 label:         orob2b.shoppinglist.account_user.label
             account:
@@ -53,8 +51,6 @@ datagrid:
                     data_name: shopping_list.id
                 label:
                     data_name: shopping_list.label
-                owner:
-                    data_name: account_user
                 account:
                     data_name: account
                 account_user:
@@ -73,9 +69,6 @@ datagrid:
                 label:
                     type:      string
                     data_name: shopping_list.label
-                owner:
-                    type:      string
-                    data_name: account_user
                 account:
                     type:      string
                     data_name: account

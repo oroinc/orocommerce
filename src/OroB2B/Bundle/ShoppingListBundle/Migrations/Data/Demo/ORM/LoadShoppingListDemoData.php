@@ -76,7 +76,6 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $label, $current)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
         $shoppingList->setAccount($accountUser->getAccount());
