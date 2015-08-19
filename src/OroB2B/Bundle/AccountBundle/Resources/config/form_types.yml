@@ -85,6 +85,9 @@ services:
 
     orob2b_account.form.type.frontend.account_user.register:
         class: %orob2b_account.form.type.frontend.account_user.register.class%
+        arguments:
+            - @oro_config.manager
+            - @oro_user.manager
         calls:
             - [setDataClass, [%orob2b_account.entity.account_user.class%]]
         tags:

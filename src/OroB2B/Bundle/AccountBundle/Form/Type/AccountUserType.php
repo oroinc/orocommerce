@@ -239,7 +239,8 @@ class AccountUserType extends AbstractType
             'cascade_validation'   => true,
             'data_class'           => $this->dataClass,
             'intention'            => 'account_user',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'ownership_disabled'   => true
         ]);
     }
 

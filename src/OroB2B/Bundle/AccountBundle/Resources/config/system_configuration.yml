@@ -8,6 +8,15 @@ oro_system_configuration:
             title: orob2b.account.system_configuration.groups.account_users.title
 
     fields:
+        oro_b2b_account.default_account_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 110
+            options:
+                label: orob2b.account.system_configuration.fields.default_account_owner.label
+                tooltip: orob2b.account.system_configuration.fields.default_account_owner.tooltip
+                required: true
         oro_b2b_account.registration_allowed:
             data_type: boolean
             type: oro_config_checkbox
@@ -45,6 +54,7 @@ oro_system_configuration:
                                     account_users:
                                         priority: 100
                                         children:
+                                            - oro_b2b_account.default_account_owner
                                             - oro_b2b_account.registration_allowed
                                             - oro_b2b_account.confirmation_required
                                             - oro_b2b_account.send_password_in_welcome_email

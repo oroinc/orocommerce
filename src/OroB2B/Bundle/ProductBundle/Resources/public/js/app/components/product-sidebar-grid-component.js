@@ -56,13 +56,13 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.$container = options._sourceElement;
+            this.$el = options._sourceElement;
             this.$widgetContent = $(options.widgetContent);
 
             mediator.on('product_sidebar:changed', this.onSidebarChange, this);
 
-            this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
-            this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
+            this.$el.find('.control-minimize').click(_.bind(this.minimize, this));
+            this.$el.find('.control-maximize').click(_.bind(this.maximize, this));
 
             this._maximizeOrMaximize(null);
         },
@@ -168,14 +168,14 @@ define(function(require) {
             }
 
             if (state === 'on') {
-                this.$container.find('.sidebar-minimized').hide();
-                this.$container.find('.sidebar-maximized').show();
+                this.$el.find('.sidebar-minimized').hide();
+                this.$el.find('.sidebar-maximized').show();
                 this.$widgetContent.addClass('product-sidebar-maximized').removeClass('product-sidebar-minimized');
 
                 delete params.sidebar;
             } else {
-                this.$container.find('.sidebar-maximized').hide();
-                this.$container.find('.sidebar-minimized').show();
+                this.$el.find('.sidebar-maximized').hide();
+                this.$el.find('.sidebar-minimized').show();
                 this.$widgetContent.addClass('product-sidebar-minimized').removeClass('product-sidebar-maximized');
 
                 params.sidebar = state;

@@ -21,7 +21,8 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
     {
         return [
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountInternalRatingDemoData'
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountInternalRatingDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
         ];
     }
 
@@ -34,34 +35,38 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
         $accountUsers = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findAll();
         $internalRatings =
             $manager->getRepository(ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE))->findAll();
+        $accountGroupRepository = $manager->getRepository('OroB2BAccountBundle:AccountGroup');
 
         $rootAccount = null;
         $firstLevelAccount = null;
 
-        // create account groups
-        $rootGroup = $this->createAccountGroup('Root');
-        $firstLevelGroup = $this->createAccountGroup('First');
-        $secondLevelGroup = $this->createAccountGroup('Second');
+        $rootGroup = $accountGroupRepository->findOneBy(['name' => 'Root']);
+        $firstLevelGroup = $accountGroupRepository->findOneBy(['name' => 'First']);
+        $secondLevelGroup = $accountGroupRepository->findOneBy(['name' => 'Second']);
 
         $manager->persist($rootGroup);
         $manager->persist($firstLevelGroup);
         $manager->persist($secondLevelGroup);
 
+        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
+
         // create accounts
         foreach ($accountUsers as $index => $accountUser) {
-            $account = $accountUser->getAccount();
+            $account = $accountUser->getAccount()->setOwner($user);
             switch ($index % 3) {
                 case 0:
                     $account->setGroup($rootGroup);
                     $rootAccount = $account;
                     break;
                 case 1:
-                    $account->setGroup($firstLevelGroup)
+                    $account
+                        ->setGroup($firstLevelGroup)
                         ->setParent($rootAccount);
                     $firstLevelAccount = $account;
                     break;
                 case 2:
-                    $account->setGroup($secondLevelGroup)
+                    $account
+                        ->setGroup($secondLevelGroup)
                         ->setParent($firstLevelAccount);
                     break;
             }
@@ -69,17 +74,5 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
         }
 
         $manager->flush();
-    }
-
-    /**
-     * @param string $name
-     * @return AccountGroup
-     */
-    protected function createAccountGroup($name)
-    {
-        $accountGroup = new AccountGroup();
-        $accountGroup->setName($name);
-
-        return $accountGroup;
     }
 }

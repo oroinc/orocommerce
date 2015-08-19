@@ -1,7 +1,6 @@
 <?php
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator;
 use OroB2B\Bundle\OrderBundle\EventListener\OrderListener;
 
 class OrderListenerTest extends \PHPUnit_Framework_TestCase

@@ -1,0 +1,20 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="row-fluid form-horizontal">
+    <div class="responsive-block">
+        {% if paymentTerm %}
+            {% if is_granted('VIEW', paymentTerm) %}
+                {% set paymentTermData %}
+                    <a href="{{ path('orob2b_payment_term_view', {id: paymentTerm.id}) }}">
+                        {{ paymentTerm.label }}
+                    </a>
+                {% endset %}
+                {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, paymentTermData) }}
+            {% else %}
+                {{ UI.renderProperty('orob2b.payment.paymentterm.entity_label'|trans, paymentTermData.label) }}
+            {% endif %}
+        {%  else %}
+            {{ UI.renderHtmlProperty('orob2b.payment.paymentterm.entity_label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    </div>
+</div>

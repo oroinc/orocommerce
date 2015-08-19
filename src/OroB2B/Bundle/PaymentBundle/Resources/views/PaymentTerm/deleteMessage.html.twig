@@ -1,0 +1,12 @@
+{% import 'OroUIBundle::macros.html.twig' as ui %}
+{% set accountGroupFilterUrl = accountGroupFilterUrl ? accountGroupFilterUrl : false %}
+{% set accountFilterUrl = accountFilterUrl ? accountFilterUrl : false %}
+{% set message = '' %}
+{% if accountGroupFilterUrl and accountFilterUrl %}
+    {% set message = 'orob2b.payment.controller.paymentterm.delete.with_two_url.message'|trans({'%accounts%': accountFilterUrl, '%account_groups%': accountGroupFilterUrl}) %}
+{% elseif accountGroupFilterUrl %}
+    {% set message = 'orob2b.payment.controller.paymentterm.delete.with_url.message'|trans({'%url%': accountGroupFilterUrl}) %}
+{% elseif  accountFilterUrl %}
+    {% set message = 'orob2b.payment.controller.paymentterm.delete.with_url.message'|trans({'%url%': accountFilterUrl}) %}
+{% endif %}
+{{ 'oro.ui.delete_confirm'|trans({'%entity_label%': 'orob2b.payment.paymentterm.entity_label'|trans}) }} {{ message|raw }}
