@@ -73,7 +73,7 @@
                             <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
                             <td>{{ lineItem.price|oro_format_price }}</td>
                             <td>
-                                {{ lineItem|orob2b_format_order_line_item }}
+                                {# TODO output line item #}
 
                                 {% if lineItem.comment is not empty %}
                                     {{ UI.renderProperty('orob2b.order.orderlineitem.comment.label'|trans, lineItem.comment) }}

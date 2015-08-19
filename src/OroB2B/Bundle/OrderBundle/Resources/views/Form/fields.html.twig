@@ -16,25 +16,19 @@
         {% set name = widget.vars.prototype.vars.name %}
         {% set disabled = widget.vars.disabled %}
         {% set allow_delete = widget.vars.allow_delete %}
-        {% set componentOptions = widget.vars.prototype.vars.componentOptions %}
     {% else %}
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
         {% set disabled = widget.parent.vars.disabled %}
         {% set allow_delete = widget.parent.vars.allow_delete %}
-        {% set componentOptions = widget.vars.componentOptions %}
     {% endif %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group
-            {{ block('widget_container_attributes') }}
-        data-page-component-options="{{ componentOptions|json_encode }}"
-        data-page-component-module="orob2border/js/app/components/order-orderproductitem-selection-component"
-            >
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
         {{ form_widget(form, {disabled: disabled}) }}
 
         {% if allow_delete %}
             <td>
-                <button type="button" class="removeRow btn btn-small">Remove</button>
+                <button type="button" class="removeRow btn btn-small"></button>
             </td>
         {% endif %}
     </tr>

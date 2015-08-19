@@ -21,8 +21,6 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
         lineItems:
             - Valid: ~
 OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
-    constraints:
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder: ~
     properties:
         order:
             - NotBlank: ~

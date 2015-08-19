@@ -4,32 +4,16 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Formatter\OrderLineItemFormatter;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class OrderLineItemType extends AbstractType
 {
     const NAME = 'orob2b_order_line_item';
-
-    /**
-     * @var OrderLineItemFormatter
-     */
-    protected $orderLineItemFormatter;
-
-    /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $productUnitLabelFormatter;
 
     /**
      * @var string
@@ -37,60 +21,11 @@ class OrderLineItemType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param OrderLineItemFormatter $orderLineItemFormatter
-     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
-     */
-    public function __construct(
-        OrderLineItemFormatter $orderLineItemFormatter,
-        ProductUnitLabelFormatter $productUnitLabelFormatter
-    ) {
-        $this->orderLineItemFormatter = $orderLineItemFormatter;
-        $this->productUnitLabelFormatter = $productUnitLabelFormatter;
-    }
-
-    /**
      * @param string $dataClass
      */
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $units = [];
-
-        /* @var $products Product[] */
-        $products = [];
-
-        if ($view->vars['value']) {
-            /* @var OrderLineItem $lineItem */
-            $lineItem = $view->vars['value'];
-
-            if ($lineItem->getProduct()) {
-                $product = $lineItem->getProduct();
-                $products[$product->getId()] = $product;
-            }
-        }
-
-        foreach ($products as $product) {
-            $units[$product->getId()] = [];
-
-            foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->productUnitLabelFormatter->format($unitCode);
-            }
-        }
-
-        $componentOptions = ['units' => $units];
-
-        if (array_key_exists('componentOptions', $view->vars)) {
-            $componentOptions = array_merge($view->vars['componentOptions'], $componentOptions);
-        }
-
-        $view->vars['componentOptions'] = $componentOptions;
     }
 
     /**
@@ -113,7 +48,7 @@ class OrderLineItemType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.sku.label'
+                    'label' => 'orob2b.product.sku.label',
                 ]
             )
             ->add(
@@ -151,12 +86,10 @@ class OrderLineItemType extends AbstractType
             )
             ->add(
                 'priceType',
-                'choice',
+                PriceTypeSelectorType::NAME,
                 [
                     'label' => 'orob2b.order.orderlineitem.price_type.label',
-                    'choices' => $this->orderLineItemFormatter->formatPriceTypeLabels(OrderLineItem::getPriceTypes()),
                     'required' => true,
-                    'expanded' => true,
                 ]
             )
             ->add(
@@ -186,7 +119,6 @@ class OrderLineItemType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'order_line_item',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ]
         );
     }
