@@ -82,7 +82,7 @@ class DatagridListener
             'frontend_type' => 'html',
             'template' => 'OroB2BPaymentBundle:Account:Datagrid/Property/paymentTerm.html.twig'
         ];
-        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS );
+        $this->addConfigElement($config, '[columns]', $column, static::PAYMENT_TERM_LABEL_ALIAS);
 
         $sorter = ['data_name' => static::PAYMENT_TERM_FOR_FILTER];
         $this->addConfigElement($config, '[sorters][columns]', $sorter, static::PAYMENT_TERM_LABEL_ALIAS);
@@ -103,7 +103,6 @@ class DatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @param string $joinCondition
      */
     protected function addPaymentTermRelationForAccountGroup(DatagridConfiguration $config)
     {
@@ -158,6 +157,4 @@ class DatagridListener
         }
         $config->offsetSetByPath($path, $select);
     }
-
-
 }

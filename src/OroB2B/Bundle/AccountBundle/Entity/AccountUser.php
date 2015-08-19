@@ -68,6 +68,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
 {

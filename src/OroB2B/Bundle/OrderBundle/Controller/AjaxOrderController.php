@@ -18,6 +18,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class AjaxOrderController extends AbstractAjaxOrderController
 {
@@ -51,21 +52,12 @@ class AjaxOrderController extends AbstractAjaxOrderController
         $accountUser = null;
         /** @var Account $account */
         $account = null;
-        $accountUserId = $request->get('accountUserId');
-        if ($accountUserId) {
-            $accountUserClass = $this->getParameter('orob2b_account.entity.account_user.class');
 
-            $accountUser = $this->findEntity($accountUserClass, $accountUserId);
-            $order->setAccountUser($accountUser);
-            $account = $accountUser->getAccount();
-        }
+        $accountUser = $this->findAccountUser($request->get('accountUserId'));
+        $account = $this->findAccount($request->get('accountId'), $accountUser);
 
-        $accountId = $request->get('accountId');
-        if ($accountId && !$account) {
-            $accountClass = $this->getParameter('orob2b_account.entity.account.class');
-            $account = $this->findEntity($accountClass, $accountId);
-        }
         $order->setAccount($account);
+        $order->setAccountUser($accountUser);
 
         $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
         $accountGroupPaymentTerm = null;
@@ -135,5 +127,68 @@ class AjaxOrderController extends AbstractAjaxOrderController
         }
 
         return $entity;
+    }
+
+    /**
+     * @param int $accountUserId
+     *
+     * @return AccountUser
+     */
+    protected function findAccountUser($accountUserId)
+    {
+        $accountUser = null;
+
+        if ($accountUserId) {
+            $accountUserClass = $this->getParameter('orob2b_account.entity.account_user.class');
+            /** @var AccountUser $accountUser */
+            $accountUser = $this->findEntity($accountUserClass, $accountUserId);
+        }
+
+        return $accountUser;
+    }
+
+    /**
+     * @param int $accountId
+     * @param AccountUser|null $accountUser
+     *
+     * @return Account
+     *
+     * @throws BadRequestHttpException
+     */
+    protected function findAccount($accountId, AccountUser $accountUser = null)
+    {
+        $account = null;
+
+        if ($accountId) {
+            $accountClass = $this->getParameter('orob2b_account.entity.account.class');
+            /** @var Account $account */
+            $account = $this->findEntity($accountClass, $accountId);
+        }
+
+        if ($accountUser) {
+            if ($account) {
+                $this->validateRelation($accountUser, $account);
+            } else {
+                $account = $accountUser->getAccount();
+            }
+        }
+
+        return $account;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param Account $account
+     *
+     * @throws BadRequestHttpException
+     */
+    protected function validateRelation(AccountUser $accountUser, Account $account)
+    {
+        if ($accountUser
+            && $accountUser->getAccount()
+            && $accountUser->getAccount()->getId() !== $account->getId()
+        ) {
+            throw new BadRequestHttpException('AccountUser must belong to Account');
+        }
     }
 }

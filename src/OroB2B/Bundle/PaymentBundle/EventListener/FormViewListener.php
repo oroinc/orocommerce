@@ -89,7 +89,8 @@ class FormViewListener
 
         $template = $event->getEnvironment()->render(
             'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
-            ['paymentTerm' => $paymentTerm]);
+            ['paymentTerm' => $paymentTerm]
+        );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
 

@@ -2,57 +2,34 @@
 
 namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Datagrid;
 
-use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
-use OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener;
 
-class FormViewListenerTest extends \PHPUnit_Framework_TestCase
+class FormViewListenerTest extends FormViewListenerTestCase
 {
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrineHelper;
-
     /**
      * @var FormViewListener
      */
     protected $listener;
 
+    /**
+     * {@inheritDoc}
+     */
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(
-                function ($id) {
-                    return $id . '.trans';
-                }
-            );
-
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
 
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->doctrineHelper, $this->listener);
     }
 
     public function testOnViewNoRequest()
@@ -94,6 +71,9 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $isPaymentTermExist
      * @param bool $isPaymentTermInGroupExist
      * @dataProvider viewAccountDataProvider
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function testOnAccountView($isPaymentTermExist, $isPaymentTermInGroupExist)
     {
@@ -111,7 +91,9 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->setRequest(new Request(['id' => $accountId]));
 
-        $paymentTermRepository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
+        $paymentTermRepository = $this->getMockBuilder(
+            'OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -153,8 +135,8 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
                 )
                 ->willReturn(
                     $isPaymentTermInGroupExist ?
-                        $templateAccountGroupPaymentTermHtml :
-                        $templateAccountGroupWithoutPaymentTermHtml
+                    $templateAccountGroupPaymentTermHtml :
+                    $templateAccountGroupWithoutPaymentTermHtml
                 );
         }
 
@@ -183,6 +165,8 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool $isPaymentTermExist
      * @dataProvider viewAccountGroupDataProvider
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testOnAccountGroupView($isPaymentTermExist)
     {

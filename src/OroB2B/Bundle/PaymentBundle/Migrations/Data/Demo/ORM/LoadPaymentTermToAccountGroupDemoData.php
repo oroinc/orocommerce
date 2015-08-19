@@ -24,7 +24,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
      *
      * @return array
      */
-    function getDependencies()
+    public function getDependencies()
     {
         return [
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',

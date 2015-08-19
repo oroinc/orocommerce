@@ -26,7 +26,9 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'select' => [
                     'payment_term.label as payment_term_label',
                     'payment_term_group.label as payment_term_group_label',
+                    // @codingStandardsIgnoreStart
                     '(CASE WHEN payment_term.id IS NOT NULL THEN payment_term.id ELSE payment_term_group.id END) as payment_term_for_filter'
+                    // @codingStandardsIgnoreEnd
                 ],
                 'join' => [
                     'left' => [

@@ -1,8 +1,6 @@
 <?php
 
-
-namespace OroB2B\src\OroB2B\Bundle\PaymentBundle\Tests\Unit\Fixtures;
-
+namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Fixtures;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
