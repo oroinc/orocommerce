@@ -19,7 +19,7 @@ class AbstractAjaxProductPriceController extends Controller
         $params = $request->query->all();
 
         $priceListId = isset($params['price_list_id']) ? $params['price_list_id'] : null;
-        $productIds = isset($params['product_ids']) ? $params['product_ids'] : null;
+        $productIds = isset($params['product_ids']) ? $params['product_ids'] : [];
         $currency = isset($params['currency']) ? $params['currency'] : null;
 
         $currencies = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
