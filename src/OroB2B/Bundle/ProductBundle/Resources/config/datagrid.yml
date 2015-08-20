@@ -153,3 +153,63 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_product_delete
+
+    frontend-products-grid:
+        extended_entity_name: %orob2b_product.product.class%
+        options:
+            entityHint:        product
+            entity_pagination: true
+            skip_acl_check: true
+        source:
+            acl_resource: orob2b_product_view_products
+            type:         orm
+            query:
+                select:
+                    - product.id
+                    - product.sku
+                    - productInventoryStatus.id as inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
+                    - product.sku as name
+                from:
+                    - { table: %orob2b_product.product.class%, alias: product }
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+        columns:
+            sku:
+                label: orob2b.product.sku.label
+            name:
+                label: orob2b.product.name.label
+            inventoryStatusName:
+                label: orob2b.product.inventory_status.label
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_product_frontend_product_view
+                params: [ id ]
+        sorters:
+            columns:
+                sku:
+                    data_name: product.sku
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                sku:
+                    type:      string
+                    data_name: product.sku
+                name:
+                    type:      string
+                    data_name: product.sku
+                inventoryStatusName:
+                    type:      enum
+                    data_name: inventoryStatusId
+                    enum_code: prod_inventory_status
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true

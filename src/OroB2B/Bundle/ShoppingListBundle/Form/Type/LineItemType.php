@@ -8,14 +8,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 
 class LineItemType extends AbstractType
 {
@@ -32,23 +32,28 @@ class LineItemType extends AbstractType
     protected $registry;
 
     /**
-     * @var RoundingService
-     */
-    protected $roundingService;
-
-    /**
      * @var string
      */
     protected $productClass;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param RoundingService $roundingService
+     * @var LineItemManager
      */
-    public function __construct(ManagerRegistry $registry, RoundingService $roundingService)
+    protected $lineItemManager;
+
+    /**
+     * @var LineItemSubscriber
+     */
+    protected $lineItemSubscriber;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param LineItemManager $lineItemManager
+     */
+    public function __construct(ManagerRegistry $registry, LineItemManager $lineItemManager)
     {
         $this->registry = $registry;
-        $this->roundingService = $roundingService;
+        $this->lineItemManager = $lineItemManager;
     }
 
     /**
@@ -66,7 +71,7 @@ class LineItemType extends AbstractType
                 ProductSelectType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.product.label',
+                    'label' => 'orob2b.shoppinglist.lineitem.product.label',
                     'create_enabled' => false,
                     'disabled' => $isExisting
                 ]
@@ -76,7 +81,7 @@ class LineItemType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.quantity.label'
+                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label'
                 ]
             )
             ->add(
@@ -84,9 +89,7 @@ class LineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.productprice.unit.label',
-                    'empty_data' => null,
-                    'empty_value' => 'orob2b.pricing.productprice.unit.choose'
+                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                 ]
             )
             ->add(
@@ -100,7 +103,7 @@ class LineItemType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmitData']);
+        $builder->addEventSubscriber($this->lineItemSubscriber);
     }
 
     /**
@@ -121,9 +124,7 @@ class LineItemType extends AbstractType
             ProductUnitSelectionType::NAME,
             [
                 'required' => true,
-                'label' => 'orob2b.pricing.productprice.unit.label',
-                'empty_data' => null,
-                'empty_value' => 'orob2b.pricing.productprice.unit.choose',
+                'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                 'query_builder' => function (ProductUnitRepository $er) use ($entity) {
                     return $er->getProductUnitsQueryBuilder($entity->getProduct());
                 }
@@ -132,30 +133,11 @@ class LineItemType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
+     * {@inheritdoc}
      */
-    public function preSubmitData(FormEvent $event)
+    public function getName()
     {
-        $data = $event->getData();
-
-        if (!isset($data['product'], $data['unit'], $data['quantity'])) {
-            return;
-        }
-
-        /** @var Product $product */
-        $product = $this->registry
-            ->getRepository($this->productClass)
-            ->find($data['product']);
-
-        if ($product) {
-            $unitPrecision = $product->getUnitPrecision($data['unit']);
-
-            if ($unitPrecision) {
-                $data['quantity'] = $this->roundingService->round($data['quantity'], $unitPrecision->getPrecision());
-
-                $event->setData($data);
-            }
-        }
+        return self::NAME;
     }
 
     /**
@@ -164,6 +146,14 @@ class LineItemType extends AbstractType
     public function setProductClass($productClass)
     {
         $this->productClass = $productClass;
+    }
+
+    /**
+     * @param LineItemSubscriber $lineItemSubscriber
+     */
+    public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
+    {
+        $this->lineItemSubscriber = $lineItemSubscriber;
     }
 
     /**
@@ -181,7 +171,7 @@ class LineItemType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
@@ -191,13 +181,5 @@ class LineItemType extends AbstractType
                 }
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return self::NAME;
     }
 }

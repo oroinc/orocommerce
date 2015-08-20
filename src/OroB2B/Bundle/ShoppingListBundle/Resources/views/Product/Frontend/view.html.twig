@@ -1,0 +1,41 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+
+{% if form.vars.errors|length > 0 %}
+    <div class="alert alert-error">
+        {{ form_errors(form) }}
+    </div>
+{% endif %}
+
+<form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+      method="{{ form.vars.method }}" data-collect="true" class="form-horizontal">
+
+    <fieldset class="form-horizontal">
+        {{ form_row(form.quantity) }}
+        {{ form_row(form.unit) }}
+    </fieldset>
+
+    <div class="hidden">
+        {{ form_rest(form) }}
+    </div>
+
+    <div class="btn-group" data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
+        {% set commonOptions = {
+            dataUrl: 'orob2b_shopping_list_frontend_add_product',
+            dataUrlOptions: {
+                productId: product.id
+            },
+            dataAttributes: {}
+        } %}
+        {% set options = {
+            new: commonOptions,
+            current: commonOptions,
+            existing: commonOptions,
+            shoppingLists: shoppingLists,
+            currentShoppingList: currentShoppingList
+        } %}
+
+        {{ buttons.createAddToShoppingListButton(options) }}
+    </div>
+</form>
+{{ oro_form_js_validation(form) }}
