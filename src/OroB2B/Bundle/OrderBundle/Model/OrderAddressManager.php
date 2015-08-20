@@ -13,6 +13,8 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider;
@@ -72,21 +74,33 @@ class OrderAddressManager
      * @param OrderAddress $orderAddress
      * @return OrderAddress
      */
-    public function updateFromAbstract(AbstractAddress $address, OrderAddress $orderAddress = null)
+    public function updateFromAbstract(AbstractAddress $address = null, OrderAddress $orderAddress = null)
     {
         if (!$orderAddress) {
             $orderAddress = new $this->orderAddressClass();
         }
 
-        $existingClassName = ClassUtils::getClass($address);
-        $metadata = $this->registry->getManagerForClass($existingClassName)->getClassMetadata($existingClassName);
+        if ($address) {
+            $addressClassName = ClassUtils::getClass($address);
+            $addressMetadata = $this->registry->getManagerForClass($addressClassName)
+                ->getClassMetadata($addressClassName);
 
-        foreach ($metadata->getFieldNames() as $fieldName) {
-            $this->setValue($address, $orderAddress, $fieldName);
+            foreach ($addressMetadata->getFieldNames() as $fieldName) {
+                $this->setValue($address, $orderAddress, $fieldName);
+            }
+
+            foreach ($addressMetadata->getAssociationNames() as $associationName) {
+                $this->setValue($address, $orderAddress, $associationName);
+            }
         }
 
-        foreach ($metadata->getAssociationNames() as $associationName) {
-            $this->setValue($address, $orderAddress, $associationName);
+        $orderAddress->setAccountAddress(null);
+        $orderAddress->setAccountUserAddress(null);
+
+        if ($address instanceof AccountAddress) {
+            $orderAddress->setAccountAddress($address);
+        } elseif ($address instanceof AccountUserAddress) {
+            $orderAddress->setAccountUserAddress($address);
         }
 
         return $orderAddress;

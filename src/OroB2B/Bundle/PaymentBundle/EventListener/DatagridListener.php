@@ -104,6 +104,7 @@ class DatagridListener
 
     /**
      * @param DatagridConfiguration $config
+     * @param string $joinCondition
      */
     protected function addPaymentTermRelationForAccountGroup(DatagridConfiguration $config)
     {

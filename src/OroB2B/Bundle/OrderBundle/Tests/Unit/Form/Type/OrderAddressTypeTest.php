@@ -321,6 +321,18 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
      */
     protected function checkForm($isValid, $submittedData, $expectedData, $defaultData, $formErrors)
     {
+        $this->orderAddressManager->expects($this->any())->method('updateFromAbstract')
+            ->will(
+                $this->returnCallback(
+                    function (AccountAddress $address = null, OrderAddress $orderAddress = null) {
+                        if (!$orderAddress) {
+                            $orderAddress = new OrderAddress();
+                        }
+                        return $orderAddress;
+                    }
+                )
+            );
+
         $form = $this->factory->create(
             $this->formType,
             $defaultData,
@@ -361,6 +373,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
             'array',
             json_decode($form->get('accountAddress')->getConfig()->getOption('attr')['data-addresses'], true)
         );
+        $this->assertArrayHasKey('data-default', $form->get('accountAddress')->getConfig()->getOption('attr'));
     }
 
     public function testFinishView()

@@ -16,6 +16,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
 class OrderController extends Controller
@@ -118,6 +119,9 @@ class OrderController extends Controller
      */
     protected function update(Order $order)
     {
+        if (in_array($this->get('request')->getMethod(), array('POST', 'PUT'))) {
+            $this->getOrderHandler()->setOrderAccountUser($order);
+        }
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
             $this->createForm(OrderType::NAME, $order),
@@ -155,5 +159,13 @@ class OrderController extends Controller
     protected function getOrderAddressSecurityProvider()
     {
         return $this->get('orob2b_order.order.provider.order_address_security');
+    }
+
+    /**
+     * @return OrderRequestHandler
+     */
+    protected function getOrderHandler()
+    {
+        return $this->get('orob2b_order.model.order_request_handler');
     }
 }
