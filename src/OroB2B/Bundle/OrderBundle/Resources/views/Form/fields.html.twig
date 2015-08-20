@@ -23,7 +23,8 @@
         {% set allow_delete = widget.parent.vars.allow_delete %}
     {% endif %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        class="order-line-item">
         {{ form_widget(form, {disabled: disabled}) }}
 
         {% if allow_delete %}
@@ -42,27 +43,23 @@
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection' }) %}
         {% set id = id ~ '_collection' %}
         <div class="row-oro">
-            {% if allow_add %}
-                <a class="btn add-list-item" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
-            {% endif %}
-
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
-                <table>
+                <table class="order-line-items">
                     <thead>
                     <tr>
-                        <th>{{ 'orob2b.product.sku.label'|trans }}</th>
-                        <th>{{ 'orob2b.product.entity_label'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</th>
+                        <th class="order-line-item-sku">{{ 'orob2b.product.sku.label'|trans }}</th>
+                        <th class="order-line-item-type">{{ 'orob2b.product.entity_label'|trans }}</th>
+                        <th class="order-line-item-quantity">{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
+                        <th class="order-line-item-price">{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
+                        <th class="order-line-item-ship_by">{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</th>
+                        <th class="order-line-item-comment">{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</th>
                         {% if form.vars.allow_delete %}
-                            <th></th>
+                            <th class="order-line-item-actions"></th>
                         {% endif %}
                     </tr>
                     </thead>
-                    <tbody class="collection-fields-list" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                    <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.orob2b_order_line_items_collection_item_prototype(child) }}
@@ -73,46 +70,58 @@
                     </tbody>
                 </table>
             </div>
+
+            {% if allow_add %}
+                <a class="btn add-list-item" data-container=".order-line-items tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+            {% endif %}
         </div>
     {% endspaceless %}
 {% endblock %}
 
 {% block orob2b_order_line_item_widget %}
-    <td>
-        <div class="order-line-item-sku">
+    <td class="order-line-item-sku">
+        <div class="order-line-item-sku order-line-item-type-product">
             {% if form.vars.value.product is defined %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
-
-        {{ form_widget(form.productSku) }}
+        <div class="order-line-item-type-free-form">
+            {{ form_widget(form.productSku) }}
+        </div>
     </td>
-    <td>
-        {{ form_widget(form.product) }}
-        {{ form_errors(form.product) }}
-
-        {{ form_widget(form.freeFormProduct) }}
-        {{ form_errors(form.freeFormProduct) }}
+    <td class="order-line-item-type">
+        <div data-page-component-module="orob2border/js/app/components/line-item-type-component">
+            <div class="order-line-item-type-product">
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+                <a class="order-line-item-type-free-form">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+            </div>
+            <div class="order-line-item-type-free-form">
+                {{ form_widget(form.freeFormProduct) }}
+                {{ form_errors(form.freeFormProduct) }}
+                <br/><a class="order-line-item-type-product">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+            </div>
+        </div>
     </td>
-    <td>
+    <td class="order-line-item-quantity">
         {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
 
         {{ form_widget(form.productUnit) }}
         {{ form_errors(form.productUnit) }}
     </td>
-    <td>
+    <td class="order-line-item-price">
         {{ form_widget(form.price) }}
         {{ form_errors(form.price) }}
 
         {{ form_widget(form.priceType) }}
         {{ form_errors(form.priceType) }}
     </td>
-    <td>
+    <td class="order-line-item-ship_by">
         {{ form_widget(form.shipBy) }}
         {{ form_errors(form.shipBy) }}
     </td>
-    <td>
-        {{ form_row(form.comment) }}
+    <td class="order-line-item-comment">
+        {{ form_widget(form.comment) }}
     </td>
 {% endblock %}

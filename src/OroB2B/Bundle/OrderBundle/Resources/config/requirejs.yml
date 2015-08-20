@@ -5,3 +5,5 @@ config:
         'orob2border/js/app/listener/subtotals-listener': 'bundles/orob2border/js/app/listener/subtotals-listener.js'
         'orob2border/js/app/views/address-view': 'bundles/orob2border/js/app/views/address-view.js'
         'orob2border/js/app/views/payment-term-view': 'bundles/orob2border/js/app/views/payment-term-view.js'
+
+        'orob2border/js/app/components/line-item-type-component': 'bundles/orob2border/js/app/components/line-item-type-component.js'

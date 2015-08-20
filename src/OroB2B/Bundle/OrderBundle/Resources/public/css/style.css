@@ -13,3 +13,57 @@
 .order-order-accountuser-select .select2-container {
     width: 257px !important;
 }
+
+/* order-line-items */
+table.order-line-items td {
+    vertical-align: top;
+}
+
+.order-line-items a {
+    cursor: pointer;
+}
+
+.order-line-items td, .order-line-items th {
+    border: 1px solid #e5e5e5;
+    padding: 10px;
+}
+
+.order-line-items th {
+    text-align: left;
+}
+
+.order-line-item-sku {
+    width: 134px;
+}
+
+.order-line-item-sku input,
+.order-line-item-ship_by input{
+    width: 120px !important;
+}
+
+.order-line-item-type {
+    width: 290px;
+}
+
+.order-line-item-type input[type="text"]{
+    width: 279px !important;
+}
+
+.order-line-item-quantity,
+.order-line-item-price {
+    width: 207px;
+}
+
+.order-line-item-quantity input[type="number"],
+.order-line-item-quantity select,
+.order-line-item-price input[type="text"],
+.order-line-item-price select {
+    width: 80px !important;
+}
+
+.order-line-item-quantity input[type="number"],
+.order-line-item-quantity .selector,
+.order-line-item-price input[type="text"],
+.order-line-item-price .selector {
+    float: left;
+}
