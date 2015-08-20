@@ -8,6 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 
 /**
  * @dbIsolation
@@ -87,13 +88,13 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl(
-                'orob2b_order_related_data',
-                [
-                    'accountId' => $accountEntity->getId(),
-                    'accountUserId' => $accountUserEntity ? $accountUserEntity->getId() : null
+            $this->getUrl('orob2b_order_related_data'),
+            [
+                OrderType::NAME => [
+                    'account' => $accountEntity->getId(),
+                    'accountUser' => $accountUserEntity ? $accountUserEntity->getId() : null
                 ]
-            )
+            ]
         );
 
         $response = $this->client->getResponse();
@@ -134,13 +135,13 @@ class AjaxOrderControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl(
-                'orob2b_order_related_data',
-                [
-                    'accountId' => $accountUser1->getAccount()->getId(),
-                    'accountUserId' => $accountUser2->getId(),
+            $this->getUrl('orob2b_order_related_data'),
+            [
+                OrderType::NAME => [
+                    'account' => $accountUser1->getAccount()->getId(),
+                    'accountUser' => $accountUser2->getId(),
                 ]
-            )
+            ]
         );
 
         $response = $this->client->getResponse();

@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+
 /**
  * @dbIsolation
  */
@@ -29,7 +31,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testDelete()
     {
-        $shoppingList = $this->getReference('shopping_list');
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $this->client->request(
             'DELETE',
