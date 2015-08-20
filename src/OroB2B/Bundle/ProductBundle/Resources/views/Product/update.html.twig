@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
@@ -102,6 +103,19 @@
             }]
         }] ) %}
     {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title' : '###VARIANTS-BLOCK###'|trans,
+        'subblocks': [{
+            'title' : null,
+            'useSpan': false,
+            'data' : [
+                form_widget(form.appendVariants, {'id': 'productAppendVariants'}),
+                form_widget(form.removeVariants, {'id': 'productRemoveVariants'}),
+                dataGrid.renderGrid('product-variants-select-grid', {}, { cssClass: 'inner-grid' })
+            ]
+            }]
+    }] ) %}
 
     {% set data = {
         'formErrors': form_errors(form),

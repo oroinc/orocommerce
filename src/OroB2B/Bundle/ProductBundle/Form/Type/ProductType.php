@@ -118,6 +118,24 @@ class ProductType extends AbstractType
                     'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
                     'required' => false
                 ]
+            )->add(
+                'appendVariants',
+                'oro_entity_identifier',
+                [
+                    'class'    => $this->dataClass,
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true
+                ]
+            )->add(
+                'removeVariants',
+                'oro_entity_identifier',
+                [
+                    'class'    => $this->dataClass,
+                    'required' => false,
+                    'mapped'   => false,
+                    'multiple' => true
+                ]
             );
     }
 

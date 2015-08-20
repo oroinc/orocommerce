@@ -191,6 +191,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $descriptions;
 
+    /**
+     * @var Collection|Product[]
+     *
+     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $variants;
+
     public function __construct()
     {
         parent::__construct();
@@ -198,6 +205,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->unitPrecisions = new ArrayCollection();
         $this->names          = new ArrayCollection();
         $this->descriptions   = new ArrayCollection();
+        $this->variants       = new ArrayCollection();
     }
 
     /**
@@ -503,6 +511,30 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return Collection|Product[]
+     */
+    public function getVariants()
+    {
+        return $this->variants;
+    }
+
+    /**
+     * @param Collection|Product[] $variants
+     */
+    public function setVariants($variants)
+    {
+        $this->variants = $variants;
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function addVariant($product)
+    {
+        $this->variants->add($product);
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -530,6 +562,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->unitPrecisions = new ArrayCollection();
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
+            $this->variants = new ArrayCollection();
         }
     }
 }
