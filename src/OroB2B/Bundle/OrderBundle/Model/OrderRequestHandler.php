@@ -4,12 +4,11 @@ namespace OroB2B\Bundle\OrderBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderRequestHandler
 {
@@ -64,35 +63,16 @@ class OrderRequestHandler
     }
 
     /**
-     * @param Order $order
-     * @return bool
-     */
-    public function setOrderAccountUser(Order $order)
-    {
-        $account = $this->getAccount();
-        $accountUser = $this->getAccountUser();
-
-        if ($account
-            && $accountUser
-            && $accountUser->getAccount()
-            && $accountUser->getAccount()->getId() !== $account->getId()
-        ) {
-            return false;
-        }
-
-        $order->setAccount($account);
-        $order->setAccountUser($accountUser);
-
-        return true;
-    }
-
-    /**
      * @param string $var
      * @param mixed $default
      * @return mixed
      */
     protected function getFromRequest($var, $default = null)
     {
+        if (!$this->request) {
+            return $default;
+        }
+
         $request = $this->request->get(OrderType::NAME);
         if (!is_array($request) || !array_key_exists($var, $request)) {
             return $default;

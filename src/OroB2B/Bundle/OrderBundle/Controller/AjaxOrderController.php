@@ -9,10 +9,8 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
@@ -49,15 +47,17 @@ class AjaxOrderController extends AbstractAjaxOrderController
     public function getRelatedDataAction()
     {
         $order = new Order();
-        if (!$this->getOrderHandler()
-            ->setOrderAccountUser($order)
-        ) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+        $account = $this->getOrderHandler()->getAccount();
+        $accountUser = $this->getOrderHandler()->getAccountUser();
+
+        if ($account && $accountUser) {
+            $this->validateRelation($accountUser, $account);
         }
 
-        $account = $order->getAccount();
-        $accountPaymentTerm = $this->getPaymentTermProvider()
-            ->getAccountPaymentTerm($account);
+        $order->setAccount($account);
+        $order->setAccountUser($accountUser);
+
+        $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
         $accountGroupPaymentTerm = null;
         if ($account->getGroup()) {
             $accountGroupPaymentTerm = $this->getPaymentTermProvider()
@@ -69,12 +69,10 @@ class AjaxOrderController extends AbstractAjaxOrderController
         return new JsonResponse(
             [
                 'billingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_BILLING . 'Address')
-                        ->createView()
+                    $orderForm->get(AddressType::TYPE_BILLING . 'Address')->createView()
                 ),
                 'shippingAddress' => $this->renderForm(
-                    $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')
-                        ->createView()
+                    $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
                 ),
                 'accountPaymentTerm' => $accountPaymentTerm ? $accountPaymentTerm->getId() : null,
                 'accountGroupPaymentTerm' => $accountGroupPaymentTerm ? $accountGroupPaymentTerm->getId() : null,
@@ -174,11 +172,7 @@ class AjaxOrderController extends AbstractAjaxOrderController
      */
     protected function validateRelation(AccountUser $accountUser, Account $account)
     {
-        if ($accountUser
-            && $accountUser->getAccount()
-            && $accountUser->getAccount()
-                ->getId() !== $account->getId()
-        ) {
+        if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
             throw new BadRequestHttpException('AccountUser must belong to Account');
         }
     }

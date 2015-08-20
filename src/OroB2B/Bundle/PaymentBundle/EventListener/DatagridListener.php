@@ -47,7 +47,6 @@ class DatagridListener
      */
     protected function addPaymentTermRelationForAccount(DatagridConfiguration $config)
     {
-
         $selectAccountPaymentTerm = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
         $this->addConfigElement($config, '[source][query][select]', $selectAccountPaymentTerm);
 
@@ -104,11 +103,9 @@ class DatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @param string $joinCondition
      */
     protected function addPaymentTermRelationForAccountGroup(DatagridConfiguration $config)
     {
-
         $select = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
         $this->addConfigElement($config, '[source][query][select]', $select);
 

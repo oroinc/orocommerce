@@ -104,17 +104,20 @@ class OrderAddressType extends AbstractType
                 }
 
                 $identifier = $form->get('accountAddress')->getData();
-                if ($identifier !== null) {
-                    //Enter manually or Account/AccountUser address
-                    $address = null;
-                    if ($identifier) {
-                        $address = $this->orderAddressManager->getEntityByIdentifier($identifier);
-                    }
+                if ($identifier === null) {
+                    return;
+                }
 
-                    $orderAddress = $event->getData();
-                    if ($orderAddress || $address) {
-                        $event->setData($this->orderAddressManager->updateFromAbstract($address, $orderAddress));
-                    }
+                //Enter manually or Account/AccountUser address
+                $orderAddress = $event->getData();
+
+                $address = null;
+                if ($identifier) {
+                    $address = $this->orderAddressManager->getEntityByIdentifier($identifier);
+                }
+
+                if ($orderAddress || $address) {
+                    $event->setData($this->orderAddressManager->updateFromAbstract($address, $orderAddress));
                 }
             },
             -10
@@ -221,7 +224,9 @@ class OrderAddressType extends AbstractType
         foreach ($addresses as $key => $address) {
             if ($address->hasDefault($type)) {
                 $addressKey = $key;
-                if ($address instanceof AccountUserAddress && $address->getId() === $accountUser->getID()) {
+                if ($address instanceof AccountUserAddress &&
+                    $address->getFrontendOwner()->getId() === $accountUser->getId()
+                ) {
                     break;
                 }
             }

@@ -119,9 +119,11 @@ class OrderController extends Controller
      */
     protected function update(Order $order)
     {
-        if (in_array($this->get('request')->getMethod(), array('POST', 'PUT'))) {
-            $this->getOrderHandler()->setOrderAccountUser($order);
+        if (in_array($this->get('request')->getMethod(), ['POST', 'PUT'], true)) {
+            $order->setAccount($this->getOrderHandler()->getAccount());
+            $order->setAccountUser($this->getOrderHandler()->getAccountUser());
         }
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
             $this->createForm(OrderType::NAME, $order),
