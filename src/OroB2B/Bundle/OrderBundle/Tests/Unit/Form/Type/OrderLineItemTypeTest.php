@@ -93,7 +93,7 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_order_line_item', $this->formType->getName());
+        $this->assertEquals(OrderLineItemType::NAME, $this->formType->getName());
     }
 
     /**
