@@ -60,7 +60,7 @@ class OrderLineItem extends ExtendOrderLineItem
     /**
      * @var string
      *
-     * @ORM\Column(name="product_sku", type="string", length=255)
+     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
      */
     protected $productSku;
 
@@ -89,7 +89,7 @@ class OrderLineItem extends ExtendOrderLineItem
     /**
      * @var string
      *
-     * @ORM\Column(name="product_unit_code", type="string", length=255)
+     * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=true)
      */
     protected $productUnitCode;
 
@@ -117,7 +117,7 @@ class OrderLineItem extends ExtendOrderLineItem
      *
      * @ORM\Column(name="price_type", type="integer")
      */
-    protected $priceType;
+    protected $priceType = self::PRICE_TYPE_UNIT;
 
     /**
      * @var \DateTime
@@ -139,14 +139,6 @@ class OrderLineItem extends ExtendOrderLineItem
      * @ORM\Column(name="comment", type="text", nullable=true)
      */
     protected $comment;
-
-    public static function getPriceTypes()
-    {
-        return [
-            self::PRICE_TYPE_UNIT => 'unit',
-            self::PRICE_TYPE_BUNDLED => 'bundled',
-        ];
-    }
 
     /**
      * Get id
@@ -384,7 +376,6 @@ class OrderLineItem extends ExtendOrderLineItem
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-        $this->getPrice()->setCurrency($currency);
 
         return $this;
     }
@@ -423,7 +414,6 @@ class OrderLineItem extends ExtendOrderLineItem
     public function setValue($value)
     {
         $this->value = $value;
-        $this->getPrice()->setValue($this->value);
 
         return $this;
     }

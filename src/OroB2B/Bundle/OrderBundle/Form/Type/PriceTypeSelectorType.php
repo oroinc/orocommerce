@@ -18,7 +18,10 @@ class PriceTypeSelectorType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'choices' => $this->getChoices(),
+                'choices' => [
+                    OrderLineItem::PRICE_TYPE_UNIT => 'orob2b.order.orderlineitem.price_type.unit',
+                    OrderLineItem::PRICE_TYPE_BUNDLED => 'orob2b.order.orderlineitem.price_type.bundled',
+                ],
                 'expanded' => true
             ]
         );
@@ -38,18 +41,5 @@ class PriceTypeSelectorType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getChoices()
-    {
-        $choices = [];
-        foreach (OrderLineItem::getPriceTypes() as $key => $code) {
-            $choices[$key] = sprintf('orob2b.order.orderlineitem.price_type.%s', $code);
-        }
-
-        return $choices;
     }
 }

@@ -157,10 +157,10 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
-        $table->addColumn('product_sku', 'string', ['length' => 255]);
+        $table->addColumn('product_sku', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
-        $table->addColumn('product_unit_code', 'string', ['length' => 255]);
+        $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
             'value',
             'money',

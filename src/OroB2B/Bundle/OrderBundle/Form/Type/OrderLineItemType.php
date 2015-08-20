@@ -4,10 +4,13 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
@@ -82,6 +85,8 @@ class OrderLineItemType extends AbstractType
                     'error_bubbling' => false,
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.price.label',
+                    'hide_currency' => true,
+                    'default_currency' => $options['currency']
                 ]
             )
             ->add(
@@ -108,6 +113,22 @@ class OrderLineItemType extends AbstractType
                     'label' => 'orob2b.order.orderlineitem.comment.label',
                 ]
             );
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                /** @var OrderLineItem $item */
+                $item = $event->getData();
+                if ($item) {
+                    if ($item->getProduct()) {
+                        $item->setProductSku($item->getProduct()->getSku());
+                    }
+                    if ($item->getProductUnit()) {
+                        $item->setProductUnitCode($item->getProductUnit()->getCode());
+                    }
+                }
+            }
+        );
     }
 
     /**
@@ -115,10 +136,12 @@ class OrderLineItemType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setRequired(['currency']);
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'order_line_item',
+                'currency' => null
             ]
         );
     }
