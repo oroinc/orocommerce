@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
@@ -88,7 +89,12 @@ class OrderController extends Controller
      */
     public function createAction()
     {
-        return $this->update(new Order());
+        $order = new Order();
+        /** @var LocaleSettings $localeSettings */
+        $localeSettings = $this->get('oro_locale.settings');
+        $order->setCurrency($localeSettings->getCurrency());
+
+        return $this->update($order);
     }
 
     /**
