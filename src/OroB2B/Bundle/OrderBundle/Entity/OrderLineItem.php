@@ -476,6 +476,7 @@ class OrderLineItem extends ExtendOrderLineItem
     public function prePersist()
     {
         $this->updatePrice();
+        $this->updateItemInformation();
     }
 
     /**
@@ -485,5 +486,16 @@ class OrderLineItem extends ExtendOrderLineItem
     {
         $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
+    }
+
+    protected function updateItemInformation()
+    {
+        if ($this->getProduct()) {
+            $this->productSku = $this->getProduct()->getSku();
+        }
+
+        if ($this->getProductUnit()) {
+            $this->productUnitCode = $this->getProductUnit()->getCode();
+        }
     }
 }

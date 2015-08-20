@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -41,8 +40,8 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
     {
         $productSelectType = new EntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id', ['sku' => 'SKU1']),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id', ['sku' => 'SKU2']),
+                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
+                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
             ],
             ProductSelectType::NAME
         );
@@ -118,7 +117,7 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id', ['sku' => 'SKU1']);
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id');
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
 
         return [
@@ -132,6 +131,7 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
                     'freeFormProduct' => '',
                     'quantity' => 10,
                     'productUnit' => 'item',
+                    'productUnitCode' => '',
                     'price' => [
                         'value' => '5',
                         'currency' => 'USD',
@@ -149,6 +149,36 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
                     ->setShipBy($date)
                     ->setComment('Comment')
             ],
+            'free form entry' => [
+                'options' => [
+                    'currency' => 'USD',
+                ],
+                'submittedData' => [
+                    'product' => null,
+                    'productSku' => 'SKU02',
+                    'freeFormProduct' => 'Service',
+                    'quantity' => 1,
+                    'productUnit' => 'item',
+                    'productUnitCode' => 'item',
+                    'price' => [
+                        'value' => 5,
+                        'currency' => 'USD',
+                    ],
+                    'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
+                    'shipBy' => '2015-02-03',
+                    'comment' => 'Comment',
+                ],
+                'expectedData' => (new OrderLineItem())
+                    ->setQuantity(1)
+                    ->setFreeFormProduct('Service')
+                    ->setProductSku('SKU02')
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnitCode('item')
+                    ->setPrice(Price::create(5, 'USD'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
+                    ->setComment('Comment')
+            ],
         ];
     }
 
@@ -156,10 +186,9 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
      * @param string $className
      * @param int $id
      * @param string $property
-     * @param array $data
      * @return object
      */
-    protected function getEntity($className, $id, $property = 'id', array $data = [])
+    protected function getEntity($className, $id, $property = 'id')
     {
         $entity = new $className;
 
@@ -167,13 +196,6 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
         $method = $reflectionClass->getProperty($property);
         $method->setAccessible(true);
         $method->setValue($entity, $id);
-
-        if ($data) {
-            $propertyAccessor = PropertyAccess::createPropertyAccessor();
-            foreach ($data as $key => $value) {
-                $propertyAccessor->setValue($entity, $key, $value);
-            }
-        }
 
         return $entity;
     }

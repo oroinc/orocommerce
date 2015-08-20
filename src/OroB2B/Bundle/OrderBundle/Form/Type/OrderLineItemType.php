@@ -4,13 +4,10 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
@@ -113,22 +110,6 @@ class OrderLineItemType extends AbstractType
                     'label' => 'orob2b.order.orderlineitem.comment.label',
                 ]
             );
-
-        $builder->addEventListener(
-            FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
-                /** @var OrderLineItem $item */
-                $item = $event->getData();
-                if ($item) {
-                    if ($item->getProduct()) {
-                        $item->setProductSku($item->getProduct()->getSku());
-                    }
-                    if ($item->getProductUnit()) {
-                        $item->setProductUnitCode($item->getProductUnit()->getCode());
-                    }
-                }
-            }
-        );
     }
 
     /**
