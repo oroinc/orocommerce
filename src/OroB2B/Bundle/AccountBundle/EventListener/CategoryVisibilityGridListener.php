@@ -26,7 +26,7 @@ class CategoryVisibilityGridListener
     public function onResultBefore(OrmResultBefore $event)
     {
         if (!$this->canHandleGrid($event->getDatagrid()->getName())
-            || !$this->isFilteredByParent($event->getDatagrid()->getParameters())
+            || !$this->isFilteredByDefaultValue($event->getDatagrid()->getParameters())
         ) {
             return;
         }
@@ -74,7 +74,7 @@ class CategoryVisibilityGridListener
      *
      * @return bool
      */
-    protected function isFilteredByParent(ParameterBag $params)
+    protected function isFilteredByDefaultValue(ParameterBag $params)
     {
         if (!$params->get('_filter')) {
             return false;
