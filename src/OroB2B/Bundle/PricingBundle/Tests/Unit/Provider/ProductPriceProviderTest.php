@@ -52,10 +52,19 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with($priceListId, $productIds, true, null)
             ->willReturn($prices);
 
-        $this->registry->expects($this->once())
+        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $manager->expects($this->once())
             ->method('getRepository')
             ->with($this->equalTo('\stdClass'))
             ->willReturn($repository);
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with($this->equalTo('\stdClass'))
+            ->will($this->returnValue($manager));
 
         $this->assertEquals(
             $expectedData,
@@ -75,6 +84,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 'prices' => [
                     $this->createPrice(1, 'item', 1, 100.0000, 'USD'),
                     $this->createPrice(1, 'kg', 1, 20.0000, 'USD'),
+                    $this->createPrice(1, 'kg', 10, 15.0000, 'USD'),
                     $this->createPrice(2, 'kg', 3, 50.0000, 'EUR')
                 ],
                 'expectedData' => [
@@ -91,6 +101,11 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                                 'price' => '20.0000',
                                 'currency' => 'USD',
                                 'qty' => 1
+                            ],
+                            [
+                                'price' => '15.0000',
+                                'currency' => 'USD',
+                                'qty' => 10
                             ]
                         ]
                     ],

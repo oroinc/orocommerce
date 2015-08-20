@@ -57,6 +57,8 @@ class ProductPriceProvider
      */
     protected function getRepository()
     {
-        return $this->registry->getRepository($this->className);
+        return $this->registry
+            ->getManagerForClass($this->className)
+            ->getRepository($this->className);
     }
 }
