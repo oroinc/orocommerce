@@ -72,9 +72,10 @@ class QuoteTypeTest extends AbstractTest
      * @param int $accountUserId
      * @param int $accountId
      * @param QuoteProduct[] $items
+     * @param bool $locked
      * @return Quote
      */
-    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [])
+    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [], $locked = false)
     {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
@@ -90,6 +91,7 @@ class QuoteTypeTest extends AbstractTest
         foreach ($items as $item) {
             $quote->addQuoteProduct($item);
         }
+        $quote->setLocked($locked);
 
         return $quote;
     }
@@ -115,6 +117,7 @@ class QuoteTypeTest extends AbstractTest
                     'owner' => 1,
                     'accountUser' => 1,
                     'account' => 2,
+                    'locked'=> false,
                     'quoteProducts' => [
                         [
                             'product'   => 2,
@@ -135,7 +138,7 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct]),
+                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], false),
             ],
         ];
     }

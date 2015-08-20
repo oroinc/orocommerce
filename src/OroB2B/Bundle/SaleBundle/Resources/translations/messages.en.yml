@@ -15,6 +15,10 @@ orob2b:
             request.label: 'Request'
             account.label: 'Account'
             account_user.label: 'Account User'
+            locked.label: 'Locked'
+            not_locked.label: 'Not Locked'
+            locked.yes.label: 'Yes'
+            locked.no.label: 'No'
 
             sections:
                 general: 'General'
