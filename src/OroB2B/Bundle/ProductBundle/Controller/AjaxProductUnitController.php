@@ -26,7 +26,7 @@ class AjaxProductUnitController extends Controller
     {
         return new JsonResponse(
             [
-                'units' => $this->formatProductUnits($this->getRepository()->findAll())
+                'units' => $this->formatProductUnits($this->getRepository()->findBy([], ['code' => 'ASC']))
             ]
         );
     }
