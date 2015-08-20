@@ -122,6 +122,8 @@ class OroB2BOrderBundleInstaller implements
     {
         $table = $schema->createTable('orob2b_order_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -201,6 +203,18 @@ class OroB2BOrderBundleInstaller implements
     protected function addOroB2BOrderAddressForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_order_address');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_address'),
+            ['account_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user_address'),
+            ['account_user_address_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_dictionary_region'),
             ['region_code'],

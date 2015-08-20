@@ -15,6 +15,9 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
+use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Model\OrderAddressManager;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
@@ -61,8 +64,10 @@ class OrderAddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $type = $options['addressType'];
+        $order = $options['order'];
+
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        $addresses = $this->orderAddressManager->getGroupedAddresses($options['order'], $type);
+        $addresses = $this->orderAddressManager->getGroupedAddresses($order, $type);
 
         $accountAddressOptions = [
             'label' => false,
@@ -72,6 +77,7 @@ class OrderAddressType extends AbstractType
             'configs' => ['placeholder' => 'orob2b.order.form.address.choose'],
             'attr' => [
                 'data-addresses' => json_encode($this->getPlainData($addresses)),
+                'data-default' => $this->getDefaultAddressKey($order, $type, $addresses),
             ],
         ];
 
@@ -98,13 +104,20 @@ class OrderAddressType extends AbstractType
                 }
 
                 $identifier = $form->get('accountAddress')->getData();
+                if ($identifier === null) {
+                    return;
+                }
+
+                //Enter manually or Account/AccountUser address
+                $orderAddress = $event->getData();
+
+                $address = null;
                 if ($identifier) {
                     $address = $this->orderAddressManager->getEntityByIdentifier($identifier);
-                    if ($address) {
-                        $event->setData(
-                            $this->orderAddressManager->updateFromAbstract($address, $event->getData())
-                        );
-                    }
+                }
+
+                if ($orderAddress || $address) {
+                    $event->setData($this->orderAddressManager->updateFromAbstract($address, $orderAddress));
                 }
             },
             -10
@@ -188,6 +201,38 @@ class OrderAddressType extends AbstractType
         );
 
         return $addresses;
+    }
+
+    /**
+     * @param Order $order
+     * @param string $type
+     * @param array $addresses
+     *
+     * @return null|string
+     */
+    protected function getDefaultAddressKey(Order $order, $type, array $addresses)
+    {
+        if (!$addresses) {
+            return null;
+        }
+
+        $addresses = call_user_func_array('array_merge', array_values($addresses));
+        $accountUser = $order->getAccountUser();
+        $addressKey = null;
+
+        /** @var AbstractDefaultTypedAddress $address */
+        foreach ($addresses as $key => $address) {
+            if ($address->hasDefault($type)) {
+                $addressKey = $key;
+                if ($address instanceof AccountUserAddress &&
+                    $address->getFrontendOwner()->getId() === $accountUser->getId()
+                ) {
+                    break;
+                }
+            }
+        }
+
+        return $addressKey;
     }
 
     /**
