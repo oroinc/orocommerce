@@ -86,6 +86,7 @@ orob2b.rfp:
     message:
         request_status_saved: 'Request Status saved'
         request_status_restored: 'Request Status restored'
+        request_status_deleted: 'Request Status deleted' 
         request_status_not_found: 'Request Status not found'
         request_status_changed: 'Request For Proposal Status was successfully changed'
         request_status_not_deletable: 'Request Status is not deletable'
