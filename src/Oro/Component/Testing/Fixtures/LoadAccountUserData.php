@@ -45,6 +45,10 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
             ->getRepository('OroOrganizationBundle:Organization')
             ->getFirst();
 
+        $user = $manager
+            ->getRepository('OroUserBundle:User')
+            ->findOneBy([]);
+
         /** @var AccountUser $entity */
         $entity = $userManager->createUser();
 
@@ -58,6 +62,7 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
             ->setFirstName('AccountUser')
             ->setLastName('AccountUser')
             ->setEmail(self::AUTH_USER)
+            ->setOwner($user)
             ->setEnabled(true)
             ->setSalt('')
             ->setPlainPassword(self::AUTH_PW)

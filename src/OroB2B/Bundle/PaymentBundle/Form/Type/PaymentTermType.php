@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\PaymentBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 class PaymentTermType extends AbstractType
 {
@@ -12,6 +14,16 @@ class PaymentTermType extends AbstractType
 
     /** @var string */
     private $dataClass;
+
+    /**
+     * @var string
+     */
+    protected $accountClass;
+
+    /**
+     * @var string
+     */
+    protected $accountGroupClass;
 
     /**
      * @param string $dataClass
@@ -22,6 +34,22 @@ class PaymentTermType extends AbstractType
     }
 
     /**
+     * @param string $accountClass
+     */
+    public function setAccountClass($accountClass)
+    {
+        $this->accountClass = $accountClass;
+    }
+
+    /**
+     * @param string $accountGroupClass
+     */
+    public function setAccountGroupClass($accountGroupClass)
+    {
+        $this->accountGroupClass = $accountGroupClass;
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -29,13 +57,53 @@ class PaymentTermType extends AbstractType
     {
         $builder
             ->add('label', 'text', ['required' => true, 'label' => 'orob2b.payment.paymentterm.label.label'])
+            ->add(
+                'appendAccountGroups',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => $this->accountGroupClass,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeAccountGroups',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => $this->accountGroupClass,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'appendAccounts',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => $this->accountClass,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
+            ->add(
+                'removeAccounts',
+                EntityIdentifierType::NAME,
+                [
+                    'class' => $this->accountClass,
+                    'required' => false,
+                    'mapped' => false,
+                    'multiple' => true,
+                ]
+            )
         ;
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,

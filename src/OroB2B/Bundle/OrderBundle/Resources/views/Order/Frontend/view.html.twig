@@ -1,0 +1,61 @@
+{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_order_frontend_index'),
+        'indexLabel': 'orob2b.order.entity_plural_label'|trans,
+        'entityTitle': entity.identifier|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_order_frontend_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.order.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_frontend_delete_order', {'id': entity.id}),
+            'dataRedirect': path('orob2b_order_frontend_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.order.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block ownerLink %}
+    {# Backend owner must be hidden on frontend  #}
+{% endblock ownerLink %}
+
+{% block content_data %}
+    {% set orderInformationWidget %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'title': 'orob2b.order.widgets.order_information'|trans,
+            'url': path('orob2b_order_frontend_info', {id: entity.id})
+        }) }}
+    {% endset %}
+
+    {% set generalSectionBlocks = [{'data' : [orderInformationWidget]}]%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.order.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% set id = 'frontend-order-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

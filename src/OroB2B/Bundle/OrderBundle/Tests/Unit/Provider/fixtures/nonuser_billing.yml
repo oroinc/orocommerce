@@ -1,0 +1,180 @@
+nonuser_billing_not_granted:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - [orob2b_order_address_shipping_allow_manual_backend, null, false]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_view_account_user_granted:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_use_account_user_granted:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_use_account_user_granted:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_user_address_granted:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_user_address_granted_with_entity:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: true
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_user_address_granted_with_entity_and_address:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: true
+    hasEntity: true
+    isAddressGranted: true
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: true
+nonuser_billing_account_user_address_granted_with_entity_and_address:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: true
+    hasEntity: true
+    isAddressGranted: true
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: true
+nonuser_billing_account_user_address_granted_with_manual:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, false]
+        - ['VIEW;entity:AccountUserOrderClass', null, true]
+        - [orob2b_order_address_billing_allow_manual_backend, null, true]
+        - [orob2b_order_address_billing_account_user_use_any_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: true
+    hasEntity: ~
+    isAddressGranted: true
+    isAccountAddressGranted: true
+    isAccountUserAddressGranted: true
+nonuser_billing_account_not_granted:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, true]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_without_entity:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, true]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_with_entity:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, true]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: true
+    isAddressGranted: ~
+    isAccountAddressGranted: ~
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_with_entity_and_addresses:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, true]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+    hasAccountAddresses: true
+    hasAccountUserAddresses: ~
+    hasEntity: true
+    isAddressGranted: true
+    isAccountAddressGranted: true
+    isAccountUserAddressGranted: ~
+nonuser_billing_account_with_manual:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: billing
+    isGranted:
+        - ['VIEW;entity:AccountOrderClass', null, true]
+        - ['VIEW;entity:AccountUserOrderClass', null, false]
+        - [orob2b_order_address_billing_allow_manual_backend, null, true]
+    hasAccountAddresses: ~
+    hasAccountUserAddresses: ~
+    hasEntity: ~
+    isAddressGranted: true
+    isAccountAddressGranted: true
+    isAccountUserAddressGranted: true

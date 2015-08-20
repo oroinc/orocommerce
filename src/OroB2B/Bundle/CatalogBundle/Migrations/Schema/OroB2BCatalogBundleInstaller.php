@@ -6,15 +6,30 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroB2BCatalogBundleInstaller implements Installation
+class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
+    /** @var NoteExtension */
+    protected $noteExtension;
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
         return 'v1_1';
+    }
+
+    /**
+     * Sets the NoteExtension
+     *
+     * @param NoteExtension $noteExtension
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
     }
 
     /**
@@ -50,6 +65,7 @@ class OroB2BCatalogBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
+        $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
     }
 
     /**

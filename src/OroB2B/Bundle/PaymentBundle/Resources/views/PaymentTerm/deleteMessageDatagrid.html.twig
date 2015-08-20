@@ -1,0 +1,3 @@
+{% set paymentTermId = record.getValue('id') %}
+{% set message = get_payment_term_delete_message_datagrid(paymentTermId) %}
+{{ message|raw }}

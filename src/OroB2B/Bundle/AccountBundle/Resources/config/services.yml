@@ -43,6 +43,7 @@ parameters:
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
 
+    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -252,3 +253,12 @@ services:
             - @orob2b_account.security.account_user_provider
         tags:
             - { name: twig.extension }
+
+    orob2b_account.event_listener.system_config:
+        class: %orob2b_account.event_listener.system_config.class%
+        arguments:
+            - @doctrine
+            - %oro_user.entity.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
