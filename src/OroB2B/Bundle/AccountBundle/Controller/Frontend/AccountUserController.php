@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -13,10 +12,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+
 
 class AccountUserController extends Controller
 {
@@ -101,7 +97,7 @@ class AccountUserController extends Controller
     protected function update(AccountUser $accountUser)
     {
         $form = $this->createForm(AccountUserType::NAME, $accountUser);
-        $handler = new AccountUserHandler(
+        $handler = new AccountUserProfileController(
             $form,
             $this->getRequest(),
             $this->get('orob2b_account_user.manager'),
