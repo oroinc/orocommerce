@@ -111,10 +111,15 @@ class ProductPriceRepository extends EntityRepository
      * @param int $priceListId
      * @param array $productIds
      * @param bool $getTierPrices
+     * @param string|null $currency
      * @return ProductPrice[]
      */
-    public function findByPriceListIdAndProductIds($priceListId, array $productIds, $getTierPrices = true)
-    {
+    public function findByPriceListIdAndProductIds(
+        $priceListId,
+        array $productIds,
+        $getTierPrices = true,
+        $currency = null
+    ) {
         if (!$productIds) {
             return [];
         }
@@ -124,6 +129,11 @@ class ProductPriceRepository extends EntityRepository
             $queryBuilder->expr()->eq('IDENTITY(price.priceList)', ':priceListId'),
             $queryBuilder->expr()->in('IDENTITY(price.product)', ':productIds')
         );
+
+        if ($currency) {
+            $where->add($queryBuilder->expr()->eq('price.currency', ':currency'));
+            $queryBuilder->setParameter('currency', $currency);
+        }
 
         if (!$getTierPrices) {
             $where->add($queryBuilder->expr()->eq('price.quantity', ':priceQuantity'));

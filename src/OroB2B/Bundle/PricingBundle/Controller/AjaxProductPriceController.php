@@ -4,18 +4,20 @@ namespace OroB2B\Bundle\PricingBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 
-class AjaxProductPriceController extends Controller
+class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
      * Create product form
@@ -62,6 +64,18 @@ class AjaxProductPriceController extends Controller
     public function updateAction(ProductPrice $productPrice)
     {
         return $this->update($productPrice);
+    }
+
+    /**
+     * @Route("/get-product-prices-by-pricelist", name="orob2b_product_price_by_pricelist")
+     * @Method({"GET"})
+     * @AclAncestor("orob2b_pricing_product_price_view")
+     *
+     * {@inheritdoc}
+     */
+    public function getProductPricesByPriceListAction(Request $request)
+    {
+        return parent::getProductPricesByPriceListAction($request);
     }
 
     /**

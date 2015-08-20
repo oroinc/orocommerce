@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -14,8 +12,11 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 /**
  * @dbIsolation
  */
-class AjaxProductPriceControllerTest extends WebTestCase
+class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
+    /** @var string */
+    protected $pricesByPriceListActionUrl = 'orob2b_product_price_by_pricelist';
+
     protected function setUp()
     {
         $this->initClient(
@@ -31,7 +32,6 @@ class AjaxProductPriceControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
             ]
         );
@@ -104,6 +104,44 @@ class AjaxProductPriceControllerTest extends WebTestCase
         );
 
         $this->assertSaved($form);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductPricesByPriceListActionDataProvider()
+    {
+        return [
+            'without currency' => [
+                'product' => 'product.1',
+                'priceList' => 'price_list_1',
+                'expected' => [
+                    'bottle' => [
+                        ['price' => 12.2, 'currency' => 'EUR', 'qty' => 1],
+                        ['price' => 20, 'currency' => 'USD', 'qty' => 10],
+                        ['price' => 12.2, 'currency' => 'EUR', 'qty' => 11],
+                    ],
+                    'liter' => [
+                        ['price' => 10, 'currency' => 'USD', 'qty' => 1],
+                        ['price' => 12.2, 'currency' => 'USD', 'qty' => 10],
+                    ]
+                ],
+            ],
+            'with currency' => [
+                'product' => 'product.1',
+                'priceList' => 'price_list_1',
+                'expected' => [
+                    'bottle' => [
+                        ['price' => 20, 'currency' => 'USD', 'qty' => 10],
+                    ],
+                    'liter' => [
+                        ['price' => 10.0000, 'currency' => 'USD', 'qty' => 1],
+                        ['price' => 12.2000, 'currency' => 'USD', 'qty' => 10],
+                    ]
+                ],
+                'currency' => 'USD'
+            ]
+        ];
     }
 
     /**
