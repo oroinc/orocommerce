@@ -599,7 +599,7 @@ datagrid:
         properties:
             id: ~
 
-    accountgroup-category-visibility-grid:
+    account-group-category-visibility-grid:
         source:
             type:              orm
             query:

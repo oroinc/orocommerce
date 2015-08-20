@@ -15,12 +15,17 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 
 class CategoryVisibilityGridListener
 {
+    const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'account-category-visibility-grid';
+    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID = 'account-group-category-visibility-grid';
+    const ACCOUNT_CATEGORY_VISIBILITY_ALIAS = 'accountCategoryVisibility.visibility';
+    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS = 'accountGroupCategoryVisibility.visibility';
+
     /**
      * @param OrmResultBefore $event
      */
     public function onResultBefore(OrmResultBefore $event)
     {
-        if ($this->canHandleGrid($event->getDatagrid()->getName())
+        if (!$this->canHandleGrid($event->getDatagrid()->getName())
             || !$this->isFilteredByParent($event->getDatagrid()->getParameters())
         ) {
             return;
@@ -48,6 +53,23 @@ class CategoryVisibilityGridListener
     }
 
     /**
+     * @param string $gridName
+     *
+     * @return bool
+     */
+    protected function canHandleGrid($gridName)
+    {
+        return in_array(
+            $gridName,
+            [
+                self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
+                self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID
+            ],
+            true
+        );
+    }
+
+    /**
      * @param ParameterBag $params
      *
      * @return bool
@@ -59,10 +81,7 @@ class CategoryVisibilityGridListener
         }
 
         foreach ($params->get('_filter')['visibility']['value'] as $value) {
-            if (in_array($value, [
-                AccountCategoryVisibility::PARENT_CATEGORY,
-                AccountGroupCategoryVisibility::PARENT_CATEGORY
-            ])) {
+            if ($this->isDefaultValue($value)) {
                 return true;
             }
         }
@@ -71,16 +90,20 @@ class CategoryVisibilityGridListener
     }
 
     /**
-     * @param string $gridName
+     * @param string $value
      *
      * @return bool
      */
-    protected function canHandleGrid($gridName)
+    protected function isDefaultValue($value)
     {
-        return !in_array($gridName, [
-            'account-category-visibility-grid',
-            'accountgroup-category-visibility-grid'
-        ]);
+        return in_array(
+            $value,
+            [
+                AccountCategoryVisibility::PARENT_CATEGORY,
+                AccountGroupCategoryVisibility::PARENT_CATEGORY
+            ],
+            true
+        );
     }
 
     /**
@@ -90,12 +113,10 @@ class CategoryVisibilityGridListener
      */
     protected function getFieldAlias($gridName)
     {
-        switch ($gridName) {
-            case 'account-category-visibility-grid':
-                $alias = 'accountCategoryVisibility.visibility';
-                break;
-            default:
-                $alias = 'accountGroupCategoryVisibility.visibility';
+        if ($gridName === self::ACCOUNT_CATEGORY_VISIBILITY_GRID) {
+            $alias = self::ACCOUNT_CATEGORY_VISIBILITY_ALIAS;
+        } else {
+            $alias = self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS;
         }
 
         return $alias;
@@ -107,8 +128,8 @@ class CategoryVisibilityGridListener
     protected function getFieldAliases()
     {
         return [
-            'accountCategoryVisibility.visibility',
-            'accountGroupCategoryVisibility.visibility'
+            self::ACCOUNT_CATEGORY_VISIBILITY_ALIAS,
+            self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS
         ];
     }
 }
