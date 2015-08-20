@@ -2,6 +2,7 @@ config:
     paths:
         'orob2bproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/orob2bproduct/js/app/components/product-unit-selection-limitations-component.js'
         'orob2bproduct/js/app/components/product-sidebar-grid-component': 'bundles/orob2bproduct/js/app/components/product-sidebar-grid-component.js'
+        'orob2bproduct/js/app/components/product-unit-component': 'bundles/orob2bproduct/js/app/components/product-unit-component.js'
         'tinymce/plugins/fullscreen/plugin.min': 'empty:'
 
     shim:

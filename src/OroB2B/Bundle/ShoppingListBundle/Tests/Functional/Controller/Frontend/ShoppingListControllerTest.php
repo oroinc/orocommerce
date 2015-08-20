@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
 
+use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use Oro\Component\Testing\WebTestCase;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -28,6 +30,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
             ]
         );
@@ -72,7 +75,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testView()
     {
-        $shoppingList = $this->getReference('shopping_list');
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $crawler = $this->client->request(
             'GET',
@@ -84,6 +87,26 @@ class ShoppingListControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains($shoppingList->getLabel(), $html);
+    }
+
+    public function testSetCurrent()
+    {
+        $this->client->followRedirects(true);
+        /** @var ShoppingList $list */
+        $list = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $this->assertFalse($list->isCurrent());
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_shopping_list_frontend_set_current', ['id' => $list->getId()])
+        );
+        $response = $this->client->getResponse();
+        $this->assertEquals(200, $response->getStatusCode());
+        /** @var ShoppingList $updatedList */
+        $updatedList = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')
+            ->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList')->find($list->getId());
+        $this->assertTrue($updatedList->isCurrent());
     }
 
     /**

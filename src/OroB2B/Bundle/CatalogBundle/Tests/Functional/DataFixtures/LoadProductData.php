@@ -44,6 +44,7 @@ class LoadProductData extends AbstractFixture
                 ->setSku($item['productCode']);
 
             $manager->persist($product);
+            $this->addReference($item['productCode'], $product);
         }
 
         $manager->flush();

@@ -44,7 +44,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = $.extend(true, this.options, options || {});
+            this.options = $.extend(true, {}, this.options, options || {});
 
             this.$input = this.$el.find('input.select2');
             this.selectionTemplate = _.template(this.options.selectionTemplate);
