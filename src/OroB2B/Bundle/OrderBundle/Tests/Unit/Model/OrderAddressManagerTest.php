@@ -54,20 +54,25 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param AbstractAddress $abstractAddress
+     * @param AbstractAddress $address
      * @param OrderAddress|null $expected
+     * @param AbstractAddress|null $expectedAccountAddress
+     * @param AbstractAddress|null $expectedAccountUserAddress
      * @param OrderAddress|null $orderAddress
      *
      * @dataProvider orderDataProvider
      */
     public function testUpdateFromAbstract(
-        AbstractAddress $abstractAddress,
+        AbstractAddress $address,
         OrderAddress $expected = null,
+        AbstractAddress $expectedAccountAddress = null,
+        AbstractAddress $expectedAccountUserAddress = null,
         OrderAddress $orderAddress = null
     ) {
         $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $classMetadata->expects($this->once())->method('getFieldNames')->willReturn(['street', 'city', 'label']);
-        $classMetadata->expects($this->once())->method('getAssociationNames')->willReturn(['country', 'region']);
+        $classMetadata->expects($this->once())->method('getAssociationNames')
+            ->willReturn(['country', 'region']);
 
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())->method('getClassMetadata')->willReturn($classMetadata);
@@ -75,8 +80,10 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->any())->method('getManagerForClass')->with($this->isType('string'))
             ->willReturn($em);
 
-        $orderAddress = $this->manager->updateFromAbstract($abstractAddress, $orderAddress);
+        $orderAddress = $this->manager->updateFromAbstract($address, $orderAddress);
         $this->assertEquals($expected, $orderAddress);
+        $this->assertEquals($expectedAccountAddress, $orderAddress->getAccountAddress());
+        $this->assertEquals($expectedAccountUserAddress, $orderAddress->getAccountUserAddress());
     }
 
     /**
@@ -88,45 +95,65 @@ class OrderAddressManagerTest extends \PHPUnit_Framework_TestCase
         $region = new Region('US-AL');
 
         return [
-            'empty account address' => [new AccountAddress(), new OrderAddress()],
-            'empty account user address' => [new AccountUserAddress(), new OrderAddress()],
+            'empty account address' => [
+                $accountAddress = new AccountAddress(),
+                (new OrderAddress())
+                    ->setAccountAddress($accountAddress),
+                $accountAddress
+            ],
+            'empty account user address' => [
+                $accountUserAddress = new AccountUserAddress(),
+                (new OrderAddress())
+                    ->setAccountUserAddress($accountUserAddress),
+                null,
+                $accountUserAddress
+            ],
             'from account address' => [
-                (new AccountAddress())
+                $accountAddress = (new AccountAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 (new OrderAddress())
+                    ->setAccountAddress($accountAddress)
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
+                $accountAddress
             ],
             'from account user address' => [
-                (new AccountUserAddress())
+                $accountUserAddress = (new AccountUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 (new OrderAddress())
+                    ->setAccountUserAddress($accountUserAddress)
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
+                null,
+                $accountUserAddress
             ],
             'do not override value from existing with empty one' => [
-                (new AccountUserAddress())
+                $accountUserAddress = (new AccountUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 (new OrderAddress())
+                    ->setAccountUserAddress($accountUserAddress)
                     ->setLabel('ExistingLabel')
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
-                (new OrderAddress())->setLabel('ExistingLabel'),
+                null,
+                $accountUserAddress,
+                (new OrderAddress())
+                    ->setLabel('ExistingLabel')
             ],
         ];
     }

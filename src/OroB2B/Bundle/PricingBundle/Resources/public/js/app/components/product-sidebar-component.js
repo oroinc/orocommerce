@@ -21,6 +21,7 @@ define(function(require) {
             priceListSelector: '.priceListSelectorContainer',
             currenciesSelector: '.currenciesSelectorContainer',
             showTierPricesSelector: '.showTierPricesSelectorContainer',
+            sidebarAlias: 'products-sidebar',
             routeName: 'orob2b_pricing_price_list_currency_list',
             routingParams: {},
             currencyTemplate: '<input type="checkbox" id="<%- id %>" value="<%- value %>">' +
@@ -96,7 +97,10 @@ define(function(require) {
                 showTierPrices: $(this.options.showTierPricesSelector).prop('checked')
             };
 
-            mediator.trigger('product_sidebar:changed', {widgetReload: Boolean(widgetReload), params: params});
+            mediator.trigger(
+                'grid-sidebar:change:' + this.options.sidebarAlias,
+                {widgetReload: Boolean(widgetReload), params: params}
+            );
         },
 
         /**

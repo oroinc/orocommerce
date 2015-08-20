@@ -12,7 +12,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -36,7 +36,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|PriceListRequestHandler
+     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractPriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
@@ -59,9 +59,10 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler')
+            ->setMethods(['getShowTierPrices'])
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockForAbstractClass();
 
         $this->listener = new ProductPriceDatagridListener(
             $this->translator,

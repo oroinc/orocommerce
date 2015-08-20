@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+
 /**
  * @dbIsolation
  */
@@ -29,7 +31,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     public function testView()
     {
-        $shoppingList = $this->getReference('shopping_list');
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $crawler = $this->client->request(
             'GET',
