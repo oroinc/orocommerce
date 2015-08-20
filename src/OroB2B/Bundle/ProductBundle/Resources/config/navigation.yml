@@ -33,6 +33,7 @@ oro_menu_config:
             route:           'orob2b_product_frontend_product_index'
             extras:
                 position:    10
+                routes:      ['/^orob2b_product_frontend_product/']
 
     tree:
         application_menu:
@@ -54,4 +55,5 @@ oro_titles:
     orob2b_product_update: '%%sku%% - %%name%% - Edit'
     orob2b_product_create: 'Create Product'
 
+    orob2b_product_frontend_product_index: ~
     orob2b_product_frontend_product_view: '%%name%%'

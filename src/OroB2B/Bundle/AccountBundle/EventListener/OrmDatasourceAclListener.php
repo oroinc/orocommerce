@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\EventListener;
+namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Doctrine\ORM\Query\AST\IdentificationVariableDeclaration;
 use Doctrine\ORM\Query\AST\SelectStatement;

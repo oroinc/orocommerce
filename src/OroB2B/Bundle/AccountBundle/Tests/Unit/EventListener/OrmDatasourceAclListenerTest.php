@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CustomerBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Query\AST\FromClause;
@@ -17,8 +17,8 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\EventListener\OrmDatasourceAclListener;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener;
 
 class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
 {

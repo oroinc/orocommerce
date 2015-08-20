@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -42,15 +42,15 @@ class PriceListTreeHandlerTest extends WebTestCase
     }
 
     /**
-     * @param string $customerReference
+     * @param string $accountReference
      * @param string $expectedPriceListReference
      *
      * @dataProvider accountUserDataProvider
      */
-    public function testGetPriceList($customerReference, $expectedPriceListReference)
+    public function testGetPriceList($accountReference, $expectedPriceListReference)
     {
         $accountUser = new AccountUser();
-        $accountUser->setCustomer($this->getCustomer($customerReference));
+        $accountUser->setAccount($this->getAccount($accountReference));
 
         $this->websiteManager->expects($this->any())->method('getCurrentWebsite')
             ->willReturn($this->getReference('US'));
@@ -67,13 +67,13 @@ class PriceListTreeHandlerTest extends WebTestCase
     public function accountUserDataProvider()
     {
         return [
-            'get PriceList from customer' => ['customer.level_1.2', 'price_list_2'],
-            'get PriceList from parent' => ['customer.level_1.2.1', 'price_list_2'],
-            'get PriceList from parents parent' => ['customer.level_1.2.1.1', 'price_list_2'],
-            'get PriceList from group' => ['customer.level_1.3', 'price_list_1'],
-            'get PriceList from parent group' => ['customer.level_1.3.1', 'price_list_1'],
-            'get PriceList from parents parent group' => ['customer.level_1.3.1.1', 'price_list_1'],
-            'get PriceList from website' => ['customer.level_1.4', 'price_list_1'],
+            'get PriceList from account' => ['account.level_1.2', 'price_list_2'],
+            'get PriceList from parent' => ['account.level_1.2.1', 'price_list_2'],
+            'get PriceList from parents parent' => ['account.level_1.2.1.1', 'price_list_2'],
+            'get PriceList from group' => ['account.level_1.3', 'price_list_1'],
+            'get PriceList from parent group' => ['account.level_1.3.1', 'price_list_1'],
+            'get PriceList from parents parent group' => ['account.level_1.3.1.1', 'price_list_1'],
+            'get PriceList from website' => ['account.level_1.4', 'price_list_1'],
         ];
     }
 
@@ -96,7 +96,7 @@ class PriceListTreeHandlerTest extends WebTestCase
     public function testDefaultIfNotFound()
     {
         $accountUser = new AccountUser();
-        $accountUser->setCustomer($this->getCustomer('customer.level_1'));
+        $accountUser->setAccount($this->getAccount('account.level_1'));
 
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
 
@@ -105,9 +105,9 @@ class PriceListTreeHandlerTest extends WebTestCase
 
     /**
      * @param string $reference
-     * @return Customer
+     * @return Account
      */
-    protected function getCustomer($reference)
+    protected function getAccount($reference)
     {
         return $this->getReference($reference);
     }

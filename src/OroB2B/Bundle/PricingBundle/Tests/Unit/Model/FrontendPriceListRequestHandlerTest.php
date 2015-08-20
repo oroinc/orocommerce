@@ -8,11 +8,14 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -96,7 +99,7 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList = $this->getPriceList(42);
 
         /** @var AccountUser $priceList */
-        $accountUser = $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', 11);
+        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 11);
 
         return [
             [

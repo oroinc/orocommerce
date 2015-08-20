@@ -14,8 +14,12 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\EventListener\FormViewListener;
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class FormViewListenerTest extends FormViewListenerTestCase
 {
     /**

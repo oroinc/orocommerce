@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -43,10 +43,10 @@ class PriceListTreeHandler
     public function getPriceList(AccountUser $accountUser = null)
     {
         if ($accountUser) {
-            $account = $accountUser->getCustomer();
+            $account = $accountUser->getAccount();
 
             if ($account) {
-                $priceList = $this->getPriceListRepository()->getPriceListByCustomer($account);
+                $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
                 if ($priceList) {
                     return $priceList;
                 }
@@ -77,10 +77,10 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      * @return null|PriceList
      */
-    protected function getPriceListFromAccountTree(Customer $account)
+    protected function getPriceListFromAccountTree(Account $account)
     {
         $parentAccount = $account->getParent();
         if (!$parentAccount) {
@@ -88,7 +88,7 @@ class PriceListTreeHandler
         }
 
         while ($parentAccount) {
-            $priceList = $this->getPriceListRepository()->getPriceListByCustomer($parentAccount);
+            $priceList = $this->getPriceListRepository()->getPriceListByAccount($parentAccount);
             if ($priceList) {
                 return $priceList;
             }
@@ -100,10 +100,10 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      * @return null|PriceList
      */
-    protected function getPriceListFromAccountGroupTree(Customer $account)
+    protected function getPriceListFromAccountGroupTree(Account $account)
     {
         $parentAccount = $account->getParent();
         if (!$parentAccount) {
@@ -113,7 +113,7 @@ class PriceListTreeHandler
         while ($parentAccount) {
             $parentGroup = $parentAccount->getGroup();
             if ($parentGroup) {
-                $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($parentGroup);
+                $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($parentGroup);
                 if ($priceList) {
                     return $priceList;
                 }
@@ -144,17 +144,17 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      * @return null|PriceList
      */
-    protected function getPriceListFromAccountGroup(Customer $account)
+    protected function getPriceListFromAccountGroup(Account $account)
     {
         $accountGroup = $account->getGroup();
         if (!$accountGroup) {
             return null;
         }
 
-        $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($accountGroup);
+        $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($accountGroup);
         if ($priceList) {
             return $priceList;
         }
