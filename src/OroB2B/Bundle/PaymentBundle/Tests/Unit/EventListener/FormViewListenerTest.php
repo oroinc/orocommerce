@@ -17,6 +17,8 @@ use OroB2B\Bundle\PaymentBundle\EventListener\FormViewListener;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
+    const PAYMENT_TERM_CLASS = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm';
+
     /**
      * @var FormViewListener
      */
@@ -29,7 +31,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, static::PAYMENT_TERM_CLASS);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->doctrineHelper, $this->translator, $this->listener);
     }
 
     public function testOnViewNoRequest()
@@ -40,6 +47,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMock('\Twig_Environment');
         $event = $this->createEvent($env);
+
         $this->listener->onAccountView($event);
         $this->listener->onAccountGroupView($event);
     }
@@ -89,8 +97,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
             $account->setGroup($accountGroup);
         }
 
-        $this->listener->setRequest(new Request(['id' => $accountId]));
-
         $paymentTermRepository = $this->getMockBuilder(
             'OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository'
         )
@@ -106,9 +112,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:Account', $accountId)
             ->willReturn($account);
+
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
-            ->with('OroB2BPaymentBundle:PaymentTerm')
+            ->with(static::PAYMENT_TERM_CLASS)
             ->willReturn($paymentTermRepository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
@@ -117,21 +124,28 @@ class FormViewListenerTest extends FormViewListenerTestCase
         if ($isPaymentTermExist) {
             $environment->expects($isPaymentTermExist ? $this->once() : $this->never())
                 ->method('render')
-                ->with('OroB2BPaymentBundle:Account:payment_term_view.html.twig', ['paymentTerm' => $paymentTerm])
+                ->with('OroB2BPaymentBundle:Account:payment_term_view.html.twig')
                 ->willReturn($templateAccountPaymentTermHtml);
         } else {
+            $this->translator->expects($this->at(0))
+                ->method('trans')
+                ->with('orob2b.payment.account.payment_term_non_defined_in_group');
+
             $paymentTermRepository->expects($this->any())
                 ->method('getOnePaymentTermByAccountGroup')
                 ->with($accountGroup)
                 ->willReturn($isPaymentTermInGroupExist ? $paymentTerm : null);
 
+            if ($isPaymentTermInGroupExist) {
+                $this->translator->expects($this->at(1))
+                    ->method('trans')
+                    ->with('orob2b.payment.account.payment_term_defined_in_group');
+            }
+
             $environment->expects($this->once())
                 ->method('render')
                 ->with(
-                    'OroB2BPaymentBundle:Account:payment_term_for_account_view.html.twig',
-                    [
-                        'accountGroupPaymentTerm' => $isPaymentTermInGroupExist ? $paymentTerm : null
-                    ]
+                    'OroB2BPaymentBundle:Account:payment_term_view.html.twig'
                 )
                 ->willReturn(
                     $isPaymentTermInGroupExist ?
@@ -140,25 +154,18 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 );
         }
 
+        $this->listener->setRequest(new Request(['id' => $accountId]));
+
         $event = $this->createEvent($environment);
         $this->listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPaymentTermExist) {
-            $this->assertEquals(
-                [$templateAccountPaymentTermHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
+            $this->assertEqualsForScrollData($templateAccountPaymentTermHtml, $scrollData);
         } elseif ($isPaymentTermInGroupExist) {
-            $this->assertEquals(
-                [$templateAccountGroupPaymentTermHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
+            $this->assertEqualsForScrollData($templateAccountGroupPaymentTermHtml, $scrollData);
         } else {
-            $this->assertEquals(
-                [$templateAccountGroupWithoutPaymentTermHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
+            $this->assertEqualsForScrollData($templateAccountGroupWithoutPaymentTermHtml, $scrollData);
         }
     }
 
@@ -176,8 +183,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $templateHtml = 'template_html';
         $emptyTemplate = 'template_html_empty';
 
-        $this->listener->setRequest(new Request(['id' => $accountGroupId]));
-
         $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -193,7 +198,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPaymentBundle:PaymentTerm')
+            ->with(static::PAYMENT_TERM_CLASS)
             ->willReturn($priceRepository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
@@ -201,27 +206,20 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $environment->expects($this->once())
             ->method('render')
             ->with(
-                'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
-                [
-                    'paymentTerm' => $isPaymentTermExist ? $paymentTerm : null
-                ]
+                'OroB2BPaymentBundle:Account:payment_term_view.html.twig'
             )
             ->willReturn($isPaymentTermExist ? $templateHtml : $emptyTemplate);
 
         $event = $this->createEvent($environment);
+        $this->listener->setRequest(new Request(['id' => $accountGroupId]));
+
         $this->listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPaymentTermExist) {
-            $this->assertEquals(
-                [$templateHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
+            $this->assertEqualsForScrollData($templateHtml, $scrollData);
         } else {
-            $this->assertEquals(
-                [$emptyTemplate],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
+            $this->assertEqualsForScrollData($emptyTemplate, $scrollData);
         }
     }
 
@@ -234,17 +232,15 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
-            ->with('OroB2BPaymentBundle:Account:payment_term_update.html.twig', ['form' => $formView])
+            ->with('OroB2BPaymentBundle:Account/Form:payment_term_update.html.twig', ['form' => $formView])
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);
+
         $this->listener->onEntityEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
-        $this->assertEquals(
-            [$templateHtml],
-            $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-        );
+        $this->assertEqualsForScrollData($templateHtml, $scrollData);
     }
 
     /**
@@ -267,5 +263,17 @@ class FormViewListenerTest extends FormViewListenerTestCase
         ];
 
         return new BeforeListRenderEvent($environment, new ScrollData($defaultData), $formView);
+    }
+
+    /**
+     * @param string $template
+     * @param array  $scrollData
+     */
+    protected function assertEqualsForScrollData($template, $scrollData)
+    {
+        $this->assertEquals(
+            [$template],
+            $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
     }
 }

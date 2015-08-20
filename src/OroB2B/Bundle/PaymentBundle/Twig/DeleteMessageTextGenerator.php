@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\PaymentBundle\Twig;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Routing\RouterInterface;
 
-use Oro\Bundle\UIBundle\Twig\Environment;
 use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
@@ -20,10 +19,18 @@ class DeleteMessageTextGenerator
     /** @var RouterInterface  */
     protected $router;
 
-    /** @var Environment  */
+    /** @var \Twig_Environment  */
     protected $twig;
 
-    public function __construct(RouterInterface $router, Environment $twig, ManagerRegistry $managerRegistry)
+    /** @var ManagerRegistry  */
+    protected $managerRegistry;
+
+    /**
+     * @param RouterInterface $router
+     * @param \Twig_Environment $twig
+     * @param ManagerRegistry $managerRegistry
+     */
+    public function __construct(RouterInterface $router, \Twig_Environment $twig, ManagerRegistry $managerRegistry)
     {
         $this->router = $router;
         $this->twig = $twig;
@@ -36,7 +43,7 @@ class DeleteMessageTextGenerator
      */
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
-        $accountGroupFilterUrlHtml  = $this->generateAccountGroupFilterUrl($paymentTerm);
+        $accountGroupFilterUrlHtml = $this->generateAccountGroupFilterUrl($paymentTerm);
         $accountFilterUrlHtml = $this->generateAccountFilterUrl($paymentTerm);
 
         $message = $this->twig->render('@OroB2BPayment/PaymentTerm/deleteMessage.html.twig', [
@@ -47,66 +54,62 @@ class DeleteMessageTextGenerator
         return $message;
     }
 
+    /**
+     * @param int $paymentTermId
+     * @return string
+     */
     public function getDeleteMessageTextForDataGrid($paymentTermId)
     {
-
         $paymentRepository = $this->managerRegistry
             ->getManagerForClass('OroB2BPaymentBundle:PaymentTerm')
             ->getRepository('OroB2BPaymentBundle:PaymentTerm');
         $paymentTerm = $paymentRepository->find($paymentTermId);
 
-        $message = $this->getDeleteMessageText($paymentTerm);
-        return $message;
+        return $this->getDeleteMessageText($paymentTerm);
     }
 
     /**
      * @param PaymentTerm $paymentTerm
      * @return string
      */
-    private function generateAccountGroupFilterUrl(PaymentTerm $paymentTerm)
+    protected function generateAccountGroupFilterUrl(PaymentTerm $paymentTerm)
     {
-        if ($paymentTerm->getAccountGroups()->count() == 0) {
+        if ($paymentTerm->getAccountGroups()->count() === 0) {
             return null;
         }
 
-        $accountGroupFilterHtmlUrl =
-            $this->generateHtmFilterUrl(
-                $paymentTerm->getId(),
-                static::ACCOUNT_GROUP_GRID_NAME,
-                static::ACCOUNT_GROUP_GRID_ROUTE,
-                'orob2b.account.accountgroup.entity_label'
-            );
-
-        return $accountGroupFilterHtmlUrl;
+        return $this->generateHtmFilterUrl(
+            $paymentTerm->getId(),
+            static::ACCOUNT_GROUP_GRID_NAME,
+            static::ACCOUNT_GROUP_GRID_ROUTE,
+            'orob2b.account.accountgroup.entity_label'
+        );
     }
 
     /**
      * @param PaymentTerm $paymentTerm
      * @return string
      */
-    private function generateAccountFilterUrl(PaymentTerm $paymentTerm)
+    protected function generateAccountFilterUrl(PaymentTerm $paymentTerm)
     {
-        if ($paymentTerm->getAccounts()->count() == 0) {
+        if ($paymentTerm->getAccounts()->count() === 0) {
             return null;
         }
 
-        $accountFilterHtmlUrl = $this->generateHtmFilterUrl(
+        return $this->generateHtmFilterUrl(
             $paymentTerm->getId(),
             static::ACCOUNT_GRID_NAME,
             static::ACCOUNT_GRID_ROUTE,
             'orob2b.account.entity_label'
         );
-
-        return $accountFilterHtmlUrl;
-
     }
 
     /**
-     * @param $gridName
-     * @param $paymentTermId
+     * @param string $gridName
+     * @param int $paymentTermId
      * @return array
      */
-    private function getParameters($gridName, $paymentTermId)
+    protected function getParameters($gridName, $paymentTermId)
     {
         $parameters = [
             $gridName => [
@@ -122,13 +125,13 @@ class DeleteMessageTextGenerator
     }
 
     /**
-     * @param $paymentTermId
-     * @param $gridName
-     * @param $gridRoute
-     * @param $label
+     * @param int $paymentTermId
+     * @param string $gridName
+     * @param string $gridRoute
+     * @param string $label
      * @return string
      */
-    private function generateHtmFilterUrl($paymentTermId, $gridName, $gridRoute, $label)
+    protected function generateHtmFilterUrl($paymentTermId, $gridName, $gridRoute, $label)
     {
         $urlParameters = $this->getParameters($gridName, $paymentTermId);
         $url = $this->router->generate($gridRoute, $urlParameters, true);

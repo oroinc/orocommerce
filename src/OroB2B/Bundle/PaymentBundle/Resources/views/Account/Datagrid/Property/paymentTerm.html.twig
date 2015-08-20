@@ -4,7 +4,7 @@
 {% if accountPaymentTermLabel %}
     {{ accountPaymentTermLabel }}
 {% elseif accountGroupPaymentTermLabel %}
-    {{ 'orob2b.payment.account.payment_term_defined_in_group'|trans({'%payment_term%': accountGroupPaymentTermLabel }) }}
+    {{ 'orob2b.payment.account.payment_term_defined_in_group'|trans({'{{ payment_term }}': accountGroupPaymentTermLabel }) }}
 {% else %}
     {{ 'orob2b.payment.account.payment_term_non_defined_in_group'|trans }}
 {% endif %}

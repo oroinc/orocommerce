@@ -33,20 +33,15 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
     {
         /** @var AccountUser[] $accountUsers */
         $accountUsers = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findAll();
-        $internalRatings =
-            $manager->getRepository(ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE))->findAll();
-        $accountGroupRepository = $manager->getRepository('OroB2BAccountBundle:AccountGroup');
+        $internalRatings = $manager->getRepository(ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE))
+            ->findAll();
 
         $rootAccount = null;
         $firstLevelAccount = null;
 
-        $rootGroup = $accountGroupRepository->findOneBy(['name' => 'Root']);
-        $firstLevelGroup = $accountGroupRepository->findOneBy(['name' => 'First']);
-        $secondLevelGroup = $accountGroupRepository->findOneBy(['name' => 'Second']);
-
-        $manager->persist($rootGroup);
-        $manager->persist($firstLevelGroup);
-        $manager->persist($secondLevelGroup);
+        $rootGroup = $this->getReference(LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . 'Root');
+        $firstLevelGroup = $this->getReference(LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . 'First');
+        $secondLevelGroup = $this->getReference(LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . 'Second');
 
         $user = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 

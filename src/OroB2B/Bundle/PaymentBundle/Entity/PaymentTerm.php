@@ -64,7 +64,7 @@ class PaymentTerm
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinTable(
-     *      name="orob2b_payment_term_to_c_group",
+     *      name="orob2b_payment_term_to_acc_grp",
      *      joinColumns={
      *          @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -80,7 +80,7 @@ class PaymentTerm
      *
      * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinTable(
-     *      name="orob2b_payment_t_to_account",
+     *      name="orob2b_payment_term_to_account",
      *      joinColumns={
      *          @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="CASCADE")
      *      },

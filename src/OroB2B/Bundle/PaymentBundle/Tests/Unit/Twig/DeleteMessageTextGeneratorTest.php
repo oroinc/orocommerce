@@ -9,32 +9,32 @@ use Oro\Bundle\FilterBundle\Grid\Extension\OrmFilterExtension;
 
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\PaymentBundle\Twig\DeleteMessageTextGenerator;
-use OroB2B\Bundle\PaymentBundle\Tests\Unit\Fixtures\PaymentTermStub;
+use OroB2B\Bundle\PaymentBundle\Tests\Unit\Fixtures\Stub\PaymentTermStub;
 
 class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var DeleteMessageTextGenerator
-     */
+    /** @var DeleteMessageTextGenerator */
     protected $extension;
 
-    /** @var RouterInterface */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|RouterInterface */
     protected $router;
 
-    /** @var ManagerRegistry */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $managerRegistry;
 
     protected function setUp()
     {
         $this->router = $this->getMock('\Symfony\Component\Routing\RouterInterface');
-        $twig = $this->getMock('\Oro\Bundle\UIBundle\Twig\Environment');
-
         $this->router->expects($this->any())
             ->method('generate')
             ->willReturnCallback(function ($route, $params) {
                 return serialize($params);
             });
 
+        /** @var \Twig_Environment|\PHPUnit_Framework_MockObject_MockObject $twig */
+        $twig = $this->getMockBuilder('\Twig_Environment')
+            ->disableOriginalConstructor()
+            ->getMock();
         $twig->expects($this->any())
             ->method('render')
             ->willReturnCallback(function ($template, $params) {
@@ -46,6 +46,11 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->extension = new DeleteMessageTextGenerator($this->router, $twig, $this->managerRegistry);
+    }
+
+    public function tearDown()
+    {
+        unset($this->extension, $this->router, $this->managerRegistry);
     }
 
     /**
@@ -91,8 +96,6 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
             ->with($this->equalTo('OroB2BPaymentBundle:PaymentTerm'))
             ->willReturn($om);
 
-
-
         $message = $this->extension->getDeleteMessageTextForDataGrid($paymentTermId);
         $this->assertDeleteMessage(
             $message,
@@ -103,10 +106,10 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $message
-     * @param $paymentTermId
-     * @param $accountGroupCount
-     * @param $accountCount
+     * @param string $message
+     * @param int $paymentTermId
+     * @param int $accountGroupCount
+     * @param int $accountCount
      */
     public function assertDeleteMessage($message, $paymentTermId, $accountGroupCount, $accountCount)
     {
@@ -118,7 +121,6 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
         if ($accountGroupCount) {
             $accountGroupFilterUrl = unserialize($message['accountGroupFilterUrl']);
             $this->assertDataFromDeleteMessage(
-                $message,
                 $paymentTermId,
                 $accountGroupFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GROUP_GRID_NAME,
@@ -131,7 +133,6 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
         if ($accountCount) {
             $accountFilterUrl = unserialize($message['accountFilterUrl']);
             $this->assertDataFromDeleteMessage(
-                $message,
                 $paymentTermId,
                 $accountFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GRID_NAME,
@@ -182,15 +183,12 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $message
      * @param int $paymentTermId
      * @param string $accountFilterUrl
      * @param string $gridName
      * @param string $label
-     *
-     * @internal param $paymentTerm
      */
-    private function assertDataFromDeleteMessage($message, $paymentTermId, $accountFilterUrl, $gridName, $label)
+    private function assertDataFromDeleteMessage($paymentTermId, $accountFilterUrl, $gridName, $label)
     {
         $urlParameters = unserialize($accountFilterUrl['urlPath']);
 

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PaymentBundle\EventListener;
 
+use Doctrine\ORM\Query\Expr\Join;
+
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
@@ -13,11 +15,11 @@ class DatagridListener
     const PAYMENT_TERM_GROUP_ALIAS = 'payment_term_group';
     const PAYMENT_TERM_FOR_FILTER = 'payment_term_for_filter';
 
-    /** @var $paymentTermEntityClass */
+    /** @var string $paymentTermEntityClass */
     protected $paymentTermEntityClass;
 
     /**
-     * @param $paymentTermEntityClass
+     * @param string $paymentTermEntityClass
      */
     public function setPaymentTermClass($paymentTermEntityClass)
     {
@@ -43,7 +45,7 @@ class DatagridListener
     /**
      * @param DatagridConfiguration $config
      */
-    private function addPaymentTermRelationForAccount(DatagridConfiguration $config)
+    protected function addPaymentTermRelationForAccount(DatagridConfiguration $config)
     {
 
         $selectAccountPaymentTerm = static::PAYMENT_TERM_ALIAS . '.label as ' . static::PAYMENT_TERM_LABEL_ALIAS;
@@ -62,16 +64,15 @@ class DatagridListener
         $leftJoinPaymentTerm = [
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_ALIAS,
-            'conditionType' => 'WITH',
+            'conditionType' => Join::WITH,
             'condition' => 'account MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.accounts'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoinPaymentTerm);
 
-
         $leftJoinAccountGroupPaymentTerm = [
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_GROUP_ALIAS,
-            'conditionType' => 'WITH',
+            'conditionType' => Join::WITH,
             'condition' => 'account.group MEMBER OF ' . static::PAYMENT_TERM_GROUP_ALIAS . '.accountGroups'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoinAccountGroupPaymentTerm);
@@ -89,7 +90,7 @@ class DatagridListener
 
         $filter = [
             'type' => 'entity',
-            'data_name' => static::PAYMENT_TERM_FOR_FILTER,
+            'data_name' => 'CAST(payment_term_for_filter as integer)',
             'options' => [
                 'field_type' => 'entity',
                 'field_options' => [
@@ -113,7 +114,7 @@ class DatagridListener
         $leftJoin = [
             'join' => $this->paymentTermEntityClass,
             'alias' => static::PAYMENT_TERM_ALIAS,
-            'conditionType' => 'WITH',
+            'conditionType' => Join::WITH,
             'condition' => 'account_group MEMBER OF ' . static::PAYMENT_TERM_ALIAS . '.accountGroups'
         ];
         $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
