@@ -67,7 +67,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -101,9 +101,11 @@ class OroB2BSaleBundleInstaller implements
     {
         $table = $schema->createTable('orob2b_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('qid', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
@@ -176,7 +178,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('product_replacement_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('type', 'smallint', ['notnull' => false]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addColumn('comment_customer', 'text', ['notnull' => false]);
+        $table->addColumn('comment_account', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -189,8 +191,8 @@ class OroB2BSaleBundleInstaller implements
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_user'),
-            ['user_owner_id'],
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -203,6 +205,18 @@ class OroB2BSaleBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_rfp_request'),
             ['request_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

@@ -13,6 +13,8 @@ orob2b:
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             request.label: 'Request'
+            account.label: 'Account'
+            account_user.label: 'Account User'
 
             sections:
                 general: 'General'
@@ -20,6 +22,9 @@ orob2b:
 
             widgets:
                 quote_information: 'Quote Information'
+
+            column:
+                assigned_to: 'Assigned to'
 
         quoteproduct:
             entity_label: 'Quote Product'
@@ -35,7 +40,7 @@ orob2b:
             quote_product_requests.label: 'Quote Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            comment_customer.label: 'Customer Notes'
+            comment_account.label: 'Account Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
             type:
@@ -97,3 +102,35 @@ orob2b:
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
+
+    frontend:
+        sale:
+            quote:
+                entity_plural_label: Quotes
+                qid.label: 'ID'
+                account_user.label: 'Assigned To'
+                valid_until.label: 'Valid Until'
+                sections:
+                    general: 'General'
+                    quote_products: 'Line Items'
+                widgets:
+                    quote_information: 'Quote Information'
+
+            quoteproduct:
+                comment.label: 'Seller Notes'
+                comment_account.label: 'Account Notes'
+                product_replacement.label: 'Suggested Replacement:'
+                column:
+                    product: 'Product'
+                    type: 'Type'
+                    quote_product_items: 'Offers'
+
+            quoteproductoffer:
+                quantity.label: 'Quantity'
+                price.label: 'Price'
+                column_summary: 'Summary'
+
+            quoteproductrequest:
+                quantity.label: 'Requested Qty'
+                price.label: 'Requested Price'
+                column_summary: 'Summary'

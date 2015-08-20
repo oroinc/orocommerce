@@ -6,7 +6,7 @@ orob2b:
         id.label: Id
         sku.label: SKU
         inventory_status.label: Inventory Status
-        visibility.label: Visible to Customers
+        visibility.label: Visible to Accounts
         status.label: Status
         owner.label: Owner
         organization.label: Organization
@@ -45,6 +45,9 @@ orob2b:
             shortcut_new_product.description: Create new product item
             shortcut_products_list.description: Show list of existing products
 
+        acl:
+            view_products.label: View products
+
         rounding:
             type:
                 half_up.label: Half Up
@@ -72,7 +75,7 @@ orob2b:
                 default_visibility.title: Default Visibility
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
-                visibility.label: Visible to Customers
+                visibility.label: Visible to Accounts
 
         grid:
             action:

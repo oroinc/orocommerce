@@ -8,13 +8,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
     const SHOPPING_LIST_1 = 'shopping_list_1';
     const SHOPPING_LIST_2 = 'shopping_list_2';
+    const SHOPPING_LIST_3 = 'shopping_list_3';
 
     /**
      * {@inheritdoc}
@@ -52,10 +53,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name, $isCurrent = false)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
-        $shoppingList->setAccount($accountUser->getCustomer());
+        $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
@@ -74,7 +74,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getAccountUser(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
         if (!$accountUser) {
@@ -89,6 +89,6 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getData()
     {
-        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2];
+        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2, self::SHOPPING_LIST_3];
     }
 }

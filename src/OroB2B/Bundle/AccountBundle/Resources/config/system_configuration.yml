@@ -1,0 +1,60 @@
+oro_system_configuration:
+    groups:
+        account:
+            title: orob2b.account.system_configuration.groups.account.title
+            icon: 'icon-user'
+            page_reload: true
+        account_users:
+            title: orob2b.account.system_configuration.groups.account_users.title
+
+    fields:
+        oro_b2b_account.default_account_owner:
+            ui_only: true
+            data_type: string
+            type: oro_user_select
+            priority: 110
+            options:
+                label: orob2b.account.system_configuration.fields.default_account_owner.label
+                tooltip: orob2b.account.system_configuration.fields.default_account_owner.tooltip
+                required: true
+        oro_b2b_account.registration_allowed:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 100
+            options:
+                label: orob2b.account.system_configuration.fields.registration_allowed.label
+                tooltip: orob2b.account.system_configuration.fields.registration_allowed.tooltip
+                required: true
+        oro_b2b_account.confirmation_required:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 90
+            options:
+                label: orob2b.account.system_configuration.fields.confirmation_required.label
+                tooltip: orob2b.account.system_configuration.fields.confirmation_required.tooltip
+                required: true
+        oro_b2b_account.send_password_in_welcome_email:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 80
+            options:
+                label: orob2b.account.system_configuration.fields.send_password_in_welcome_email.label
+                tooltip: orob2b.account.system_configuration.fields.send_password_in_welcome_email.tooltip
+                required: true
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    frontend_application:
+                        children:
+                            account:
+                                priority: 200
+                                children:
+                                    account_users:
+                                        priority: 100
+                                        children:
+                                            - oro_b2b_account.default_account_owner
+                                            - oro_b2b_account.registration_allowed
+                                            - oro_b2b_account.confirmation_required
+                                            - oro_b2b_account.send_password_in_welcome_email

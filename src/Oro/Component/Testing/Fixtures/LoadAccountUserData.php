@@ -11,8 +11,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class LoadAccountUserData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -45,19 +45,24 @@ class LoadAccountUserData extends AbstractFixture implements ContainerAwareInter
             ->getRepository('OroOrganizationBundle:Organization')
             ->getFirst();
 
+        $user = $manager
+            ->getRepository('OroUserBundle:User')
+            ->findOneBy([]);
+
         /** @var AccountUser $entity */
         $entity = $userManager->createUser();
 
         $role = $this->container
             ->get('doctrine')
-            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
-            ->getRepository('OroB2BCustomerBundle:AccountUserRole')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+            ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->findOneBy([], ['id' => Criteria::ASC]);
 
         $entity
             ->setFirstName('AccountUser')
             ->setLastName('AccountUser')
             ->setEmail(self::AUTH_USER)
+            ->setOwner($user)
             ->setEnabled(true)
             ->setSalt('')
             ->setPlainPassword(self::AUTH_PW)

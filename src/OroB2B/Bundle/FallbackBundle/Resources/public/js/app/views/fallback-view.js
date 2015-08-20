@@ -28,7 +28,7 @@ define(function(require) {
         options: {
             expanded: false,
             hideDefaultLabel: true,
-            fallbackWidth: 200,
+            fallbackWidth: 180,
             selectors: {
                 status: '.fallback-status',
                 item: '.fallback-item',
@@ -193,9 +193,9 @@ define(function(require) {
 
             var parentItemCode = this.getParentItemCode($item);
             if (parentItemCode) {
-                var fromValue = this.getValueEl(this.itemsByCode[parentItemCode]);
-                var toValue = this.getValueEl($item);
-                this.cloneValue(fromValue, toValue);
+                var $fromValue = this.getValueEl(this.itemsByCode[parentItemCode]);
+                var $toValue = this.getValueEl($item);
+                this.cloneValue($fromValue, $toValue);
             } else {
                 this.cloneValueToChildrenEvent(e);
             }
@@ -381,13 +381,13 @@ define(function(require) {
          * @returns {undefined|String}
          */
         getParentItemCode: function($item) {
-            var select = this.getFallbackEl($item);
-            if (select.length === 0 || select.attr('disabled')) {
+            var $select = this.getFallbackEl($item);
+            if ($select.length === 0 || $select.attr('disabled')) {
                 return;
             }
 
-            var parentItemCode = select.attr('data-parent-locale');
-            return parentItemCode && select.val() !== 'system' ? parentItemCode : select.val();
+            var parentItemCode = $select.attr('data-parent-locale');
+            return parentItemCode && $select.val() !== 'system' ? parentItemCode : $select.val();
         },
 
         /**
@@ -398,13 +398,13 @@ define(function(require) {
          * @returns {String}
          */
         getItemCode: function($item) {
-            var select = this.getFallbackEl($item);
+            var $select = this.getFallbackEl($item);
             var itemCode;
 
-            if (select.length === 0) {
+            if ($select.length === 0) {
                 itemCode = 'system';
             } else {
-                itemCode = select.attr('data-locale');
+                itemCode = $select.attr('data-locale');
             }
 
             return itemCode;

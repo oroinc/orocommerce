@@ -6,7 +6,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\DataTransformer\FallbackValueTransformer;
 
@@ -38,7 +43,16 @@ class FallbackValueType extends AbstractType
             'fallback_type_locale'        => null,
             'fallback_type_parent_locale' => null,
             'enabled_fallbacks'           => [],
+            'group_fallback_fields'       => null
         ]);
+
+        $resolver->setNormalizer('group_fallback_fields', function (Options $options, $value) {
+            if ($value !== null) {
+                return $value;
+            }
+
+            return in_array($options['type'], ['textarea', OroRichTextType::NAME], true);
+        });
     }
 
     /**
@@ -77,5 +91,13 @@ class FallbackValueType extends AbstractType
                     ->add('value', $options['type'], array_merge($valueOptions, ['validation_groups' => false]));
             }
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['group_fallback_fields'] = $options['group_fallback_fields'];
     }
 }

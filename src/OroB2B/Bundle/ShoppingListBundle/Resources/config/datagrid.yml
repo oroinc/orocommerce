@@ -29,8 +29,6 @@ datagrid:
                 label:         orob2b.shoppinglist.label.label
             notes:
                 label:         orob2b.shoppinglist.notes.label
-            owner:
-                label:         orob2b.shoppinglist.owner.label
             account_user:
                 label:         orob2b.shoppinglist.account_user.label
             account:
@@ -53,8 +51,6 @@ datagrid:
                     data_name: shopping_list.id
                 label:
                     data_name: shopping_list.label
-                owner:
-                    data_name: account_user
                 account:
                     data_name: account
                 account_user:
@@ -73,9 +69,6 @@ datagrid:
                 label:
                     type:      string
                     data_name: shopping_list.label
-                owner:
-                    type:      string
-                    data_name: account_user
                 account:
                     type:      string
                     data_name: account
@@ -98,13 +91,13 @@ datagrid:
                 rowAction:     true
 
     frontend-shopping-list-grid:
-        extended_entity_name: %orob2b_shopping_list.entity.shopping_list.class%
+        extended_entity_name:  %orob2b_shopping_list.entity.shopping_list.class%
         options:
             entityHint:        shopping list
             entity_pagination: true
         source:
-            acl_resource: orob2b_shopping_list_frontend_view
-            type:         orm
+            acl_resource:      orob2b_shopping_list_frontend_view
+            type:              orm
             query:
                 select:
                     - shopping_list.id
@@ -163,8 +156,8 @@ datagrid:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_shopping_list_frontend_view
                 rowAction:     true
+                acl_resource:  orob2b_shopping_list_frontend_view
             update:
                 type:          navigate
                 label:         oro.grid.action.update
@@ -181,9 +174,9 @@ datagrid:
     shopping-list-line-items-grid:
         extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
         options:
-            entityHint:        lineItem
+            entityHint:        line item
         source:
-            acl_resource:      orob2b_shopping_list_line_item_update
+            acl_resource:      orob2b_shopping_list_view
             type:              orm
             query:
                 select:
@@ -205,14 +198,14 @@ datagrid:
                 - shopping_list_id
         columns:
             productSku:
-                label:         orob2b.pricing.productprice.product_sku.label
+                label:         orob2b.shoppinglist.lineitem.product_sku.label
             quantity:
-                label:         orob2b.pricing.productprice.quantity.label
+                label:         orob2b.shoppinglist.lineitem.quantity.label
             unitCode:
-                label:         orob2b.pricing.productprice.unit_code.label
+                label:         orob2b.shoppinglist.lineitem.unit.label
                 type: twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template: OroB2BShoppingListBundle:LineItem:Datagrid/Property/unitCode.html.twig
             notes:
                 label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:
@@ -257,7 +250,7 @@ datagrid:
         actions:
             view_product:
                 type:          navigate
-                label:         orob2b.pricing.grid.action.view.product
+                label:         orob2b.shoppinglist.lineitem.grid.action.view.product
                 link:          view_product_link
                 icon:          eye-open
                 acl_resource:  orob2b_product_view
@@ -279,3 +272,106 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_shopping_list_line_item_delete
+
+    frontend-shopping-list-line-items-grid:
+        extended_entity_name: %orob2b_shopping_list.entity.line_item.class%
+        options:
+            entityHint:     line item
+            skip_acl_check: true
+        source:
+            acl_resource:   orob2b_shopping_list_frontend_view
+            type:           orm
+            query:
+                select:
+                    - product.id as productId
+                    - product.sku as productSku
+                    - lineItem.id
+                    - lineItem.quantity
+                    - lineItem.notes
+                    - IDENTITY(lineItem.unit) as unitCode
+                from:
+                    - { table: %orob2b_shopping_list.entity.line_item.class%, alias: lineItem }
+                join:
+                    inner:
+                        - { join: lineItem.product, alias: product }
+                where:
+                    and:
+                        - IDENTITY(lineItem.shoppingList) = :shopping_list_id
+            bind_parameters:
+                - shopping_list_id
+        columns:
+            productSku:
+                label:         orob2b.shoppinglist.lineitem.product_sku.label
+            quantity:
+                label:         orob2b.shoppinglist.lineitem.quantity.label
+            unitCode:
+                label:         orob2b.shoppinglist.lineitem.unit.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BShoppingListBundle:LineItem:Datagrid/Property/unitCode.html.twig
+            notes:
+                label:         orob2b.shoppinglist.lineitem.notes.label
+        sorters:
+            columns:
+                productSku:
+                    data_name: productSku
+                quantity:
+                    data_name: lineItem.quantity
+                unitCode:
+                    data_name: unit.code
+            default:
+                productSku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                productSku:
+                    type:      string
+                    data_name: productSku
+                quantity:
+                    type:      number
+                    data_name: lineItem.quantity
+                unitCode:
+                    type:      choice
+                    data_name: unitCode
+                    options:
+                        field_type: orob2b_product_unit_selection
+        properties:
+            id: ~
+            productId: ~
+            view_product_link:
+                type:  url
+                route: orob2b_product_frontend_product_view
+                params:
+                    id: productId
+            update_link:
+                type: url
+                route: orob2b_shopping_list_line_item_frontend_update_widget
+                params: [ id ]
+            delete_link:
+                type: url
+                route: orob2b_api_shopping_list_frontend_delete_line_item
+                params: [ id ]
+        actions:
+            view_product:
+                type:          navigate
+                label:         orob2b.shoppinglist.lineitem.grid.action.view.product
+                link:          view_product_link
+                icon:          eye-open
+                rowAction:     true
+                acl_resource:  orob2b_product_view_products
+            update:
+                type:          dialog
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_shopping_list_line_item_frontend_update
+                widgetOptions:
+                    reload-grid-name: frontend-shopping-list-line-items-grid
+                    options:
+                        dialogOptions:
+                            width: 650
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_shopping_list_line_item_frontend_delete

@@ -1,6 +1,8 @@
 <?php
+
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
@@ -11,45 +13,66 @@ use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class ShoppingListHandler
 {
-    /** @var FormInterface */
+    /**
+     * @var FormInterface
+     */
     protected $form;
 
-    /** @var Request */
+    /**
+     * @var Request
+     */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $om;
-
-    /** @var ShoppingListManager */
+    /**
+     * @var ShoppingListManager
+     */
     protected $manager;
 
     /**
-     * @param FormInterface $form
-     * @param Request       $request
-     * @param ObjectManager $om
+     * @var ObjectManager
+     */
+    protected $em;
+
+    /**
+     * @param FormInterface       $form
+     * @param Request             $request
+     * @param ShoppingListManager $manager
+     * @param Registry            $doctrine
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ShoppingListManager $manager
+        ShoppingListManager $manager,
+        Registry $doctrine
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
+        $this->em = $doctrine->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
     }
 
+    /**
+     * @param ShoppingList $shoppingList
+     *
+     * @return bool
+     */
     public function process(ShoppingList $shoppingList)
     {
         $this->form->setData($shoppingList);
 
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($this->request);
 
-            if ($this->form->isValid() && $shoppingList->getId() === null) {
-                $this->manager->setCurrent(
-                    $shoppingList->getAccountUser(),
-                    $shoppingList
-                );
+            if ($this->form->isValid()) {
+                if ($shoppingList->getId() === null) {
+                    $this->manager->setCurrent(
+                        $shoppingList->getAccountUser(),
+                        $shoppingList
+                    );
+                } else {
+                    $this->em->persist($shoppingList);
+                    $this->em->flush();
+                }
 
                 return true;
             }

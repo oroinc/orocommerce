@@ -15,6 +15,8 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
@@ -49,6 +51,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData',
         ];
     }
@@ -61,8 +65,20 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $user = $this->getUser($manager);
         $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
+        $accounts = $this->getAccounts($manager);
 
         for ($i = 0; $i < 20; $i++) {
+            /* @var $account Account */
+            $account = $accounts[rand(0, count($accounts) - 1)];
+
+            if (!$account) {
+                $accountUser = null;
+            } else {
+                $accountUsers = array_merge([null], $account->getUsers()->getValues());
+                /* @var $accountUser AccountUser */
+                $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+            }
+
             // set date in future
             $validUntil = new \DateTime('now');
             $addDays = sprintf('+%s days', rand(10, 100));
@@ -72,6 +88,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setOwner($user)
                 ->setOrganization($organization)
                 ->setValidUntil($validUntil)
+                ->setAccountUser($accountUser)
+                ->setAccount($account)
             ;
 
             if (1 === rand(1, 3)) {
@@ -84,6 +102,33 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|Account[]
+     */
+    protected function getAccounts(ObjectManager $manager)
+    {
+        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:Account')->findBy([], null, 10));
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCurrencies()
+    {
+        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
+
+        if (!$currencies) {
+            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
+        }
+
+        if (!$currencies) {
+            throw new \LogicException('There are no currencies in system');
+        }
+
+        return $currencies;
     }
 
     /**
@@ -173,7 +218,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setProduct($product)
             ->setType($type)
             ->setComment(sprintf('Seller Notes %s', $index + 1))
-            ->setCommentCustomer(sprintf('Customer Notes %s', $index + 1))
+            ->setCommentAccount(sprintf('Account Notes %s', $index + 1))
         ;
 
         return $quoteProduct;
@@ -227,28 +272,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
     }
 
     /**
-     * @return array
-     * @throws \LogicException
-     */
-    protected function getCurrencies()
-    {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-
-        if (!$currencies) {
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
-    }
-
-    /**
      * @param ObjectManager $manager
      * @return User
-     * @throws \RuntimeException
      */
     protected function getUser(ObjectManager $manager)
     {

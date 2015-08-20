@@ -107,10 +107,10 @@ services:
         calls:
             - [setRequest, ["@?request="]]
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -120,8 +120,8 @@ services:
         calls:
             - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
 
     orob2b_pricing.event_listener.product_price_datagrid:
         class: %orob2b_pricing.event_listener.product_price_datagrid.class%

@@ -23,19 +23,36 @@ class DatagridListener
         // properties
         $addToShoppingListLink = [
             'type'   => 'url',
-            'route'  => 'orob2b_product_frontend_product_view',
-            'params' => ['id'],
+            'route'  => 'orob2b_shopping_list_line_item_frontend_add_widget',
+            'params' => ['productId' => 'id'],
         ];
         $this->addConfigElement($config, '[properties]', $addToShoppingListLink, 'add_to_shopping_list_link');
 
         // actions
         $addToShoppingList = [
-            'type'  => 'navigate',
+            'type'  => 'dialog',
             'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
             'link'  => 'add_to_shopping_list_link',
             'icon'  => 'shopping-cart',
+            'acl_resource' => 'orob2b_shopping_list_line_item_frontend_add',
+            'widgetOptions' => [
+                'options' => [
+                    'dialogOptions' => [
+                        'title' => 'Add To Shopping List'
+                    ]
+                ]
+            ]
         ];
         $this->addConfigElement($config, '[actions]', $addToShoppingList, 'add_to_shopping_list');
+
+        //mass actions
+        $addToShoppingListMassAction = [
+            'type' => 'addproducts',
+            'entity_name' => '%orob2b_product.product.class%',
+            'data_identifier' => 'product.id',
+            'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label'
+        ];
+        $this->addConfigElement($config, '[mass_actions]', $addToShoppingListMassAction, 'addproducts');
     }
 
     /**

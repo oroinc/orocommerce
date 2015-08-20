@@ -8,9 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
@@ -30,16 +34,20 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
+ *              "organization_column_name"="organization_id",
+ *              "frontend_owner_type"="FRONTEND_USER",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id"
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
- *          }
+ *              "group_name"="commerce"
+ *          },
+ *          "grouping"={"groups"={"activity"}}
  *      }
  * )
  */
-class Quote extends ExtendQuote
+class Quote extends ExtendQuote implements AccountOwnerAwareInterface
 {
     /**
      * @var int
@@ -71,6 +79,22 @@ class Quote extends ExtendQuote
      * )
      */
     protected $owner;
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountUser;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $account;
 
     /**
      * @var OrganizationInterface
@@ -325,6 +349,44 @@ class Quote extends ExtendQuote
     public function getQuoteProducts()
     {
         return $this->quoteProducts;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return Quote
+     */
+    public function setAccountUser(AccountUser $accountUser = null)
+    {
+        $this->accountUser = $accountUser;
+
+        return $this;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return Quote
+     */
+    public function setAccount(Account $account = null)
+    {
+        $this->account = $account;
+
+        return $this;
     }
 
     /**

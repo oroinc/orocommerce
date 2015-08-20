@@ -6,21 +6,39 @@ orob2b:
         id.label: ID
         label.label: Label
         notes.label: Notes
-        owner.label: Owner
         account.label: Account
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
+        current.label: Current
+        default.label: Default
+
+        create_new_form:
+            input_label: Shopping List Label
+            comment: Selected products will be added to this new shopping list.
+            comment_cancel: Click "Cancel" to select a different list.
+            submit_label: Create and Add
 
         product:
-            add_to_shopping_list.label: Add To Shopping List
+            add_to_shopping_list.label: Add to Shopping List
+            add_to.label: Add to
+            create_new_shopping_list.label: Create New Shopping List
+            added.label: Product has been added
 
         actions:
             set_current: Set as current
+            view: view shopping list
+            add_to_shopping_list: Add to
+            add_to_new_shopping_list: Create New Shopping List
+            add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added."
+
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the account users
+
+        acl:
+            shoppinglist_add_product.label: Add Product To Shopping List
 
         widgets:
             shopping_list_information: Shopping Lists Information
@@ -32,20 +50,27 @@ orob2b:
         controller:
             shopping_list.saved.message: Shopping List has been saved
 
-        security:
-            permission:
-                view_shopping_list: View Shopping List
-
         lineitem:
             entity_label: Line Item
             entity_plural_label: Line Items
             id.label: ID
             notes.label: Notes
+            product_sku.label: Product SKU
             quantity.label: Quantity
             product.label: Product
             shopping_list.label: Shopping List
             unit.label: Unit
+            organization.label: Organization
+            account_user.label: Account User
             add_line_item: Add Line Item
-
+            create_new_shopping_list: Create New Shopping List
+            new_shopping_list_label: Shopping List Label
+            new_shopping_list_label.empty: Shopping List label must not be empty
+            grid:
+                action:
+                    view:
+                        product: View Product
+            flash:
+                success: Line item has been added
             controller:
                 saved.message: Line Item Saved Successfully

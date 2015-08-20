@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +19,10 @@ class LineItemHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
-    protected $manager;
+    /** @var Registry */
+    protected $registry;
 
-    /** @var ObjectManager */
+    /** @var int */
     protected $savedId;
 
     /**
@@ -37,7 +37,7 @@ class LineItemHandler
     ) {
         $this->form = $form;
         $this->request = $request;
-        $this->manager = $registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+        $this->registry = $registry;
     }
 
     /**
@@ -48,28 +48,27 @@ class LineItemHandler
     public function process(LineItem $lineItem)
     {
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
+            /** @var EntityManagerInterface $manager */
+            $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+            $manager->beginTransaction();
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 /** @var LineItemRepository $lineItemRepository */
-                $lineItemRepository = $this->manager->getRepository('OroB2BShoppingListBundle:LineItem');
+                $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
                 $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
-                if ($existingLineItem) {
-                    $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
-                    $existingLineItemNote = $existingLineItem->getNotes();
-                    $newNotes = $lineItem->getNotes();
-                    $notes = trim(implode(' ', [$existingLineItemNote, $newNotes]));
-                    if ($notes) {
-                        $existingLineItem->setNotes($notes);
-                    }
-                    $this->savedId = $existingLineItem->getId();
+                if ($existingLineItem instanceof LineItem) {
+                    $this->updateExistingLineItem($lineItem, $existingLineItem);
                 } else {
-                    $this->manager->persist($lineItem);
+                    $manager->persist($lineItem);
                 }
 
-                $this->manager->flush();
+                $manager->flush();
+                $manager->commit();
 
                 return true;
+            } else {
+                $manager->rollBack();
             }
         }
 
@@ -90,5 +89,21 @@ class LineItemHandler
         }
 
         return $result;
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param LineItem $existingLineItem
+     */
+    protected function updateExistingLineItem(LineItem $lineItem, LineItem $existingLineItem)
+    {
+        $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
+        $existingLineItemNote = $existingLineItem->getNotes();
+        $newNotes = $lineItem->getNotes();
+        $notes = trim(implode(' ', [$existingLineItemNote, $newNotes]));
+        if ($notes) {
+            $existingLineItem->setNotes($notes);
+        }
+        $this->savedId = $existingLineItem->getId();
     }
 }
