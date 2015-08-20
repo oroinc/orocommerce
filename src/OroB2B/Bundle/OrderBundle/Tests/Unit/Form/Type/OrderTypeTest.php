@@ -50,6 +50,7 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'data_class' => 'Order',
+                    'intention' => 'order'
                 ]
             );
 

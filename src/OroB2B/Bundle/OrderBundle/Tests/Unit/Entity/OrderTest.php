@@ -10,7 +10,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class OrderTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,9 +38,12 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['paymentTerm', new PaymentTerm()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],
+            ['priceList', new PriceList()]
         ];
 
-        $this->assertPropertyAccessors(new Order(), $properties);
+        $order = new Order();
+        $this->assertPropertyAccessors($order, $properties);
+        $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
     }
 
     public function testAccountUserToAccountRelation()

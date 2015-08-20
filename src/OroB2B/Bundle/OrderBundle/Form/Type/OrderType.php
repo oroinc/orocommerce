@@ -65,10 +65,6 @@ class OrderType extends AbstractType
                 [
                     'label' => 'orob2b.order.account_user.label',
                     'required' => false,
-                    //TODO remove this after related entity selection fix
-                    'attr' => [
-                        'class' => 'order-order-accountuser-select'
-                    ]
                 ]
             )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
@@ -88,6 +84,7 @@ class OrderType extends AbstractType
                 [
                     'add_label' => 'orob2b.order.orderlineitem.add_label',
                     'cascade_validation' => true,
+                    'options' => ['currency' => $order->getCurrency()]
                 ]
             );
 

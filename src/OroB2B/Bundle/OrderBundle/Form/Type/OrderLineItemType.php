@@ -82,6 +82,8 @@ class OrderLineItemType extends AbstractType
                     'error_bubbling' => false,
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.price.label',
+                    'hide_currency' => true,
+                    'default_currency' => $options['currency']
                 ]
             )
             ->add(
@@ -115,10 +117,12 @@ class OrderLineItemType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setRequired(['currency']);
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'order_line_item',
+                'currency' => null
             ]
         );
     }
