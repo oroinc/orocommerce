@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Symfony\Component\Translation\TranslatorInterface;
+
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -39,7 +40,7 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $this->translator->expects($this->once())
             ->method('trans')
             ->with(sprintf('orob2b.order.subtotals.%s', Subtotal::TYPE_SUBTOTAL))
-            ->will($this->returnValue(ucfirst(Subtotal::TYPE_SUBTOTAL)));
+            ->willReturn(ucfirst(Subtotal::TYPE_SUBTOTAL));
 
         $order = new Order();
         $perUnitLineItem = new OrderLineItem();
