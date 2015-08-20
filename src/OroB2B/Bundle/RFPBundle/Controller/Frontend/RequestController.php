@@ -112,14 +112,9 @@ class RequestController extends Controller
             FrontendRequestType::NAME,
             $rfpRequest,
             [
-                'action' => $this->generateUrl('orob2b_rfp_request_process'),
-                'method' => 'POST',
+                'label' => '',
             ]
         );
-
-        $form->add('submit', 'submit', [
-            'label' => 'orob2b.rfp.request.submit.label'
-        ]);
 
         return $form;
     }

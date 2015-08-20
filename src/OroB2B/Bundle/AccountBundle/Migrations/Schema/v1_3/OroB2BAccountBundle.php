@@ -20,13 +20,16 @@ class OroB2BAccountBundle implements Migration
         $this->createOroB2BNavigationHistoryTable($schema);
         $this->createOroB2BNavigationItemTable($schema);
         $this->createOroB2BNavigationItemPinbarTable($schema);
-        $this->addOroB2BNavigationHistoryForeignKeys($schema);
+        $this->createOroB2BAccountUserSdbarStTable($schema);
+        $this->createOroB2BAccountUserSdbarWdgTable($schema);
+        $this->createOroB2BAccNavigationPagestateTable($schema);
+
         $this->addOroB2BNavigationItemForeignKeys($schema);
+        $this->addOroB2BNavigationHistoryForeignKeys($schema);
         $this->addOroB2BNavigationItemPinbarForeignKeys($schema);
-        $this->createOrob2BAccountUserSdbarStTable($schema);
-        $this->createOrob2BAccountUserSdbarWdgTable($schema);
-        $this->addOrob2BAccountUserSdbarStForeignKeys($schema);
-        $this->addOrob2BAccountUserSdbarWdgForeignKeys($schema);
+        $this->addOroB2BAccountUserSdbarStForeignKeys($schema);
+        $this->addOroB2BAccountUserSdbarWdgForeignKeys($schema);
+        $this->addOroB2BAccNavigationPagestateForeignKeys($schema);
     }
 
     /**
@@ -85,6 +88,7 @@ class OroB2BAccountBundle implements Migration
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('maximized', 'datetime', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['item_id'], 'UNIQ_F6DC70B5126F525E');
     }
 
     /**
@@ -148,11 +152,46 @@ class OroB2BAccountBundle implements Migration
     }
 
     /**
+     * Create orob2b_acc_pagestate table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccNavigationPagestateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_acc_pagestate');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('page_id', 'string', ['length' => 4000]);
+        $table->addColumn('page_hash', 'string', ['length' => 32]);
+        $table->addColumn('data', 'text', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['page_hash'], 'UNIQ_993DC655567C7E62');
+    }
+
+    /**
+     * Add orob2b_acc_pagestate foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccNavigationPagestateForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_acc_pagestate');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
      * Create orob2b_account_user_sdbar_st table
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAccountUserSdbarStTable(Schema $schema)
+    protected function createOroB2BAccountUserSdbarStTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_account_user_sdbar_st');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -168,7 +207,7 @@ class OroB2BAccountBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BAccountUserSdbarWdgTable(Schema $schema)
+    protected function createOroB2BAccountUserSdbarWdgTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_account_user_sdbar_wdg');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -189,7 +228,7 @@ class OroB2BAccountBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAccountUserSdbarStForeignKeys(Schema $schema)
+    protected function addOroB2BAccountUserSdbarStForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_account_user_sdbar_st');
         $table->addForeignKeyConstraint(
@@ -205,7 +244,7 @@ class OroB2BAccountBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BAccountUserSdbarWdgForeignKeys(Schema $schema)
+    protected function addOroB2BAccountUserSdbarWdgForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_account_user_sdbar_wdg');
         $table->addForeignKeyConstraint(

@@ -30,6 +30,11 @@ placeholders:
             frontend_sidebar:
                 order: 200
 
+    content_before:
+        items:
+            page_state_routes:
+                order: 100
+
 items:
     frontend_menu:
         template: OroB2BAccountBundle:Menu:frontendMenu.html.twig
@@ -52,4 +57,6 @@ items:
     frontend_sidebar:
         template: OroB2BAccountBundle:Sidebar:sidebar.html.twig
         applicable: @orob2b_account.placeholder.filter->isUserApplicable()
-
+    page_state_routes:
+        template: OroB2BAccountBundle:Pagestate:pagestate.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
