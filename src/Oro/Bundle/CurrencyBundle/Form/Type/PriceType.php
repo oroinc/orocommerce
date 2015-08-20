@@ -33,9 +33,6 @@ class PriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $currencyOptions = [
-            'data' => $options['default_currency']
-        ];
         if (empty($options['hide_currency'])) {
             $currencyType = CurrencySelectionType::NAME;
             $currencyOptions = [
@@ -48,6 +45,9 @@ class PriceType extends AbstractType
             ];
         } else {
             $currencyType = 'hidden';
+            $currencyOptions = [
+                'data' => $options['default_currency']
+            ];
         }
 
         $builder
