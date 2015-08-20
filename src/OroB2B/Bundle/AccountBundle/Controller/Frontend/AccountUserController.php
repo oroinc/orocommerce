@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
+use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -20,7 +22,7 @@ class AccountUserController extends Controller
 {
     /**
      * @Route("/view/{id}", name="orob2b_account_frontend_account_user_view", requirements={"id"="\d+"})
-     * @Template
+     * @Template("OroB2BAccountBundle:AccountUser/Frontend:view.html.twig")
      * @Acl(
      *      id="orob2b_account_frontend_account_user_view",
      *      type="entity",
@@ -56,142 +58,93 @@ class AccountUserController extends Controller
     /**
      * Create account user form
      *
-     * @Route("/register", name="orob2b_account_frontend_account_user_register")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:register.html.twig")
-     *
+     * @Route("/create", name="orob2b_account_frontend_account_user_create")
+     * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_create",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUser",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
      * @return array|RedirectResponse
      */
-    public function registerAction()
+    public function createAction()
     {
-        if ($this->getUser()) {
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
-        }
-
-        $isRegistrationAllowed = $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
-        if (!$isRegistrationAllowed) {
-            throw new AccessDeniedException();
-        }
-
-        $accountUser = new AccountUser();
-
-        /** @var WebsiteManager $websiteManager */
-        $websiteManager = $this->get('orob2b_website.manager');
-        $website = $websiteManager->getCurrentWebsite();
-        $websiteOrganization = $website->getOrganization();
-
-        if (!$websiteOrganization) {
-            throw new \RuntimeException('Website organization is empty');
-        }
-
-        $defaultRole = $this->getDoctrine()
-            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole')
-            ->getDefaultAccountUserRoleByWebsite($website);
-
-        if (!$defaultRole) {
-            throw new \RuntimeException(sprintf('Role "%s" was not found', AccountUser::ROLE_DEFAULT));
-        }
-
-        $accountUser
-            ->addOrganization($websiteOrganization)
-            ->setOrganization($websiteOrganization)
-            ->addRole($defaultRole);
-
-        $userManager = $this->get('orob2b_account_user.manager');
-        $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler($form, $this->getRequest(), $userManager);
-
-        if ($userManager->isConfirmationRequired()) {
-            $registrationMessage = 'orob2b.account.controller.accountuser.registered_with_confirmation.message';
-        } else {
-            $registrationMessage = 'orob2b.account.controller.accountuser.registered.message';
-        }
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $accountUser,
-            $form,
-            ['route' => 'orob2b_account_account_user_security_login'],
-            ['route' => 'orob2b_account_account_user_security_login'],
-            $this->get('translator')->trans($registrationMessage),
-            $handler
-        );
-    }
-
-    /**
-     * @Route("/confirm-email", name="orob2b_account_frontend_account_user_confirmation")
-     * @return RedirectResponse
-     */
-    public function confirmEmailAction()
-    {
-        $request = $this->getRequest();
-        $userManager = $this->get('orob2b_account_user.manager');
-
-        /** @var AccountUser $accountUser */
-        $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
-        $token = $request->get('token');
-
-        if ($accountUser === null || empty($token) || $accountUser->getConfirmationToken() !== $token) {
-            throw $this->createNotFoundException(
-                $this->get('translator')->trans('orob2b.account.controller.accountuser.confirmation_error.message')
-            );
-        }
-
-        if (!$accountUser->isConfirmed()) {
-            $userManager->confirmRegistration($accountUser);
-            $userManager->updateUser($accountUser);
-
-            $messageType = 'success';
-            $message = 'orob2b.account.controller.accountuser.confirmed.message';
-        } else {
-            $messageType = 'warn';
-            $message = 'orob2b.account.controller.accountuser.already_confirmed.message';
-        }
-
-        $this->get('session')->getFlashBag()->add($messageType, $message);
-
-        return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
-    }
-
-    /**
-     * @Route("/profile", name="orob2b_account_frontend_account_user_profile")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:view.html.twig")
-     *
-     * @return array
-     */
-    public function profileAction()
-    {
-        return [
-            'entity' => $this->getUser(),
-            'editRoute' => 'orob2b_account_frontend_account_user_profile_update'
-        ];
+        return $this->update(new AccountUser());
     }
 
     /**
      * Edit account user form
      *
-     * @Route("/profile/update", name="orob2b_account_frontend_account_user_profile_update")
+     * @Route("/update/{id}", name="orob2b_account_frontend_account_user_update", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
-     *
+     * @Acl(
+     *      id="orob2b_account_frontend_account_user_update",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUser",
+     *      permission="EDIT",
+     *      group_name="commerce"
+     * )
+     * @param AccountUser $accountUser
      * @return array|RedirectResponse
      */
-    public function updateAction()
+    public function updateAction(AccountUser $accountUser)
     {
-        $accountUser = $this->getUser();
+        return $this->update($accountUser);
+    }
 
-        $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler(
+    /**
+     * @param AccountUser $accountUser
+     * @return array|RedirectResponse
+     */
+    protected function update(AccountUser $accountUser)
+    {
+        $form = $this->createForm(AccountUserType::NAME, $accountUser);
+        $handler = new AccountUserHandler(
             $form,
             $this->getRequest(),
-            $this->get('orob2b_account_user.manager')
+            $this->get('orob2b_account_user.manager'),
+            $this->get('security.context')
         );
 
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
-            ['route' => 'orob2b_account_frontend_account_user_profile_update'],
-            ['route' => 'orob2b_account_frontend_account_user_profile'],
-            $this->get('translator')->trans('orob2b.account.controller.accountuser.profile_updated.message'),
+            function (AccountUser $accountUser) {
+                return [
+                    'route' => 'orob2b_account_frontend_account_user_update',
+                    'parameters' => ['id' => $accountUser->getId()]
+                ];
+            },
+            function (AccountUser $accountUser) {
+                return [
+                    'route' => 'orob2b_account_frontend_account_user_view',
+                    'parameters' => ['id' => $accountUser->getId()]
+                ];
+            },
+            $this->get('translator')->trans('orob2b.account.controller.accountuser.saved.message'),
             $handler
         );
+
+        return $result;
     }
+
+
+    /**
+     * @Route("/info/{id}", name="orob2b_account_frontend_account_user_info", requirements={"id"="\d+"})
+     * @Template("OroB2BAccountBundle:AccountUser/Frontend/widget:info.html.twig")
+     * @AclAncestor("orob2b_account_frontend_account_user_view")
+     *
+     * @param AccountUser $accountUser
+     * @return array
+     */
+    public function infoAction(AccountUser $accountUser)
+    {
+        return [
+            'entity' => $accountUser
+        ];
+    }
+
+
 }
