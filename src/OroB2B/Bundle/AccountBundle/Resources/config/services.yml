@@ -55,6 +55,7 @@ parameters:
     orob2b_account.item.builder.history.class: Oro\Bundle\NavigationBundle\Entity\Builder\HistoryItemBuilder
 
     orob2b_account.navigation_item_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationItemBuilder
+    orob2b_account.history_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationHistoryBuilder
     orob2b_account.navigation_mostviewed_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationMostviewedBuilder
     orob2b_account.item.pinbar.post_persist_listener.class: Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist
 
@@ -315,11 +316,14 @@ services:
             - { name: oro_menu.builder, alias: frontend_favorite }
 
     orob2b_account.history_menu.builder:
-        class: %orob2b_account.navigation_item_menu.builder.class%
+        class: %orob2b_account.history_menu.builder.class%
         arguments:
             - @security.context
             - @doctrine.orm.entity_manager
             - @oro_navigation.item.factory
+        calls:
+            - [ setMatcher, [ @knp_menu.matcher ]]
+            - [ setOptions, [ @oro_config.user ]]
         tags:
             - { name: oro_menu.builder, alias: frontend_history }
 
