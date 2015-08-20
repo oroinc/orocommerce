@@ -9,7 +9,7 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -27,19 +27,19 @@ class ProductPriceDatagridListener
     protected $doctrineHelper;
 
     /**
-     * @var PriceListRequestHandler
+     * @var AbstractPriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
     /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param AbstractPriceListRequestHandler $priceListRequestHandler
      */
     public function __construct(
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
-        PriceListRequestHandler $priceListRequestHandler
+        AbstractPriceListRequestHandler $priceListRequestHandler
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
