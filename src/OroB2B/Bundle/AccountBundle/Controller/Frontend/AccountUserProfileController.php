@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -14,13 +12,11 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class AccountUserProfileController extends Controller
 {
-
     /**
      * Create account user form
      *
@@ -146,7 +142,7 @@ class AccountUserProfileController extends Controller
     {
         $accountUser = $this->getUser();
 
-        $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
+        $form = $this->createForm(FrontendAccountUserProfileType::NAME, $accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
             $this->getRequest(),

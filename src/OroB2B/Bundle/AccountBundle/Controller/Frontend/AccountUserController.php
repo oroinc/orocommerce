@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
+use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -96,8 +96,8 @@ class AccountUserController extends Controller
      */
     protected function update(AccountUser $accountUser)
     {
-        $form = $this->createForm(AccountUserType::NAME, $accountUser);
-        $handler = new AccountUserProfileController(
+        $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
+        $handler = new AccountUserHandler(
             $form,
             $this->getRequest(),
             $this->get('orob2b_account_user.manager'),
@@ -126,7 +126,6 @@ class AccountUserController extends Controller
         return $result;
     }
 
-
     /**
      * @Route("/info/{id}", name="orob2b_account_frontend_account_user_info", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUser/Frontend/widget:info.html.twig")
@@ -141,6 +140,4 @@ class AccountUserController extends Controller
             'entity' => $accountUser
         ];
     }
-
-
 }
