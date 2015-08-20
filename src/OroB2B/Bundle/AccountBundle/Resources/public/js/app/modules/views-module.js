@@ -34,4 +34,26 @@ require([
             collection: collection
         });
     });
+
+    /**
+     * Init PageHistoryView
+     */
+    BaseController.loadBeforeAction([
+        'orob2baccount/js/app/views/history-view'
+    ], function(FrontendPageHistoryView) {
+        BaseController.addToReuse('frontend_history', FrontendPageHistoryView, {
+            el: '#frontend_history-content'
+        });
+    });
+
+    /**
+     * Init PageMostViewedView
+     */
+    BaseController.loadBeforeAction([
+        'orob2baccount/js/app/views/most-viewed-view'
+    ], function(FrontendPageMostViewedView) {
+        BaseController.addToReuse('frontend_mostviewed', FrontendPageMostViewedView, {
+            el: '#frontend_mostviewed-content'
+        });
+    });
 });
