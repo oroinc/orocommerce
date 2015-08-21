@@ -27,9 +27,8 @@ orob2b:
                 assigned_to: 'Assigned to'
 
             notify_customer:
-                    label: 'Notify Customer'
-                    by_email.link.text: 'Notify by Email'
-                    by_email.link.title: 'Notify by Email'
+                label: 'Notify Customer'
+                by_email.link.text: 'Notify by Email'
 
         quoteproduct:
             entity_label: 'Quote Product'
