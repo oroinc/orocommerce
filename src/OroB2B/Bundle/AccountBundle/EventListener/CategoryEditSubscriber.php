@@ -4,23 +4,23 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 
 class CategoryEditSubscriber implements EventSubscriberInterface
 {
@@ -98,8 +98,8 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             ->findOneBy(['category' => $category]);
 
         if (!$categoryVisibility) {
-            $categoryVisibility = new CategoryVisibility();
-            $categoryVisibility->setCategory($category);
+            $categoryVisibility = (new CategoryVisibility())
+                ->setCategory($category);
         }
 
         $this->applyVisibility($categoryVisibility, self::CATEGORY_VISIBILITY, $visibilityEnum->getId());
