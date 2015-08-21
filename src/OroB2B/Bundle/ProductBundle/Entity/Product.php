@@ -240,24 +240,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->sku;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDescription()
-    {
-        // @codingStandardsIgnoreStart
-        return 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam consequat, augue ac egestas pharetra, tortor diam auctor libero, id tincidunt libero erat a justo. Nam tortor quam, imperdiet sed eleifend eget, elementum convallis velit. Suspendisse non quam vitae lectus imperdiet efficitur id ac est. Interdum et malesuada fames ac ante ipsum primis in faucibus. Quisque metus lacus, imperdiet commodo velit eget, sodales vulputate nibh. Quisque nec odio vitae erat dapibus faucibus ac non erat. Fusce eros tortor, aliquet vel molestie iaculis, vehicula at lacus.';
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
      * @return \DateTime
      */
     public function getCreatedAt()

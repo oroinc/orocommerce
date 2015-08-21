@@ -9,9 +9,6 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PriceListRequestHandler */
@@ -148,76 +145,6 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             'submit invalid currency' => [['USD', 'UAH'], ['USD', 'EUR'], ['USD']],
             'null value returns all currencies on initial state' => [null, ['USD', 'EUR'], ['EUR', 'USD']],
         ];
-    }
-
-    public function testShowTierPricesWithoutRequest()
-    {
-        $this->assertFalse($this->handler->getShowTierPrices());
-    }
-
-    /**
-     * @dataProvider showTierPricesWithoutParamDataProvider
-     *
-     * @param mixed $value
-     * @param bool $expected
-     */
-    public function testShowTierPricesWithoutParam($value, $expected)
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->once())
-            ->method('get')
-            ->with(PriceListRequestHandler::TIER_PRICES_KEY)
-            ->willReturn($value);
-
-        $this->assertEquals($expected, $this->handler->getShowTierPrices());
-    }
-
-    /**
-     * @return array
-     */
-    public function showTierPricesWithoutParamDataProvider()
-    {
-        return [
-            [
-                'value' => null,
-                'expected' => false
-            ],
-            [
-                'value' => false,
-                'expected' => false
-            ],
-            [
-                'value' => 'true',
-                'expected' => true
-            ],
-            [
-                'value' => 'false',
-                'expected' => false
-            ],
-            [
-                'value' => 1,
-                'expected' => true
-            ],
-            [
-                'value' => 0,
-                'expected' => false
-            ]
-        ];
-    }
-
-    public function testShowTierPrices()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->once())->method('get')->with(PriceListRequestHandler::TIER_PRICES_KEY)
-            ->willReturn(true);
-
-        $this->assertTrue($this->handler->getShowTierPrices());
     }
 
     /**

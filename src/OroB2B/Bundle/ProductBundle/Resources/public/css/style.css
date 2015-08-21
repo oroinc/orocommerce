@@ -14,3 +14,15 @@
 .product-container div.box-type1 div.title {
     padding: 0 !important;
 }
+
+.product-index-content.grid-sidebar-maximized {
+    margin-left: 320px;
+}
+
+.product-index-content.grid-sidebar-minimized {
+    margin-left: 40px;
+}
+
+.product-container .grid-sidebar.grid-sidebar-maximized {
+    width: 313px;
+}

@@ -39,6 +39,7 @@ parameters:
     orob2b_account.event_listener.datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListener
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
+    orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -279,6 +280,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    orob2b_frontend.listener.ormdatasource_acl:
+        class: %orob2b_account.event_listener.ormdatasource_acl.class%
+        arguments:
+            - @oro_security.security_facade
+            - @orob2b_account.owner.frontend_ownership_metadata_provider
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before, method: onResultBefore, priority: 100 }
 
     orob2b_account.item.builder.pinbar:
         class: %orob2b_account.item.builder.pinbar.class%
