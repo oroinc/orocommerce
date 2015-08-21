@@ -96,6 +96,7 @@ orob2b.account:
         role.label:                      'Role'
         websites.label:                  'Websites'
         account.label:                   'Account'
+        organization.label:              'Organization'
 
     accountuseraddress:
         city.label:                 City
