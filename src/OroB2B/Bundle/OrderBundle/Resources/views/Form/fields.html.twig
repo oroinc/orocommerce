@@ -125,3 +125,40 @@
         {{ form_widget(form.comment) }}
     </td>
 {% endblock %}
+
+{% block orob2b_order_line_item_frontend_widget %}
+    <td class="order-line-item-sku">
+        <div class="order-line-item-sku order-line-item-type-product">
+            {% if form.vars.value.product is defined %}
+                {{ form.vars.value.product.sku }}
+            {% endif %}
+        </div>
+    </td>
+    <td class="order-line-item-type">
+        <div class="order-line-item-type-product">
+            {{ form_widget(form.product) }}
+            {{ form_errors(form.product) }}
+        </div>
+    </td>
+    <td class="order-line-item-quantity">
+        {{ form_widget(form.quantity) }}
+        {{ form_errors(form.quantity) }}
+
+        {{ form_widget(form.productUnit) }}
+        {{ form_errors(form.productUnit) }}
+    </td>
+    <td class="order-line-item-price">
+        <div class="order-line-item-price-value">
+            {% if form.vars.value.price is defined %}
+                {{ form.vars.value.price.value }}
+            {% endif %}
+        </div>
+    </td>
+    <td class="order-line-item-ship_by">
+        {{ form_widget(form.shipBy) }}
+        {{ form_errors(form.shipBy) }}
+    </td>
+    <td class="order-line-item-comment">
+        {{ form_widget(form.comment) }}
+    </td>
+{% endblock %}

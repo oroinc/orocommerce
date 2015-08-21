@@ -86,10 +86,10 @@
             </div>
         {% endset %}
 
-        {% set dataBlocks = dataBlocks|merge({
+        {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.order.sections.order_line_items'|trans,
             'subblocks': [{'data' : [lineItems]}]
-        }) %}
+        }]) %}
     {% endif %}
 
     {% set id = 'order-view' %}

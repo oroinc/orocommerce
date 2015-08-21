@@ -53,6 +53,7 @@ orob2b:
             order_product_requests.label: 'Order Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
+            comment.frontend.label: 'Notes'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
             item: '{units}, {price} per {unit}'

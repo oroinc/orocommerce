@@ -60,6 +60,16 @@ class FrontendOrderType extends AbstractType
                 'customerNotes',
                 'textarea',
                 ['required' => false, 'label' => 'orob2b.order.customer_notes.frontend.label']
+            )
+            ->add(
+                'lineItems',
+                OrderLineItemsCollectionType::NAME,
+                [
+                    'type' => FrontendOrderLineItemType::NAME,
+                    'add_label' => 'orob2b.order.orderlineitem.add_label',
+                    'cascade_validation' => true,
+                    'options' => ['currency' => $order->getCurrency()]
+                ]
             );
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
