@@ -24,7 +24,10 @@
     {% endif %}
 
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="order-line-item">
+        class="order-line-item"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {view: 'orob2border/js/app/views/line-item-view'}|json_encode }}"
+        data-layout="separate">
         {{ form_widget(form, {disabled: disabled}) }}
 
         {% if allow_delete %}
@@ -90,17 +93,15 @@
         </div>
     </td>
     <td class="order-line-item-type">
-        <div data-page-component-module="orob2border/js/app/components/line-item-type-component">
-            <div class="order-line-item-type-product">
-                {{ form_widget(form.product) }}
-                {{ form_errors(form.product) }}
-                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
-            </div>
-            <div class="order-line-item-type-free-form">
-                {{ form_widget(form.freeFormProduct) }}
-                {{ form_errors(form.freeFormProduct) }}
-                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
-            </div>
+        <div class="order-line-item-type-product">
+            {{ form_widget(form.product) }}
+            {{ form_errors(form.product) }}
+            <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+        </div>
+        <div class="order-line-item-type-free-form">
+            {{ form_widget(form.freeFormProduct) }}
+            {{ form_errors(form.freeFormProduct) }}
+            <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
         </div>
     </td>
     <td class="order-line-item-quantity">
