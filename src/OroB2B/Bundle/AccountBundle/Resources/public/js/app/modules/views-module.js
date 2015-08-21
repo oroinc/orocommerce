@@ -39,10 +39,11 @@ require([
      * Init PageHistoryView
      */
     BaseController.loadBeforeAction([
-        'orob2baccount/js/app/views/history-view'
-    ], function(FrontendPageHistoryView) {
-        BaseController.addToReuse('frontend_history', FrontendPageHistoryView, {
-            el: '#frontend_history-content'
+        'oronavigation/js/app/views/history-view'
+    ], function(PageHistoryView) {
+        BaseController.addToReuse('frontend_history', PageHistoryView, {
+            el: '#frontend_history-content',
+            dataItems: 'frontend_history'
         });
     });
 
@@ -50,10 +51,11 @@ require([
      * Init PageMostViewedView
      */
     BaseController.loadBeforeAction([
-        'orob2baccount/js/app/views/most-viewed-view'
-    ], function(FrontendPageMostViewedView) {
-        BaseController.addToReuse('frontend_mostviewed', FrontendPageMostViewedView, {
-            el: '#frontend_mostviewed-content'
+        'oronavigation/js/app/views/most-viewed-view'
+    ], function(PageMostViewedView) {
+        BaseController.addToReuse('frontend_mostviewed', PageMostViewedView, {
+            el: '#frontend_mostviewed-content',
+            dataItems: 'frontend_mostviewed'
         });
     });
 });
