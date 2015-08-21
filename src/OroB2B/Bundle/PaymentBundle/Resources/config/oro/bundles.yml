@@ -1,2 +1,2 @@
 bundles:
-    - { name: OroB2B\Bundle\PaymentBundle\OroB2BPaymentBundle, priority: 16  }
+    - { name: OroB2B\Bundle\PaymentBundle\OroB2BPaymentBundle, priority: 18  }
