@@ -79,7 +79,10 @@ define(function(require) {
             this.targetElement.off('change');
             this.targetElement.off('select2-selecting');
 
-            this.changeAccountConfirmDialog.dispose();
+            if (this.changeAccountConfirmDialog) {
+                this.changeAccountConfirmDialog.dispose();
+                delete this.changeAccountConfirmDialog;
+            }
 
             AccountUserRole.__super__.dispose.call(this);
         },
