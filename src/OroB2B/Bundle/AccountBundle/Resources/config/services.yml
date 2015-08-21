@@ -9,6 +9,12 @@ parameters:
     orob2b_account.entity.account_user_role.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserRole
     orob2b_account.entity.audit.class: OroB2B\Bundle\AccountBundle\Entity\Audit
     orob2b_account.entity.audit_field.class: OroB2B\Bundle\AccountBundle\Entity\AuditField
+    orob2b_account.entity.navigation_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationItem
+    orob2b_account.entity.navigation_history_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationHistoryItem
+    orob2b_account.entity.pinbar_tab.class: OroB2B\Bundle\AccountBundle\Entity\PinbarTab
+    orob2b_account.entity.sidebar_state.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarState
+    orob2b_account.entity.widget.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarWidget
+    orob2b_account.entity.page_state.class: OroB2B\Bundle\AccountBundle\Entity\PageState
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -45,6 +51,17 @@ parameters:
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
 
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.item.builder.pinbar.class: Oro\Bundle\NavigationBundle\Entity\Builder\PinbarTabBuilder
+    orob2b_account.item.builder.favorite.class: Oro\Bundle\NavigationBundle\Entity\Builder\NavigationItemBuilder
+    orob2b_account.item.builder.history.class: Oro\Bundle\NavigationBundle\Entity\Builder\HistoryItemBuilder
+
+    orob2b_account.navigation_item_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationItemBuilder
+    orob2b_account.history_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationHistoryBuilder
+    orob2b_account.navigation_mostviewed_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationMostviewedBuilder
+    orob2b_account.item.pinbar.post_persist_listener.class: Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist
+
+    orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -271,3 +288,120 @@ services:
             - @orob2b_account.owner.frontend_ownership_metadata_provider
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before, method: onResultBefore, priority: 100 }
+
+    orob2b_account.item.builder.pinbar:
+        class: %orob2b_account.item.builder.pinbar.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+        calls:
+            - [ setClassName, [ %orob2b_account.entity.pinbar_tab.class% ]]
+            - [ setNavigationItemClassName, [ %orob2b_account.entity.navigation_item.class% ]]
+        tags:
+            - { name: oro_navigation.item.builder, alias: frontend_pinbar }
+
+    orob2b_account.item.builder.favorite:
+        class: %orob2b_account.item.builder.favorite.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+        calls:
+            - [ setClassName, [ %orob2b_account.entity.navigation_item.class% ]]
+        tags:
+            - { name: oro_navigation.item.builder, alias: frontend_favorite }
+
+    orob2b_account.pinbar_menu.builder:
+        class: %orob2b_account.navigation_item_menu.builder.class%
+        arguments:
+            - @security.context
+            - @doctrine.orm.entity_manager
+            - @oro_navigation.item.factory
+        tags:
+            - { name: oro_menu.builder, alias: frontend_pinbar }
+
+    orob2b_account.favorites_menu.builder:
+        class: %orob2b_account.navigation_item_menu.builder.class%
+        arguments:
+            - @security.context
+            - @doctrine.orm.entity_manager
+            - @oro_navigation.item.factory
+        tags:
+            - { name: oro_menu.builder, alias: frontend_favorite }
+
+    orob2b_account.history_menu.builder:
+        class: %orob2b_account.history_menu.builder.class%
+        arguments:
+            - @security.context
+            - @doctrine.orm.entity_manager
+            - @oro_navigation.item.factory
+        calls:
+            - [ setMatcher, [ @knp_menu.matcher ]]
+            - [ setOptions, [ @oro_config.user ]]
+        tags:
+            - { name: oro_menu.builder, alias: frontend_history }
+
+    orob2b_account.mostviewed_menu.builder:
+        class: %orob2b_account.navigation_mostviewed_menu.builder.class%
+        arguments:
+            - @security.context
+            - @doctrine.orm.entity_manager
+            - @oro_navigation.item.factory
+        calls:
+            - [ setOptions, [ @oro_config.user ]]
+        tags:
+            - { name: oro_menu.builder, alias: frontend_mostviewed }
+
+    orob2b_account.item.pinbar.post_persist_listener:
+        class: %orob2b_account.item.pinbar.post_persist_listener.class%
+        calls:
+            - [ setClassName, [ %orob2b_account.entity.pinbar_tab.class% ]]
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+
+    kernel.listener.frontend_nav_history_response:
+        class: %oro_navigation.event.response_history.listener.class%
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onResponse }
+        arguments:
+            - @oro_navigation.item.factory
+            - @security.context
+            - @doctrine
+            - @oro_navigation.title_service
+        calls:
+            - [ setHistoryItemEntityFQCN, [ %orob2b_account.entity.navigation_history_item.class% ]]
+            - [ setUserEntityFQCN, [ %orob2b_account.entity.account_user.class%]]
+            - [ setNavigationHistoryItemType, ['frontend_history']]
+
+    orob2b_account.item.builder.history:
+        class: %orob2b_account.item.builder.history.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+        calls:
+            - [ setClassName, [ %orob2b_account.entity.navigation_history_item.class% ]]
+        tags:
+            - { name: oro_navigation.item.builder, alias: frontend_history }
+
+    orob2b_account.item.builder.mostviewed:
+        class: %orob2b_account.item.builder.history.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+        calls:
+            - [ setClassName, [ %orob2b_account.entity.navigation_history_item.class% ]]
+        tags:
+            - { name: oro_navigation.item.builder, alias: frontend_mostviewed }
+
+    orob2b_account.content_provider.menu.history_menu:
+        class: %orob2b_account.content_provider.menu.class%
+        arguments:
+            - @oro_menu.twig.extension
+            - "frontend_history"
+            - "frontend_history"
+        tags:
+            - { name: oro_ui.content_provider }
+
+    orob2b_account.content_provider.menu.mostviewed_menu:
+        class: %orob2b_account.content_provider.menu.class%
+        arguments:
+            - @oro_menu.twig.extension
+            - "frontend_mostviewed"
+            - "frontend_mostviewed"
+        tags:
+            - { name: oro_ui.content_provider }
