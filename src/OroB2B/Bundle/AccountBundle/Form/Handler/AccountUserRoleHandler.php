@@ -199,9 +199,11 @@ class AccountUserRoleHandler extends AclRoleHandler
             $appendUsers = $appendNewUsers;
         }
 
-        // Security check
-        $appendUsers = array_filter($appendUsers, function (AccountUser $user) use ($role) {
-            return $user->getAccount() === $role->getAccount();
-        });
+        if ($role->getAccount()) {
+            // Security check
+            $appendUsers = array_filter($appendUsers, function (AccountUser $user) use ($role) {
+                return $user->getAccount() === $role->getAccount();
+            });
+        }
     }
 }
