@@ -81,7 +81,9 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
 
 OroB2B\Bundle\AccountBundle\Entity\AccountUserRole:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: label
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [label, account]
+            message: "Role with this name already exists"
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: role
     properties:
         role:

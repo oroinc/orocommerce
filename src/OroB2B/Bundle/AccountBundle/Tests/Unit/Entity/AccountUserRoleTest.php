@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -33,16 +34,17 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test relations between AccountUserRole and Websites
+     * Test AccountUserRole relations
      */
-    public function testWebsiteRelations()
+    public function testRelations()
     {
         static::assertPropertyCollections(new AccountUserRole(), [
             ['websites', new Website()],
         ]);
 
         static::assertPropertyAccessors(new AccountUserRole(), [
-            ['account', new Account()]
+            ['account', new Account()],
+            ['organization', new Organization()]
         ]);
     }
 

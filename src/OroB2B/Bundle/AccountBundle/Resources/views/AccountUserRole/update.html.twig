@@ -92,7 +92,7 @@
             'data' : [
                 form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
                 form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
-                dataGrid.renderGrid('account-account-users-grid-update', {_parameters: {account: entity.account, role: entity.id}}, { cssClass: 'inner-grid' })
+                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id, account: entity.account ? entity.account.id : null}, { cssClass: 'inner-grid' })
             ]
         }]
     }] ) %}

@@ -96,6 +96,7 @@ orob2b.account:
         role.label:                      'Role'
         websites.label:                  'Websites'
         account.label:                   'Account'
+        organization.label:              'Organization'
         type.label:                      'Type'
         type.predefined.label:           'Predefined'
         type.customizable.label:         'Customizable'
