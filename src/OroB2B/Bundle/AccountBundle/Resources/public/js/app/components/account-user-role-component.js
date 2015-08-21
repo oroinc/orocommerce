@@ -140,8 +140,8 @@ define(function(require) {
                 mediator.trigger('datagrid:setParam:' + this.datagridName, 'hideHasRole', 1);
             }
 
-            mediator.trigger('datagrid:setParam:' + this.datagridName, 'data_in', null);
-            mediator.trigger('datagrid:setParam:' + this.datagridName, 'data_not_in', null);
+            mediator.trigger('datagrid:removeParam:' + this.datagridName, 'data_in');
+            mediator.trigger('datagrid:removeParam:' + this.datagridName, 'data_not_in');
 
             this.appendElement.val(null);
             this.removeElement.val(null);
