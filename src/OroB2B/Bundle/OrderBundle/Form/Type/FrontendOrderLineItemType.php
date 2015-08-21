@@ -33,16 +33,6 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     {
         parent::buildForm($builder, $options);
 
-        $builder
-            ->add(
-                'comment',
-                'textarea',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.order.orderlineitem.comment.frontend.label',
-                ]
-            );
-
         $builder->addEventListener(
             FormEvents::SUBMIT,
             function (FormEvent $event) use ($options) {

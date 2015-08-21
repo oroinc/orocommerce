@@ -62,6 +62,14 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'required' => false,
                     'label' => 'orob2b.order.orderlineitem.ship_by.label',
                 ]
+            )
+            ->add(
+                'comment',
+                'textarea',
+                [
+                    'required' => false,
+                    'label' => 'orob2b.order.orderlineitem.comment.label',
+                ]
             );
     }
 

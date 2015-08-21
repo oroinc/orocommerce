@@ -52,14 +52,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'label' => 'orob2b.order.orderlineitem.price_type.label',
                     'required' => true,
                 ]
-            )
-            ->add(
-                'comment',
-                'textarea',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.order.orderlineitem.comment.label',
-                ]
             );
     }
 
