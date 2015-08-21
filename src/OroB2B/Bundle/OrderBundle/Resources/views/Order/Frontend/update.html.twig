@@ -53,7 +53,17 @@
         } only %}
     {% endset %}
 
-    {% set dataBlocks = [] %}
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'subblocks': [{
+            'title': '',
+                'data': [
+                    form_widget(form.lineItems)
+                ]
+            }]
+        }
+    ] %}
 
     {% if isBillingAddressGranted %}
         {% set billingAddress %}
