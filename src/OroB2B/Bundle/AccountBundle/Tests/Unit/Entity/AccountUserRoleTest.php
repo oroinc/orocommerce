@@ -52,4 +52,15 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
         $role = new AccountUserRole($name);
         $this->assertEquals(AccountUserRole::PREFIX_ROLE . 'ANOTHER_TEST_ROLE', $role->getRole());
     }
+
+    public function testIsPredefined()
+    {
+        $name = 'Predefined role';
+
+        $role = new AccountUserRole($name);
+        $this->assertTrue($role->isPredefined());
+
+        $role->setAccount(new Account());
+        $this->assertFalse($role->isPredefined());
+    }
 }

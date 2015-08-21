@@ -75,3 +75,10 @@ orob2b_account_frontend_account_user_datagrid_index:
         gridName: '[\w\:-]+'
     options:
         frontend: true
+
+orob2b_account_account_user_role_frontend:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserRoleController.php"
+    type:     annotation
+    prefix:   /account/roles
+    options:
+        frontend: true

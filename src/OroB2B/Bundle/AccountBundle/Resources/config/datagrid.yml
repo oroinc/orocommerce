@@ -410,6 +410,7 @@ datagrid:
                     - role.id
                     - role.role
                     - role.label
+                    - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
         properties:
@@ -427,10 +428,18 @@ datagrid:
         columns:
             label:
                 label: orob2b.account.accountuserrole.role.label
+            isRolePredefined:
+                type: twig
+                label: orob2b.account.accountuserrole.type.label
+                frontend_type: html
+                data_name: isRolePredefined
+                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
         sorters:
             columns:
                 label:
                     data_name: role.label
+                isRolePredefined:
+                    data_name: isRolePredefined
             default:
                 label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -438,6 +447,14 @@ datagrid:
                 label:
                     type: string
                     data_name: role.label
+                isRolePredefined:
+                    type: choice
+                    data_name: CAST(isRolePredefined as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.accountuserrole.type.predefined.label
+                                false: orob2b.account.accountuserrole.type.customizable.label
         actions:
             update:
                 type:          navigate
@@ -453,6 +470,64 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_account_account_user_role_delete
 
+    frontend-account-account-user-roles-grid:
+        extended_entity_name: %orob2b_account.entity.account_user_role.class%
+        options:
+            entityHint: role
+            entity_pagination: true
+            skip_acl_check: true
+        source:
+            type: orm
+            query:
+                select:
+                    - role.id
+                    - role.role
+                    - role.label
+                    - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
+                from:
+                    - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
+        properties:
+            id: ~
+            update_link:
+                type: url
+                route: orob2b_account_account_user_role_update
+                params:
+                    - id
+            delete_link:
+                type: url
+                route: orob2b_api_account_delete_accountuserrole
+                params:
+                    - id
+        columns:
+            label:
+                label: orob2b.account.accountuserrole.role.label
+            isRolePredefined:
+                type: twig
+                label: orob2b.account.accountuserrole.type.label
+                frontend_type: html
+                data_name: isRolePredefined
+                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
+        sorters:
+            columns:
+                label:
+                    data_name: role.label
+                isRolePredefined:
+                    data_name: isRolePredefined
+            default:
+                label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                label:
+                    type: string
+                    data_name: role.label
+                isRolePredefined:
+                    type: choice
+                    data_name: CAST(isRolePredefined as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.accountuserrole.type.predefined.label
+                                false: orob2b.account.accountuserrole.type.customizable.label
     account-account-users-grid-update:
         source:
             type: orm
