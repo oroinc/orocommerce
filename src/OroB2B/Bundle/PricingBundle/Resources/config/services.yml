@@ -11,6 +11,7 @@ parameters:
     orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
+    orob2b_pricing.provider.product_price_matching.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceMatchingProvider
 
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
     orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
@@ -212,3 +213,9 @@ services:
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_pricing.provider.product_price_matching:
+        class: %orob2b_pricing.provider.product_price_matching.class%
+        arguments:
+            - @doctrine
+            - %orob2b_pricing.entity.product_price.class%
