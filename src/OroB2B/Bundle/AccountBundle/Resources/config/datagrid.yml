@@ -528,6 +528,7 @@ datagrid:
                             choices:
                                 true:  orob2b.account.accountuserrole.type.predefined.label
                                 false: orob2b.account.accountuserrole.type.customizable.label
+
     account-account-users-grid-update:
         source:
             type: orm
@@ -573,7 +574,6 @@ datagrid:
                     path: _parameters.changeAccountAction
                     default: FALSE
                     type: boolean
-
         properties:
             id: ~
         columns:
