@@ -21,8 +21,7 @@ class PriceTypeSelectorType extends AbstractType
                 'choices' => [
                     OrderLineItem::PRICE_TYPE_UNIT => 'orob2b.order.orderlineitem.price_type.unit',
                     OrderLineItem::PRICE_TYPE_BUNDLED => 'orob2b.order.orderlineitem.price_type.bundled',
-                ],
-                'expanded' => true
+                ]
             ]
         );
     }

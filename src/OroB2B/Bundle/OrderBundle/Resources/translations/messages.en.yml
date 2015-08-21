@@ -68,8 +68,11 @@ orob2b:
             ship_by.label: 'Ship By'
             price_type:
                 label: 'Price Type'
-                bundled: 'bundled item'
-                unit: 'at unit price of'
+                bundled: 'bundle'
+                unit: 'per unit'
+            select:
+                product: Select product
+                free_form: Free-form entry
 
             column:
                 product: 'Product'
