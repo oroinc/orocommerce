@@ -59,6 +59,8 @@ parameters:
     orob2b_account.navigation_mostviewed_menu.builder.class: Oro\Bundle\NavigationBundle\Menu\NavigationMostviewedBuilder
     orob2b_account.item.pinbar.post_persist_listener.class: Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist
 
+    orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -376,3 +378,21 @@ services:
             - [ setClassName, [ %orob2b_account.entity.navigation_history_item.class% ]]
         tags:
             - { name: oro_navigation.item.builder, alias: frontend_mostviewed }
+
+    orob2b_account.content_provider.menu.history_menu:
+        class: %orob2b_account.content_provider.menu.class%
+        arguments:
+            - @oro_menu.twig.extension
+            - "frontend_history"
+            - "frontend_history"
+        tags:
+            - { name: oro_ui.content_provider }
+
+    orob2b_account.content_provider.menu.mostviewed_menu:
+        class: %orob2b_account.content_provider.menu.class%
+        arguments:
+            - @oro_menu.twig.extension
+            - "frontend_mostviewed"
+            - "frontend_mostviewed"
+        tags:
+            - { name: oro_ui.content_provider }

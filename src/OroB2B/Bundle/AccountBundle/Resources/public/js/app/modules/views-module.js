@@ -34,4 +34,28 @@ require([
             collection: collection
         });
     });
+
+    /**
+     * Init PageHistoryView
+     */
+    BaseController.loadBeforeAction([
+        'oronavigation/js/app/views/history-view'
+    ], function(PageHistoryView) {
+        BaseController.addToReuse('frontend_history', PageHistoryView, {
+            el: '#frontend_history-content',
+            dataItems: 'frontend_history'
+        });
+    });
+
+    /**
+     * Init PageMostViewedView
+     */
+    BaseController.loadBeforeAction([
+        'oronavigation/js/app/views/most-viewed-view'
+    ], function(PageMostViewedView) {
+        BaseController.addToReuse('frontend_mostviewed', PageMostViewedView, {
+            el: '#frontend_mostviewed-content',
+            dataItems: 'frontend_mostviewed'
+        });
+    });
 });
