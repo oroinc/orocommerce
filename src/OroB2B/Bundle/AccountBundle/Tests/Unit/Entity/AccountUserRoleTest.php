@@ -34,9 +34,9 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test relations between AccountUserRole and Websites
+     * Test AccountUserRole relations
      */
-    public function testWebsiteRelations()
+    public function testRelations()
     {
         static::assertPropertyCollections(new AccountUserRole(), [
             ['websites', new Website()],
