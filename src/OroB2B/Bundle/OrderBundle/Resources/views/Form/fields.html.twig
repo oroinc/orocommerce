@@ -94,12 +94,12 @@
             <div class="order-line-item-type-product">
                 {{ form_widget(form.product) }}
                 {{ form_errors(form.product) }}
-                <a class="order-line-item-type-free-form">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
             </div>
             <div class="order-line-item-type-free-form">
                 {{ form_widget(form.freeFormProduct) }}
                 {{ form_errors(form.freeFormProduct) }}
-                <br/><a class="order-line-item-type-product">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
             </div>
         </div>
     </td>
