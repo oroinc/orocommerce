@@ -29,6 +29,20 @@
             'entity_label': 'orob2b.sale.quote.entity_label'|trans
         }) }}
     {% endif %}
+    {% set html %}
+        {{ UI.dropdownItem({
+            'path': '#',
+            'title': 'orob2b.sale.quote.notify_customer.by_email.link.text'|trans,
+            'label': 'orob2b.sale.quote.notify_customer.by_email.link.text'|trans,
+            'iCss': 'icon-envelope'
+        }) }}
+    {% endset %}
+
+    {{ UI.dropdownButton({
+        'label': 'orob2b.sale.quote.notify_customer.label'|trans,
+        'aCss': 'pull-right',
+        'html': html
+    }) }}
 {% endblock navButtons %}
 
 {% block content_data %}
