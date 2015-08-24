@@ -105,6 +105,11 @@ datagrid:
                     type:      datetime
                     data_name: product.updatedAt
 
+    products-select-grid-frontend:
+        extends: products-select-grid
+        source:
+            acl_resource: orob2b_product_view_products
+
     products-grid:
         extends: products-select-grid
         options:
