@@ -86,10 +86,18 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
      * @param array $options
      * @param array $submittedData
      * @param OrderLineItem $expectedData
+     * @param OrderLineItem|null $data
      */
-    public function testSubmit(array $options, array $submittedData, OrderLineItem $expectedData)
-    {
-        $form = $this->factory->create($this->formType, new OrderLineItem(), $options);
+    public function testSubmit(
+        array $options,
+        array $submittedData,
+        OrderLineItem $expectedData,
+        OrderLineItem $data = null
+    ) {
+        if (!$data) {
+            $data = new OrderLineItem();
+        }
+        $form = $this->factory->create($this->formType, $data, $options);
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());

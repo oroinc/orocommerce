@@ -3,12 +3,8 @@
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class OrderLineItemType extends AbstractOrderLineItemType
 {
@@ -57,32 +53,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'required' => true,
                 ]
             );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        /** @var OrderLineItem $item */
-        $item = $form->getData();
-        if ($item && $item->isFromExternalSource()) {
-            $this->markReadOnly($view);
-        }
-    }
-
-    /**
-     * @param FormView $view
-     */
-    protected function markReadOnly(FormView $view)
-    {
-        if (!$view->children) {
-            $view->vars['attr']['readonly'] = true;
-        } else {
-            foreach ($view->children as $child) {
-                $this->markReadOnly($child);
-            }
-        }
     }
 
     /**

@@ -40,12 +40,14 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
      * @param array $options
      * @param array $submittedData
      * @param OrderLineItem $expectedData
-     * @param Price $matchedPrice
+     * @param OrderLineItem|null $data
+     * @param Price|null $matchedPrice
      */
     public function testSubmit(
         array $options,
         array $submittedData,
         OrderLineItem $expectedData,
+        OrderLineItem $data = null,
         Price $matchedPrice = null
     ) {
         $this->productPriceMatchingProvider->expects($this->once())
@@ -58,7 +60,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             )
             ->willReturn($matchedPrice);
 
-        parent::testSubmit($options, $submittedData, $expectedData);
+        parent::testSubmit($options, $submittedData, $expectedData, $data);
     }
 
     /**
@@ -92,8 +94,40 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
+                'data' => null,
                 'matchedPrice' => Price::create($price, $currency)
-            ]
+            ],
+            'restricted modifications' => [
+                'options' => [
+                    'currency' => $currency,
+                ],
+                'submittedData' => [
+                    'product' => 2,
+                    'quantity' => 10,
+                    'productUnit' => 'item',
+                    'shipBy' => '2015-02-03',
+                    'comment' => 'Comment',
+                ],
+                'expectedData' => (new OrderLineItem())
+                    ->setFromExternalSource(true)
+                    ->setProduct($product)
+                    ->setQuantity(5)
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
+                    ->setPrice(Price::create($price, 'USD'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
+                    ->setComment('Comment'),
+                'data' => (new OrderLineItem())
+                    ->setFromExternalSource(true)
+                    ->setProduct($product)
+                    ->setQuantity(5)
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
+                    ->setPrice(Price::create($price, 'USD'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
+                    ->setComment('Comment'),
+                'matchedPrice' => Price::create($price, $currency)
+            ],
         ];
     }
 }
