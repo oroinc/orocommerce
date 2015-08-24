@@ -12,6 +12,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
@@ -60,6 +62,8 @@ class LoadRequestDemoData extends AbstractFixture implements
 
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
+        $accountUsers = $this->getAccountUsers($manager);
+
         $locator  = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
         if (is_array($filePath)) {
@@ -72,14 +76,19 @@ class LoadRequestDemoData extends AbstractFixture implements
         while (($data = fgetcsv($handler, 5000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
+            $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+
             $request = new Request();
-            $request->setFirstName($row['first_name']);
-            $request->setLastName($row['last_name']);
-            $request->setEmail($row['email']);
-            $request->setPhone($row['phone']);
-            $request->setCompany($row['company']);
-            $request->setRole($row['role']);
-            $request->setBody($row['body']);
+            $request->setFirstName($row['first_name'])
+                ->setLastName($row['last_name'])
+                ->setEmail($row['email'])
+                ->setPhone($row['phone'])
+                ->setCompany($row['company'])
+                ->setRole($row['role'])
+                ->setBody($row['body'])
+                ->setAccountUser($accountUser)
+                ->setAccount($accountUser ? $accountUser->getAccount() : null)
+            ;
 
             $status = $statuses[rand(0, count($statuses) - 1)];
             $request->setStatus($status);
@@ -128,6 +137,15 @@ class LoadRequestDemoData extends AbstractFixture implements
         }
 
         return $currencies;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|AccountUser[]
+     */
+    protected function getAccountUsers(ObjectManager $manager)
+    {
+        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:AccountUser')->findBy([], null, 10));
     }
 
     /**

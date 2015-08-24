@@ -74,11 +74,12 @@ class RequestACLTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check isset RFP request with first user ownership
+        /** @var Request $request */
         $request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getFrontendOwner());
-        $this->assertEquals($user->getId(), $request->getFrontendOwner()->getId());
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getAccountUser());
+        $this->assertEquals($user->getId(), $request->getAccountUser()->getId());
 
         // Check owner access
         $this->assertIsGranted($permissions['owner'], $request);

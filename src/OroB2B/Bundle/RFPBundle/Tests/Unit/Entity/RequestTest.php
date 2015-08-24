@@ -73,8 +73,8 @@ class RequestTest extends EntityTestCase
     public function testOwnershipAccessors()
     {
         $properties = [
-            ['frontendOwner', null],
-            ['frontendOwner', new AccountUser()],
+            ['accountUser', null],
+            ['accountUser', new AccountUser()],
             ['organization', new Organization()],
         ];
 

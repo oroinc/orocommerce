@@ -19,6 +19,45 @@ use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 class RequestController extends Controller
 {
     /**
+     * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
+     * @Template("OroB2BRFPBundle:Request/Frontend:view.html.twig")
+     * @param RFPRequest $request
+     * @return array
+     */
+    public function viewAction(RFPRequest $request)
+    {
+        return [
+            'entity' => $request,
+        ];
+    }
+
+    /**
+     * @Route("/", name="orob2b_rfp_frontend_request_index")
+     * @Template("OroB2BRFPBundle:Request/Frontend:index.html.twig")
+     * @return array
+     */
+    public function indexAction()
+    {
+        return [
+            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class')
+        ];
+    }
+
+    /**
+     * @Route("/info/{id}", name="orob2b_rfp_frontend_request_info", requirements={"id"="\d+"})
+     * @Template("OroB2BRFPBundle:Request/Frontend/widget:info.html.twig")
+     *
+     * @param RFPRequest $request
+     * @return array
+     */
+    public function infoAction(RFPRequest $request)
+    {
+        return [
+            'entity' => $request
+        ];
+    }
+
+    /**
      * @Route("/create", name="orob2b_rfp_request_create")
      * @Method("GET")
      * @Template("OroB2BRFPBundle:Request/Frontend:create.html.twig")
@@ -63,7 +102,7 @@ class RequestController extends Controller
 
             $user = $this->getUser();
             if ($user) {
-                $rfpRequest->setFrontendOwner($user);
+                $rfpRequest->setAccountUser($user);
             } else {
                 $rfpRequest->setOrganization(
                     $this->getWebsiteManager()->getCurrentWebsite()->getOrganization()

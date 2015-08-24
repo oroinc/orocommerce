@@ -252,3 +252,62 @@ datagrid:
                 icon:          trash
                 link:          delete_link
         action_configuration: [@orob2b_rfp.datagrid.action_permission_provider, "getRequestStatusDefinitionPermissions"]
+
+    frontend-requests-grid:
+        extended_entity_name: %orob2b_rfp.entity.request.class%
+        options:
+            entityHint:        request
+            entity_pagination: true
+        source:
+            type: orm
+            query:
+                select:
+                    - request.id
+                    - request.createdAt
+                    - requestAccountUser.username as accountUserName
+                from:
+                    - { table: %orob2b_rfp.entity.request.class%, alias: request }
+                join:
+                    left:
+                        - { join: request.accountUser, alias: requestAccountUser }
+        columns:
+            id:
+                label:         orob2b.frontend.rfp.request.id.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            accountUserName:
+                label:         orob2b.frontend.rfp.request.column.submitted_to
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_rfp_frontend_request_view
+                params: [ id ]
+        sorters:
+            columns:
+                accountUserName:
+                    data_name: accountUserName
+                createdAt:
+                    data_name: request.createdAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                accountUserName:
+                    type:      entity
+                    data_name: request.accountUser
+                    options:
+                        field_options:
+                            class:      %orob2b_account.entity.account_user.class%
+                            multiple:   false
+                createdAt:
+                    type:      datetime
+                    data_name: request.createdAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true

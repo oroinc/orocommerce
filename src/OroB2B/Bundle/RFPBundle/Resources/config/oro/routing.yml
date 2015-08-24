@@ -17,9 +17,9 @@ orob2b_rfp_bundle_api:
     defaults:
         version:  latest
 
-orob2b_rfp_frontend_account_user:
+orob2b_rfp_frontend:
     resource: "@OroB2BRFPBundle/Controller/Frontend/RequestController.php"
     type: annotation
-    prefix: /rfp
+    prefix: /account/rfp
     options:
         frontend: true

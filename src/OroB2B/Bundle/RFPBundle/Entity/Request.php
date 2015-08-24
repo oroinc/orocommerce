@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
 
@@ -31,8 +32,8 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="frontendOwner",
- *              "frontend_owner_column_name"="frontend_owner_id",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -144,12 +145,20 @@ class Request extends ExtendRequest
     protected $updatedAt;
 
     /**
-     * @var AccountUser|null
+     * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="frontend_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $frontendOwner;
+    protected $accountUser;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $account;
 
     /**
      * @var Organization
@@ -223,26 +232,51 @@ class Request extends ExtendRequest
 
     /**
      * @param Organization $organization
+     * @return Request
      */
     public function setOrganization(Organization $organization)
     {
         $this->organization = $organization;
+
+        return $this;
     }
 
     /**
      * @return AccountUser
      */
-    public function getFrontendOwner()
+    public function getAccountUser()
     {
-        return $this->frontendOwner;
+        return $this->accountUser;
     }
 
     /**
-     * @param AccountUser $frontendOwner
+     * @param AccountUser $accountUser
+     * @return Request
      */
-    public function setFrontendOwner(AccountUser $frontendOwner = null)
+    public function setAccountUser(AccountUser $accountUser = null)
     {
-        $this->frontendOwner = $frontendOwner;
+        $this->accountUser = $accountUser;
+
+        return $this;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return Request
+     */
+    public function setAccount(Account $account = null)
+    {
+        $this->account = $account;
+
+        return $this;
     }
 
     /**
