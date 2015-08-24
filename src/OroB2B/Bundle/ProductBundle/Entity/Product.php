@@ -604,6 +604,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        if (false === $this->variants) {
+            $this->variantLinks->clear();
+            $this->variantFields = [];
+        }
     }
 
     public function __clone()

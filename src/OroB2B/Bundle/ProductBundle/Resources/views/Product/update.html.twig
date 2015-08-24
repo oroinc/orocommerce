@@ -106,18 +106,20 @@
         }] ) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title' : 'orob2b.product.sections.productVariants'|trans,
-        'subblocks': [{
-            'title' : null,
-            'useSpan': false,
-            'data' : [
-                form_widget(form.appendVariants, {'id': 'productAppendVariants'}),
-                form_widget(form.removeVariants, {'id': 'productRemoveVariants'}),
-                dataGrid.renderGrid('product-variants-select-grid', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
-            ]
+    {% if entity.hasVariants %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'orob2b.product.sections.productVariants'|trans,
+            'subblocks': [{
+                'title' : null,
+                'useSpan': false,
+                'data' : [
+                    form_widget(form.appendVariants, {'id': 'productAppendVariants'}),
+                    form_widget(form.removeVariants, {'id': 'productRemoveVariants'}),
+                    dataGrid.renderGrid('product-variants-select-grid', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
+                ]
             }]
-    }] ) %}
+        }] ) %}
+    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),
