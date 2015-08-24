@@ -42,8 +42,12 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
      * @param OrderLineItem $expectedData
      * @param Price $matchedPrice
      */
-    public function testSubmit(array $options, array $submittedData, OrderLineItem $expectedData, Price $matchedPrice)
-    {
+    public function testSubmit(
+        array $options,
+        array $submittedData,
+        OrderLineItem $expectedData,
+        Price $matchedPrice = null
+    ) {
         $this->productPriceMatchingProvider->expects($this->once())
             ->method('matchPrice')
             ->with(

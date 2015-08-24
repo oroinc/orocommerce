@@ -19,6 +19,7 @@ orob2b:
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
         price_list.label: 'Price List'
+        line_items.label: Line Items
 
         orderaddress:
             entity_label: Order Address
@@ -66,6 +67,8 @@ orob2b:
             quote_product_offer.label: 'Quote Product Offer'
             fromExternalSource.label: 'Created from External Source'
             ship_by.label: 'Ship By'
+            free_form_product.label: Product (free-form)
+            from_external_source.label: Created from External Source
             price_type:
                 label: 'Price Type'
                 bundled: 'bundle'
