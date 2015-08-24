@@ -36,7 +36,14 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
-            ->add('variants', 'checkbox', ['label' => 'orob2b.product.variants.label'])
+            ->add(
+                'variants',
+                'checkbox',
+                [
+                    'label' => 'orob2b.product.variants.label',
+                    'tooltip'  => 'orob2b.product.form.tooltip.variants'
+                ]
+            )
             ->add(
                 'variantFields',
                 ProductCustomFieldsChoiceType::NAME,

@@ -178,8 +178,11 @@ datagrid:
                     - productStatus.id as statusId
                     - productStatus.name as statusName
                     - >
-                         (CASE WHEN (parentProductVariantLink.id IS NOT NULL OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
-                         THEN true ELSE false END) as isVariant
+                         (CASE
+                               WHEN (parentProductVariantLink.id IS NOT NULL OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                               THEN true
+                               ELSE false
+                          END) as isVariant
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
@@ -194,9 +197,6 @@ datagrid:
                         -
                             join: product.parentProductVariantLink
                             alias: parentProductVariantLink2
-                        -
-                            join: product.variantLinks
-                            alias: variantLinks
                     inner:
                         -
                             join: product.names
@@ -207,8 +207,7 @@ datagrid:
                     and:
                         - product.id <> :parentProduct
                         - parentProductVariantLink2.product = :parentProduct OR parentProductVariantLink2.id IS NULL
-                groupBy: product, productNames, productInventoryStatus.id, productStatus.id, parentProductVariantLink.id
-                having: COUNT(variantLinks.id) = 0
+                        - product.variantLinks IS EMPTY
             bind_parameters:
                 - parentProduct
         columns:

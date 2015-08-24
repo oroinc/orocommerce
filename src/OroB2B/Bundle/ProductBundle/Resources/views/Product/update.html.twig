@@ -52,21 +52,29 @@
 {% block content_data %}
     {% set id = 'product-edit' %}
 
+    {% set generalData = [
+        form_row(form.sku),
+        form_row(form.variants)
+    ] %}
+
+    {% if entity.hasVariants %}
+        {% set generalData = generalData|merge([form_row(form.variantFields)]) %}
+    {% endif %}
+
+    {% set generalData = generalData|merge([
+        form_row(form.names),
+        form_row(form.status),
+        form_row(form.inventoryStatus),
+        form_row(form.image),
+        form_row(form.unitPrecisions)
+    ]) %}
+
     {% set generalBlock = {
         'title': 'orob2b.product.sections.general'|trans,
         'class': 'active',
         'subblocks': [{
             'title': '',
-            'data': [
-                form_row(form.sku),
-                form_row(form.variants),
-                form_row(form.variantFields),
-                form_row(form.names),
-                form_row(form.status),
-                form_row(form.inventoryStatus),
-                form_row(form.image),
-                form_row(form.unitPrecisions),
-            ]
+            'data': generalData
         },
         {
             'title': '',
