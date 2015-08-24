@@ -236,6 +236,8 @@ datagrid:
             id: ~
         sorters:
             columns:
+                isVariant:
+                    data_name: isVariant
                 id:
                     data_name: product.id
                 sku:
@@ -247,7 +249,7 @@ datagrid:
                 inventoryStatus:
                     data_name: inventoryStatusName
             default:
-                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                isVariant: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 id:

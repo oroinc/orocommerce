@@ -578,11 +578,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @param Collection|ProductVariantLink[] $variantLinks
+     * @param ProductVariantLink $variantLink
      */
-    public function setVariantLinks($variantLinks)
+    public function addVariantLink(ProductVariantLink $variantLink)
     {
-        $this->variantLinks = $variantLinks;
+        $this->variantLinks->add($variantLink);
     }
 
     /**

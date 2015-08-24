@@ -39,5 +39,41 @@ class ProductVariantLink
      * @var boolean
      * @ORM\Column(name="linked", type="boolean", options={"default"="1"})
      */
-    protected $linked;
+    protected $linked = true;
+
+    /**
+     * ProductVariantLink constructor.
+     * @param Product $product
+     * @param Product $variant
+     */
+    public function __construct(Product $product, Product $variant)
+    {
+        $this->product = $product;
+        $this->variant = $variant;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getProduct()
+    {
+        return $this->product;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getVariant()
+    {
+        return $this->variant;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isLinked()
+    {
+        return $this->linked;
+    }
+
 }
