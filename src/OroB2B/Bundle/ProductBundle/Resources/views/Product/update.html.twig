@@ -59,6 +59,8 @@
             'title': '',
             'data': [
                 form_row(form.sku),
+                form_row(form.variants),
+                form_row(form.variantFields),
                 form_row(form.names),
                 form_row(form.status),
                 form_row(form.inventoryStatus),
@@ -105,14 +107,14 @@
     {% endif %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title' : '###VARIANTS-BLOCK###'|trans,
+        'title' : 'orob2b.product.sections.productVariants'|trans,
         'subblocks': [{
             'title' : null,
             'useSpan': false,
             'data' : [
                 form_widget(form.appendVariants, {'id': 'productAppendVariants'}),
                 form_widget(form.removeVariants, {'id': 'productRemoveVariants'}),
-                dataGrid.renderGrid('product-variants-select-grid', {}, { cssClass: 'inner-grid' })
+                dataGrid.renderGrid('product-variants-select-grid', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
             ]
             }]
     }] ) %}

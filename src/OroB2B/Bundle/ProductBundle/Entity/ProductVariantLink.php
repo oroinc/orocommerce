@@ -23,14 +23,14 @@ class ProductVariantLink
 
     /**
      * @var Product
-     * @ORM\ManyToOne(targetEntity="Product", inversedBy="variants")
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="variantLinks")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
 
     /**
      * @var Product
-     * @ORM\ManyToOne(targetEntity="Product")
+     * @ORM\OneToOne(targetEntity="Product")
      * @ORM\JoinColumn(name="variant_id", referencedColumnName="id")
      */
     protected $variant;

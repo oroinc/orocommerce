@@ -6,6 +6,7 @@ parameters:
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
+    orob2b_product.form.type.custom_entity_fields_choice.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType
 
 services:
     # Product form types
@@ -53,3 +54,9 @@ services:
         class: %orob2b_product.form.type.product_default_visibility_type.class%
         tags:
             - { name: form.type, alias: orob2b_product_default_visibility }
+
+    orob2b_product.form.type.custom_entity_fields_choice:
+        class: %orob2b_product.form.type.custom_entity_fields_choice.class%
+        arguments: [@oro_entity_config.config_manager, %orob2b_product.product.class%]
+        tags:
+            - { name: form.type, alias: orob2b_product_custom_entity_fields_choice }

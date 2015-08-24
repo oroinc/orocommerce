@@ -36,6 +36,12 @@ class ProductType extends AbstractType
     {
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
+            ->add('variants', 'checkbox', ['label' => 'orob2b.product.variants.label'])
+            ->add(
+                'variantFields',
+                ProductCustomFieldsChoiceType::NAME,
+                ['label' => 'orob2b.product.variant_fields.label']
+            )
             ->add(
                 'status',
                 'oro_enum_select',

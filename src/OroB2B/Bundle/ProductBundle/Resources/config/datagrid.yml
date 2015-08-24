@@ -157,14 +157,14 @@ datagrid:
     product-variants-select-grid:
         extended_entity_name: %orob2b_product.product.class%
         options:
-            entityHint:        product
+            entityHint:        parentProduct
             entity_pagination: true
-#            rowSelection:
-#                dataField: id
-#                columnName: isVariant
-#                selectors:
-#                    included: '#productAppendVariants'
-#                    excluded: '#productRemoveVariants'
+            rowSelection:
+                dataField: id
+                columnName: isVariant
+                selectors:
+                    included: '#productAppendVariants'
+                    excluded: '#productRemoveVariants'
         source:
             acl_resource: orob2b_product_view
             type:         orm
@@ -177,21 +177,43 @@ datagrid:
                     - productInventoryStatus.name as inventoryStatusName
                     - productStatus.id as statusId
                     - productStatus.name as statusName
+                    - >
+                         (CASE WHEN (parentProductVariantLink.id IS NOT NULL OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                         THEN true ELSE false END) as isVariant
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: product.status, alias: productStatus}
+                        -
+                            join: product.parentProductVariantLink
+                            alias: parentProductVariantLink
+                            conditionType: WITH
+                            condition: parentProductVariantLink.product = :parentProduct
+                        -
+                            join: product.parentProductVariantLink
+                            alias: parentProductVariantLink2
+                        -
+                            join: product.variantLinks
+                            alias: variantLinks
                     inner:
                         -
                             join: product.names
                             alias: productNames
                             conditionType: WITH
                             condition: productNames.locale IS NULL
+                where:
+                    and:
+                        - product.id <> :parentProduct
+                        - parentProductVariantLink2.product = :parentProduct OR parentProductVariantLink2.id IS NULL
+                groupBy: product, productNames, productInventoryStatus.id, productStatus.id, parentProductVariantLink.id
+                having: COUNT(variantLinks.id) = 0
+            bind_parameters:
+                - parentProduct
         columns:
             isVariant:
-                label: 'IS VARIANT?'
+                label: orob2b.product.is_variant.label
                 editable: true
                 frontend_type: boolean
             id:

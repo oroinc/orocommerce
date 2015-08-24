@@ -94,6 +94,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     protected $sku;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
+     */
+    protected $variants = false;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="variant_fields", type="array", nullable=true)
+     */
+    protected $variantFields;
+
+    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -192,11 +206,18 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     protected $descriptions;
 
     /**
-     * @var Collection|Product[]
+     * @var Collection|ProductVariantLink[]
      *
      * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      */
-    protected $variants;
+    protected $variantLinks;
+
+    /**
+     * @var ProductVariantLink
+     *
+     * @ORM\OneToOne(targetEntity="ProductVariantLink", mappedBy="variant", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $parentProductVariantLink;
 
     public function __construct()
     {
@@ -205,7 +226,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->unitPrecisions = new ArrayCollection();
         $this->names          = new ArrayCollection();
         $this->descriptions   = new ArrayCollection();
-        $this->variants       = new ArrayCollection();
+        $this->variantLinks       = new ArrayCollection();
     }
 
     /**
@@ -243,6 +264,44 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function setSku($sku)
     {
         $this->sku = $sku;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasVariants()
+    {
+        return $this->variants;
+    }
+
+    /**
+     * @param bool $variants
+     * @return Product
+     */
+    public function setVariants($variants)
+    {
+        $this->variants = $variants;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVariantFields()
+    {
+        return $this->variantFields;
+    }
+
+    /**
+     * @param array $variantFields
+     * @return Product
+     */
+    public function setVariantFields(array $variantFields)
+    {
+        $this->variantFields = $variantFields;
 
         return $this;
     }
@@ -511,27 +570,19 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @return Collection|Product[]
+     * @return Collection|ProductVariantLink[]
      */
-    public function getVariants()
+    public function getVariantLinks()
     {
-        return $this->variants;
+        return $this->variantLinks;
     }
 
     /**
-     * @param Collection|Product[] $variants
+     * @param Collection|ProductVariantLink[] $variantLinks
      */
-    public function setVariants($variants)
+    public function setVariantLinks($variantLinks)
     {
-        $this->variants = $variants;
-    }
-
-    /**
-     * @param Product $product
-     */
-    public function addVariant($product)
-    {
-        $this->variants->add($product);
+        $this->variantLinks = $variantLinks;
     }
 
     /**
@@ -562,7 +613,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->unitPrecisions = new ArrayCollection();
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
-            $this->variants = new ArrayCollection();
+            $this->variantLinks = new ArrayCollection();
         }
     }
 }
