@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
 
@@ -79,6 +80,23 @@
             'subblocks': [{'data' : [productVisibility]}]
         },
     ] %}
+
+    {% if entity.hasVariants %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'orob2b.product.sections.productVariants'|trans,
+            'subblocks': [{
+                'title' : null,
+                'useSpan': false,
+                'data' : [
+                    dataGrid.renderGrid(
+                        'product-variants-view-grid',
+                        {'parentProduct': entity.id},
+                        { cssClass: 'inner-grid' }
+                    )
+                ]
+            }]
+        }] ) %}
+    {% endif %}
 
     {% set id = 'product-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

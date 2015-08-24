@@ -9,14 +9,17 @@ use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 class ProductCustomFieldsChoiceType extends AbstractType
 {
     const NAME = 'orob2b_product_custom_entity_fields_choice';
+
     /**
      * @var ConfigManager
      */
     private $configManager;
+
     /**
      * @var string
      */
     private $productClass;
+
     /**
      * @param ConfigManager $configManager
      * @param $productClass
@@ -26,6 +29,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
         $this->configManager = $configManager;
         $this->productClass = $productClass;
     }
+
     /**
      * {@inheritdoc}
      */
@@ -38,6 +42,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
+
     /**
      * @return string
      */
@@ -45,6 +50,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
     {
         return 'choice';
     }
+
     /**
      * @return string
      */
@@ -52,6 +58,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
     {
         return self::NAME;
     }
+
     /**
      * @return array
      */
@@ -61,6 +68,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
         $schema = $extendConfig->get('schema');
         $customProperties = $schema['property'];
         unset($customProperties['serialized_data']);
+
         return $customProperties;
     }
 }
