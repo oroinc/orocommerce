@@ -86,10 +86,6 @@ services:
 
     orob2b_account.form.type.frontend.account_user:
         class: %orob2b_account.form.type.frontend.account_user.class%
-        arguments:
-            - @oro_security.security_facade
-        calls:
-            - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
         tags:
             - { name: form.type, alias: orob2b_account_frontend_account_user }
 
