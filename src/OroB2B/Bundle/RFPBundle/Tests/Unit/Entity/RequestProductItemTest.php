@@ -24,6 +24,14 @@ class RequestProductItemTest extends AbstractTest
         static::assertPropertyAccessors(new RequestProductItem(), $properties);
     }
 
+    public function testGetEntityIdentifier()
+    {
+        $item = new RequestProductItem();
+        $value = 321;
+        $this->setProperty($item, 'id', $value);
+        $this->assertEquals($value, $item->getEntityIdentifier());
+    }
+
     public function testSetProductUnit()
     {
         $productUnit        = (new ProductUnit())->setCode('rfp-unit-code');

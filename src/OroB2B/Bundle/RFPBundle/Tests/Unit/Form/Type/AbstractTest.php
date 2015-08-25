@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -23,7 +22,6 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
-use OroB2B\Bundle\RFPBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -63,19 +61,18 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getValidators()
     {
-        $requestProductItemConstraint = new Constraints\RequestProductItem();
+        $productUnitHolderConstraint = new ProductUnitHolder();
         return [
-            $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
+            $productUnitHolderConstraint->validatedBy() => new ProductUnitHolderValidator(),
         ];
     }
 
     /**
-     * @param TranslatorInterface $translator
      * @return RequestProductItemType
      */
-    protected function prepareRequestProductItemType(TranslatorInterface $translator)
+    protected function prepareRequestProductItemType()
     {
-        $requestProductItemType = new RequestProductItemType($translator);
+        $requestProductItemType = new RequestProductItemType();
         $requestProductItemType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
 
         return $requestProductItemType;
