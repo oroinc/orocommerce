@@ -94,7 +94,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -131,6 +131,7 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountUserForeignKeys($schema);
         $this->addOroB2BAccountUserAccessAccountUserRoleForeignKeys($schema);
         $this->addOroB2BAccountUserOrganizationForeignKeys($schema);
+        $this->addOroB2BAccountUserRoleForeignKeys($schema);
         $this->addOroB2BAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroB2BAccountForeignKeys($schema);
         $this->addOroB2BAccountAddressForeignKeys($schema);
@@ -384,10 +385,13 @@ class OroB2BAccountBundleInstaller implements
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('role', 'string', ['length' => 64]);
         $table->addColumn('label', 'string', ['length' => 64]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
+        $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
 
         $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
     }
@@ -561,6 +565,29 @@ class OroB2BAccountBundleInstaller implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
+
+    /**
+     * Add orob2b_account_user_role foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountUserRoleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
 
     /**
      * Add orob2b_account_role_to_website foreign keys.
