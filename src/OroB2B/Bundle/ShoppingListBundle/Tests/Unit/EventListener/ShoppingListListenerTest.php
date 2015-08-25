@@ -26,7 +26,7 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->shoppingListOne = (new ShoppingList())
             ->setCurrent(true)
-            ->setOwner(new AccountUser());
+            ->setAccountUser(new AccountUser());
         $this->shoppingListTwo = new ShoppingList();
     }
 

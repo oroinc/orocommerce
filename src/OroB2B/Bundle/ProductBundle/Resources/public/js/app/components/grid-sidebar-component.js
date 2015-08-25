@@ -1,9 +1,7 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
-    var ProductSidebarGridComponent;
+    var GridSidebarComponent;
     var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
@@ -12,25 +10,18 @@ define(function(require) {
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
-    ProductSidebarGridComponent = BaseComponent.extend({
+    GridSidebarComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            widgetAlias: 'products-grid-widget',
-            widgetContent: '.product-index-content',
+            sidebarAlias: '',
+            widgetAlias: '',
+            widgetContainer: '',
+            widgetRoute: 'oro_datagrid_widget',
             widgetRouteParameters: {
-                gridName: 'products-grid',
-                renderParams: {
-                    enableFullScreenLayout: 1,
-                    enableViews: 0
-                },
-                renderParamsTypes: {
-                    enableFullScreenLayout: 'int',
-                    enableViews: 'int'
-                }
-            },
-            sidebarItemSelector: '.sidebar-item'
+                gridName: ''
+            }
         },
 
         /**
@@ -57,9 +48,9 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$container = options._sourceElement;
-            this.$widgetContent = $(options.widgetContent);
+            this.$widgetContainer = $(options.widgetContainer);
 
-            mediator.on('product_sidebar:changed', this.onSidebarChange, this);
+            mediator.on('grid-sidebar:change:' + this.options.sidebarAlias, this.onSidebarChange, this);
 
             this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
             this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
@@ -91,15 +82,16 @@ define(function(require) {
         onSidebarChange: function(data) {
             var params = _.extend(this._getCurrentUrlParams(), data.params);
             var widgetParams = _.extend(this.options.widgetRouteParameters, params);
+            var self = this;
 
-            history.pushState({}, document.title, location.pathname + '?' + $.param(params) + location.hash);
+            this._pushState(params);
 
             this._patchGridCollectionUrl(params);
 
             widgetManager.getWidgetInstanceByAlias(
                 this.options.widgetAlias,
                 function(widget) {
-                    widget.setUrl(routing.generate('oro_datagrid_widget', widgetParams));
+                    widget.setUrl(routing.generate(self.options.widgetRoute, widgetParams));
 
                     if (data.widgetReload) {
                         widget.render();
@@ -140,8 +132,8 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            var paramsString = this._urlParamsToString(params);
-            if (paramsString.length > 0) {
+            var paramsString = this._urlParamsToString(_.omit(params, 'saveState'));
+            if (paramsString.length) {
                 paramsString = '?' + paramsString;
             }
 
@@ -168,15 +160,13 @@ define(function(require) {
             }
 
             if (state === 'on') {
-                this.$container.find('.sidebar-minimized').hide();
-                this.$container.find('.sidebar-maximized').show();
-                this.$widgetContent.addClass('product-sidebar-maximized').removeClass('product-sidebar-minimized');
+                this.$container.addClass('grid-sidebar-maximized').removeClass('grid-sidebar-minimized');
+                this.$widgetContainer.addClass('grid-sidebar-maximized').removeClass('grid-sidebar-minimized');
 
                 delete params.sidebar;
             } else {
-                this.$container.find('.sidebar-maximized').hide();
-                this.$container.find('.sidebar-minimized').show();
-                this.$widgetContent.addClass('product-sidebar-minimized').removeClass('product-sidebar-maximized');
+                this.$container.addClass('grid-sidebar-minimized').removeClass('grid-sidebar-maximized');
+                this.$widgetContainer.addClass('grid-sidebar-minimized').removeClass('grid-sidebar-maximized');
 
                 params.sidebar = state;
             }
@@ -224,9 +214,9 @@ define(function(require) {
 
             delete this.gridCollection;
 
-            ProductSidebarGridComponent.__super__.dispose.call(this);
+            GridSidebarComponent.__super__.dispose.call(this);
         }
     });
 
-    return ProductSidebarGridComponent;
+    return GridSidebarComponent;
 });

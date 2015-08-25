@@ -65,7 +65,6 @@ class ShoppingListManager
 
         $shoppingList = new ShoppingList();
         $shoppingList
-            ->setOwner($this->accountUser)
             ->setOrganization($this->accountUser->getOrganization())
             ->setAccount($this->accountUser->getAccount())
             ->setAccountUser($this->accountUser)

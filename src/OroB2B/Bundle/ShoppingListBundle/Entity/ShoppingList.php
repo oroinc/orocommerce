@@ -32,8 +32,8 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="owner",
- *              "frontend_owner_column_name"="account_user_owner_id",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -114,21 +114,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      * )
      */
     protected $updatedAt;
-
-    /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="CASCADE")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $owner;
 
     /**
      * @var Organization
@@ -295,26 +280,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     public function getOrganization()
     {
         return $this->organization;
-    }
-
-    /**
-     * @return AccountUser
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param AccountUser $owningUser
-     *
-     * @return $this
-     */
-    public function setOwner(AccountUser $owningUser)
-    {
-        $this->owner = $owningUser;
-
-        return $this;
     }
 
     /**

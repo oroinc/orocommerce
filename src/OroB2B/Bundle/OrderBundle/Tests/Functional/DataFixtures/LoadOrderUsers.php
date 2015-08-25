@@ -10,6 +10,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
 {
+    const ORDER_USER_1 = 'order.simple_user';
+    const ORDER_USER_2 = 'order.simple_user2';
+
     /**
      * @var ContainerInterface
      */
@@ -28,8 +31,8 @@ class LoadOrderUsers extends AbstractFixture implements ContainerAwareInterface
      */
     public function load(ObjectManager $manager)
     {
-        $this->createOrderUser('order.simple_user');
-        $this->createOrderUser('order.simple_user2');
+        $this->createOrderUser(self::ORDER_USER_1);
+        $this->createOrderUser(self::ORDER_USER_2);
 
         $manager->flush();
     }

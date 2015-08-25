@@ -21,7 +21,6 @@ class ShoppingListTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['label', 'label-test-123'],
             ['notes', 'notes-test-123'],
-            ['owner', new AccountUser()],
             ['organization', new Organization()],
             ['account', new Account()],
             ['accountUser', new AccountUser()],

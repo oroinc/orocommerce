@@ -1,30 +1,37 @@
-{% extends commerce.layout %}
+{% extends 'OroB2BFrontendBundle:actions:update.html.twig' %}
 
-{% oro_title_set({params : {"%entityName%": 'orob2b.rfp.request.entity_label'|trans} }) %}
+{% oro_title_set({params : {'%entityName%': 'orob2b.rfp.request.entity_label'|trans, "%label%": entity.label|default('N/A'|trans)} }) %}
 
-{% block content %}
-    {% for flashMessage in app.session.flashbag.get('notice') %}
-        <div class="flash-notice">
-            {{ flashMessage }}
-        </div>
-    {% endfor %}
-    <div class="form-container">
-        <div class="responsive-cell">
-        <fieldset class="form-horizontal rfp-form">
-            {{ form_start(form) }}
-            {{ form_errors(form) }}
-            {{ form_row(form.firstName) }}
-            {{ form_row(form.lastName) }}
-            {{ form_row(form.email) }}
-            {{ form_row(form.phone) }}
-            {{ form_row(form.company) }}
-            {{ form_row(form.role) }}
-            {{ form_row(form.body) }}
-            <div class="control-group text-center">
-                {{ form_row(form.submit, {'attr': {'class': 'btn  btn-primary '}}) }}
-            </div>
-            {{ form_end(form) }}
-        </fieldset>
-        </div>
-    </div>
-{% endblock content %}
+{% set formAction = path('orob2b_rfp_request_process') %}
+
+{% block navButtons %}
+    {% set html = UI.saveAndCloseButton() %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.rfp.request.entity_label'|trans}) %}
+    {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'request-edit' %}
+
+    {% set dataBlocks = [{
+            'title': 'orob2b.rfp.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data': [
+                    form(form)
+                ]
+            }]
+        }]
+    %}
+
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}

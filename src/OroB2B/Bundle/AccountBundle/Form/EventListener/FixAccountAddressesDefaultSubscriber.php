@@ -20,7 +20,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
 {
     /**
-     * Property path to collection of all addresses (e.g. 'owner.address' means $address->getOwner()->getAddresses())
+     * Property path to collection of all addresses
+     * (e.g. 'frontendOwner.address' means $address->getFrontendOwner()->getAddresses())
      *
      * @var string
      */

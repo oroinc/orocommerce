@@ -18,7 +18,7 @@ class ShoppingListListener
         /** @var ShoppingList $shoppingList */
         $shoppingList = $args->getEntity();
         if ($shoppingList instanceof ShoppingList && $shoppingList->isCurrent()) {
-            $this->setNewCurrent($args->getEntityManager(), $shoppingList->getOwner());
+            $this->setNewCurrent($args->getEntityManager(), $shoppingList->getAccountUser());
         }
     }
 

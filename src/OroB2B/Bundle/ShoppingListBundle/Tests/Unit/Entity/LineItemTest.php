@@ -21,12 +21,11 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['product', new Product()],
             ['shoppingList', new ShoppingList()],
-            ['owner', new AccountUser()],
             ['organization', new Organization()],
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
             ['quantity', 12.5],
-            ['owner', new AccountUser()],
+            ['accountUser', new AccountUser()],
             ['organization', new Organization()],
         ];
 

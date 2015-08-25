@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 /**
@@ -22,7 +23,7 @@ class PaymentTermControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
-        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData'], true);
+        $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
     }
 
     public function testIndex()
@@ -46,6 +47,8 @@ class PaymentTermControllerTest extends WebTestCase
         /** @var Form $form */
         $createForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
         $createForm['orob2b_payment_term[label]'] = self::TERM_LABEL_NEW;
+        $createForm['orob2b_payment_term[appendAccounts]'] = $this->getReference('account.level_1')->getId();
+        $createForm['orob2b_payment_term[appendAccountGroups]'] = $this->getReference('account_group.group1')->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($createForm);
@@ -56,11 +59,20 @@ class PaymentTermControllerTest extends WebTestCase
 
         $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
         $this->assertContains(self::TERM_LABEL_NEW, $html);
+
+        $accountsGrid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
+        $this->assertContains($this->getReference('account.level_1')->getName(), $accountsGrid);
+
+        $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
+        $this->assertContains($this->getReference('account_group.group1')->getName(), $accountsGroupGrid);
     }
 
+    /**
+     * @depends testCreate
+     */
     public function testUpdate()
     {
-        $paymentTermData = $this->getPaymentTermDataByLabel(LoadPaymentTermData::TERM_LABEL_NET_10);
+        $paymentTermData = $this->getPaymentTermDataByLabel(self::TERM_LABEL_NEW);
 
         $crawler = $this->client->request(
             'GET',
@@ -70,6 +82,10 @@ class PaymentTermControllerTest extends WebTestCase
         /** @var Form $form */
         $updateForm = $crawler->selectButton(self::SAVE_AND_CLOSE_BUTTON)->form();
         $updateForm['orob2b_payment_term[label]'] = self::TERM_LABEL_UPDATED;
+        $updateForm['orob2b_payment_term[appendAccounts]'] = $this->getReference('account.orphan')->getId();
+        $updateForm['orob2b_payment_term[removeAccounts]'] = $this->getReference('account.level_1')->getId();
+        $updateForm['orob2b_payment_term[appendAccountGroups]'] = $this->getReference('account_group.group2')->getId();
+        $updateForm['orob2b_payment_term[removeAccountGroups]'] = $this->getReference('account_group.group1')->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($updateForm);
@@ -80,11 +96,22 @@ class PaymentTermControllerTest extends WebTestCase
 
         $this->assertContains(self::CREATE_UPDATE_SUCCESS_MESSAGE, $html);
         $this->assertContains(self::TERM_LABEL_UPDATED, $html);
+
+        $accountsGrid = $crawler->filter('.inner-grid')->eq(0)->attr('data-page-component-options');
+        $this->assertContains($this->getReference('account.orphan')->getName(), $accountsGrid);
+        $this->assertNotContains($this->getReference('account.level_1')->getName(), $accountsGrid);
+
+        $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
+        $this->assertContains($this->getReference('account_group.group2')->getName(), $accountsGroupGrid);
+        $this->assertNotContains($this->getReference('account_group.group1')->getName(), $accountsGroupGrid);
     }
 
+    /**
+     * @depends testUpdate
+     */
     public function testView()
     {
-        $paymentTermData = $this->getPaymentTermDataByLabel(LoadPaymentTermData::TERM_LABEL_NET_10);
+        $paymentTermData = $this->getPaymentTermDataByLabel(self::TERM_LABEL_UPDATED);
 
         $crawler = $this->client->request(
             'GET',
@@ -96,6 +123,9 @@ class PaymentTermControllerTest extends WebTestCase
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_10, $crawler->html());
     }
 
+    /**
+     * @depends testView
+     */
     public function testDelete()
     {
         $paymentTermData = $this->getPaymentTermDataByLabel(LoadPaymentTermData::TERM_LABEL_NET_10);

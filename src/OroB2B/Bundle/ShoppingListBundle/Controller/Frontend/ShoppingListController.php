@@ -94,7 +94,6 @@ class ShoppingListController extends Controller
         /** @var AccountUser $accountUser */
         $accountUser = $this->getUser();
         $shoppingList
-            ->setOwner($accountUser)
             ->setOrganization($accountUser->getOrganization())
             ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser);

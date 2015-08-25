@@ -79,16 +79,15 @@ abstract class AbstractLoadAddressDemoData extends AbstractFixture implements Co
         }
 
         $address = $this->getNewAddressEntity();
-        $address
+        $address->setTypes(new ArrayCollection($types));
+        $address->setDefaults(new ArrayCollection($defaultTypes))
             ->setPrimary(true)
             ->setLabel('Primary address')
             ->setCountry($country)
             ->setStreet($data['street'])
             ->setCity($data['city'])
             ->setRegion($region)
-            ->setPostalCode($data['zipCode'])
-            ->setTypes(new ArrayCollection($types))
-            ->setDefaults(new ArrayCollection($defaultTypes));
+            ->setPostalCode($data['zipCode']);
 
         return $address;
     }

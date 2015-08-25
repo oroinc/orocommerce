@@ -16,6 +16,11 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
 {
     const QUOTE1    = 'sale.quote.1';
     const QUOTE2    = 'sale.quote.2';
+    const QUOTE3    = 'sale.quote.3';
+    const QUOTE4    = 'sale.quote.4';
+    const QUOTE5    = 'sale.quote.5';
+    const QUOTE6    = 'sale.quote.6';
+    const QUOTE7    = 'sale.quote.7';
 
     const PRODUCT1  = 'product.1';
     const PRODUCT2  = 'product.2';
@@ -36,12 +41,14 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'products'  => [
                 self::PRODUCT1 => [
                     [
+                        'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 1,
                         'unit'      => self::UNIT1,
                         'price'     => 1,
                         'currency'  => self::CURRENCY1,
                     ],
                     [
+                        'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 2,
                         'unit'      => self::UNIT2,
                         'price'     => 2,
@@ -50,6 +57,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ],
                 self::PRODUCT2 => [
                     [
+                        'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 3,
                         'unit'      => self::UNIT3,
                         'price'     => 3,
@@ -59,8 +67,38 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             ],
         ],
         [
-            'qid'       => self::QUOTE2,
-            'products'  => [],
+            'qid'           => self::QUOTE2,
+            'account'       => LoadUserData::ACCOUNT1,
+            'products'      => [],
+        ],
+        [
+            'qid'           => self::QUOTE3,
+            'account'       => LoadUserData::ACCOUNT1,
+            'accountUser'   => LoadUserData::ACCOUNT1_USER1,
+            'products'      => [],
+        ],
+        [
+            'qid'           => self::QUOTE4,
+            'account'       => LoadUserData::ACCOUNT1,
+            'accountUser'   => LoadUserData::ACCOUNT1_USER2,
+            'products'      => [],
+        ],
+        [
+            'qid'           => self::QUOTE5,
+            'account'       => LoadUserData::ACCOUNT1,
+            'accountUser'   => LoadUserData::ACCOUNT1_USER3,
+            'products'      => [],
+        ],
+        [
+            'qid'           => self::QUOTE6,
+            'account'       => LoadUserData::ACCOUNT2,
+            'products'      => [],
+        ],
+        [
+            'qid'           => self::QUOTE7,
+            'account'       => LoadUserData::ACCOUNT2,
+            'accountUser'   => LoadUserData::ACCOUNT2_USER1,
+            'products'      => [],
         ],
     ];
 
@@ -70,6 +108,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
@@ -89,6 +128,14 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setOwner($user)
                 ->setOrganization($user->getOrganization())
             ;
+
+            if (!empty($item['account'])) {
+                $quote->setAccount($this->getReference($item['account']));
+            }
+
+            if (!empty($item['accountUser'])) {
+                $quote->setAccountUser($this->getReference($item['accountUser']));
+            }
 
             foreach ($item['products'] as $sku => $items) {
                 $this->addQuoteProduct($manager, $quote, $sku, $items);
@@ -121,7 +168,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         foreach ($items as $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
+                ->setAllowIncrements(false)
                 ->setQuantity($item['quantity'])
+                ->setPriceType($item['priceType'])
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
             ;
 

@@ -1,0 +1,17 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.frontend.sale.quote.qid.label'|trans, entity.qid) }}
+            {% if is_granted_view_account_user(entity) %}
+                {{ UI.renderHtmlProperty('orob2b.frontend.sale.quote.account_user.label'|trans, entity.accountUser) }}
+            {% endif %}
+            {{ UI.renderProperty('orob2b.frontend.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
+        </div>
+        <div class="responsive-block">
+            {{ entityConfig.renderDynamicFields(entity) }}
+        </div>
+    </div>
+</div>

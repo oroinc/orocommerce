@@ -1,0 +1,32 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% if prices and prices|length > 0 %}
+    {% set pricesContent %}
+        {% set shownUnit = '' %}
+
+        <table>
+            {% for key, price in prices %}
+                {% if shownUnit != price.unit.code %}
+                    {% set shownUnit = price.unit.code %}
+                    <tr>
+                        <td colspan="2">
+                            {% if key != 0 %}<br/>{% endif %}
+                            <strong>{{ shownUnit|orob2b_format_product_unit_label|capitalize }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+
+                <tr>
+                    <td>
+                        <div class="text-right">{{ price.quantity }}:&nbsp;</div>
+                    </td>
+                    <td>
+                        <div class="text-left">{{ price.price|oro_format_price }}</div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endset %}
+
+    {{ UI.renderHtmlProperty('orob2b.pricing.productprice.entity_plural_label'|trans, pricesContent) }}
+{% endif %}

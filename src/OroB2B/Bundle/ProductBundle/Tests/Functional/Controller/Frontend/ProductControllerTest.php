@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -50,6 +51,7 @@ class ProductControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains($product->getSku(), $result->getContent());
+        $this->assertContains($product->getDefaultName()->getString(), $result->getContent());
     }
 
     /**

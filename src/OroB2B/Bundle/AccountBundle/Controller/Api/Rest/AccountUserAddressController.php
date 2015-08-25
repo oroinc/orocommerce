@@ -226,7 +226,7 @@ class AccountUserAddressController extends RestController implements ClassResour
         $result['regionCode']  = $entity->getRegionCode();
         $result['country'] = $entity->getCountryName();
 
-        unset($result['owner']);
+        unset($result['frontendOwner']);
 
         return $result;
     }

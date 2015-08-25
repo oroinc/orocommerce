@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\EventListener\FixAddressesPrimarySubscriber;
 
@@ -66,13 +66,14 @@ class AccountTypedAddressType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
                 'single_form' => true,
-                'all_addresses_property_path' => 'owner.addresses'
+                'all_addresses_property_path' => 'frontendOwner.addresses',
+                'ownership_disabled' => true
             ]
         );
     }

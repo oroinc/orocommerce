@@ -55,7 +55,7 @@ class AjaxLineItemController extends Controller
         $accountUser = $this->getUser();
         $lineItem = (new LineItem())
             ->setProduct($product)
-            ->setOwner($accountUser)
+            ->setAccountUser($accountUser)
             ->setOrganization($accountUser->getOrganization());
 
         $form = $this->createForm(FrontendLineItemWidgetType::NAME, $lineItem);
@@ -98,7 +98,7 @@ class AjaxLineItemController extends Controller
         $lineItem = (new LineItem())
             ->setProduct($product)
             ->setShoppingList($shoppingList)
-            ->setOwner($shoppingList->getOwner())
+            ->setAccountUser($shoppingList->getAccountUser())
             ->setOrganization($shoppingList->getOrganization());
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);

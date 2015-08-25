@@ -6,12 +6,11 @@ orob2b:
         id.label: ID
         label.label: Label
         notes.label: Notes
-        owner.label: Owner
         account.label: Account
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
-        is_current.label: Current
+        current.label: Current
         default.label: Default
 
         create_new_form:
@@ -62,7 +61,7 @@ orob2b:
             shopping_list.label: Shopping List
             unit.label: Unit
             organization.label: Organization
-            owner.label: Owner
+            account_user.label: Account User
             add_line_item: Add Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label

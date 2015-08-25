@@ -134,7 +134,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(1);
 
         $shoppingList->expects($this->any())
-            ->method('getOwner')
+            ->method('getAccountUser')
             ->willReturn(new AccountUser());
 
         $shoppingListManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')

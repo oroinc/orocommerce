@@ -75,7 +75,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
             /** @var Product $product */
             foreach ($chunkedProducts[$index] as $id => $product) {
                 $lineItem = (new LineItem())
-                    ->setOwner($accountUser)
+                    ->setAccountUser($accountUser)
                     ->setOrganization($accountUser->getOrganization())
                     ->setShoppingList($shoppingList)
                     ->setNotes(sprintf('Line item %d notes', $id + 1))

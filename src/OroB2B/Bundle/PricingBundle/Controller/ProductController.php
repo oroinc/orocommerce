@@ -91,6 +91,6 @@ class ProductController extends Controller
      */
     protected function getPriceListHandler()
     {
-        return $this->get('orob2b_pricing.model.price_list_request_hanlder');
+        return $this->get('orob2b_pricing.model.price_list_request_handler');
     }
 }

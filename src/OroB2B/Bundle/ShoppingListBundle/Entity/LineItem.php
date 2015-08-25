@@ -34,8 +34,8 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="owner",
- *              "frontend_owner_column_name"="account_user_owner_id",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -140,7 +140,7 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
      * @var AccountUser
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -149,7 +149,7 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
      *      }
      * )
      */
-    protected $owner;
+    protected $accountUser;
 
     /**
      * @var Organization
@@ -288,19 +288,19 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
     /**
      * @return AccountUser
      */
-    public function getOwner()
+    public function getAccountUser()
     {
-        return $this->owner;
+        return $this->accountUser;
     }
 
     /**
-     * @param AccountUser $owningUser
+     * @param AccountUser $user
      *
      * @return $this
      */
-    public function setOwner(AccountUser $owningUser)
+    public function setAccountUser(AccountUser $user)
     {
-        $this->owner = $owningUser;
+        $this->accountUser = $user;
 
         return $this;
     }

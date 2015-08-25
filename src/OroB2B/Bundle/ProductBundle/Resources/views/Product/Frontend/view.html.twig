@@ -1,13 +1,13 @@
-{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
+{% extends 'OroUIBundle:actions:view.html.twig' %}
 
-{% oro_title_set({params : {"%sku%": entity.sku}}) %}
+{% oro_title_set({params : {"%name%": entity.defaultName.string|default('N/A'|trans)}}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_product_frontend_product_index'),
         'indexLabel': 'orob2b.product.entity_plural_label'|trans,
-        'entityTitle': entity.sku|default('N/A'|trans)
+        'entityTitle': entity.defaultName
     } %}
     {{ parent() }}
 {% endblock pageHeader %}

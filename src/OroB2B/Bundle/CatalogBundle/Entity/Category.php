@@ -28,6 +28,9 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
+ *          },
+ *          "activity"={
+ *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
  *          }
  *      }
  * )
