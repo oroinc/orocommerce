@@ -58,7 +58,9 @@ define(function(require) {
                     return;
                 }
 
-                if (!self.accountChangeConfirmationShown) {
+                var showRoles = !value || self.originalValue == value;
+
+                if (!self.accountChangeConfirmationShown && !showRoles) {
                     setTimeout(function() {
                         self.targetElement.val(previousValue).trigger('change');
                     }, 10);
@@ -66,7 +68,7 @@ define(function(require) {
                     previousValue = value;
                 }
 
-                self._changeAccountAction(value);
+                self._changeAccountAction(value, showRoles);
             });
         },
 
@@ -85,8 +87,7 @@ define(function(require) {
             AccountUserRole.__super__.dispose.call(this);
         },
 
-        _changeAccountAction: function(value) {
-            var showRoles = !value || this.originalValue == value;
+        _changeAccountAction: function(value, showRoles) {
 
             if (this.accountChangeConfirmationShown || showRoles) {
                 if (value) {
@@ -97,7 +98,6 @@ define(function(require) {
                 this._getAccountConfirmDialog(function() {
                     this.accountChangeConfirmationShown = true;
                     this.targetElement.val(value).trigger('change');
-                    this._updateAccountUserGrid(value, showRoles);
                 });
             }
         },
