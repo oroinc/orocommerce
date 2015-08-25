@@ -4,15 +4,20 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class FrontendOrderType extends AbstractType
 {
@@ -30,19 +35,25 @@ class FrontendOrderType extends AbstractType
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
+    /** @var ProductPriceProvider */
+    protected $productPriceProvider;
+
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param SecurityFacade $securityFacade
      * @param PaymentTermProvider $paymentTermProvider
+     * @param ProductPriceProvider $productPriceProvider
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         SecurityFacade $securityFacade,
-        PaymentTermProvider $paymentTermProvider
+        PaymentTermProvider $paymentTermProvider,
+        ProductPriceProvider $productPriceProvider
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->securityFacade = $securityFacade;
         $this->paymentTermProvider = $paymentTermProvider;
+        $this->productPriceProvider = $productPriceProvider;
     }
 
     /**
@@ -97,6 +108,40 @@ class FrontendOrderType extends AbstractType
                 ]
             );
         }
+
+        $builder->addEventListener(
+            FormEvents::SUBMIT,
+            function (FormEvent $event) use ($options) {
+                /** @var Order $order */
+                $order = $event->getData();
+                if ($order && $order->getLineItems()) {
+                    $productUnitQuantities = [];
+
+                    foreach ($order->getLineItems() as $lineItem) {
+                        $productUnitQuantityCollection[] = new ProductUnitQuantity(
+                            $lineItem->getProduct(),
+                            $lineItem->getProductUnit(),
+                            $lineItem->getQuantity()
+                        );
+                    }
+
+                    $prices = $this->productPriceProvider->matchPrices($productUnitQuantities, $order->getCurrency());
+
+                    foreach ($order->getLineItems() as $lineItem) {
+                        $key = sprintf(
+                            '%s-%s-%s',
+                            $lineItem->getProduct()->getId(),
+                            $lineItem->getProductUnit()->getCode(),
+                            $lineItem->getQuantity()
+                        );
+
+                        if (array_key_exists($key, $prices) && $prices[$key] instanceof Price) {
+                            $lineItem->setPrice($prices[$key]);
+                        }
+                    }
+                }
+            }
+        );
     }
 
     /**
