@@ -129,6 +129,16 @@ class ProductPriceProvider
     {
         $price = 0.0;
 
+        usort(
+            $prices,
+            function ($a, $b) {
+                if ($a['quantity'] === $b['quantity']) {
+                    return 0;
+                }
+                return ($a['quantity'] < $b['quantity']) ? -1 : 1;
+            }
+        );
+
         foreach ($prices as $productPrice) {
             $quantity = (float)$productPrice['quantity'];
 

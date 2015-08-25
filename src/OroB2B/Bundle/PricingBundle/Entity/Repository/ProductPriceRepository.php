@@ -199,6 +199,6 @@ class ProductPriceRepository extends EntityRepository
                 ->setParameter('currencies', $currencies);
         }
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getResult();
     }
 }

@@ -8,19 +8,22 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
+    const CLASS_NAME = '\stdClass';
+
     /**
      * @var ProductPriceProvider
      */
     protected $provider;
 
     /**
-     * @var FrontendPriceListRequestHandler
+     * @var  \PHPUnit_Framework_MockObject_MockObject|FrontendPriceListRequestHandler
      */
     protected $requestHandler;
 
@@ -38,7 +41,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new ProductPriceProvider($this->registry, $this->requestHandler, '\stdClass');
+        $this->provider = new ProductPriceProvider($this->registry, $this->requestHandler, self::CLASS_NAME);
     }
 
     protected function tearDown()
@@ -173,14 +176,177 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         return $productPrice;
     }
 
-    public function testMatchPrices()
-    {
-        $this->markTestIncomplete();
+    /**
+     * @dataProvider getMatchPricesDataProvider
+     *
+     * @param array $productUnitQuantities
+     * @param string $currency
+     * @param bool $withPriceList
+     * @param array $repositoryData
+     * @param array $expectedData
+     */
+    public function testMatchPrices(
+        array $productUnitQuantities,
+        $currency,
+        $withPriceList,
+        array $repositoryData,
+        array $expectedData
+    ) {
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 12);
 
-        $currency = 'USD';
-        $prices = $this->provider->matchPrices([], $currency);
+        if ($withPriceList) {
+            $this->requestHandler->expects($this->never())->method('getPriceList');
+        } else {
+            $this->requestHandler->expects($this->once())->method('getPriceList')->willReturn($priceList);
+        }
+
+        $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())
+            ->method('getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrencies')
+            ->willReturn($repositoryData);
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with(self::CLASS_NAME)
+            ->willReturn($repository);
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(self::CLASS_NAME)
+            ->willReturn($em);
+
+        $prices = $this->provider->matchPrices($productUnitQuantities, $currency, $withPriceList ? $priceList : null);
 
         $this->assertInternalType('array', $prices);
-        $this->assertCount(1, $prices);
+        $this->assertEquals(count($productUnitQuantities), count($prices));
+        $this->assertEquals($expectedData, $prices);
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchPricesDataProvider()
+    {
+        $prodUnitQty1 = $this->getProductUnitQuantity(1);
+        $prodUnitQty105 = $this->getProductUnitQuantity(10.5);
+        $prodUnitQty50 = $this->getProductUnitQuantity(50);
+        $prodUnitQty200 = $this->getProductUnitQuantity(200);
+        $prodUnitQty01 = $this->getProductUnitQuantity(0.1);
+
+        $repositoryData = $this->getRepositoryData($prodUnitQty50);
+
+        return [
+            'with priceList' => [
+                'productUnitQuantities' => [$prodUnitQty1, $prodUnitQty105],
+                'currency' => 'USD',
+                'withPriceList' => true,
+                'repositoryData' => $repositoryData,
+                'expectedData' => [
+                    $this->getResultKey($prodUnitQty1) => Price::create(20, 'USD'),
+                    $this->getResultKey($prodUnitQty105) => Price::create(15, 'USD'),
+                ]
+            ],
+            'without priceList' => [
+                'productUnitQuantities' => [$prodUnitQty50, $prodUnitQty200, $prodUnitQty01],
+                'currency' => 'USD',
+                'withPriceList' => false,
+                'repositoryData' => $repositoryData,
+                'expectedData' => [
+                    $this->getResultKey($prodUnitQty50) => Price::create(300, 'USD'),
+                    $this->getResultKey($prodUnitQty200) => Price::create(1400, 'USD'),
+                    $this->getResultKey($prodUnitQty01) => null,
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param ProductUnitQuantity $productUnitQuantity
+     * @return string
+     */
+    protected function getResultKey(ProductUnitQuantity $productUnitQuantity)
+    {
+        return sprintf(
+            '%s-%s-%s',
+            $productUnitQuantity->getProduct()->getId(),
+            $productUnitQuantity->getProductUnit()->getCode(),
+            $productUnitQuantity->getQuantity()
+        );
+    }
+
+    /**
+     * @param float $quantity
+     * @return ProductUnitQuantity
+     */
+    protected function getProductUnitQuantity($quantity)
+    {
+        /** @var Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42);
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode('kg');
+
+        return new ProductUnitQuantity($product, $productUnit, $quantity);
+    }
+
+    /**
+     * @param ProductUnitQuantity $productUnitQuantity
+     * @return array
+     */
+    protected function getRepositoryData(ProductUnitQuantity $productUnitQuantity)
+    {
+        $product = $productUnitQuantity->getProduct();
+        $productUnit = $productUnitQuantity->getProductUnit();
+
+        return [
+            [
+                'id' => $product->getId(),
+                'code' => $productUnit->getCode(),
+                'quantity' => 1.5,
+                'value' => 15,
+                'currency' => 'USD'
+            ],
+            [
+                'id' => $product->getId(),
+                'code' => $productUnit->getCode(),
+                'quantity' => 20,
+                'value' => 300,
+                'currency' => 'USD'
+            ],
+            [
+                'id' => $product->getId(),
+                'code' => $productUnit->getCode(),
+                'quantity' => 100,
+                'value' => 1400,
+                'currency' => 'USD'
+            ],
+            [
+                'id' => $product->getId(),
+                'code' => $productUnit->getCode(),
+                'quantity' => 1,
+                'value' => 20,
+                'currency' => 'EUR'
+            ],
+        ];
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }

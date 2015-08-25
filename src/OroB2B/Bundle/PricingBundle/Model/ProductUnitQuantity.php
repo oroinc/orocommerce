@@ -32,7 +32,7 @@ class ProductUnitQuantity
         $this->product = $product;
         $this->productUnit = $productUnit;
 
-        if ((!is_float($quantity) && !is_int($quantity)) || $quantity <= 0) {
+        if (!is_numeric($quantity) || $quantity <= 0) {
             throw new \InvalidArgumentException('Quantity must be positive float or integer.');
         }
 
