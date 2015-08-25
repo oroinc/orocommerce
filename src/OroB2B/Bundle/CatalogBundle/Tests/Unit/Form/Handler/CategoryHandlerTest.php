@@ -2,17 +2,20 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $eventDispatcher;
 
     /**
@@ -31,6 +34,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
     /**
      * @dataProvider supportedMethods
+     *
      * @param string $method
      * @param boolean $isValid
      * @param boolean $isProcessed

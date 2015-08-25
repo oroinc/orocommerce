@@ -13,13 +13,13 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\EventListener\CategoryEditSubscriber;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\EventListener\CategoryEditSubscriber;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 
 class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
 {
