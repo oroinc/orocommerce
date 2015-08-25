@@ -10,6 +10,7 @@ parameters:
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
 
+    orob2b_account.form.type.frontend.account_user_profile.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
     orob2b_account.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType
@@ -76,10 +77,19 @@ services:
         tags:
             - { name: form.type, alias: orob2b_account_account_user_role }
 
-    orob2b_account.form.type.frontend.account_user:
-        class: %orob2b_account.form.type.frontend.account_user.class%
+    orob2b_account.form.type.frontend.account_user_profile:
+        class: %orob2b_account.form.type.frontend.account_user_profile.class%
         calls:
             - [setDataClass, [%orob2b_account.entity.account_user.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_frontend_account_user_profile }
+
+    orob2b_account.form.type.frontend.account_user:
+        class: %orob2b_account.form.type.frontend.account_user.class%
+        arguments:
+            - @oro_security.security_facade
+        calls:
+            - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
         tags:
             - { name: form.type, alias: orob2b_account_frontend_account_user }
 

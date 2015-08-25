@@ -22,7 +22,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          },
  *          "dataaudit"={
  *              "auditable"=true

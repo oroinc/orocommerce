@@ -31,6 +31,11 @@ class AccountUserType extends AbstractType
     protected $addressClass;
 
     /**
+     * @var bool
+     */
+    protected $frontend=false;
+
+    /**
      * @param SecurityFacade $securityFacade
      */
     public function __construct(SecurityFacade $securityFacade)
@@ -68,6 +73,7 @@ class AccountUserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->frontend = isset($options['frontend']) && $options['frontend'];
         $this->addEntityFields($builder);
 
         $data = $builder->getData();
@@ -185,7 +191,7 @@ class AccountUserType extends AbstractType
             )
         ;
 
-        if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
+        if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view') || $this->frontend) {
             $builder->add(
                 'roles',
                 'entity',
@@ -240,7 +246,8 @@ class AccountUserType extends AbstractType
             'data_class'           => $this->dataClass,
             'intention'            => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            'ownership_disabled'   => true
+            'ownership_disabled'   => true,
+            'frontend'             => false
         ]);
     }
 
