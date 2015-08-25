@@ -2,14 +2,13 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
@@ -147,8 +146,6 @@ class FrontendRequestTypeTest extends AbstractTest
         $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
         $requestProduct     = $this->getRequestProduct(2, 'comment', [$requestProductItem]);
 
-        $longStr    = str_repeat('a', 256);
-        $longEmail  = $longStr . '@example.com';
         $email      = 'test@example.com';
 
         return [
@@ -180,7 +177,8 @@ class FrontendRequestTypeTest extends AbstractTest
                     ->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '+38 (044) 247-68-00')
                     ->addRequestProduct($requestProduct)->setStatus(new RequestStatus()),
                 'defaultData'   => $this->getRequest(),
-            ],        ];
+            ],
+        ];
     }
 
     /**

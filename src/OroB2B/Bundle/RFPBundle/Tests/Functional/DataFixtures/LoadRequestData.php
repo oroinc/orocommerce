@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -44,6 +45,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function load(ObjectManager $manager)
     {
+        /** @var RequestStatus $status */
         $status = $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy([], ['id' => 'ASC']);
 
         if (!$status) {
