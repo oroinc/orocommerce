@@ -134,6 +134,16 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     {
         $form = $this->factory->create($this->type, $defaultData, []);
 
+        $repo = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())
+            ->method('createFindForAccountUserQueryBuilder')
+            ->will($this->returnValue(null));
+
+        $closure = $form->get('shoppingList')->getConfig()->getOptions()['query_builder'];
+        $this->assertNull($closure($repo));
+
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);

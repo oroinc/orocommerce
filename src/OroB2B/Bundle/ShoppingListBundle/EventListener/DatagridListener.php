@@ -22,18 +22,18 @@ class DatagridListener
     {
         // properties
         $addToShoppingListLink = [
-            'type'   => 'url',
-            'route'  => 'orob2b_shopping_list_line_item_frontend_add_widget',
+            'type' => 'url',
+            'route' => 'orob2b_shopping_list_line_item_frontend_add_widget',
             'params' => ['productId' => 'id'],
         ];
         $this->addConfigElement($config, '[properties]', $addToShoppingListLink, 'add_to_shopping_list_link');
 
         // actions
         $addToShoppingList = [
-            'type'  => 'dialog',
+            'type' => 'dialog',
             'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
-            'link'  => 'add_to_shopping_list_link',
-            'icon'  => 'shopping-cart',
+            'link' => 'add_to_shopping_list_link',
+            'icon' => 'shopping-cart',
             'acl_resource' => 'orob2b_shopping_list_line_item_frontend_add',
             'widgetOptions' => [
                 'options' => [
@@ -61,14 +61,10 @@ class DatagridListener
      * @param mixed                 $element
      * @param mixed                 $key
      */
-    protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key = null)
+    protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key)
     {
         $select = $config->offsetGetByPath($path);
-        if ($key) {
-            $select[$key] = $element;
-        } else {
-            $select[] = $element;
-        }
+        $select[$key] = $element;
         $config->offsetSetByPath($path, $select);
     }
 }
