@@ -61,4 +61,4 @@ services:
         arguments:
             - @security.token_storage
         tags:
-            - { name: form.type_extension, alias: oro_entity_create_or_select_inline }
+            - { name: form.type_extension, alias: orob2b_product_select }

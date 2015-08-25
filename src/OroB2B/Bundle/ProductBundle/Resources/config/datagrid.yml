@@ -1,10 +1,9 @@
 datagrid:
-    products-select-grid:
+    products-select-grid-base:
         extended_entity_name: %orob2b_product.product.class%
         options:
             entityHint:        product
         source:
-            acl_resource: orob2b_product_view
             type:         orm
             query:
                 select:
@@ -15,8 +14,6 @@ datagrid:
                     - product.updatedAt
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
-                    - productVisibility.id as visibilityId
-                    - productVisibility.name as visibilityName
                     - productStatus.id as statusId
                     - productStatus.name as statusName
                 from:
@@ -24,7 +21,6 @@ datagrid:
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                        - { join: product.visibility, alias: productVisibility}
                         - { join: product.status, alias: productStatus}
                     inner:
                         -
@@ -42,11 +38,6 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
-            visibility:
-                label:         orob2b.product.visibility.label
-                type:          twig
-                frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/visibility.html.twig
             status:
                 label:         orob2b.product.status.label
                 type:          twig
@@ -68,8 +59,6 @@ datagrid:
                     data_name: productName
                 inventoryStatus:
                     data_name: inventoryStatusName
-                visibility:
-                    data_name: visibilityName
                 status:
                     data_name: statusName
                 createdAt:
@@ -90,10 +79,6 @@ datagrid:
                     type:      enum
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
-                visibility:
-                    type:      enum
-                    data_name: visibilityId
-                    enum_code: prod_visibility
                 status:
                     type:      enum
                     data_name: statusId
@@ -105,8 +90,39 @@ datagrid:
                     type:      datetime
                     data_name: product.updatedAt
 
+    products-select-grid:
+        extends: products-select-grid-base
+        source:
+            acl_resource: orob2b_product_view
+            query:
+                select:
+                    - productVisibility.id as visibilityId
+                    - productVisibility.name as visibilityName
+                join:
+                    left:
+                        - { join: product.visibility, alias: productVisibility}
+        columns:
+            visibility:
+                label:         orob2b.product.visibility.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/visibility.html.twig
+        sorters:
+            columns:
+                visibility:
+                    data_name: visibilityName
+        filters:
+            columns:
+                visibility:
+                    type:      enum
+                    data_name: visibilityId
+                    enum_code: prod_visibility
+
     products-select-grid-frontend:
-        extends: products-select-grid
+        extends: products-select-grid-base
+        options:
+            # TODO: Remove this after BB-1008
+            skip_acl_check: true
         source:
             acl_resource: orob2b_product_view_products
 
