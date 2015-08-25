@@ -89,3 +89,9 @@ orob2b_account_pinbar_help:
     defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
     options:
         frontend: true
+
+orob2b_frontend_autocomplete_search:
+    pattern: /autocomplete/search
+    defaults: { _controller: OroFormBundle:Autocomplete:search }
+    options:
+        frontend: true

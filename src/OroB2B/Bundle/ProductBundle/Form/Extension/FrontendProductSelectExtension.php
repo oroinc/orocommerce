@@ -32,6 +32,16 @@ class FrontendProductSelectExtension extends AbstractTypeExtension
         $token = $this->tokenStorage->getToken();
         if ($token && $token->getUser() instanceof AccountUser) {
             $resolver->setDefault('grid_name', 'products-select-grid-frontend');
+            $resolver->setDefault('autocomplete_alias', 'orob2b_frontend_products_list');
+            $resolver->setDefault(
+                'configs',
+                [
+                    'route_name' => 'orob2b_frontend_autocomplete_search',
+                    'placeholder' => 'orob2b.product.form.choose',
+                    'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
+                    'selection_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
+                ]
+            );
         }
     }
 
