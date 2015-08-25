@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class AccountGroupCategoryVisibilityRepository extends EntityRepository
 {
