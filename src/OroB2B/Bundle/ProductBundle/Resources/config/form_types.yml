@@ -3,9 +3,11 @@ parameters:
     orob2b_product.form.type.product_default_visibility_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductDefaultVisibilityType
     orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+    orob2b_product.form.type.product_unit_removed_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
+    orob2b_product.form.type.product_removed_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType
 
 services:
     # Product form types
@@ -32,6 +34,14 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product_unit_selection }
 
+    orob2b_product.form.type.product_unit_removed_selection:
+        class: %orob2b_product.form.type.product_unit_removed_selection.class%
+        calls:
+            - [setEntityClass, [%orob2b_product.product_unit.class%]]
+            - [setTranslator, [@translator]]
+        tags:
+            - { name: form.type, alias: orob2b_product_unit_removed_selection }
+
     orob2b_product.form.type.product_unit_precision:
         class: %orob2b_product.form.type.product_unit_precision.class%
         calls:
@@ -48,6 +58,13 @@ services:
         class: %orob2b_product.form.type.product_select.class%
         tags:
             - { name: form.type, alias: orob2b_product_select }
+
+    orob2b_product.form.type.product_removed_select:
+        class: %orob2b_product.form.type.product_removed_select.class%
+        arguments:
+            - @translator
+        tags:
+            - { name: form.type, alias: orob2b_product_removed_select }
 
     orob2b_product.form.type.default_visibility:
         class: %orob2b_product.form.type.product_default_visibility_type.class%
