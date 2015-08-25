@@ -48,26 +48,25 @@ define(function(require) {
             this.appendElement = $('#' + options.appendFieldId);
             this.removeElement = $('#' + options.removeFieldId);
             this.datagridName = options.datagridName;
-            this.originalValue = this.targetElement.val();
-
+            var previousValue = this.originalValue = this.targetElement.val();
             var self = this;
 
             this.targetElement.on('change', function() {
-                // was handled by 'select2-selecting' event
                 var value = $(this).val();
-                if (value) {
+
+                if (value === previousValue) {
                     return;
                 }
 
-                self._changeAccountAction(value);
-            });
-
-            this.targetElement.on('select2-selecting', function(e) {
-                self.targetElement.select2('close');
                 if (!self.accountChangeConfirmationShown) {
-                    e.preventDefault();
+                    setTimeout(function() {
+                        self.targetElement.val(previousValue).trigger('change');
+                    }, 10);
+                } else {
+                    previousValue = value;
                 }
-                self._changeAccountAction(e.val);
+
+                self._changeAccountAction(value);
             });
         },
 
@@ -77,7 +76,6 @@ define(function(require) {
             }
 
             this.targetElement.off('change');
-            this.targetElement.off('select2-selecting');
 
             if (this.changeAccountConfirmDialog) {
                 this.changeAccountConfirmDialog.dispose();
