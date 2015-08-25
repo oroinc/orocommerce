@@ -510,7 +510,9 @@ datagrid:
                         - :account IS NOT NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE AND user.account = :account
                         - :newAccount IS NOT NULL AND user.account = :newAccount AND :changeAccountAction = TRUE
             bind_parameters:
-                - role
+                -
+                    name: role
+                    default: NULL
                 -
                     name: account
                     default: NULL

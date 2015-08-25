@@ -108,6 +108,7 @@ class AccountUserRoleHandler extends AclRoleHandler
                 return true;
             }
         }
+
         return false;
     }
 
@@ -170,6 +171,7 @@ class AccountUserRoleHandler extends AclRoleHandler
     public function process(AbstractRole $role)
     {
         $this->originalRole = clone $role;
+
         return parent::process($role);
     }
 
@@ -184,13 +186,15 @@ class AccountUserRoleHandler extends AclRoleHandler
         $roleRepository = $this->doctrineHelper->getEntityRepository($role);
 
         // Role moved to another account OR account added
-        if (($this->originalRole->getAccount() !== $role->getAccount() &&
-                $this->originalRole->getAccount() !== null && $role->getAccount() !== null) ||
-            ($this->originalRole->getAccount() === null && $role->getAccount() !== null)
+        if ($role->getId() && (
+                ($this->originalRole->getAccount() !== $role->getAccount() &&
+                    $this->originalRole->getAccount() !== null && $role->getAccount() !== null) ||
+                ($this->originalRole->getAccount() === null && $role->getAccount() !== null)
+            )
         ) {
             // Remove assigned users
             $assignedUsers = $roleRepository->getAssignedUsers($role);
-            $removeUsers   = array_replace($removeUsers, $assignedUsers);
+            $removeUsers = array_replace($removeUsers, $assignedUsers);
 
             $appendNewUsers = array_diff($appendUsers, $removeUsers);
             $removeNewUsers = array_diff($removeUsers, $appendUsers);
@@ -201,9 +205,12 @@ class AccountUserRoleHandler extends AclRoleHandler
 
         if ($role->getAccount()) {
             // Security check
-            $appendUsers = array_filter($appendUsers, function (AccountUser $user) use ($role) {
-                return $user->getAccount() === $role->getAccount();
-            });
+            $appendUsers = array_filter(
+                $appendUsers,
+                function (AccountUser $user) use ($role) {
+                    return $user->getAccount() === $role->getAccount();
+                }
+            );
         }
     }
 }
