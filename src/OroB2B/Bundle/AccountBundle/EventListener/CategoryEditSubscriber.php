@@ -208,12 +208,10 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $visibilities = new ArrayCollection();
         $repo
             ->findForAccounts($accounts, $category)
-            ->forAll(
-                function($_, $visibility) use ($visibilities) {
+            ->map(
+                function($visibility) use ($visibilities) {
                     /** @var AccountCategoryVisibility $visibility */
                     $visibilities->offsetSet($visibility->getAccount()->getId(), $visibility);
-
-                    return true;
                 }
             );
 
@@ -241,12 +239,10 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $visibilities = new ArrayCollection();
         $repo
             ->findForAccountGroups($accountGroups, $category)
-            ->forAll(
-                function($_, $visibility) use ($visibilities) {
+            ->map(
+                function($visibility) use ($visibilities) {
                     /** @var AccountGroupCategoryVisibility $visibility */
                     $visibilities->offsetSet($visibility->getAccountGroup()->getId(), $visibility);
-
-                    return true;
                 }
             );
 
