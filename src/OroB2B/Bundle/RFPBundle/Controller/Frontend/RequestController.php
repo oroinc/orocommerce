@@ -107,13 +107,13 @@ class RequestController extends Controller
             $this->createForm(FrontendRequestType::NAME, $rfpRequest),
             function (RFPRequest $rfpRequest) {
                 return [
-                    'route'         => 'orob2b_rfp_request_update',
+                    'route'         => 'orob2b_rfp_frontend_request_update',
                     'parameters'    => ['id' => $rfpRequest->getId()]
                 ];
             },
             function (RFPRequest $rfpRequest) {
                 return [
-                    'route'         => 'orob2b_rfp_request_view',
+                    'route'         => 'orob2b_rfp_frontend_request_view',
                     'parameters'    => ['id' => $rfpRequest->getId()]
                 ];
             },

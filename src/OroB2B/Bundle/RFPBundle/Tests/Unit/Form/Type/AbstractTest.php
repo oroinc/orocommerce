@@ -17,6 +17,9 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder;
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator;
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
@@ -259,5 +262,39 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $requestProductItem;
+    }
+
+    /**
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $body
+     * @param string $company
+     * @param string $role
+     * @param string $phone
+     * @return Request
+     */
+    protected function getRequest(
+        $firstName = null,
+        $lastName = null,
+        $email = null,
+        $body = null,
+        $company = null,
+        $role = null,
+        $phone = null
+    ) {
+        $request = new Request();
+
+        $request
+            ->setFirstName($firstName)
+            ->setLastName($lastName)
+            ->setEmail($email)
+            ->setBody($body)
+            ->setCompany($company)
+            ->setRole($role)
+            ->setPhone($phone)
+        ;
+
+        return $request;
     }
 }

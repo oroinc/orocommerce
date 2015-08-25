@@ -12,6 +12,10 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
@@ -162,37 +166,6 @@ class RequestTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', $longStr),
             ],
         ];
-    }
-
-    /**
-     * @param string $firstName
-     * @param string $lastName
-     * @param string $email
-     * @param string $body
-     * @param string $company
-     * @param string $role
-     * @return Request
-     */
-    protected function getRequest(
-        $firstName = null,
-        $lastName = null,
-        $email = null,
-        $body = null,
-        $company = null,
-        $role = null
-    ) {
-        $request = new Request();
-
-        $request
-            ->setFirstName($firstName)
-            ->setLastName($lastName)
-            ->setEmail($email)
-            ->setBody($body)
-            ->setCompany($company)
-            ->setRole($role)
-        ;
-
-        return $request;
     }
 
     /**

@@ -4,17 +4,26 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType;
-
 use Symfony\Component\Form\Forms;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class FrontendRequestTypeTest extends FormIntegrationTestCase
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+
+class FrontendRequestTypeTest extends AbstractTest
 {
     const DATA_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\Request';
     const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus';
@@ -97,6 +106,8 @@ class FrontendRequestTypeTest extends FormIntegrationTestCase
         $this->formType = new FrontendRequestType($configManager, $registry);
         $this->formType->setDataClass(self::DATA_CLASS);
         $this->formType->setRequestStatusClass(self::REQUEST_STATUS_CLASS);
+
+        parent::setUp();
     }
 
     /**
@@ -129,52 +140,83 @@ class FrontendRequestTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param mixed $defaultData
-     * @param mixed $viewData
-     * @param mixed $submittedData
-     * @param mixed $expectedData
-     * @dataProvider submitDataProvider
+     * @return array
      */
-    public function testSubmit($defaultData, $viewData, $submittedData, $expectedData)
+    public function submitProvider()
     {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $requestProductItem = $this->getRequestProductItem(2, 10, 'kg', $this->createPrice(20, 'USD'));
+        $requestProduct     = $this->getRequestProduct(2, 'comment', [$requestProductItem]);
 
-        $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
+        $longStr    = str_repeat('a', 256);
+        $longEmail  = $longStr . '@example.com';
+        $email      = 'test@example.com';
 
-        $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($expectedData, $form->getData());
+        return [
+            'valid data' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'phone'     => '+38 (044) 247-68-00',
+                    'company'   => 'company',
+                    'role'      => 'role',
+                    'body'      => 'body',
+                    'requestProducts' => [
+                        [
+                            'product'   => 2,
+                            'comment'   => 'comment',
+                            'requestProductItems' => [
+                                [
+                                    'quantity' => 10,
+                                    'productUnit' => 'kg',
+                                    'price' => ['value' => 20, 'currency' => 'USD',],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedData'  => $this
+                    ->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '+38 (044) 247-68-00')
+                    ->addRequestProduct($requestProduct)->setStatus(new RequestStatus()),
+                'defaultData'   => $this->getRequest(),
+            ],        ];
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function submitDataProvider()
+    protected function getExtensions()
     {
+        $priceType                  = $this->preparePriceType();
+        $entityType                 = $this->prepareProductEntityType();
+        $optionalPriceType          = $this->prepareOptionalPriceType();
+        $currencySelectionType      = new CurrencySelectionTypeStub();
+        $requestProductItemType     = $this->prepareRequestProductItemType();
+        $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
+
+        $requestProductType = new RequestProductType();
+        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+
         return [
-            'new request' => [
-                'defaultData' => new Request(),
-                'viewData'    => new Request(),
-                'submittedData' => [
-                    'firstName' => 'Grzegorz',
-                    'lastName'  => 'Brzeczyszczykiewicz',
-                    'email'     => 'grzegorz@nsdap.de',
-                    'phone'     => '+38 (044) 247-68-00',
-                    'company'   => 'NSDAP',
-                    'role'      => 'obersturmbannfuhrer',
-                    'body'      => 'I wanna buy more Tiger I and Tiger II'
+            new PreloadedExtension(
+                [
+                    CollectionType::NAME                    => new CollectionType(),
+                    RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
+                    RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
+                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
+                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    $priceType->getName()                   => $priceType,
+                    $entityType->getName()                  => $entityType,
+                    $optionalPriceType->getName()           => $optionalPriceType,
+                    $requestProductType->getName()          => $requestProductType,
+                    $currencySelectionType->getName()       => $currencySelectionType,
+                    $requestProductItemType->getName()      => $requestProductItemType,
+                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
-                'expectedData' => (new Request())
-                    ->setFirstName('Grzegorz')
-                    ->setLastName('Brzeczyszczykiewicz')
-                    ->setEmail('grzegorz@nsdap.de')
-                    ->setPhone('+38 (044) 247-68-00')
-                    ->setCompany('NSDAP')
-                    ->setRole('obersturmbannfuhrer')
-                    ->setBody('I wanna buy more Tiger I and Tiger II')
-                    ->setStatus(new RequestStatus())
-            ]
+                []
+            ),
+            $this->getValidatorExtension(true),
         ];
     }
 }
