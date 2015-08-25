@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 
 /**
  * @dbIsolation
@@ -19,6 +20,12 @@ class AccountUserRoleControllerTest extends WebTestCase
                 ['HTTP_X-CSRF-Header' => 1]
             )
         );
+
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
+            ]
+        );
     }
 
     public function testIndex()
@@ -28,6 +35,15 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        // TODO: check role name and role type after testCreate method
+        $accountUserRoleLabel = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER);
+        $response = $this->requestFrontendGrid(
+            'frontend-account-account-user-roles-grid',
+            [
+                'frontend-account-account-user-roles-grid[_filter][label][value]' => $accountUserRoleLabel
+            ]
+        );
+
+        $this->assertJsonResponseStatusCodeEquals($response, 200);
+        $this->assertContains(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER, $response->getContent());
     }
 }

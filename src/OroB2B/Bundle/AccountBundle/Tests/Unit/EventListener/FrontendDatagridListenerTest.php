@@ -138,8 +138,8 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'hasToken' => true,
                 'expected' => $this->expectedDataForWorse
             ],
-            'when user not logged1' => [
-                'isGranted' => false,
+            'when user not logged and have no token' => [
+                'isGranted' => true,
                 'user' => false,
                 'hasToken' => false,
                 'expected' => $this->expectedDataForWorse
