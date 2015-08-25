@@ -92,6 +92,10 @@ class FrontendRequestType extends AbstractType
             ->add('body', 'textarea', [
                 'label' => 'orob2b.rfp.request.body.label'
             ])
+            ->add('requestProducts', RequestProductCollectionType::NAME, [
+                'label'     => 'orob2b.rfp.requestproduct.entity_plural_label',
+                'add_label' => 'orob2b.rfp.requestproduct.add_label',
+            ])
         ;
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);

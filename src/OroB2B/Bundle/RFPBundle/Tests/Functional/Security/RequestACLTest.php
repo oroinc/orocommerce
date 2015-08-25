@@ -53,7 +53,7 @@ class RequestACLTest extends WebTestCase
         $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 

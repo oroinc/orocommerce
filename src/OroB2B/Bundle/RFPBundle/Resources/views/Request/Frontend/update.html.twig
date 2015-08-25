@@ -3,20 +3,20 @@
 
 {% oro_title_set({params : {'%title%': entity.__toString(), '%entityName%' : 'orob2b.rfp.request.entity_label'|trans} }) %}
 
-{% set formAction = path('orob2b_rfp_request_update', { 'id': entity.id }) %}
+{% set formAction = entity.id ? path('orob2b_rfp_frontend_request_update', { 'id': entity.id }) : path('orob2b_rfp_frontend_request_create')  %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity':      entity,
-        'indexPath':   path('orob2b_rfp_request_index'),
-        'indexLabel':  'orob2b.rfp.request.entity_plural_label'|trans,
+        'indexPath':   path('orob2b_rfp_frontend_request_index'),
+        'indexLabel':  'orob2b.frontend.rfp.request.entity_plural_label'|trans,
         'entityTitle': entity|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {{ UI.cancelButton(path('orob2b_rfp_request_index')) }}
+    {{ UI.cancelButton(path('orob2b_rfp_frontend_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
@@ -35,7 +35,13 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    include('OroB2BRFPBundle:Request:block/infoRequest.html.twig'),
+                    form_row(form.firstName),
+                    form_row(form.lastName),
+                    form_row(form.email),
+                    form_row(form.phone),
+                    form_row(form.company),
+                    form_row(form.role),
+                    form_row(form.body)
                 ]
             }]
         },
