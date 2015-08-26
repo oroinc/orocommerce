@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var SubtotalsListener;
+    var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
 
@@ -13,10 +14,13 @@ define(function(require) {
         /**
          * Listen fields change
          *
-         * @param {jQuery} $fields
+         * @param {jQuery|Array} $fields
          */
         listen: function($fields) {
-            $fields.change(_.bind(this.updateSubtotals, this));
+            var self = this;
+            _.each($fields, function(field) {
+                $(field).change(_.bind(self.updateSubtotals, self));
+            });
         },
 
         /**
