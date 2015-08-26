@@ -129,7 +129,7 @@ class AccountUserController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_account_frontend_account_user_info", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUser/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_account_frontend_account_user_view")
+     * @AclAncestor("orob2b_account_account_user_view")
      *
      * @param AccountUser $accountUser
      * @return array
