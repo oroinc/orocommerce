@@ -247,8 +247,17 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'currency' => $priceEntity->getPrice()->getCurrency(),
             ];
         }
+        $sorter = function ($a, $b) {
+            if ($a['id'] === $b['id']) {
+                return 0;
+            }
+            return ($a['id'] < $b['id']) ? -1 : 1;
+        };
 
         $actualPrices = $this->repository->getPricesBatch($priceListId, $productIds, $productUnitCodes, $currencies);
+
+        $expectedPriceData = usort($expectedPriceData, $sorter);
+        $actualPrices = usort($actualPrices, $sorter);
 
         $this->assertEquals($expectedPriceData, $actualPrices);
     }

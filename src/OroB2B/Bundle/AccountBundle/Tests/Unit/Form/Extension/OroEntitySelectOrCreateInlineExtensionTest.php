@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -12,7 +12,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension;
 
-class OroEntitySelectOrCreateInlineExtensionTest extends \PHPUnit_Framework_TestCase
+class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwareExtensionTest
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
@@ -26,8 +26,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends \PHPUnit_Framework_Test
 
     protected function setUp()
     {
-        $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        parent::setUp();
 
         $this->extension = new OroEntitySelectOrCreateInlineExtension($this->tokenStorage);
     }
@@ -39,20 +38,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends \PHPUnit_Framework_Test
 
     public function testConfigureOptionsNonAccountUser()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->once())
-            ->method('getUser');
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->will($this->returnValue($token));
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $resolver->expects($this->never())
-            ->method($this->anything());
-
-        $this->extension->configureOptions($resolver);
+        $this->assertOptionsNotChangedForNonAccountUser();
     }
 
     public function testConfigureOptionsAccountUser()
