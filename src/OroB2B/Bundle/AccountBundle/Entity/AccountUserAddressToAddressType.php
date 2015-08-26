@@ -22,7 +22,7 @@ class AccountUserAddressToAddressType extends AbstractAddressToAddressType
      *
      * @ORM\ManyToOne(
      *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress",
-     *      inversedBy="addressesToTypes"
+     *      inversedBy="types"
      * )
      * @ORM\JoinColumn(name="account_user_address_id", referencedColumnName="id", onDelete="CASCADE")
      */

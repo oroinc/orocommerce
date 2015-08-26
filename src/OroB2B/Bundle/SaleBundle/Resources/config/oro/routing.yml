@@ -11,3 +11,10 @@ orob2b_sale_bundle_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_sale_frontend_quote:
+    resource: "@OroB2BSaleBundle/Controller/Frontend/QuoteController.php"
+    type: annotation
+    prefix: /account/quote
+    options:
+        frontend: true

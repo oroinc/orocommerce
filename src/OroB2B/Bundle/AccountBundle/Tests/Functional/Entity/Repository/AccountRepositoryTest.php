@@ -67,10 +67,48 @@ class AccountRepositoryTest extends WebTestCase
     public function accountReferencesDataProvider()
     {
         return [
-            'orphan' => ['account.orphan', []],
-            'level_1' => ['account.level_1', ['account.level_1.1', 'account.level_1.1.1', 'account.level_1.2']],
-            'level_1.1' => ['account.level_1.1', ['account.level_1.1.1']],
-            'level_1.2' => ['account.level_1.2', []]
+            'orphan' => [
+                'account.orphan',
+                []
+            ],
+            'level_1' => [
+                'account.level_1',
+                [
+                    'account.level_1.1',
+                    'account.level_1.1.1',
+                    'account.level_1.2',
+                    'account.level_1.2.1',
+                    'account.level_1.2.1.1',
+                    'account.level_1.3',
+                    'account.level_1.3.1',
+                    'account.level_1.3.1.1',
+                    'account.level_1.4',
+                ]
+            ],
+            'level_1.1' => [
+                'account.level_1.1',
+                [
+                    'account.level_1.1.1'
+                ]
+            ],
+            'level_1.2' => [
+                'account.level_1.2',
+                [
+                    'account.level_1.2.1',
+                    'account.level_1.2.1.1',
+                ]
+            ],
+            'level_1.3' => [
+                'account.level_1.3',
+                [
+                    'account.level_1.3.1',
+                    'account.level_1.3.1.1',
+                ]
+            ],
+            'level_1.4' => [
+                'account.level_1.4',
+                []
+            ],
         ];
     }
 }

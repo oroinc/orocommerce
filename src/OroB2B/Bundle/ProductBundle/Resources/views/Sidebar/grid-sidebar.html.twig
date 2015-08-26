@@ -1,0 +1,14 @@
+<div class="grid-sidebar-header text-right">
+    {% block sidebar_header %}
+        <div class="grid-sidebar-minimized grid-sidebar-controls">
+            <i class="icon-forward control-maximize"></i>
+        </div>
+        <div class="grid-sidebar-maximized grid-sidebar-controls">
+            <i class="icon-backward control-minimize"></i>
+        </div>
+    {% endblock sidebar_header %}
+</div>
+<div class="grid-sidebar-content grid-sidebar-maximized">
+    {% block sidebar_content %}
+    {% endblock sidebar_content %}
+</div>

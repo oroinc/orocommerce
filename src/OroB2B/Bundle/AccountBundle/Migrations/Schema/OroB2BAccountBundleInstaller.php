@@ -19,6 +19,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class OroB2BAccountBundleInstaller implements
     Installation,
@@ -93,7 +94,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -125,6 +126,12 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAuditTable($schema);
         $this->createOroB2BAccountUserAddressTable($schema);
         $this->createOroB2BAccUsrAdrToAdrTypeTable($schema);
+        $this->createOroB2BNavigationHistoryTable($schema);
+        $this->createOroB2BNavigationItemTable($schema);
+        $this->createOroB2BNavigationItemPinbarTable($schema);
+        $this->createOroB2BAccountUserSdbarStTable($schema);
+        $this->createOroB2BAccountUserSdbarWdgTable($schema);
+        $this->createOroB2BAccNavigationPagestateTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -139,6 +146,12 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAuditForeignKeys($schema);
         $this->addOroB2BAccountUserAddressForeignKeys($schema);
         $this->addOroB2BAccUsrAdrToAdrTypeForeignKeys($schema);
+        $this->addOroB2BNavigationHistoryForeignKeys($schema);
+        $this->addOroB2BNavigationItemForeignKeys($schema);
+        $this->addOroB2BNavigationItemPinbarForeignKeys($schema);
+        $this->addOroB2BAccountUserSdbarStForeignKeys($schema);
+        $this->addOroB2BAccountUserSdbarWdgForeignKeys($schema);
+        $this->addOroB2BAccNavigationPagestateForeignKeys($schema);
     }
 
     /**
@@ -151,6 +164,7 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
 
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('username', 'string', ['length' => 255]);
@@ -222,6 +236,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('name', 'string', ['length' => 255]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
 
         $table->setPrimaryKey(['id']);
@@ -388,6 +403,8 @@ class OroB2BAccountBundleInstaller implements
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
         $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
+
+        $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
     }
 
     /**
@@ -414,6 +431,8 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
@@ -452,6 +471,121 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
+     * Create orob2b_navigation_history table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BNavigationHistoryTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_acc_navigation_history');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('url', 'string', ['length' => 1023]);
+        $table->addColumn('title', 'text', []);
+        $table->addColumn('visited_at', 'datetime', []);
+        $table->addColumn('visit_count', 'integer', []);
+        $table->addColumn('route', 'string', ['length' => 128]);
+        $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
+        $table->addColumn('entity_id', 'integer', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['route'], 'orob2b_navigation_history_route_idx');
+        $table->addIndex(['entity_id'], 'orob2b_navigation_history_entity_id_idx');
+    }
+
+    /**
+     * Create orob2b_navigation_item table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BNavigationItemTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_acc_navigation_item');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('type', 'string', ['length' => 20]);
+        $table->addColumn('url', 'string', ['length' => 1023]);
+        $table->addColumn('title', 'text', []);
+        $table->addColumn('position', 'smallint', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['account_user_id', 'position'], 'oro_b2b_sorted_items_idx', []);
+    }
+
+    /**
+     * Create orob2b_acc_nav_item_pinbar table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BNavigationItemPinbarTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_acc_nav_item_pinbar');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('item_id', 'integer', []);
+        $table->addColumn('maximized', 'datetime', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['item_id'], 'UNIQ_F6DC70B5126F525E');
+    }
+
+    /**
+     * Create orob2b_account_user_sdbar_st table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountUserSdbarStTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_account_user_sdbar_st');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('position', 'string', ['length' => 13]);
+        $table->addColumn('state', 'string', ['length' => 17]);
+        $table->addUniqueIndex(['account_user_id', 'position'], 'b2b_sdbar_st_unq_idx');
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_account_user_sdbar_wdg table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountUserSdbarWdgTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_account_user_sdbar_wdg');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('placement', 'string', ['length' => 50]);
+        $table->addColumn('position', 'smallint', []);
+        $table->addColumn('widget_name', 'string', ['length' => 50]);
+        $table->addColumn('settings', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addColumn('state', 'string', ['length' => 22]);
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['position'], 'b2b_sdar_wdgs_pos_idx', []);
+        $table->addIndex(['account_user_id', 'placement'], 'b2b_sdbr_wdgs_usr_place_idx', []);
+    }
+
+    /**
+     * Create orob2b_acc_pagestate table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccNavigationPagestateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_acc_pagestate');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('account_user_id', 'integer', []);
+        $table->addColumn('page_id', 'string', ['length' => 4000]);
+        $table->addColumn('page_hash', 'string', ['length' => 32]);
+        $table->addColumn('data', 'text', []);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['page_hash'], 'UNIQ_993DC655567C7E62');
+    }
+
+    /**
      * Add orob2b_account_user foreign keys.
      *
      * @param Schema $schema
@@ -459,6 +593,12 @@ class OroB2BAccountBundleInstaller implements
     protected function addOroB2BAccountUserForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
             ['organization_id'],
@@ -512,6 +652,12 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $table,
             ['parent_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -599,7 +745,7 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->getTable(static::ORO_B2B_ACCOUNT_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
-            ['owner_id'],
+            ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -614,6 +760,18 @@ class OroB2BAccountBundleInstaller implements
             ['country_code'],
             ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['system_org_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 
@@ -686,8 +844,10 @@ class OroB2BAccountBundleInstaller implements
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('system_org_id', 'integer', ['notnull' => false]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('is_primary', 'boolean', ['notnull' => false]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -723,7 +883,7 @@ class OroB2BAccountBundleInstaller implements
         );
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_USER_TABLE_NAME),
-            ['owner_id'],
+            ['frontend_owner_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -732,6 +892,18 @@ class OroB2BAccountBundleInstaller implements
             ['country_code'],
             ['iso2_code'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['system_org_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
     }
 
@@ -768,6 +940,120 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME),
             ['account_user_address_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_navigation_history foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BNavigationHistoryForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_acc_navigation_history');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_navigation_item foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BNavigationItemForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_acc_navigation_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_acc_nav_item_pinbar foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BNavigationItemPinbarForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_acc_nav_item_pinbar');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_acc_navigation_item'),
+            ['item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_account_user_sdbar_st foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountUserSdbarStForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_account_user_sdbar_st');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_account_user_sdbar_wdg foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountUserSdbarWdgForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_account_user_sdbar_wdg');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_acc_navigation_pagestate foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccNavigationPagestateForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_acc_pagestate');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

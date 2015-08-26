@@ -86,18 +86,27 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->getObjectManager()->flush();
 
         $this->assertNotNull($accountUser);
+        $this->assertContains('Add note', $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user_role[label]'] = self::UPDATED_TEST_ROLE;
-        $form['orob2b_account_account_user_role[account]'] = $account->getId();
-        $form['orob2b_account_account_user_role[appendUsers]'] = $accountUser->getId();
 
+        $token = $this->getContainer()->get('form.csrf_provider')
+            ->generateCsrfToken('orob2b_account_account_user_role');
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
+            'input_action'        => '',
+            'orob2b_account_account_user_role' => [
+                '_token' => $token,
+                'label' => self::UPDATED_TEST_ROLE,
+                'account' => $account->getId(),
+                'appendUsers' => $accountUser->getId(),
+            ]
+        ]);
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Account User Role has been saved', $crawler->html());
+        $content = $crawler->html();
+        $this->assertContains('Account User Role has been saved', $content);
 
         $this->getObjectManager()->clear();
 

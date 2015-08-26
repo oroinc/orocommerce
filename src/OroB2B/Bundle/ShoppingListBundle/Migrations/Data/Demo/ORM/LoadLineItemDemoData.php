@@ -33,7 +33,6 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
             'OroB2B\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData'
@@ -45,6 +44,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
 
@@ -61,7 +61,7 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
         }
         fclose($handler);
 
-        if (count($labels) == 0) {
+        if (count($labels) === 0) {
             return;
         }
 
@@ -75,6 +75,8 @@ class LoadLineItemDemoData extends AbstractFixture implements DependentFixtureIn
             /** @var Product $product */
             foreach ($chunkedProducts[$index] as $id => $product) {
                 $lineItem = (new LineItem())
+                    ->setAccountUser($accountUser)
+                    ->setOrganization($accountUser->getOrganization())
                     ->setShoppingList($shoppingList)
                     ->setNotes(sprintf('Line item %d notes', $id + 1))
                     ->setProduct($product)

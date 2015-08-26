@@ -1,5 +1,42 @@
 oro_menu_config:
+    templates:
+        frontend_dots_menu:
+            template: 'OroNavigationBundle:Menu:dots_menu.html.twig'
+        frontend_favorite:
+            template: 'OroNavigationBundle:Menu:favorites.html.twig'
+        frontend_pinbar:
+            template: 'OroNavigationBundle:Menu:pinbar.html.twig'
+        frontend_history:
+            template: 'OroNavigationBundle:Menu:history.html.twig'
+            rootClass: 'extra-list'
+            currentAsLink: false
+        frontend_mostviewed:
+            template: 'OroNavigationBundle:Menu:mostviewed.html.twig'
+            rootClass: 'extra-list'
+
     items:
+        frontend_favorite:
+            label: 'oro.navigation.menu.favorite.label'
+            extras:
+                icon: 'icon-star-empty'
+            uri: '#'
+        frontend_pinbar:
+            label: 'oro.navigation.menu.pinbar.label'
+            extras:
+                icon: 'icon-folder-close'
+                maxItems: 10
+            uri: '#'
+        frontend_history:
+            label: 'oro.navigation.menu.history.label'
+            extras:
+                icon: 'icon-time'
+                activeIfFirstIsEmpty: true
+            uri: '#'
+        frontend_mostviewed:
+            label: 'oro.navigation.menu.mostviewed.label'
+            extras:
+                icon: 'icon-flag'
+            uri: '#'
         account_tab:
             label:           'orob2b.account.menu.account_tab.label'
             uri:             '#'
@@ -114,6 +151,13 @@ oro_menu_config:
                     children:
                         frontend_account_user_roles: ~
 
+        frontend_dots_menu:
+            type: dots_menu
+            children:
+                frontend_history: ~
+                frontend_favorite: ~
+                frontend_mostviewed: ~
+
         account_usermenu:
             children:
                 orob2b_account_frontend_account_user_profile: ~
@@ -128,6 +172,8 @@ oro_menu_config:
                 shortcut_list_account_user_groups: ~
 
 oro_titles:
+    orob2b_account_pinbar_help: 'How To Use Pinbar'
+
     orob2b_account_index: ~
     orob2b_account_view:  '%%title%%'
     orob2b_account_update: %%accountName%% - oro.ui.edit

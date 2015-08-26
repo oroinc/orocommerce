@@ -82,3 +82,17 @@ orob2b_account_account_user_role_frontend:
     prefix:   /account/roles
     options:
         frontend: true
+
+orob2b_account_frontend_account_user_datagrid_widget:
+    path: /datagrid/widget/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:widget }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
+
+orob2b_account_pinbar_help:
+    pattern: /pinbar/help
+    defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
+    options:
+        frontend: true

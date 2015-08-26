@@ -1,7 +1,7 @@
 orob2b_shopping_list_api:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/Api/Rest/ShoppingListController.php"
     type:     rest
-    prefix:       api/rest/{version}/
+    prefix:       account/api/rest/{version}/
     requirements:
         version:  latest|v1
         _format:  json
@@ -19,3 +19,15 @@ orob2b_shopping_list_api_line_item:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_shopping_list_api_line_item_frontend:
+    resource: "@OroB2BShoppingListBundle/Controller/Frontend/Api/Rest/LineItemController.php"
+    type:     rest
+    prefix:       account/api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+    options:
+        frontend: true

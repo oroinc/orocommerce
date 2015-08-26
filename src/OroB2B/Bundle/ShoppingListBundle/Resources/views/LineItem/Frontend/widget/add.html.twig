@@ -1,0 +1,56 @@
+{% form_theme form '@OroB2BShoppingList/LineItem/Frontend/widget/shoppinglist_form_widget.html.twig' %}
+
+{% set pageComponentOptions = {
+    '_wid': app.request.get('_wid'),
+    'savedId': savedId|default(null)
+} %}
+{% set message %}
+    {% set msgArray = ['orob2b.shoppinglist.lineitem.flash.success'|trans] %}
+    {% if shoppingListId is defined %}
+        {% set shoppingListLink = "(<a href='%s'>%s</a>)"|format(
+            path('orob2b_shopping_list_frontend_view', {id: shoppingListId}),
+            'orob2b.shoppinglist.actions.view'|trans
+        ) %}
+        {% set msgArray = msgArray|merge([shoppingListLink]) %}
+    {% endif %}
+    {{ msgArray|join(' ')|raw }}
+{% endset %}
+<div class="widget-content add-product-widget"
+     data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ pageComponentOptions|merge({message: message})|json_encode }}"
+>
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-error">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
+          data-page-component-module="orob2bshoppinglist/js/app/components/add-product-component">
+        <fieldset class="form-horizontal">
+            {{ form_row(form.shoppingList, {attr: {class: 'orob2b-shoppinglist'} }) }}
+            {{ form_row(form.quantity) }}
+            {{ form_row(form.unit) }}
+
+            {% set showShoppingListLabel =
+                    (app.request.isMethod('POST') and form.shoppingList.vars.value is empty)
+                or
+                    (not app.request.isMethod('POST') and form.shoppingList.vars.currentShoppingList is null)
+            %}
+            <div{{ not showShoppingListLabel ? ' class="hidden"' }}>
+                {{ form_row(form.shoppingListLabel, {attr: {class: 'orob2b-shoppinglist-label'} }) }}
+            </div>
+        </fieldset>
+
+        <div class="hidden">
+            {{ form_rest(form) }}
+        </div>
+
+        <div class="widget-actions">
+            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'Save'|trans }}</button>
+        </div>
+    </form>
+    {{ oro_form_js_validation(form) }}
+</div>

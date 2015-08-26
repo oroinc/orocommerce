@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {"%title%": entity.label|default('N/A'|trans), '%entityName%' : 'orob2b.shoppinglist.entity_label'|trans} }) %}
 
 {% set formAction = entity.id ? path('orob2b_shopping_list_frontend_update', { 'id': entity.id }) : path('orob2b_shopping_list_frontend_create')  %}
 

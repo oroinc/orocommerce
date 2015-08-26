@@ -1,0 +1,6 @@
+{% include 'OroSidebarBundle::sidebar.html.twig' with {
+    sidebarsGetURL: path('orob2b_api_frontend_get_sidebars', {'position': 'SIDEBAR_' ~ placement|upper}),
+    sidebarPostURL: path('orob2b_api_frontend_post_sidebars'),
+    widgetsGetURL: path('orob2b_api_frontend_get_sidebarwidgets', {'placement': placement}),
+    widgetPostURL: path('orob2b_api_frontend_post_sidebarwidgets')
+} %}

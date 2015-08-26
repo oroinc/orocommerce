@@ -89,7 +89,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
@@ -97,7 +97,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with(['data_class' => self::DATA_CLASS]);
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     public function testGetName()

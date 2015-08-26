@@ -1,0 +1,6 @@
+<%= label %>
+<% if (isAccountDefault) { %>
+    (<%= _.__('orob2b.payment.autocomplete.account') %>)
+<% } else if (isAccountGroupDefault) { %>
+    (<%= _.__('orob2b.payment.autocomplete.account_group') %>)
+<% } %>
