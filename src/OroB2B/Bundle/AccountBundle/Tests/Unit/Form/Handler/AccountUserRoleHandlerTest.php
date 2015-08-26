@@ -469,24 +469,27 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function processWithAccountProvider()
     {
         $newAccount1 = new Account();
-        $role1 = new AccountUserRole('test role1');
+        $role1 = $this->createAccountUserRole('test role1', 1);
         $role1->setAccount(null);
         $users1 = $this->createUsersWithRole($role1, 6, $newAccount1);
 
         $newAccount2 = new Account();
-        $role2 = new AccountUserRole('test role2');
+        $role2 = $this->createAccountUserRole('test role2', 2);
         $role2->setAccount(new Account());
         $users2 = $this->createUsersWithRole($role2, 6, $newAccount2);
 
-        $role3 = new AccountUserRole('test role3');
+        $role3 = $this->createAccountUserRole('test role3', 3);
         $role3->setAccount(new Account());
         $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
 
         $newAccount4 = new Account();
-        $role4 = new AccountUserRole('test role2');
+        $role4 = $this->createAccountUserRole('test role2', 4);
         $role4->setAccount(new Account());
         $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
 
@@ -550,6 +553,23 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         }
 
         return $users;
+    }
+
+    /**
+     * @param string   $role
+     * @param int|null $id
+     * @return AccountUserRole
+     */
+    protected function createAccountUserRole($role, $id = null)
+    {
+        $entity = new AccountUserRole($role);
+        if ($id) {
+            $reflection = new \ReflectionProperty(get_class($entity), 'id');
+            $reflection->setAccessible(true);
+            $reflection->setValue($entity, $id);
+        }
+
+        return $entity;
     }
 
     /**
