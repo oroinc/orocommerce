@@ -36,7 +36,8 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             if (!this.options.ftid) {
-                this.options.ftid = this.$el.data('content').replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
+                this.options.ftid = this.$el.data('content').toString()
+                    .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
             }
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
