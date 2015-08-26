@@ -49,8 +49,37 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
+                    ->setComment('Comment'),
+                'data' => null,
+            ],
+            'restricted modifications' => [
+                'options' => [
+                    'currency' => $currency,
+                ],
+                'submittedData' => [
+                    'product' => 2,
+                    'quantity' => 10,
+                    'productUnit' => 'item',
+                    'shipBy' => '2015-05-07',
+                    'comment' => 'Comment',
+                ],
+                'expectedData' => (new OrderLineItem())
+                    ->setFromExternalSource(true)
+                    ->setProduct($product)
+                    ->setQuantity(5)
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
+                    ->setComment('Comment'),
+                'data' => (new OrderLineItem())
+                    ->setFromExternalSource(true)
+                    ->setProduct($product)
+                    ->setQuantity(5)
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
                     ->setComment('Comment')
-            ]
+            ],
         ];
     }
 }
