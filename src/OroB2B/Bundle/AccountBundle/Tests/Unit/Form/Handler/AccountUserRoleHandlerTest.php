@@ -221,10 +221,12 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('get')
-            ->willReturnMap([
-                ['entity', $entityForm],
-                ['action', $actionForm],
-            ]);
+            ->willReturnMap(
+                [
+                    ['entity', $entityForm],
+                    ['action', $actionForm],
+                ]
+            );
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -244,23 +246,29 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $this->privilegeRepository->expects($this->any())
             ->method('getPrivileges')
             ->with($roleSecurityIdentity)
-            ->willReturn(new ArrayCollection(
-                [$firstEntityPrivilege, $secondEntityPrivilege, $unknownEntityPrivilege, $actionPrivilege]
-            ));
+            ->willReturn(
+                new ArrayCollection(
+                    [$firstEntityPrivilege, $secondEntityPrivilege, $unknownEntityPrivilege, $actionPrivilege]
+                )
+            );
 
         $this->ownershipConfigProvider->expects($this->any())
             ->method('hasConfig')
-            ->willReturnMap([
-                [$firstClass, null, true],
-                [$secondClass, null, true],
-                [$unknownClass, null, false],
-            ]);
+            ->willReturnMap(
+                [
+                    [$firstClass, null, true],
+                    [$secondClass, null, true],
+                    [$unknownClass, null, false],
+                ]
+            );
         $this->ownershipConfigProvider->expects($this->any())
             ->method('getConfig')
-            ->willReturnMap([
-                [$firstClass, null, $firstEntityConfig],
-                [$secondClass, null, $secondEntityConfig],
-            ]);
+            ->willReturnMap(
+                [
+                    [$firstClass, null, $firstEntityConfig],
+                    [$secondClass, null, $secondEntityConfig],
+                ]
+            );
 
         $this->handler->setRequest($request);
         $this->handler->createForm($role);
@@ -309,12 +317,14 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $form->expects($this->any())
             ->method('get')
-            ->willReturnMap([
-                ['appendUsers', $appendForm],
-                ['removeUsers', $removeForm],
-                ['entity', $entityForm],
-                ['action', $actionForm],
-            ]);
+            ->willReturnMap(
+                [
+                    ['appendUsers', $appendForm],
+                    ['removeUsers', $removeForm],
+                    ['entity', $entityForm],
+                    ['action', $actionForm],
+                ]
+            );
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -408,18 +418,22 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->once())
             ->method('submit')
             ->with($request)
-            ->willReturnCallback(function () use ($role, $newAccount) {
-                $role->setAccount($newAccount);
-            });
+            ->willReturnCallback(
+                function () use ($role, $newAccount) {
+                    $role->setAccount($newAccount);
+                }
+            );
         $form->expects($this->once())
             ->method('isValid')
             ->willReturn(true);
         $form->expects($this->any())
             ->method('get')
-            ->willReturnMap([
-                ['appendUsers', $appendForm],
-                ['removeUsers', $removeForm],
-            ]);
+            ->willReturnMap(
+                [
+                    ['appendUsers', $appendForm],
+                    ['removeUsers', $removeForm],
+                ]
+            );
 
         $this->formFactory->expects($this->once())
             ->method('create')
@@ -429,11 +443,13 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
 
         $objectManager->expects($this->any())
             ->method('persist')
-            ->willReturnCallback(function ($entity) use (&$persistedUsers) {
-                if ($entity instanceof AccountUser) {
-                    $persistedUsers[spl_object_hash($entity)] = $entity;
+            ->willReturnCallback(
+                function ($entity) use (&$persistedUsers) {
+                    if ($entity instanceof AccountUser) {
+                        $persistedUsers[spl_object_hash($entity)] = $entity;
+                    }
                 }
-            });
+            );
 
         $this->managerRegistry->expects($this->any())
             ->method('getManagerForClass')
@@ -489,9 +505,14 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
 
         $newAccount4 = new Account();
-        $role4 = $this->createAccountUserRole('test role2', 4);
+        $role4 = $this->createAccountUserRole('test role4', 4);
         $role4->setAccount(new Account());
         $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
+
+        $newAccount5 = new Account();
+        $role5 = $this->createAccountUserRole('test role5');
+        $role5->setAccount(new Account());
+        $users5 = $this->createUsersWithRole($role5, 6, $newAccount4);
 
         return [
             'set account for role without account (assigned users should be removed except appendUsers)'      => [
@@ -530,6 +551,16 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
                 'assignedUsers'            => [$users4[0], $users4[1], $users4[2], $users4[3]],
                 'expectedUsersWithRole'    => [$users4[4], $users4[5]],
                 'expectedUsersWithoutRole' => [$users4[2], $users4[3]],
+            ],
+            'change account logic shouldn\'t be processed (role without ID)'                                  => [
+                'role'                     => $role5,
+                'newAccount'               => $newAccount5,
+                'appendUsers'              => [$users5[0], $users5[4], $users5[5]],
+                'removedUsers'             => [$users5[2], $users5[3]],
+                'assignedUsers'            => [$users5[0], $users5[1], $users5[2], $users5[3]],
+                'expectedUsersWithRole'    => [$users5[4], $users5[5]],
+                'expectedUsersWithoutRole' => [$users5[2], $users5[3]],
+                'changeAccountProcessed'   => false,
             ],
         ];
     }
