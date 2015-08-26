@@ -17,7 +17,7 @@
         {% set disabled = widget.vars.disabled %}
         {% set allow_delete = widget.vars.allow_delete %}
     {% else %}
-        {% if widget.vars.value is defined and widget.vars.value.fromExternalSource %}
+        {% if widget.vars.disallow_delete is defined and widget.vars.disallow_delete %}
             {% set allow_delete = false %}
         {% else %}
             {% set allow_delete = widget.parent.vars.allow_delete %}
