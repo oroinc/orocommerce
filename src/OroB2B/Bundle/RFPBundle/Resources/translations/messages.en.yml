@@ -88,6 +88,7 @@ orob2b:
         message:
             request_status_saved: 'Request Status saved'
             request_status_restored: 'Request Status restored'
+            request_status_deleted: 'Request Status deleted'
             request_status_not_found: 'Request Status not found'
             request_status_changed: 'Request For Proposal Status was successfully changed'
             request_status_not_deletable: 'Request Status is not deletable'
@@ -95,38 +96,21 @@ orob2b:
             request.create_quote.success: 'New Quote created'
             request.create_quote.error: 'Can not create new Quote'
 
-    system_configuration:
-        group_title: 'Request For Proposal'
-        requeststatus_group_title: 'Request For Proposal Status'
-        requeststatus_default_label: 'Default Request For Proposal Status'
-        default_user_for_notifications: 'Default User For Notifications'
+        datagrid:
+            action_restore: 'Restore'
 
-    message:
-        request_status_saved: 'Request Status saved'
-        request_status_restored: 'Request Status restored'
-        request_status_deleted: 'Request Status deleted' 
-        request_status_not_found: 'Request Status not found'
-        request_status_changed: 'Request For Proposal Status was successfully changed'
-        request_status_not_deletable: 'Request Status is not deletable'
-        requestproductitem.unit.removed: '{title} - removed'
-        request.create_quote.success: 'New Quote created'
-        request.create_quote.error: 'Can not create new Quote'
+        btn:
+            delete: 'Delete'
+            restore: 'Restore'
+            change_status: 'Change Status'
+            create_quote: 'Create Quote'
 
-    datagrid:
-        action_restore: 'Restore'
+        widget:
+            change_status_title: 'Change Request For Proposal Status'
 
-    btn:
-        delete: 'Delete'
-        restore: 'Restore'
-        change_status: 'Change Status'
-        create_quote: 'Create Quote'
-
-    widget:
-        change_status_title: 'Change Request For Proposal Status'
-
-    controller:
-        request:
-            saved.message: 'Request has been saved'
+        controller:
+            request:
+                saved.message: 'Request has been saved'
 
     frontend:
         rfp:

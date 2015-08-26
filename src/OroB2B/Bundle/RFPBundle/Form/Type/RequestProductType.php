@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 
 class RequestProductType extends AbstractType

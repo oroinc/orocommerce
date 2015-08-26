@@ -15,7 +15,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -62,6 +61,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function getValidators()
     {
         $productUnitHolderConstraint = new ProductUnitHolder();
+
         return [
             $productUnitHolderConstraint->validatedBy() => new ProductUnitHolderValidator(),
         ];

@@ -31,7 +31,6 @@ class RequestProductItemTypeTest extends AbstractTest
     {
         parent::setUp();
 
-
         $this->formType = new RequestProductItemType();
         $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
     }

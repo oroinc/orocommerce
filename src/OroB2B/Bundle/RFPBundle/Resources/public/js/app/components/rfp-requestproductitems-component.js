@@ -65,15 +65,15 @@ define(function(require) {
             this.options    = _.defaults(options || {}, this.options);
             this.units      = _.defaults(this.units, options.units);
 
-            this.$el = options._sourceElement;
+            this.$container = options._sourceElement;
 
-            this.loadingMask = new LoadingMaskView({container: this.$el});
+            this.loadingMask = new LoadingMaskView({container: this.$container});
 
-            this.$productSelect     = this.$el.find(this.options.productSelect);
-            this.$addItemButton     = this.$el.find(this.options.addItemButton);
-            this.$itemsContainer    = this.$el.find(this.options.itemsContainer);
+            this.$productSelect     = this.$container.find(this.options.productSelect);
+            this.$addItemButton     = this.$container.find(this.options.addItemButton);
+            this.$itemsContainer    = this.$container.find(this.options.itemsContainer);
 
-            this.$el
+            this.$container
                 .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
@@ -88,7 +88,7 @@ define(function(require) {
         },
 
         initSelects: function() {
-            this.$el.find(this.options.unitsSelect).addClass(this.options.syncClass);
+            this.$container.find(this.options.unitsSelect).addClass(this.options.syncClass);
         },
 
         /**
@@ -156,7 +156,7 @@ define(function(require) {
 
             var units = data || {};
 
-            var widgets = self.$el.find(self.options.itemWidget);
+            var widgets = self.$container.find(self.options.itemWidget);
 
             $.each(widgets, function(index, widget) {
                 var select = $(widget).find(self.options.unitsSelect);
@@ -184,7 +184,7 @@ define(function(require) {
             });
 
             if (force) {
-                this.$el.find('select').uniform('update');
+                this.$container.find('select').uniform('update');
             }
         },
 
@@ -193,7 +193,7 @@ define(function(require) {
                 return;
             }
 
-            this.$el.off();
+            this.$container.off();
 
             RequestProductItemsComponent.__super__.dispose.call(this);
         }

@@ -120,13 +120,13 @@ class ProductUnitRemovedSelectionType extends AbstractType
                 $productUnitOptions['empty_value'] =  $emptyValueTitle;
             }
             $productUnitOptions['choices'] = $choices;
-
-            $form->add(
-                'productUnit',
-                $this->getParent(),
-                $productUnitOptions
-            );
         }
+
+        $form->add(
+            'productUnit',
+            $this->getParent(),
+            $productUnitOptions
+        );
     }
 
     /**
