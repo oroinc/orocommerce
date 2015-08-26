@@ -46,6 +46,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
                     $this->disableFieldChanges($form, 'product');
                     $this->disableFieldChanges($form, 'productUnit');
                     $this->disableFieldChanges($form, 'quantity');
+                    $this->disableFieldChanges($form, 'shipBy');
                 }
             }
         );

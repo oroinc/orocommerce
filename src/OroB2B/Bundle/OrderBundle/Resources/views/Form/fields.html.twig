@@ -17,20 +17,26 @@
         {% set disabled = widget.vars.disabled %}
         {% set allow_delete = widget.vars.allow_delete %}
     {% else %}
+        {% if widget.vars.value is defined and widget.vars.value.fromExternalSource %}
+            {% set allow_delete = false %}
+        {% else %}
+            {% set allow_delete = widget.parent.vars.allow_delete %}
+        {% endif %}
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
         {% set disabled = widget.parent.vars.disabled %}
-        {% set allow_delete = widget.parent.vars.allow_delete %}
     {% endif %}
 
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
         class="order-line-item">
-        {{ form_widget(form, {disabled: disabled}) }}
+        {{ form_widget(form) }}
 
         {% if allow_delete %}
             <td>
                 <button type="button" class="removeRow btn btn-small"></button>
             </td>
+        {% elseif widget.parent.vars.allow_delete %}
+            <td></td>
         {% endif %}
     </tr>
 {% endmacro %}

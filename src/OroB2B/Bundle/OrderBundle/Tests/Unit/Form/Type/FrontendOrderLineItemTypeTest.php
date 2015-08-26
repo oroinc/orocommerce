@@ -105,7 +105,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     'product' => 2,
                     'quantity' => 10,
                     'productUnit' => 'item',
-                    'shipBy' => '2015-02-03',
+                    'shipBy' => '2015-05-07',
                     'comment' => 'Comment',
                 ],
                 'expectedData' => (new OrderLineItem())
