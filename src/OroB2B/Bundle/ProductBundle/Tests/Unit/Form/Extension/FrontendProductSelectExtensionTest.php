@@ -65,9 +65,12 @@ class FrontendProductSelectExtensionTest extends \PHPUnit_Framework_TestCase
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
             ->getMock();
-        $resolver->expects($this->once())
+        $resolver->expects($this->at(0))
             ->method('setDefault')
             ->with('grid_name', 'products-select-grid-frontend');
+        $resolver->expects($this->at(1))
+            ->method('setDefault')
+            ->with('autocomplete_alias', 'orob2b_frontend_products_list');
 
         $this->extension->configureOptions($resolver);
     }
