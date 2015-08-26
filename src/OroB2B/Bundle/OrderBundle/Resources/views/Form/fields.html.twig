@@ -155,7 +155,7 @@
     </td>
     <td class="order-line-item-price">
         <div class="order-line-item-price-value">
-            {% if form.vars.value.price is defined %}
+            {% if form.vars.value.price is defined and form.vars.value.price is not null %}
                 {{ form.vars.value.price.value }}
             {% endif %}
         </div>

@@ -25,6 +25,7 @@ services:
             - @orob2b_order.order.provider.order_address_security
             - @oro_security.security_facade
             - @orob2b_payment.provider.payment_term
+            - @orob2b_pricing.provider.product_price
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
@@ -61,8 +62,6 @@ services:
 
     orob2b_order.form.type.frontend.order_line_item:
         class: %orob2b_order.form.type.frontend.order_line_item.class%
-        arguments:
-            - @orob2b_pricing.provider.product_price_matching
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
         tags:
