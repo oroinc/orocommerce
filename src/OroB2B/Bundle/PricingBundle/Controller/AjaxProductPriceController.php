@@ -90,17 +90,18 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $currency = $request->get('currency', null);
-        $priceListId = $request->get('pricelist', null);
-
-        $productUnitQuantities = $this->prepareProductUnitQuantities($lineItems);
+        $currency = $request->get('currency');
+        $priceListId = $request->get('pricelist');
 
         $priceList = null;
-
         if ($priceListId) {
-            $em = $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList');
-            $priceList = $em->getReference('OroB2BPricingBundle:PriceList', $priceListId);
+            $priceList = $this->getEntityReference(
+                $this->getParameter('orob2b_pricing.entity.price_list.class'),
+                $priceListId
+            );
         }
+
+        $productUnitQuantities = $this->prepareProductUnitQuantities($lineItems);
 
         /** @var Price[] $matchedPrice */
         $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
