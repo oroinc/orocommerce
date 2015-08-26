@@ -12,7 +12,7 @@
             {{ UI.renderProperty('orob2b.rfp.request.company.label'|trans, entity.company|default('N/A')) }}
             {{ UI.renderProperty('orob2b.rfp.request.role.label'|trans, entity.role|default('N/A')) }}
             {% if is_granted_view_account_user(entity) %}
-                {{ UI.renderHtmlProperty('orob2b.frontend.order.account_user.label'|trans, entity.accountUser) }}
+                {{ UI.renderHtmlProperty('orob2b.frontend.rfp.request.account_user.label'|trans, entity.accountUser) }}
             {% endif %}
             {{ UI.renderProperty('orob2b.rfp.request.status.label'|trans, entity.status.label) }}
         </div>
