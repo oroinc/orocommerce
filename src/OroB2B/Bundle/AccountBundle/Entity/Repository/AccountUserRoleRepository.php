@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -66,5 +67,26 @@ class AccountUserRoleRepository extends EntityRepository
             ->getArrayResult();
 
         return !empty($findResult);
+    }
+
+    /**
+     * Return array of assigned users to the given role
+     *
+     * @param AccountUserRole $role
+     * @return AccountUser[]
+     */
+    public function getAssignedUsers(AccountUserRole $role)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $findResult = $qb
+            ->select('accountUser')
+            ->from('OroB2BAccountBundle:AccountUser', 'accountUser')
+            ->innerJoin('accountUser.roles', 'accountUserRole')
+            ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
+            ->setParameter('accountUserRole', $role)
+            ->getQuery()
+            ->getResult();
+
+        return $findResult;
     }
 }

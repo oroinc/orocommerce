@@ -1,5 +1,12 @@
-orob2b.account.address:
-    edit: 'Edit'
-    remove: 'Remove'
-    primary: 'Primary'
-    default_type: 'Default {{ type_name }}'
+orob2b.account:
+    address:
+        edit: 'Edit'
+        remove: 'Remove'
+        primary: 'Primary'
+        default_type: 'Default {{ type_name }}'
+
+    account_user_role:
+        change_account_confirmation_title: 'Account changed'
+        continue: 'Continue'
+        cancel: 'Cancel'
+        content: 'There are currently account users from other accounts associated with this role. Once you confirm the change of an account these account users will no longer be associated with this role. Do you wish to proceed with the account change?'

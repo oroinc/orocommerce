@@ -27,7 +27,6 @@ class OroB2BAccountBundleInstaller implements
     ActivityExtensionAwareInterface,
     ExtendExtensionAwareInterface
 {
-
     const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
     const ORO_B2B_ACCOUNT_USER_TABLE_NAME = 'orob2b_account_user';
     const ORO_B2B_ACC_USER_ACCESS_ROLE_TABLE_NAME = 'orob2b_acc_user_access_role';
@@ -94,7 +93,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -131,6 +130,7 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountUserForeignKeys($schema);
         $this->addOroB2BAccountUserAccessAccountUserRoleForeignKeys($schema);
         $this->addOroB2BAccountUserOrganizationForeignKeys($schema);
+        $this->addOroB2BAccountUserRoleForeignKeys($schema);
         $this->addOroB2BAccountUserRoleToWebsiteForeignKeys($schema);
         $this->addOroB2BAccountForeignKeys($schema);
         $this->addOroB2BAccountAddressForeignKeys($schema);
@@ -269,7 +269,6 @@ class OroB2BAccountBundleInstaller implements
         $table->setPrimaryKey(['account_user_id', 'account_user_role_id']);
     }
 
-
     /**
      * Create orob2b_account_group table
      *
@@ -382,10 +381,13 @@ class OroB2BAccountBundleInstaller implements
     {
         $table = $schema->createTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('role', 'string', ['length' => 64]);
         $table->addColumn('label', 'string', ['length' => 64]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
+        $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
     }
 
     /**
@@ -493,7 +495,6 @@ class OroB2BAccountBundleInstaller implements
         );
     }
 
-
     /**
      * Add orob2b_account foreign keys.
      *
@@ -541,6 +542,28 @@ class OroB2BAccountBundleInstaller implements
             ['organization_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_account_user_role foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountUserRoleForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(static::ORO_B2B_ACCOUNT_TABLE_NAME),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 

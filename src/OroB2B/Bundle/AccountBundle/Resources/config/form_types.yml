@@ -104,6 +104,7 @@ services:
             - [setRequest, [@request]]
             - [setOwnershipConfigProvider, [@oro_entity_config.provider.ownership]]
             - [setChainMetadataProvider, [@oro_security.owner.metadata_provider.chain]]
+            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
 

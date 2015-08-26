@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 
 /**
@@ -22,6 +24,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
             ]
         );
@@ -78,11 +81,15 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $accountUser */
         $accountUser = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+        $account = $this->getAccountRepository()->findOneBy(['name' => 'account.orphan']);
+        $accountUser->setAccount($account);
+        $this->getObjectManager()->flush();
 
         $this->assertNotNull($accountUser);
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_account_account_user_role[label]'] = self::UPDATED_TEST_ROLE;
+        $form['orob2b_account_account_user_role[account]'] = $account->getId();
         $form['orob2b_account_account_user_role[appendUsers]'] = $accountUser->getId();
 
         $this->client->followRedirects(true);
@@ -122,6 +129,14 @@ class AccountUserRoleControllerTest extends WebTestCase
     protected function getUserRepository()
     {
         return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
+    }
+
+    /**
+     * @return \OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository
+     */
+    protected function getAccountRepository()
+    {
+        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Account');
     }
 
     /**

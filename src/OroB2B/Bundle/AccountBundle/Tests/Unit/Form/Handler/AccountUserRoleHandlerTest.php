@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
@@ -17,10 +18,12 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
@@ -54,6 +57,16 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
     protected $managerRegistry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleRepository
+     */
+    protected $roleRepository;
 
     /**
      * @var AccountUserRoleHandler
@@ -99,7 +112,20 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $this->ownershipConfigProvider
             = $this->getMock('Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface');
 
+        $this->roleRepository =
+            $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+                ->disableOriginalConstructor()
+                ->getMock();
+
         $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        $this->doctrineHelper = $this->getMockBuilder('\Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->setConstructorArgs([$this->managerRegistry])
+            ->getMock();
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityRepository')
+            ->willReturn($this->roleRepository);
 
         $this->handler = new AccountUserRoleHandler($this->formFactory, $this->privilegeConfig);
         $this->handler->setAclManager($this->aclManager);
@@ -107,6 +133,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->setChainMetadataProvider($this->chainMetadataProvider);
         $this->handler->setOwnershipConfigProvider($this->ownershipConfigProvider);
         $this->handler->setManagerRegistry($this->managerRegistry);
+        $this->handler->setDoctrineHelper($this->doctrineHelper);
     }
 
     public function testCreateForm()
@@ -334,8 +361,195 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $handler->setAclManager($this->aclManager);
         $handler->setChainMetadataProvider($this->chainMetadataProvider);
         $handler->setRequest($request);
+        $handler->setDoctrineHelper($this->doctrineHelper);
         $handler->createForm($role);
         $handler->process($role);
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @param Account|null    $newAccount
+     * @param AccountUser[]   $appendUsers
+     * @param AccountUser[]   $removedUsers
+     * @param AccountUser[]   $assignedUsers
+     * @param AccountUser[]   $expectedUsersWithRole
+     * @param AccountUser[]   $expectedUsersWithoutRole
+     * @param bool            $changeAccountProcessed
+     * @dataProvider processWithAccountProvider
+     */
+    public function testProcessWithAccount(
+        AccountUserRole $role,
+        $newAccount,
+        array $appendUsers,
+        array $removedUsers,
+        array $assignedUsers,
+        array $expectedUsersWithRole,
+        array $expectedUsersWithoutRole,
+        $changeAccountProcessed = true
+    ) {
+        // Array of persisted users
+        /** @var AccountUser[] $persistedUsers */
+        $persistedUsers = [];
+
+        $request = new Request();
+        $request->setMethod('POST');
+
+        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $appendForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($appendUsers);
+
+        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $removeForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($removedUsers);
+
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())
+            ->method('submit')
+            ->with($request)
+            ->willReturnCallback(function () use ($role, $newAccount) {
+                $role->setAccount($newAccount);
+            });
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendUsers', $appendForm],
+                ['removeUsers', $removeForm],
+            ]);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($form);
+
+        $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+
+        $objectManager->expects($this->any())
+            ->method('persist')
+            ->willReturnCallback(function ($entity) use (&$persistedUsers) {
+                if ($entity instanceof AccountUser) {
+                    $persistedUsers[spl_object_hash($entity)] = $entity;
+                }
+            });
+
+        $this->managerRegistry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(get_class($role))
+            ->willReturn($objectManager);
+
+        $this->roleRepository->expects($changeAccountProcessed ? $this->once() : $this->never())
+            ->method('getAssignedUsers')
+            ->with($role)
+            ->willReturn($assignedUsers);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleHandler $handler */
+        $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler')
+            ->setMethods(['processPrivileges'])
+            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
+            ->getMock();
+
+        $handler->setManagerRegistry($this->managerRegistry);
+        $handler->setAclPrivilegeRepository($this->privilegeRepository);
+        $handler->setAclManager($this->aclManager);
+        $handler->setChainMetadataProvider($this->chainMetadataProvider);
+        $handler->setRequest($request);
+        $handler->setDoctrineHelper($this->doctrineHelper);
+        $handler->createForm($role);
+        $handler->process($role);
+
+        foreach ($expectedUsersWithRole as $expectedUser) {
+            $this->assertEquals($persistedUsers[spl_object_hash($expectedUser)]->getRole($role->getRole()), $role);
+        }
+
+        foreach ($expectedUsersWithoutRole as $expectedUser) {
+            $this->assertEquals($persistedUsers[spl_object_hash($expectedUser)]->getRole($role->getRole()), null);
+        }
+    }
+
+    public function processWithAccountProvider()
+    {
+        $newAccount1 = new Account();
+        $role1 = new AccountUserRole('test role1');
+        $role1->setAccount(null);
+        $users1 = $this->createUsersWithRole($role1, 6, $newAccount1);
+
+        $newAccount2 = new Account();
+        $role2 = new AccountUserRole('test role2');
+        $role2->setAccount(new Account());
+        $users2 = $this->createUsersWithRole($role2, 6, $newAccount2);
+
+        $role3 = new AccountUserRole('test role3');
+        $role3->setAccount(new Account());
+        $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
+
+        $newAccount4 = new Account();
+        $role4 = new AccountUserRole('test role2');
+        $role4->setAccount(new Account());
+        $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
+
+        return [
+            'set account for role without account (assigned users should be removed except appendUsers)'      => [
+                'role'                     => $role1,
+                'newAccount'               => $newAccount1,
+                'appendUsers'              => [$users1[0], $users1[4], $users1[5]],
+                'removedUsers'             => [$users1[2], $users1[3]],
+                'assignedUsers'            => [$users1[0], $users1[1], $users1[2], $users1[3]],
+                'expectedUsersWithRole'    => [$users1[4], $users1[5]], // $users0 not changed, because already has role
+                'expectedUsersWithoutRole' => [$users1[1], $users1[2], $users1[3]],
+            ],
+            'set another account for role with account (assigned users should be removed except appendUsers)' => [
+                'role'                     => $role2,
+                'newAccount'               => $newAccount2,
+                'appendUsers'              => [$users2[0], $users2[4], $users2[5]],
+                'removedUsers'             => [$users2[2], $users2[3]],
+                'assignedUsers'            => [$users2[0], $users2[1], $users2[2], $users2[3]],
+                'expectedUsersWithRole'    => [$users2[4], $users2[5]], // $users0 not changed, because already has role
+                'expectedUsersWithoutRole' => [$users2[1], $users2[2], $users2[3]],
+            ],
+            'add/remove users for role with account (account not changed)'                                    => [
+                'role'                     => $role3,
+                'newAccount'               => $role3->getAccount(),
+                'appendUsers'              => [$users3[4], $users3[5]],
+                'removedUsers'             => [$users3[2], $users3[3]],
+                'assignedUsers'            => [$users3[0], $users3[1], $users3[2], $users3[3]],
+                'expectedUsersWithRole'    => [$users3[4], $users3[5]],
+                'expectedUsersWithoutRole' => [$users3[2], $users3[3]],
+                'changeAccountProcessed'   => false,
+            ],
+            'remove account for role with account (assigned users should not be removed)'                     => [
+                'role'                     => $role4,
+                'newAccount'               => $newAccount4,
+                'appendUsers'              => [$users4[0], $users4[4], $users4[5]],
+                'removedUsers'             => [$users4[2], $users4[3]],
+                'assignedUsers'            => [$users4[0], $users4[1], $users4[2], $users4[3]],
+                'expectedUsersWithRole'    => [$users4[4], $users4[5]],
+                'expectedUsersWithoutRole' => [$users4[2], $users4[3]],
+            ],
+        ];
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @param int             $numberOfUsers
+     * @param Account         $account
+     * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser[]
+     */
+    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null)
+    {
+        /** @var AccountUser[] $users */
+        $users = [];
+        for ($i = 0; $i < $numberOfUsers; $i++) {
+            $user = new AccountUser();
+            $user->setUsername('user' . $i . $role->getRole());
+            $user->setRoles([$role]);
+            $user->setAccount($account);
+            $users[] = $user;
+        }
+
+        return $users;
     }
 
     /**

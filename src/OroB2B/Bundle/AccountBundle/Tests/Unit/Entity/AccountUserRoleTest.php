@@ -2,11 +2,17 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testRole()
     {
         $name = 'test role#$%';
@@ -28,30 +34,18 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test relations between AccountUserRole and Websites
+     * Test AccountUserRole relations
      */
-    public function testWebsiteRelations()
+    public function testRelations()
     {
-        $accountUserRole = new AccountUserRole();
-        $website = new Website();
+        static::assertPropertyCollections(new AccountUserRole(), [
+            ['websites', new Website()],
+        ]);
 
-        $this->assertInstanceOf(
-            'Doctrine\Common\Collections\ArrayCollection',
-            $accountUserRole->getWebsites()
-        );
-        $this->assertCount(0, $accountUserRole->getWebsites());
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole',
-            $accountUserRole->addWebsite($website)
-        );
-        $this->assertCount(1, $accountUserRole->getWebsites());
-
-        $accountUserRole->addWebsite($website);
-        $this->assertCount(1, $accountUserRole->getWebsites());
-
-        $accountUserRole->removeWebsite($website);
-        $this->assertCount(0, $accountUserRole->getWebsites());
+        static::assertPropertyAccessors(new AccountUserRole(), [
+            ['account', new Account()],
+            ['organization', new Organization()]
+        ]);
     }
 
     public function testNotEmptyRole()

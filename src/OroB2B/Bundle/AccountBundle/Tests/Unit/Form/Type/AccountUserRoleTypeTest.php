@@ -10,14 +10,22 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
 use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AclPriviledgeTypeStub;
 
 class AccountUserRoleTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole';
+
+    /**
+     * @var Account
+     */
+    protected static $accounts;
 
     /**
      * @var AccountUserRoleType
@@ -57,11 +65,13 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $entityIdentifierType = new EntityIdentifierType([]);
+        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
 
         return [
             new PreloadedExtension(
                 [
                     $entityIdentifierType->getName() => $entityIdentifierType,
+                    $accountSelectType->getName() => $accountSelectType,
                     'oro_acl_collection' => new PrivilegeCollectionType(),
                     AclPriviledgeTypeStub::NAME => new AclPriviledgeTypeStub(),
                 ],
@@ -204,5 +214,38 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @return Account[]
+     */
+    protected function getAccounts()
+    {
+        if (!self::$accounts) {
+            self::$accounts = [
+                '1' => $this->createAccount(1, 'first'),
+                '2' => $this->createAccount(2, 'second')
+            ];
+        }
+
+        return self::$accounts;
+    }
+
+    /**
+     * @param int $id
+     * @param string $name
+     * @return Account
+     */
+    protected static function createAccount($id, $name)
+    {
+        $account = new Account();
+
+        $reflection = new \ReflectionProperty(get_class($account), 'id');
+        $reflection->setAccessible(true);
+        $reflection->setValue($account, $id);
+
+        $account->setName($name);
+
+        return $account;
     }
 }

@@ -185,6 +185,9 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      */
     protected $updatedAt;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         $this->addresses = new ArrayCollection();

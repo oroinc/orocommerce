@@ -50,11 +50,6 @@ class AccountAddress extends ExtendAccountAddress
      */
     protected $addressesToTypes;
 
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
     /**
      * {@inheritdoc}
      */

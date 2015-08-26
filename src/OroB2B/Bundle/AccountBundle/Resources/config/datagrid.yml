@@ -465,16 +465,42 @@ datagrid:
                     - user.email
                     - >
                         (CASE WHEN (:role IS NOT NULL) THEN
-                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in)
+                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in) AND (:hideHasRole = FALSE)
                             THEN true ELSE false END
                         ELSE
-                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in)
+                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in) AND (:hideHasRole = FALSE)
                             THEN true ELSE false END
                         END) as hasRole
                 from:
                     - { table: %orob2b_account.entity.account_user.class%, alias: user }
+                where:
+                    or:
+                        - :account IS NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE
+                        - :newAccount IS NULL AND :changeAccountAction = TRUE
+                        - :account IS NOT NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE AND user.account = :account
+                        - :newAccount IS NOT NULL AND user.account = :newAccount AND :changeAccountAction = TRUE
             bind_parameters:
-                - role
+                -
+                    name: role
+                    default: NULL
+                -
+                    name: account
+                    default: NULL
+                -
+                    name: newAccount
+                    path: _parameters.newAccount
+                    default: NULL
+                -
+                    name: hideHasRole
+                    path: _parameters.hideHasRole
+                    default: FALSE
+                    type: boolean
+                -
+                    name: changeAccountAction
+                    path: _parameters.changeAccountAction
+                    default: FALSE
+                    type: boolean
+
         properties:
             id: ~
         columns:
