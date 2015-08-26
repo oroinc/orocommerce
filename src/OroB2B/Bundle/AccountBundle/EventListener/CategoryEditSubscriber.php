@@ -30,8 +30,10 @@ class CategoryEditSubscriber implements EventSubscriberInterface
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
     /** @var EnumValueProvider */
     protected $enumValueProvider;
+
     /** @var  ArrayCollection|EntityManager[] */
     protected $entityManagers;
 
@@ -106,7 +108,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category $category
+     * @param Category        $category
      * @param ArrayCollection $accountChangeSet
      */
     protected function processAccountVisibility(Category $category, ArrayCollection $accountChangeSet)
@@ -132,7 +134,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category $category
+     * @param Category        $category
      * @param ArrayCollection $accountChangeSet
      */
     protected function processAccountGroupVisibility(Category $category, ArrayCollection $accountChangeSet)
@@ -188,7 +190,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category $category
+     * @param Category        $category
      * @param ArrayCollection $accountChangeSet
      *
      * @return ArrayCollection|\OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility[]
@@ -196,9 +198,11 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     protected function getAccountVisibilities(Category $category, ArrayCollection $accountChangeSet)
     {
         /** @var Account[] $accounts */
-        $accounts = $accountChangeSet->map(function($item) {
-            return $item['entity'];
-        })->toArray();
+        $accounts = $accountChangeSet->map(
+            function ($item) {
+                return $item['entity'];
+            }
+        )->toArray();
 
         /** @var AccountCategoryVisibilityRepository $repo */
         $repo = $this
@@ -209,7 +213,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $repo
             ->findForAccounts($accounts, $category)
             ->map(
-                function($visibility) use ($visibilities) {
+                function ($visibility) use ($visibilities) {
                     /** @var AccountCategoryVisibility $visibility */
                     $visibilities->offsetSet($visibility->getAccount()->getId(), $visibility);
                 }
@@ -219,7 +223,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category $category
+     * @param Category        $category
      * @param ArrayCollection $accountGroupChangeSet
      *
      * @return ArrayCollection|\OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility[]
@@ -227,9 +231,11 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     protected function getAccountGroupVisibilities(Category $category, ArrayCollection $accountGroupChangeSet)
     {
         /** @var AccountGroup[] $accountGroups */
-        $accountGroups = $accountGroupChangeSet->map(function($item) {
-            return $item['entity'];
-        })->toArray();
+        $accountGroups = $accountGroupChangeSet->map(
+            function ($item) {
+                return $item['entity'];
+            }
+        )->toArray();
 
         /** @var AccountGroupCategoryVisibilityRepository $repo */
         $repo = $this
@@ -240,7 +246,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
         $repo
             ->findForAccountGroups($accountGroups, $category)
             ->map(
-                function($visibility) use ($visibilities) {
+                function ($visibility) use ($visibilities) {
                     /** @var AccountGroupCategoryVisibility $visibility */
                     $visibilities->offsetSet($visibility->getAccountGroup()->getId(), $visibility);
                 }
