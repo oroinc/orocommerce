@@ -89,6 +89,14 @@ oro_menu_config:
             extras:
                 position: 10
 
+        frontend_configuration_tab:
+            label:           'orob2b.account.menu.frontend_configuration_tab'
+            uri:             '#'
+
+        frontend_account_user_roles:
+             label: 'orob2b.account.menu.frontend_account_user_roles.label'
+             route: 'orob2b_account_account_user_role_frontend_index'
+
     tree:
         application_menu:
             children:
@@ -101,6 +109,10 @@ oro_menu_config:
 
         frontend_menu:
             type: application_menu
+            children:
+                frontend_configuration_tab:
+                    children:
+                        frontend_account_user_roles: ~
 
         account_usermenu:
             children:
@@ -143,3 +155,5 @@ oro_titles:
     orob2b_account_frontend_account_user_reset_request: orob2b.account.accountuser.profile.forgot_password
     orob2b_account_frontend_account_user_reset_check_email: orob2b.account.accountuser.profile.check_email.title
     orob2b_account_frontend_account_user_password_reset: orob2b.account.accountuser.profile.reset_password.title
+
+    orob2b_account_account_user_role_frontend_index: ~

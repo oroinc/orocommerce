@@ -398,18 +398,18 @@ datagrid:
                 acl_resource:  orob2b_account_account_user_delete
         action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
 
-    account-account-user-roles-grid:
+    basic-account-account-user-roles-grid:
         options:
             entityHint: role
             entity_pagination: true
         source:
-            acl_resource: orob2b_account_account_user_role_view
             type: orm
             query:
                 select:
                     - role.id
                     - role.role
                     - role.label
+                    - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
         properties:
@@ -427,10 +427,18 @@ datagrid:
         columns:
             label:
                 label: orob2b.account.accountuserrole.role.label
+            isRolePredefined:
+                type: twig
+                label: orob2b.account.accountuserrole.type.label
+                frontend_type: html
+                data_name: isRolePredefined
+                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
         sorters:
             columns:
                 label:
                     data_name: role.label
+                isRolePredefined:
+                    data_name: isRolePredefined
             default:
                 label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -438,6 +446,14 @@ datagrid:
                 label:
                     type: string
                     data_name: role.label
+                isRolePredefined:
+                    type: choice
+                    data_name: CAST(isRolePredefined as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.accountuserrole.type.predefined.label
+                                false: orob2b.account.accountuserrole.type.customizable.label
         actions:
             update:
                 type:          navigate
@@ -452,6 +468,20 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_account_account_user_role_delete
+
+    account-account-user-roles-grid:
+        extends: basic-account-account-user-roles-grid
+        options:
+            entityHint: role
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_account_account_user_role_view
+
+    frontend-account-account-user-roles-grid:
+        extends: basic-account-account-user-roles-grid
+        extended_entity_name: %orob2b_account.entity.account_user_role.class%
+        options:
+            skip_acl_check: true
 
     account-account-users-grid-update:
         source:
@@ -500,7 +530,6 @@ datagrid:
                     path: _parameters.changeAccountAction
                     default: FALSE
                     type: boolean
-
         properties:
             id: ~
         columns:

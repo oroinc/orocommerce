@@ -237,4 +237,12 @@ class AccountUserRole extends AbstractRole
 
         return $this;
     }
+
+    /**
+     * @return bool
+     */
+    public function isPredefined()
+    {
+        return !$this->getAccount();
+    }
 }

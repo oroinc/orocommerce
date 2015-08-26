@@ -34,6 +34,7 @@ parameters:
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\FrontendDatagridListener
 
 services:
     orob2b_account.account_tree_handler:
@@ -204,3 +205,11 @@ services:
         arguments:
             - %orob2b_account.entity.account_user_address.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_account.event_listener.frontend_datagrid:
+        class: %orob2b_account.event_listener.frontend_datagrid.class%
+        arguments:
+            - @security.token_storage
+            - @oro_security.security_facade
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }
