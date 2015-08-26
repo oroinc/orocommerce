@@ -36,20 +36,11 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /**
-     * @var CategoryType
-     */
-    protected $type;
-
     protected function setUp()
     {
-        $this->type = new CategoryType();
-        $this->type->setDataClass(self::DATA_CLASS);
-        $this->type->setProductClass(self::PRODUCT_CLASS);
-
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->setRegistryExpectations();
-        $this->setUpFormFactory();
+
+        parent::setUp();
     }
 
     /**
@@ -67,6 +58,19 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
+        /** @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator */
+        $validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
+        $validator->expects($this->any())
+            ->method('validate')
+            ->willReturn(new ConstraintViolationList());
+
+        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
         $entityChangeSetType = new EntityChangesetType($doctrineHelper);
         $oroIdentifierType = new EntityIdentifierType([]);
         $localizedFallbackType = new LocalizedFallbackValueCollectionType($this->registry);
@@ -75,6 +79,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $localeCollectionType->setLocaleClass(self::LOCALE_CLASS);
         $localeFallbackValue = new FallbackValueType();
         $localeFallBackProperty = new FallbackPropertyType($translator);
+        $categoryType = new CategoryType();
 
         return [
             new PreloadedExtension(
@@ -86,16 +91,26 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     $localizedPropertyType->getName() => $localizedPropertyType,
                     $localeCollectionType->getName() => $localeCollectionType,
                     $localeFallbackValue->getName() => $localeFallbackValue,
-                    $localeFallBackProperty->getName() => $localeFallBackProperty
+                    $localeFallBackProperty->getName() => $localeFallBackProperty,
+                    $categoryType->getName() => $categoryType,
                 ],
-                []
+                [
+                    'form' => [
+                        new FormTypeValidatorExtension($validator),
+                    ],
+                    CategoryType::NAME => [
+                        new CategoryFormExtension($this->registry),
+                    ]
+                ]
             )
         ];
     }
 
     public function testBuildForm()
     {
-        $form = $this->factory->create($this->type);
+        $this->setRegistryExpectations();
+
+        $form = $this->factory->create(CategoryType::NAME);
 
         $this->assertTrue($form->has('categoryVisibility'));
         $this->assertTrue($form->has('visibilityForAccount'));
@@ -104,34 +119,11 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 
     public function testSubmit()
     {
-
     }
 
     public function testGetName()
     {
-        $this->assertEquals(CategoryType::NAME, $this->type->getName());
-    }
-
-    protected function setUpFormFactory()
-    {
-        /** @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator */
-        $validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validator->expects($this->any())
-            ->method('validate')
-            ->willReturn(new ConstraintViolationList());
-
-        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $em $em */
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->factory = Forms::createFormFactoryBuilder()
-            ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new CategoryFormExtension($this->registry))
-            ->addTypeExtension(new FormTypeValidatorExtension($validator))
-            ->getFormFactory();
+        $this->assertEquals(CategoryType::NAME, (new CategoryType())->getName());
     }
 
     /**
