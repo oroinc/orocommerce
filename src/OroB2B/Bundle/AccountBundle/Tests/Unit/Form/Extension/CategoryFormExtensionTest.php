@@ -135,6 +135,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->setMethods(['getResult'])
             ->getMockForAbstractClass();
+
         $query->expects($this->once())
             ->method('getResult')
             ->will($this->returnValue($this->getLocales()));
@@ -142,14 +143,17 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
+
         $queryBuilder->expects($this->once())
             ->method('leftJoin')
             ->with('locale.parentLocale', 'parentLocale')
             ->will($this->returnSelf());
+
         $queryBuilder->expects($this->once())
             ->method('addOrderBy')
             ->with('locale.id', 'ASC')
             ->will($this->returnSelf());
+
         $queryBuilder->expects($this->once())
             ->method('getQuery')
             ->will($this->returnValue($query));
@@ -157,6 +161,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
+
         $repository->expects($this->once())
             ->method('createQueryBuilder')
             ->with('locale')
