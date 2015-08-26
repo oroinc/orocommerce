@@ -75,7 +75,14 @@ class ProductPriceRepositoryTest extends WebTestCase
             ],
             'second product' => [
                 'productReference' => 'product.2',
-                'priceReferences' => ['product_price.8', 'product_price.3', 'product_price.5', 'product_price.4'],
+                'priceReferences' => [
+                    'product_price.11',
+                    'product_price.8',
+                    'product_price.3',
+                    'product_price.12',
+                    'product_price.5',
+                    'product_price.4'
+                ],
             ],
         ];
     }
@@ -176,7 +183,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             'second valid set' => [
                 'priceList' => 'price_list_2',
                 'products' => ['product.1', 'product.2'],
-                'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
+                'expectedPrices' => ['product_price.5', 'product_price.12', 'product_price.4', 'product_price.6'],
             ],
             'second valid set without tier prices' => [
                 'priceList' => 'price_list_2',
@@ -190,6 +197,105 @@ class ProductPriceRepositoryTest extends WebTestCase
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
                 'getTierPrices' => true,
                 'currency' => 'USD'
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getPricesBatchDataProvider
+     *
+     * @param string $priceList
+     * @param array $products
+     * @param array $productUnits
+     * @param array $expectedPrices
+     * @param array $currencies
+     */
+    public function testGetPricesBatch(
+        $priceList,
+        array $products,
+        array $productUnits,
+        array $expectedPrices,
+        array $currencies = []
+    ) {
+        /** @var PriceList $priceListEntity */
+        $priceListEntity = $this->getReference($priceList);
+        $priceListId = $priceListEntity->getId();
+
+        $productIds = [];
+        foreach ($products as $product) {
+            /** @var Product $productEntity */
+            $productEntity = $this->getReference($product);
+            $productIds[] = $productEntity->getId();
+        }
+
+        $productUnitCodes = [];
+        foreach ($productUnits as $productUnit) {
+            /** @var ProductUnit $productUnit */
+            $productUnitEntity = $this->getReference($productUnit);
+            $productUnitCodes[] = $productUnitEntity->getCode();
+        }
+
+        $expectedPriceData = [];
+        foreach ($expectedPrices as $price) {
+            /** @var ProductPrice $priceEntity */
+            $priceEntity = $this->getReference($price);
+            $expectedPriceData[] = [
+                'id' => $priceEntity->getProduct()->getId(),
+                'code' => $priceEntity->getUnit()->getCode(),
+                'quantity' => $priceEntity->getQuantity(),
+                'value' => $priceEntity->getPrice()->getValue(),
+                'currency' => $priceEntity->getPrice()->getCurrency(),
+            ];
+        }
+
+        $actualPrices = $this->repository->getPricesBatch($priceListId, $productIds, $productUnitCodes, $currencies);
+
+        $this->assertEquals($expectedPriceData, $actualPrices);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPricesBatchDataProvider()
+    {
+        return [
+            'empty' => [
+                'priceList' => 'price_list_1',
+                'products' => [],
+                'productUnits' => [],
+                'expectedPrices' => [],
+            ],
+            'first valid set' => [
+                'priceList' => 'price_list_1',
+                'products' => ['product.1', 'product.2'],
+                'productUnits' => ['product_unit.liter'],
+                'expectedPrices' => [
+                    'product_price.7',
+                    'product_price.8',
+                    'product_price.1',
+                    'product_price.3',
+                    'product_price.11'
+                ],
+            ],
+            'first valid set with currency' => [
+                'priceList' => 'price_list_1',
+                'products' => ['product.1', 'product.2'],
+                'productUnits' => ['product_unit.liter'],
+                'expectedPrices' => ['product_price.11'],
+                'currencies' => ['EUR']
+            ],
+            'second valid set' => [
+                'priceList' => 'price_list_2',
+                'products' => ['product.2'],
+                'productUnits' => ['product_unit.bottle'],
+                'expectedPrices' => ['product_price.5', 'product_price.12'],
+            ],
+            'second valid set with currency' => [
+                'priceList' => 'price_list_2',
+                'products' => ['product.2'],
+                'productUnits' => ['product_unit.bottle'],
+                'expectedPrices' => ['product_price.5'],
+                'currencies' => ['USD']
             ],
         ];
     }
