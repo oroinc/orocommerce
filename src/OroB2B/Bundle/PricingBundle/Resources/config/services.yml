@@ -8,7 +8,10 @@ parameters:
     orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.listener.product_unit_precision.class: OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener
     orob2b_pricing.acl.voter.product_list.class: OroB2B\Bundle\PricingBundle\Acl\Voter\PriceListVoter
+
     orob2b_pricing.datagrid.price_list_permissions_provider.class: OroB2B\Bundle\PricingBundle\Datagrid\PriceListPermissionProvider
+    orob2b_pricing.datagrid.extension.product_selection_grid.class: OroB2B\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension
+
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
 
@@ -27,6 +30,7 @@ parameters:
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.frontend.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
+    orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
@@ -213,3 +217,17 @@ services:
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_pricing.model.frontend_product_list_modifier:
+        class: %orob2b_pricing.model.frontend_product_list_modifier.class%
+        arguments:
+            - @security.token_storage
+            - @orob2b_pricing.model.price_list_tree_handler
+
+    orob2b_pricing.datagrid.extension.product_selection_grid:
+        class: %orob2b_pricing.datagrid.extension.product_selection_grid.class%
+        arguments:
+            - @security.token_storage
+            - @orob2b_pricing.model.frontend_product_list_modifier
+        tags:
+            - { name: oro_datagrid.extension }
