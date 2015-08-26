@@ -135,37 +135,32 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->setMethods(['getResult'])
             ->getMockForAbstractClass();
-
         $query->expects($this->once())
             ->method('getResult')
             ->will($this->returnValue($this->getLocales()));
 
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $queryBuilder->expects($this->once())
+        $qb->expects($this->once())
             ->method('leftJoin')
             ->with('locale.parentLocale', 'parentLocale')
             ->will($this->returnSelf());
-
-        $queryBuilder->expects($this->once())
+        $qb->expects($this->once())
             ->method('addOrderBy')
             ->with('locale.id', 'ASC')
             ->will($this->returnSelf());
-
-        $queryBuilder->expects($this->once())
+        $qb->expects($this->once())
             ->method('getQuery')
             ->will($this->returnValue($query));
 
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
-
         $repository->expects($this->once())
             ->method('createQueryBuilder')
             ->with('locale')
-            ->will($this->returnValue($queryBuilder));
+            ->will($this->returnValue($qb));
 
         $this->registry->expects($this->any())
             ->method('getRepository')
