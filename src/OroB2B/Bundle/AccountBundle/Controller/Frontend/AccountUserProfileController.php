@@ -104,7 +104,7 @@ class AccountUserProfileController extends Controller
     }
     /**
      * @Route("/profile", name="orob2b_account_frontend_account_user_profile")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:view.html.twig")
+     * @Template("OroB2BAccountBundle:AccountUser/Frontend:viewProfile.html.twig")
      *
      * @return array
      */
@@ -115,11 +115,12 @@ class AccountUserProfileController extends Controller
             'editRoute' => 'orob2b_account_frontend_account_user_profile_update'
         ];
     }
+
     /**
      * Edit account user form
      *
      * @Route("/profile/update", name="orob2b_account_frontend_account_user_profile_update")
-     * @Template("OroB2BAccountBundle:AccountUser/Frontend:update.html.twig")
+     * @Template("OroB2BAccountBundle:AccountUser/Frontend:updateProfile.html.twig")
      *
      * @return array|RedirectResponse
      */
