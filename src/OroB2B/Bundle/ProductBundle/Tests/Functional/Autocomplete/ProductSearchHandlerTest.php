@@ -125,6 +125,7 @@ class ProductSearchHandlerTest extends WebTestCase
      */
     public function testCheckAllDependenciesInjected()
     {
+        /** @var FrontendProductListModifier|\PHPUnit_Framework_MockObject_MockObject $modifier */
         $modifier = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()
             ->getMock();

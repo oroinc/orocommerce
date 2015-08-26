@@ -71,17 +71,6 @@ class FrontendProductSelectExtensionTest extends \PHPUnit_Framework_TestCase
         $resolver->expects($this->at(1))
             ->method('setDefault')
             ->with('autocomplete_alias', 'orob2b_frontend_products_list');
-        $resolver->expects($this->at(2))
-            ->method('setDefault')
-            ->with(
-                'configs',
-                [
-                    'route_name' => 'orob2b_frontend_autocomplete_search',
-                    'placeholder' => 'orob2b.product.form.choose',
-                    'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
-                    'selection_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
-                ]
-            );
 
         $this->extension->configureOptions($resolver);
     }

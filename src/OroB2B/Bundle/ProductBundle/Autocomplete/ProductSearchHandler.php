@@ -9,6 +9,11 @@ use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
 class ProductSearchHandler extends SearchHandler
 {
     /**
+     * @var FrontendProductListModifier
+     */
+    protected $productListModifier;
+
+    /**
      * @param string $entityName
      * @param array $properties
      * @param FrontendProductListModifier $productListModifier
@@ -16,6 +21,7 @@ class ProductSearchHandler extends SearchHandler
     public function __construct($entityName, array $properties, FrontendProductListModifier $productListModifier)
     {
         $this->productListModifier = $productListModifier;
+
         parent::__construct($entityName, $properties);
     }
 
@@ -30,13 +36,15 @@ class ProductSearchHandler extends SearchHandler
     }
 
     /**
+     * @todo Apply ACL helper after BB-1008
+     *
      * {@inheritdoc}
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $queryBuilder = $this->entityRepository->createQueryBuilder('p');
         $queryBuilder
-            ->innerJoin('p.names', 'pn', 'WITH', 'pn.locale IS NULL')
+            ->innerJoin('p.names', 'pn', 'WITH', $queryBuilder->expr()->isNull('pn.locale'))
             ->where($queryBuilder->expr()->like('LOWER(p.sku)', ':search'))
             ->orWhere($queryBuilder->expr()->like('LOWER(pn.string)', ':search'))
             ->setParameter('search', '%' . strtolower($search) . '%')
@@ -45,6 +53,9 @@ class ProductSearchHandler extends SearchHandler
 
         $this->productListModifier->applyPriceListLimitations($queryBuilder);
 
-        return $queryBuilder->getQuery()->getResult();
+        $query = $queryBuilder->getQuery();
+        //$query = $this->aclHelper->apply($queryBuilder);
+
+        return $query->getResult();
     }
 }
