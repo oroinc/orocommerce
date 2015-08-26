@@ -9,7 +9,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 /**
  * @dbIsolation
  */
-class AccountUserControllerTest extends WebTestCase
+class AccountUserProfileControllerTest extends WebTestCase
 {
     protected function setUp()
     {
