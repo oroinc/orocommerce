@@ -23,17 +23,12 @@ class AccountUserType extends AbstractType
     /**
      * @var string
      */
-    protected $roleClass;
-
-    /**
-     * @var string
-     */
     protected $addressClass;
 
     /**
      * @var bool
      */
-    protected $frontend=false;
+    protected $frontend = false;
 
     /**
      * @param SecurityFacade $securityFacade
@@ -49,14 +44,6 @@ class AccountUserType extends AbstractType
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @param string $roleClass
-     */
-    public function setRoleClass($roleClass)
-    {
-        $this->roleClass = $roleClass;
     }
 
     /**
@@ -79,10 +66,10 @@ class AccountUserType extends AbstractType
         $data = $builder->getData();
 
         $passwordOptions = [
-            'type'            => 'password',
-            'required'        => false,
-            'first_options'   => ['label' => 'orob2b.account.accountuser.password.label'],
-            'second_options'  => ['label' => 'orob2b.account.accountuser.password_confirmation.label'],
+            'type' => 'password',
+            'required' => false,
+            'first_options' => ['label' => 'orob2b.account.accountuser.password.label'],
+            'second_options' => ['label' => 'orob2b.account.accountuser.password_confirmation.label'],
             'invalid_message' => 'orob2b.account.message.password_mismatch',
         ];
 
@@ -180,31 +167,20 @@ class AccountUserType extends AbstractType
                 'addresses',
                 AddressCollectionType::NAME,
                 [
-                    'label'    => 'orob2b.account.accountuser.addresses.label',
-                    'type'     => AccountUserTypedAddressType::NAME,
+                    'label' => 'orob2b.account.accountuser.addresses.label',
+                    'type' => AccountUserTypedAddressType::NAME,
                     'required' => false,
-                    'options'  => [
-                        'data_class'  => $this->addressClass,
+                    'options' => [
+                        'data_class' => $this->addressClass,
                         'single_form' => false
                     ]
                 ]
-            )
-        ;
-
-        if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view') || $this->frontend) {
-            $builder->add(
-                'roles',
-                'entity',
-                [
-                    'property_path' => 'roles',
-                    'label' => 'orob2b.account.accountuser.roles.label',
-                    'class' => $this->roleClass,
-                    'property' => 'label',
-                    'multiple' => true,
-                    'expanded' => true,
-                    'required' => true
-                ]
             );
+
+        if ($this->frontend) {
+            $builder->add('roles', FrontendAccountUserRoleSelectType::NAME);
+        } elseif ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
+            $builder->add('roles', AccountUserRoleSelectType::NAME);
         }
     }
 
@@ -219,8 +195,8 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label'    => 'orob2b.account.accountuser.password_generate.label',
-                    'mapped'   => false
+                    'label' => 'orob2b.account.accountuser.password_generate.label',
+                    'mapped' => false
                 ]
             )
             ->add(
@@ -228,8 +204,8 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label'    => 'orob2b.account.accountuser.send_email.label',
-                    'mapped'   => false
+                    'label' => 'orob2b.account.accountuser.send_email.label',
+                    'mapped' => false
                 ]
             );
     }
@@ -242,12 +218,12 @@ class AccountUserType extends AbstractType
         $resolver->setRequired(['data']);
 
         $resolver->setDefaults([
-            'cascade_validation'   => true,
-            'data_class'           => $this->dataClass,
-            'intention'            => 'account_user',
+            'cascade_validation' => true,
+            'data_class' => $this->dataClass,
+            'intention' => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            'ownership_disabled'   => true,
-            'frontend'             => false
+            'ownership_disabled' => true,
+            'frontend' => false
         ]);
     }
 

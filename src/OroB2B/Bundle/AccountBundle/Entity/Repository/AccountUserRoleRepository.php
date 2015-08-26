@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -66,5 +68,24 @@ class AccountUserRoleRepository extends EntityRepository
             ->getArrayResult();
 
         return !empty($findResult);
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return QueryBuilder
+     */
+    public function getAvailableRolesByAccountUserQueryBuilder(AccountUser $accountUser)
+    {
+        $qb = $this->createQueryBuilder('accountUserRole');
+        $qb->where($qb->expr()->orX(
+            $qb->expr()->isNull('accountUserRole.account'),
+            $qb->expr()->andX(
+                $qb->expr()->eq('accountUserRole.account', ':account'),
+                $qb->expr()->eq('accountUserRole.organization', ':organization')
+            )
+        ));
+        $qb->setParameter('account', $accountUser->getAccount());
+        $qb->setParameter('organization', $accountUser->getOrganization());
+        return $qb;
     }
 }
