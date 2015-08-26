@@ -279,7 +279,7 @@ class ImportExportTest extends WebTestCase
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $this->assertTrue($data['success']);
-        $this->assertEquals(7, $data['readsCount']);
+        $this->assertEquals(8, $data['readsCount']);
         $this->assertEquals(0, $data['errorsCount']);
 
         $this->client->request(

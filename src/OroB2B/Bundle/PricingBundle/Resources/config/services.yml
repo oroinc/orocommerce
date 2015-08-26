@@ -14,7 +14,6 @@ parameters:
 
     orob2b_pricing.provider.currency.class: OroB2B\Bundle\PricingBundle\Provider\CurrencyProvider
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
-    orob2b_pricing.provider.product_price_matching.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceMatchingProvider
 
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
     orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
@@ -103,6 +102,7 @@ services:
         class: %orob2b_pricing.provider.product_price.class%
         arguments:
             - @doctrine
+            - @orob2b_pricing.model.frontend.price_list_request_handler
             - %orob2b_pricing.entity.product_price.class%
 
     orob2b_pricing.validator.unique_product_prices:
