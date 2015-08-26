@@ -7,11 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -67,7 +69,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-product-prices-by-pricelist", name="orob2b_product_price_by_pricelist")
+     * @Route("/get-product-prices-by-pricelist", name="orob2b_pricing_price_by_pricelist")
      * @Method({"GET"})
      * @AclAncestor("orob2b_pricing_product_price_view")
      *
@@ -76,6 +78,36 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getProductPricesByPriceListAction(Request $request)
     {
         return parent::getProductPricesByPriceListAction($request);
+    }
+
+    /**
+     * @Route("/get-matching-price", name="orob2b_pricing_mathing_price")
+     * @Method({"GET"})
+     * @AclAncestor("orob2b_pricing_product_price_view")
+     *
+     * {@inheritdoc}
+     */
+    public function getMatchingPriceAction(Request $request)
+    {
+        $lineItems = $request->get('items', []);
+        $currency = $request->get('currency');
+        $priceListId = $request->get('pricelist');
+
+        $priceList = null;
+        if ($priceListId) {
+            $priceList = $this->getEntityReference(
+                $this->getParameter('orob2b_pricing.entity.price_list.class'),
+                $priceListId
+            );
+        }
+
+        $productUnitQuantities = $this->prepareProductUnitQuantities($lineItems);
+
+        /** @var Price[] $matchedPrice */
+        $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
+            ->getMatchedPrices($productUnitQuantities, $currency, $priceList);
+
+        return new JsonResponse($this->formatMatchedPrices($matchedPrice));
     }
 
     /**
