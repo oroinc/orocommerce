@@ -19,27 +19,23 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
 use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $countries = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $regions = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $paymentTerms = [];
 
-    /**
-     * @var ContainerInterface
-     */
+    /** @var array */
+    protected $priceLists = [];
+
+    /** @var ContainerInterface */
     protected $container;
 
     /**
@@ -56,8 +52,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData'
+            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData'
         ];
     }
 
@@ -116,6 +113,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
                 ->setPaymentTerm($this->getPaymentTerm($manager, $row['paymentTerm']))
+                ->setPriceList($this->getPriceList($manager, $row['priceListName']))
                 ->setShipUntil(new \DateTime())
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber'])
@@ -193,11 +191,31 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param EntityManager $manager
-     * @param string $paymentTerm
+     * @param string $label
      * @return PaymentTerm
      */
-    protected function getPaymentTerm(EntityManager $manager, $paymentTerm)
+    protected function getPaymentTerm(EntityManager $manager, $label)
     {
-        return $manager->getRepository('OroB2BPaymentBundle:PaymentTerm')->findOneBy(['label' => $paymentTerm]);
+        if (!array_key_exists($label, $this->paymentTerms)) {
+            $this->paymentTerms[$label] = $manager->getRepository('OroB2BPaymentBundle:PaymentTerm')
+                ->findOneBy(['label' => $label]);
+        }
+
+        return $this->paymentTerms[$label];
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $name
+     * @return PriceList
+     */
+    protected function getPriceList(EntityManager $manager, $name)
+    {
+        if (!array_key_exists($name, $this->priceLists)) {
+            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceList')
+                ->findOneBy(['name' => $name]);
+        }
+
+        return $this->priceLists[$name];
     }
 }
