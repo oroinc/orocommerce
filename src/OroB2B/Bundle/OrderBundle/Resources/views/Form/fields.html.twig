@@ -87,7 +87,7 @@
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined %}
+            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
@@ -135,7 +135,7 @@
 {% block orob2b_order_line_item_frontend_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined %}
+            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
