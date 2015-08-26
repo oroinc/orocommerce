@@ -38,7 +38,7 @@ class AccountUserProfileControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->offsetSet('orob2b_account_frontend_account_user[firstName]', 'AccountUserUpdated');
+        $form->offsetSet('orob2b_account_frontend_account_user_profile[firstName]', 'AccountUserUpdated');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -57,7 +57,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form->offsetSet(
-            'orob2b_account_frontend_account_user[changePassword]',
+            'orob2b_account_frontend_account_user_profile[changePassword]',
             [
                 'currentPassword' => LoadAccountUserData::AUTH_PW,
                 'plainPassword' => [
@@ -84,7 +84,7 @@ class AccountUserProfileControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form->offsetSet(
-            'orob2b_account_frontend_account_user[changePassword]',
+            'orob2b_account_frontend_account_user_profile[changePassword]',
             [
                 'currentPassword' => '123456',
                 'plainPassword' => [

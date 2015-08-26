@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -127,7 +128,7 @@ class AccountUserProfileController extends Controller
     public function updateAction()
     {
         $accountUser = $this->getUser();
-        $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
+        $form = $this->createForm(FrontendAccountUserProfileType::NAME, $accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
             $this->getRequest(),
