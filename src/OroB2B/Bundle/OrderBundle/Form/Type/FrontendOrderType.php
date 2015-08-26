@@ -14,6 +14,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
@@ -116,27 +117,28 @@ class FrontendOrderType extends AbstractType
                 $order = $event->getData();
                 if ($order && $order->getLineItems()) {
                     $productUnitQuantities = [];
+                    /** @var OrderLineItem[] $lineItemsWithIdentifier */
+                    $lineItemsWithIdentifier = [];
 
                     foreach ($order->getLineItems() as $lineItem) {
-                        $productUnitQuantityCollection[] = new ProductUnitQuantity(
+                        $productUnitQuantity = new ProductUnitQuantity(
                             $lineItem->getProduct(),
                             $lineItem->getProductUnit(),
                             $lineItem->getQuantity()
                         );
+
+                        $productUnitQuantities[] = $productUnitQuantity;
+                        $lineItemsWithIdentifier[$productUnitQuantity->getIdentifier()] = $lineItem;
                     }
 
-                    $prices = $this->productPriceProvider->matchPrices($productUnitQuantities, $order->getCurrency());
+                    $prices = $this->productPriceProvider->getMatchedPrices(
+                        $productUnitQuantities,
+                        $order->getCurrency()
+                    );
 
-                    foreach ($order->getLineItems() as $lineItem) {
-                        $key = sprintf(
-                            '%s-%s-%s',
-                            $lineItem->getProduct()->getId(),
-                            $lineItem->getProductUnit()->getCode(),
-                            $lineItem->getQuantity()
-                        );
-
-                        if (array_key_exists($key, $prices) && $prices[$key] instanceof Price) {
-                            $lineItem->setPrice($prices[$key]);
+                    foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
+                        if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {
+                            $lineItem->setPrice($prices[$identifier]);
                         }
                     }
                 }

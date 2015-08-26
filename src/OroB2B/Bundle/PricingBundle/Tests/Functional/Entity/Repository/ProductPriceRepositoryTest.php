@@ -202,7 +202,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrenciesDataProvider
+     * @dataProvider getPricesBatchDataProvider
      *
      * @param string $priceList
      * @param array $products
@@ -210,7 +210,7 @@ class ProductPriceRepositoryTest extends WebTestCase
      * @param array $expectedPrices
      * @param array $currencies
      */
-    public function testGetPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrencies(
+    public function testGetPricesBatch(
         $priceList,
         array $products,
         array $productUnits,
@@ -248,12 +248,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             ];
         }
 
-        $actualPrices = $this->repository->getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrencies(
-            $priceListId,
-            $productIds,
-            $productUnitCodes,
-            $currencies
-        );
+        $actualPrices = $this->repository->getPricesBatch($priceListId, $productIds, $productUnitCodes, $currencies);
 
         $this->assertEquals($expectedPriceData, $actualPrices);
     }
@@ -261,7 +256,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrenciesDataProvider()
+    public function getPricesBatchDataProvider()
     {
         return [
             'empty' => [

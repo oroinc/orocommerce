@@ -167,12 +167,8 @@ class ProductPriceRepository extends EntityRepository
      *
      * @return array
      */
-    public function getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrencies(
-        $priceListId,
-        array $productIds,
-        array $productUnitCodes,
-        array $currencies = []
-    ) {
+    public function getPricesBatch($priceListId, array $productIds, array $productUnitCodes, array $currencies = [])
+    {
         if (!$productIds || !$productUnitCodes) {
             return [];
         }

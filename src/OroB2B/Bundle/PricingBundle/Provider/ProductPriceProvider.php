@@ -70,7 +70,7 @@ class ProductPriceProvider
      * @param PriceList|null $priceList
      * @return array
      */
-    public function matchPrices(array $productUnitQuantities, $currency, PriceList $priceList = null)
+    public function getMatchedPrices(array $productUnitQuantities, $currency, PriceList $priceList = null)
     {
         if (!$priceList) {
             $priceList = $this->requestHandler->getPriceList();
@@ -85,7 +85,7 @@ class ProductPriceProvider
             $productUnitCodes[] = $productUnitQuantity->getProductUnit()->getCode();
         }
 
-        $prices = $this->getRepository()->getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrencies(
+        $prices = $this->getRepository()->getPricesBatch(
             $priceList->getId(),
             $productIds,
             $productUnitCodes,
@@ -112,9 +112,7 @@ class ProductPriceProvider
                 $price = $this->matchPriceByQuantity($prices, $quantity);
             }
 
-            $key = sprintf('%s-%s-%s', $id, $code, $quantity);
-
-            $result[$key] = $price ? Price::create($price, $currency) : null;
+            $result[$productUnitQuantity->getIdentifier()] = $price ? Price::create($price, $currency) : null;
         }
 
         return $result;
@@ -128,16 +126,6 @@ class ProductPriceProvider
     protected function matchPriceByQuantity(array $prices, $expectedQuantity)
     {
         $price = 0.0;
-
-        usort(
-            $prices,
-            function ($a, $b) {
-                if ($a['quantity'] === $b['quantity']) {
-                    return 0;
-                }
-                return ($a['quantity'] < $b['quantity']) ? -1 : 1;
-            }
-        );
 
         foreach ($prices as $productPrice) {
             $quantity = (float)$productPrice['quantity'];

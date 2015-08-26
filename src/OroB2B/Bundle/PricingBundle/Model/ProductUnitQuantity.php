@@ -29,7 +29,14 @@ class ProductUnitQuantity
      */
     public function __construct(Product $product, ProductUnit $productUnit, $quantity)
     {
+        if (!$product->getId()) {
+            throw new \InvalidArgumentException('Product must have id.');
+        }
         $this->product = $product;
+
+        if (!$productUnit->getCode()) {
+            throw new \InvalidArgumentException('ProductUnit must have code.');
+        }
         $this->productUnit = $productUnit;
 
         if (!is_numeric($quantity) || $quantity <= 0) {
@@ -61,5 +68,18 @@ class ProductUnitQuantity
     public function getQuantity()
     {
         return $this->quantity;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return sprintf(
+            '%s-%s-%s',
+            $this->getProduct()->getId(),
+            $this->getProductUnit()->getCode(),
+            $this->getQuantity()
+        );
     }
 }

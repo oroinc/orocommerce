@@ -177,7 +177,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getMatchPricesDataProvider
+     * @dataProvider getMatchedPricesDataProvider
      *
      * @param array $productUnitQuantities
      * @param string $currency
@@ -185,7 +185,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @param array $repositoryData
      * @param array $expectedData
      */
-    public function testMatchPrices(
+    public function testGetMatchedPrices(
         array $productUnitQuantities,
         $currency,
         $withPriceList,
@@ -203,9 +203,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repository->expects($this->once())
-            ->method('getPricesByPriceListIdAndProductIdsAndUnitCodesAndCurrencies')
-            ->willReturn($repositoryData);
+        $repository->expects($this->once())->method('getPricesBatch')->willReturn($repositoryData);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
         $em->expects($this->once())
@@ -218,7 +216,11 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->with(self::CLASS_NAME)
             ->willReturn($em);
 
-        $prices = $this->provider->matchPrices($productUnitQuantities, $currency, $withPriceList ? $priceList : null);
+        $prices = $this->provider->getMatchedPrices(
+            $productUnitQuantities,
+            $currency,
+            $withPriceList ? $priceList : null
+        );
 
         $this->assertInternalType('array', $prices);
         $this->assertEquals(count($productUnitQuantities), count($prices));
@@ -228,7 +230,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getMatchPricesDataProvider()
+    public function getMatchedPricesDataProvider()
     {
         $prodUnitQty1 = $this->getProductUnitQuantity(1);
         $prodUnitQty105 = $this->getProductUnitQuantity(10.5);
@@ -245,8 +247,8 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 'withPriceList' => true,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
-                    $this->getResultKey($prodUnitQty1) => Price::create(20, 'USD'),
-                    $this->getResultKey($prodUnitQty105) => Price::create(15, 'USD'),
+                    $prodUnitQty1->getIdentifier() => Price::create(20, 'USD'),
+                    $prodUnitQty105->getIdentifier() => Price::create(15, 'USD'),
                 ]
             ],
             'without priceList' => [
@@ -255,26 +257,12 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 'withPriceList' => false,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
-                    $this->getResultKey($prodUnitQty50) => Price::create(300, 'USD'),
-                    $this->getResultKey($prodUnitQty200) => Price::create(1400, 'USD'),
-                    $this->getResultKey($prodUnitQty01) => null,
+                    $prodUnitQty50->getIdentifier() => Price::create(300, 'USD'),
+                    $prodUnitQty200->getIdentifier() => Price::create(1400, 'USD'),
+                    $prodUnitQty01->getIdentifier() => null,
                 ]
             ]
         ];
-    }
-
-    /**
-     * @param ProductUnitQuantity $productUnitQuantity
-     * @return string
-     */
-    protected function getResultKey(ProductUnitQuantity $productUnitQuantity)
-    {
-        return sprintf(
-            '%s-%s-%s',
-            $productUnitQuantity->getProduct()->getId(),
-            $productUnitQuantity->getProductUnit()->getCode(),
-            $productUnitQuantity->getQuantity()
-        );
     }
 
     /**
@@ -305,6 +293,13 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => $product->getId(),
                 'code' => $productUnit->getCode(),
+                'quantity' => 1,
+                'value' => 20,
+                'currency' => 'EUR'
+            ],
+            [
+                'id' => $product->getId(),
+                'code' => $productUnit->getCode(),
                 'quantity' => 1.5,
                 'value' => 15,
                 'currency' => 'USD'
@@ -322,14 +317,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 'quantity' => 100,
                 'value' => 1400,
                 'currency' => 'USD'
-            ],
-            [
-                'id' => $product->getId(),
-                'code' => $productUnit->getCode(),
-                'quantity' => 1,
-                'value' => 20,
-                'currency' => 'EUR'
-            ],
+            ]
         ];
     }
 
