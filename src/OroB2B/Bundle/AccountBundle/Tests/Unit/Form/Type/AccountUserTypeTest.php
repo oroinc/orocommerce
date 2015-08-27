@@ -56,7 +56,6 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         $this->formType = new AccountUserType($this->securityFacade);
         $this->formType->setDataClass(self::DATA_CLASS);
-        $this->formType->setRoleClass(self::ROLE_CLASS);
         $this->formType->setAddressClass(self::ADDRESS_CLASS);
     }
 
