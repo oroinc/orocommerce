@@ -117,7 +117,7 @@ class QuoteTypeTest extends AbstractTest
                     'owner' => 1,
                     'accountUser' => 1,
                     'account' => 2,
-                    'locked'=> false,
+                    'locked' => false,
                     'quoteProducts' => [
                         [
                             'product'   => 2,

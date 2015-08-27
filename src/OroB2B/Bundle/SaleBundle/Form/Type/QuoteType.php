@@ -51,12 +51,8 @@ class QuoteType extends AbstractType
                 'label'     => 'orob2b.sale.quote.valid_until.label',
                 'required'  => false,
             ])
-            ->add('locked', 'choice', [
+            ->add('locked', 'checkbox', [
                     'label' => 'orob2b.sale.quote.locked.label',
-                    'choices' => [
-                        false => 'orob2b.sale.quote.locked.no.label',
-                        true => 'orob2b.sale.quote.locked.yes.label'
-                    ],
                 ])
             ->add(
                 'quoteProducts',
