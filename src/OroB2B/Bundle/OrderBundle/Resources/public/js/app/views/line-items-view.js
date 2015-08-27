@@ -64,6 +64,9 @@ define(function(require) {
                 this.loadProductsTierPrices(this.getProductsId(), function(response) {
                     mediator.trigger('order:refresh:products-tier-prices', response);
                 });
+                this.loadLineItemsMatchedPrices(this.getItems(), function(response) {
+                    mediator.trigger('order:refresh:line-items-matched-prices', response);
+                });
             }, this));
         },
 
@@ -125,6 +128,29 @@ define(function(require) {
             $.get(url, function(response) {
                 callback(response);
             });
+        },
+
+        /**
+         * @returns {Array} products
+         */
+        getItems: function() {
+            var lineItems = this.$el.find('.order-line-item');
+            var items = [];
+
+            _.each(lineItems, function(lineItem) {
+                var $lineItem = $(lineItem);
+                var productId = $lineItem.find('input[data-ftid$="_product"]')[0].value;
+                if (productId.length === 0) {
+                    return;
+                }
+
+                var unitCode = $lineItem.find('select[data-ftid$="productUnit"]')[0].value;
+                var quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
+
+                items.push({'product': productId, 'unit': unitCode, 'qty': quantity});
+            });
+
+            return items;
         },
 
         /**
