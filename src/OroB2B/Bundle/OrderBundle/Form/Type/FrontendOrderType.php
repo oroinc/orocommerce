@@ -110,40 +110,7 @@ class FrontendOrderType extends AbstractType
             );
         }
 
-        $builder->addEventListener(
-            FormEvents::SUBMIT,
-            function (FormEvent $event) use ($options) {
-                /** @var Order $order */
-                $order = $event->getData();
-                if ($order && $order->getLineItems()) {
-                    $productUnitQuantities = [];
-                    /** @var OrderLineItem[] $lineItemsWithIdentifier */
-                    $lineItemsWithIdentifier = [];
-
-                    foreach ($order->getLineItems() as $lineItem) {
-                        $productUnitQuantity = new ProductUnitQuantity(
-                            $lineItem->getProduct(),
-                            $lineItem->getProductUnit(),
-                            $lineItem->getQuantity()
-                        );
-
-                        $productUnitQuantities[] = $productUnitQuantity;
-                        $lineItemsWithIdentifier[$productUnitQuantity->getIdentifier()] = $lineItem;
-                    }
-
-                    $prices = $this->productPriceProvider->getMatchedPrices(
-                        $productUnitQuantities,
-                        $order->getCurrency()
-                    );
-
-                    foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
-                        if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {
-                            $lineItem->setPrice($prices[$identifier]);
-                        }
-                    }
-                }
-            }
-        );
+        $builder->addEventListener(FormEvents::SUBMIT, [$this, 'updateLineItemPrices']);
     }
 
     /**
@@ -172,5 +139,51 @@ class FrontendOrderType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function updateLineItemPrices(FormEvent $event)
+    {
+        /** @var Order $order */
+        $order = $event->getData();
+        if ($order && $order->getLineItems()) {
+            $productUnitQuantities = [];
+            /** @var OrderLineItem[] $lineItemsWithIdentifier */
+            $lineItemsWithIdentifier = [];
+
+            foreach ($order->getLineItems() as $lineItem) {
+                if (!$lineItem->getProduct() || !$lineItem->getProductUnit() || !$lineItem->getQuantity()) {
+                    continue;
+                }
+                $productUnitQuantity = new ProductUnitQuantity(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity()
+                );
+
+                $productUnitQuantities[] = $productUnitQuantity;
+                $lineItemsWithIdentifier[$productUnitQuantity->getIdentifier()] = $lineItem;
+            }
+
+            $this->fillLineItemsPrice($order->getCurrency(), $productUnitQuantities, $lineItemsWithIdentifier);
+        }
+    }
+
+    /**
+     * @param string $currency
+     * @param ProductUnitQuantity[] $productUnitQuantities
+     * @param OrderLineItem[] $lineItemsWithIdentifier
+     */
+    protected function fillLineItemsPrice($currency, array $productUnitQuantities, array $lineItemsWithIdentifier)
+    {
+        $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities, $currency);
+
+        foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
+            if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {
+                $lineItem->setPrice($prices[$identifier]);
+            }
+        }
     }
 }

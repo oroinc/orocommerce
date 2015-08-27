@@ -97,7 +97,16 @@ abstract class AbstractOrderLineItemType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['page_component'] = $options['page_component'];
-        $view->vars['page_component_options'] = $options['page_component_options'];
+        if (array_key_exists('page_component', $options)) {
+            $view->vars['page_component'] = $options['page_component'];
+        } else {
+            $view->vars['page_component'] = null;
+        }
+
+        if (array_key_exists('page_component_options', $options)) {
+            $view->vars['page_component_options'] = $options['page_component_options'];
+        } else {
+            $view->vars['page_component_options'] = null;
+        }
     }
 }
