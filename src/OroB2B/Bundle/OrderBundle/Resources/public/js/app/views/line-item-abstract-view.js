@@ -117,6 +117,7 @@ define(function(require) {
             }, this));
 
             mediator.trigger('order:get:products-tier-prices', _.bind(this.setTierPrices, this));
+            mediator.on('order:refresh:products-tier-prices', this.setTierPrices, this);
 
             if (this.fieldsByName.priceValue) {
                 this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
@@ -158,6 +159,19 @@ define(function(require) {
             this.$el.trigger('content:remove');
             this.remove();
             SubtotalsListener.updateSubtotals();
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('order:refresh:products-tier-prices', this.setTierPrices, this);
+
+            LineItemAbstractView.__super__.dispose.call(this);
         }
     });
 
