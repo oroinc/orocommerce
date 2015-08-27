@@ -121,3 +121,7 @@ table.order-line-items th {
 .order-line-item-price-overridden div.popover {
     min-width: 130px;
 }
+
+.order-line-item-tier-prices div.popover tr.matched-tier-price > td {
+    font-weight: bold;
+}

@@ -170,6 +170,7 @@ define(function(require) {
             if (!_.isEmpty(this.tierPrices)) {
                 content = this.tierPricesTemplate({
                     tierPrices: this.tierPrices,
+                    matchedPrice: this.matchedPrice ? this.matchedPrice.value : null,
                     formatter: NumberFormatter
                 });
                 $button.removeClass('disabled');
@@ -226,16 +227,20 @@ define(function(require) {
             var identifier = this._getMatchedPriceIdentifier();
             if (identifier) {
                 this.matchedPrice = matchedPrices[identifier] || {};
-
-                if (this.fieldsByName.priceValue.hasClass('matched-price')) {
-                    this.fieldsByName.priceValue
-                        .val(this.matchedPrice.value)
-                        .change()
-                        .addClass('matched-price');
-                } else {
-                    this.renderPriceOverridden();
-                }
+            } else {
+                this.matchedPrice = null;
             }
+
+            if (this.matchedPrice && this.fieldsByName.priceValue.hasClass('matched-price')) {
+                this.fieldsByName.priceValue
+                    .val(this.matchedPrice.value)
+                    .change()
+                    .addClass('matched-price');
+            } else {
+                this.renderPriceOverridden();
+            }
+
+            this.renderTierPrices();
         },
 
         renderPriceOverridden: function() {

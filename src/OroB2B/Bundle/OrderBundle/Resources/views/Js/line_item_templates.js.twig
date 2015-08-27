@@ -12,7 +12,7 @@
             </td>
         </tr>
         <% _.each(prices, function(price) { %>
-            <tr>
+            <tr class="<% if (matchedPrice && parseFloat(price.price) === parseFloat(matchedPrice)) { %>matched-tier-price<% } %>">
                 <td class="text-right"><%= price.qty %>:</td>
                 <td class="text-left">
                     <a href="javascript: void(0);" data-price="<%= price.price %>"><%= formatter.formatCurrency(price.price, price.currency) %></a>
