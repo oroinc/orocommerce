@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -73,6 +75,17 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'label' => 'orob2b.order.orderlineitem.comment.label',
                 ]
             );
+
+        // Set quantity to 1 by default
+        $builder->get('quantity')->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!$data) {
+                    $event->setData(1);
+                }
+            }
+        );
     }
 
     /**

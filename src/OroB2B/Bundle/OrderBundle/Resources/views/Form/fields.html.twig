@@ -90,8 +90,8 @@
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
-                {{ form.vars.value.product.sku }}
+            {% if form.vars.value is not empty %}
+                {{ form.vars.value.productSku }}
             {% endif %}
         </div>
         <div class="order-line-item-type-free-form">
@@ -106,6 +106,7 @@
         </div>
         <div class="order-line-item-type-free-form">
             {{ form_widget(form.freeFormProduct) }}
+            {{ form_errors(form.product) }}
             {{ form_errors(form.freeFormProduct) }}
             <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
         </div>
@@ -134,17 +135,23 @@
 {% endblock %}
 
 {% block orob2b_order_line_item_frontend_widget %}
+    {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
+
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
-                {{ form.vars.value.product.sku }}
+            {% if form.vars.value is not empty %}
+                {{ form.vars.value.productSku }}
             {% endif %}
         </div>
     </td>
     <td class="order-line-item-type">
         <div class="order-line-item-type-product">
-            {{ form_widget(form.product) }}
-            {{ form_errors(form.product) }}
+            {% if isFreeFormProduct %}
+                {{ form.vars.value.freeFormProduct }}
+            {% else %}
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+            {% endif %}
         </div>
     </td>
     <td class="order-line-item-quantity">

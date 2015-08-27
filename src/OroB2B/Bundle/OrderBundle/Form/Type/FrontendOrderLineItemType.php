@@ -24,6 +24,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     {
         parent::configureOptions($resolver);
 
+        $resolver->setDefault('error_bubbling', true);
         $resolver->setDefault(
             'page_component_options',
             ['view' => 'orob2border/js/app/views/frontend-line-item-view']
