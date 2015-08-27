@@ -21,3 +21,27 @@ orob2b_account_account_user_role_api:
 orob2b_account_account_user_address_api:
     resource: "@OroB2BAccountBundle/Controller/Api/Rest/AccountUserAddressController.php"
     type:     rest
+
+orob2b_account_api_pinbar:
+    resource:     "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/NavigationItemController.php"
+    type:         rest
+    options:
+        frontend: true
+
+orob2b_account_sidebar_api:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/SidebarController.php"
+    type:     rest
+    options:
+        frontend: true
+
+orob2b_account_widget_api:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/WidgetController.php"
+    type:     rest
+    options:
+        frontend: true
+
+orob2b_account_pagestate_api:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/PagestateController.php"
+    type:     rest
+    options:
+        frontend: true

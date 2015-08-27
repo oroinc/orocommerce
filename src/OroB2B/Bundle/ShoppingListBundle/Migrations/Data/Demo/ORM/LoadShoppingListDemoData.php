@@ -53,9 +53,11 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $first = true;
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $this->createShoppingList($manager, $accountUser, $row['label']);
+            $this->createShoppingList($manager, $accountUser, $row['label'], $first);
+            $first = false;
         }
 
         fclose($handler);
@@ -67,17 +69,18 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      * @param ObjectManager $manager
      * @param AccountUser   $accountUser
      * @param string        $label
+     * @param boolean       $current
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $label)
+    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $label, $current)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
         $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setNotes('Some notes for ' . $label);
+        $shoppingList->setCurrent($current);
         $shoppingList->setLabel($label);
 
         $manager->persist($shoppingList);

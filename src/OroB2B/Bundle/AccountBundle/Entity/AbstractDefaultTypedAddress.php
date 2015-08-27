@@ -128,6 +128,22 @@ abstract class AbstractDefaultTypedAddress extends AbstractTypedAddress
     }
 
     /**
+     * Checks if address has default type with specified name
+     *
+     * @param string $typeName
+     * @return bool
+     */
+    public function hasDefault($typeName)
+    {
+        $defaultType = $this->getDefaults()->filter(
+            function (AddressType $addressType) use ($typeName) {
+                return $addressType->getName() === $typeName;
+            }
+        );
+        return false === $defaultType->isEmpty();
+    }
+
+    /**
      * Set default types
      *
      * @param Collection|AddressType[] $defaults

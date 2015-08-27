@@ -108,13 +108,17 @@ abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
             'Doctrine\Common\Collections\ArrayCollection',
             $this->address->getDefaults()
         );
+        $this->assertFalse($this->address->hasDefault('billing'));
+        $this->assertFalse($this->address->hasDefault('shipping'));
 
         $this->address->addType($this->billingType);
         $this->address->addType($this->shippingType);
         $this->assertCount(0, $this->address->getDefaults());
 
-        $this->address->setDefaults([$this->billingType]);
-        $this->assertCount(1, $this->address->getDefaults());
+        $this->address->setDefaults([$this->billingType, $this->shippingType]);
+        $this->assertCount(2, $this->address->getDefaults());
+        $this->assertTrue($this->address->hasDefault('billing'));
+        $this->assertTrue($this->address->hasDefault('shipping'));
     }
 
     public function testSetDefaults()
