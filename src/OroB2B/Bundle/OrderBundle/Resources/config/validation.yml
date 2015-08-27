@@ -20,10 +20,17 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
             - NotBlank: ~
         lineItems:
             - Valid: ~
+
 OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
+    constraints:
+        - OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
     properties:
         order:
             - NotBlank: ~
+        product:
+            - NotBlank:
+                message: 'orob2b.order.orderlineitem.product.blank'
+                groups: [ Frontend ]
         productSku:
             - NotBlank:
                 groups: [ Import ]

@@ -121,6 +121,7 @@ class FrontendOrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
+                'validation_groups' => ['Default', 'Frontend']
             ]
         );
     }
