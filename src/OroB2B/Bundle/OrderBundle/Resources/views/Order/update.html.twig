@@ -64,6 +64,17 @@
         </div>
     {% endset %}
 
+    {% set lineItems %}
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2border/js/app/views/line-items-view',
+                 tierPrices: tierPrices|default({})
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.lineItems) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.order.sections.general'|trans,
@@ -72,6 +83,7 @@
                 'data': [
                     ownerSelectors,
                     form_row(form.priceList),
+                    form_row(form.currency),
                     UI.renderProperty('orob2b.order.currency.label'|trans, entity.currency)
                 ]
             }]
@@ -81,7 +93,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_widget(form.lineItems)
+                    lineItems
                 ]
             }]
         }

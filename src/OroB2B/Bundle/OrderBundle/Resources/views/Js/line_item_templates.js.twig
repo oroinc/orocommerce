@@ -1,0 +1,24 @@
+<script type="text/template" id="order-line-item-tier-prices-template">
+    <table>
+        <tr>
+            <td colspan="2">
+                <%= _.__('orob2b.pricing.click_to_select') %>
+            </td>
+        </tr>
+    <% _.each(tierPrices, function(prices, unit) { %>
+        <tr>
+            <td colspan="2">
+                <b><%= _.__('orob2b.product.product_unit.' + unit + '.label.full') %></b>
+            </td>
+        </tr>
+        <% _.each(prices, function(price) { %>
+            <tr>
+                <td class="text-right"><%= price.qty %>:</td>
+                <td class="text-left">
+                    <a href="javascript: void(0);" data-price="<%= price.price %>"><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                </td>
+            </tr>
+        <% }) %>
+    <% }) %>
+    </table>
+</script>

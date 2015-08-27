@@ -16,6 +16,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -156,6 +157,7 @@ class OrderController extends Controller
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
+                    'tierPrices' => $this->getTierPrices($order),
                 ];
             }
         );
@@ -175,5 +177,39 @@ class OrderController extends Controller
     protected function getOrderHandler()
     {
         return $this->get('orob2b_order.model.order_request_handler');
+    }
+
+    /**
+     * @param Order $order
+     * @return array
+     */
+    protected function getTierPrices(Order $order)
+    {
+        $tierPrices = [];
+
+        $priceList = $order->getPriceList();
+        if (!$priceList) {
+            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
+        }
+
+        $productIds = $order->getLineItems()->filter(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct() !== null;
+            }
+        )->map(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct()->getId();
+            }
+        );
+
+        if ($productIds) {
+            $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
+                $priceList->getId(),
+                $productIds->toArray(),
+                $order->getCurrency()
+            );
+        }
+
+        return $tierPrices;
     }
 }

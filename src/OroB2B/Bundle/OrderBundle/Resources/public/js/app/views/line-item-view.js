@@ -2,6 +2,8 @@ define(function(require) {
     'use strict';
 
     var LineItemView;
+    var $ = require('jquery');
+    var _ = require('underscore');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
@@ -11,14 +13,19 @@ define(function(require) {
      */
     LineItemView = LineItemAbstractView.extend({
         /**
-         * @property {Object}
+         * @inheritDoc
          */
-        options: {
-            selectors: {
-                productType: '.order-line-item-type-product',
-                freeFormType: '.order-line-item-type-free-form'
-            }
+        initialize: function() {
+            this.options = $.extend(true, {
+                selectors: {
+                    productType: '.order-line-item-type-product',
+                    freeFormType: '.order-line-item-type-free-form'
+                }
+            }, this.options);
+
+            LineItemView.__super__.initialize.apply(this, arguments);
         },
+
         /**
          * Doing something after loading child components
          */
@@ -34,21 +41,23 @@ define(function(require) {
             ]);
 
             this.initTypeSwitcher();
+
+            this.initTierPrices();
         },
 
         initTypeSwitcher: function() {
-            var self = this;
-            var $freeFormType = this.$el.find('a' + this.options.selectors.freeFormType).click(function() {
-                self.fieldsByName.product.select2('val', '').change();
-                self.$el.find('div' + self.options.selectors.productType).hide();
-                self.$el.find('div' + self.options.selectors.freeFormType).show();
-            });
+            var $freeFormType = this.$el.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
+                this.fieldsByName.product.select2('val', '').change();
+                this.$el.find('div' + this.options.selectors.productType).hide();
+                this.$el.find('div' + this.options.selectors.freeFormType).show();
+            }, this));
 
-            var $productType = this.$el.find('a' + this.options.selectors.productType).click(function() {
-                self.fieldsByName.freeFormProduct.val('').change();
-                self.$el.find('div' + self.options.selectors.freeFormType).hide();
-                self.$el.find('div' + self.options.selectors.productType).show();
-            });
+            var $productType = this.$el.find('a' + this.options.selectors.productType).click(_.bind(function() {
+                var $freeFormTypeContainers = this.$el.find('div' + this.options.selectors.freeFormType);
+                $freeFormTypeContainers.find(':input').val('').change();
+                $freeFormTypeContainers.hide();
+                this.$el.find('div' + this.options.selectors.productType).show();
+            }, this));
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
                 $freeFormType.click();
