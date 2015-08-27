@@ -17,7 +17,7 @@
         {% set disabled = widget.vars.disabled %}
         {% set allow_delete = widget.vars.allow_delete %}
     {% else %}
-        {% if widget.vars.value is defined and widget.vars.value.fromExternalSource %}
+        {% if widget.vars.disallow_delete is defined and widget.vars.disallow_delete %}
             {% set allow_delete = false %}
         {% else %}
             {% set allow_delete = widget.parent.vars.allow_delete %}
@@ -90,7 +90,7 @@
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined and form.vars.value.product %}
+            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
@@ -138,7 +138,7 @@
 {% block orob2b_order_line_item_frontend_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined %}
+            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>

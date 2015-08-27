@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -19,6 +22,37 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function testGetName()
     {
         $this->assertEquals(FrontendOrderLineItemType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @dataProvider buildViewDatProvider
+     * @param object|null $data
+     * @param bool $expected
+     */
+    public function testBuildView($data, $expected)
+    {
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())
+            ->method('getData')
+            ->will($this->returnValue($data));
+        $options = [];
+        $this->formType->buildView($view, $form, $options);
+
+        $this->assertEquals($expected, $view->vars['disallow_delete']);
+    }
+
+    /**
+     * @return array
+     */
+    public function buildViewDatProvider()
+    {
+        return [
+            [null, false],
+            [(new OrderLineItem()), false],
+            [(new OrderLineItem())->setFromExternalSource(true), true],
+        ];
     }
 
     /**

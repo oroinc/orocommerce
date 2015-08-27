@@ -6,6 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 
@@ -36,6 +37,16 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
                 }
             }
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        /** @var OrderLineItem $item */
+        $item = $form->getData();
+        $view->vars['disallow_delete'] = $item && $item->isFromExternalSource();
     }
 
     /**
