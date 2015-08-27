@@ -2,16 +2,15 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -61,7 +60,7 @@ class OrderControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $date = new \DateTime();
@@ -70,43 +69,36 @@ class OrderControllerTest extends WebTestCase
             [
                 'poNumber' => self::ORDER_PO_NUMBER,
                 'shipUntil' => $date->format('Y-m-d'),
-                'customerNotes' => 'Customer Notes'
+                'customerNotes' => 'Customer Notes',
             ],
             [
                 self::ORDER_PO_NUMBER,
                 'Customer Notes',
-                $this->dateFormatter->formatDate($date)
+                $this->dateFormatter->formatDate($date),
             ]
         );
     }
 
     /**
      * @depends testCreate
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return int
      */
     public function testUpdate()
     {
-        $response = $this->requestFrontendGrid(
+        $id = $this->findInGrid(
             'frontend-orders-grid',
-            [
-                'orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER
-            ]
+            ['frontend-orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER]
         );
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id      = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_order_frontend_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_order_frontend_update', ['id' => $id])
         );
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         /** @var PriceList $defaultPriceList */
         $defaultPriceList = $this->getReference('price_list_1');
@@ -124,7 +116,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'quantity' => 10,
                 'productUnit' => 'liter',
-                'shipBy' => $date
+                'shipBy' => $date,
             ],
         ];
 
@@ -133,8 +125,8 @@ class OrderControllerTest extends WebTestCase
             'orob2b_order_frontend_type' => [
                 '_token' => $form['orob2b_order_frontend_type[_token]']->getValue(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
-                'lineItems' => $lineItems
-            ]
+                'lineItems' => $lineItems,
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -148,22 +140,15 @@ class OrderControllerTest extends WebTestCase
         // Check updated order
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_update', ['id' => $id]));
 
-        $this->assertEquals(
-            self::ORDER_PO_NUMBER_UPDATED,
-            $crawler->filter('input[name="orob2b_order_frontend_type[poNumber]"]')
-                ->extract('value')[0]
-        );
-
-        /** @var ProductPrice $price */
-        $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
                 'quantity' => 10,
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $productPrice->getPrice()->getValue(),
-                'shipBy' => $date
-            ]
+                'price' => $this->getReference('product_price.1')->getPrice()->getValue(),
+                'shipBy' => $date,
+                'poNumber' => self::ORDER_PO_NUMBER_UPDATED
+            ],
         ];
 
         $actualLineItems = [
@@ -177,8 +162,10 @@ class OrderControllerTest extends WebTestCase
                     ->html(),
                 'price' => trim($crawler->filter('.order-line-item-price-value')->html()),
                 'shipBy' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems][0][shipBy]"]')
+                    ->extract('value')[0],
+                'poNumber' =>  $crawler->filter('input[name="orob2b_order_frontend_type[poNumber]"]')
                     ->extract('value')[0]
-            ]
+            ],
         ];
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
@@ -249,5 +236,20 @@ class OrderControllerTest extends WebTestCase
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $gridName
+     * @param array $filters
+     * @return array
+     */
+    protected function findInGrid($gridName, array $filters)
+    {
+        $response = $this->requestFrontendGrid($gridName, $filters);
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        return $result['id'];
     }
 }
