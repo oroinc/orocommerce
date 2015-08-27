@@ -166,8 +166,6 @@ define(function(require) {
 
         renderTierPrices: function() {
             var $button = this.$tierPrices.find('i');
-            $button.data('popover', null);
-
             var content = '';
             if (!_.isEmpty(this.tierPrices)) {
                 content = this.tierPricesTemplate({
@@ -179,8 +177,12 @@ define(function(require) {
                 $button.addClass('disabled');
             }
 
-            $button.data('content', content);
-            layout.initPopover(this.$tierPrices);
+            if ($button.data('popover')) {
+                $button.data('popover').options.content = content;
+            } else {
+                $button.data('content', content);
+                layout.initPopover(this.$tierPrices);
+            }
         },
 
         initMatchedPrices: function() {
