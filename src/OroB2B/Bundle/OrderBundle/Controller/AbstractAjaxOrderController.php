@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 
 abstract class AbstractAjaxOrderController extends Controller
@@ -29,7 +28,7 @@ abstract class AbstractAjaxOrderController extends Controller
             $order = new $orderClass();
         }
 
-        $form = $this->createForm(OrderType::NAME, $order);
+        $form = $this->createForm($this->getOrderFormTypeName(), $order);
         $form->submit($this->get('request'));
 
         $subtotals = $this->get('orob2b_order.provider.subtotals')->getSubtotals($order);
@@ -41,4 +40,9 @@ abstract class AbstractAjaxOrderController extends Controller
 
         return new JsonResponse(['subtotals' => $subtotals]);
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getOrderFormTypeName();
 }

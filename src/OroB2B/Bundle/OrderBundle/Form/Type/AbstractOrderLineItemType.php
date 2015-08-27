@@ -4,6 +4,10 @@ namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
@@ -71,6 +75,17 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'label' => 'orob2b.order.orderlineitem.comment.label',
                 ]
             );
+
+        // Set quantity to 1 by default
+        $builder->get('quantity')->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!$data) {
+                    $event->setData(1);
+                }
+            }
+        );
     }
 
     /**
@@ -83,8 +98,28 @@ abstract class AbstractOrderLineItemType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'order_line_item',
+                'page_component' => 'oroui/js/app/components/view-component',
+                'page_component_options' => [],
                 'currency' => null
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if (array_key_exists('page_component', $options)) {
+            $view->vars['page_component'] = $options['page_component'];
+        } else {
+            $view->vars['page_component'] = null;
+        }
+
+        if (array_key_exists('page_component_options', $options)) {
+            $view->vars['page_component_options'] = $options['page_component_options'];
+        } else {
+            $view->vars['page_component_options'] = null;
+        }
     }
 }

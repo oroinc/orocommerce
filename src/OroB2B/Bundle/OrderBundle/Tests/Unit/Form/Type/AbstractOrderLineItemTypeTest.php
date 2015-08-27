@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -102,6 +104,41 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+    }
+
+    public function assertDefaultBuildViewCalled()
+    {
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $possibleOptions = [
+            [
+                'options' => [],
+                'expected' => ['page_component' => null, 'page_component_options' => null]
+            ],
+            [
+                'options' => ['page_component' => 'test', 'page_component_options' => ['v2']],
+                'expected' => ['page_component' => 'test', 'page_component_options' => ['v2']]
+            ]
+        ];
+
+        foreach ($possibleOptions as $optionsData) {
+            $this->formType->buildView($view, $form, $optionsData['options']);
+            $this->assertBuildView($view, $optionsData['expected']);
+        }
+    }
+
+    /**
+     * @param FormView $view
+     * @param array $expectedVars
+     */
+    public function assertBuildView(FormView $view, array $expectedVars)
+    {
+        foreach ($expectedVars as $key => $val) {
+            $this->assertArrayHasKey($key, $view->vars);
+            $this->assertEquals($val, $view->vars[$key]);
+        }
     }
 
     /**

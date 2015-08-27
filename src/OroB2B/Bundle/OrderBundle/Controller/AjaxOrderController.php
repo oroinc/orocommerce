@@ -11,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -64,7 +63,7 @@ class AjaxOrderController extends AbstractAjaxOrderController
                 ->getAccountGroupPaymentTerm($account->getGroup());
         }
 
-        $orderForm = $this->createForm(OrderType::NAME, $order);
+        $orderForm = $this->createForm($this->getOrderFormTypeName(), $order);
 
         return new JsonResponse(
             [
@@ -118,5 +117,13 @@ class AjaxOrderController extends AbstractAjaxOrderController
     {
         return $this->get('orob2b_order.model.order_request_handler');
 
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getOrderFormTypeName()
+    {
+        return OrderType::NAME;
     }
 }
