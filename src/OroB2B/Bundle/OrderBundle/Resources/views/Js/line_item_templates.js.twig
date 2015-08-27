@@ -1,6 +1,10 @@
 <script type="text/template" id="order-line-item-tier-prices-template">
-    <i class="icon-bars<%= _.isEmpty(tierPrices) ? ' disabled' : ''%>"></i>
     <table>
+        <tr>
+            <td colspan="2">
+                <%= _.__('orob2b.pricing.click_to_select') %>
+            </td>
+        </tr>
     <% _.each(tierPrices, function(prices, unit) { %>
         <tr>
             <td colspan="2">

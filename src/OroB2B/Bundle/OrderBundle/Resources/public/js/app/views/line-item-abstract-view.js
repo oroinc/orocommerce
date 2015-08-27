@@ -4,9 +4,11 @@ define(function(require) {
     var LineItemAbstractView;
     var $ = require('jquery');
     var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
+    var layout = require('oroui/js/layout');
+    var NumberFormatter = require('orolocale/js/formatter/number');
     var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
-    var mediator = require('oroui/js/mediator');
 
     /**
      * @export orob2border/js/app/views/line-item-abstract-view
@@ -18,13 +20,27 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            ftid: ''
+            ftid: '',
+            selectors: {
+                tierPrices: '.order-line-item-tier-prices',
+                tierPricesTemplate: '#order-line-item-tier-prices-template'
+            }
         },
 
         /**
          * @property {jQuery}
          */
         $fields: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $tierPrices: null,
+
+        /**
+         * @property {Object}
+         */
+        matchedPrices: null,
 
         /**
          * @property {Object}
@@ -34,7 +50,12 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        matchedPrices: null,
+        tierPricesTemplate: null,
+
+        /**
+         * @property {Object}
+         */
+        tierPrices: null,
 
         /**
          * @inheritDoc
@@ -79,6 +100,62 @@ define(function(require) {
                 name[i] = name[i][0].toUpperCase() + name[i].substr(1);
             }
             return name.join('');
+        },
+
+        /**
+         * @param {jQuery|Array} $fields
+         */
+        subtotalFields: function($fields) {
+            SubtotalsListener.listen($fields);
+        },
+
+        initTierPrices: function() {
+            this.tierPricesTemplate = _.template($(this.options.selectors.tierPricesTemplate).text());
+            this.$tierPrices = this.$el.find(this.options.selectors.tierPrices);
+
+            this.fieldsByName.product.change(_.bind(function(e) {
+                var productId = e.currentTarget.value;
+                if (productId.length === 0) {
+                    this.setTierPrices({});
+                } else {
+                    mediator.trigger('order:load:products-tier-prices', [productId], _.bind(this.setTierPrices, this));
+                }
+            }, this));
+
+            mediator.trigger('order:get:products-tier-prices', _.bind(this.setTierPrices, this));
+
+            if (this.fieldsByName.priceValue) {
+                this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
+                    this.fieldsByName.priceValue.val($(e.currentTarget).data('price'));
+                }, this));
+            }
+        },
+
+        /**
+         * @param {Object} tierPrices
+         */
+        setTierPrices: function(tierPrices) {
+            this.tierPrices = tierPrices[this.fieldsByName.product.val()] || {};
+            this.renderTierPrices();
+        },
+
+        renderTierPrices: function() {
+            var $button = this.$tierPrices.find('i');
+            $button.data('popover', null);
+
+            var content = '';
+            if (!_.isEmpty(this.tierPrices)) {
+                content = this.tierPricesTemplate({
+                    tierPrices: this.tierPrices,
+                    formatter: NumberFormatter
+                });
+                $button.removeClass('disabled');
+            } else {
+                $button.addClass('disabled');
+            }
+
+            $button.data('content', content);
+            layout.initPopover(this.$tierPrices);
         },
 
         initMatchedPrices: function() {
@@ -134,13 +211,6 @@ define(function(require) {
             var quantity = this.fieldsByName.quantity.val();
 
             return productId.length === 0 ? null : productId + '-' + unitCode + '-' + quantity;
-        },
-
-        /**
-         * @param {jQuery|Array} $fields
-         */
-        subtotalFields: function($fields) {
-            SubtotalsListener.listen($fields);
         }
     });
 

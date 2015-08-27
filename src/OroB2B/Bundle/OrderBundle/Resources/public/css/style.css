@@ -34,11 +34,7 @@ table.order-line-items th {
 }
 
 .order-line-item-tier-prices table {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin-top: 29px;
-    border: 1px solid #e5e5e5;
+    min-width: 100px;
 }
 
 .order-line-item-tier-prices table td {
