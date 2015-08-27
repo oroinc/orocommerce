@@ -4,7 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -12,7 +14,7 @@ use OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductP
 class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
     /** @var string  */
-    protected $pricesByPriceListActionUrl = 'orob2b_frontend_product_price_by_pricelist';
+    protected $pricesByPriceListActionUrl = 'orob2b_pricing_frontend_price_by_pricelist';
 
     protected function setUp()
     {
@@ -61,6 +63,95 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                     ]
                 ],
                 'currency' => 'USD'
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getMatchingPriceActionDataProvider
+     * @param string $product
+     * @param float|int $qty
+     * @param string $unit
+     * @param string $currency
+     * @param array $expected
+     */
+    public function testGetMatchingPriceAction($product, $qty, $unit, $currency, array $expected)
+    {
+        /** @var PriceList $defaultPriceList */
+        $defaultPriceList = $this->getReference('price_list_1');
+
+        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
+            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($defaultPriceList);
+
+        /** @var Product $product */
+        $product = $this->getReference($product);
+
+        $params = [
+            'items' => [
+                ['qty' => $qty, 'product' => $product->getId(), 'unit' => $unit]
+            ],
+            'currency' => $currency
+        ];
+
+        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_mathing_price', $params));
+
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+
+        $expectedData = [];
+        if (!empty($expected)) {
+            $expectedData = [
+                $product->getId() .'-'. $unit .'-'. $qty  => $expected
+            ];
+        }
+
+        $this->assertEquals($expectedData, $data);
+    }
+
+    /**
+     * @return array
+     */
+    public function getMatchingPriceActionDataProvider()
+    {
+        return [
+            [
+                'product' => 'product.1',
+                'qty' => 0.1,
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'expected' => []
+            ],
+            [
+                'product' => 'product.1',
+                'qty' => 1,
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'expected' => [
+                    'value' => 10,
+                    'currency' => 'USD'
+                ]
+            ],
+            [
+                'product' => 'product.1',
+                'qty' => 10,
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'expected' => [
+                    'value' => 12.2,
+                    'currency' => 'USD'
+                ]
+            ],
+            [
+                'product' => 'product.1',
+                'qty' => 100,
+                'unit' => 'liter',
+                'currency' => 'USD',
+                'expected' => [
+                    'value' => 12.2,
+                    'currency' => 'USD'
+                ]
             ]
         ];
     }

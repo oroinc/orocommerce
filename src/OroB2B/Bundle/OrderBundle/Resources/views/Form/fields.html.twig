@@ -13,11 +13,11 @@
 {% macro orob2b_order_line_items_collection_item_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
-        {% set name = widget.vars.prototype.vars.name %}
+        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
         {% set disabled = widget.vars.disabled %}
         {% set allow_delete = widget.vars.allow_delete %}
     {% else %}
-        {% if widget.vars.value is defined and widget.vars.value.fromExternalSource %}
+        {% if widget.vars.disallow_delete is defined and widget.vars.disallow_delete %}
             {% set allow_delete = false %}
         {% else %}
             {% set allow_delete = widget.parent.vars.allow_delete %}
@@ -28,7 +28,10 @@
     {% endif %}
 
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="order-line-item">
+        class="order-line-item"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {view: 'orob2border/js/app/views/line-item-view'}|json_encode }}"
+        data-layout="separate">
         {{ form_widget(form) }}
 
         {% if allow_delete %}
@@ -87,7 +90,7 @@
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined %}
+            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
@@ -96,17 +99,15 @@
         </div>
     </td>
     <td class="order-line-item-type">
-        <div data-page-component-module="orob2border/js/app/components/line-item-type-component">
-            <div class="order-line-item-type-product">
-                {{ form_widget(form.product) }}
-                {{ form_errors(form.product) }}
-                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
-            </div>
-            <div class="order-line-item-type-free-form">
-                {{ form_widget(form.freeFormProduct) }}
-                {{ form_errors(form.freeFormProduct) }}
-                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
-            </div>
+        <div class="order-line-item-type-product">
+            {{ form_widget(form.product) }}
+            {{ form_errors(form.product) }}
+            <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+        </div>
+        <div class="order-line-item-type-free-form">
+            {{ form_widget(form.freeFormProduct) }}
+            {{ form_errors(form.freeFormProduct) }}
+            <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
         </div>
     </td>
     <td class="order-line-item-quantity">
@@ -135,7 +136,7 @@
 {% block orob2b_order_line_item_frontend_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined %}
+            {% if form.vars.value.product is defined and form.vars.value.product is not null %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
