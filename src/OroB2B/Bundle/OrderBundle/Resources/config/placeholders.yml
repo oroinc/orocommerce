@@ -1,0 +1,8 @@
+placeholders:
+    scripts_before:
+        items:
+            line_item_tier_prices_template: ~
+
+items:
+    line_item_tier_prices_template:
+        template: OroB2BOrderBundle:Js:line_item_tier_prices_template.js.twig

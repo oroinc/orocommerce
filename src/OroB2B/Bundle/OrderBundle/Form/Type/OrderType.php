@@ -79,6 +79,10 @@ class OrderType extends AbstractType
                 ]
             )
             ->add(
+                'currency',
+                'hidden'
+            )
+            ->add(
                 'lineItems',
                 OrderLineItemsCollectionType::NAME,
                 [
