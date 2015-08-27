@@ -29,7 +29,7 @@ class LineItemProductValidator extends ConstraintValidator
 
         if (!$value->getProduct() && !$value->getFreeFormProduct()) {
             $this->context->buildViolation($constraint->emptyProductMessage)
-                 ->atPath('product')
+                ->atPath('product')
                 ->addViolation();
         }
 
