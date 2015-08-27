@@ -93,6 +93,9 @@ class ProductUnitRemovedSelectionType extends AbstractType
     public function preSetData(FormEvent $event)
     {
         $form = $event->getForm()->getParent();
+        if (!$form) {
+            return;
+        }
 
         /* @var $productUnitHolder ProductUnitHolderInterface */
         $productUnitHolder = $form ? $form->getData() : null;

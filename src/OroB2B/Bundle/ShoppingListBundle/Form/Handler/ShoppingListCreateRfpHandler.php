@@ -105,14 +105,13 @@ class ShoppingListCreateRfpHandler
     {
         $rfpRequest = new RFPRequest();
         $rfpRequest
-            //->setShoppingList($entity)
-                ->setFirstName($this->user->getFirstName())
-                ->setLastName($this->user->getLastName())
-                ->setEmail($this->user->getEmail())
-                ->setPhone('')
-                ->setRole('')
-                ->setBody('')
-                ->setCompany($this->user->getOrganization()->getName())
+            ->setFirstName($this->user->getFirstName())
+            ->setLastName($this->user->getLastName())
+            ->setEmail($this->user->getEmail())
+            ->setPhone('')
+            ->setRole('')
+            ->setBody('')
+            ->setCompany($this->user->getOrganization() ? $this->user->getOrganization()->getName() : '')
             ->setAccountUser($this->user)
             ->setAccount($this->user->getAccount())
         ;
@@ -124,11 +123,8 @@ class ShoppingListCreateRfpHandler
             ;
             $requestProductItem = new RequestProductItem();
             $requestProductItem
-                //->setFromShoppingList(true)
                 ->setQuantity($shoppingListLineItem->getQuantity())
                 ->setProductUnit($shoppingListLineItem->getUnit())
-                //->setShoppingListProductOffer($shoppingListProductOffer)
-                //->setPriceType($shoppingListProductOffer->getPriceType())
             ;
             $requestProduct->addRequestProductItem($requestProductItem);
             $rfpRequest->addRequestProduct($requestProduct);

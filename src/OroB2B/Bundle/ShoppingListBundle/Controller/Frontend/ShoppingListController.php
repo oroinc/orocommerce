@@ -158,7 +158,6 @@ class ShoppingListController extends Controller
         );
     }
 
-
     /**
      * @Route("/create_rfp/{id}", name="orob2b_shopping_list_frontend_create_rfp", requirements={"id"="\d+"})
      * @Acl(
@@ -196,7 +195,7 @@ class ShoppingListController extends Controller
                 $form,
                 function (ShoppingList $shoppingList) {
                     return [
-                        'route'         => 'orob2b_sale_shoppingList_frontend_view',
+                        'route'         => 'orob2b_shopping_list_frontend_view',
                         'parameters'    => ['id' => $shoppingList->getId()],
                     ];
                 },
