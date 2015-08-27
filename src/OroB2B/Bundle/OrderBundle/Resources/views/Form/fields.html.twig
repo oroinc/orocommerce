@@ -29,14 +29,14 @@
 
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
         class="order-line-item"
-        data-page-component-module="oroui/js/app/components/view-component"
-        data-page-component-options="{{ {view: 'orob2border/js/app/views/line-item-view'}|json_encode }}"
+        data-page-component-module="{{ form.vars.page_component }}"
+        data-page-component-options="{{ form.vars.page_component_options|json_encode }}"
         data-layout="separate">
         {{ form_widget(form) }}
 
         {% if allow_delete %}
             <td>
-                <button type="button" class="removeRow btn btn-small"></button>
+                <button type="button" class="removeLineItem btn btn-small icons-holder"><i class="icon-remove"></i></button>
             </td>
         {% elseif widget.parent.vars.allow_delete %}
             <td></td>
