@@ -73,15 +73,21 @@ table.order-line-items th {
     width: 279px !important;
 }
 
+.order-line-item-quantity input[type="number"],
+.order-line-item-price input[type="text"] {
+    text-align: right;
+}
+
 .order-line-item-quantity {
     width: 207px;
 }
 .order-line-item-price {
     width: 241px;
+    position: relative;
 }
 
 .order-line-item-price input[type="text"] {
-    padding-right: 17px;
+    padding-left: 17px;
 }
 
 .order-line-item-quantity input[type="number"],
@@ -103,10 +109,15 @@ table.order-line-items th {
 }
 
 .order-line-item-price-overridden {
-    margin-left: -17px;
-    float: left;
+    position: absolute;
+    top: 8px;
+    left: 9px;
 }
 
 .order-line-item-price-overridden i {
     cursor: pointer;
+}
+
+.order-line-item-price-overridden div.popover {
+    min-width: 130px;
 }
