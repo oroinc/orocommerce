@@ -77,7 +77,11 @@ table.order-line-items th {
     width: 207px;
 }
 .order-line-item-price {
-    width: 231px;
+    width: 241px;
+}
+
+.order-line-item-price input[type="text"] {
+    padding-right: 17px;
 }
 
 .order-line-item-quantity input[type="number"],
@@ -92,4 +96,17 @@ table.order-line-items th {
 .order-line-item-price input[type="text"],
 .order-line-item-price .selector {
     float: left;
+}
+
+.order-line-item-price input.matched-price {
+    background-color: #eee;
+}
+
+.order-line-item-price-overridden {
+    margin-left: -17px;
+    float: left;
+}
+
+.order-line-item-price-overridden i {
+    cursor: pointer;
 }

@@ -20,7 +20,7 @@ define(function(require) {
         options: {
             tierPrices: null,
             matchedPrices: null,
-            tierPricesRoute: 'orob2b_pricing_price_by_pricelist'
+            tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
             matchedPricesRoute: 'orob2b_pricing_mathing_price'
         },
 

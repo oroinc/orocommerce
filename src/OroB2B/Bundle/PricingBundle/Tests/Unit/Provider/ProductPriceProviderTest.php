@@ -247,7 +247,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 'withPriceList' => true,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
-                    $prodUnitQty1->getIdentifier() => Price::create(20, 'USD'),
+                    $prodUnitQty1->getIdentifier() => null,
                     $prodUnitQty105->getIdentifier() => Price::create(15, 'USD'),
                 ]
             ],
