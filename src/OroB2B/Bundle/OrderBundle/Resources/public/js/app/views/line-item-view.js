@@ -19,6 +19,7 @@ define(function(require) {
                 freeFormType: '.order-line-item-type-free-form'
             }
         },
+
         /**
          * Doing something after loading child components
          */

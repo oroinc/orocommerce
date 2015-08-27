@@ -5,6 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
+    var LineItemPricesListener = require('orob2border/js/app/listener/line-item-prices-listener');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -56,6 +57,12 @@ define(function(require) {
                 var name = self.normalizeName($field.data('ftid').replace(self.options.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
+
+            this.lineItemPricesFields([
+                this.fieldsByName.product,
+                this.fieldsByName.productUnit,
+                this.fieldsByName.quantity
+            ]);
         },
 
         /**
@@ -78,6 +85,13 @@ define(function(require) {
          */
         subtotalFields: function($fields) {
             SubtotalsListener.listen($fields);
+        },
+
+        /**
+         * @param {jQuery|Array} $fields
+         */
+        lineItemPricesFields: function($fields) {
+            LineItemPricesListener.listen($fields);
         }
     });
 
