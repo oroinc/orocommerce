@@ -31,12 +31,9 @@ class QuoteTest extends AbstractTest
 
         static::assertPropertyAccessors(new Quote(), $properties);
 
-        static::assertPropertyCollections(
-            new Quote(),
-            [
-                ['quoteProducts', new QuoteProduct()],
-            ]
-        );
+        static::assertPropertyCollections(new Quote(), [
+            ['quoteProducts', new QuoteProduct()],
+        ]);
     }
 
     public function testToString()
@@ -87,8 +84,8 @@ class QuoteTest extends AbstractTest
 
     public function testAddQuoteProduct()
     {
-        $quote = new Quote();
-        $quoteProduct = new QuoteProduct();
+        $quote          = new Quote();
+        $quoteProduct   = new QuoteProduct();
 
         $this->assertNull($quoteProduct->getQuote());
 
