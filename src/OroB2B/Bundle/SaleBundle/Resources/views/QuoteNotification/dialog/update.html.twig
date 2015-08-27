@@ -1,0 +1,13 @@
+{% extends 'OroEmailBundle:Email/dialog:update.html.twig' %}
+{% block page_container_before_form %}
+    {# todo show this message only if entity not locked #}
+    <div class="alert alert-warning">
+        <div class="message">
+           {{ 'orob2b.sale.quote.notify_customer.by_email.notify_and_lock_warning'|trans }}
+        </div>
+    </div>
+{% endblock %}
+{% block page_container_form_actions %}
+    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+    <button class="btn btn-primary" type="submit">{{ 'orob2b.sale.btn.notify_and_lock'|trans }}</button>
+{% endblock %}

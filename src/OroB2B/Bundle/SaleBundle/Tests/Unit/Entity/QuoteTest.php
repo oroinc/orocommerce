@@ -31,9 +31,34 @@ class QuoteTest extends AbstractTest
 
         static::assertPropertyAccessors(new Quote(), $properties);
 
-        static::assertPropertyCollections(new Quote(), [
-            ['quoteProducts', new QuoteProduct()],
-        ]);
+        static::assertPropertyCollections(
+            new Quote(),
+            [
+                ['quoteProducts', new QuoteProduct()],
+            ]
+        );
+    }
+
+    public function testToString()
+    {
+        $id = '123';
+        $quote = new Quote();
+        $class = new \ReflectionClass($quote);
+        $prop = $class->getProperty('id');
+        $prop->setAccessible(true);
+        $prop->setValue($quote, $id);
+
+        $this->assertEquals($id, (string)$quote);
+    }
+
+    public function testGetEmail()
+    {
+        $quote = new Quote();
+        $this->assertEmpty($quote->getEmail());
+        $accountUser = new AccountUser();
+        $accountUser->setEmail('test');
+        $quote->setAccountUser($accountUser);
+        $this->assertEquals('test', $quote->getEmail());
     }
 
     public function testPrePersist()
@@ -62,8 +87,8 @@ class QuoteTest extends AbstractTest
 
     public function testAddQuoteProduct()
     {
-        $quote          = new Quote();
-        $quoteProduct   = new QuoteProduct();
+        $quote = new Quote();
+        $quoteProduct = new QuoteProduct();
 
         $this->assertNull($quoteProduct->getQuote());
 

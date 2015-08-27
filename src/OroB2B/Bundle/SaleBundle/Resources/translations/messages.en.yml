@@ -26,6 +26,12 @@ orob2b:
             column:
                 assigned_to: 'Assigned to'
 
+            notify_customer:
+                label: 'Notify Customer'
+                by_email:
+                    link.text: 'Notify by Email'
+                    notify_and_lock_warning: 'Once you click on "Notify and Lock" the email will be sent to a customer and the quote will be locked for further editis.'
+
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
@@ -102,6 +108,7 @@ orob2b:
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
+            notify_and_lock: 'Notify and Lock'
 
     frontend:
         sale:

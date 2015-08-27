@@ -1,0 +1,9 @@
+@name = customer_notification
+@entityName = OroB2B\Bundle\SaleBundle\Entity\Quote
+@subject = Your quotation #{{ entity.id }} is ready
+@isSystem = 0
+@isEditable = 1
+
+<h4>Your quotation #{{ entity.id }} is ready and can be viewed at
+    <a href="{{ oro_config_value('oro_ui.application_url') }}{{ path('oro_default') }}">
+        {{ oro_config_value('oro_ui.application_url') }}{{ path('oro_default') }}</a></h4>

@@ -29,6 +29,38 @@
             'entity_label': 'orob2b.sale.quote.entity_label'|trans
         }) }}
     {% endif %}
+    {% set html %}
+        <li>
+            {{ UI.clientLink({
+                'dataUrl': path('quote_notification_email', {'id': entity.id}) ,
+                'aCss': 'no-hash',
+                'iCss': 'icon-envelope',
+                'label' : 'orob2b.sale.quote.notify_customer.by_email.link.text'|trans,
+                'widget' : {
+                    'type' : 'dialog',
+                    'multiple' : true,
+                    'reload-grid-name' : 'activity-list-grid',
+                    'options' : {
+                        'alias': 'notification-email-dialog',
+                        'dialogOptions' : {
+                            'title' : 'orob2b.sale.quote.notify_customer.by_email.link.text'|trans,
+                            'allowMaximize': true,
+                            'allowMinimize': true,
+                            'dblclick': 'maximize',
+                            'maximizedHeightDecreaseBy': 'minimize-bar',
+                            'width': 1000
+                        }
+                    }
+                }
+            }) }}
+        </li>
+    {% endset %}
+
+    {{ UI.dropdownButton({
+        'label': 'orob2b.sale.quote.notify_customer.label'|trans,
+        'aCss': 'pull-right',
+        'html': html
+    }) }}
 {% endblock navButtons %}
 
 {% block content_data %}
@@ -153,4 +185,13 @@
     {% endif %}
 
     {{ parent() }}
+    <script type="text/javascript">
+        console.log('hre');
+        require(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
+                function (_, __, mediator) {
+                    mediator.on('widget_success:notification-email-dialog', function () {
+                        mediator.trigger('widget:doRefresh:activity-list-widget');
+                    });
+                });
+    </script>
 {% endblock content_data %}
