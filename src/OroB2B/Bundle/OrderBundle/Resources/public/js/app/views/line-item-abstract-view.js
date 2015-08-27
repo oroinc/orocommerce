@@ -5,8 +5,8 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
-    var LineItemPricesListener = require('orob2border/js/app/listener/line-item-prices-listener');
     var BaseView = require('oroui/js/app/views/base/view');
+    var mediator = require('oroui/js/mediator');
 
     /**
      * @export orob2border/js/app/views/line-item-abstract-view
@@ -30,6 +30,11 @@ define(function(require) {
          * @property {Object}
          */
         fieldsByName: null,
+
+        /**
+         * @property {Object}
+         */
+        matchedPrices: null,
 
         /**
          * @inheritDoc
@@ -58,11 +63,7 @@ define(function(require) {
                 self.fieldsByName[name] = $field;
             });
 
-            this.lineItemPricesFields([
-                this.fieldsByName.product,
-                this.fieldsByName.productUnit,
-                this.fieldsByName.quantity
-            ]);
+            this.initMatchedPrices();
         },
 
         /**
@@ -80,18 +81,66 @@ define(function(require) {
             return name.join('');
         },
 
+        initMatchedPrices: function() {
+            var fields = [
+                this.fieldsByName.product,
+                this.fieldsByName.productUnit,
+                this.fieldsByName.quantity
+            ];
+
+            var self = this;
+            _.each(fields, function(field) {
+                field.change(_.bind(self.updateMatchedPrices, self));
+            });
+
+            mediator.trigger('order:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
+        },
+
         /**
-         * @param {jQuery|Array} $fields
+         * Trigger subtotals update
          */
-        subtotalFields: function($fields) {
-            SubtotalsListener.listen($fields);
+        updateMatchedPrices: function() {
+            var productId = this.fieldsByName.product.val();
+            var unitCode = this.fieldsByName.productUnit.val();
+            var quantity = this.fieldsByName.quantity.val();
+
+            if (productId.length === 0) {
+                this.setMatchedPrices({});
+            } else {
+                mediator.trigger(
+                    'order:load:line-items-matched-prices',
+                    [{'product': productId, 'unit': unitCode, 'qty': quantity}],
+                    _.bind(this.setMatchedPrices, this)
+                );
+            }
+        },
+
+        /**
+         * @param {Object} matchedPrices
+         */
+        setMatchedPrices: function(matchedPrices) {
+            var identifier = this._getMatchedPriceIdentifier();
+            if (identifier) {
+                this.matchedPrices = matchedPrices[identifier] || {};
+            }
+        },
+
+        /**
+         * @returns {string}
+         */
+        _getMatchedPriceIdentifier: function() {
+            var productId = this.fieldsByName.product.val();
+            var unitCode = this.fieldsByName.productUnit.val();
+            var quantity = this.fieldsByName.quantity.val();
+
+            return productId.length === 0 ? null : productId + '-' + unitCode + '-' + quantity;
         },
 
         /**
          * @param {jQuery|Array} $fields
          */
-        lineItemPricesFields: function($fields) {
-            LineItemPricesListener.listen($fields);
+        subtotalFields: function($fields) {
+            SubtotalsListener.listen($fields);
         }
     });
 

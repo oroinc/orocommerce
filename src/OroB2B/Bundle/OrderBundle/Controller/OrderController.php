@@ -11,6 +11,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -20,6 +21,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 
 class OrderController extends Controller
 {
@@ -158,6 +160,7 @@ class OrderController extends Controller
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
                     'tierPrices' => $this->getTierPrices($order),
+                    'matchedPrices' => $this->getMatchedPrices($order),
                 ];
             }
         );
@@ -209,5 +212,51 @@ class OrderController extends Controller
         }
 
         return $tierPrices;
+    }
+
+    /**
+     * @param Order $order
+     * @return array
+     */
+    protected function getMatchedPrices(Order $order)
+    {
+        $matchedPrices = [];
+        if (!$order->getPriceList()) {
+            return $matchedPrices;
+        }
+
+        $productUnitQuantities = $order->getLineItems()->filter(
+            function (OrderLineItem $lineItem) {
+                return $lineItem->getProduct() && $lineItem->getProductUnit() && $lineItem->getQuantity();
+            }
+        )->map(
+            function (OrderLineItem $lineItem) {
+                return new ProductUnitQuantity(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity()
+                );
+            }
+        );
+
+        if ($productUnitQuantities) {
+            $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
+                $productUnitQuantities->toArray(),
+                $order->getCurrency(),
+                $order->getPriceList()
+            );
+        }
+
+        /** @var Price $price */
+        foreach ($matchedPrices as &$price) {
+            if ($price) {
+                $price = [
+                    'value' => $price->getValue(),
+                    'currency' => $price->getCurrency()
+                ];
+            }
+        }
+
+        return $matchedPrices;
     }
 }

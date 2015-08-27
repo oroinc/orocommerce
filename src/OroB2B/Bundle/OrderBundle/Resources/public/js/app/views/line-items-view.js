@@ -19,7 +19,9 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            tierPricesRoute: 'orob2b_product_price_by_pricelist'
+            matchedPrices: null,
+            tierPricesRoute: 'orob2b_product_price_by_pricelist',
+            matchedPricesRoute: 'orob2b_pricing_mathing_price'
         },
 
         /**
@@ -55,6 +57,8 @@ define(function(require) {
 
             mediator.on('order:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('order:load:products-tier-prices', this.loadProductsTierPrices, this);
+            mediator.on('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
+            mediator.on('order:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
         },
 
         /**
@@ -81,6 +85,29 @@ define(function(require) {
         },
 
         /**
+         * @param {Function} callback
+         */
+        getLineItemsMatchedPrices: function(callback) {
+            callback(this.options.matchedPrices);
+        },
+
+        /**
+         * @param {Array} items
+         * @param {Function} callback
+         */
+        loadLineItemsMatchedPrices: function(items, callback) {
+            var url = routing.generate(this.options.matchedPricesRoute, {
+                items: items,
+                pricelist: this.$priceList.val(),
+                currency: this.$currency.val()
+            });
+
+            $.get(url, function(response) {
+                callback(response);
+            });
+        },
+
+        /**
          * @inheritDoc
          */
         dispose: function() {
@@ -90,6 +117,8 @@ define(function(require) {
 
             mediator.off('order:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.off('order:load:products-tier-prices', this.loadProductsTierPrices, this);
+            mediator.off('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
+            mediator.off('order:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
             LineItemsView.__super__.dispose.call(this);
         }
