@@ -27,9 +27,15 @@ class AbstractAjaxProductPriceController extends Controller
      */
     public function getProductPricesByPriceListAction(Request $request)
     {
+        $priceListId = $request->get('price_list_id');
+        if (!$priceListId) {
+            $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
+                ->getPriceList()->getId();
+        }
+
         return new JsonResponse(
             $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $request->get('price_list_id'),
+                $priceListId,
                 $request->get('product_ids', []),
                 $request->get('currency')
             )
