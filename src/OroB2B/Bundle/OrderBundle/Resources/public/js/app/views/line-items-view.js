@@ -19,7 +19,7 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            tierPricesRoute: 'orob2b_product_price_by_pricelist'
+            tierPricesRoute: 'orob2b_pricing_price_by_pricelist'
         },
 
         /**

@@ -121,7 +121,9 @@
         {{ form_widget(form.price) }}
         {{ form_errors(form.price) }}
 
-        <div class="order-line-item-tier-prices"></div>
+        <div class="order-line-item-tier-prices">
+            <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
+        </div>
 
         {{ form_widget(form.priceType) }}
         {{ form_errors(form.priceType) }}
