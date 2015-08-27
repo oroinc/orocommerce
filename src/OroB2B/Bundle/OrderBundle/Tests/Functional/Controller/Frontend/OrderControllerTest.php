@@ -11,6 +11,7 @@ use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
@@ -140,14 +141,21 @@ class OrderControllerTest extends WebTestCase
         // Check updated order
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_update', ['id' => $id]));
 
+        $this->assertEquals(
+            self::ORDER_PO_NUMBER_UPDATED,
+            $crawler->filter('input[name="orob2b_order_frontend_type[poNumber]"]')
+                ->extract('value')[0]
+        );
+
+        /** @var ProductPrice $price */
+        $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
                 'quantity' => 10,
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $this->getReference('product_price.1')->getPrice()->getValue(),
+                'price' => $productPrice->getPrice()->getValue(),
                 'shipBy' => $date,
-                'poNumber' => self::ORDER_PO_NUMBER_UPDATED
             ],
         ];
 
@@ -163,8 +171,6 @@ class OrderControllerTest extends WebTestCase
                 'price' => trim($crawler->filter('.order-line-item-price-value')->html()),
                 'shipBy' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems][0][shipBy]"]')
                     ->extract('value')[0],
-                'poNumber' =>  $crawler->filter('input[name="orob2b_order_frontend_type[poNumber]"]')
-                    ->extract('value')[0]
             ],
         ];
 
@@ -239,7 +245,6 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $gridName
      * @param array $filters
      * @return array
      */
