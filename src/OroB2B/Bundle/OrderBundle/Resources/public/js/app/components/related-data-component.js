@@ -17,14 +17,15 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            relatedDataRoute: 'orob2b_order_related_data'
+            relatedDataRoute: 'orob2b_order_related_data',
+            formName: ''
         },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = $.extend(true, this.options, options || {});
+            this.options = $.extend(true, {}, this.options, options || {});
 
             mediator.on('account-account-user:change', this.loadRelatedData, this);
         },
@@ -33,16 +34,25 @@ define(function(require) {
          * Load related to user data and trigger event
          */
         loadRelatedData: function(accountUser) {
-            var url = routing.generate(this.options.relatedDataRoute, {
-                accountId: accountUser.accountId,
-                accountUserId: accountUser.accountUserId
-            });
+            var url = routing.generate(this.options.relatedDataRoute);
+            var data = {
+                account: accountUser.accountId,
+                accountUser: accountUser.accountUserId
+            };
+
+            var ajaxData = {};
+            if (this.options.formName) {
+                ajaxData[this.options.formName] = data;
+            } else {
+                ajaxData = data;
+            }
 
             mediator.trigger('order:load:related-data');
 
             $.ajax({
                 url: url,
                 type: 'GET',
+                data: ajaxData,
                 success: function(response) {
                     mediator.trigger('order:loaded:related-data', response);
                 },

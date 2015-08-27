@@ -65,9 +65,15 @@ class RequestStatusController extends FOSRestController implements ClassResource
         $requestStatus->setDeleted(true);
         $em->flush();
 
-        $result = new Response(null, Codes::HTTP_NO_CONTENT);
-
-        return $result;
+        return $this->handleView(
+            $this->view(
+                [
+                    'successful' => true,
+                    'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_deleted')
+                ],
+                Codes::HTTP_OK
+            )
+        );
     }
 
     /**

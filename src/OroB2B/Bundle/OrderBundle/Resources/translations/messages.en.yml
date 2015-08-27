@@ -23,6 +23,8 @@ orob2b:
             entity_label: Order Address
             entity_plural_label: Order Addresses
             id.label: ID
+            account_address.label: Account address
+            account_user_address.label: Account user address
             label.label: Label
             first_name.label: First Name
             middle_name.label: Middle Name

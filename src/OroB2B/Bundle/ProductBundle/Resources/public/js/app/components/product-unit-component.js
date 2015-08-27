@@ -1,23 +1,25 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var ProductPriceProductUnitComponent,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        routing = require('routing'),
-        messenger = require('oroui/js/messenger'),
-        __ = require('orotranslation/js/translator');
+    var ProductUnitComponent;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var routing = require('routing');
+    var messenger = require('oroui/js/messenger');
+    var _ = require('underscore');
+    var $ = require('jquery');
+    var __ = require('orotranslation/js/translator');
 
-    ProductPriceProductUnitComponent = BaseComponent.extend({
+    ProductUnitComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            productSelector: '.price-product-product input.select2',
-            quantitySelector: '.price-product-quantity input',
-            unitSelector: '.price-product-unit select',
+            productSelector: '.product-product input.select2',
+            quantitySelector: '.product-quantity input',
+            unitSelector: '.product-unit select',
             routeName: 'orob2b_product_unit_product_units',
             routingParams: {},
             errorMessage: 'Sorry, unexpected error was occurred'
@@ -46,7 +48,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
@@ -65,12 +67,14 @@ define(function (require) {
         /**
          * @param {jQuery.Event} e
          */
-        onProductChange: function (e) {
-            var value = e.target.value,
-                self = this;
+        onProductChange: function(e) {
+            var value = e.target.value;
+            var self = this;
 
             if (!value) {
-                return this._dropValues();
+                this._dropValues();
+
+                return;
             }
 
             var routeParams = $.extend({}, this.options.routingParams, {'id': value});
@@ -79,7 +83,7 @@ define(function (require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: function (jqXHR) {
+                error: function(jqXHR) {
                     messenger.showErrorMessage(__(self.options.errorMessage), jqXHR.responseJSON);
                 }
             });
@@ -88,7 +92,7 @@ define(function (require) {
         /**
          * @private
          */
-        _beforeSend: function () {
+        _beforeSend: function() {
             this.loadingMaskView.show();
             this._dropValues();
         },
@@ -96,7 +100,7 @@ define(function (require) {
         /**
          * @private
          */
-        _dropValues: function () {
+        _dropValues: function() {
             this.handleQuantityState(true);
             this.handleUnitsState(true, null);
         },
@@ -106,7 +110,7 @@ define(function (require) {
          *
          * @private
          */
-        _success: function (data) {
+        _success: function(data) {
             this.handleQuantityState(false);
             this.handleUnitsState(false, data.units);
         },
@@ -114,14 +118,14 @@ define(function (require) {
         /**
          * @private
          */
-        _complete: function () {
+        _complete: function() {
             this.loadingMaskView.hide();
         },
 
         /**
          * @param {Boolean} disabled
          */
-        handleQuantityState: function (disabled) {
+        handleQuantityState: function(disabled) {
             this.quantitySelector.prop('disabled', disabled).val(null);
         },
 
@@ -129,21 +133,21 @@ define(function (require) {
          * @param {Boolean} disabled
          * @param {Object} units
          */
-        handleUnitsState: function (disabled, units) {
+        handleUnitsState: function(disabled, units) {
             var self = this;
 
             this.unitSelector
                 .prop('disabled', disabled)
                 .val(null)
                 .find('option')
-                .filter(function () {
-                    return this.value || $.trim(this.value).length != 0;
+                .filter(function() {
+                    return this.value || $.trim(this.value).length;
                 })
                 .remove();
 
             if (units) {
-                $.each(units, function (code, label) {
-                    if (!self.unitSelector.find("option[value='" + code + "']").length) {
+                $.each(units, function(code, label) {
+                    if (!self.unitSelector.find('option[value=' + code + ']').length) {
                         self.unitSelector.append($('<option/>').val(code).text(label));
                     }
                 });
@@ -158,16 +162,16 @@ define(function (require) {
             }
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
 
             this.options._sourceElement.off();
 
-            ProductPriceProductUnitComponent.__super__.dispose.call(this);
+            ProductUnitComponent.__super__.dispose.call(this);
         }
     });
 
-    return ProductPriceProductUnitComponent;
+    return ProductUnitComponent;
 });

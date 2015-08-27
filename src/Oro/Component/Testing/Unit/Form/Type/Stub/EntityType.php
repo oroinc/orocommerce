@@ -51,7 +51,7 @@ class EntityType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['choice_list' => $this->choiceList, 'query_builder' => null]);
+        $resolver->setDefaults(['choice_list' => $this->choiceList, 'query_builder' => null, 'class' => null]);
     }
 
     /**

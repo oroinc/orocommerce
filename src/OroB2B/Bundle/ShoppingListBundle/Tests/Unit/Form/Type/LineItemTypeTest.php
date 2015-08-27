@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -14,13 +16,14 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
+use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
+use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
-class LineItemTypeTest extends FormIntegrationTestCase
+class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
@@ -42,21 +45,23 @@ class LineItemTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|RoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
+        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $roundingService->expects($this->any())
-            ->method('round')
+        $lineItemManager->expects($this->any())
+            ->method('roundProductQuantity')
             ->willReturnCallback(
-                function ($value, $precision) {
-                    return round($value, $precision);
+                function ($product, $unit, $quantity) {
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
+                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
                 }
             );
 
-        $this->type = new LineItemType($this->getRegistry(), $roundingService);
+        $this->type = new LineItemType($this->getRegistry(), $lineItemManager);
         $this->type->setDataClass(self::DATA_CLASS);
         $this->type->setProductClass(self::PRODUCT_CLASS);
+        $this->type->setLineItemSubscriber($this->getLineItemSubscriber());
     }
 
     /**
@@ -168,7 +173,7 @@ class LineItemTypeTest extends FormIntegrationTestCase
 
         $expectedLineItem3 = clone $existingLineItem;
         $expectedLineItem3
-            ->setQuantity('15.1119')
+            ->setQuantity(15.112)
             ->setUnit($expectedProduct->getUnitPrecision('kg')->getUnit())
             ->setNotes(null);
 
@@ -207,10 +212,10 @@ class LineItemTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         $resolver = new OptionsResolver();
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
         $resolvedOptions = $resolver->resolve();
 
         $lineItem = new LineItem();
@@ -285,44 +290,52 @@ class LineItemTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param integer $productId
-     * @param string  $unitCode
-     * @param integer $precision
-     *
-     * @return Product
+     * @return LineItemSubscriber
      */
-    protected function getProductEntityWithPrecision($productId, $unitCode, $precision = 0)
+    protected function getLineItemSubscriber()
     {
-        /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', $productId);
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $repository */
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $unit = new ProductUnit();
-        $unit->setCode($unitCode);
+        $repository->expects($this->any())
+            ->method('find')
+            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
 
-        $unitPrecision = new ProductUnitPrecision();
-        $unitPrecision
-            ->setPrecision($precision)
-            ->setUnit($unit)
-            ->setProduct($product);
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $manager */
+        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        return $product->addUnitPrecision($unitPrecision);
-    }
+        $manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
 
-    /**
-     * @param string $className
-     * @param int    $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
+        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
+        $registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($manager);
 
-        return $entity;
+        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
+        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lineItemManager->expects($this->any())
+            ->method('roundProductQuantity')
+            ->willReturnCallback(
+                function ($product, $unit, $quantity) {
+                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
+                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
+                }
+            );
+
+        $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+
+        return $lineItemSubscriber;
     }
 }

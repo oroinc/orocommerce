@@ -38,6 +38,16 @@ define(function(require) {
         $fields: null,
 
         /**
+         * @property {jQuery}
+         */
+        $address: null,
+
+        /**
+         * @property {Boolean}
+         */
+        useDefaultAddress: null,
+
+        /**
          * @property {Object}
          */
         fieldsByName: null,
@@ -51,7 +61,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = $.extend(true, this.options, options || {});
+            this.options = $.extend(true, {}, this.options, options || {});
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
 
@@ -71,10 +81,14 @@ define(function(require) {
 
             this.setAddress(this.$el.find(this.options.selectors.address));
 
+            this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
             this.$fields.each(function() {
                 var $field = $(this);
+                if ($field.val().length > 0) {
+                    self.useDefaultAddress = false;
+                }
                 var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
@@ -108,7 +122,12 @@ define(function(require) {
          */
         setAddress: function($address) {
             this.$address = $address;
-            this.$address.change(_.bind(this.accountAddressChange, this));
+
+            var self = this;
+            this.$address.change(function() {
+                self.useDefaultAddress = false;
+                self.accountAddressChange();
+            });
         },
 
         /**
@@ -190,6 +209,11 @@ define(function(require) {
             $oldAddress.parent().trigger('content:remove');
             $oldAddress.select2('destroy')
                 .replaceWith(this.$address);
+
+            if (this.useDefaultAddress) {
+                this.$address.val(this.$address.data('default'));
+                this.accountAddressChange();
+            }
 
             this.initLayout().done(_.bind(this.loadingEnd, this));
         },
