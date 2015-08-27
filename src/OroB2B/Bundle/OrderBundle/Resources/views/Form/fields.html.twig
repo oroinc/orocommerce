@@ -90,7 +90,7 @@
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value.product is defined %}
+            {% if form.vars.value.product is defined and form.vars.value.product %}
                 {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
@@ -120,6 +120,8 @@
     <td class="order-line-item-price">
         {{ form_widget(form.price) }}
         {{ form_errors(form.price) }}
+
+        <div class="order-line-item-tier-prices"></div>
 
         {{ form_widget(form.priceType) }}
         {{ form_errors(form.priceType) }}
