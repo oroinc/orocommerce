@@ -53,8 +53,11 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $bundledUnitLineItem->setPrice(Price::create(2, 'USD'));
         $bundledUnitLineItem->setQuantity(10);
 
+        $emptyLineItem = new OrderLineItem();
+
         $order->addLineItem($perUnitLineItem);
         $order->addLineItem($bundledUnitLineItem);
+        $order->addLineItem($emptyLineItem);
 
         $order->setCurrency('USD');
 

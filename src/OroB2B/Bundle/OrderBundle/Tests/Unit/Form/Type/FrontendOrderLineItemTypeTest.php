@@ -41,6 +41,8 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $this->formType->buildView($view, $form, $options);
 
         $this->assertEquals($expected, $view->vars['disallow_delete']);
+
+        $this->assertDefaultBuildViewCalled();
     }
 
     /**
