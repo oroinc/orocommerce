@@ -53,8 +53,17 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $bundledUnitLineItem->setPrice(Price::create(2, 'USD'));
         $bundledUnitLineItem->setQuantity(10);
 
+        $otherCurrencyLineItem = new OrderLineItem();
+        $otherCurrencyLineItem->setPriceType(OrderLineItem::PRICE_TYPE_UNIT);
+        $otherCurrencyLineItem->setPrice(Price::create(10, 'EUR'));
+        $otherCurrencyLineItem->setQuantity(10);
+
+        $emptyLineItem = new OrderLineItem();
+
         $order->addLineItem($perUnitLineItem);
         $order->addLineItem($bundledUnitLineItem);
+        $order->addLineItem($emptyLineItem);
+        $order->addLineItem($otherCurrencyLineItem);
 
         $order->setCurrency('USD');
 
@@ -67,6 +76,6 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(ucfirst(Subtotal::TYPE_SUBTOTAL), $subtotal->getLabel());
         $this->assertEquals($order->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
-        $this->assertEquals(42.0, $subtotal->getAmount());
+        $this->assertEquals(142.0, $subtotal->getAmount());
     }
 }
