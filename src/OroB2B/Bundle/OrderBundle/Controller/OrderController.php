@@ -186,8 +186,10 @@ class OrderController extends Controller
     protected function getTierPrices(Order $order)
     {
         $tierPrices = [];
-        if (!$order->getPriceList()) {
-            return $tierPrices;
+
+        $priceList = $order->getPriceList();
+        if (!$priceList) {
+            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
         }
 
         $productIds = $order->getLineItems()->filter(
@@ -202,7 +204,7 @@ class OrderController extends Controller
 
         if ($productIds) {
             $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $order->getPriceList()->getId(),
+                $priceList->getId(),
                 $productIds->toArray(),
                 $order->getCurrency()
             );
