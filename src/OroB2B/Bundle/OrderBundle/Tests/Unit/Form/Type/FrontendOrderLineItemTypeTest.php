@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
@@ -12,9 +14,20 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
 class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
+    const PRICE_CLASS = 'priceClass';
+
+    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    protected $registry;
+
+    /** @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject */
+    protected $priceListRequestHandler;
+
     /**
      * {@inheritdoc}
      */
@@ -38,7 +51,27 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         parent::setUp();
 
-        $this->formType = new FrontendOrderLineItemType();
+        $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->priceListRequestHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new FrontendOrderLineItemType(
+            $this->registry,
+            $this->priceListRequestHandler,
+            self::PRICE_CLASS
+        );
+
+        $priceList = new PriceList();
+
+        $this->priceListRequestHandler->expects($this->any())
+            ->method('getPriceList')
+            ->willReturn($priceList);
+
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
     }
 
@@ -48,7 +81,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     }
 
     /**
-     * @dataProvider buildViewDatProvider
+     * @dataProvider buildViewDataProvider
      * @param object|null $data
      * @param bool $expected
      */
@@ -71,7 +104,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /**
      * @return array
      */
-    public function buildViewDatProvider()
+    public function buildViewDataProvider()
     {
         return [
             [null, false],
@@ -81,6 +114,55 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     }
 
     /**
+     * @dataProvider submitDataProvider
+     *
+     * @param array $options
+     * @param array $submittedData
+     * @param OrderLineItem $expectedData
+     * @param OrderLineItem|null $data
+     * @param array $choices
+     */
+    public function testSubmit(
+        array $options,
+        array $submittedData,
+        OrderLineItem $expectedData,
+        OrderLineItem $data = null,
+        array $choices = []
+    ) {
+        if (!$data) {
+            $data = new OrderLineItem();
+        }
+
+        $em = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $priceRepository->expects($this->any())
+            ->method('getProductUnitsByPriceList')
+            ->willReturn($choices);
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with(self::PRICE_CLASS)
+            ->willReturn($priceRepository);
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with(self::PRICE_CLASS)
+            ->willReturn($em);
+
+        $form = $this->factory->create($this->formType, $data, $options);
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertEquals($expectedData, $form->getData());
+    }
+    
+    /**
      * @return array
      */
     public function submitDataProvider()
@@ -89,6 +171,8 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id');
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
         $currency = 'USD';
+        $order = new Order();
+        $order->setCurrency($currency);
 
         return [
             'default' => [
@@ -123,6 +207,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     'comment' => 'Comment',
                 ],
                 'expectedData' => (new OrderLineItem())
+                    ->setOrder($order)
                     ->setFromExternalSource(true)
                     ->setProduct($product)
                     ->setQuantity(5)
@@ -131,13 +216,48 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setShipBy($date)
                     ->setComment('Comment'),
                 'data' => (new OrderLineItem())
+                    ->setOrder($order)
                     ->setFromExternalSource(true)
                     ->setProduct($product)
                     ->setQuantity(5)
                     ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
-                    ->setComment('Comment')
+                    ->setComment('Comment'),
+                'choices' => []
+            ],
+            'modifications with choices' => [
+                'options' => [
+                    'currency' => $currency,
+                ],
+                'submittedData' => [
+                    'product' => 2,
+                    'quantity' => 10,
+                    'productUnit' => 'item',
+                    'shipBy' => '2015-05-07',
+                    'comment' => 'Comment',
+                ],
+                'expectedData' => (new OrderLineItem())
+                    ->setOrder($order)
+                    ->setFromExternalSource(true)
+                    ->setProduct($product)
+                    ->setQuantity(5)
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
+                    ->setComment('Comment'),
+                'data' => (new OrderLineItem())
+                    ->setOrder($order)
+                    ->setFromExternalSource(true)
+                    ->setProduct($product)
+                    ->setQuantity(5)
+                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
+                    ->setShipBy($date)
+                    ->setComment('Comment'),
+                'choices' => [
+                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code')
+                ]
             ],
         ];
     }
