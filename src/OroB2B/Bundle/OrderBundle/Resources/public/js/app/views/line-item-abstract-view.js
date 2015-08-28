@@ -24,7 +24,8 @@ define(function(require) {
             selectors: {
                 tierPrices: '.order-line-item-tier-prices',
                 priceOverridden: '.order-line-item-price-overridden',
-                tierPricesTemplate: '#order-line-item-tier-prices-template'
+                tierPricesTemplate: '#order-line-item-tier-prices-template',
+                productSku: '.order-line-item-sku .order-line-item-type-product'
             }
         },
 
@@ -101,6 +102,8 @@ define(function(require) {
                 this.fieldsByName.priceValue.addClass('matched-price');
             }
             this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
+
+            this.initProductSku();
         },
 
         onPriceValueChange: function() {
@@ -297,6 +300,15 @@ define(function(require) {
             mediator.off('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
             LineItemAbstractView.__super__.dispose.call(this);
+        },
+
+        initProductSku: function() {
+            if (this.fieldsByName.product) {
+                this.fieldsByName.product.change(_.bind(function() {
+                    var data = this.fieldsByName.product.select2('data') || {};
+                    this.$el.find(this.options.selectors.productSku).html(data.sku || null);
+                }, this));
+            }
         }
     });
 

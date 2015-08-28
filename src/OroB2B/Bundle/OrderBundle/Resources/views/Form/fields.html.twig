@@ -89,9 +89,9 @@
 
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
-        <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value is not empty %}
-                {{ form.vars.value.productSku }}
+        <div class="order-line-item-type-product">
+            {% if form.vars.value is not empty and form.vars.value.product is not empty %}
+                {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
         <div class="order-line-item-type-free-form">
@@ -151,9 +151,9 @@
     {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
 
     <td class="order-line-item-sku">
-        <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value is not empty %}
-                {{ form.vars.value.productSku }}
+        <div class="order-line-item-type-product">
+            {% if form.vars.value is not empty and form.vars.value.product is not empty %}
+                {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
     </td>
