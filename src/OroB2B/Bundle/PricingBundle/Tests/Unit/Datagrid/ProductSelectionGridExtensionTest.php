@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -81,8 +82,23 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testVisitDatasource()
+    /**
+     * @dataProvider visitDatasourceDataProvider
+     * @param string $currency
+     */
+    public function testVisitDatasource($currency)
     {
+        if ($currency) {
+            /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
+            $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+            $this->extension->setRequest($request);
+
+            $request->expects($this->once())
+                ->method('get')
+                ->with(ProductSelectionGridExtension::CURRENCY_KEY)
+                ->willReturn($currency);
+        }
+
         $gridName = 'products-select-grid-frontend';
 
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
@@ -110,7 +126,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $dataSource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb));
+            ->will($this->returnValue($qb, $currency));
 
         $this->productListModifier->expects($this->once())
             ->method('applyPriceListLimitations')
@@ -120,5 +136,20 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
 
         // Check that limits are applied only once
         $this->extension->visitDatasource($config, $dataSource);
+    }
+
+    /**
+     * @return array
+     */
+    public function visitDatasourceDataProvider()
+    {
+        return [
+            'with currency' => [
+                'currency' => 'USD'
+            ],
+            'without currency' => [
+                'currency' => null
+            ]
+        ];
     }
 }
