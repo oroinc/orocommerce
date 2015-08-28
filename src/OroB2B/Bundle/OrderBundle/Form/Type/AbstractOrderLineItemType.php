@@ -103,6 +103,9 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'currency' => null
             ]
         );
+        $resolver->setAllowedTypes('page_component_options', 'array');
+        $resolver->setAllowedTypes('page_component', 'string');
+        $resolver->setAllowedTypes('currency', ['null', 'string']);
     }
 
     /**
@@ -118,8 +121,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
 
         if (array_key_exists('page_component_options', $options)) {
             $view->vars['page_component_options'] = $options['page_component_options'];
-        } else {
-            $view->vars['page_component_options'] = null;
         }
+        $view->vars['page_component_options']['currency'] = $options['currency'];
     }
 }

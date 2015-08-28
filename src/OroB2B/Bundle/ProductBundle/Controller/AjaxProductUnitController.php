@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
@@ -26,7 +25,8 @@ class AjaxProductUnitController extends Controller
     {
         return new JsonResponse(
             [
-                'units' => $this->formatProductUnits($this->getRepository()->findBy([], ['code' => 'ASC']))
+                'units' => $this->getProductUnitFormatter()
+                    ->formatChoices($this->getRepository()->findBy([], ['code' => 'ASC']))
             ]
         );
     }
@@ -42,25 +42,10 @@ class AjaxProductUnitController extends Controller
     {
         return new JsonResponse(
             [
-                'units' => $this->formatProductUnits($this->getRepository()->getProductUnits($product))
+                'units' => $this->getProductUnitFormatter()
+                    ->formatChoices($this->getRepository()->getProductUnits($product))
             ]
         );
-    }
-
-    /**
-     * @param array|ProductUnit[] $units
-     * @return array
-     */
-    protected function formatProductUnits(array $units)
-    {
-        $formatter = $this->getProductUnitFormatter();
-
-        $result = [];
-        foreach ($units as $unit) {
-            $result[$unit->getCode()] = $formatter->format($unit->getCode());
-        }
-
-        return $result;
     }
 
     /**

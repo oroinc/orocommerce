@@ -94,6 +94,7 @@ class ProductPriceRepository extends EntityRepository
     public function getPricesByProduct(Product $product)
     {
         $qb = $this->createQueryBuilder('price');
+
         return $qb
             ->andWhere('price.product = :product')
             ->addOrderBy($qb->expr()->asc('price.priceList'))
@@ -196,5 +197,38 @@ class ProductPriceRepository extends EntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     * @param string|null $currency
+     *
+     * @return ProductUnit[]
+     */
+    public function getProductUnitsByPriceList(PriceList $priceList, Product $product, $currency = null)
+    {
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('IDENTITY(price.unit) as unitCode')
+            ->from($this->_entityName, 'price')
+            ->where($qb->expr()->eq('price.product', ':product'))
+            ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
+            ->setParameter('product', $product)
+            ->setParameter('priceList', $priceList)
+            ->addOrderBy('IDENTITY(price.unit)')
+            ->groupBy('price.unit');
+
+        if ($currency) {
+            $qb->andWhere($qb->expr()->eq('price.currency', ':currency'))
+                ->setParameter('currency', $currency);
+        }
+
+        $results = [];
+        $unitCodes = $qb->getQuery()->getResult();
+        foreach ($unitCodes as $unitCode) {
+            $results[] = $this->_em->getReference('OroB2BProductBundle:ProductUnit', $unitCode['unitCode']);
+        }
+
+        return $results;
     }
 }

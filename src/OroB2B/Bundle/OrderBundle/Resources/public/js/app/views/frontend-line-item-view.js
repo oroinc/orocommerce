@@ -3,6 +3,7 @@ define(function(require) {
 
     var FrontendLineItemView;
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
+    var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
 
     /**
      * @export orob2border/js/app/views/line-item-view
@@ -10,6 +11,24 @@ define(function(require) {
      * @class orob2border.app.views.LineItemView
      */
     FrontendLineItemView = LineItemAbstractView.extend({
+        /**
+         * @inheritDoc
+         */
+        initialize: function() {
+            FrontendLineItemView.__super__.initialize.apply(this, arguments);
+
+            var productUnitComponent = new ProductUnitComponent({
+                _sourceElement: this.$el,
+                routingParams: {currency: this.options.currency},
+                routeName: 'orob2b_pricing_frontend_units_by_pricelist',
+                productSelector: '.order-line-item-type-product input.select2',
+                quantitySelector: '.order-line-item-quantity input',
+                unitSelector: '.order-line-item-quantity select',
+                loadingMaskEnabled: false
+            });
+            this.subview('productUnitComponent', productUnitComponent);
+        },
+
         /**
          * Doing something after loading child components
          */

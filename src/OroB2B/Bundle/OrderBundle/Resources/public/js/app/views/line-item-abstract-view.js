@@ -21,6 +21,7 @@ define(function(require) {
          */
         options: {
             ftid: '',
+            currency: null,
             selectors: {
                 tierPrices: '.order-line-item-tier-prices',
                 tierPricesTemplate: '#order-line-item-tier-prices-template'

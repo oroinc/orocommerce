@@ -22,7 +22,8 @@ define(function(require) {
             unitSelector: '.product-unit select',
             routeName: 'orob2b_product_unit_product_units',
             routingParams: {},
-            errorMessage: 'Sorry, unexpected error was occurred'
+            errorMessage: 'Sorry, unexpected error was occurred',
+            loadingMaskEnabled: true
         },
 
         /**
@@ -51,7 +52,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
+            this.initializeLoadingMask(options);
 
             this.options._sourceElement
                 .on('change', this.options.productSelector, _.bind(this.onProductChange, this));
@@ -61,6 +62,12 @@ define(function(require) {
             this.productSelector = this.options._sourceElement.find(this.options.productSelector);
             if (!this.productSelector.val()) {
                 this._dropValues();
+            }
+        },
+
+        initializeLoadingMask: function(options) {
+            if (options.loadingMaskEnabled) {
+                this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
             }
         },
 
@@ -93,7 +100,9 @@ define(function(require) {
          * @private
          */
         _beforeSend: function() {
-            this.loadingMaskView.show();
+            if (this.loadingMaskView) {
+                this.loadingMaskView.show();
+            }
             this._dropValues();
         },
 
@@ -119,7 +128,9 @@ define(function(require) {
          * @private
          */
         _complete: function() {
-            this.loadingMaskView.hide();
+            if (this.loadingMaskView) {
+                this.loadingMaskView.hide();
+            }
         },
 
         /**

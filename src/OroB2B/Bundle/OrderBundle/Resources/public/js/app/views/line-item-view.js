@@ -5,6 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
+    var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
 
     /**
      * @export orob2border/js/app/views/line-item-view
@@ -24,6 +25,15 @@ define(function(require) {
             }, this.options);
 
             LineItemView.__super__.initialize.apply(this, arguments);
+
+            var productUnitComponent = new ProductUnitComponent({
+                _sourceElement: this.$el,
+                productSelector: '.order-line-item-type-product input.select2',
+                quantitySelector: '.order-line-item-quantity input',
+                unitSelector: '.order-line-item-quantity select',
+                loadingMaskEnabled: false
+            });
+            this.subview('productUnitComponent', productUnitComponent);
         },
 
         /**
