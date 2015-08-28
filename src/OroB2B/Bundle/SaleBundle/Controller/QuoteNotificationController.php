@@ -18,7 +18,7 @@ class QuoteNotificationController extends Controller
     /**
      * @Route("{id}/email", name="quote_notification_email")
      * @AclAncestor("oro_email_email_create")
-     * @Template("OroB2BSaleBundle:QuoteNotification/dialog:update.html.twig")
+     * @Template("OroB2BSaleBundle:QuoteNotification/dialog:email.html.twig")
      * @param Quote $quote
      * @return array
      */
@@ -47,7 +47,10 @@ class QuoteNotificationController extends Controller
         ];
         if ($this->get('oro_email.form.handler.email')->process($emailModel)) {
             $responseData['saved'] = true;
-            // todo $quote->setLocked(); $em->flush(); after BB-997 closed
+            if(!$quote->isLocked()) {
+                $quote->setLocked();
+                $em->flush();
+            }
         }
         $responseData['form'] = $this->get('oro_email.form.email')->createView();
 
