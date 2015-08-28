@@ -5,23 +5,14 @@
     padding: 10px 10px 10px;
 }
 
-.form-inline .controls {
-    margin-left: 50px;
+.form-inline .control-label {
+    width: 50px;
 }
 
-.form-horizontal .control-group label.control-label {
-    float: left;
-    width: 45px;
-    padding-top: 7px;
-    color: #777;
-    font-weight: normal;
-    font-size: 13px;
-    text-align: right;
-}
-
-.form-horizontal .control-group .controls {
+.form-inline .control-group .controls {
     margin-left: 60px;
 }
+
 .add-products-btn-holder {
-    margin-left: 20px;
+    margin-left: 15px;
 }
