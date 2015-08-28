@@ -4,13 +4,36 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\PreloadedExtension;
+
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 
 class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        $productSelectType = new EntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
+                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
+            ],
+            ProductPriceListAwareSelectType::NAME
+        );
+
+        return array_merge(
+            parent::getExtensions(),
+            [new PreloadedExtension([$productSelectType->getName() => $productSelectType], [])]
+        );
+    }
+
     protected function setUp()
     {
         parent::setUp();
@@ -37,7 +60,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $form->expects($this->once())
             ->method('getData')
             ->will($this->returnValue($data));
-        $options = [];
+        $options = ['currency' => 'USD'];
         $this->formType->buildView($view, $form, $options);
 
         $this->assertEquals($expected, $view->vars['disallow_delete']);

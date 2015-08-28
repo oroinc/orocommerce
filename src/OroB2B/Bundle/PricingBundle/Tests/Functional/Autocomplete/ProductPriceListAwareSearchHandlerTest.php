@@ -100,11 +100,28 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
     {
         return [
             [
-                'search' => 'product.;UAH',
+                'search' => 'product.',
                 'expected' => [
                     'product.1',
                     'product.2'
                 ]
+            ],
+            [
+                'search' => 'product.;USD',
+                'expected' => [
+                    'product.1',
+                    'product.2'
+                ]
+            ],
+            [
+                'search' => 'product.;EUR',
+                'expected' => [
+                    'product.2'
+                ]
+            ],
+            [
+                'search' => 'product.;CAD',
+                'expected' => []
             ],
             [
                 'search' => '1',

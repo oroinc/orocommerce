@@ -30,7 +30,12 @@ class FrontendProductListModifierTest extends WebTestCase
         );
     }
 
-    public function testApplyPriceListLimitations()
+    /**
+     * @dataProvider applyPriceListLimitationsDataProvider
+     * @param string|null $currency
+     * @param array $expectedProductSku
+     */
+    public function testApplyPriceListLimitations($currency, array $expectedProductSku)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_2');
@@ -67,16 +72,48 @@ class FrontendProductListModifierTest extends WebTestCase
             ->from('OroB2BProductBundle:Product', 'p')
             ->orderBy('p.sku');
 
-        $modifier->applyPriceListLimitations($qb);
+        $modifier->applyPriceListLimitations($qb, $currency);
 
         /** @var Product[] $result */
         $result = $qb->getQuery()->getResult();
 
-        $this->assertCount(2, $result);
-        $expectedProductSku = ['product.1', 'product.2'];
+        $this->assertCount(count($expectedProductSku), $result);
         $sku = array_map(function (Product $product) {
             return $product->getSku();
         }, $result);
         $this->assertEquals($expectedProductSku, $sku);
+    }
+
+    /**
+     * @return array
+     */
+    public function applyPriceListLimitationsDataProvider()
+    {
+        return [
+            'without currency' => [
+                'currency' => null,
+                'expectedProductSku' => [
+                    'product.1',
+                    'product.2'
+                ]
+            ],
+            'with USD' => [
+                'currency' => 'USD',
+                'expectedProductSku' => [
+                    'product.1',
+                    'product.2'
+                ]
+            ],
+            'with EUR' => [
+                'currency' => 'EUR',
+                'expectedProductSku' => [
+                    'product.2'
+                ]
+            ],
+            'with MXN' => [
+                'currency' => 'MXN',
+                'expectedProductSku' => []
+            ]
+        ];
     }
 }
