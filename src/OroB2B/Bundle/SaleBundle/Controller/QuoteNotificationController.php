@@ -47,8 +47,8 @@ class QuoteNotificationController extends Controller
         ];
         if ($this->get('oro_email.form.handler.email')->process($emailModel)) {
             $responseData['saved'] = true;
-            if(!$quote->isLocked()) {
-                $quote->setLocked();
+            if (!$quote->isLocked()) {
+                $quote->setLocked(true);
                 $em->flush();
             }
         }
