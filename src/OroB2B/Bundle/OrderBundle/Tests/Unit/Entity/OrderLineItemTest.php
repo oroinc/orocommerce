@@ -65,7 +65,7 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
         $entity->setProduct((new Product())->setSku('SKU'));
         $entity->setProductUnit((new ProductUnit())->setCode('kg'));
 
-        $entity->prePersist();
+        $entity->preSave();
         $this->assertEquals(84, $entity->getValue());
         $this->assertEquals('EUR', $entity->getCurrency());
         $this->assertEquals('SKU', $entity->getProductSku());

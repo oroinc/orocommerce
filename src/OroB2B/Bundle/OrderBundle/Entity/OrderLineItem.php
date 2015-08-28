@@ -182,9 +182,6 @@ class OrderLineItem extends ExtendOrderLineItem
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
-        if ($product) {
-            $this->productSku = $product->getSku();
-        }
 
         return $this;
     }
@@ -472,16 +469,14 @@ class OrderLineItem extends ExtendOrderLineItem
 
     /**
      * @ORM\PrePersist
+     * @ORM\PreUpdate
      */
-    public function prePersist()
+    public function preSave()
     {
         $this->updatePrice();
         $this->updateItemInformation();
     }
 
-    /**
-     * @ORM\PreUpdate
-     */
     public function updatePrice()
     {
         $this->value = $this->price ? $this->price->getValue() : null;
