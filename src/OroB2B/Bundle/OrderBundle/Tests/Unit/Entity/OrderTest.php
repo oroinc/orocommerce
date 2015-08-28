@@ -43,12 +43,13 @@ class OrderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEmail()
     {
+        $email = 'test@test.com';
         $order = new Order();
         $this->assertEmpty($order->getEmail());
         $accountUser = new AccountUser();
-        $accountUser->setEmail('test');
+        $accountUser->setEmail($email);
         $order->setAccountUser($accountUser);
-        $this->assertEquals('test', $order->getEmail());
+        $this->assertEquals($email, $order->getEmail());
     }
 
     public function testAccountUserToAccountRelation()
