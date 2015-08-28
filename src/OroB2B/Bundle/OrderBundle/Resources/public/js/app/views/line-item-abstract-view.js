@@ -129,6 +129,12 @@ define(function(require) {
             SubtotalsListener.listen($fields);
         },
 
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
+            SubtotalsListener.updateSubtotals();
+        },
+
         initTierPrices: function() {
             this.tierPricesTemplate = _.template($(this.options.selectors.tierPricesTemplate).text());
 
@@ -277,12 +283,6 @@ define(function(require) {
             var quantity = this.fieldsByName.quantity.val();
 
             return productId.length === 0 ? null : productId + '-' + unitCode + '-' + quantity;
-        },
-
-        removeRow: function() {
-            this.$el.trigger('content:remove');
-            this.remove();
-            SubtotalsListener.updateSubtotals();
         },
 
         /**
