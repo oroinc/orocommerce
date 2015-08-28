@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -11,18 +9,21 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
  * @dbIsolation
  */
 class QuoteNotificationControllerTest extends WebTestCase
 {
-
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        $this->markTestIncomplete('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
+
         $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
 
         $this->loadFixtures(
@@ -35,8 +36,6 @@ class QuoteNotificationControllerTest extends WebTestCase
 
     public function testEmail()
     {
-        $this->markTestIncomplete('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
-
         /** @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE3);
         $crawler = $this->client->request(
