@@ -32,6 +32,8 @@ orob2b_account_frontend_account_user_ajax:
     resource: "@OroB2BAccountBundle/Controller/Frontend/AjaxAccountUserController.php"
     type: annotation
     prefix: /account/user
+    options:
+        frontend: true
 
 orob2b_account_account_user_role:
     resource: "@OroB2BAccountBundle/Controller/AccountUserRoleController.php"

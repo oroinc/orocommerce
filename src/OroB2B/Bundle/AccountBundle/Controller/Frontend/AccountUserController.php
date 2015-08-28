@@ -4,15 +4,16 @@ namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
+
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
 
 class AccountUserController extends Controller
 {
