@@ -55,6 +55,12 @@ define(function(require) {
 
             mediator.on('order:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('order:load:products-tier-prices', this.loadProductsTierPrices, this);
+
+            this.$priceList.change(_.bind(function() {
+                this.loadProductsTierPrices(this.getProductsId(), function(response) {
+                    mediator.trigger('order:refresh:products-tier-prices', response);
+                });
+            }, this));
         },
 
         /**
@@ -78,6 +84,20 @@ define(function(require) {
             $.get(url, function(response) {
                 callback(response);
             });
+        },
+
+        /**
+         * @returns {Array} products
+         */
+        getProductsId: function() {
+            var products = this.$el.find('input[data-ftid$="_product"]');
+            products = _.filter(products, function(product) {
+                return product.value.length > 0;
+            });
+            products = _.map(products, function(product) {
+                return product.value;
+            });
+            return products;
         },
 
         /**
