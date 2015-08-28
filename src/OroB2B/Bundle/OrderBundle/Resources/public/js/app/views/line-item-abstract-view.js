@@ -24,6 +24,7 @@ define(function(require) {
             currency: null,
             selectors: {
                 tierPrices: '.order-line-item-tier-prices',
+                priceOverridden: '.order-line-item-price-overridden',
                 tierPricesTemplate: '#order-line-item-tier-prices-template'
             }
         },
@@ -39,6 +40,11 @@ define(function(require) {
         $tierPrices: null,
 
         /**
+         * @property {jQuery}
+         */
+        $priceOverridden: null,
+
+        /**
          * @property {Object}
          */
         fieldsByName: null,
@@ -52,6 +58,11 @@ define(function(require) {
          * @property {Object}
          */
         tierPrices: null,
+
+        /**
+         * @property {Object}
+         */
+        matchedPrice: {},
 
         /**
          * @inheritDoc
@@ -80,6 +91,23 @@ define(function(require) {
                 var name = self.normalizeName($field.data('ftid').replace(self.options.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
+
+            this.$tierPrices = this.$el.find(this.options.selectors.tierPrices);
+            this.$priceOverridden = this.$el.find(this.options.selectors.priceOverridden);
+            layout.initPopover(this.$priceOverridden);
+
+            this.initMatchedPrices();
+
+            if (_.isEmpty(this.fieldsByName.priceValue.val())) {
+                this.fieldsByName.priceValue.addClass('matched-price');
+            }
+            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
+        },
+
+        onPriceValueChange: function() {
+            this.fieldsByName.priceValue.removeClass('matched-price');
+
+            this.renderPriceOverridden();
         },
 
         /**
@@ -112,7 +140,6 @@ define(function(require) {
 
         initTierPrices: function() {
             this.tierPricesTemplate = _.template($(this.options.selectors.tierPricesTemplate).text());
-            this.$tierPrices = this.$el.find(this.options.selectors.tierPrices);
 
             this.fieldsByName.product.change(_.bind(function(e) {
                 var productId = e.currentTarget.value;
@@ -128,7 +155,9 @@ define(function(require) {
 
             if (this.fieldsByName.priceValue) {
                 this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
-                    this.fieldsByName.priceValue.val($(e.currentTarget).data('price'));
+                    this.fieldsByName.priceValue
+                        .val($(e.currentTarget).data('price'))
+                        .change();
                 }, this));
             }
         },
@@ -147,6 +176,8 @@ define(function(require) {
             if (!_.isEmpty(this.tierPrices)) {
                 content = this.tierPricesTemplate({
                     tierPrices: this.tierPrices,
+                    unitCode: this.fieldsByName.productUnit.val(),
+                    matchedPrice: !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null,
                     formatter: NumberFormatter
                 });
                 $button.removeClass('disabled');
@@ -162,6 +193,99 @@ define(function(require) {
             }
         },
 
+        initMatchedPrices: function() {
+            var fields = [
+                this.fieldsByName.product,
+                this.fieldsByName.productUnit,
+                this.fieldsByName.quantity
+            ];
+
+            var self = this;
+            _.each(fields, function(field) {
+                field.change(_.bind(self.updateMatchedPrices, self));
+            });
+
+            mediator.trigger('order:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
+            mediator.on('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
+
+            if (this.fieldsByName.priceValue) {
+                this.$priceOverridden.on('click', 'a', _.bind(function() {
+                    this.fieldsByName.priceValue
+                        .val(this.matchedPrice.value)
+                        .change()
+                        .addClass('matched-price');
+                }, this));
+            }
+        },
+
+        /**
+         * Trigger subtotals update
+         */
+        updateMatchedPrices: function() {
+            var productId = this.fieldsByName.product.val();
+            var unitCode = this.fieldsByName.productUnit.val();
+            var quantity = this.fieldsByName.quantity.val();
+
+            if (productId.length === 0) {
+                this.setMatchedPrices({});
+            } else {
+                mediator.trigger(
+                    'order:load:line-items-matched-prices',
+                    [{'product': productId, 'unit': unitCode, 'qty': quantity}],
+                    _.bind(this.setMatchedPrices, this)
+                );
+            }
+        },
+
+        /**
+         * @param {Object} matchedPrices
+         */
+        setMatchedPrices: function(matchedPrices) {
+            var identifier = this._getMatchedPriceIdentifier();
+            if (identifier) {
+                this.matchedPrice = matchedPrices[identifier] || {};
+            } else {
+                this.matchedPrice = {};
+            }
+
+            if (this.fieldsByName.priceValue.hasClass('matched-price')) {
+                var priceValue = !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
+
+                this.fieldsByName.priceValue
+                    .val(priceValue)
+                    .change()
+                    .addClass('matched-price');
+            } else {
+                this.renderPriceOverridden();
+            }
+
+            this.renderTierPrices();
+        },
+
+        renderPriceOverridden: function() {
+            var priceValue = this.fieldsByName.priceValue.val();
+
+            if (!_.isEmpty(this.matchedPrice) &&
+                priceValue &&
+                parseFloat(this.matchedPrice.value) !== parseFloat(priceValue)
+            ) {
+                this.$priceOverridden.show();
+            } else {
+                this.$priceOverridden.hide();
+            }
+        },
+
+        /**
+         * @returns {String}
+         */
+        _getMatchedPriceIdentifier: function() {
+            var productId = this.fieldsByName.product.val();
+            var unitCode = this.fieldsByName.productUnit.val();
+            var quantity = this.fieldsByName.quantity.val();
+
+            return productId.length === 0 ? null : productId + '-' + unitCode + '-' + quantity;
+        },
+
         /**
          * @inheritDoc
          */
@@ -171,6 +295,7 @@ define(function(require) {
             }
 
             mediator.off('order:refresh:products-tier-prices', this.setTierPrices, this);
+            mediator.off('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
             LineItemAbstractView.__super__.dispose.call(this);
         }

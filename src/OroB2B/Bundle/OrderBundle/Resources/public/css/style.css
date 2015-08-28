@@ -73,11 +73,21 @@ table.order-line-items th {
     width: 279px !important;
 }
 
+.order-line-item-quantity input[type="number"],
+.order-line-item-price input[type="text"] {
+    text-align: right;
+}
+
 .order-line-item-quantity {
     width: 207px;
 }
 .order-line-item-price {
-    width: 231px;
+    width: 243px;
+    position: relative;
+}
+
+.order-line-item-price input[type="text"] {
+    padding-left: 17px;
 }
 
 .order-line-item-quantity input[type="number"],
@@ -92,4 +102,26 @@ table.order-line-items th {
 .order-line-item-price input[type="text"],
 .order-line-item-price .selector {
     float: left;
+}
+
+.order-line-item-price input.matched-price {
+    background-color: #eee;
+}
+
+.order-line-item-price-overridden {
+    position: absolute;
+    top: 8px;
+    left: 9px;
+}
+
+.order-line-item-price-overridden i {
+    cursor: pointer;
+}
+
+.order-line-item-price-overridden div.popover {
+    min-width: 130px;
+}
+
+.order-line-item-tier-prices div.popover tr.matched-tier-price > td {
+    font-weight: bold;
 }

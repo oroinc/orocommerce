@@ -193,6 +193,8 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
             $this->prices[$priceList->getId()][$currency][$identifier] = $prices[$identifier];
         }
 
-        return $this->prices[$priceList->getId()][$currency][$identifier];
+        $price = $this->prices[$priceList->getId()][$currency][$identifier];
+
+        return $price ?: Price::create(mt_rand(10, 1000), $currency);
     }
 }

@@ -52,12 +52,9 @@ class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensi
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
             ->getMock();
-        $resolver->expects($this->at(0))
+        $resolver->expects($this->once())
             ->method('setDefault')
             ->with('grid_name', 'products-select-grid-frontend');
-        $resolver->expects($this->at(1))
-            ->method('setDefault')
-            ->with('autocomplete_alias', 'orob2b_frontend_products_list');
 
         $this->extension->configureOptions($resolver);
     }
