@@ -36,7 +36,7 @@ class QuoteNotificationController extends Controller
 
         $emailTemplate = $em
             ->getRepository('OroEmailBundle:EmailTemplate')
-            ->findByName('customer_notification');
+            ->findByName('quote_email_link');
         $emailModel->setTemplate($emailTemplate);
 
         $responseData = [
