@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
 
+use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
 
 class FrontendAccountUserProfileType extends AbstractType
 {
