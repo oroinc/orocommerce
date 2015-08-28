@@ -270,9 +270,6 @@ class OrderLineItem extends ExtendOrderLineItem
     public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
-        if ($productUnit) {
-            $this->productUnitCode = $productUnit->getCode();
-        }
 
         return $this;
     }
