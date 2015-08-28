@@ -12,24 +12,6 @@ class PriceTest extends \PHPUnit_Framework_TestCase
     const CURRENCY = 'USD';
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Price value can not be empty
-     */
-    public function testEmptyValueException()
-    {
-        (new Price())->setValue(null);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Price currency can not be empty
-     */
-    public function testEmptyCurrencyException()
-    {
-        (new Price())->setCurrency(null);
-    }
-
-    /**
      * @dataProvider propertiesDataProvider
      * @param string $property
      * @param mixed  $value

@@ -4,6 +4,7 @@ config:
         'orob2border/js/app/components/subtotals-component': 'bundles/orob2border/js/app/components/subtotals-component.js'
         'orob2border/js/app/listener/subtotals-listener': 'bundles/orob2border/js/app/listener/subtotals-listener.js'
         'orob2border/js/app/views/address-view': 'bundles/orob2border/js/app/views/address-view.js'
+        'orob2border/js/app/views/frontend-line-item-view': 'bundles/orob2border/js/app/views/frontend-line-item-view.js'
         'orob2border/js/app/views/line-item-view': 'bundles/orob2border/js/app/views/line-item-view.js'
         'orob2border/js/app/views/line-item-abstract-view': 'bundles/orob2border/js/app/views/line-item-abstract-view.js'
         'orob2border/js/app/views/line-items-view': 'bundles/orob2border/js/app/views/line-items-view.js'

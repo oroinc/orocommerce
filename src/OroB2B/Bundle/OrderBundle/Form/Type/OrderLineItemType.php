@@ -3,12 +3,26 @@
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 class OrderLineItemType extends AbstractOrderLineItemType
 {
     const NAME = 'orob2b_order_line_item';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        parent::configureOptions($resolver);
+
+        $resolver->setDefault(
+            'page_component_options',
+            ['view' => 'orob2border/js/app/views/line-item-view']
+        );
+    }
 
     /**
      * {@inheritdoc}

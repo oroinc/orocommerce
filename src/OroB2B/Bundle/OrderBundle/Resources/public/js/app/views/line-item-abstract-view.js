@@ -63,6 +63,7 @@ define(function(require) {
             }
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
+            this.delegate('click', '.removeLineItem', this.removeRow);
         },
 
         /**
@@ -100,6 +101,12 @@ define(function(require) {
          */
         subtotalFields: function($fields) {
             SubtotalsListener.listen($fields);
+        },
+
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
+            SubtotalsListener.updateSubtotals();
         },
 
         initTierPrices: function() {

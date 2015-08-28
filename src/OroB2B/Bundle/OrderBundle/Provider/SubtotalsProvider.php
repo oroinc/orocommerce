@@ -59,6 +59,9 @@ class SubtotalsProvider
 
         $subtotalAmount = 0.0;
         foreach ($order->getLineItems() as $lineItem) {
+            if (!$lineItem->getPrice()) {
+                continue;
+            }
             $rowTotal = $lineItem->getPrice()->getValue();
             if ($lineItem->getPriceType() === OrderLineItem::PRICE_TYPE_UNIT) {
                 $rowTotal *= $lineItem->getQuantity();
