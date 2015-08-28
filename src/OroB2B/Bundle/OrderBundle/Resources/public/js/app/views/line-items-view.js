@@ -21,7 +21,7 @@ define(function(require) {
             tierPrices: null,
             matchedPrices: null,
             tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
-            matchedPricesRoute: 'orob2b_pricing_mathing_price'
+            matchedPricesRoute: 'orob2b_pricing_matching_price'
         },
 
         /**
@@ -144,7 +144,7 @@ define(function(require) {
                     return;
                 }
 
-                var unitCode = $lineItem.find('select[data-ftid$="productUnit"]')[0].value;
+                var unitCode = $lineItem.find('select[data-ftid$="_productUnit"]')[0].value;
                 var quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
 
                 items.push({'product': productId, 'unit': unitCode, 'qty': quantity});

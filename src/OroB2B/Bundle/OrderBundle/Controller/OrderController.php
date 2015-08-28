@@ -223,9 +223,6 @@ class OrderController extends Controller
     protected function getMatchedPrices(Order $order)
     {
         $matchedPrices = [];
-        if (!$order->getPriceList()) {
-            return $matchedPrices;
-        }
 
         $productUnitQuantities = $order->getLineItems()->filter(
             function (OrderLineItem $lineItem) {

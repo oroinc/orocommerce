@@ -93,6 +93,7 @@ define(function(require) {
 
             this.$tierPrices = this.$el.find(this.options.selectors.tierPrices);
             this.$priceOverridden = this.$el.find(this.options.selectors.priceOverridden);
+            layout.initPopover(this.$priceOverridden);
 
             this.initMatchedPrices();
 
@@ -207,7 +208,7 @@ define(function(require) {
             mediator.on('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
             if (this.fieldsByName.priceValue) {
-                this.$priceOverridden.on('click', 'a', _.bind(function(e) {
+                this.$priceOverridden.on('click', 'a', _.bind(function() {
                     this.fieldsByName.priceValue
                         .val(this.matchedPrice.value)
                         .change()
@@ -271,12 +272,10 @@ define(function(require) {
             } else {
                 this.$priceOverridden.hide();
             }
-
-            layout.initPopover(this.$priceOverridden);
         },
 
         /**
-         * @returns {string}
+         * @returns {String}
          */
         _getMatchedPriceIdentifier: function() {
             var productId = this.fieldsByName.product.val();
