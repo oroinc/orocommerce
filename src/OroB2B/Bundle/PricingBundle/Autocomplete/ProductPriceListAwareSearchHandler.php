@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Autocomplete;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 
 use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
@@ -14,6 +16,11 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
     protected $productListModifier;
 
     /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
      * @param string $entityName
      * @param array $properties
      * @param FrontendProductListModifier $productListModifier
@@ -23,6 +30,17 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
         $this->productListModifier = $productListModifier;
 
         parent::__construct($entityName, $properties);
+    }
+
+    /**
+     * @param Request $request
+     * @return ProductPriceListAwareSearchHandler
+     */
+    public function setRequest(Request $request = null)
+    {
+        $this->request = $request;
+
+        return $this;
     }
 
     /**
@@ -42,10 +60,10 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
-        if (strpos($search, ';') !== false) {
-            list($search, $currency) = explode(';', $search);
+        $currency = null;
+        if ($this->request) {
+            $currency = $this->request->get('currency');
         }
-        $currency = 'USD';
 
         $queryBuilder = $this->entityRepository->createQueryBuilder('p');
         $queryBuilder

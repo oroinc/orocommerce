@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Autocomplete;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -42,10 +43,11 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
 
     /**
      * @dataProvider testSearchDataProvider
-     * @param $search
-     * @param $expected
+     * @param string $search
+     * @param string $currency
+     * @param array $expected
      */
-    public function testSearch($search, $expected)
+    public function testSearch($search, $currency, $expected)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_2');
@@ -74,11 +76,20 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
 
         $modifier = new FrontendProductListModifier($tokenStorage, $priceListTreeHandler);
 
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->any())
+            ->method('get')
+            ->with('currency')
+            ->will($this->returnValue($currency));
+
         $searchHandler = new ProductPriceListAwareSearchHandler(
             self::TEST_ENTITY_CLASS,
             $this->testProperties,
             $modifier
         );
+        $searchHandler->setRequest($request);
 
         $searchHandler->initDoctrinePropertiesByManagerRegistry($this->getContainer()->get('doctrine'));
         $result = $searchHandler->search($search, 1, 10);
@@ -101,42 +112,49 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
         return [
             [
                 'search' => 'product.',
+                'currency' => null,
                 'expected' => [
                     'product.1',
                     'product.2'
                 ]
             ],
             [
-                'search' => 'product.;USD',
+                'search' => 'product.',
+                'currency' => 'USD',
                 'expected' => [
                     'product.1',
                     'product.2'
                 ]
             ],
             [
-                'search' => 'product.;EUR',
+                'search' => 'product.',
+                'currency' => 'EUR',
                 'expected' => [
                     'product.2'
                 ]
             ],
             [
-                'search' => 'product.;CAD',
+                'search' => 'product.',
+                'currency' => 'CAD',
                 'expected' => []
             ],
             [
                 'search' => '1',
+                'currency' => null,
                 'expected' => [
                     'product.1'
                 ]
             ],
             [
                 'search' => 'product.2',
+                'currency' => null,
                 'expected' => [
                     'product.2'
                 ]
             ],
             [
                 'search' => 'product.100',
+                'currency' => null,
                 'expected' => []
             ],
         ];

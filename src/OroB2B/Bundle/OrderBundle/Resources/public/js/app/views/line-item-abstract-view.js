@@ -98,10 +98,12 @@ define(function(require) {
 
             this.initMatchedPrices();
 
-            if (_.isEmpty(this.fieldsByName.priceValue.val())) {
-                this.fieldsByName.priceValue.addClass('matched-price');
+            if (this.fieldsByName.hasOwnProperty('priceValue')) {
+                if (_.isEmpty(this.fieldsByName.priceValue.val())) {
+                    this.fieldsByName.priceValue.addClass('matched-price');
+                }
+                this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
             }
-            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
         },
 
         onPriceValueChange: function() {
@@ -208,7 +210,7 @@ define(function(require) {
             mediator.trigger('order:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             mediator.on('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
 
-            if (this.fieldsByName.priceValue) {
+            if (this.fieldsByName.hasOwnProperty('priceValue')) {
                 this.$priceOverridden.on('click', 'a', _.bind(function() {
                     this.fieldsByName.priceValue
                         .val(this.matchedPrice.value)
@@ -248,15 +250,17 @@ define(function(require) {
                 this.matchedPrice = {};
             }
 
-            if (this.fieldsByName.priceValue.hasClass('matched-price')) {
-                var priceValue = !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
+            if (this.fieldsByName.hasOwnProperty('priceValue')) {
+                if (this.fieldsByName.priceValue.hasClass('matched-price')) {
+                    var priceValue = !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
 
-                this.fieldsByName.priceValue
-                    .val(priceValue)
-                    .change()
-                    .addClass('matched-price');
-            } else {
-                this.renderPriceOverridden();
+                    this.fieldsByName.priceValue
+                        .val(priceValue)
+                        .change()
+                        .addClass('matched-price');
+                } else {
+                    this.renderPriceOverridden();
+                }
             }
 
             this.renderTierPrices();
