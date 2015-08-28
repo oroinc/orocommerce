@@ -95,7 +95,7 @@ class ProductVariantCustomFieldsDatagridListener
      */
     protected function buildColumnName($fieldName)
     {
-        return 'custom_field_' . strtolower($fieldName);
+        return $fieldName;
     }
 
     /**

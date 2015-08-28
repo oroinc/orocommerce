@@ -155,7 +155,6 @@ datagrid:
                 acl_resource:  orob2b_product_delete
 
     product-variants-select-grid:
-        extended_entity_name: %orob2b_product.product.class%
         options:
             entityHint:        parentProduct
             entity_pagination: true
@@ -270,7 +269,6 @@ datagrid:
                     enum_code: prod_inventory_status
 
     product-variants-view-grid:
-        extended_entity_name: %orob2b_product.product_variant_link.class%
         options:
             entityHint:        parentProduct
             entity_pagination: true
