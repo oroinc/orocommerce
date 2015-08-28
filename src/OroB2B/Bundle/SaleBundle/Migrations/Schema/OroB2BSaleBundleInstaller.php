@@ -110,6 +110,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
+        $table->addColumn('locked', 'boolean');
         $table->setPrimaryKey(['id']);
     }
 

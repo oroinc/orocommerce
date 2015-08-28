@@ -155,6 +155,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $quoteProducts;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $locked = false;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -433,6 +440,26 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @param bool $locked
+     *
+     * @return Quote
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = (bool)$locked;
+
+        return $this;
     }
 
     /**

@@ -12,6 +12,17 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block breadcrumbs %}
+    {{ parent() }}
+        <div class="pull-left">
+            {% if entity.locked %}
+                <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'orob2b.sale.quote.locked.label'|trans }}</div>
+            {% else %}
+                <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'orob2b.sale.quote.not_locked.label'|trans }}</div>
+            {% endif %}
+        </div>
+{% endblock breadcrumbs %}
+
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
