@@ -103,6 +103,12 @@ define(function(require) {
             SubtotalsListener.listen($fields);
         },
 
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
+            SubtotalsListener.updateSubtotals();
+        },
+
         initTierPrices: function() {
             this.tierPricesTemplate = _.template($(this.options.selectors.tierPricesTemplate).text());
             this.$tierPrices = this.$el.find(this.options.selectors.tierPrices);
@@ -153,12 +159,6 @@ define(function(require) {
                 $button.data('content', content);
                 layout.initPopover(this.$tierPrices);
             }
-        },
-
-        removeRow: function() {
-            this.$el.trigger('content:remove');
-            this.remove();
-            SubtotalsListener.updateSubtotals();
         },
 
         /**
