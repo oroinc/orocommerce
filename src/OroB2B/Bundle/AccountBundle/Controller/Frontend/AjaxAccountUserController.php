@@ -2,47 +2,24 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
-
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
+use OroB2B\Bundle\AccountBundle\Controller\AbstractAjaxAccountUserController;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
-class AjaxAccountUserController extends Controller
+use Symfony\Component\Routing\Annotation\Route;
+
+class AjaxAccountUserController extends AbstractAjaxAccountUserController
 {
     /**
      * @Route("/confirm/{id}", name="orob2b_account_frontend_account_user_confirm", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
+     * {@inheritdoc}
      */
     public function confirmAction(AccountUser $accountUser)
     {
-        $userManager = $this->get('orob2b_account_user.manager');
-
-        try {
-            $userManager->confirmRegistration($accountUser);
-            $userManager->updateUser($accountUser);
-
-            $response = [
-                'successful' => true,
-                'message' => $this->get('translator')->trans('orob2b.account.controller.accountuser.confirmed.message')
-            ];
-        } catch (\Exception $e) {
-            $this->get('logger')->error(
-                sprintf(
-                    'Confirm account user failed: %s: %s',
-                    $e->getCode(),
-                    $e->getMessage()
-                )
-            );
-            $response = ['successful' => false];
-        }
-
-        return new JsonResponse($response);
+        return parent::confirmAction($accountUser);
     }
 
     /**
@@ -54,24 +31,12 @@ class AjaxAccountUserController extends Controller
      *      requirements={"id"="\d+"}
      * )
      * @AclAncestor("orob2b_account_frontend_account_user_update")
-     * @param AccountUser $accountUser
-     * @return JsonResponse
+     *
+     * {@inheritdoc}
      */
     public function sendConfirmationAction(AccountUser $accountUser)
     {
-        $userManager = $this->get('orob2b_account_user.manager');
-
-        $result = ['successful' => true];
-        try {
-            $userManager->sendConfirmationEmail($accountUser);
-            $result['message'] = $this->get('translator')
-                ->trans('orob2b.account.controller.accountuser.confirmation_sent.message');
-        } catch (\Exception $e) {
-            $result['successful'] = false;
-            $result['message'] = $e->getMessage();
-        }
-
-        return new JsonResponse($result);
+        return parent::sendConfirmationAction($accountUser);
     }
 
     /**
@@ -82,14 +47,11 @@ class AjaxAccountUserController extends Controller
      * )
      * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
+     * {@inheritdoc}
      */
     public function enableAction(AccountUser $accountUser)
     {
-        $enableMessage = $this->get('translator')->trans('orob2b.account.controller.accountuser.enabled.message');
-
-        return $this->enableTrigger($accountUser, true, $enableMessage);
+        return parent::enableAction($accountUser);
     }
 
     /**
@@ -100,14 +62,11 @@ class AjaxAccountUserController extends Controller
      * )
      * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
+     * {@inheritdoc}
      */
     public function disableAction(AccountUser $accountUser)
     {
-        $disableMessage = $this->get('translator')->trans('orob2b.account.controller.accountuser.disabled.message');
-
-        return $this->enableTrigger($accountUser, false, $disableMessage);
+        return parent::disableAction($accountUser);
     }
 
     /**
@@ -116,31 +75,10 @@ class AjaxAccountUserController extends Controller
      *      requirements={"id"="\d+"})
      * @AclAncestor("orob2b_account_frontend_account_user_view")
      *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
+     * {@inheritdoc}
      */
     public function getAccountIdAction(AccountUser $accountUser)
     {
-        return new JsonResponse([
-            'accountId' => $accountUser->getAccount() ? $accountUser->getAccount()->getId() : null
-        ]);
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @param boolean $enabled
-     * @param string $successMessage
-     * @return JsonResponse
-     */
-    protected function enableTrigger(AccountUser $accountUser, $enabled, $successMessage)
-    {
-        $userManager = $this->get('orob2b_account_user.manager');
-        $accountUser->setEnabled($enabled);
-        $userManager->updateUser($accountUser);
-
-        return new JsonResponse([
-            'successful' => true,
-            'message' => $successMessage
-        ]);
+        return parent::getAccountIdAction($accountUser);
     }
 }
