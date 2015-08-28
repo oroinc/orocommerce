@@ -4,6 +4,7 @@ define(function(require) {
     var LineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
+    var layout = require('oroui/js/layout');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
@@ -12,6 +13,11 @@ define(function(require) {
      * @class orob2border.app.views.LineItemView
      */
     LineItemView = LineItemAbstractView.extend({
+        /**
+         * @property {jQuery}
+         */
+        $priceOverridden: null,
+
         /**
          * @inheritDoc
          */
@@ -30,6 +36,9 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
+            this.$priceOverridden = this.$el.find(this.options.selectors.priceOverridden);
+            layout.initPopover(this.$priceOverridden);
+
             LineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
             this.subtotalFields([
@@ -61,6 +70,69 @@ define(function(require) {
                 $freeFormType.click();
             } else {
                 $productType.click();
+            }
+        },
+
+        onPriceValueChange: function() {
+            this.fieldsByName.priceValue.removeClass('matched-price');
+
+            this.renderPriceOverridden();
+        },
+
+        initTierPrices: function() {
+            LineItemView.__super__.initTierPrices.apply(this, arguments);
+
+            this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
+                this.fieldsByName.priceValue
+                    .val($(e.currentTarget).data('price'))
+                    .change();
+            }, this));
+        },
+
+        initMatchedPrices: function() {
+            LineItemView.__super__.initMatchedPrices.apply(this, arguments);
+
+            if (_.isEmpty(this.fieldsByName.priceValue.val())) {
+                this.fieldsByName.priceValue.addClass('matched-price');
+            }
+            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
+
+            this.$priceOverridden.on('click', 'a', _.bind(function() {
+                this.fieldsByName.priceValue
+                    .val(this._getMatchedPriceValue())
+                    .change()
+                    .addClass('matched-price');
+            }, this));
+        },
+
+        /**
+         * @inheritdoc
+         */
+        setMatchedPrices: function(matchedPrices) {
+            LineItemView.__super__.setMatchedPrices.apply(this, arguments);
+
+            if (this.fieldsByName.priceValue.hasClass('matched-price')) {
+                this.fieldsByName.priceValue
+                    .val(this._getMatchedPriceValue())
+                    .change()
+                    .addClass('matched-price');
+            } else {
+                this.renderPriceOverridden();
+            }
+
+            this.renderTierPrices();
+        },
+
+        renderPriceOverridden: function() {
+            var priceValue = this.fieldsByName.priceValue.val();
+
+            if (!_.isEmpty(this.matchedPrice) &&
+                priceValue &&
+                parseFloat(this.matchedPrice.value) !== parseFloat(priceValue)
+            ) {
+                this.$priceOverridden.show();
+            } else {
+                this.$priceOverridden.hide();
             }
         }
     });
