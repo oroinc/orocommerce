@@ -7,6 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+
 class OrderLineItemType extends AbstractOrderLineItemType
 {
     const NAME = 'orob2b_order_line_item';
@@ -32,6 +34,15 @@ class OrderLineItemType extends AbstractOrderLineItemType
         parent::buildForm($builder, $options);
 
         $builder
+            ->add(
+                'product',
+                ProductSelectType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.product.entity_label',
+                    'create_enabled' => false,
+                ]
+            )
             ->add(
                 'productSku',
                 'text',

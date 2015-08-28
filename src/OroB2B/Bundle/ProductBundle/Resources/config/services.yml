@@ -12,7 +12,6 @@ parameters:
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
-    orob2b_product.autocomplete.product.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductSearchHandler
 
 services:
     orob2b_product.form.product:
@@ -94,15 +93,3 @@ services:
         calls:
             - [setUrlGenerator, [@router]]
             - [setTranslator, [@translator]]
-
-    orob2b_product.autocomplete.product.search_handler:
-            class: %orob2b_product.autocomplete.product.search_handler.class%
-            arguments:
-                - %orob2b_product.product.class%
-                - ["sku", "defaultName.string"]
-                - @orob2b_pricing.model.frontend_product_list_modifier
-            calls:
-                - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
-                - [setAclHelper,["@oro_security.acl_helper"]]
-            tags:
-                - { name: oro_form.autocomplete.search_handler, alias: "orob2b_frontend_products_list" }

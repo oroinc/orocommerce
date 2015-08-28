@@ -35,15 +35,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
     {
         $builder
             ->add(
-                'product',
-                ProductSelectType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.product.entity_label',
-                    'create_enabled' => false,
-                ]
-            )
-            ->add(
                 'quantity',
                 'integer',
                 [

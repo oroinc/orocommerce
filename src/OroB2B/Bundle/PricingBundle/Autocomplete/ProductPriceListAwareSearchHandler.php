@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Autocomplete;
+namespace OroB2B\Bundle\PricingBundle\Autocomplete;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 
 use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
 
-class ProductSearchHandler extends SearchHandler
+class ProductPriceListAwareSearchHandler extends SearchHandler
 {
     /**
      * @var FrontendProductListModifier
@@ -42,6 +42,10 @@ class ProductSearchHandler extends SearchHandler
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
+        if (strpos($search, ';') !== false) {
+            list($search, $currency) = explode(';', $search);
+        }
+
         $queryBuilder = $this->entityRepository->createQueryBuilder('p');
         $queryBuilder
             ->innerJoin('p.names', 'pn', 'WITH', $queryBuilder->expr()->isNull('pn.locale'))
@@ -51,7 +55,9 @@ class ProductSearchHandler extends SearchHandler
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 
-        $this->productListModifier->applyPriceListLimitations($queryBuilder);
+        $currency = isset($currency) ? $currency : null;
+
+        $this->productListModifier->applyPriceListLimitations($queryBuilder, $currency);
 
         $query = $queryBuilder->getQuery();
         //$query = $this->aclHelper->apply($queryBuilder);

@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 
 class FrontendOrderLineItemType extends AbstractOrderLineItemType
 {
@@ -37,20 +38,30 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     {
         parent::buildForm($builder, $options);
 
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) {
-                $form = $event->getForm();
-                /** @var OrderLineItem $item */
-                $item = $form->getData();
-                if ($item && $item->isFromExternalSource()) {
-                    $this->disableFieldChanges($form, 'product');
-                    $this->disableFieldChanges($form, 'productUnit');
-                    $this->disableFieldChanges($form, 'quantity');
-                    $this->disableFieldChanges($form, 'shipBy');
+        $builder
+            ->add(
+                'product',
+                ProductPriceListAwareSelectType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.product.entity_label',
+                    'create_enabled' => false,
+                ]
+            )
+            ->addEventListener(
+                FormEvents::POST_SET_DATA,
+                function (FormEvent $event) {
+                    $form = $event->getForm();
+                    /** @var OrderLineItem $item */
+                    $item = $form->getData();
+                    if ($item && $item->isFromExternalSource()) {
+                        $this->disableFieldChanges($form, 'product');
+                        $this->disableFieldChanges($form, 'productUnit');
+                        $this->disableFieldChanges($form, 'quantity');
+                        $this->disableFieldChanges($form, 'shipBy');
+                    }
                 }
-            }
-        );
+            );
     }
 
     /**

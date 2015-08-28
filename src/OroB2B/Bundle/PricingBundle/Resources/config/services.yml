@@ -34,6 +34,8 @@ parameters:
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
+    orob2b_pricing.autocomplete.product.search_handler.class: OroB2B\Bundle\PricingBundle\Autocomplete\ProductPriceListAwareSearchHandler
+
 services:
     orob2b_pricing.acl.voter.product_list:
         class: %orob2b_pricing.acl.voter.product_list.class%
@@ -231,3 +233,15 @@ services:
             - @orob2b_pricing.model.frontend_product_list_modifier
         tags:
             - { name: oro_datagrid.extension }
+
+    orob2b_pricing.autocomplete.product.search_handler:
+            class: %orob2b_pricing.autocomplete.product.search_handler.class%
+            arguments:
+                - %orob2b_product.product.class%
+                - ["sku", "defaultName.string"]
+                - @orob2b_pricing.model.frontend_product_list_modifier
+            calls:
+                - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
+                - [setAclHelper,["@oro_security.acl_helper"]]
+            tags:
+                - { name: oro_form.autocomplete.search_handler, alias: "orob2b_pricing_price_list_aware_products_list" }
