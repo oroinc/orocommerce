@@ -81,7 +81,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="orob2b_pricing_mathing_price")
+     * @Route("/get-matching-price", name="orob2b_pricing_matching_price")
      * @Method({"GET"})
      * @AclAncestor("orob2b_pricing_product_price_view")
      *

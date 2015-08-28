@@ -19,7 +19,9 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            tierPricesRoute: 'orob2b_pricing_price_by_pricelist'
+            matchedPrices: null,
+            tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+            matchedPricesRoute: 'orob2b_pricing_matching_price'
         },
 
         /**
@@ -55,10 +57,15 @@ define(function(require) {
 
             mediator.on('order:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('order:load:products-tier-prices', this.loadProductsTierPrices, this);
+            mediator.on('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
+            mediator.on('order:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
             this.$priceList.change(_.bind(function() {
                 this.loadProductsTierPrices(this.getProductsId(), function(response) {
                     mediator.trigger('order:refresh:products-tier-prices', response);
+                });
+                this.loadLineItemsMatchedPrices(this.getItems(), function(response) {
+                    mediator.trigger('order:refresh:line-items-matched-prices', response);
                 });
             }, this));
         },
@@ -101,6 +108,52 @@ define(function(require) {
         },
 
         /**
+         * @param {Function} callback
+         */
+        getLineItemsMatchedPrices: function(callback) {
+            callback(this.options.matchedPrices);
+        },
+
+        /**
+         * @param {Array} items
+         * @param {Function} callback
+         */
+        loadLineItemsMatchedPrices: function(items, callback) {
+            var url = routing.generate(this.options.matchedPricesRoute, {
+                items: items,
+                pricelist: this.$priceList.val(),
+                currency: this.$currency.val()
+            });
+
+            $.get(url, function(response) {
+                callback(response);
+            });
+        },
+
+        /**
+         * @returns {Array} products
+         */
+        getItems: function() {
+            var lineItems = this.$el.find('.order-line-item');
+            var items = [];
+
+            _.each(lineItems, function(lineItem) {
+                var $lineItem = $(lineItem);
+                var productId = $lineItem.find('input[data-ftid$="_product"]')[0].value;
+                if (productId.length === 0) {
+                    return;
+                }
+
+                var unitCode = $lineItem.find('select[data-ftid$="_productUnit"]')[0].value;
+                var quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
+
+                items.push({'product': productId, 'unit': unitCode, 'qty': quantity});
+            });
+
+            return items;
+        },
+
+        /**
          * @inheritDoc
          */
         dispose: function() {
@@ -110,6 +163,8 @@ define(function(require) {
 
             mediator.off('order:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.off('order:load:products-tier-prices', this.loadProductsTierPrices, this);
+            mediator.off('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
+            mediator.off('order:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
             LineItemsView.__super__.dispose.call(this);
         }

@@ -108,10 +108,6 @@ class ProductPriceProvider
 
             $price = $this->matchPriceByQuantity($productPrices, $quantity);
 
-            if (!$price) {
-                $price = $this->matchPriceByQuantity($prices, $quantity);
-            }
-
             $result[$productUnitQuantity->getIdentifier()] = $price ? Price::create($price, $currency) : null;
         }
 
