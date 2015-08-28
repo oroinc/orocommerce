@@ -1,5 +1,6 @@
 config:
     paths:
+        'orob2border/js/app/components/notes-component': 'bundles/orob2border/js/app/components/notes-component.js'
         'orob2border/js/app/components/related-data-component': 'bundles/orob2border/js/app/components/related-data-component.js'
         'orob2border/js/app/components/subtotals-component': 'bundles/orob2border/js/app/components/subtotals-component.js'
         'orob2border/js/app/listener/subtotals-listener': 'bundles/orob2border/js/app/listener/subtotals-listener.js'

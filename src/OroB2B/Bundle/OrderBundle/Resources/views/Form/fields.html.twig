@@ -143,7 +143,9 @@
         {{ form_errors(form.shipBy) }}
     </td>
     <td class="order-line-item-comment">
-        {{ form_widget(form.comment) }}
+        <div data-page-component-module="orob2border/js/app/components/notes-component">
+            {{ form_widget(form.comment) }}
+        </div>
     </td>
 {% endblock %}
 
@@ -186,6 +188,8 @@
         {{ form_errors(form.shipBy) }}
     </td>
     <td class="order-line-item-comment">
-        {{ form_widget(form.comment) }}
+        <div data-page-component-module="orob2border/js/app/components/notes-component">
+            {{ form_widget(form.comment) }}
+        </div>
     </td>
 {% endblock %}
