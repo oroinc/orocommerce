@@ -7,8 +7,6 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
-use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 

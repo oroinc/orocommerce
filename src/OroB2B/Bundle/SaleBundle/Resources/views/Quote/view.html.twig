@@ -14,13 +14,13 @@
 
 {% block breadcrumbs %}
     {{ parent() }}
-        <div class="pull-left">
-            {% if entity.locked %}
-                <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'orob2b.sale.quote.locked.label'|trans }}</div>
-            {% else %}
-                <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'orob2b.sale.quote.not_locked.label'|trans }}</div>
-            {% endif %}
-        </div>
+    <div class="pull-left">
+        {% if entity.locked %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'orob2b.sale.quote.locked.label'|trans }}</div>
+        {% else %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'orob2b.sale.quote.not_locked.label'|trans }}</div>
+        {% endif %}
+    </div>
 {% endblock breadcrumbs %}
 
 {% block navButtons %}
@@ -200,10 +200,10 @@
     {{ parent() }}
     <script type="text/javascript">
         require(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
-                function (_, __, mediator) {
-                    mediator.on('widget_success:notification-email-dialog', function () {
-                        mediator.execute('refreshPage');
-                    });
-                });
+        function (_, __, mediator) {
+            mediator.on('widget_success:notification-email-dialog', function () {
+                mediator.execute('refreshPage');
+            });
+        });
     </script>
 {% endblock content_data %}
