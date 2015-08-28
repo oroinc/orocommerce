@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -208,27 +210,36 @@ class ProductPriceRepository extends EntityRepository
      */
     public function getProductUnitsByPriceList(PriceList $priceList, Product $product, $currency = null)
     {
+        $qb = $this->getProductUnitsByPriceListQueryBuilder($priceList, $product, $currency);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @param Product $product
+     * @param string|null $currency
+     *
+     * @return QueryBuilder
+     */
+    public function getProductUnitsByPriceListQueryBuilder(PriceList $priceList, Product $product, $currency = null)
+    {
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('IDENTITY(price.unit) as unitCode')
-            ->from($this->_entityName, 'price')
+        $qb->select('partial unit.{code}')
+            ->from('OroB2BProductBundle:ProductUnit', 'unit')
+            ->join($this->_entityName, 'price', Join::WITH, 'price.unit = unit')
             ->where($qb->expr()->eq('price.product', ':product'))
             ->andWhere($qb->expr()->eq('price.priceList', ':priceList'))
             ->setParameter('product', $product)
             ->setParameter('priceList', $priceList)
-            ->addOrderBy('IDENTITY(price.unit)')
-            ->groupBy('price.unit');
+            ->addOrderBy('unit.code')
+            ->groupBy('unit.code');
 
         if ($currency) {
             $qb->andWhere($qb->expr()->eq('price.currency', ':currency'))
                 ->setParameter('currency', $currency);
         }
 
-        $results = [];
-        $unitCodes = $qb->getQuery()->getResult();
-        foreach ($unitCodes as $unitCode) {
-            $results[] = $this->_em->getReference('OroB2BProductBundle:ProductUnit', $unitCode['unitCode']);
-        }
-
-        return $results;
+        return $qb;
     }
 }

@@ -45,6 +45,7 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
         if (strpos($search, ';') !== false) {
             list($search, $currency) = explode(';', $search);
         }
+        $currency = 'USD';
 
         $queryBuilder = $this->entityRepository->createQueryBuilder('p');
         $queryBuilder

@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Formatter;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase

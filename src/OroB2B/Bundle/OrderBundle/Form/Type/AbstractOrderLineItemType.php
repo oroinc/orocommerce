@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 abstract class AbstractOrderLineItemType extends AbstractType
@@ -77,6 +77,18 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 }
             }
         );
+
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                /** @var OrderLineItem $item */
+                $item = $form->getData();
+                if ($item) {
+                    $this->updateAvailableUnits($form);
+                }
+            }
+        );
     }
 
     /**
@@ -115,4 +127,9 @@ abstract class AbstractOrderLineItemType extends AbstractType
         }
         $view->vars['page_component_options']['currency'] = $options['currency'];
     }
+
+    /**
+     * @param FormInterface $form
+     */
+    abstract protected function updateAvailableUnits(FormInterface $form);
 }
