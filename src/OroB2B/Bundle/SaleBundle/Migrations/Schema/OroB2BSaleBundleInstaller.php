@@ -67,7 +67,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
