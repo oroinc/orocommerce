@@ -6,11 +6,10 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductVariantCustomFieldsDatagridListener
 {
@@ -20,9 +19,9 @@ class ProductVariantCustomFieldsDatagridListener
     private $doctrineHelper;
 
     /**
-     * @var ConfigManager
+     * @var CustomFieldProvider
      */
-    private $configManager;
+    private $customFieldProvider;
 
     /**
      * @var string
@@ -36,16 +35,16 @@ class ProductVariantCustomFieldsDatagridListener
 
     /**
      * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
+     * @param CustomFieldProvider $customFieldProvider
      * @param string $productClass
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        ConfigManager $configManager,
+        CustomFieldProvider $customFieldProvider,
         $productClass
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->configManager = $configManager;
+        $this->customFieldProvider = $customFieldProvider;
         $this->productClass = $productClass;
         $this->accessor = new PropertyAccessor();
     }
@@ -115,26 +114,18 @@ class ProductVariantCustomFieldsDatagridListener
     private function getActualVariantField(Product $product)
     {
         $customFields = [];
-        $configProvider = $this->getEntityConfigProvider();
+        $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
 
         foreach ($product->getVariantFields() as $fieldName) {
-            if ($configProvider->hasConfig($this->productClass, $fieldName)) {
-                $fieldConfig = $configProvider->getConfig($this->productClass, $fieldName);
+            if (array_key_exists($fieldName, $allCustomFields)) {
+                $fieldData = $allCustomFields[$fieldName];
                 $customFields[] = [
-                    'name' => $fieldName,
-                    'label' => $fieldConfig->get('label')
+                    'name' => $fieldData['name'],
+                    'label' => $fieldData['label']
                 ];
             }
         }
 
         return $customFields;
-    }
-
-    /**
-     * @return ConfigProvider
-     */
-    private function getEntityConfigProvider()
-    {
-        return $this->configManager->getProvider('entity');
     }
 }

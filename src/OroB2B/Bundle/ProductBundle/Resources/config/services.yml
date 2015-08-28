@@ -13,6 +13,7 @@ parameters:
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
+    orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
 
 services:
@@ -96,11 +97,17 @@ services:
             - [setUrlGenerator, [@router]]
             - [setTranslator, [@translator]]
 
-    orob2b_pricing.event_listener.product_variant_custom_fields_datagrid:
+    orob2b_product.provider.custom_field_provider:
+        class: %orob2b_product.provider.custom_field_provider.class%
+        arguments:
+            - @oro_entity_config.provider.extend
+            - @oro_entity.entity_field_provider
+
+    orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
         arguments:
             - @oro_entity.doctrine_helper
-            - @oro_entity_config.config_manager
+            - @orob2b_product.provider.custom_field_provider
             - %orob2b_product.product.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-variants-view-grid, method: onBuildBefore }

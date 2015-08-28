@@ -4,16 +4,17 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+
+use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
 class ProductCustomFieldsChoiceType extends AbstractType
 {
     const NAME = 'orob2b_product_custom_entity_fields_choice';
 
     /**
-     * @var ConfigManager
+     * @var CustomFieldProvider
      */
-    private $configManager;
+    private $customFieldProvider;
 
     /**
      * @var string
@@ -21,12 +22,12 @@ class ProductCustomFieldsChoiceType extends AbstractType
     private $productClass;
 
     /**
-     * @param ConfigManager $configManager
+     * @param CustomFieldProvider $customFieldProvider
      * @param $productClass
      */
-    public function __construct(ConfigManager $configManager, $productClass)
+    public function __construct(CustomFieldProvider $customFieldProvider, $productClass)
     {
-        $this->configManager = $configManager;
+        $this->customFieldProvider = $customFieldProvider;
         $this->productClass = $productClass;
     }
 
@@ -64,11 +65,13 @@ class ProductCustomFieldsChoiceType extends AbstractType
      */
     private function getProductCustomFields()
     {
-        $extendConfig = $this->configManager->getProvider('extend')->getConfig($this->productClass);
-        $schema = $extendConfig->get('schema');
-        $customProperties = $schema['property'];
-        unset($customProperties['serialized_data']);
+        $result = [];
+        $customFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
 
-        return $customProperties;
+        foreach ($customFields as $field) {
+            $result[$field['name']] = $field['label'];
+        }
+
+        return $result;
     }
 }
