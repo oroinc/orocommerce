@@ -17,16 +17,21 @@ define(function(require) {
         initialize: function() {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
 
+            var currencyRouteParameter = {currency: this.options.currency};
             var productUnitComponent = new ProductUnitComponent({
                 _sourceElement: this.$el,
-                routingParams: {currency: this.options.currency},
+                routingParams: currencyRouteParameter,
                 routeName: 'orob2b_pricing_frontend_units_by_pricelist',
                 productSelector: '.order-line-item-type-product input.select2',
                 quantitySelector: '.order-line-item-quantity input',
                 unitSelector: '.order-line-item-quantity select',
                 loadingMaskEnabled: false
             });
+
             this.subview('productUnitComponent', productUnitComponent);
+
+            this.$el.find('.order-line-item-type-product input.select2')
+                .data('select2_query_additional_params', currencyRouteParameter);
         },
 
         /**
