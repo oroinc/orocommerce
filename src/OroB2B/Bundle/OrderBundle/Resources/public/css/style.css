@@ -19,17 +19,41 @@ table.order-line-items td {
     vertical-align: top;
 }
 
-.order-line-items a {
-    cursor: pointer;
-}
-
-.order-line-items td, .order-line-items th {
+table.order-line-items td, table.order-line-items th {
     border: 1px solid #e5e5e5;
     padding: 10px;
 }
 
-.order-line-items th {
+table.order-line-items th {
     text-align: left;
+}
+
+.order-line-item-tier-prices {
+    float: left;
+    position: relative;
+}
+
+.order-line-item-tier-prices table {
+    min-width: 100px;
+}
+
+.order-line-item-tier-prices table td {
+    border: none;
+    padding: 2px;
+}
+
+.order-line-item-tier-prices i {
+    padding-top: 5px;
+    cursor: pointer;
+}
+
+.order-line-item-tier-prices i.disabled {
+    cursor: default;
+    opacity: 0.4;
+}
+
+.order-line-item-tier-prices i:before {
+    font-size: 20px;
 }
 
 .order-line-item-sku {
@@ -49,9 +73,11 @@ table.order-line-items td {
     width: 279px !important;
 }
 
-.order-line-item-quantity,
-.order-line-item-price {
+.order-line-item-quantity {
     width: 207px;
+}
+.order-line-item-price {
+    width: 231px;
 }
 
 .order-line-item-quantity input[type="number"],
