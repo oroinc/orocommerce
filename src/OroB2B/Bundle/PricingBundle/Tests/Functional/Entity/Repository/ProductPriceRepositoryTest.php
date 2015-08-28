@@ -37,6 +37,48 @@ class ProductPriceRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider unitDataProvider
+     * @param string $priceList
+     * @param string $product
+     * @param null|string $currency
+     * @param array $expected
+     */
+    public function testGetProductUnitsByPriceList($priceList, $product, $currency = null, array $expected = [])
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+        /** @var Product $product */
+        $product = $this->getReference($product);
+
+        $units = $this->repository->getProductUnitsByPriceList($priceList, $product, $currency);
+        $this->assertCount(count($expected), $units);
+        foreach ($units as $unit) {
+            $this->assertContains($unit->getCode(), $expected);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function unitDataProvider()
+    {
+        return [
+            [
+                'price_list_1',
+                'product.1',
+                null,
+                ['liter', 'bottle']
+            ],
+            [
+                'price_list_1',
+                'product.1',
+                'EUR',
+                ['bottle']
+            ]
+        ];
+    }
+
+    /**
      * @param string $productReference
      * @param array $priceReferences
      * @dataProvider getPricesByProductDataProvider
