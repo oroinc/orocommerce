@@ -24,9 +24,10 @@ define(function(require) {
             selectors: {
                 tierPrices: '.order-line-item-tier-prices',
                 priceOverridden: '.order-line-item-price-overridden',
-                tierPricesTemplate: '#order-line-item-tier-prices-template',
-                currency: null
-            }
+                tierPricesTemplate: '#order-line-item-tier-prices-template'
+            },
+            currency: null,
+            disabled: false
         },
 
         /**
@@ -277,7 +278,7 @@ define(function(require) {
                 } else {
                     this.renderPriceOverridden();
                 }
-            } else {
+            } else if (!this.options.disabled) {
                 this.fieldsByName.priceValueText.text(
                     NumberFormatter.formatCurrency(priceValue, this.options.currency)
                 );

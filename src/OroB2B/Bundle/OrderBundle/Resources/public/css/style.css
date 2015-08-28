@@ -126,8 +126,9 @@ table.order-line-items th {
     font-weight: bold;
 }
 
-.order-line-item-price-value {
+.order-line-item-price-value,
+.order-line-item-sku.order-line-item-type-product {
     float: left;
-    line-height: 29px;
+    line-height: 31px;
     margin-right: 10px;
 }

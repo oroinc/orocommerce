@@ -27,7 +27,10 @@
         {% set disabled = widget.parent.vars.disabled %}
     {% endif %}
 
-    {% set page_component_options = form.vars.page_component_options|merge({'currency': form.parent.parent.vars.value.currency}) %}
+    {% set page_component_options = form.vars.page_component_options|merge({
+        'currency': form.parent.parent.vars.value.currency,
+        'disabled': disabled
+    }) %}
 
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
         class="order-line-item"
