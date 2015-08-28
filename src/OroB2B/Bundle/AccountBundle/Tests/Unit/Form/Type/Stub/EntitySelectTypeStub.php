@@ -11,7 +11,12 @@ class EntitySelectTypeStub extends EntityTypeStub
     /** @var AbstractType | null */
     protected $formType;
 
-    public function __construct(array $choices, $name = 'entity', $formType = null)
+    /**
+     * @param array $choices
+     * @param string $name
+     * @param AbstractType | null $formType
+     */
+    public function __construct(array $choices, $name, $formType = null)
     {
         parent::__construct($choices, $name);
         $this->formType = $formType;
