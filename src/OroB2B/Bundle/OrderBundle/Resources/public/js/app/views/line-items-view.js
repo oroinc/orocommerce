@@ -19,9 +19,10 @@ define(function(require) {
          */
         options: {
             tierPrices: null,
-            matchedPrices: null,
+            matchedPrices: {},
             tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
-            matchedPricesRoute: 'orob2b_pricing_matching_price'
+            matchedPricesRoute: 'orob2b_pricing_matching_price',
+            currency: null
         },
 
         /**
@@ -82,13 +83,17 @@ define(function(require) {
          * @param {Function} callback
          */
         loadProductsTierPrices: function(products, callback) {
-            var url = routing.generate(this.options.tierPricesRoute, {
+            var params = {
                 product_ids: products,
-                price_list_id: this.$priceList.val(),
-                currency: this.$currency.val()
-            });
+                currency: this._getCurrency()
+            };
 
-            $.get(url, function(response) {
+            var priceList = this._getPriceList();
+            if (priceList.length !== 0) {
+                params = _.extend(params, {price_list_id: priceList});
+            }
+
+            $.get(routing.generate(this.options.tierPricesRoute, params), function(response) {
                 callback(response);
             });
         },
@@ -119,13 +124,17 @@ define(function(require) {
          * @param {Function} callback
          */
         loadLineItemsMatchedPrices: function(items, callback) {
-            var url = routing.generate(this.options.matchedPricesRoute, {
+            var params = {
                 items: items,
-                pricelist: this.$priceList.val(),
-                currency: this.$currency.val()
-            });
+                currency: this._getCurrency()
+            };
 
-            $.get(url, function(response) {
+            var priceList = this._getPriceList();
+            if (priceList.length !== 0) {
+                params = _.extend(params, {pricelist: priceList});
+            }
+
+            $.get(routing.generate(this.options.matchedPricesRoute, params), function(response) {
                 callback(response);
             });
         },
@@ -151,6 +160,26 @@ define(function(require) {
             });
 
             return items;
+        },
+
+        /**
+         * @returns {String}
+         * @private
+         */
+        _getCurrency: function() {
+            var currency = this.options.currency;
+            if (this.$currency.length !== 0) {
+                currency = this.$currency.val();
+            }
+            return currency;
+        },
+
+        /**
+         * @returns {String}
+         * @private
+         */
+        _getPriceList: function() {
+            return this.$priceList.length !== 0 ? this.$priceList.val() : '';
         },
 
         /**

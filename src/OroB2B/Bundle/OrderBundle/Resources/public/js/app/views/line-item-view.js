@@ -41,8 +41,6 @@ define(function(require) {
             ]);
 
             this.initTypeSwitcher();
-
-            this.initTierPrices();
         },
 
         initTypeSwitcher: function() {
