@@ -1,0 +1,32 @@
+.btn.frontend-favorite-button {
+    background:none;
+    padding:1px;
+    border:0;
+    -webkit-box-shadow:none;
+    box-shadow:none;
+    height:26px;
+    width:26px
+}
+
+.btn.frontend-favorite-button:hover {
+    background:#eee
+}
+
+.btn.frontend-favorite-button:hover .icon-star:before,
+.btn.frontend-favorite-button:hover .icon-pushpin:before {
+    color:#d7d7d7
+}
+
+.btn.frontend-favorite-button{
+    padding:1px 0
+}
+
+.btn.frontend-favorite-button .icon-star:before {
+    color:#e7e7e7;
+    font-size:19px
+}
+
+.btn.frontend-favorite-button.gold-icon i:before,
+.btn.frontend-favorite-button.gold-icon:hover i:before {
+    color:#ffd631
+}
