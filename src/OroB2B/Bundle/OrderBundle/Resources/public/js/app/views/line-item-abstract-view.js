@@ -96,7 +96,9 @@ define(function(require) {
 
             this.initMatchedPrices();
 
-            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
+            this.fieldsByName.priceValue
+                .addClass('matched-price')
+                .change(_.bind(this.onPriceValueChange, this));
         },
 
         onPriceValueChange: function() {
@@ -237,9 +239,11 @@ define(function(require) {
                 this.matchedPrice = {};
             }
 
-            if (!_.isEmpty(this.matchedPrice) && this.fieldsByName.priceValue.hasClass('matched-price')) {
+            if (this.fieldsByName.priceValue.hasClass('matched-price')) {
+                var priceValue = !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
+
                 this.fieldsByName.priceValue
-                    .val(this.matchedPrice.value)
+                    .val(priceValue)
                     .change()
                     .addClass('matched-price');
             } else {
