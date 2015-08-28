@@ -96,9 +96,10 @@ define(function(require) {
 
             this.initMatchedPrices();
 
-            this.fieldsByName.priceValue
-                .addClass('matched-price')
-                .change(_.bind(this.onPriceValueChange, this));
+            if (_.isEmpty(this.fieldsByName.priceValue.val())) {
+                this.fieldsByName.priceValue.addClass('matched-price');
+            }
+            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
         },
 
         onPriceValueChange: function() {
