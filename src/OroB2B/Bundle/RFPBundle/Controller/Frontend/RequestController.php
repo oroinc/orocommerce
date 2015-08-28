@@ -10,6 +10,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -21,6 +24,14 @@ class RequestController extends Controller
     /**
      * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend:view.html.twig")
+     * @Acl(
+     *      id="orob2b_rfp_request_frontend_view",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
+     *
      * @param RFPRequest $request
      * @return array
      */
@@ -38,14 +49,23 @@ class RequestController extends Controller
      */
     public function indexAction()
     {
+        $entityClass = $this->container->getParameter('orob2b_rfp.entity.request.class');
+        $viewPermission = 'VIEW;entity:' . $entityClass;
+        if (!$this->getSecurityFacade()->isGranted($viewPermission)) {
+            return $this->redirect(
+                $this->generateUrl('orob2b_rfp_frontend_request_create')
+            );
+        }
+
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class')
+            'entity_class' => $entityClass,
         ];
     }
 
     /**
      * @Route("/info/{id}", name="orob2b_rfp_frontend_request_info", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend/widget:info.html.twig")
+     * @AclAncestor("orob2b_rfp_request_frontend_view")
      *
      * @param RFPRequest $request
      * @return array
@@ -73,7 +93,7 @@ class RequestController extends Controller
                 ->setAccount($user->getAccount())
                 ->setFirstName($user->getFirstName())
                 ->setLastName($user->getLastName())
-                ->setCompany($user->getOrganization()->getName())
+                ->setCompany($user->getAccount()->getName())
                 ->setEmail($user->getEmail())
             ;
         }
@@ -84,8 +104,15 @@ class RequestController extends Controller
     /**
      * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
-     * @param RFPRequest $rfpRequest
+     * @Acl(
+     *      id="orob2b_rfp_request_frontend_update",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="EDIT",
+     *      group_name="commerce"
+     * )
      *
+     * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
     public function updateAction(RFPRequest $rfpRequest)
@@ -139,5 +166,13 @@ class RequestController extends Controller
     protected function getWebsiteManager()
     {
         return $this->get('orob2b_website.manager');
+    }
+
+    /**
+     * @return SecurityFacade
+     */
+    protected function getSecurityFacade()
+    {
+        return $this->get('oro_security.security_facade');
     }
 }

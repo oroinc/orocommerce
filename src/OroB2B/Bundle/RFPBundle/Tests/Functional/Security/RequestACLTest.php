@@ -43,7 +43,7 @@ class RequestACLTest extends WebTestCase
      * @param int $level
      * @param array $permissions
      */
-    public function testRFPPermissions($level, $permissions)
+    public function testRFPPermissions($level, $permissions, $expectedCode)
     {
         $this->setRolePermissions($level);
         $this->login(LoadAccountUsersData::USER_EMAIL, LoadAccountUsersData::USER_PASSWORD);
@@ -71,7 +71,7 @@ class RequestACLTest extends WebTestCase
         $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($result, $expectedCode);
 
         // Check isset RFP request with first user ownership
         /** @var Request $request */
@@ -112,8 +112,9 @@ class RequestACLTest extends WebTestCase
                     'owner' => false,
                     'sameAccountUser' => false,
                     'subAccountUser' => false,
-                    'notSameAccountUser' => false
-                ]
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 403,
             ],
             'account user' => [
                 'level' => AccessLevel::BASIC_LEVEL,
@@ -121,8 +122,9 @@ class RequestACLTest extends WebTestCase
                     'owner' => true,
                     'sameAccountUser' => false,
                     'subAccountUser' => false,
-                    'notSameAccountUser' => false
-                ]
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
             ],
             'account' => [
                 'level' => AccessLevel::LOCAL_LEVEL,
@@ -130,9 +132,10 @@ class RequestACLTest extends WebTestCase
                     'owner' => true,
                     'sameAccountUser' => true,
                     'subAccountUser' => false,
-                    'notSameAccountUser' => false
-                ]
-            ]
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
+            ],
         ];
     }
 
