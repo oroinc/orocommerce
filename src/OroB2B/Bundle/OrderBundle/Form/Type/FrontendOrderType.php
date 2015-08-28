@@ -145,7 +145,7 @@ class FrontendOrderType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    public function updateLineItemPrices(FormEvent $event)
+    protected function updateLineItemPrices(FormEvent $event)
     {
         /** @var Order $order */
         $order = $event->getData();
@@ -182,7 +182,10 @@ class FrontendOrderType extends AbstractType
         $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities, $currency);
 
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
-            if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {
+            if (array_key_exists($identifier, $prices) &&
+                $prices[$identifier] instanceof Price &&
+                !$lineItem->isFromExternalSource()
+            ) {
                 $lineItem->setPrice($prices[$identifier]);
             }
         }
