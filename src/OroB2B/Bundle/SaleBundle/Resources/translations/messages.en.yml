@@ -32,7 +32,7 @@ orob2b:
                 label: 'Notify Customer'
                 by_email:
                     link.text: 'Notify by Email'
-                    notify_and_lock_warning: 'Once you click on "Notify and Lock" the email will be sent to a customer and the quote will be locked for further editis.'
+                    notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
         quoteproduct:
             entity_label: 'Quote Product'
