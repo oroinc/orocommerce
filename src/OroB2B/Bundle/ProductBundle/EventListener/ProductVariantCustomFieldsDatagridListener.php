@@ -2,21 +2,18 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Component\PropertyAccess\PropertyAccessor;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductVariantCustomFieldsDatagridListener
 {
-    /**
-     * @var TranslatorInterface
-     */
-    private $translator;
-
     /**
      * @var DoctrineHelper
      */
@@ -33,21 +30,24 @@ class ProductVariantCustomFieldsDatagridListener
     private $productClass;
 
     /**
-     * @param TranslatorInterface $translator
+     * @var PropertyAccessor
+     */
+    private $accessor;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
      * @param string $productClass
      */
     public function __construct(
-        TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,
         $productClass
     ) {
-        $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->configManager = $configManager;
         $this->productClass = $productClass;
+        $this->accessor = new PropertyAccessor();
     }
 
     /**
@@ -56,10 +56,11 @@ class ProductVariantCustomFieldsDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
+        $parentProduct = $this->getProductById($event->getDatagrid()->getParameters()->get('parentProduct'));
 
-        foreach ($this->getProductCustomFields() as $customField) {
-            $columnName = $this->buildColumnName($customField);
-            $column = ['label' => ucfirst($customField),];
+        foreach ($this->getActualVariantField($parentProduct) as $customField) {
+            $columnName = $this->buildColumnName($customField['name']);
+            $column = ['label' => $customField['label']];
 
             $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
         }
@@ -73,37 +74,67 @@ class ProductVariantCustomFieldsDatagridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
+        $parentProduct = $this->getProductById($event->getDatagrid()->getParameters()->get('parentProduct'));
+        $customFields = $this->getActualVariantField($parentProduct);
+
         foreach ($records as $record) {
             $productId = $record->getValue('id');
-            $product = $this->doctrineHelper->getEntityRepository($this->productClass)->find($productId);
+            $product = $this->getProductById($productId);
 
             $data = [];
-            foreach ($this->getProductCustomFields() as $customField) {
-                $data[$this->buildColumnName($customField)] = $product->{'get' . ucfirst($customField)}();
+            foreach ($customFields as $customField) {
+                $fieldName = $customField['name'];
+                $data[$this->buildColumnName($fieldName)] = $this->accessor->getValue($product, $fieldName);
             }
             $record->addData($data);
         }
     }
 
     /**
-     * @param string $customField
+     * @param string $fieldName
      * @return string
      */
-    protected function buildColumnName($customField)
+    protected function buildColumnName($fieldName)
     {
-        return 'custom_field_' . strtolower($customField);
+        return 'custom_field_' . strtolower($fieldName);
     }
 
     /**
+     * @param int $productId
+     * @return null|Product
+     */
+    private function getProductById($productId)
+    {
+        return $this->doctrineHelper->getEntityRepository($this->productClass)->find($productId);
+    }
+
+    /**
+     * @param Product $product
      * @return array
      */
-    private function getProductCustomFields()
+    private function getActualVariantField(Product $product)
     {
-        $extendConfig = $this->configManager->getProvider('extend')->getConfig($this->productClass);
-        $schema = $extendConfig->get('schema');
-        $customProperties = $schema['property'];
-        unset($customProperties['serialized_data']);
+        $customFields = [];
+        $configProvider = $this->getEntityConfigProvider();
 
-        return $customProperties;
+        foreach ($product->getVariantFields() as $fieldName) {
+            if ($configProvider->hasConfig($this->productClass, $fieldName)) {
+                $fieldConfig = $configProvider->getConfig($this->productClass, $fieldName);
+                $customFields[] = [
+                    'name' => $fieldName,
+                    'label' => $fieldConfig->get('label')
+                ];
+            }
+        }
+
+        return $customFields;
+    }
+
+    /**
+     * @return ConfigProvider
+     */
+    private function getEntityConfigProvider()
+    {
+        return $this->configManager->getProvider('entity');
     }
 }

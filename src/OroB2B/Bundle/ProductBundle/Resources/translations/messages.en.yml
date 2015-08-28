@@ -44,6 +44,9 @@ orob2b:
             precision.label: Precision
             representation: "{{ label }} with precision {{ precision }} decimal places"
 
+        productvariantlink:
+            entity_label: Product Variant Link
+
         menu:
             products_tab.label: Product management
             products_list.description: List of existing products

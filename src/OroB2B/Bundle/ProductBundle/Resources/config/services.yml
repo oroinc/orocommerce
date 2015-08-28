@@ -99,7 +99,6 @@ services:
     orob2b_pricing.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
         arguments:
-            - @translator
             - @oro_entity.doctrine_helper
             - @oro_entity_config.config_manager
             - %orob2b_product.product.class%
