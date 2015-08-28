@@ -40,5 +40,4 @@ class OroB2BSaleBundle implements Migration, ActivityExtensionAwareInterface
     {
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_sale_quote', true);
     }
-
 }
