@@ -12,9 +12,9 @@
     <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
 
     {% if quote.locked %}
-        {%  set button_text = 'orob2b.sale.btn.notify_and_lock' %}
-    {% else %}
         {% set button_text = 'Send' %}
+    {% else %}
+        {%  set button_text = 'orob2b.sale.btn.notify_and_lock' %}
     {% endif %}
     <button class="btn btn-primary" type="submit">{{ button_text|trans }}</button>
 {% endblock %}
