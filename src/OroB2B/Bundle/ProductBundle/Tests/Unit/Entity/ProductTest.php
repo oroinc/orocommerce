@@ -10,6 +10,7 @@ use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
@@ -27,6 +28,8 @@ class ProductTest extends EntityTestCase
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
+            //['variants', false],
+            ['variantFields', ['field'], []]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
@@ -65,8 +68,15 @@ class ProductTest extends EntityTestCase
     public function testPreUpdate()
     {
         $product = new Product();
+        $product->setVariants(false);
+        $product->setVariantFields(['field']);
+        $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
+
         $product->preUpdate();
+
         $this->assertInstanceOf('\DateTime', $product->getUpdatedAt());
+        $this->assertCount(0, $product->getVariantFields());
+        $this->assertCount(0, $product->getVariantLinks());
     }
 
     public function testUnitRelation()
@@ -144,6 +154,8 @@ class ProductTest extends EntityTestCase
         $product->getUnitPrecisions()->add(new ProductUnitPrecision());
         $product->getNames()->add(new LocalizedFallbackValue());
         $product->getDescriptions()->add(new LocalizedFallbackValue());
+        $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
+        $product->setVariantFields(['field']);
 
         $refProduct = new \ReflectionObject($product);
         $refId = $refProduct->getProperty('id');
@@ -154,6 +166,8 @@ class ProductTest extends EntityTestCase
         $this->assertCount(1, $product->getUnitPrecisions());
         $this->assertCount(1, $product->getNames());
         $this->assertCount(1, $product->getDescriptions());
+        $this->assertCount(1, $product->getVariantLinks());
+        $this->assertCount(1, $product->getVariantFields());
 
         $productCopy = clone $product;
 
@@ -161,6 +175,8 @@ class ProductTest extends EntityTestCase
         $this->assertCount(0, $productCopy->getUnitPrecisions());
         $this->assertCount(0, $productCopy->getNames());
         $this->assertCount(0, $productCopy->getDescriptions());
+        $this->assertCount(0, $productCopy->getVariantLinks());
+        $this->assertCount(0, $productCopy->getVariantFields());
     }
 
     public function testGetDefaultName()
@@ -236,6 +252,33 @@ class ProductTest extends EntityTestCase
             $product->addDescription($description);
         }
         $product->getDefaultDescription();
+    }
+
+    public function testVariantLinksRelation()
+    {
+        $variantLink = new ProductVariantLink(new Product(), new Product());
+        $product = new Product();
+
+        $this->assertCount(0, $product->getVariantLinks());
+
+        $this->assertSame($product, $product->addVariantLink($variantLink));
+        $this->assertCount(1, $product->getVariantLinks());
+
+        $actual = $product->getVariantLinks();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertEquals([$variantLink], $actual->toArray());
+
+        // Add already added variant link
+        $this->assertSame($product, $product->addVariantLink($variantLink));
+        $this->assertCount(1, $product->getVariantLinks());
+
+        // Remove variant link
+        $this->assertSame($product, $product->removeVariantLink($variantLink));
+        $this->assertCount(0, $product->getVariantLinks());
+
+        $actual = $product->getVariantLinks();
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $actual);
+        $this->assertNotContains($variantLink, $actual->toArray());
     }
 
     /**

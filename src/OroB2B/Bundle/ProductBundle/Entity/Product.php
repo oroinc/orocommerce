@@ -103,9 +103,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var array
      *
-     * @ORM\Column(name="variant_fields", type="array", nullable=true)
+     * @ORM\Column(name="variant_fields", type="array", nullable=false)
      */
-    protected $variantFields = null;
+    protected $variantFields = [];
 
     /**
      * @var \DateTime $createdAt
@@ -579,10 +579,28 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
 
     /**
      * @param ProductVariantLink $variantLink
+     * @return $this
      */
     public function addVariantLink(ProductVariantLink $variantLink)
     {
-        $this->variantLinks->add($variantLink);
+        if (!$this->variantLinks->contains($variantLink)) {
+            $this->variantLinks->add($variantLink);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductVariantLink $variantLink
+     * @return $this
+     */
+    public function removeVariantLink(ProductVariantLink $variantLink)
+    {
+        if ($this->variantLinks->contains($variantLink)) {
+            $this->variantLinks->removeElement($variantLink);
+        }
+
+        return $this;
     }
 
     /**
@@ -619,6 +637,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
+            $this->variantFields = [];
         }
     }
 }

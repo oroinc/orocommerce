@@ -132,7 +132,7 @@ class ProductUpdateHandler extends UpdateHandler
 
         foreach ($product->getVariantLinks() as $variantLink) {
             if (in_array($variantLink->getProduct(), $variants)) {
-                $product->getVariantLinks()->removeElement($variantLink);
+                $product->removeVariantLink($variantLink);
             }
         }
     }
