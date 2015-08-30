@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
@@ -76,4 +75,36 @@ class ProductVariantLink
         return $this->linked;
     }
 
+    /**
+     * @param Product $parentProduct
+     * @return $this
+     */
+    public function setParentProduct($parentProduct)
+    {
+        $this->parentProduct = $parentProduct;
+
+        return $this;
+    }
+
+    /**
+     * @param Product $product
+     * @return $this
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * @param boolean $linked
+     * @return $this
+     */
+    public function setLinked($linked)
+    {
+        $this->linked = (bool) $linked;
+
+        return $this;
+    }
 }
