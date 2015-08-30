@@ -30,6 +30,16 @@ class StubProduct extends Product
     private $status;
 
     /**
+     * @var string
+     */
+    private $size;
+
+    /**
+     * @var string
+     */
+    private $color;
+
+    /**
      * @return AbstractEnumValue
      */
     public function getVisibility()
@@ -103,5 +113,37 @@ class StubProduct extends Product
         $this->inventoryStatus = $inventoryStatus;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSize()
+    {
+        return $this->size;
+    }
+
+    /**
+     * @param string $size
+     */
+    public function setSize($size)
+    {
+        $this->size = $size;
+    }
+
+    /**
+     * @return string
+     */
+    public function getColor()
+    {
+        return $this->color;
+    }
+
+    /**
+     * @param string $color
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
     }
 }

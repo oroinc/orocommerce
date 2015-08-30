@@ -15,6 +15,7 @@ parameters:
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
+    orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
 services:
     orob2b_product.form.product:
@@ -114,3 +115,8 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.product-variants-view-grid, method: onResultAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-variants-select-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.product-variants-select-grid, method: onResultAfter }
+
+    orob2b_product.validator.unique_variant_links:
+        class: %orob2b_product.validator.unique_variant_links.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }

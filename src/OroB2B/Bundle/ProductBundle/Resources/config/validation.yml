@@ -1,6 +1,7 @@
 OroB2B\Bundle\ProductBundle\Entity\Product:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: sku
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
     properties:
         sku:
             - NotBlank: ~
