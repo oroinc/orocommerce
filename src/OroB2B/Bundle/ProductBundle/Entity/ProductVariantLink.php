@@ -45,10 +45,18 @@ class ProductVariantLink
      * @param Product $parentProduct
      * @param Product $product
      */
-    public function __construct(Product $parentProduct, Product $product)
+    public function __construct(Product $parentProduct = null, Product $product = null)
     {
         $this->parentProduct = $parentProduct;
         $this->product = $product;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**

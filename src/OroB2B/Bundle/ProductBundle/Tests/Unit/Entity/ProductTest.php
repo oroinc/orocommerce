@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -16,8 +16,10 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductTest extends EntityTestCase
+class ProductTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testProperties()
     {
         $now = new \DateTime('now');
