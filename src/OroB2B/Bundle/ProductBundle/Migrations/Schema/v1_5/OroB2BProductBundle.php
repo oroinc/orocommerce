@@ -64,6 +64,6 @@ class OroB2BProductBundle implements Migration
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
-        $table->addColumn('variant_fields', 'array', ['notnull' => true, 'comment' => '(DC2Type:array)']);
+        $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
     }
 }

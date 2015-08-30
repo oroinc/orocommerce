@@ -37,7 +37,7 @@ class ProductVariantLink
 
     /**
      * @var boolean
-     * @ORM\Column(name="linked", type="boolean", nullable=false, options={"default"="1"})
+     * @ORM\Column(name="linked", type="boolean", nullable=false, options={"default"=true})
      */
     protected $linked = true;
 
@@ -79,7 +79,7 @@ class ProductVariantLink
      * @param Product $parentProduct
      * @return $this
      */
-    public function setParentProduct($parentProduct)
+    public function setParentProduct(Product $parentProduct)
     {
         $this->parentProduct = $parentProduct;
 
@@ -90,7 +90,7 @@ class ProductVariantLink
      * @param Product $product
      * @return $this
      */
-    public function setProduct($product)
+    public function setProduct(Product $product)
     {
         $this->product = $product;
 

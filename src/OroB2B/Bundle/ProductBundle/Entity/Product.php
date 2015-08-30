@@ -96,14 +96,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"="0"})
+     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
      */
     protected $variants = false;
 
     /**
      * @var array
      *
-     * @ORM\Column(name="variant_fields", type="array", nullable=false)
+     * @ORM\Column(name="variant_fields", type="array", nullable=true)
      */
     protected $variantFields = [];
 
@@ -226,7 +226,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->unitPrecisions = new ArrayCollection();
         $this->names          = new ArrayCollection();
         $this->descriptions   = new ArrayCollection();
-        $this->variantLinks       = new ArrayCollection();
+        $this->variantLinks   = new ArrayCollection();
     }
 
     /**

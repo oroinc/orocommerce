@@ -28,7 +28,6 @@ class ProductTest extends EntityTestCase
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            //['variants', false],
             ['variantFields', ['field'], []]
         ];
 
