@@ -25,6 +25,7 @@ class OroB2BProductBundleInstaller implements
     const PRODUCT_TABLE_NAME = 'orob2b_product';
     const PRODUCT_UNIT_TABLE_NAME = 'orob2b_product_unit';
     const PRODUCT_UNIT_PRECISION_TABLE_NAME = 'orob2b_product_unit_precision';
+    const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
 
     const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
     const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
@@ -67,7 +68,7 @@ class OroB2BProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -80,11 +81,13 @@ class OroB2BProductBundleInstaller implements
         $this->createOroB2BProductUnitPrecisionTable($schema);
         $this->createOrob2BProductNameTable($schema);
         $this->createOrob2BProductDescriptionTable($schema);
+        $this->createOroB2BProductVariantLinkTable($schema);
 
         $this->addOroB2BProductForeignKeys($schema);
         $this->addOroB2BProductUnitPrecisionForeignKeys($schema);
         $this->addOrob2BProductNameForeignKeys($schema);
         $this->addOrob2BProductDescriptionForeignKeys($schema);
+        $this->addOroB2BProductVariantLinkForeignKeys($schema);
 
         $this->updateProductTable($schema);
         $this->addNoteAssociations($schema);
@@ -105,6 +108,8 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('sku', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('has_variants', 'boolean', ['default' => false]);
+        $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
@@ -301,6 +306,41 @@ class OroB2BProductBundleInstaller implements
             self::PRODUCT_TABLE_NAME,
             [],
             self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductVariantLinkTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('parent_product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('linked', 'boolean', ['default' => true]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['product_id'], 'uniq_22accd774584665a');
+        $table->addIndex(['parent_product_id'], 'idx_22accd772c7e20a');
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductVariantLinkForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            ['parent_product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }

@@ -96,7 +96,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
+     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"="0"})
      */
     protected $variants = false;
 
@@ -105,7 +105,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *
      * @ORM\Column(name="variant_fields", type="array", nullable=true)
      */
-    protected $variantFields;
+    protected $variantFields = null;
 
     /**
      * @var \DateTime $createdAt
@@ -208,14 +208,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var Collection|ProductVariantLink[]
      *
-     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $variantLinks;
 
     /**
      * @var ProductVariantLink
      *
-     * @ORM\OneToOne(targetEntity="ProductVariantLink", mappedBy="variant", cascade={"ALL"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $parentProductVariantLink;
 

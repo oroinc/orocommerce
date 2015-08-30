@@ -25,32 +25,39 @@ class ProductVariantLink
     /**
      * @var Product
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="variantLinks")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false))
      */
-    protected $product;
+    protected $parentProduct;
 
     /**
      * @var Product
      * @ORM\OneToOne(targetEntity="Product")
-     * @ORM\JoinColumn(name="variant_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
-    protected $variant;
+    protected $product;
 
     /**
      * @var boolean
-     * @ORM\Column(name="linked", type="boolean", options={"default"="1"})
+     * @ORM\Column(name="linked", type="boolean", nullable=false, options={"default"="1"})
      */
     protected $linked = true;
 
     /**
-     * ProductVariantLink constructor.
+     * @param Product $parentProduct
      * @param Product $product
-     * @param Product $variant
      */
-    public function __construct(Product $product, Product $variant)
+    public function __construct(Product $parentProduct, Product $product)
     {
+        $this->parentProduct = $parentProduct;
         $this->product = $product;
-        $this->variant = $variant;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getParentProduct()
+    {
+        return $this->parentProduct;
     }
 
     /**
@@ -59,14 +66,6 @@ class ProductVariantLink
     public function getProduct()
     {
         return $this->product;
-    }
-
-    /**
-     * @return Product
-     */
-    public function getVariant()
-    {
-        return $this->variant;
     }
 
     /**

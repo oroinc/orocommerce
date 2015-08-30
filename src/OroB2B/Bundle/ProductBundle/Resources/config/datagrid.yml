@@ -192,7 +192,7 @@ datagrid:
                             join: product.parentProductVariantLink
                             alias: parentProductVariantLink
                             conditionType: WITH
-                            condition: parentProductVariantLink.product = :parentProduct
+                            condition: parentProductVariantLink.parentProduct = :parentProduct
                         -
                             join: product.parentProductVariantLink
                             alias: parentProductVariantLink2
@@ -205,7 +205,7 @@ datagrid:
                 where:
                     and:
                         - product.id <> :parentProduct
-                        - parentProductVariantLink2.product = :parentProduct OR parentProductVariantLink2.id IS NULL
+                        - parentProductVariantLink2.parentProduct = :parentProduct OR parentProductVariantLink2.id IS NULL
                         - product.variantLinks IS EMPTY
             bind_parameters:
                 - parentProduct
@@ -292,7 +292,7 @@ datagrid:
                         - { join: product.inventory_status, alias: productInventoryStatus}
                         - { join: product.status, alias: productStatus}
                     inner:
-                        - { join: productVariantLink.variant, alias: product }
+                        - { join: productVariantLink.product, alias: product }
                         -
                             join: product.names
                             alias: productNames
@@ -300,7 +300,7 @@ datagrid:
                             condition: productNames.locale IS NULL
                 where:
                     and:
-                        - productVariantLink.product = :parentProduct
+                        - productVariantLink.parentProduct = :parentProduct
             bind_parameters:
                 - parentProduct
         columns:
