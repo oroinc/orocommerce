@@ -138,10 +138,17 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(Router::ACTION_PARAMETER)
             ->will($this->returnValue(ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE));
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->exactly(2))
             ->method('getEntityManager')
             ->with($entity)
             ->will($this->returnValue($this->entityManager));
+
+        $this->entityManager->expects($this->exactly(2))
+            ->method('flush')
+            ->willReturnMap([
+                [null, null],
+                [$entity, null]
+            ]);
 
         $message = 'Saved';
         $savedAndDuplicatedMessage = 'Saved and duplicated';
@@ -153,6 +160,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->once())
             ->method('isValid')
             ->will($this->returnValue(true));
+        $this->attachVariantForms($form);
 
         $flashBag = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface')
             ->getMock();
@@ -224,6 +232,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->attachVariantForms($form);
         $entity = $this->getProductMock(false);
 
         $handler = $this->getMockBuilder('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub')
@@ -236,6 +245,11 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getSingleEntityIdentifier')
             ->with($entity)
             ->will($this->returnValue(1));
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityManager')
+            ->with($entity)
+            ->will($this->returnValue($this->entityManager));
 
         $expected = $this->assertSaveData($form, $entity);
         $expected['savedId'] = 1;
@@ -275,5 +289,33 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             'form'   => $formView,
             'isWidgetContext' => true
         ];
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_MockObject|Form $form
+     */
+    protected function attachVariantForms($form)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $appendVariantsForm */
+        $appendVariantsForm = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $appendVariantsForm->expects($this->once())
+            ->method('getData')
+            ->willReturn([]);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Form $removeVariantsForm */
+        $removeVariantsForm = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $removeVariantsForm->expects($this->once())
+            ->method('getData')
+            ->willReturn([]);
+
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap([
+                ['appendVariants', $appendVariantsForm],
+                ['removeVariants', $removeVariantsForm]
+            ]);
     }
 }

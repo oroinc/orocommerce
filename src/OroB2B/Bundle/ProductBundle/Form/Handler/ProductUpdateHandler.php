@@ -111,7 +111,7 @@ class ProductUpdateHandler extends UpdateHandler
      * @param Product[] $variants
      * @param Product $product
      */
-    private function appendVariantsToProduct($variants, Product $product)
+    private function appendVariantsToProduct(array $variants, Product $product)
     {
         foreach ($variants as $variant) {
             $product->addVariantLink(
@@ -124,7 +124,7 @@ class ProductUpdateHandler extends UpdateHandler
      * @param Product[] $variants
      * @param Product $product
      */
-    private function removeVariantsFromProduct($variants, Product $product)
+    private function removeVariantsFromProduct(array $variants, Product $product)
     {
         if (!$variants) {
             return;

@@ -8,6 +8,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 
 use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
@@ -16,11 +18,13 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubLocalizedFallbackV
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
@@ -89,6 +93,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ProductUnitSelectionType::NAME
                     ),
                     LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
+                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(),
+                    EntityIdentifierType::NAME => new StubEntityIdentifierType([])
                 ],
                 [
                     'form' => [
