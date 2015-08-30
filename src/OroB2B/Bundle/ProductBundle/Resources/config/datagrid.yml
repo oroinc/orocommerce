@@ -247,7 +247,7 @@ datagrid:
                 inventoryStatus:
                     data_name: inventoryStatusName
             default:
-                isVariant: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
                 id:
@@ -301,6 +301,9 @@ datagrid:
                 where:
                     and:
                         - productVariantLink.parentProduct = :parentProduct
+                orderBy:
+                    - { column: linked, dir: DESC}
+                    - { column: product.sku, dir: ASC}
             bind_parameters:
                 - parentProduct
         columns:
@@ -333,12 +336,12 @@ datagrid:
                     data_name: product.sku
                 productName:
                     data_name: productName
+                linked:
+                    data_name: linked
                 status:
                     data_name: statusName
                 inventoryStatus:
                     data_name: inventoryStatusName
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
                 id:

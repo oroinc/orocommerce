@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -12,6 +11,7 @@ use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 
 class ProductUpdateHandler extends UpdateHandler
 {
@@ -92,24 +92,48 @@ class ProductUpdateHandler extends UpdateHandler
         return $this->request->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
     }
 
-    protected function processProductVariants(FormInterface $form, Product $product)
+    /**
+     * @param FormInterface $form
+     * @param Product $product
+     */
+    private function processProductVariants(FormInterface $form, Product $product)
     {
         $appendVariants = $form->get('appendVariants')->getData();
         $removeVariants = $form->get('removeVariants')->getData();
 
-        foreach ($appendVariants as $appendVariant) {
+        $this->appendVariantsToProduct($appendVariants, $product);
+        $this->removeVariantsFromProduct($removeVariants, $product);
+
+        $this->doctrineHelper->getEntityManager($product)->flush($product);
+    }
+
+    /**
+     * @param Product[] $variants
+     * @param Product $product
+     */
+    private function appendVariantsToProduct($variants, Product $product)
+    {
+        foreach ($variants as $variant) {
             $product->addVariantLink(
-                new ProductVariantLink($product, $appendVariant)
+                new ProductVariantLink($product, $variant)
             );
+        }
+    }
+
+    /**
+     * @param Product[] $variants
+     * @param Product $product
+     */
+    private function removeVariantsFromProduct($variants, Product $product)
+    {
+        if (!$variants) {
+            return;
         }
 
         foreach ($product->getVariantLinks() as $variantLink) {
-            if (in_array($variantLink->getProduct(), $removeVariants)) {
+            if (in_array($variantLink->getProduct(), $variants)) {
                 $product->getVariantLinks()->removeElement($variantLink);
             }
         }
-
-        $this->doctrineHelper->getEntityManager($product)->flush($product);
-
     }
 }
