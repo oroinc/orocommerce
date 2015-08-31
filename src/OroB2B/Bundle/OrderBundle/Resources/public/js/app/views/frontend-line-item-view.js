@@ -23,7 +23,7 @@ define(function(require) {
         initialize: function() {
             this.options = $.extend(true, {
                 selectors: {
-                    priceValueText: 'input.order-line-item-price-value'
+                    priceValueText: 'div.order-line-item-price-value'
                 }
             }, this.options);
 
@@ -52,7 +52,7 @@ define(function(require) {
             FrontendLineItemView.__super__.setMatchedPrices.apply(this, arguments);
 
             if (!this.options.disabled) {
-                this.$priceValueText.val(
+                this.$priceValueText.text(
                     NumberFormatter.formatCurrency(this.getMatchedPriceValue(), this.options.currency)
                 );
             }
