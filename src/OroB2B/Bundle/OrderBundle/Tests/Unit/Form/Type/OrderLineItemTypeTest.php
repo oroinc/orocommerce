@@ -94,7 +94,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     'freeFormProduct' => 'Service',
                     'quantity' => 1,
                     'productUnit' => 'item',
-                    'productUnitCode' => 'item',
                     'price' => [
                         'value' => 5,
                         'currency' => 'USD',
@@ -108,7 +107,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFreeFormProduct('Service')
                     ->setProductSku('SKU02')
                     ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
-                    ->setProductUnitCode('item')
                     ->setPrice(Price::create(5, 'USD'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
