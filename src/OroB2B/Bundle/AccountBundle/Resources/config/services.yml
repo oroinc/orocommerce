@@ -428,14 +428,8 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
-    orob2b_account.twig.security_extension:
-        class: %orob2b_account.twig.account_extension.class%
-        arguments:
-            - @orob2b_account.security.account_user_provider
-        tags:
-            - { name: twig.extension }
-
     orob2b_account.event_listener.category_visibility_grid_listener:
         class: %orob2b_account.event_listener.category_visibility_grid_listener.class%
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-category-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-category-visibility-grid, method: onResultBefore }

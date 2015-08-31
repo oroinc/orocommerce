@@ -160,7 +160,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param object $visibilityEntity
+     * @param CategoryVisibility|AccountCategoryVisibility|AccountGroupCategoryVisibility $visibilityEntity
      * @param string $enumCode
      * @param string $visibilityCode
      */

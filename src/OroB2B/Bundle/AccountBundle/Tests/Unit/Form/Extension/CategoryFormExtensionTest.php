@@ -183,6 +183,25 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         ];
     }
 
+    public function testGetExtendedType()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $er */
+        $er = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $em */
+        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($er);
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($em);
+
+        $extension = new CategoryFormExtension($this->registry);
+        $this->assertEquals(CategoryType::NAME, $extension->getExtendedType());
+    }
+
     protected function setRegistryExpectations()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|AbstractQuery $query */
