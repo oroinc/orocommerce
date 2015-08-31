@@ -27,10 +27,15 @@
         {% set disabled = widget.parent.vars.disabled %}
     {% endif %}
 
+    {% set page_component_options = form.vars.page_component_options|merge({
+        'currency': form.parent.parent.vars.value.currency,
+        'disabled': not allow_delete
+    }) %}
+
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
         class="order-line-item"
         data-page-component-module="{{ form.vars.page_component }}"
-        data-page-component-options="{{ form.vars.page_component_options|json_encode }}"
+        data-page-component-options="{{ page_component_options|json_encode }}"
         data-layout="separate">
         {{ form_widget(form) }}
 
@@ -179,8 +184,11 @@
     <td class="order-line-item-price">
         <div class="order-line-item-price-value">
             {% if form.vars.value.price is defined and form.vars.value.price is not null %}
-                {{ form.vars.value.price.value }}
+                {{ form.vars.value.price|oro_format_price }}
             {% endif %}
+        </div>
+        <div class="order-line-item-tier-prices">
+            <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
         </div>
     </td>
     <td class="order-line-item-ship_by">
