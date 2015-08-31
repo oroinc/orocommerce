@@ -81,6 +81,11 @@ table.order-line-items th {
 .order-line-item-quantity {
     width: 207px;
 }
+
+.order-line-item-ship_by {
+    width: 155px;
+}
+
 .order-line-item-price {
     width: 243px;
     position: relative;
