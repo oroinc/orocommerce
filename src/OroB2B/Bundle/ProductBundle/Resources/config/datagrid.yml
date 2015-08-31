@@ -380,7 +380,7 @@ datagrid:
             productName:
                 label:         orob2b.product.names.label
             linked:
-                label:         orob2b.product.linked.label
+                label:         orob2b.product.productvariantlink.linked.label
                 frontend_type: boolean
             status:
                 label:         orob2b.product.status.label

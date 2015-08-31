@@ -7,7 +7,6 @@ orob2b:
         sku.label: SKU
         variants.label: Has Variants
         variant_fields.label: Variant Fields
-        linked.label: Linked
         inventory_status.label: Inventory Status
         visibility.label: Visible to Accounts
         status.label: Status
@@ -46,6 +45,11 @@ orob2b:
 
         productvariantlink:
             entity_label: Product Variant Link
+            entity_plural_label: Product Variant Links
+            id.label: Id
+            linked.label: Linked
+            parent_product.label: Parent Product
+            product.label: Product
 
         menu:
             products_tab.label: Product management
