@@ -61,7 +61,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options = $.extend(true, this.options, options || {});
+            this.options = $.extend(true, {}, this.options, options || {});
 
             if (this.options.url.length === 0) {
                 return;

@@ -1,6 +1,6 @@
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
-    'savedId': savedId is defined and savedId ? savedId : null
+    'savedId': savedId|default(null)
 } %}
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
@@ -14,11 +14,11 @@
 
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
           method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-          data-page-component-module="orob2bpricing/js/app/components/product-price-product-unit-component">
+          data-page-component-module="orob2bproduct/js/app/components/product-unit-component">
         <fieldset class="form-horizontal">
-            {{ form_row(form.product, { 'attr': {'class': 'price-product-product'} }) }}
-            {{ form_row(form.quantity, { 'attr': {'class': 'price-product-quantity'} }) }}
-            {{ form_row(form.unit, { 'attr': {'class': 'price-product-unit'} }) }}
+            {{ form_row(form.product, { 'attr': {'class': 'product-product'} }) }}
+            {{ form_row(form.quantity, { 'attr': {'class': 'product-quantity'} }) }}
+            {{ form_row(form.unit, { 'attr': {'class': 'product-unit'} }) }}
             {{ form_row(form.notes) }}
         </fieldset>
 

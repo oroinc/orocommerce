@@ -114,21 +114,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     }
 
     /**
-     * @param EntityManager $manager
-     * @param string $title
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
-    {
-        if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] =
-                $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
-        }
-
-        return $this->categories[$title];
-    }
-
-    /**
      * @param ObjectManager $manager
      * @param string $enumCode
      * @return AbstractEnumValue[]

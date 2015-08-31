@@ -28,6 +28,13 @@ oro_menu_config:
                 description:    'orob2b.product.menu.shortcut_new_product.description'
                 isCustomAction: true
 
+        frontend_products_list:
+            label:           'orob2b.product.entity_plural_label'
+            route:           'orob2b_product_frontend_product_index'
+            extras:
+                position:    10
+                routes:      ['/^orob2b_product_frontend_product/']
+
     tree:
         application_menu:
             children:
@@ -38,9 +45,15 @@ oro_menu_config:
             children:
                 shortcut_products_list: ~
                 shortcut_new_product:   ~
+        frontend_menu:
+            children:
+                frontend_products_list: ~
 
 oro_titles:
     orob2b_product_index: ~
     orob2b_product_view:   '%%sku%% - %%name%%'
     orob2b_product_update: '%%sku%% - %%name%% - Edit'
     orob2b_product_create: 'Create Product'
+
+    orob2b_product_frontend_product_index: ~
+    orob2b_product_frontend_product_view: '%%name%%'

@@ -11,6 +11,7 @@ parameters:
     orob2b_order.order.provider.order_address_security.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider
 
     orob2b_order.manager.order_address.class: OroB2B\Bundle\OrderBundle\Model\OrderAddressManager
+    orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
 
 services:
     orob2b_order.order.manager.api:
@@ -60,3 +61,12 @@ services:
         calls:
             - [addEntity, ['a', %orob2b_account.entity.account_address.class%]]
             - [addEntity, ['au', %orob2b_account.entity.account_user_address.class%]]
+
+    orob2b_order.model.order_request_handler:
+            class: %orob2b_order.model.order_request_handler.class%
+            arguments:
+                - @doctrine
+                - %orob2b_account.entity.account.class%
+                - %orob2b_account.entity.account_user.class%
+            calls:
+                - [setRequest, ["@?request="]]
