@@ -45,6 +45,14 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $roundingService;
 
     /**
+     * @var array
+     */
+    protected $exampleCustomFields = [
+        'size'  => 'Size Label',
+        'color' => 'Color Label'
+    ];
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -93,7 +101,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ProductUnitSelectionType::NAME
                     ),
                     LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
-                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(),
+                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType($this->exampleCustomFields),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([])
                 ],
                 [
@@ -153,7 +161,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'unitPrecisions' => [],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => Product::STATUS_DISABLED
+                    'status' => Product::STATUS_DISABLED,
+                    'variants' => true,
+                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
@@ -170,7 +180,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => Product::STATUS_DISABLED
+                    'status' => Product::STATUS_DISABLED,
+                    'variants' => true,
+                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
@@ -191,6 +203,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first description'],
                         ['text' => 'second description'],
                     ],
+                    'variants' => true,
+                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
                 'rounding' => false
@@ -208,6 +222,8 @@ class ProductTypeTest extends FormIntegrationTestCase
         $withNamesAndDescriptions = false
     ) {
         $expectedProduct = new StubProduct();
+        $expectedProduct->setVariants(true);
+        $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
@@ -239,6 +255,8 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('unitPrecisions'));
+        $this->assertTrue($form->has('appendVariants'));
+        $this->assertTrue($form->has('removeVariants'));
     }
 
     public function testGetName()

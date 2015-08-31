@@ -63,7 +63,7 @@ class ProductCustomFieldsChoiceType extends AbstractType
     /**
      * @return array
      */
-    private function getProductCustomFields()
+    protected function getProductCustomFields()
     {
         $result = [];
         $customFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
