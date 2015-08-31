@@ -101,7 +101,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ProductUnitSelectionType::NAME
                     ),
                     LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
-                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType($this->exampleCustomFields),
+                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(
+                        $this->exampleCustomFields
+                    ),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([])
                 ],
                 [
