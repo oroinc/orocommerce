@@ -420,7 +420,7 @@ class OrderControllerTest extends WebTestCase
                     'value' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][price][value]"]')
                         ->extract('value')[0],
                     'currency' => $crawler
-                        ->filter('input[name="orob2b_order_type[lineItems]['. $i .'][price][currency]"]')
+                        ->filter('[data-ftid="orob2b_order_type_lineItems_' . $i . '_price_currency"]')
                         ->extract('value')[0],
                 ],
                 'priceType' => $crawler
