@@ -25,7 +25,9 @@ define(function(require) {
                 tierPrices: '.order-line-item-tier-prices',
                 priceOverridden: '.order-line-item-price-overridden',
                 tierPricesTemplate: '#order-line-item-tier-prices-template'
-            }
+            },
+            currency: null,
+            disabled: false
         },
 
         /**
@@ -37,11 +39,6 @@ define(function(require) {
          * @property {jQuery}
          */
         $tierPrices: null,
-
-        /**
-         * @property {jQuery}
-         */
-        $priceOverridden: null,
 
         /**
          * @property {Object}
@@ -92,21 +89,9 @@ define(function(require) {
             });
 
             this.$tierPrices = this.$el.find(this.options.selectors.tierPrices);
-            this.$priceOverridden = this.$el.find(this.options.selectors.priceOverridden);
-            layout.initPopover(this.$priceOverridden);
 
+            this.initTierPrices();
             this.initMatchedPrices();
-
-            if (_.isEmpty(this.fieldsByName.priceValue.val())) {
-                this.fieldsByName.priceValue.addClass('matched-price');
-            }
-            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
-        },
-
-        onPriceValueChange: function() {
-            this.fieldsByName.priceValue.removeClass('matched-price');
-
-            this.renderPriceOverridden();
         },
 
         /**
@@ -140,32 +125,36 @@ define(function(require) {
         initTierPrices: function() {
             this.tierPricesTemplate = _.template($(this.options.selectors.tierPricesTemplate).text());
 
-            this.fieldsByName.product.change(_.bind(function(e) {
-                var productId = e.currentTarget.value;
-                if (productId.length === 0) {
-                    this.setTierPrices({});
-                } else {
-                    mediator.trigger('order:load:products-tier-prices', [productId], _.bind(this.setTierPrices, this));
-                }
-            }, this));
+            if (this.fieldsByName.hasOwnProperty('product')) {
+                this.fieldsByName.product.change(_.bind(function(e) {
+                    var productId = this._getProductId();
+                    if (productId.length === 0) {
+                        this.setTierPrices({});
+                    } else {
+                        mediator.trigger(
+                            'order:load:products-tier-prices',
+                            [productId],
+                            _.bind(this.setTierPrices, this)
+                        );
+                    }
+                }, this));
+            }
 
             mediator.trigger('order:get:products-tier-prices', _.bind(this.setTierPrices, this));
             mediator.on('order:refresh:products-tier-prices', this.setTierPrices, this);
-
-            if (this.fieldsByName.priceValue) {
-                this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
-                    this.fieldsByName.priceValue
-                        .val($(e.currentTarget).data('price'))
-                        .change();
-                }, this));
-            }
         },
 
         /**
          * @param {Object} tierPrices
          */
         setTierPrices: function(tierPrices) {
-            this.tierPrices = tierPrices[this.fieldsByName.product.val()] || {};
+            var productId = this._getProductId();
+            var productTierPrices = {};
+            if (productId.length !== 0) {
+                productTierPrices = tierPrices[productId] || {};
+            }
+
+            this.tierPrices = productTierPrices;
             this.renderTierPrices();
         },
 
@@ -176,7 +165,8 @@ define(function(require) {
                 content = this.tierPricesTemplate({
                     tierPrices: this.tierPrices,
                     unitCode: this.fieldsByName.productUnit.val(),
-                    matchedPrice: !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null,
+                    matchedPrice: this.getMatchedPriceValue(),
+                    clickable: this.fieldsByName.hasOwnProperty('priceValue'),
                     formatter: NumberFormatter
                 });
                 $button.removeClass('disabled');
@@ -201,27 +191,20 @@ define(function(require) {
 
             var self = this;
             _.each(fields, function(field) {
-                field.change(_.bind(self.updateMatchedPrices, self));
+                if (field) {
+                    field.change(_.bind(self.updateMatchedPrices, self));
+                }
             });
 
             mediator.trigger('order:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             mediator.on('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
-
-            if (this.fieldsByName.priceValue) {
-                this.$priceOverridden.on('click', 'a', _.bind(function() {
-                    this.fieldsByName.priceValue
-                        .val(this.matchedPrice.value)
-                        .change()
-                        .addClass('matched-price');
-                }, this));
-            }
         },
 
         /**
          * Trigger subtotals update
          */
         updateMatchedPrices: function() {
-            var productId = this.fieldsByName.product.val();
+            var productId = this._getProductId();
             var unitCode = this.fieldsByName.productUnit.val();
             var quantity = this.fieldsByName.quantity.val();
 
@@ -246,43 +229,33 @@ define(function(require) {
             } else {
                 this.matchedPrice = {};
             }
-
-            if (this.fieldsByName.priceValue.hasClass('matched-price')) {
-                var priceValue = !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
-
-                this.fieldsByName.priceValue
-                    .val(priceValue)
-                    .change()
-                    .addClass('matched-price');
-            } else {
-                this.renderPriceOverridden();
-            }
-
-            this.renderTierPrices();
-        },
-
-        renderPriceOverridden: function() {
-            var priceValue = this.fieldsByName.priceValue.val();
-
-            if (!_.isEmpty(this.matchedPrice) &&
-                priceValue &&
-                parseFloat(this.matchedPrice.value) !== parseFloat(priceValue)
-            ) {
-                this.$priceOverridden.show();
-            } else {
-                this.$priceOverridden.hide();
-            }
         },
 
         /**
          * @returns {String}
+         * @private
+         */
+        _getProductId: function() {
+            return this.fieldsByName.hasOwnProperty('product') ? this.fieldsByName.product.val() : '';
+        },
+
+        /**
+         * @returns {String|Null}
+         * @private
          */
         _getMatchedPriceIdentifier: function() {
-            var productId = this.fieldsByName.product.val();
+            var productId = this._getProductId();
             var unitCode = this.fieldsByName.productUnit.val();
             var quantity = this.fieldsByName.quantity.val();
 
             return productId.length === 0 ? null : productId + '-' + unitCode + '-' + quantity;
+        },
+
+        /**
+         * @returns {String|Null}
+         */
+        getMatchedPriceValue: function() {
+            return !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
         },
 
         /**
