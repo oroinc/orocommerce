@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -54,13 +53,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      */
     public function getProductUnitsByCurrencyAction(Request $request)
     {
-        $user = $this->getUser();
-        if (!$user instanceof AccountUser) {
-            $user = null;
-        }
-
         return $this->getProductUnitsByCurrency(
-            $this->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($user),
+            $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList(),
             $request
         );
     }

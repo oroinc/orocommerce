@@ -9,6 +9,7 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
     var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
+    var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
 
     /**
      * @export orob2border/js/app/views/line-item-abstract-view
@@ -25,7 +26,10 @@ define(function(require) {
             selectors: {
                 tierPrices: '.order-line-item-tier-prices',
                 priceOverridden: '.order-line-item-price-overridden',
-                tierPricesTemplate: '#order-line-item-tier-prices-template'
+                tierPricesTemplate: '#order-line-item-tier-prices-template',
+                productSelector: '.order-line-item-type-product input.select2',
+                quantitySelector: '.order-line-item-quantity input',
+                unitSelector: '.order-line-item-quantity select'
             },
             disabled: false
         },
@@ -72,6 +76,24 @@ define(function(require) {
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
             this.delegate('click', '.removeLineItem', this.removeRow);
+        },
+
+        /**
+         * Initialize unit loader component
+         *
+         * @param {Object} options
+         */
+        initializeUnitLoader: function(options) {
+            var defaultOptions = {
+                _sourceElement: this.$el,
+                productSelector: this.options.selectors.productSelector,
+                quantitySelector: this.options.selectors.quantitySelector,
+                unitSelector: this.options.selectors.unitSelector,
+                loadingMaskEnabled: false,
+                dropQuantityOnLoad: false
+            };
+
+            this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));
         },
 
         /**

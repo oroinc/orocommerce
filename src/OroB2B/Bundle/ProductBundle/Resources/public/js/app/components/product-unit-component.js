@@ -23,7 +23,8 @@ define(function(require) {
             routeName: 'orob2b_product_unit_product_units',
             routingParams: {},
             errorMessage: 'Sorry, unexpected error was occurred',
-            loadingMaskEnabled: true
+            loadingMaskEnabled: true,
+            dropQuantityOnLoad: true
         },
 
         /**
@@ -137,7 +138,10 @@ define(function(require) {
          * @param {Boolean} disabled
          */
         handleQuantityState: function(disabled) {
-            this.quantitySelector.prop('disabled', disabled).val(null);
+            this.quantitySelector.prop('disabled', disabled);
+            if (this.options.dropQuantityOnLoad) {
+                this.quantitySelector.val(null);
+            }
         },
 
         /**

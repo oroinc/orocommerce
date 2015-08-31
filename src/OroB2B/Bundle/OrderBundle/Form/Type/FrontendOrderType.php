@@ -145,7 +145,7 @@ class FrontendOrderType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    protected function updateLineItemPrices(FormEvent $event)
+    public function updateLineItemPrices(FormEvent $event)
     {
         /** @var Order $order */
         $order = $event->getData();
