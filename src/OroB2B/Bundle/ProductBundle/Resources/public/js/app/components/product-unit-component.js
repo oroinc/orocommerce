@@ -140,7 +140,10 @@ define(function(require) {
          * @param {Boolean} disabled
          */
         handleQuantityState: function(disabled) {
-            this.quantitySelector.prop('disabled', disabled).val(null);
+            this.quantitySelector.prop('disabled', disabled);
+            if (this.options.dropQuantityOnLoad) {
+                this.quantitySelector.val(null);
+            }
         },
 
         /**
