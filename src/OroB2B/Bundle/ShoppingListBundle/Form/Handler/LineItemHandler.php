@@ -57,7 +57,7 @@ class LineItemHandler
                 $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
                 $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
-                if ($existingLineItem instanceof LineItem) {
+                if ($existingLineItem) {
                     $this->updateExistingLineItem($lineItem, $existingLineItem);
                 } else {
                     $manager->persist($lineItem);
