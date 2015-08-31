@@ -119,9 +119,4 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         $this->assertDefaultBuildViewCalled();
     }
-
-    public function testGetParent()
-    {
-
-    }
 }

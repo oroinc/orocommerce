@@ -74,8 +74,6 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 
-        $currency = isset($currency) ? $currency : null;
-
         $this->productListModifier->applyPriceListLimitations($queryBuilder, $currency);
 
         $query = $queryBuilder->getQuery();

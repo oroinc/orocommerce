@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Tests\Functional\Controller\AbstractAjaxProductPriceControllerTest;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -80,8 +81,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         /** @var PriceList $defaultPriceList */
         $defaultPriceList = $this->getReference('price_list_1');
 
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($defaultPriceList);
+        $this->setDefaultPriceList($defaultPriceList);
 
         /** @var Product $product */
         $product = $this->getReference($product);
@@ -154,5 +154,45 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 ]
             ]
         ];
+    }
+
+    /**
+     * @dataProvider unitDataProvider
+     * @param string $priceList
+     * @param string $product
+     * @param null|string $currency
+     * @param array $expected
+     */
+    public function testGetProductUnitsByCurrencyAction($priceList, $product, $currency = null, array $expected = [])
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+        /** @var Product $product */
+        $product = $this->getReference($product);
+
+        $this->setDefaultPriceList($priceList);
+
+        $params = [
+            'id' => $product->getId(),
+            'currency' => $currency
+        ];
+
+        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_units_by_pricelist', $params));
+
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertArrayHasKey('units', $data);
+        $this->assertEquals($expected, array_keys($data['units']));
+    }
+
+    /**
+     * @param PriceList $priceList
+     */
+    protected function setDefaultPriceList(PriceList $priceList)
+    {
+        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
+            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($priceList);
     }
 }
