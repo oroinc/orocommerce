@@ -57,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -111,6 +111,7 @@ class OroB2BOrderBundleInstaller implements
         $this->noteExtension->addNoteAssociation($schema, $table->getName());
         $this->attachmentExtension->addAttachmentAssociation($schema, $table->getName());
         $this->activityExtension->addActivityAssociation($schema, 'oro_calendar_event', $table->getName());
+        $this->activityExtension->addActivityAssociation($schema, 'oro_email', $table->getName());
     }
 
     /**

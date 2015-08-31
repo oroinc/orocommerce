@@ -1,0 +1,20 @@
+{% extends 'OroEmailBundle:Email/dialog:update.html.twig' %}
+{% block page_container_before_form %}
+    {% if not quote.locked %}
+        <div class="alert alert-warning">
+            <div class="message">
+               {{ 'orob2b.sale.quote.notify_customer.by_email.notify_and_lock_warning'|trans }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+{% block page_container_form_actions %}
+    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+
+    {% if quote.locked %}
+        {% set button_text = 'Send' %}
+    {% else %}
+        {%  set button_text = 'orob2b.sale.btn.notify_and_lock' %}
+    {% endif %}
+    <button class="btn btn-primary" type="submit">{{ button_text|trans }}</button>
+{% endblock %}

@@ -42,7 +42,9 @@ class AddProductsMassActionArgsParser
      */
     public function getShoppingListId()
     {
-        return is_numeric($this->args['shoppingList']) ? (int) $this->args['shoppingList'] : null;
+        return array_key_exists('shoppingList', $this->args) && is_numeric($this->args['shoppingList'])
+            ? (int) $this->args['shoppingList']
+            : null;
     }
 
     /**
@@ -50,6 +52,6 @@ class AddProductsMassActionArgsParser
      */
     protected function isAllSelected()
     {
-        return (array_key_exists('inset', $this->args) && (int) $this->args['inset'] === 0);
+        return array_key_exists('inset', $this->args) && (int) $this->args['inset'] === 0;
     }
 }
