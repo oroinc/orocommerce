@@ -111,8 +111,10 @@ define(function(require) {
          * @private
          */
         _dropValues: function() {
-            this.handleQuantityState(true);
-            this.handleUnitsState(true, null);
+            if (this.options.dropQuantityOnLoad) {
+                this.handleQuantityState(true);
+                this.handleUnitsState(true, null);
+            }
         },
 
         /**
@@ -138,10 +140,7 @@ define(function(require) {
          * @param {Boolean} disabled
          */
         handleQuantityState: function(disabled) {
-            this.quantitySelector.prop('disabled', disabled);
-            if (this.options.dropQuantityOnLoad) {
-                this.quantitySelector.val(null);
-            }
+            this.quantitySelector.prop('disabled', disabled).val(null);
         },
 
         /**
