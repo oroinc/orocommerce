@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -11,7 +13,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
-class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface
+class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     const ACCOUNT_USERS_REFERENCE_PREFIX = 'account_user_demo_data_';
 
@@ -24,6 +26,12 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
+    }
+
+    /** @return array */
+    public function getDependencies()
+    {
+        return [__NAMESPACE__ . '\LoadAccountUserRolesDemoData'];
     }
 
     /**
@@ -55,13 +63,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
             // create/get account user role
             $roleLabel = $row['role'];
             if (!array_key_exists($roleLabel, $roles)) {
-                $newRole = new AccountUserRole();
-                $newRole->setLabel($roleLabel)
-                    ->setRole($roleLabel);
-
-                $storageManager->persist($newRole);
-
-                $roles[$roleLabel] = $newRole;
+                $roles[$roleLabel] = $this->getAccountUserRole($roleLabel);
             }
             $role = $roles[$roleLabel];
 
@@ -88,5 +90,17 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
 
         fclose($handler);
         $storageManager->flush();
+    }
+
+    /**
+     * @param string $roleLabel
+     * @return AccountUserRole
+     */
+    protected function getAccountUserRole($roleLabel)
+    {
+        return $this->container->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+            ->getRepository('OroB2BAccountBundle:AccountUserRole')
+            ->findOneBy(['label' => $roleLabel]);
     }
 }
