@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Autocomplete;
+namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Autocomplete;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -10,12 +10,12 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
-use OroB2B\Bundle\ProductBundle\Autocomplete\ProductSearchHandler;
+use OroB2B\Bundle\PricingBundle\Autocomplete\ProductPriceListAwareSearchHandler;
 
 /**
  * @dbIsolation
  */
-class ProductSearchHandlerTest extends WebTestCase
+class ProductPriceListAwareSearchHandlerTest extends WebTestCase
 {
     const TEST_ENTITY_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
 
@@ -25,7 +25,7 @@ class ProductSearchHandlerTest extends WebTestCase
     protected $testProperties = ['sku'];
 
     /**
-     * @var ProductSearchHandler
+     * @var ProductPriceListAwareSearchHandler
      */
     protected $searchHandler;
 
@@ -42,10 +42,11 @@ class ProductSearchHandlerTest extends WebTestCase
 
     /**
      * @dataProvider testSearchDataProvider
-     * @param $search
-     * @param $expected
+     * @param string $search
+     * @param string $currency
+     * @param array $expected
      */
-    public function testSearch($search, $expected)
+    public function testSearch($search, $currency, $expected)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_2');
@@ -74,11 +75,26 @@ class ProductSearchHandlerTest extends WebTestCase
 
         $modifier = new FrontendProductListModifier($tokenStorage, $priceListTreeHandler);
 
-        $searchHandler = new ProductSearchHandler(self::TEST_ENTITY_CLASS, $this->testProperties, $modifier);
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $request->expects($this->any())
+            ->method('get')
+            ->with('currency')
+            ->will($this->returnValue($currency));
+
+        $searchHandler = new ProductPriceListAwareSearchHandler(
+            self::TEST_ENTITY_CLASS,
+            $this->testProperties,
+            $modifier
+        );
+        $searchHandler->setRequest($request);
+
         $searchHandler->initDoctrinePropertiesByManagerRegistry($this->getContainer()->get('doctrine'));
         $result = $searchHandler->search($search, 1, 10);
 
         if ($expected) {
+            $this->assertCount(count($expected), $result['results']);
             foreach ($result['results'] as $product) {
                 $this->assertContains($product['sku'], $expected);
             }
@@ -95,25 +111,49 @@ class ProductSearchHandlerTest extends WebTestCase
         return [
             [
                 'search' => 'product.',
+                'currency' => null,
                 'expected' => [
                     'product.1',
                     'product.2'
                 ]
             ],
             [
+                'search' => 'product.',
+                'currency' => 'USD',
+                'expected' => [
+                    'product.1',
+                    'product.2'
+                ]
+            ],
+            [
+                'search' => 'product.',
+                'currency' => 'EUR',
+                'expected' => [
+                    'product.2'
+                ]
+            ],
+            [
+                'search' => 'product.',
+                'currency' => 'CAD',
+                'expected' => []
+            ],
+            [
                 'search' => '1',
+                'currency' => null,
                 'expected' => [
                     'product.1'
                 ]
             ],
             [
                 'search' => 'product.2',
+                'currency' => null,
                 'expected' => [
                     'product.2'
                 ]
             ],
             [
                 'search' => 'product.100',
+                'currency' => null,
                 'expected' => []
             ],
         ];
@@ -123,14 +163,18 @@ class ProductSearchHandlerTest extends WebTestCase
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Search handler is not fully configured
      */
-    public function testCheckAllDependenciesInjected()
+    public function testCheckAllDependenciesInjectedException()
     {
         /** @var FrontendProductListModifier|\PHPUnit_Framework_MockObject_MockObject $modifier */
         $modifier = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $searchHandler = new ProductSearchHandler(self::TEST_ENTITY_CLASS, $this->testProperties, $modifier);
+        $searchHandler = new ProductPriceListAwareSearchHandler(
+            self::TEST_ENTITY_CLASS,
+            $this->testProperties,
+            $modifier
+        );
         $searchHandler->search('test', 1, 10);
     }
 }

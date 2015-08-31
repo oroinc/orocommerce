@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 abstract class AbstractOrderLineItemType extends AbstractType
@@ -34,15 +34,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add(
-                'product',
-                ProductSelectType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.product.entity_label',
-                    'create_enabled' => false,
-                ]
-            )
             ->add(
                 'quantity',
                 'integer',
@@ -86,6 +77,18 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 }
             }
         );
+
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                /** @var OrderLineItem $item */
+                $item = $form->getData();
+                if ($item) {
+                    $this->updateAvailableUnits($form);
+                }
+            }
+        );
     }
 
     /**
@@ -103,6 +106,9 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'currency' => null
             ]
         );
+        $resolver->setAllowedTypes('page_component_options', 'array');
+        $resolver->setAllowedTypes('page_component', 'string');
+        $resolver->setAllowedTypes('currency', ['null', 'string']);
     }
 
     /**
@@ -118,8 +124,12 @@ abstract class AbstractOrderLineItemType extends AbstractType
 
         if (array_key_exists('page_component_options', $options)) {
             $view->vars['page_component_options'] = $options['page_component_options'];
-        } else {
-            $view->vars['page_component_options'] = null;
         }
+        $view->vars['page_component_options']['currency'] = $options['currency'];
     }
+
+    /**
+     * @param FormInterface $form
+     */
+    abstract protected function updateAvailableUnits(FormInterface $form);
 }

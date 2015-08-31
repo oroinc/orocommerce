@@ -32,8 +32,9 @@ class FrontendProductListModifier
 
     /**
      * @param QueryBuilder $queryBuilder
+     * @param string|null $currency
      */
-    public function applyPriceListLimitations(QueryBuilder $queryBuilder)
+    public function applyPriceListLimitations(QueryBuilder $queryBuilder, $currency = null)
     {
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
@@ -50,6 +51,13 @@ class FrontendProductListModifier
                     ->select('IDENTITY(_productPrice.product)')
                     ->where($limitationQb->expr()->eq('_productPrice.priceList', ':_priceList'))
                     ->andWhere($limitationQb->expr()->eq('_productPrice.product', $rootAlias));
+
+                if ($currency) {
+                    $limitationQb
+                        ->andWhere($queryBuilder->expr()->eq('_productPrice.currency', ':currency'));
+                    $queryBuilder
+                        ->setParameter('currency', strtoupper($currency));
+                }
 
                 $queryBuilder
                     ->andWhere($queryBuilder->expr()->exists($limitationQb))

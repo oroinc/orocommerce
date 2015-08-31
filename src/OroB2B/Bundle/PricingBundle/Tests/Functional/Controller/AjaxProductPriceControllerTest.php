@@ -261,4 +261,34 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             ]
         ];
     }
+
+    /**
+     * @dataProvider unitDataProvider
+     * @param string $priceList
+     * @param string $product
+     * @param null|string $currency
+     * @param array $expected
+     */
+    public function testGetProductUnitsByCurrencyAction($priceList, $product, $currency = null, array $expected = [])
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($priceList);
+        /** @var Product $product */
+        $product = $this->getReference($product);
+
+        $params = [
+            'id' => $product->getId(),
+            'price_list_id' => $priceList->getId(),
+            'currency' => $currency
+        ];
+
+        $this->client->request('GET', $this->getUrl('orob2b_pricing_units_by_pricelist', $params));
+
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+        $this->assertArrayHasKey('units', $data);
+        $this->assertEquals($expected, array_keys($data['units']));
+    }
 }

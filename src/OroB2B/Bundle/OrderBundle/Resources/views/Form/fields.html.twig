@@ -28,7 +28,6 @@
     {% endif %}
 
     {% set page_component_options = form.vars.page_component_options|merge({
-        'currency': form.parent.parent.vars.value.currency,
         'disabled': not allow_delete
     }) %}
 

@@ -30,6 +30,8 @@ define(function(require) {
             }, this.options);
 
             LineItemView.__super__.initialize.apply(this, arguments);
+
+            this.initializeUnitLoader();
         },
 
         /**

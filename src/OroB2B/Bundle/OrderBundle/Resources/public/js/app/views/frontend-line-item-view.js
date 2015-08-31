@@ -23,11 +23,24 @@ define(function(require) {
         initialize: function() {
             this.options = $.extend(true, {
                 selectors: {
-                    priceValueText: 'div.order-line-item-price-value'
+                    priceValueText: 'div.order-line-item-price-value',
+                    unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist'
                 }
             }, this.options);
 
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
+
+            var currencyRouteParameter = {currency: this.options.currency};
+            var unitLoaderOptions = {
+                routingParams: currencyRouteParameter
+            };
+            if (_.has(this.options, 'unitLoaderRouteName') && this.options.unitLoaderRouteName) {
+                unitLoaderOptions['routeName'] = this.options.unitLoaderRouteName;
+            }
+            this.initializeUnitLoader(unitLoaderOptions);
+
+            this.$el.find('.order-line-item-type-product input.select2')
+                .data('select2_query_additional_params', currencyRouteParameter);
         },
 
         /**

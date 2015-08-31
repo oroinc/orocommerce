@@ -11,9 +11,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class AbstractAjaxProductPriceController extends Controller
 {
@@ -134,5 +137,35 @@ class AbstractAjaxProductPriceController extends Controller
         }
 
         return $this->managers[$class];
+    }
+
+    /**
+     * @return ProductUnitLabelFormatter
+     */
+    protected function getProductUnitFormatter()
+    {
+        return $this->container->get('orob2b_product.formatter.product_unit_label');
+    }
+
+    /**
+     * Get product units that for which prices in given currency are exists.
+     *
+     * @param PriceList $priceList
+     * @param Request $request
+     * @return JsonResponse
+     */
+    protected function getProductUnitsByCurrency(PriceList $priceList, Request $request)
+    {
+        $priceClass = $this->getParameter('orob2b_pricing.entity.product_price.class');
+        $productClass = $this->getParameter('orob2b_product.product.class');
+
+        /** @var Product $product */
+        $product = $this->getEntityReference($productClass, $request->get('id'));
+
+        /** @var ProductPriceRepository $repository */
+        $repository = $this->getManagerForClass($priceClass)->getRepository($priceClass);
+        $units = $repository->getProductUnitsByPriceList($priceList, $product, $request->get('currency'));
+
+        return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);
     }
 }

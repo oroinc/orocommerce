@@ -15,7 +15,6 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\PriceTypeSelectorType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
@@ -30,14 +29,6 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $productSelectType = new EntityType(
-            [
-                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
-            ],
-            ProductSelectType::NAME
-        );
-
         $unitSelectType = new EntityType(
             [
                 'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
@@ -55,7 +46,6 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    $productSelectType->getName() => $productSelectType,
                     $unitSelectType->getName() => $unitSelectType,
                     $priceType->getName() => $priceType,
                     $orderPriceType->getName() => $orderPriceType,
@@ -114,12 +104,12 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
         $possibleOptions = [
             [
-                'options' => [],
-                'expected' => ['page_component' => null, 'page_component_options' => null]
+                'options' => ['currency' => 'USD'],
+                'expected' => ['page_component' => null, 'page_component_options' => ['currency' => 'USD']]
             ],
             [
-                'options' => ['page_component' => 'test', 'page_component_options' => ['v2']],
-                'expected' => ['page_component' => 'test', 'page_component_options' => ['v2']]
+                'options' => ['currency' => 'USD', 'page_component' => 'test', 'page_component_options' => ['v2']],
+                'expected' => ['page_component' => 'test', 'page_component_options' => ['v2', 'currency' => 'USD']]
             ]
         ];
 

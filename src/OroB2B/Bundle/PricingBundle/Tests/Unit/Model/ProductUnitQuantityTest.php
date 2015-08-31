@@ -29,6 +29,8 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
     public function productUnitQuantityDataProvider()
     {
         return [
+            [0],
+            ['0'],
             [1],
             [1.1],
             ['1'],
@@ -58,7 +60,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      * @dataProvider constructorExceptionDataProvider
      *
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Quantity must be positive float or integer.
+     * @expectedExceptionMessage Quantity must be numeric and more than or equal zero.
      *
      * @param mixed $quantity
      */
@@ -73,7 +75,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
     public function constructorExceptionDataProvider()
     {
         return [
-            [0],
+            [-1],
             [''],
             [null],
             ['1a']

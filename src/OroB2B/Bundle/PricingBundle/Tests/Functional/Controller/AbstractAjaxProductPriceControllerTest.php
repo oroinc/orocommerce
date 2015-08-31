@@ -51,4 +51,25 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 
         $this->assertEquals($expectedData, $data);
     }
+
+    /**
+     * @return array
+     */
+    public function unitDataProvider()
+    {
+        return [
+            [
+                'price_list_1',
+                'product.1',
+                null,
+                ['bottle', 'liter']
+            ],
+            [
+                'price_list_1',
+                'product.1',
+                'EUR',
+                ['bottle']
+            ]
+        ];
+    }
 }

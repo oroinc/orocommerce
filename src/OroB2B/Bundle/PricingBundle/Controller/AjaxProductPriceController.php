@@ -81,6 +81,24 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
+     * @Route("/get-product-units-by-currency", name="orob2b_pricing_units_by_pricelist")
+     * @Method({"GET"})
+     * @AclAncestor("orob2b_pricing_product_price_view")
+     *
+     * {@inheritdoc}
+     */
+    public function getProductUnitsByCurrencyAction(Request $request)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntityReference(
+            $this->getParameter('orob2b_pricing.entity.price_list.class'),
+            $request->get('price_list_id')
+        );
+
+        return $this->getProductUnitsByCurrency($priceList, $request);
+    }
+
+    /**
      * @Route("/get-matching-price", name="orob2b_pricing_matching_price")
      * @Method({"GET"})
      * @AclAncestor("orob2b_pricing_product_price_view")

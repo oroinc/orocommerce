@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+
 class ProductUnitLabelFormatter
 {
     /**
@@ -29,5 +31,19 @@ class ProductUnitLabelFormatter
         $translationKey = sprintf('orob2b.product_unit.%s.label.' . ($isShort ? 'short' : 'full'), $unitCode);
 
         return $this->translator->trans($translationKey);
+    }
+
+    /**
+     * @param array|ProductUnit[] $units
+     * @return array
+     */
+    public function formatChoices(array $units)
+    {
+        $result = [];
+        foreach ($units as $unit) {
+            $result[$unit->getCode()] = $this->format($unit->getCode());
+        }
+
+        return $result;
     }
 }

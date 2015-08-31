@@ -44,4 +44,18 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));
     }
+
+    /**
+     * @Route("/get-product-units-by-currency", name="orob2b_pricing_frontend_units_by_pricelist")
+     * @Method({"GET"})
+     *
+     * {@inheritdoc}
+     */
+    public function getProductUnitsByCurrencyAction(Request $request)
+    {
+        return $this->getProductUnitsByCurrency(
+            $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList(),
+            $request
+        );
+    }
 }

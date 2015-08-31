@@ -2,14 +2,37 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\PreloadedExtension;
+
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        $productSelectType = new EntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
+                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
+            ],
+            ProductSelectType::NAME
+        );
+
+        return array_merge(
+            parent::getExtensions(),
+            [new PreloadedExtension([$productSelectType->getName() => $productSelectType], [])]
+        );
+    }
+
     protected function setUp()
     {
         parent::setUp();
@@ -71,7 +94,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     'freeFormProduct' => 'Service',
                     'quantity' => 1,
                     'productUnit' => 'item',
-                    'productUnitCode' => 'item',
                     'price' => [
                         'value' => 5,
                         'currency' => 'USD',
@@ -85,7 +107,6 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFreeFormProduct('Service')
                     ->setProductSku('SKU02')
                     ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
-                    ->setProductUnitCode('item')
                     ->setPrice(Price::create(5, 'USD'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
