@@ -96,7 +96,8 @@ define(function(require) {
                 .mousedown(_.bind(this.addNotes, this));
             this.$editBtn.click(_.bind(this.addNotes, this))
                 .mousedown(_.bind(this.addNotes, this));
-            this.$removeBtn.click(_.bind(this.removeNotes, this));
+            this.$removeBtn.click(_.bind(this.removeNotes, this))
+                .mousedown(_.bind(this.removeNotes, this));
 
             this.changed();
         },
@@ -123,17 +124,23 @@ define(function(require) {
             }
         },
 
-        addNotes: function() {
+        addNotes: function(e) {
             this.$notes.show().focus();
             this.$preview.hide();
             this.$removeBtn.show();
             this.$addBtn.hide();
             this.$editBtn.hide();
+            if (e) {
+                e.preventDefault();
+            }
         },
 
-        removeNotes: function() {
+        removeNotes: function(e) {
             this.$notes.val('');
             this.showPreview();
+            if (e) {
+                e.preventDefault();
+            }
         },
 
         showPreview: function() {
