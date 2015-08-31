@@ -1,10 +1,12 @@
 <script type="text/template" id="order-line-item-tier-prices-template">
     <table>
-        <tr>
-            <td colspan="2">
-                <%= _.__('orob2b.pricing.click_to_select') %>
-            </td>
-        </tr>
+        <% if (clickable) { %>
+            <tr>
+                <td colspan="2">
+                    <%= _.__('orob2b.pricing.click_to_select') %>
+                </td>
+            </tr>
+        <% } %>
     <% _.each(tierPrices, function(prices, unit) { %>
         <tr>
             <td colspan="2">
@@ -15,7 +17,11 @@
             <tr class="<% if (!_.isNull(matchedPrice) && unit === unitCode && parseFloat(price.price) === parseFloat(matchedPrice)) { %>matched-tier-price<% } %>">
                 <td class="text-right"><%= price.qty %>:</td>
                 <td class="text-left">
-                    <a href="javascript: void(0);" data-price="<%= parseFloat(price.price) %>"><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                    <% if (clickable) { %>
+                        <a href="javascript: void(0);" data-price="<%= parseFloat(price.price) %>"><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                    <% } else { %>
+                        <%= formatter.formatCurrency(price.price, price.currency) %>
+                    <% } %>
                 </td>
             </tr>
         <% }) %>

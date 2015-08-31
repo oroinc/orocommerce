@@ -125,3 +125,13 @@ table.order-line-items th {
 .order-line-item-tier-prices div.popover tr.matched-tier-price > td {
     font-weight: bold;
 }
+
+.order-line-item-price-value,
+.order-line-item-sku.order-line-item-type-product {
+    line-height: 31px;
+}
+
+.order-line-item-price-value {
+    float: left;
+    margin-right: 10px;
+}

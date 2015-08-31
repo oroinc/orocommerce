@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,11 +15,11 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Controller\AbstractOrderController;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 
-class OrderController extends Controller
+class OrderController extends AbstractOrderController
 {
     /**
      * @Route("/", name="orob2b_order_frontend_index")
@@ -178,16 +177,10 @@ class OrderController extends Controller
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
+                    'tierPrices' => $this->getTierPrices($order),
+                    'matchedPrices' => $this->getMatchedPrices($order),
                 ];
             }
         );
-    }
-
-    /**
-     * @return OrderAddressSecurityProvider
-     */
-    protected function getOrderAddressSecurityProvider()
-    {
-        return $this->get('orob2b_order.order.provider.order_address_security');
     }
 }

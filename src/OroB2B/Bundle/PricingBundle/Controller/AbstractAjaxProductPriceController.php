@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
@@ -30,7 +31,10 @@ class AbstractAjaxProductPriceController extends Controller
      */
     public function getProductPricesByPriceListAction(Request $request)
     {
-        $priceListId = $request->get('price_list_id');
+        $priceListId = null;
+        if ($this->getUser() instanceof User) {
+            $priceListId = $request->get('price_list_id');
+        }
         if (!$priceListId) {
             $priceListId = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')
                 ->getPriceList()->getId();
