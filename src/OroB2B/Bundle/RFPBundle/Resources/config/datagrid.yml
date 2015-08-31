@@ -258,6 +258,8 @@ datagrid:
         options:
             entityHint:        request
             entity_pagination: true
+            accountUserOwner:
+                accountUserColumn: accountUserName
         source:
             type: orm
             query:
@@ -314,7 +316,6 @@ datagrid:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_rfp_request_frontend_view
                 rowAction:     true
             update:
                 type:          navigate

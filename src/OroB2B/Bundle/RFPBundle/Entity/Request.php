@@ -12,6 +12,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
 
 /**
@@ -42,7 +43,7 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Request extends ExtendRequest
+class Request extends ExtendRequest implements AccountOwnerAwareInterface
 {
     /**
      * @var integer
