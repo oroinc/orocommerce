@@ -28,7 +28,7 @@ class RequestController extends Controller
      *      id="orob2b_rfp_request_frontend_view",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
-     *      permission="VIEW",
+     *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
      *
