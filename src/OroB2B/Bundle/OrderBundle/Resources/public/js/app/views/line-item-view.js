@@ -44,7 +44,7 @@ define(function(require) {
             LineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
             this.subtotalFields([
-                this.fieldsByName.product,
+                //skip product, productUnit always changed after product change
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,
                 this.fieldsByName.priceValue,

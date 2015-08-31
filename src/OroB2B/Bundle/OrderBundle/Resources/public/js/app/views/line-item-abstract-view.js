@@ -208,7 +208,7 @@ define(function(require) {
 
         initMatchedPrices: function() {
             var fields = [
-                this.fieldsByName.product,
+                //skip product, productUnit always changed after product change
                 this.fieldsByName.productUnit,
                 this.fieldsByName.quantity
             ];

@@ -91,9 +91,10 @@ define(function(require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: function(jqXHR) {
+                error: $.proxy(function(jqXHR) {
+                    this._dropValues();
                     messenger.showErrorMessage(__(self.options.errorMessage), jqXHR.responseJSON);
-                }
+                }, this)
             });
         },
 
@@ -104,7 +105,6 @@ define(function(require) {
             if (this.loadingMaskView) {
                 this.loadingMaskView.show();
             }
-            this._dropValues();
         },
 
         /**

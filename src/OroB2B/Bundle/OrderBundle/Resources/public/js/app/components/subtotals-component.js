@@ -103,7 +103,7 @@ define(function(require) {
          * @param {Function} callback
          */
         getSubtotals: function(callback) {
-            var formData = this.$form.serialize();
+            var formData = this.$form.find(':input[data-ftid]').serialize();
 
             if (formData === this.formData) {
                 callback();//nothing changed
