@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -166,7 +167,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
      */
     protected function applyVisibility($visibilityEntity, $enumCode, $visibilityCode)
     {
-        $entityClass = get_class($visibilityEntity);
+        $entityClass = ClassUtils::getClass($visibilityEntity);
 
         if (!$this->entityManagers->offsetExists($entityClass)) {
             $em = $this->doctrineHelper->getEntityManager($visibilityEntity);
