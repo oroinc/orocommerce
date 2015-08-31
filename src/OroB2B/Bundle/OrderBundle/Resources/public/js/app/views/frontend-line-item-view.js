@@ -21,7 +21,7 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$priceValueText = $(this.$el.find('input.order-line-item-price-value'));
+            this.$priceValueText = $(this.$el.find('div.order-line-item-price-value'));
 
             FrontendLineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
@@ -39,7 +39,7 @@ define(function(require) {
             FrontendLineItemView.__super__.setMatchedPrices.apply(this, arguments);
 
             if (!this.options.disabled) {
-                this.$priceValueText.val(
+                this.$priceValueText.text(
                     NumberFormatter.formatCurrency(this._getMatchedPriceValue(), this.options.currency)
                 );
             }

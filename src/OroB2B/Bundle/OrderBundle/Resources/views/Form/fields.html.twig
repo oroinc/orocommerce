@@ -180,9 +180,11 @@
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="order-line-item-price">
-        {% if form.vars.value.price is defined and form.vars.value.price is not null %}
-            <input class="order-line-item-price-value" type="text" disabled value="{{ form.vars.value.price|oro_format_price }}" />
-        {% endif %}
+        <div class="order-line-item-price-value">
+            {% if form.vars.value.price is defined and form.vars.value.price is not null %}
+                {{ form.vars.value.price|oro_format_price }}
+            {% endif %}
+        </div>
         <div class="order-line-item-tier-prices">
             <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
         </div>
