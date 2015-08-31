@@ -19,11 +19,17 @@ define(function(require) {
             selectors: {
                 edit: '.notes-widget-edit',
                 preview: '.notes-widget-preview',
+                editBtn: '.notes-widget-edit-btn',
                 addBtn: '.notes-widget-add-btn',
                 removeBtn: '.notes-widget-remove-btn'
             },
             template: '#order-notes-widget'
         },
+
+        /**
+         * @property {Function}
+         */
+        template: null,
 
         /**
          * @property {jQuery}
@@ -53,6 +59,11 @@ define(function(require) {
         /**
          * @property {jQuery}
          */
+        $editBtn: null,
+
+        /**
+         * @property {jQuery}
+         */
         $removeBtn: null,
 
         /**
@@ -61,17 +72,19 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.$el = options._sourceElement;
+            this.template = _.template($(this.options.template).text());
 
             this.initUI();
         },
 
         initUI: function() {
             this.$notes = this.$el.find('textarea');
-            this.$el.html($(this.options.template).text());
+            this.$el.html(this.template());
 
             this.$edit = this.$el.find(this.options.selectors.edit);
             this.$preview = this.$el.find(this.options.selectors.preview);
             this.$addBtn = this.$el.find(this.options.selectors.addBtn);
+            this.$editBtn = this.$el.find(this.options.selectors.editBtn);
             this.$removeBtn = this.$el.find(this.options.selectors.removeBtn);
 
             this.$edit.prepend(this.$notes);
@@ -81,17 +94,19 @@ define(function(require) {
             this.$preview.click(_.bind(this.addNotes, this));
             this.$addBtn.click(_.bind(this.addNotes, this))
                 .mousedown(_.bind(this.addNotes, this));
+            this.$editBtn.click(_.bind(this.addNotes, this))
+                .mousedown(_.bind(this.addNotes, this));
             this.$removeBtn.click(_.bind(this.removeNotes, this));
 
             this.changed();
         },
 
-        getVal: function() {
-            return this.$notes.val();
+        hasVal: function() {
+            return this.$notes.val().replace(/\s/g, '').length > 0;
         },
 
         change: function(e) {
-            if (e.relatedTarget === this.$addBtn.get(0)) {
+            if (e.relatedTarget === this.$addBtn.get(0) || e.relatedTarget === this.$editBtn.get(0)) {
                 this.addNotes(e);
             } else if (e.relatedTarget === this.$removeBtn.get(0)) {
                 this.removeNotes(e);
@@ -101,7 +116,7 @@ define(function(require) {
         },
 
         changed: function() {
-            if (this.getVal().length === 0) {
+            if (!this.hasVal()) {
                 this.removeNotes();
             } else {
                 this.showPreview();
@@ -113,22 +128,27 @@ define(function(require) {
             this.$preview.hide();
             this.$removeBtn.show();
             this.$addBtn.hide();
+            this.$editBtn.hide();
         },
 
         removeNotes: function() {
             this.$notes.val('');
-            this.$notes.hide();
-            this.$preview.hide();
-            this.$removeBtn.hide();
-            this.$addBtn.show();
+            this.showPreview();
         },
 
         showPreview: function() {
-            this.$preview.text(this.getVal());
+            if (this.hasVal()) {
+                this.$preview.text(this.$notes.val()).show();
+                this.$addBtn.hide();
+                this.$editBtn.show();
+            } else {
+                this.$notes.val('');
+                this.$preview.text('').hide();
+                this.$addBtn.show();
+                this.$editBtn.hide();
+            }
             this.$notes.hide();
-            this.$preview.show();
             this.$removeBtn.hide();
-            this.$addBtn.hide();
         }
     });
 

@@ -1,0 +1,6 @@
+orob2b:
+    order:
+        notes_widget:
+            edit: Edit Notes
+            add: Add Notes
+            remove: Remove Notes
