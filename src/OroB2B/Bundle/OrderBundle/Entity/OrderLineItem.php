@@ -486,6 +486,8 @@ class OrderLineItem extends ExtendOrderLineItem
     {
         $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
+
+        $this->updateItemInformation();
     }
 
     protected function updateItemInformation()
