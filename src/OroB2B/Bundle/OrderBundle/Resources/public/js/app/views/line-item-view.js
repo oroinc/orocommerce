@@ -99,7 +99,7 @@ define(function(require) {
 
             this.$priceOverridden.on('click', 'a', _.bind(function() {
                 this.fieldsByName.priceValue
-                    .val(this._getMatchedPriceValue())
+                    .val(this.getMatchedPriceValue())
                     .change()
                     .addClass('matched-price');
             }, this));
@@ -113,7 +113,7 @@ define(function(require) {
 
             if (this.fieldsByName.priceValue.hasClass('matched-price')) {
                 this.fieldsByName.priceValue
-                    .val(this._getMatchedPriceValue())
+                    .val(this.getMatchedPriceValue())
                     .change()
                     .addClass('matched-price');
             } else {

@@ -127,7 +127,7 @@ define(function(require) {
 
             if (this.fieldsByName.hasOwnProperty('product')) {
                 this.fieldsByName.product.change(_.bind(function(e) {
-                    var productId = e.currentTarget.value;
+                    var productId = this._getProductId();
                     if (productId.length === 0) {
                         this.setTierPrices({});
                     } else {
@@ -150,10 +150,10 @@ define(function(require) {
         setTierPrices: function(tierPrices) {
             var productId = this._getProductId();
             var productTierPrices = {};
-
             if (productId.length !== 0) {
                 productTierPrices = tierPrices[productId] || {};
             }
+
             this.tierPrices = productTierPrices;
             this.renderTierPrices();
         },
@@ -165,7 +165,7 @@ define(function(require) {
                 content = this.tierPricesTemplate({
                     tierPrices: this.tierPrices,
                     unitCode: this.fieldsByName.productUnit.val(),
-                    matchedPrice: this._getMatchedPriceValue(),
+                    matchedPrice: this.getMatchedPriceValue(),
                     clickable: this.fieldsByName.hasOwnProperty('priceValue'),
                     formatter: NumberFormatter
                 });
@@ -253,9 +253,8 @@ define(function(require) {
 
         /**
          * @returns {String|Null}
-         * @private
          */
-        _getMatchedPriceValue: function() {
+        getMatchedPriceValue: function() {
             return !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
         },
 

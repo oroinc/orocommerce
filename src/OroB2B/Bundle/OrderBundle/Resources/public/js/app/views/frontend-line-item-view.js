@@ -18,10 +18,23 @@ define(function(require) {
         $priceValueText: null,
 
         /**
+         * @inheritDoc
+         */
+        initialize: function() {
+            this.options = $.extend(true, {
+                selectors: {
+                    priceValueText: 'input.order-line-item-price-value'
+                }
+            }, this.options);
+
+            FrontendLineItemView.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$priceValueText = $(this.$el.find('div.order-line-item-price-value'));
+            this.$priceValueText = $(this.$el.find(this.options.selectors.priceValueText));
 
             FrontendLineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
@@ -39,8 +52,8 @@ define(function(require) {
             FrontendLineItemView.__super__.setMatchedPrices.apply(this, arguments);
 
             if (!this.options.disabled) {
-                this.$priceValueText.text(
-                    NumberFormatter.formatCurrency(this._getMatchedPriceValue(), this.options.currency)
+                this.$priceValueText.val(
+                    NumberFormatter.formatCurrency(this.getMatchedPriceValue(), this.options.currency)
                 );
             }
 
