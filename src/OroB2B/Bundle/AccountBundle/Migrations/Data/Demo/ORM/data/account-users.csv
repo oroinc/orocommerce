@@ -1,7 +1,7 @@
 "email","firstName","lastName","role","street","city","state","zipCode","country","types","defaultTypes"
 "BrandaJSanborn@dayrep.com","Branda","Sanborn","Manager","1215 Caldwell Road","Rochester","NY","14608","US","billing,shipping","billing,shipping"
 "LoisLLessard@teleworm.us","Lois","Lessard","Operator","2413 Capitol Avenue","Romney","IN","47981","US","billing,shipping","billing,shipping"
-"AmandaRCole@rhyta.com","Amanda","Cole","Manager","722 Harvest Lane","Sedalia","MO","65301","US","billing,shipping","billing,shipping"
+AmandaRCole@rhyta.com,Amanda,Cole,Administrator,"722 Harvest Lane",Sedalia,MO,65301,US,"billing,shipping","billing,shipping"
 "LonnieVTownsend@jourrapide.com","Lonnie","Townsend","Operator","1167 Marion Drive","Winter Haven","FL","33830","US","billing,shipping","billing,shipping"
 "JamesSWall@armyspy.com","James","Wall","Manager","988 Sunburst Drive","Fort Myers","FL","33901","US","billing,shipping","billing,shipping"
 "RuthWMaxwell@armyspy.com","Ruth","Maxwell","Manager","2849 Junkins Avenue","Albany","GA","31707","US","billing,shipping","billing,shipping"
