@@ -8,8 +8,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
 abstract class AbstractFixture extends DoctrineAbstractFixture implements ContainerAwareInterface
 {
@@ -39,17 +40,24 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
     /**
      * @param ObjectManager $manager
      * @return User
-     * @throws \LogicException
      */
     protected function getUser(ObjectManager $manager)
     {
-        /* @var $user User */
-        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([
-                'email' => LoadAdminUserData::DEFAULT_ADMIN_EMAIL,
-        ]);
+        $role = $manager->getRepository('OroUserBundle:Role')
+            ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
+
+        if (!$role) {
+            throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
+        }
+
+        /** @var RoleRepository $roleRepository */
+        $roleRepository = $manager->getRepository('OroUserBundle:Role');
+        $user = $roleRepository->getFirstMatchedUser($role);
 
         if (!$user) {
-            throw new \LogicException('There are no users in system');
+            throw new \RuntimeException(
+                sprintf('At least one user with role %s should exist.', LoadRolesData::ROLE_ADMINISTRATOR)
+            );
         }
 
         return $user;

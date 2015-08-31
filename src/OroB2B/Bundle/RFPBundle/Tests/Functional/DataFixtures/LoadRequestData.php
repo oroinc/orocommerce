@@ -149,6 +149,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setRole($rawRequest['role'])
                 ->setBody($rawRequest['body'])
                 ->setStatus($status)
+                ->setOrganization($this->getUser($manager)->getOrganization())
             ;
             if (!empty($rawRequest['account'])) {
                 $request->setAccount($this->getReference($rawRequest['account']));

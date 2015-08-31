@@ -51,11 +51,11 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         self::ROLE2 => [
             [
                 'class' => 'orob2b_rfp.entity.request.class',
-                'acls'  => ['VIEW_BASIC'],
+                'acls'  => ['VIEW_LOCAL'],
             ],
             [
                 'class' => 'orob2b_account.entity.account_user.class',
-                'acls'  => [],
+                'acls'  => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE3 => [
@@ -112,8 +112,8 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         ],
         [
             'email'     => self::ACCOUNT2_USER1,
-            'firstname' => 'User1FN',
-            'lastname'  => 'User1LN',
+            'firstname' => 'User21FN',
+            'lastname'  => 'User21LN',
             'password'  => self::ACCOUNT2_USER1,
             'account'   => self::ACCOUNT2,
             'role'      => self::ROLE1,
@@ -128,15 +128,15 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'email'     => 'rfp-user1@example.com',
             'username'  => self::USER1,
             'password'  => self::USER1,
-            'firstname' => 'SaleUser1FN',
-            'lastname'  => 'SaleUser1LN',
+            'firstname' => 'RFPUser1FN',
+            'lastname'  => 'RFPUser1LN',
         ],
         [
             'email'     => 'rfp-user2@example.com',
             'username'  => self::USER2,
             'password'  => self::USER2,
-            'firstname' => 'SaleUser2FN',
-            'lastname'  => 'SaleUser2LN',
+            'firstname' => 'RFPUser2FN',
+            'lastname'  => 'RFPUser2LN',
         ],
     ];
 
@@ -221,7 +221,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)
-                ->setOrganization($organization)
                 ->addOrganization($organization)
                 ->addRole($this->getReference($item['role']))
                 ->setSalt('')
