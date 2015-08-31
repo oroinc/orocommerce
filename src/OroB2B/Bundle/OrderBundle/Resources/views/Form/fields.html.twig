@@ -94,9 +94,9 @@
 
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
-        <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value is not empty %}
-                {{ form.vars.value.productSku }}
+        <div class="order-line-item-type-product">
+            {% if form.vars.value is not empty and form.vars.value.product is not empty %}
+                {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
         <div class="order-line-item-type-free-form">
@@ -104,43 +104,47 @@
         </div>
     </td>
     <td class="order-line-item-type">
-        <div class="order-line-item-type-product">
-            {{ form_widget(form.product) }}
-            {{ form_errors(form.product) }}
-            <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+        <div class="fields-row">
+            <div class="order-line-item-type-product">
+                {{ form_widget(form.product) }}
+                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+            </div>
+            <div class="order-line-item-type-free-form">
+                {{ form_widget(form.freeFormProduct) }}
+                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+            </div>
         </div>
-        <div class="order-line-item-type-free-form">
-            {{ form_widget(form.freeFormProduct) }}
-            {{ form_errors(form.product) }}
-            {{ form_errors(form.freeFormProduct) }}
-            <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
-        </div>
+        {{ form_errors(form.product) }}
+        {{ form_errors(form.freeFormProduct) }}
     </td>
     <td class="order-line-item-quantity">
-        {{ form_widget(form.quantity) }}
+        <div class="fields-row">
+            {{ form_widget(form.quantity) }}
+            {{ form_widget(form.productUnit) }}
+        </div>
         {{ form_errors(form.quantity) }}
-
-        {{ form_widget(form.productUnit) }}
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="order-line-item-price">
-        {% set priceOverriddenTooltip %}
-            <p>{{ 'orob2b.order.orderlineitem.price_is_overridden.label'|trans }}</p>
-            <p><a href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.reset_price.label'|trans }}</a></p>
-        {% endset %}
+        <div class="fields-row">
+            {% set priceOverriddenTooltip %}
+                <p>{{ 'orob2b.order.orderlineitem.price_is_overridden.label'|trans }}</p>
+                <p><a href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.reset_price.label'|trans }}</a></p>
+            {% endset %}
 
-        <div class="order-line-item-price-overridden">
-            <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ priceOverriddenTooltip|escape }}"></i>
+            <div class="order-line-item-price-overridden">
+                <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ priceOverriddenTooltip|escape }}"></i>
+            </div>
+
+            {{ form_widget(form.price) }}
+
+            <div class="order-line-item-tier-prices">
+                <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
+            </div>
+
+            {{ form_widget(form.priceType) }}
         </div>
-
-        {{ form_widget(form.price) }}
         {{ form_errors(form.price) }}
-
-        <div class="order-line-item-tier-prices">
-            <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
-        </div>
-
-        {{ form_widget(form.priceType) }}
         {{ form_errors(form.priceType) }}
     </td>
     <td class="order-line-item-ship_by">
@@ -148,7 +152,9 @@
         {{ form_errors(form.shipBy) }}
     </td>
     <td class="order-line-item-comment">
-        {{ form_widget(form.comment) }}
+        <div data-page-component-module="orob2border/js/app/components/notes-component">
+            {{ form_widget(form.comment) }}
+        </div>
     </td>
 {% endblock %}
 
@@ -156,9 +162,9 @@
     {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
 
     <td class="order-line-item-sku">
-        <div class="order-line-item-sku order-line-item-type-product">
-            {% if form.vars.value is not empty %}
-                {{ form.vars.value.productSku }}
+        <div class="order-line-item-type-product">
+            {% if form.vars.value is not empty and form.vars.value.product is not empty %}
+                {{ form.vars.value.product.sku }}
             {% endif %}
         </div>
     </td>
@@ -173,10 +179,11 @@
         </div>
     </td>
     <td class="order-line-item-quantity">
-        {{ form_widget(form.quantity) }}
+        <div class="fields-row">
+            {{ form_widget(form.quantity) }}
+            {{ form_widget(form.productUnit) }}
+        </div>
         {{ form_errors(form.quantity) }}
-
-        {{ form_widget(form.productUnit) }}
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="order-line-item-price">
@@ -194,6 +201,8 @@
         {{ form_errors(form.shipBy) }}
     </td>
     <td class="order-line-item-comment">
-        {{ form_widget(form.comment) }}
+        <div data-page-component-module="orob2border/js/app/components/notes-component">
+            {{ form_widget(form.comment) }}
+        </div>
     </td>
 {% endblock %}
