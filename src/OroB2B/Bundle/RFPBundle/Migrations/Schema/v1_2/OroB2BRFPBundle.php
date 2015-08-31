@@ -4,47 +4,29 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
+use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BRFPBundle implements Migration
+class OroB2BRFPBundle implements Migration, ActivityExtensionAwareInterface
 {
+    /** @var ActivityExtension */
+    protected $activityExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setActivityExtension(ActivityExtension $activityExtension)
+    {
+        $this->activityExtension = $activityExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        /** Tables generation **/
-        $this->changeOrob2BRfpRequestTable($schema);
-
-        /** Foreign keys generation **/
-        $this->addOrob2BRfpRequestForeignKeys($schema);
-    }
-
-    /**
-     * Create orob2b_rfp_request table
-     *
-     * @param Schema $schema
-     */
-    protected function changeOrob2BRfpRequestTable(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_rfp_request');
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
-    }
-
-    /**
-     * Add orob2b_rfp_request foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOrob2BRfpRequestForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_rfp_request');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account'),
-            ['account_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
+        $this->activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_rfp_request');
     }
 }

@@ -51,7 +51,7 @@ class OroB2BRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -292,5 +292,6 @@ class OroB2BRFPBundleInstaller implements
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
         $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_rfp_request');
+        $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_rfp_request');
     }
 }
