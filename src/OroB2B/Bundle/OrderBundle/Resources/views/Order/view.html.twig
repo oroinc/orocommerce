@@ -53,32 +53,34 @@
     {% if entity.lineItems|length %}
         {% set lineItems %}
             <div class="order-orderproducts-info control-group">
-                <table class="order-orderproduct-collection-table order-orderproduct-collection-table-view">
+                <table class="order-orderproduct-collection-table order-orderproduct-collection-table-view order-line-items">
                     <thead>
-                    <tr>
-                        <th>{{ 'orob2b.order.orderlineitem.column.product'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
-                        <th>{{ 'orob2b.order.orderlineitem.column_summary'|trans }}</th>
-                    </tr>
+                        <tr>
+                            <th class="order-line-item-sku">{{ 'orob2b.product.sku.label'|trans }}</th>
+                            <th class="order-line-item-type">{{ 'orob2b.product.entity_label'|trans }}</th>
+                            <th class="order-line-item-quantity">{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
+                            <th class="order-line-item-price">{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
+                            <th class="order-line-item-ship_by">{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</th>
+                            <th class="order-line-item-comment">{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</th>
+                        </tr>
                     </thead>
                     <tbody>
                     {% for lineItem in entity.lineItems %}
+                        {% set isFreeFormProduct = lineItem.product is empty and lineItem.freeFormProduct is not empty %}
+
                         <tr>
+                            <td>{{ lineItem.productSku }}</td>
                             <td>
-                                <div>
-                                    {{ lineItem.productSku }}
-                                </div>
+                                {% if isFreeFormProduct %}
+                                    {{ lineItem.freeFormProduct }}
+                                {% else %}
+                                    {{ lineItem.product }}
+                                {% endif %}
                             </td>
                             <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
                             <td>{{ lineItem.price|oro_format_price }}</td>
-                            <td>
-                                {# TODO output line item #}
-
-                                {% if lineItem.comment is not empty %}
-                                    {{ UI.renderProperty('orob2b.order.orderlineitem.comment.label'|trans, lineItem.comment) }}
-                                {% endif %}
-                            </td>
+                            <td>{{ lineItem.shipBy|oro_format_date }}</td>
+                            <td>{{ lineItem.comment }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
