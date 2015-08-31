@@ -51,8 +51,7 @@ class OrderControllerTest extends WebTestCase
                 'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
 
@@ -123,7 +122,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Save')->form();
 
         /** @var Account $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
@@ -159,17 +158,13 @@ class OrderControllerTest extends WebTestCase
 
         // Submit form
         $result = $this->client->getResponse();
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        // Check updated order
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $id]));
-
         $this->assertEquals(
             self::ORDER_PO_NUMBER_UPDATED,
-            $crawler->filter('input[name="orob2b_order_type[poNumber]"]')
-                ->extract('value')[0]
+            $crawler->filter('input[name="orob2b_order_type[poNumber]"]')->extract('value')[0]
         );
 
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));

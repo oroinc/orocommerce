@@ -111,8 +111,10 @@ define(function(require) {
          * @private
          */
         _dropValues: function() {
-            this.handleQuantityState(true);
-            this.handleUnitsState(true, null);
+            if (this.options.dropQuantityOnLoad) {
+                this.handleQuantityState(true);
+                this.handleUnitsState(true, null);
+            }
         },
 
         /**
