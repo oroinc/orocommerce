@@ -44,7 +44,8 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'type' => 'addproducts',
                 'entity_name' => '%orob2b_product.product.class%',
                 'data_identifier' => 'product.id',
-                'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label'
+                'label' => 'orob2b.shoppinglist.product.add_to_shopping_list.label',
+                'acl_resource' => 'orob2b_shopping_list_line_item_frontend_add',
             ],
         ],
     ];

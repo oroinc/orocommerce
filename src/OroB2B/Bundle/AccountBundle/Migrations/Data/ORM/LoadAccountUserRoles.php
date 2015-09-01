@@ -79,8 +79,6 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
 
             if (!empty($roleConfigData['max_permissions'])) {
                 $this->setPermissionGroup($aclManager, $sid);
-
-                continue;
             }
 
             if (!is_array($roleConfigData['permissions'])) {
@@ -90,12 +88,13 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
             foreach ($roleConfigData['permissions'] as $permission => $acls) {
                 $oid = $aclManager->getOid(str_replace('|', ':', $permission));
                 $builder = $aclManager->getMaskBuilder($oid);
-                $mask = $builder->reset()->get();
+                $builder->reset();
                 if ($acls) {
                     foreach ($acls as $acl) {
-                        $mask = $builder->add($acl)->get();
+                        $builder->add($acl);
                     }
                 }
+                $mask = $builder->get();
                 $aclManager->setPermission($sid, $oid, $mask);
             }
         }
