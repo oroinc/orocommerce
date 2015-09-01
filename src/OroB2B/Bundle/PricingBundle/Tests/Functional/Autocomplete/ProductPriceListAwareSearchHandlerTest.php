@@ -89,6 +89,7 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
             $modifier
         );
         $searchHandler->setRequest($request);
+        $searchHandler->setAclHelper($this->getContainer()->get('oro_security.acl_helper'));
 
         $searchHandler->initDoctrinePropertiesByManagerRegistry($this->getContainer()->get('doctrine'));
         $result = $searchHandler->search($search, 1, 10);

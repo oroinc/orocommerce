@@ -54,8 +54,6 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
     }
 
     /**
-     * @todo Apply ACL helper after BB-1008
-     *
      * {@inheritdoc}
      */
     protected function searchEntities($search, $firstResult, $maxResults)
@@ -76,8 +74,7 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
 
         $this->productListModifier->applyPriceListLimitations($queryBuilder, $currency);
 
-        $query = $queryBuilder->getQuery();
-        //$query = $this->aclHelper->apply($queryBuilder);
+        $query = $this->aclHelper->apply($queryBuilder);
 
         return $query->getResult();
     }
