@@ -176,6 +176,40 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
+    protected function loadUsers(ObjectManager $manager)
+    {
+        /* @var $userManager UserManager */
+        $userManager    = $this->container->get('oro_user.manager');
+
+        $defaultUser    = $this->getUser($manager);
+
+        $businessUnit   = $defaultUser->getOwner();
+        $organization   = $defaultUser->getOrganization();
+
+        foreach ($this->users as $item) {
+            /* @var $user User */
+            $user = $userManager->createUser();
+
+            $user
+                ->setEmail($item['email'])
+                ->setFirstName($item['firstname'])
+                ->setLastName($item['lastname'])
+                ->setBusinessUnits($defaultUser->getBusinessUnits())
+                ->setOwner($businessUnit)
+                ->setOrganization($organization)
+                ->setUsername($item['username'])
+                ->setPlainPassword($item['password'])
+                ->setEnabled(true)
+            ;
+            $userManager->updateUser($user);
+
+            $this->setReference($user->getUsername(), $user);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
     protected function loadRoles(ObjectManager $manager)
     {
         /* @var $aclManager AclManager */
@@ -231,40 +265,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $userManager->updateUser($accountUser);
 
             $this->setReference($item['email'], $accountUser);
-        }
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function loadUsers(ObjectManager $manager)
-    {
-        /* @var $userManager UserManager */
-        $userManager    = $this->container->get('oro_user.manager');
-
-        $defaultUser    = $this->getUser($manager);
-
-        $businessUnit   = $defaultUser->getOwner();
-        $organization   = $defaultUser->getOrganization();
-
-        foreach ($this->users as $item) {
-            /* @var $user User */
-            $user = $userManager->createUser();
-
-            $user
-                ->setEmail($item['email'])
-                ->setFirstName($item['firstname'])
-                ->setLastName($item['lastname'])
-                ->setBusinessUnits($defaultUser->getBusinessUnits())
-                ->setOwner($businessUnit)
-                ->setOrganization($organization)
-                ->setUsername($item['username'])
-                ->setPlainPassword($item['password'])
-                ->setEnabled(true)
-            ;
-            $userManager->updateUser($user);
-
-            $this->setReference($user->getUsername(), $user);
         }
     }
 

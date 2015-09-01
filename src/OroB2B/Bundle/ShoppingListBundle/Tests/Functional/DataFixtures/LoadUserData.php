@@ -196,28 +196,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccounts(ObjectManager $manager)
-    {
-        $defaultUser    = $this->getUser($manager);
-        $organization   = $defaultUser->getOrganization();
-
-        foreach ($this->accounts as $item) {
-            $account = new Account();
-            $account
-                ->setName($item['name'])
-                ->setOrganization($organization)
-            ;
-            $manager->persist($account);
-
-            $this->addReference($item['name'], $account);
-        }
-
-        $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
     protected function loadUsers(ObjectManager $manager)
     {
         /* @var $userManager UserManager */
@@ -248,6 +226,28 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             $this->setReference($user->getUsername(), $user);
         }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    protected function loadAccounts(ObjectManager $manager)
+    {
+        $defaultUser    = $this->getUser($manager);
+        $organization   = $defaultUser->getOrganization();
+
+        foreach ($this->accounts as $item) {
+            $account = new Account();
+            $account
+                ->setName($item['name'])
+                ->setOrganization($organization)
+            ;
+            $manager->persist($account);
+
+            $this->addReference($item['name'], $account);
+        }
+
+        $manager->flush();
     }
 
     /**
