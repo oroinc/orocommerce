@@ -19,7 +19,11 @@
                 <td>
                     <div class="text-left">
                         <% if (clickable) { %>
-                            <a href="javascript: void(0);" data-price="<%= parseFloat(price.price) %>"><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                            <a
+                                href="javascript: void(0);"
+                                data-price="<%= parseFloat(price.price) %>"
+                                data-unit="<%= unit %>"
+                            ><%= formatter.formatCurrency(price.price, price.currency) %></a>
                         <% } else { %>
                             <%= formatter.formatCurrency(price.price, price.currency) %>
                         <% } %>

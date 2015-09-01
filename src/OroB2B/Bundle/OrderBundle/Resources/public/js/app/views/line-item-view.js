@@ -87,14 +87,18 @@ define(function(require) {
             LineItemView.__super__.initTierPrices.apply(this, arguments);
 
             this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
+                var $target = $(e.currentTarget);
                 var priceType = this.fieldsByName.priceType.val();
-                var priceValue = $(e.currentTarget).data('price');
+                var priceValue = $target.data('price');
                 var quantity = 1;
 
                 if (priceType === this.options.bundledPriceTypeValue) {
                     quantity = parseFloat(this.fieldsByName.quantity.val());
                 }
 
+                this.fieldsByName.productUnit
+                    .val($target.data('unit'))
+                    .change();
                 this.fieldsByName.priceValue
                     .val(priceValue * quantity)
                     .change();
