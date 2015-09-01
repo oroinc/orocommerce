@@ -42,6 +42,7 @@ class RequestACLTest extends WebTestCase
      * @dataProvider permissionsDataProvider
      * @param int $level
      * @param array $permissions
+     * @param int $expectedCode
      */
     public function testRFPPermissions($level, $permissions, $expectedCode)
     {

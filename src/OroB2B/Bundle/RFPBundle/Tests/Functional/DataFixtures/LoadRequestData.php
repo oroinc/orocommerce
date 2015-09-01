@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
@@ -137,6 +139,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         if (!$status) {
             return;
         }
+        /** @var Organization $organization */
+        $organization = $this->getUser($manager)->getOrganization();
 
         foreach ($this->requests as $key => $rawRequest) {
             $request = new Request();
@@ -149,7 +153,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setRole($rawRequest['role'])
                 ->setBody($rawRequest['body'])
                 ->setStatus($status)
-                ->setOrganization($this->getUser($manager)->getOrganization())
+                ->setOrganization($organization)
             ;
             if (!empty($rawRequest['account'])) {
                 $request->setAccount($this->getReference($rawRequest['account']));

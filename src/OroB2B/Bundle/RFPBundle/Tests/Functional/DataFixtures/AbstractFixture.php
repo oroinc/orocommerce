@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\Repository\RoleRepository;
+use Oro\Bundle\UserBundle\Entity\Role;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
@@ -43,6 +44,7 @@ abstract class AbstractFixture extends DoctrineAbstractFixture implements Contai
      */
     protected function getUser(ObjectManager $manager)
     {
+        /** @var Role $role */
         $role = $manager->getRepository('OroUserBundle:Role')
             ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR]);
 
