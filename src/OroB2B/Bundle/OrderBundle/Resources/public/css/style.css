@@ -145,7 +145,8 @@
 }
 
 .order-line-item-remove {
-    text-align: right;
+    padding-top: 7px !important;
+    text-align: right !important;
 }
 
 .notes-widget {
