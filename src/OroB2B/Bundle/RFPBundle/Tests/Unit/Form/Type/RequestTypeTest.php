@@ -8,15 +8,21 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -76,6 +82,12 @@ class RequestTypeTest extends AbstractTest
             'valid data' => [
                 'isValid'       => true,
                 'submittedData' => [
+                    'firstName'     => 'FirstName',
+                    'lastName'      => 'LastName',
+                    'email'         => $email,
+                    'body'          => 'body',
+                    'role'          => 'role',
+                    'company'       => 'company',
                     'requestProducts' => [
                         [
                             'product'   => 2,
@@ -93,73 +105,146 @@ class RequestTypeTest extends AbstractTest
                 ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role')
                     ->addRequestProduct($requestProduct),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'valid data empty items' => [
                 'isValid'       => true,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'empty first name' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest(null, 'LastName', $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest(null, 'LastName', $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'first name len > 255' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => $longStr,
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest($longStr, 'LastName', $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest($longStr, 'LastName', $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'empty last name' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', null, $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', null, $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'last name len > 255' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => $longStr,
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', $longStr, $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', $longStr, $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'empty email' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', null, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', null, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'invalid email' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => 'no-email',
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', 'no-email', 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', 'no-email', 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'email len > 255' => [
                 'isValid'       => false,
-                'submittedData' => [],
-                'expectedData'  => $this->getRequest('FirstName', 'Last Name', $longEmail, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'Last Name', $longEmail, 'body', 'company', 'role'),
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $longEmail,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $longEmail, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'empty body' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, null, 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, null, 'company', 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'company len > 255' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => 'role',
+                    'company'   => $longStr,
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', $longStr, 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', $longStr, 'role'),
+                'defaultData'   => $this->getRequest(),
             ],
             'role len > 255' => [
                 'isValid'       => false,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'role'      => $longStr,
+                    'company'   => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', $longStr),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', $longStr),
+                'defaultData'   => $this->getRequest(),
             ],
         ];
     }
@@ -179,6 +264,29 @@ class RequestTypeTest extends AbstractTest
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
+        $accountSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
+            ],
+            AccountSelectType::NAME
+        );
+
+        $accountUserSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
+            ],
+            AccountUserSelectType::NAME
+        );
+
+        $requestStatusSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\RFPBundle\Entity\RequestStatus', 1),
+            ],
+            RequestStatusSelectType::NAME
+        );
+
         $requestProductType = new RequestProductType($translator);
         $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
@@ -193,9 +301,12 @@ class RequestTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
+                    $accountSelectType->getName()           => $accountSelectType,
                     $requestProductType->getName()          => $requestProductType,
+                    $accountUserSelectType->getName()       => $accountUserSelectType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
+                    $requestStatusSelectType->getName()     => $requestStatusSelectType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                 ],
                 []

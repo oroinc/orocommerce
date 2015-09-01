@@ -35,7 +35,16 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    include('OroB2BRFPBundle:Request:block/infoRequest.html.twig'),
+                    form_row(form.firstName),
+                    form_row(form.lastName),
+                    form_row(form.email),
+                    form_row(form.phone),
+                    form_row(form.company),
+                    form_row(form.role),
+                    form_row(form.account),
+                    form_row(form.accountUser),
+                    form_row(form.status),
+                    form_row(form.body),
                 ]
             }]
         },
@@ -61,5 +70,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    <div class="rfp-request-widget" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+        {{ parent() }}
+    </div>
 {% endblock content_data %}
