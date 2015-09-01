@@ -43,7 +43,22 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'enabled' => true,
             'password' => 'pass',
             'account' => 'account.level_1.1'
-        ]
+        ],
+        [
+            'first_name' => 'FirstOrphan',
+            'last_name' => 'LastOrphan',
+            'email' => 'orphan.user@test.com',
+            'enabled' => true,
+            'password' => 'pass',
+            'account' => 'account.orphan'
+        ],
+        [
+            'first_name' => 'FirstAccountUser',
+            'last_name' => 'LastAccountUser',
+            'email' => 'account.user2@test.com',
+            'enabled' => true,
+            'password' => 'pass'
+        ],
     ];
 
     /**
@@ -52,8 +67,13 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     public function load(ObjectManager $manager)
     {
         foreach ($this->users as $user) {
-            /** @var Account $account */
-            $account = $this->getReference($user['account']);
+            if (isset($user['account'])) {
+                /** @var Account $account */
+                $account = $this->getReference($user['account']);
+            } else {
+                $account = $manager->getRepository('OroB2BAccountBundle:Account')
+                    ->findOneBy([], ['id' => 'DESC']);
+            }
 
             $entity = new AccountUser();
             $entity
@@ -62,6 +82,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
                 ->setLastName($user['last_name'])
                 ->setEmail($user['email'])
                 ->setEnabled($user['enabled'])
+                ->setOrganization($account->getOrganization())
                 ->setPassword($user['password']);
 
             $this->setReference($entity->getEmail(), $entity);

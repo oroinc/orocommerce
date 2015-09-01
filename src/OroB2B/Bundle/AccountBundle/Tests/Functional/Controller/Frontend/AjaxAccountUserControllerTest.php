@@ -1,10 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData as LoadLoginAccountUserData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
@@ -33,8 +34,13 @@ class AjaxAccountUserControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-
+        $this->initClient(
+            [],
+            array_merge(
+                $this->generateBasicAuthHeader(LoadLoginAccountUserData::AUTH_USER, LoadLoginAccountUserData::AUTH_PW),
+                ['HTTP_X-CSRF-Header' => 1]
+            )
+        );
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData'
@@ -45,7 +51,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
     public function testEnableAndDisable()
     {
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+        $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
         $id = $user->getId();
 
         $this->assertNotNull($user);
@@ -53,7 +59,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_disable', ['id' => $id])
+            $this->getUrl('orob2b_account_frontend_account_user_disable', ['id' => $id])
         );
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
@@ -64,7 +70,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_enable', ['id' => $id])
+            $this->getUrl('orob2b_account_frontend_account_user_enable', ['id' => $id])
         );
         $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
@@ -77,7 +83,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
     public function testConfirm()
     {
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
-        $user = $this->getReference(LoadAccountUserData::EMAIL);
+        $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
         $this->assertNotNull($user);
 
         $id = $user->getId();
@@ -85,8 +91,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
         $user->setConfirmed(false);
         $this->getObjectManager()->flush();
         $this->getObjectManager()->clear();
-
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_confirm', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_confirm', ['id' => $id]));
 
         /** @var MessageDataCollector $collector */
         $collector = $this->client->getProfile()->getCollector('swiftmailer');
@@ -107,7 +112,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $configManager = $this->getContainer()->get('oro_config.manager');
         $loginUrl = trim($configManager->get('oro_ui.application_url'), '/')
-            . $this->getUrl('orob2b_account_account_user_security_login');
+            . $this->getUrl('orob2b_account_frontend_account_user_security_login');
 
         $this->assertContains($loginUrl, $message->getBody());
 
@@ -129,11 +134,11 @@ class AjaxAccountUserControllerTest extends WebTestCase
     public function testSendConfirmation()
     {
         /** @var AccountUser $accountUser */
-        $email = LoadAccountUserData::EMAIL;
+        $email = 'account.user2@test.com';
         $accountUser = $this->getReference($email);
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_send_confirmation', ['id' => $accountUser->getId()])
+            $this->getUrl('orob2b_account_frontend_account_user_send_confirmation', ['id' => $accountUser->getId()])
         );
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
@@ -159,7 +164,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
     public function testGetAccountIdAction()
     {
         /** @var AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+        $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
 
         $this->assertNotNull($user);
 
@@ -167,7 +172,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_get_account', ['id' => $id])
+            $this->getUrl('orob2b_account_frontend_account_user_get_account', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
