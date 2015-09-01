@@ -27,9 +27,14 @@
     min-width: 100px;
 }
 
+.order-line-item-tier-prices table tr:hover > td {
+    background-color: #fff;
+}
+
 .order-line-item-tier-prices table td {
     border: none;
     padding: 2px;
+    height: 19px !important;
 }
 
 .order-line-item-tier-prices i {
@@ -109,8 +114,8 @@
 
 .order-line-item-price-overridden {
     position: absolute;
-    top: 8px;
-    left: 9px;
+    top: 4px;
+    left: 10px;
 }
 
 .order-line-item-price-overridden i {

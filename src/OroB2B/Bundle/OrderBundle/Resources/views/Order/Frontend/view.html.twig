@@ -84,8 +84,8 @@
                             </td>
                             <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
                             <td>{{ lineItem.price|oro_format_price }}</td>
-                            <td>{{ lineItem.shipBy|oro_format_date }}</td>
-                            <td>{{ lineItem.comment }}</td>
+                            <td>{{ lineItem.shipBy|oro_format_date|default('N/A'|trans) }}</td>
+                            <td>{{ lineItem.comment|default('N/A'|trans) }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

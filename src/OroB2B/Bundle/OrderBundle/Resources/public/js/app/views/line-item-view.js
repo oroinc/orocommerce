@@ -27,7 +27,8 @@ define(function(require) {
                 selectors: {
                     productType: '.order-line-item-type-product',
                     freeFormType: '.order-line-item-type-free-form'
-                }
+                },
+                bundledPriceTypeValue: '20'
             }, this.options);
 
             LineItemView.__super__.initialize.apply(this, arguments);
@@ -90,7 +91,7 @@ define(function(require) {
                 var priceValue = $(e.currentTarget).data('price');
                 var quantity = 1;
 
-                if (priceType === '20') {
+                if (priceType === this.options.bundledPriceTypeValue) {
                     quantity = parseFloat(this.fieldsByName.quantity.val());
                 }
 
