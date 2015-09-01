@@ -39,7 +39,7 @@
         {{ form_widget(form) }}
 
         {% if allow_delete %}
-            <td>
+            <td class="order-line-item-remove">
                 <button type="button" class="removeLineItem btn btn-small icons-holder"><i class="icon-remove"></i></button>
             </td>
         {% elseif widget.parent.vars.allow_delete %}

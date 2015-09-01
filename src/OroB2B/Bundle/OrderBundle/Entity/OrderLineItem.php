@@ -186,7 +186,7 @@ class OrderLineItem extends ExtendOrderLineItem
      */
     public function setProduct(Product $product = null)
     {
-        if ($product && (!$this->product || $product->getSku() !== $this->product->getSku())) {
+        if ($product && (!$this->product || $product->getId() !== $this->product->getId())) {
             $this->requirePriceRecalculation = true;
         }
 

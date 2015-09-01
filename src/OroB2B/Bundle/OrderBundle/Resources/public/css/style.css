@@ -135,7 +135,7 @@
 }
 
 .order-line-item-price-value,
-.order-line-item-sku.order-line-item-type-product {
+.order-line-item-type-product {
     line-height: 31px;
 }
 
@@ -144,7 +144,12 @@
     margin-right: 10px;
 }
 
+.order-line-item-remove {
+    text-align: right;
+}
+
 .notes-widget {
     width: 280px;
     word-wrap: break-word;
+    line-height: 31px;
 }
