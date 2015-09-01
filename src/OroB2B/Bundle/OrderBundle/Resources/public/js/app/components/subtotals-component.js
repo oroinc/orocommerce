@@ -84,17 +84,22 @@ define(function(require) {
         updateSubtotals: function() {
             this.loadingMaskView.show();
 
-            var self = this;
-            this.getSubtotals(function(subtotals) {
+            if (this.getSubtotals.timeoutId) {
+                clearTimeout(this.getSubtotals.timeoutId);
+            }
 
-                self.loadingMaskView.hide();
+            this.getSubtotals.timeoutId = setTimeout(_.bind(function() {
+                this.getSubtotals.timeoutId = null;
 
-                if (!subtotals) {
-                    return null;
-                }
+                this.getSubtotals(_.bind(function(subtotals) {
+                    this.loadingMaskView.hide();
+                    if (!subtotals) {
+                        return;
+                    }
 
-                self.render(subtotals);
-            });
+                    this.render(subtotals);
+                }, this));
+            }, this), 100);
         },
 
         /**
