@@ -83,16 +83,16 @@
             {% endif %}
         {% endif %}
     {% endif %}
-    {#{% if resource_granted('DELETE', entity) %}#}
-        {#{{ UI.deleteButton({#}
-            {#'dataUrl': path('orob2b_api_account_delete_account_user', {'id': entity.id}),#}
-            {#'dataRedirect': path('orob2b_account_frontend_account_user_index'),#}
-            {#'aCss': 'no-hash remove-button',#}
-            {#'dataId': entity.id,#}
-            {#'id': 'btn-remove-account-user',#}
-            {#'entity_label': 'orob2b.account.accountuser.entity_label'|trans#}
-        {#}) }}#}
-    {#{% endif %}#}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_account_delete_account_user', {'id': entity.id}),
+            'dataRedirect': path('orob2b_account_frontend_account_user_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account-user',
+            'entity_label': 'orob2b.account.accountuser.entity_label'|trans
+        }) }}
+    {% endif %}
 {% endblock navButtons %}
 
 {% block stats %}
