@@ -88,12 +88,7 @@ class OrderController extends AbstractOrderController
      */
     public function createAction()
     {
-        $order = new Order();
-        /** @var LocaleSettings $localeSettings */
-        $localeSettings = $this->get('oro_locale.settings');
-        $order->setCurrency($localeSettings->getCurrency());
-
-        return $this->update($order);
+        return $this->update(new Order());
     }
 
     /**

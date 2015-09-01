@@ -16,8 +16,9 @@ use Oro\Bundle\FormBundle\Utils\FormUtils;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 class FrontendOrderLineItemType extends AbstractOrderLineItemType
 {
@@ -29,7 +30,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     protected $registry;
 
     /**
-     * @var PriceListRequestHandler
+     * @var FrontendPriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
@@ -40,12 +41,12 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
 
     /**
      * @param ManagerRegistry $registry
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param FrontendPriceListRequestHandler $priceListRequestHandler
      * @param string $priceClass
      */
     public function __construct(
         ManagerRegistry $registry,
-        PriceListRequestHandler $priceListRequestHandler,
+        FrontendPriceListRequestHandler $priceListRequestHandler,
         $priceClass
     ) {
         $this->registry = $registry;
@@ -135,10 +136,35 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     {
         /** @var OrderLineItem $item */
         $item = $form->getData();
-        if (!$item->getProduct() || !$item->getOrder()) {
+        if (!$item->getOrder()) {
             return;
         }
 
+        if ($item->getProduct()) {
+            $choices = $this->getProductAvailableChoices($item);
+
+        } else {
+            $choices = [$item->getProductUnit()];
+        }
+
+        $form->remove('productUnit');
+        $form->add(
+            'productUnit',
+            ProductUnitSelectionType::NAME,
+            [
+                'label' => 'orob2b.product.productunit.entity_label',
+                'required' => true,
+                'choices' => $choices
+            ]
+        );
+    }
+
+    /**
+     * @param OrderLineItem $item
+     * @return array|ProductUnit[]
+     */
+    protected function getProductAvailableChoices(OrderLineItem $item)
+    {
         /** @var ProductPriceRepository $repository */
         $repository = $this->registry
             ->getManagerForClass($this->priceClass)
@@ -162,15 +188,6 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
             $choices[] = $item->getProductUnit();
         }
 
-        $form->remove('productUnit');
-        $form->add(
-            'productUnit',
-            ProductUnitSelectionType::NAME,
-            [
-                'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
-                'choices' => $choices
-            ]
-        );
+        return $choices;
     }
 }
