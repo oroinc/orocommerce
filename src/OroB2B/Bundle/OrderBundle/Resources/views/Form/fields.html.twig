@@ -98,7 +98,7 @@
                 {{ form.vars.value.productSku }}
             {% endif %}
         </div>
-        <div class="order-line-item-type-free-form">
+        <div class="order-line-item-type-free-form" style="display: none;">
             {{ form_widget(form.productSku) }}
         </div>
     </td>
@@ -108,7 +108,7 @@
                 {{ form_widget(form.product) }}
                 <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
             </div>
-            <div class="order-line-item-type-free-form">
+            <div class="order-line-item-type-free-form" style="display: none;">
                 {{ form_widget(form.freeFormProduct) }}
                 <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
             </div>
@@ -131,7 +131,7 @@
                 <p><a href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.reset_price.label'|trans }}</a></p>
             {% endset %}
 
-            <div class="order-line-item-price-overridden">
+            <div class="order-line-item-price-overridden" style="display: none;">
                 <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ priceOverriddenTooltip|escape }}"></i>
             </div>
 
@@ -151,7 +151,7 @@
         {{ form_errors(form.shipBy) }}
     </td>
     <td class="order-line-item-comment">
-        <div data-page-component-module="orob2border/js/app/components/notes-component">
+        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
             {{ form_widget(form.comment) }}
         </div>
     </td>
@@ -203,7 +203,7 @@
         {{ form_errors(form.shipBy) }}
     </td>
     <td class="order-line-item-comment">
-        <div data-page-component-module="orob2border/js/app/components/notes-component">
+        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display:none;">
             {{ form_widget(form.comment) }}
         </div>
     </td>

@@ -52,8 +52,12 @@ services:
 
     orob2b_order.form.type.order_line_item:
         class: %orob2b_order.form.type.order_line_item.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.formatter.product_unit_label
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
+            - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: form.type, alias: "orob2b_order_line_item" }
 
