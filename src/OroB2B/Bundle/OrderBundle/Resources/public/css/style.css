@@ -14,20 +14,6 @@
     width: 257px !important;
 }
 
-/* order-line-items */
-table.order-line-items td {
-    vertical-align: top;
-}
-
-table.order-line-items td, table.order-line-items th {
-    border: 1px solid #e5e5e5;
-    padding: 10px;
-}
-
-table.order-line-items th {
-    text-align: left;
-}
-
 .order-line-item-tier-prices {
     float: left;
     position: relative;

@@ -57,16 +57,16 @@
 
     {% if entity.lineItems|length %}
         {% set lineItems %}
-            <div class="order-orderproducts-info control-group">
-                <table class="order-orderproduct-collection-table order-orderproduct-collection-table-view order-line-items">
+            <div class="order-orderproducts-info grid-container">
+                <table class="grid table-hover table table-bordered table-condensed order-orderproduct-collection-table order-orderproduct-collection-table-view order-line-items">
                     <thead>
                         <tr>
-                            <th class="order-line-item-sku">{{ 'orob2b.product.sku.label'|trans }}</th>
-                            <th class="order-line-item-type">{{ 'orob2b.product.entity_label'|trans }}</th>
-                            <th class="order-line-item-quantity">{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
-                            <th class="order-line-item-price">{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
-                            <th class="order-line-item-ship_by">{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</th>
-                            <th class="order-line-item-comment">{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</th>
+                            <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                            <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
+                            <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
+                            <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
+                            <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
+                            <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
                         </tr>
                     </thead>
                     <tbody>

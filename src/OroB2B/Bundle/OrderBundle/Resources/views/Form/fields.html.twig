@@ -53,20 +53,20 @@
         {% if prototype is defined %}
             {% set prototype_html = _self.orob2b_order_line_items_collection_item_prototype(form) %}
         {% endif %}
-        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection' }) %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
         <div class="row-oro">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
-                <table class="order-line-items">
+                <table class="grid table-hover table table-bordered table-condensed order-line-items">
                     <thead>
                     <tr>
-                        <th class="order-line-item-sku">{{ 'orob2b.product.sku.label'|trans }}</th>
-                        <th class="order-line-item-type">{{ 'orob2b.product.entity_label'|trans }}</th>
-                        <th class="order-line-item-quantity">{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</th>
-                        <th class="order-line-item-price">{{ 'orob2b.order.orderlineitem.price.label'|trans }}</th>
-                        <th class="order-line-item-ship_by">{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</th>
-                        <th class="order-line-item-comment">{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</th>
+                        <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                        <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
+                        <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
+                        <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
+                        <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
+                        <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
                         {% if form.vars.allow_delete %}
                             <th class="order-line-item-actions"></th>
                         {% endif %}

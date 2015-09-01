@@ -5,6 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var layout = require('oroui/js/layout');
+    var NumberFormatter = require('orolocale/js/formatter/number');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
@@ -85,8 +86,16 @@ define(function(require) {
             LineItemView.__super__.initTierPrices.apply(this, arguments);
 
             this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
+                var priceType = this.fieldsByName.priceType.val();
+                var priceValue = $(e.currentTarget).data('price');
+                var quantity = 1;
+
+                if (priceType === '20') {
+                    quantity = parseFloat(this.fieldsByName.quantity.val());
+                }
+
                 this.fieldsByName.priceValue
-                    .val($(e.currentTarget).data('price'))
+                    .val(NumberFormatter.formatDecimal(priceValue * quantity))
                     .change();
             }, this));
         },
