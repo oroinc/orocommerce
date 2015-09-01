@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
@@ -22,7 +23,6 @@ use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 class RequestTypeTest extends AbstractTest
 {
