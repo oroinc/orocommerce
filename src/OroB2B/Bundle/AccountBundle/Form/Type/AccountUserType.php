@@ -55,7 +55,7 @@ class AccountUserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->addEntityFields($builder, $options['skip_role_acl_check']);
+        $this->addEntityFields($builder);
         $data = $builder->getData();
 
         $passwordOptions = [
@@ -78,10 +78,9 @@ class AccountUserType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param bool $skipRoleAclCheck
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    protected function addEntityFields(FormBuilderInterface $builder, $skipRoleAclCheck)
+    protected function addEntityFields(FormBuilderInterface $builder)
     {
         $builder
             ->add(
@@ -171,9 +170,7 @@ class AccountUserType extends AbstractType
                 ]
             );
 
-        if ($skipRoleAclCheck) {
-            $builder->add('roles', FrontendAccountUserRoleSelectType::NAME);
-        } elseif ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
+        if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
             $builder->add('roles', AccountUserRoleSelectType::NAME);
         }
     }
@@ -217,7 +214,6 @@ class AccountUserType extends AbstractType
             'intention' => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'ownership_disabled' => true,
-            'skip_role_acl_check' => false
         ]);
     }
 

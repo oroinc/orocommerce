@@ -7,6 +7,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class FrontendAccountUserType extends AbstractType
 {
@@ -32,6 +33,7 @@ class FrontendAccountUserType extends AbstractType
         /** @var $account Account */
         $account = $this->securityFacade->getLoggedUser()->getAccount();
         $builder->add('account', AccountSelectType::NAME, ['data' => $account, 'empty_data' => $account->getId()]);
+        $builder->add('roles', FrontendAccountUserRoleSelectType::NAME);
     }
 
     /**
@@ -50,11 +52,10 @@ class FrontendAccountUserType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(['skip_role_acl_check' => true]);
+        $resolver->setDefaults(array(
+            'data_class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+        ));
     }
 }

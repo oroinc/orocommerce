@@ -10,6 +10,7 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+
 class FrontendAccountUserRoleSelectType extends AbstractType
 {
     const NAME = 'orob2b_account_frontend_account_user_role_select';
@@ -59,12 +60,14 @@ class FrontendAccountUserRoleSelectType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        $resolver->setOptional(['loader']);
         $resolver->setNormalizer('loader', function () {
             $qb = $this->registry->getManager()
                 ->getRepository('OroB2BAccountBundle:AccountUserRole')
                 ->getAvailableRolesByAccountUserQueryBuilder($this->securityFacade->getLoggedUser());
             return new ORMQueryBuilderLoader($qb);
         });
-        $resolver->setDefaults(['frontend' => true]);
     }
+
+
 }

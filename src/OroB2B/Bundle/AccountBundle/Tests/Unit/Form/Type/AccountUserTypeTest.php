@@ -154,21 +154,21 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         return
             [
-//            'user without submitted data' => [
-//                'defaultData' => $newAccountUser,
-//                'submittedData' => [],
-//                'expectedData' => $newAccountUser
-//            ],
-//            'altered existing user' => [
-//                'defaultData' => $existingAccountUser,
-//                'submittedData' => [
-//                    'firstName' => 'John',
-//                    'lastName' => 'Doe',
-//                    'email' => 'johndoe@example.com',
-//                    'account' => 2
-//                ],
-//                'expectedData' => $alteredExistingAccountUser
-//            ],
+            'user without submitted data' => [
+                'defaultData' => $newAccountUser,
+                'submittedData' => [],
+                'expectedData' => $newAccountUser
+            ],
+            'altered existing user' => [
+                'defaultData' => $existingAccountUser,
+                'submittedData' => [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'account' => 2
+                ],
+                'expectedData' => $alteredExistingAccountUser
+            ],
                 'altered existing user with roles' => [
                     'defaultData' => $existingAccountUser,
                     'submittedData' => [
@@ -181,17 +181,17 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'expectedData' => $alteredExistingAccountUserWithRole,
                     'rolesGranted' => true
                 ],
-//            'altered existing user with addresses' => [
-//                'defaultData' => $existingAccountUser,
-//                'submittedData' => [
-//                    'firstName' => 'John',
-//                    'lastName' => 'Doe',
-//                    'email' => 'johndoe@example.com',
-//                    'account' => 2,
-//                    'addresses' => [1, 2]
-//                ],
-//                'expectedData' => $alteredExistingAccountUserWithAddresses,
-//            ]
+            'altered existing user with addresses' => [
+                'defaultData' => $existingAccountUser,
+                'submittedData' => [
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'account' => 2,
+                    'addresses' => [1, 2]
+                ],
+                'expectedData' => $alteredExistingAccountUserWithAddresses,
+            ]
             ];
     }
 
