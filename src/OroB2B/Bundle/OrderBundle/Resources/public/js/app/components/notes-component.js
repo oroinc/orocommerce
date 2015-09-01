@@ -100,6 +100,7 @@ define(function(require) {
                 .mousedown(_.bind(this.removeNotes, this));
 
             this.changed();
+            this.$el.show();
         },
 
         hasVal: function() {

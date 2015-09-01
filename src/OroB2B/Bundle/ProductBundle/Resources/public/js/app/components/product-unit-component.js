@@ -24,7 +24,8 @@ define(function(require) {
             routingParams: {},
             errorMessage: 'Sorry, unexpected error was occurred',
             loadingMaskEnabled: true,
-            dropQuantityOnLoad: true
+            dropQuantityOnLoad: true,
+            defaultValues: null
         },
 
         /**
@@ -113,8 +114,8 @@ define(function(require) {
         _dropValues: function() {
             if (this.options.dropQuantityOnLoad) {
                 this.handleQuantityState(true);
-                this.handleUnitsState(true, null);
             }
+            this.handleUnitsState(this.options.defaultValues);
         },
 
         /**
@@ -124,7 +125,7 @@ define(function(require) {
          */
         _success: function(data) {
             this.handleQuantityState(false);
-            this.handleUnitsState(false, data.units);
+            this.handleUnitsState(data.units);
         },
 
         /**
@@ -147,11 +148,11 @@ define(function(require) {
         },
 
         /**
-         * @param {Boolean} disabled
          * @param {Object} units
          */
-        handleUnitsState: function(disabled, units) {
+        handleUnitsState: function(units) {
             var self = this;
+            var disabled = _.isEmpty(units);
 
             this.unitSelector
                 .prop('disabled', disabled)

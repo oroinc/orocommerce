@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -11,9 +13,21 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
+    const PRODUCT_UNIT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit';
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
+     */
+    protected $productUnitLabelFormatter;
+
     /**
      * {@inheritdoc}
      */
@@ -37,8 +51,34 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         parent::setUp();
 
-        $this->formType = new OrderLineItemType();
+        $this->registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->any())
+            ->method('findBy')
+            ->will($this->returnValue([
+                'item' => 'item',
+                'kg' => 'kilogram',
+            ]));
+
+        $this->registry->expects($this->any())
+            ->method('getRepository')
+            ->with(self::PRODUCT_UNIT_CLASS)
+            ->will($this->returnValue($repository));
+
+        $this->formType = new OrderLineItemType($this->registry, $this->productUnitLabelFormatter);
         $this->formType->setDataClass('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem');
+        $this->formType->setProductUnitClass(self::PRODUCT_UNIT_CLASS);
     }
 
     public function testGetName()
