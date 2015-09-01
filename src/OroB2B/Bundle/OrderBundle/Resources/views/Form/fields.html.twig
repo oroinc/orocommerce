@@ -94,8 +94,8 @@
 {% block orob2b_order_line_item_widget %}
     <td class="order-line-item-sku">
         <div class="order-line-item-type-product">
-            {% if form.vars.value is not empty and form.vars.value.product is not empty %}
-                {{ form.vars.value.product.sku }}
+            {% if form.vars.value is not empty %}
+                {{ form.vars.value.productSku }}
             {% endif %}
         </div>
         <div class="order-line-item-type-free-form">
@@ -162,8 +162,8 @@
 
     <td class="order-line-item-sku">
         <div class="order-line-item-type-product">
-            {% if form.vars.value is not empty and form.vars.value.product is not empty %}
-                {{ form.vars.value.product.sku }}
+            {% if form.vars.value is not empty %}
+                {{ form.vars.value.productSku }}
             {% endif %}
         </div>
     </td>

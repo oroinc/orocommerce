@@ -68,7 +68,7 @@ class ProductPriceProvider
      * @param array $productUnitQuantities
      * @param string $currency
      * @param PriceList|null $priceList
-     * @return array
+     * @return array|Price[]
      */
     public function getMatchedPrices(array $productUnitQuantities, $currency, PriceList $priceList = null)
     {

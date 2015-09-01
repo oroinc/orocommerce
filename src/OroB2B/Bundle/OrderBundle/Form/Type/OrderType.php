@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
@@ -34,19 +35,25 @@ class OrderType extends AbstractType
     /** @var SecurityFacade */
     protected $securityFacade;
 
+    /** @var OrderCurrencyHandler */
+    protected $orderCurrencyHandler;
+
     /**
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
+     * @param OrderCurrencyHandler $orderCurrencyHandler
      */
     public function __construct(
         SecurityFacade $securityFacade,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
-        PaymentTermProvider $paymentTermProvider
+        PaymentTermProvider $paymentTermProvider,
+        OrderCurrencyHandler $orderCurrencyHandler
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentTermProvider = $paymentTermProvider;
+        $this->orderCurrencyHandler = $orderCurrencyHandler;
     }
 
     /**
@@ -56,6 +63,7 @@ class OrderType extends AbstractType
     {
         /** @var Order $order */
         $order = $options['data'];
+        $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
