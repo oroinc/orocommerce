@@ -187,7 +187,7 @@
     </td>
     <td class="order-line-item-price">
         {% if form.vars.value.price is defined and form.vars.value.price is not null %}
-            {% set priceValue = form.vars.value.price|oro_format_price%}
+            {% set priceValue = form.vars.value.price %}
         {% else %}
             {% set priceValue = '' %}
         {% endif %}

@@ -78,11 +78,9 @@ define(function(require) {
 
                 if (!matchedPrice && price.length !== 0) {
                     matchedPrice = price;
-                } else {
-                    matchedPrice = NumberFormatter.formatCurrency(matchedPrice, this.options.currency);
                 }
 
-                this.$priceValueText.text(matchedPrice);
+                this.$priceValueText.text(NumberFormatter.formatCurrency(matchedPrice, this.options.currency));
             }
 
             this.renderTierPrices();

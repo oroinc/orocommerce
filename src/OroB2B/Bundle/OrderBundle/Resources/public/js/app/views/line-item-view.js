@@ -96,7 +96,7 @@ define(function(require) {
                 }
 
                 this.fieldsByName.priceValue
-                    .val(NumberFormatter.formatDecimal(priceValue * quantity))
+                    .val(priceValue * quantity)
                     .change();
             }, this));
         },
