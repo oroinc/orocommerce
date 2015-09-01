@@ -153,6 +153,8 @@ define(function(require) {
 
             if (this.fieldsByName.hasOwnProperty('product')) {
                 this.fieldsByName.product.change(_.bind(function(e) {
+                    this.resetData();
+
                     var productId = this._getProductId();
                     if (productId.length === 0) {
                         this.setTierPrices({});
@@ -168,6 +170,12 @@ define(function(require) {
 
             mediator.trigger('order:get:products-tier-prices', _.bind(this.setTierPrices, this));
             mediator.on('order:refresh:products-tier-prices', this.setTierPrices, this);
+        },
+
+        resetData: function() {
+            if (this.fieldsByName.hasOwnProperty('quantity')) {
+                this.fieldsByName.quantity.val(1);
+            }
         },
 
         /**

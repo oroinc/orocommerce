@@ -76,7 +76,7 @@ define(function(require) {
                 var matchedPrice = this.getMatchedPriceValue();
                 var price = this.$priceValueText.data('price');
 
-                if (!matchedPrice && price.length !== 0) {
+                if (!matchedPrice && parseFloat(price) > 0.0) {
                     matchedPrice = price;
                 }
 
@@ -84,6 +84,17 @@ define(function(require) {
             }
 
             this.renderTierPrices();
+        },
+
+        resetData: function() {
+            var initialized = this.initialized;
+            this.initialized = false;
+
+            FrontendLineItemView.__super__.resetData.apply(this, arguments);
+
+            this.$priceValueText.data('price', null);
+            this.$priceValueText.html('');
+            this.initialized = initialized;
         }
     });
 
