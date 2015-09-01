@@ -56,6 +56,10 @@ define(function(require) {
             this.$priceList = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_priceList"]');
             this.$currency = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
 
+            this.$el.find('.add-list-item').mousedown(function(e) {
+                $(this).click();
+            });
+
             mediator.on('order:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('order:load:products-tier-prices', this.loadProductsTierPrices, this);
             mediator.on('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
