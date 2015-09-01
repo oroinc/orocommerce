@@ -286,8 +286,6 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
         array $resultData,
         array $expectedIds
     ) {
-        $this->markTestIncomplete('Incomplete due to break in platform. Should be fixed in scope of BAP-8858.');
-
         $searchResult = $this->getMockBuilder('Oro\Bundle\SearchBundle\Query\Result')
             ->disableOriginalConstructor()
             ->getMock();
@@ -325,9 +323,8 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('where')
             ->with($expr)
             ->will($this->returnSelf());
-        $this->aclHelper->expects($this->once())
-            ->method('apply')
-            ->with($queryBuilder, 'VIEW')
+        $queryBuilder->expects($this->once())
+            ->method('getQuery')
             ->will($this->returnValue($query));
         $this->entityRepository
             ->expects($this->any())

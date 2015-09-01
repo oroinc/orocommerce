@@ -177,8 +177,11 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $entityForm->expects($this->once())
             ->method('setData')
             ->willReturnCallback(
-                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege) {
-                    $this->assertEquals([$firstEntityPrivilege], array_values($actualPrivileges->toArray()));
+                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege, $secondEntityPrivilege) {
+                    $this->assertEquals(
+                        [$firstEntityPrivilege, $secondEntityPrivilege],
+                        array_values($actualPrivileges->toArray())
+                    );
                 }
             );
 
