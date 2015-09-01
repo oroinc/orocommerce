@@ -139,11 +139,11 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         /* @var $aclManager AclManager */
         $aclManager = $this->container->get('oro_security.acl.manager');
 
-        foreach ($this->roles as $key => $items) {
+        foreach ($this->roles as $key => $roles) {
             $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $key);
             $role->setLabel($key);
 
-            foreach ($items as $acls) {
+            foreach ($roles as $acls) {
                 $className = $this->container->getParameter($acls['class']);
 
                 $this->setRolePermissions($aclManager, $role, $className, $acls['acls']);
@@ -174,9 +174,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $accountUser = $userManager->createUser();
 
             $accountUser
-                ->setAccount($this->getReference($item['account']))
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
+                ->setAccount($this->getReference($item['account']))
                 ->setEmail($item['email'])
                 ->setConfirmed(true)
                 ->setOrganization($organization)
