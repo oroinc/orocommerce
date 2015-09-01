@@ -147,6 +147,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
+                        'isDraft',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -169,6 +170,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
+                        'isDraft',
                         'createdAt',
                         'accountUserName',
                         'update_link',
@@ -188,6 +190,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
+                        'isDraft',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -207,6 +210,7 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
+                        'isDraft',
                         'createdAt',
                         'update_link',
                         'view_link',

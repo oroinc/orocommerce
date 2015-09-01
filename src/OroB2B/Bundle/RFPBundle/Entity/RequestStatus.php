@@ -42,6 +42,7 @@ class RequestStatus implements Translatable
 {
     const OPEN = 'open';
     const CLOSED = 'closed';
+    const DRAFT = 'draft';
 
     /**
      * @var integer

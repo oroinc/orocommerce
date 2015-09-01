@@ -45,7 +45,7 @@ class FrontendRequestTypeTest extends AbstractTest
 
         $repository->expects($this->any())
             ->method('findOneBy')
-            ->with(['name' => 'open'])
+            ->with(['name' => RequestStatus::DRAFT])
             ->willReturn($requestStatus);
 
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
@@ -82,11 +82,6 @@ class FrontendRequestTypeTest extends AbstractTest
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_b2b_rfp.default_request_status')
-            ->willReturn('open');
 
         /**
          * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator

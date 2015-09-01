@@ -285,14 +285,20 @@ datagrid:
                     - request.id
                     - request.createdAt
                     - requestAccountUser.username as accountUserName
+                    - requestStatus.name as statusName
                 from:
                     - { table: %orob2b_rfp.entity.request.class%, alias: request }
                 join:
                     left:
                         - { join: request.accountUser, alias: requestAccountUser }
+                        - { join: request.status, alias: requestStatus }
+
         columns:
             id:
                 label:         orob2b.rfp.request.id.label
+            isDraft:
+                label:         orob2b.frontend.rfp.request.is_draft.label
+                frontend_type: boolean
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime

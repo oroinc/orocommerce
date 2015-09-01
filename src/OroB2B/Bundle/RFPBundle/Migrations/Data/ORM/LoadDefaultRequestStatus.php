@@ -18,7 +18,8 @@ class LoadDefaultRequestStatus extends AbstractTranslatableEntityFixture
      */
     protected $items = [
         ['order' => 10, 'name' => RequestStatus::OPEN],
-        ['order' => 20, 'name' => RequestStatus::CLOSED]
+        ['order' => 20, 'name' => RequestStatus::CLOSED],
+        ['order' => 30, 'name' => RequestStatus::DRAFT],
     ];
 
     /**
