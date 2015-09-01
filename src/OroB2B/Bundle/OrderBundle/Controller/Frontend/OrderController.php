@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller\Frontend;
 
+use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,12 +14,12 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Controller\AbstractOrderController;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
+use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 
 class OrderController extends AbstractOrderController
 {
@@ -84,11 +86,12 @@ class OrderController extends AbstractOrderController
      *      group_name="commerce"
      * )
      *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new Order());
+        return $this->update(new Order(), $request);
     }
 
     /**
@@ -105,20 +108,21 @@ class OrderController extends AbstractOrderController
      * )
      *
      * @param Order $order
-     *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Order $order)
+    public function updateAction(Order $order, Request $request)
     {
-        return $this->update($order);
+        return $this->update($order, $request);
     }
 
     /**
      * @param Order $order
+     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    protected function update(Order $order)
+    protected function update(Order $order, Request $request)
     {
         if (!$order->getAccountUser()) {
             $accountUser = $this->get('oro_security.security_facade')->getLoggedUser();
@@ -146,6 +150,15 @@ class OrderController extends AbstractOrderController
             $order->setOwner($user);
         }
 
+        $form = $this->createForm(FrontendOrderType::NAME, $order);
+
+        $handler = new OrderHandler(
+            $form,
+            $request,
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
+            $this->get('orob2b_order.provider.subtotals')
+        );
+
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
             $this->createForm(FrontendOrderType::NAME, $order),
@@ -162,7 +175,7 @@ class OrderController extends AbstractOrderController
                 ];
             },
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            null,
+            $handler,
             function (Order $order, FormInterface $form, Request $request) {
                 return [
                     'form' => $form->createView(),
