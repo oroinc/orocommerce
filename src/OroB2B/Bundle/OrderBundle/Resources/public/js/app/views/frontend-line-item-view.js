@@ -3,6 +3,7 @@ define(function(require) {
 
     var FrontendLineItemView;
     var $ = require('jquery');
+    var _ = require('underscore');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
@@ -16,6 +17,11 @@ define(function(require) {
          * @property {jQuery}
          */
         $priceValueText: null,
+
+        /**
+         * @property {Boolean}
+         */
+        initialized: false,
 
         /**
          * @inheritDoc
@@ -35,7 +41,7 @@ define(function(require) {
                 routingParams: currencyRouteParameter
             };
             if (_.has(this.options, 'unitLoaderRouteName') && this.options.unitLoaderRouteName) {
-                unitLoaderOptions['routeName'] = this.options.unitLoaderRouteName;
+                unitLoaderOptions.routeName = this.options.unitLoaderRouteName;
             }
             this.initializeUnitLoader(unitLoaderOptions);
 
@@ -56,6 +62,8 @@ define(function(require) {
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit
             ]);
+
+            this.initialized = true;
         },
 
         /**
@@ -64,10 +72,17 @@ define(function(require) {
         setMatchedPrices: function(matchedPrices) {
             FrontendLineItemView.__super__.setMatchedPrices.apply(this, arguments);
 
-            if (!this.options.disabled) {
-                this.$priceValueText.text(
-                    NumberFormatter.formatCurrency(this.getMatchedPriceValue(), this.options.currency)
-                );
+            if (!this.options.disabled && this.initialized) {
+                var matchedPrice = this.getMatchedPriceValue();
+                var price = this.$priceValueText.data('price');
+
+                if (!matchedPrice && price.length !== 0) {
+                    matchedPrice = price;
+                } else {
+                    matchedPrice = NumberFormatter.formatCurrency(matchedPrice, this.options.currency);
+                }
+
+                this.$priceValueText.text(matchedPrice);
             }
 
             this.renderTierPrices();

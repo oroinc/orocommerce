@@ -14,6 +14,10 @@
     width: 257px !important;
 }
 
+.order-line-items table.grid {
+    overflow: auto;
+}
+
 .order-line-items .add-list-item {
     margin-top: 10px;
 }

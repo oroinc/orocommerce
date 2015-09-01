@@ -141,6 +141,11 @@ class OrderLineItem extends ExtendOrderLineItem
     protected $comment;
 
     /**
+     * @var bool
+     */
+    protected $requirePriceRecalculation = false;
+
+    /**
      * Get id
      *
      * @return integer
@@ -181,6 +186,10 @@ class OrderLineItem extends ExtendOrderLineItem
      */
     public function setProduct(Product $product = null)
     {
+        if ($product && (!$this->product || $product->getSku() !== $this->product->getSku())) {
+            $this->requirePriceRecalculation = true;
+        }
+
         $this->product = $product;
 
         return $this;
@@ -246,6 +255,10 @@ class OrderLineItem extends ExtendOrderLineItem
      */
     public function setQuantity($quantity)
     {
+        if ($quantity !== $this->quantity) {
+            $this->requirePriceRecalculation = true;
+        }
+
         $this->quantity = $quantity;
 
         return $this;
@@ -269,6 +282,10 @@ class OrderLineItem extends ExtendOrderLineItem
      */
     public function setProductUnit(ProductUnit $productUnit = null)
     {
+        if ($productUnit && (!$this->productUnit || $productUnit->getCode() !== $this->productUnit->getCode())) {
+            $this->requirePriceRecalculation = true;
+        }
+
         $this->productUnit = $productUnit;
 
         return $this;
@@ -452,6 +469,14 @@ class OrderLineItem extends ExtendOrderLineItem
         $this->shipBy = $shipBy;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRequirePriceRecalculation()
+    {
+        return $this->requirePriceRecalculation;
     }
 
     /**

@@ -186,10 +186,13 @@
         {{ form_errors(form.productUnit) }}
     </td>
     <td class="order-line-item-price">
-        <div class="order-line-item-price-value">
-            {% if form.vars.value.price is defined and form.vars.value.price is not null %}
-                {{ form.vars.value.price|oro_format_price }}
-            {% endif %}
+        {% if form.vars.value.price is defined and form.vars.value.price is not null %}
+            {% set priceValue = form.vars.value.price|oro_format_price%}
+        {% else %}
+            {% set priceValue = '' %}
+        {% endif %}
+        <div class="order-line-item-price-value" data-price="{{ priceValue }}">
+            {{ priceValue }}
         </div>
         <div class="order-line-item-tier-prices">
             <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>

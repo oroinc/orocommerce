@@ -71,4 +71,31 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('SKU', $entity->getProductSku());
         $this->assertEquals('kg', $entity->getProductUnitCode());
     }
+
+    /**
+     * @dataProvider isRequirePriceRecalculationDataProvider
+     *
+     * @param string $method
+     * @param mixed $value
+     */
+    public function testIsRequirePriceRecalculation($method, $value)
+    {
+        $entity = new OrderLineItem();
+        $this->assertFalse($entity->isRequirePriceRecalculation());
+
+        $entity->$method($value);
+        $this->assertTrue($entity->isRequirePriceRecalculation());
+    }
+
+    /**
+     * @return array
+     */
+    public function isRequirePriceRecalculationDataProvider()
+    {
+        return [
+            ['setProduct', new Product()],
+            ['setProductUnit', new ProductUnit()],
+            ['setQuantity', 1]
+        ];
+    }
 }
