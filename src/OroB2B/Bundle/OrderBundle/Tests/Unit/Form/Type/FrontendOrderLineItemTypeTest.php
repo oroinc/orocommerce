@@ -16,7 +16,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 
 class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
@@ -25,7 +25,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /** @var PriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FrontendPriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $priceListRequestHandler;
 
     /**
@@ -56,7 +56,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->getMock();
 
         $this->priceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler')
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
 

@@ -16,7 +16,7 @@ use Oro\Bundle\FormBundle\Utils\FormUtils;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -30,7 +30,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
     protected $registry;
 
     /**
-     * @var PriceListRequestHandler
+     * @var FrontendPriceListRequestHandler
      */
     protected $priceListRequestHandler;
 
@@ -41,12 +41,12 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
 
     /**
      * @param ManagerRegistry $registry
-     * @param PriceListRequestHandler $priceListRequestHandler
+     * @param FrontendPriceListRequestHandler $priceListRequestHandler
      * @param string $priceClass
      */
     public function __construct(
         ManagerRegistry $registry,
-        PriceListRequestHandler $priceListRequestHandler,
+        FrontendPriceListRequestHandler $priceListRequestHandler,
         $priceClass
     ) {
         $this->registry = $registry;
