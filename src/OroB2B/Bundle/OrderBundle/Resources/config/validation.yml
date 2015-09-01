@@ -27,10 +27,6 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
     properties:
         order:
             - NotBlank: ~
-        product:
-            - NotBlank:
-                message: 'orob2b.order.orderlineitem.product.blank'
-                groups: [ Frontend ]
         productSku:
             - NotBlank:
                 groups: [ Import ]
