@@ -65,7 +65,8 @@
     {% endset %}
 
     {% set lineItems %}
-        <div data-page-component-module="oroui/js/app/components/view-component"
+        <div class="order-line-items"
+             data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orob2border/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
@@ -73,6 +74,7 @@
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.lineItems) }}
+            {{ form_errors(form.lineItems) }}
         </div>
     {% endset %}
 

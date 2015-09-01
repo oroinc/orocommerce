@@ -15,6 +15,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
@@ -39,22 +40,28 @@ class FrontendOrderType extends AbstractType
     /** @var ProductPriceProvider */
     protected $productPriceProvider;
 
+    /** @var OrderCurrencyHandler */
+    protected $orderCurrencyHandler;
+
     /**
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param SecurityFacade $securityFacade
      * @param PaymentTermProvider $paymentTermProvider
      * @param ProductPriceProvider $productPriceProvider
+     * @param OrderCurrencyHandler $orderCurrencyHandler
      */
     public function __construct(
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         SecurityFacade $securityFacade,
         PaymentTermProvider $paymentTermProvider,
-        ProductPriceProvider $productPriceProvider
+        ProductPriceProvider $productPriceProvider,
+        OrderCurrencyHandler $orderCurrencyHandler
     ) {
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->securityFacade = $securityFacade;
         $this->paymentTermProvider = $paymentTermProvider;
         $this->productPriceProvider = $productPriceProvider;
+        $this->orderCurrencyHandler = $orderCurrencyHandler;
     }
 
     /**
@@ -64,6 +71,7 @@ class FrontendOrderType extends AbstractType
     {
         /** @var Order $order */
         $order = $options['data'];
+        $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
@@ -155,9 +163,10 @@ class FrontendOrderType extends AbstractType
             $lineItemsWithIdentifier = [];
 
             foreach ($order->getLineItems() as $lineItem) {
-                if (!$lineItem->getProduct() || !$lineItem->getProductUnit() || !$lineItem->getQuantity()) {
+                if (!$this->isValidForPriceUpdate($lineItem)) {
                     continue;
                 }
+
                 $productUnitQuantity = new ProductUnitQuantity(
                     $lineItem->getProduct(),
                     $lineItem->getProductUnit(),
@@ -173,6 +182,20 @@ class FrontendOrderType extends AbstractType
     }
 
     /**
+     * @param OrderLineItem $lineItem
+     * @return bool
+     */
+    protected function isValidForPriceUpdate(OrderLineItem $lineItem)
+    {
+        return $lineItem->getProduct()
+            && $lineItem->getProductUnit()
+            && $lineItem->getQuantity()
+            && !$lineItem->getPrice()
+            && !$lineItem->isFromExternalSource()
+            && $lineItem->isRequirePriceRecalculation();
+    }
+
+    /**
      * @param string $currency
      * @param ProductUnitQuantity[] $productUnitQuantities
      * @param OrderLineItem[] $lineItemsWithIdentifier
@@ -182,10 +205,7 @@ class FrontendOrderType extends AbstractType
         $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities, $currency);
 
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
-            if (array_key_exists($identifier, $prices) &&
-                $prices[$identifier] instanceof Price &&
-                !$lineItem->isFromExternalSource()
-            ) {
+            if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {
                 $lineItem->setPrice($prices[$identifier]);
             }
         }

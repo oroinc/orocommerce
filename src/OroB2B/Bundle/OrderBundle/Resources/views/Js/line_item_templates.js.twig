@@ -15,13 +15,19 @@
         </tr>
         <% _.each(prices, function(price) { %>
             <tr class="<% if (!_.isNull(matchedPrice) && unit === unitCode && parseFloat(price.price) === parseFloat(matchedPrice)) { %>matched-tier-price<% } %>">
-                <td class="text-right"><%= price.qty %>:</td>
-                <td class="text-left">
-                    <% if (clickable) { %>
-                        <a href="javascript: void(0);" data-price="<%= parseFloat(price.price) %>"><%= formatter.formatCurrency(price.price, price.currency) %></a>
-                    <% } else { %>
-                        <%= formatter.formatCurrency(price.price, price.currency) %>
-                    <% } %>
+                <td><div class="text-right"><%= price.qty %>:</div></td>
+                <td>
+                    <div class="text-left">
+                        <% if (clickable) { %>
+                            <a
+                                href="javascript: void(0);"
+                                data-price="<%= parseFloat(price.price) %>"
+                                data-unit="<%= unit %>"
+                            ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                        <% } else { %>
+                            <%= formatter.formatCurrency(price.price, price.currency) %>
+                        <% } %>
+                    </div>
                 </td>
             </tr>
         <% }) %>
