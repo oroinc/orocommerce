@@ -1,0 +1,6 @@
+orob2b:
+    shoppinglist:
+        not_empty: "Shopping List label must not be empty"
+
+        lineitem:
+            already_exists: "Line Item with the same product and unit already exists"
