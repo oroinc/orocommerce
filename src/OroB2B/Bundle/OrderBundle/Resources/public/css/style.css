@@ -15,17 +15,19 @@
 }
 
 /* order-line-items */
-table.order-line-items td {
+.order-line-items table td,
+.order-line-items table th {
     vertical-align: top;
-}
-
-table.order-line-items td, table.order-line-items th {
     border: 1px solid #e5e5e5;
     padding: 10px;
 }
 
-table.order-line-items th {
+.order-line-items table th {
     text-align: left;
+}
+
+.order-line-items .add-list-item {
+    margin-top: 10px;
 }
 
 .order-line-item-tier-prices {
@@ -78,8 +80,12 @@ table.order-line-items th {
     text-align: right;
 }
 
+.order-line-item-quantity input[type="number"] {
+    margin-right: 3px;
+}
+
 .order-line-item-quantity {
-    width: 207px;
+    width: 210px;
 }
 
 .order-line-item-ship_by {
