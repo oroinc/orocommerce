@@ -155,9 +155,15 @@ class FrontendOrderType extends AbstractType
             $lineItemsWithIdentifier = [];
 
             foreach ($order->getLineItems() as $lineItem) {
-                if (!$lineItem->getProduct() || !$lineItem->getProductUnit() || !$lineItem->getQuantity()) {
+                if (!$lineItem->getProduct()
+                    || !$lineItem->getProductUnit()
+                    || !$lineItem->getQuantity()
+                    || $lineItem->getPrice()
+                    || $lineItem->isFromExternalSource()
+                ) {
                     continue;
                 }
+
                 $productUnitQuantity = new ProductUnitQuantity(
                     $lineItem->getProduct(),
                     $lineItem->getProductUnit(),
@@ -182,10 +188,7 @@ class FrontendOrderType extends AbstractType
         $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities, $currency);
 
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
-            if (array_key_exists($identifier, $prices) &&
-                $prices[$identifier] instanceof Price &&
-                !$lineItem->isFromExternalSource()
-            ) {
+            if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {
                 $lineItem->setPrice($prices[$identifier]);
             }
         }

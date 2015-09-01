@@ -22,9 +22,9 @@ define(function(require) {
          */
         initialize: function() {
             this.options = $.extend(true, {
+                unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
                 selectors: {
-                    priceValueText: 'div.order-line-item-price-value',
-                    unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist'
+                    priceValueText: 'div.order-line-item-price-value'
                 }
             }, this.options);
 
