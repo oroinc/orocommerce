@@ -14,6 +14,7 @@ services:
             - @oro_security.security_facade
             - @orob2b_order.order.provider.order_address_security
             - @orob2b_payment.provider.payment_term
+            - @orob2b_order.model.order_currency_handler
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
@@ -26,6 +27,7 @@ services:
             - @oro_security.security_facade
             - @orob2b_payment.provider.payment_term
             - @orob2b_pricing.provider.product_price
+            - @orob2b_order.model.order_currency_handler
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
