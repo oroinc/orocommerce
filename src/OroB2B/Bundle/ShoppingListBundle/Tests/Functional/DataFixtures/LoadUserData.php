@@ -174,10 +174,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $accountUser = $userManager->createUser();
 
             $accountUser
-                ->setEmail($item['email'])
                 ->setAccount($this->getReference($item['account']))
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
+                ->setEmail($item['email'])
                 ->setConfirmed(true)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
@@ -211,9 +211,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             $user = $userManager->createUser();
 
             $user
-                ->setEmail($item['email'])
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
+                ->setEmail($item['email'])
                 ->setBusinessUnits($defaultUser->getBusinessUnits())
                 ->setOwner($businessUnit)
                 ->setOrganization($organization)
