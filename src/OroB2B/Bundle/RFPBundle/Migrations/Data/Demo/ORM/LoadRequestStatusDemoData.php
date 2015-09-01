@@ -21,9 +21,9 @@ class LoadRequestStatusDemoData extends AbstractFixture implements ContainerAwar
      * @var array
      */
     protected $statuses = [
-        ['order' => 30, 'label' => 'Pending', 'name' => 'pending'],
-        ['order' => 40, 'label' => 'Assigned', 'name' => 'assigned'],
-        ['order' => 50, 'label' => 'Blocked', 'name' => 'blocked'],
+        ['order' => 40, 'label' => 'Pending', 'name' => 'pending'],
+        ['order' => 50, 'label' => 'Assigned', 'name' => 'assigned'],
+        ['order' => 60, 'label' => 'Blocked', 'name' => 'blocked'],
     ];
 
     /**

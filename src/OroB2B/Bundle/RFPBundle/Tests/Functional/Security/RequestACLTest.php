@@ -115,7 +115,7 @@ class RequestACLTest extends WebTestCase
                     'subAccountUser' => false,
                     'notSameAccountUser' => false,
                 ],
-                'expectedCode' => 403,
+                'expectedCode' => 200,
             ],
             'account user' => [
                 'level' => AccessLevel::BASIC_LEVEL,

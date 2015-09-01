@@ -108,19 +108,22 @@ class FrontendRequestType extends AbstractType
     {
         /** @var Request $request */
         $request = $event->getData();
-        $request->setStatus($this->getDefaultRequestStatus());
+        $defaultStatus = $this->getDraftRequestStatus();
+        if (!$request->getStatus() && $defaultStatus) {
+            $request->setStatus($defaultStatus);
+        }
     }
 
     /**
      * @return RequestStatus
      */
-    protected function getDefaultRequestStatus()
+    protected function getDraftRequestStatus()
     {
         return $this->registry
             ->getManagerForClass($this->requestStatusClass)
             ->getRepository($this->requestStatusClass)
             ->findOneBy([
-                'name' => $this->configManager->get('oro_b2b_rfp.default_request_status')
+                'name' => RequestStatus::DRAFT,
             ]);
     }
 

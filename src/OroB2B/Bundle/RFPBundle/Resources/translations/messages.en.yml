@@ -119,6 +119,7 @@ orob2b:
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Proposal'
                 submitted_to.label: 'Submitted To'
+                is_draft.label: 'Draft'
 
 # We MUST move this section form here in the future!
 orob2b.frontendadmin:
