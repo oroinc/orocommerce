@@ -87,12 +87,7 @@ class OrderController extends AbstractOrderController
      */
     public function createAction()
     {
-        $order = new Order();
-        /** @var LocaleSettings $localeSettings */
-        $localeSettings = $this->get('oro_locale.settings');
-        $order->setCurrency($localeSettings->getCurrency());
-
-        return $this->update($order);
+        return $this->update(new Order());
     }
 
     /**
@@ -123,6 +118,12 @@ class OrderController extends AbstractOrderController
      */
     protected function update(Order $order)
     {
+        if (!$order->getCurrency()) {
+            /** @var LocaleSettings $localeSettings */
+            $localeSettings = $this->get('oro_locale.settings');
+            $order->setCurrency($localeSettings->getCurrency());
+        }
+
         if (in_array($this->get('request')->getMethod(), ['POST', 'PUT'], true)) {
             $order->setAccount($this->getOrderHandler()->getAccount());
             $order->setAccountUser($this->getOrderHandler()->getAccountUser());
