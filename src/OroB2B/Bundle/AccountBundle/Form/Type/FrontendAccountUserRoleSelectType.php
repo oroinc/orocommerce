@@ -10,7 +10,6 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-
 class FrontendAccountUserRoleSelectType extends AbstractType
 {
     const NAME = 'orob2b_account_frontend_account_user_role_select';
@@ -68,6 +67,4 @@ class FrontendAccountUserRoleSelectType extends AbstractType
             return new ORMQueryBuilderLoader($qb);
         });
     }
-
-
 }

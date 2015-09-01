@@ -104,7 +104,14 @@ class AccountUserController extends Controller
             $this->get('orob2b_account_user.manager'),
             $this->get('security.context')
         );
+        //TODO: set correct owner in task BB-929
+        if (!$accountUser->getOwner()) {
+            $user = $this->getDoctrine()->getManagerForClass('OroUserBundle:User')
+                ->getRepository('OroUserBundle:User')
+                ->findOneBy([]);
 
+            $accountUser->setOwner($user);
+        }
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,

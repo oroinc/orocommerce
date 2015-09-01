@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub;
 
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AclExtensionStub extends AbstractTypeExtension
 {
@@ -18,9 +18,10 @@ class AclExtensionStub extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setOptional(['loader']);
-        $resolver->setDefaults(['loader' => function(){}]);
+        $resolver->setDefined(['loader']);
+        $resolver->setDefaults(['loader' => function () {
+        }]);
     }
 }

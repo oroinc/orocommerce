@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -33,9 +34,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var SecurityFacade| \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    protected $securityFacade;
 
     /**
      * @var Account[]
@@ -103,8 +104,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         array $submittedData,
         AccountUser $expectedData,
         $rolesGranted = true
-    )
-    {
+    ) {
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')
@@ -135,16 +135,16 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $prop->setAccessible(true);
         $prop->setValue($existingAccountUser, 42);
 
-        $existingAccountUser->setFirstName('John');
+        $existingAccountUser->setFirstName('Mary');
         $existingAccountUser->setLastName('Doe');
-        $existingAccountUser->setEmail('johndoe@example.com');
+        $existingAccountUser->setEmail('john@example.com');
         $existingAccountUser->setPassword('123456');
         $existingAccountUser->setAccount($this->getAccount(1));
         $existingAccountUser->addAddress($this->getAddresses()[1]);
 
         $alteredExistingAccountUser = clone $existingAccountUser;
-        $alteredExistingAccountUser->setEnabled(false);
         $alteredExistingAccountUser->setAccount($this->getAccount(2));
+        $alteredExistingAccountUser->setEnabled(false);
 
         $alteredExistingAccountUserWithRole = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithRole->setRoles([$this->getRole(2, 'test02')]);
@@ -154,44 +154,44 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         return
             [
-            'user without submitted data' => [
-                'defaultData' => $newAccountUser,
-                'submittedData' => [],
-                'expectedData' => $newAccountUser
-            ],
-            'altered existing user' => [
-                'defaultData' => $existingAccountUser,
-                'submittedData' => [
-                    'firstName' => 'John',
-                    'lastName' => 'Doe',
-                    'email' => 'johndoe@example.com',
-                    'account' => 2
+                'user without submitted data' => [
+                    'defaultData' => $newAccountUser,
+                    'submittedData' => [],
+                    'expectedData' => $newAccountUser
                 ],
-                'expectedData' => $alteredExistingAccountUser
-            ],
+                'altered existing user' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'Mary',
+                        'lastName' => 'Doe',
+                        'email' => 'john@example.com',
+                        'account' => 2
+                    ],
+                    'expectedData' => $alteredExistingAccountUser
+                ],
                 'altered existing user with roles' => [
                     'defaultData' => $existingAccountUser,
                     'submittedData' => [
-                        'firstName' => 'John',
+                        'firstName' => 'Mary',
                         'lastName' => 'Doe',
-                        'email' => 'johndoe@example.com',
+                        'email' => 'john@example.com',
                         'account' => 2,
                         'roles' => [2]
                     ],
                     'expectedData' => $alteredExistingAccountUserWithRole,
                     'rolesGranted' => true
                 ],
-            'altered existing user with addresses' => [
-                'defaultData' => $existingAccountUser,
-                'submittedData' => [
-                    'firstName' => 'John',
-                    'lastName' => 'Doe',
-                    'email' => 'johndoe@example.com',
-                    'account' => 2,
-                    'addresses' => [1, 2]
-                ],
-                'expectedData' => $alteredExistingAccountUserWithAddresses,
-            ]
+                'altered existing user with addresses' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'Mary',
+                        'lastName' => 'Doe',
+                        'email' => 'john@example.com',
+                        'account' => 2,
+                        'addresses' => [1, 2]
+                    ],
+                    'expectedData' => $alteredExistingAccountUserWithAddresses,
+                ]
             ];
     }
 
