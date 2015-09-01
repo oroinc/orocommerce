@@ -75,10 +75,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected $accounts = [
         [
-            'name' => self::ACCOUNT1,
+            'name' => self::ACCOUNT2,
         ],
         [
-            'name' => self::ACCOUNT2,
+            'name' => self::ACCOUNT1,
         ],
     ];
 
@@ -154,6 +154,28 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
+    protected function loadAccounts(ObjectManager $manager)
+    {
+        $defaultUser    = $this->getUser($manager);
+        $organization   = $defaultUser->getOrganization();
+
+        foreach ($this->accounts as $item) {
+            $account = new Account();
+            $account
+                ->setName($item['name'])
+                ->setOrganization($organization)
+            ;
+            $manager->persist($account);
+
+            $this->addReference($item['name'], $account);
+        }
+
+        $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
     protected function loadRoles(ObjectManager $manager)
     {
         /* @var $aclManager AclManager */
@@ -176,28 +198,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
         $manager->flush();
         $aclManager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function loadAccounts(ObjectManager $manager)
-    {
-        $defaultUser    = $this->getUser($manager);
-        $organization   = $defaultUser->getOrganization();
-
-        foreach ($this->accounts as $item) {
-            $account = new Account();
-            $account
-                ->setName($item['name'])
-                ->setOrganization($organization)
-            ;
-            $manager->persist($account);
-
-            $this->addReference($item['name'], $account);
-        }
-
-        $manager->flush();
     }
 
     /**

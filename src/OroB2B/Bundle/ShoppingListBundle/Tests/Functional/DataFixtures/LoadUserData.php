@@ -75,20 +75,20 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected $accountUsers = [
         [
-            'email'     => self::ACCOUNT1_USER1,
-            'firstname' => 'User1FN',
-            'lastname'  => 'User1LN',
-            'password'  => self::ACCOUNT1_USER1,
-            'account'   => self::ACCOUNT1,
-            'role'      => self::ROLE1,
-        ],
-        [
             'email'     => self::ACCOUNT1_USER2,
             'firstname' => 'User2FN',
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
             'account'   => self::ACCOUNT1,
             'role'      => self::ROLE2,
+        ],
+        [
+            'email'     => self::ACCOUNT1_USER1,
+            'firstname' => 'User1FN',
+            'lastname'  => 'User1LN',
+            'password'  => self::ACCOUNT1_USER1,
+            'account'   => self::ACCOUNT1,
+            'role'      => self::ROLE1,
         ],
         [
             'email'     => self::ACCOUNT2_USER1,
@@ -161,28 +161,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccounts(ObjectManager $manager)
-    {
-        $defaultUser    = $this->getUser($manager);
-        $organization   = $defaultUser->getOrganization();
-
-        foreach ($this->accounts as $item) {
-            $account = new Account();
-            $account
-                ->setName($item['name'])
-                ->setOrganization($organization)
-            ;
-            $manager->persist($account);
-
-            $this->addReference($item['name'], $account);
-        }
-
-        $manager->flush();
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
     protected function loadAccountUsers(ObjectManager $manager)
     {
         /* @var $userManager AccountUserManager */
@@ -213,6 +191,28 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             $this->setReference($item['email'], $accountUser);
         }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    protected function loadAccounts(ObjectManager $manager)
+    {
+        $defaultUser    = $this->getUser($manager);
+        $organization   = $defaultUser->getOrganization();
+
+        foreach ($this->accounts as $item) {
+            $account = new Account();
+            $account
+                ->setName($item['name'])
+                ->setOrganization($organization)
+            ;
+            $manager->persist($account);
+
+            $this->addReference($item['name'], $account);
+        }
+
+        $manager->flush();
     }
 
     /**
