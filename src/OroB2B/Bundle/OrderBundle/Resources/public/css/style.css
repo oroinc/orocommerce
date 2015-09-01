@@ -14,6 +14,10 @@
     width: 257px !important;
 }
 
+.order-line-items .add-list-item {
+    margin-top: 10px;
+}
+
 .order-line-item-tier-prices {
     float: left;
     position: relative;
@@ -64,8 +68,12 @@
     text-align: right;
 }
 
+.order-line-item-quantity input[type="number"] {
+    margin-right: 3px;
+}
+
 .order-line-item-quantity {
-    width: 207px;
+    width: 210px;
 }
 
 .order-line-item-ship_by {
