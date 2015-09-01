@@ -16,11 +16,17 @@ class RequestFrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $listener;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->listener = new RequestFrontendDatagridListener();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->listener);
