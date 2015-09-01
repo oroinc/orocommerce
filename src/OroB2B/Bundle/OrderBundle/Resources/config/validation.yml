@@ -19,6 +19,9 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
         account:
             - NotBlank: ~
         lineItems:
+            - Count:
+                min: 1
+                minMessage: "You must add at least one Line Item"
             - Valid: ~
 
 OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
