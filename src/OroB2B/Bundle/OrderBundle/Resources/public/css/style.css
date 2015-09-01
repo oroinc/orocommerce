@@ -14,16 +14,8 @@
     width: 257px !important;
 }
 
-/* order-line-items */
-.order-line-items table td,
-.order-line-items table th {
-    vertical-align: top;
-    border: 1px solid #e5e5e5;
-    padding: 10px;
-}
-
-.order-line-items table th {
-    text-align: left;
+.order-line-items table.grid {
+    overflow: auto;
 }
 
 .order-line-items .add-list-item {
@@ -39,9 +31,14 @@
     min-width: 100px;
 }
 
+.order-line-item-tier-prices table tr:hover > td {
+    background-color: #fff;
+}
+
 .order-line-item-tier-prices table td {
     border: none;
     padding: 2px;
+    height: 19px !important;
 }
 
 .order-line-item-tier-prices i {
@@ -121,8 +118,8 @@
 
 .order-line-item-price-overridden {
     position: absolute;
-    top: 8px;
-    left: 9px;
+    top: 4px;
+    left: 10px;
 }
 
 .order-line-item-price-overridden i {
@@ -138,7 +135,7 @@
 }
 
 .order-line-item-price-value,
-.order-line-item-sku.order-line-item-type-product {
+.order-line-item-type-product {
     line-height: 31px;
 }
 
@@ -147,7 +144,13 @@
     margin-right: 10px;
 }
 
+.order-line-item-remove {
+    padding-top: 7px !important;
+    text-align: right !important;
+}
+
 .notes-widget {
     width: 280px;
     word-wrap: break-word;
+    line-height: 31px;
 }

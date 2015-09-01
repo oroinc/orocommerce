@@ -5,10 +5,12 @@ namespace OroB2B\Bundle\OrderBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 
 abstract class AbstractOrderController extends Controller
@@ -29,11 +31,6 @@ abstract class AbstractOrderController extends Controller
     {
         $tierPrices = [];
 
-        $priceList = $order->getPriceList();
-        if (!$priceList) {
-            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
-        }
-
         $productIds = $order->getLineItems()->filter(
             function (OrderLineItem $lineItem) {
                 return $lineItem->getProduct() !== null;
@@ -46,7 +43,7 @@ abstract class AbstractOrderController extends Controller
 
         if ($productIds) {
             $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $priceList->getId(),
+                $this->getPriceList($order)->getId(),
                 $productIds->toArray(),
                 $order->getCurrency()
             );
@@ -81,7 +78,7 @@ abstract class AbstractOrderController extends Controller
             $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
                 $productUnitQuantities->toArray(),
                 $order->getCurrency(),
-                $order->getPriceList()
+                $this->getPriceList($order)
             );
         }
 
@@ -96,5 +93,21 @@ abstract class AbstractOrderController extends Controller
         }
 
         return $matchedPrices;
+    }
+
+    /**
+     * @param Order $order
+     * @return PriceList
+     */
+    protected function getPriceList(Order $order)
+    {
+        $priceList = null;
+        if ($this->getUser() instanceof User) {
+            $priceList = $order->getPriceList();
+        }
+        if (!$priceList) {
+            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
+        }
+        return $priceList;
     }
 }

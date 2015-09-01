@@ -163,12 +163,7 @@ class FrontendOrderType extends AbstractType
             $lineItemsWithIdentifier = [];
 
             foreach ($order->getLineItems() as $lineItem) {
-                if (!$lineItem->getProduct()
-                    || !$lineItem->getProductUnit()
-                    || !$lineItem->getQuantity()
-                    || $lineItem->getPrice()
-                    || $lineItem->isFromExternalSource()
-                ) {
+                if (!$this->isValidForPriceUpdate($lineItem)) {
                     continue;
                 }
 
@@ -184,6 +179,20 @@ class FrontendOrderType extends AbstractType
 
             $this->fillLineItemsPrice($order->getCurrency(), $productUnitQuantities, $lineItemsWithIdentifier);
         }
+    }
+
+    /**
+     * @param OrderLineItem $lineItem
+     * @return bool
+     */
+    protected function isValidForPriceUpdate(OrderLineItem $lineItem)
+    {
+        return $lineItem->getProduct()
+            && $lineItem->getProductUnit()
+            && $lineItem->getQuantity()
+            && !$lineItem->getPrice()
+            && !$lineItem->isFromExternalSource()
+            && $lineItem->isRequirePriceRecalculation();
     }
 
     /**
