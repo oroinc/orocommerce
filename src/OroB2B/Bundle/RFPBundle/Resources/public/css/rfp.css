@@ -14,6 +14,14 @@
     max-width: none;
 }
 
+.rfp-request-widget .account-accountuser-select .entity-select-btn {
+    display: none;
+}
+
+.rfp-request-widget .account-accountuser-select .select2-container {
+    width: 257px !important;
+}
+
 .rfp-requestproduct-collection .btn.add-list-item {
     margin-left: 90px;
 }

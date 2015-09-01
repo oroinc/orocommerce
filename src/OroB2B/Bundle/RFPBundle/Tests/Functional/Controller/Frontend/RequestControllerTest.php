@@ -85,6 +85,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         sort($expectedIds);
+        sort($testedIds);
 
         static::assertEquals($expectedIds, $testedIds);
     }

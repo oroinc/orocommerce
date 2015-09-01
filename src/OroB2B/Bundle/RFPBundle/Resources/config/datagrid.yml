@@ -10,6 +10,8 @@ datagrid:
             query:
                 select:
                     - request.id
+                    - requestAccount.name as accountName
+                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - request.firstName
                     - request.lastName
                     - request.email
@@ -25,6 +27,8 @@ datagrid:
                 join:
                     left:
                         - { join: request.status, alias: status }
+                        - { join: request.account, alias: requestAccount }
+                        - { join: request.accountUser, alias: requestAccountUser }
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
@@ -40,6 +44,10 @@ datagrid:
                 label:         orob2b.rfp.request.company.label
             role:
                 label:         orob2b.rfp.request.role.label
+            accountUserName:
+                label:         orob2b.rfp.request.account_user.label
+            accountName:
+                label:         orob2b.rfp.request.account.label
             status_label:
                 label:         orob2b.rfp.request.status.label
             createdAt:
@@ -76,6 +84,10 @@ datagrid:
                     data_name: request.company
                 role:
                     data_name: request.role
+                accountUserName:
+                    data_name: accountUserName
+                accountName:
+                    data_name: accountName
                 status_label:
                     data_name: status_order
                 createdAt:
@@ -104,6 +116,12 @@ datagrid:
                 role:
                     type:      string
                     data_name: request.role
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+                accountName:
+                    type:      string
+                    data_name: accountName
                 status_label:
                     type:      entity
                     data_name: status.id
