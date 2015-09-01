@@ -5,7 +5,6 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var layout = require('oroui/js/layout');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
@@ -111,7 +110,7 @@ define(function(require) {
             if (_.isEmpty(this.fieldsByName.priceValue.val())) {
                 this.fieldsByName.priceValue.addClass('matched-price');
             }
-            this.fieldsByName.priceValue.change(_.bind(this.onPriceValueChange, this));
+            this.addFieldEvents('priceValue', this.onPriceValueChange);
 
             this.$priceOverridden.on('click', 'a', _.bind(function() {
                 this.fieldsByName.priceValue
