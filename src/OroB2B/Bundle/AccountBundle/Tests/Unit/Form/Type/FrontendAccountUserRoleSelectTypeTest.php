@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -15,14 +14,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AclExtensionStub;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\RoleSelectStub;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Validation;
 
 class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
@@ -37,22 +31,19 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     /** @var $registry Registry | \PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
+    /** @var QueryBuilder */
+    protected $qb;
+
     protected function setUp()
     {
 
         $account = $this->createAccount(1, 'account');
         $user = new AccountUser();
         $user->setAccount($account);
-        /** @var $query AbstractQuery | \PHPUnit_Framework_MockObject_MockObject */
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $query->expects($this->any())->method('execute')->willReturn($this->getRoles());
         /** @var $qb QueryBuilder | \PHPUnit_Framework_MockObject_MockObject */
         $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
-        $qb->expects($this->any())->method('getQuery')->willReturn($query);
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
@@ -68,6 +59,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->method('getAvailableRolesByAccountUserQueryBuilder')
             ->with($user)
             ->willReturn($qb);
+        $this->qb = $qb;
         /** @var $em ObjectManager | \PHPUnit_Framework_MockObject_MockObject */
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->any())
@@ -94,70 +86,22 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals(AccountUserRoleSelectType::NAME, $this->formType->getParent());
     }
 
-    /**
-     * @dataProvider submitProvider
-     *
-     * @param AccountUserRole $defaultData
-     * @param array $submittedData
-     * @param AccountUserRole $expectedData
-     */
-    public function testSubmit(AccountUserRole $defaultData, array $submittedData, AccountUserRole $expectedData)
-    {
-        $this->markTestSkipped('Test is not finished');
-        $form = $this->factory->create($this->formType, $defaultData);
-
-        $this->assertEquals($defaultData, $form->getData());
-        $form->submit($submittedData);
-        $result = $form->isValid();
-        $this->assertTrue($result);
-        $this->assertEquals($expectedData, $form->getData());
-    }
-
-
-    public function submitProvider()
-    {
-        $newRole = new AccountUserRole();
-
-        return [
-            [
-                'defaultData' => $newRole,
-                'submittedData' => [],
-                'expectedData' => $newRole
-            ]
-        ];
-    }
-
-    protected function getExtensions()
-    {
-        $accountUserRoleSelectType = new RoleSelectStub(
-            $this->getRoles(),
-            AccountUserRoleSelectType::NAME
-        );
-        return [
-            new PreloadedExtension(
-                [
-                    AccountUserRoleSelectType::NAME => $accountUserRoleSelectType
-                ],
-                ['choice' => [new AclExtensionStub()]]
-            ),
-            new ValidatorExtension(Validation::createValidator()),
-        ];
-    }
 
     public function testConfigureOptions()
     {
         /** @var $resolver OptionsResolver | \PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())->method('setOptional')->with(['loader']);
-        $callback = function () {
-            $qb = $this->registry->getManager()
-                ->getRepository('OroB2BAccountBundle:AccountUserRole')
-                ->getAvailableRolesByAccountUserQueryBuilder($this->securityFacade->getLoggedUser());
-            return new ORMQueryBuilderLoader($qb);
-        };
-        $resolver->expects($this->once())->method('setNormalizer')->with('loader', $callback);
+        $resolver->expects($this->once())
+            ->method('setNormalizer')
+            ->with($this->isType('string'), $this->isInstanceOf('\Closure'))
+            ->willReturnCallback(function ($type, $closure) {
+                $this->assertEquals('loader', $type);
+                $this->assertEquals($closure(), new ORMQueryBuilderLoader($this->qb));
+            });
         $this->formType->configureOptions($resolver);
     }
+
 
     /**
      * @param int $id
