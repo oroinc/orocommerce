@@ -66,7 +66,7 @@ services:
         class: %orob2b_order.form.type.frontend.order_line_item.class%
         arguments:
             - @doctrine
-            - @orob2b_pricing.model.price_list_request_handler
+            - @orob2b_pricing.model.frontend.price_list_request_handler
             - %orob2b_pricing.entity.product_price.class%
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
