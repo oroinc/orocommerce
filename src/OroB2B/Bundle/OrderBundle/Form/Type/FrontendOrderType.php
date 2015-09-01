@@ -184,7 +184,8 @@ class FrontendOrderType extends AbstractType
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
             if (array_key_exists($identifier, $prices) &&
                 $prices[$identifier] instanceof Price &&
-                !$lineItem->isFromExternalSource()
+                !$lineItem->isFromExternalSource() &&
+                !$lineItem->getPrice()
             ) {
                 $lineItem->setPrice($prices[$identifier]);
             }
