@@ -66,28 +66,13 @@ class AccountUserRoleHandler extends AclRoleHandler
             $oid = $privilege->getIdentity()->getId();
             if (strpos($oid, $entityPrefix) === 0) {
                 $className = substr($oid, strlen($entityPrefix));
-                if (!$this->hasFrontendOwnership($className)) {
+                if (!$this->ownershipConfigProvider->hasConfig($className)) {
                     unset($privileges[$key]);
                 }
             }
         }
 
         return $privileges;
-    }
-
-    /**
-     * @param string $className
-     * @return bool
-     */
-    protected function hasFrontendOwnership($className)
-    {
-        if ($this->ownershipConfigProvider->hasConfig($className)) {
-            $config = $this->ownershipConfigProvider->getConfig($className);
-            if ($config->has('frontend_owner_type')) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
