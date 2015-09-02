@@ -100,30 +100,13 @@ class ProductUnitRemovedSelectionType extends AbstractType
         /* @var $productUnitHolder ProductUnitHolderInterface */
         $productUnitHolder = $form ? $form->getData() : null;
 
-        $choices = [];
-
         $productUnitOptions = [
             'required' => $this->options['required'],
             'label' => $this->options['label'],
             'compact' => $this->options['compact'],
         ];
 
-        if ($productUnitHolder && null !== $productUnitHolder->getEntityIdentifier()) {
-            $product = $productUnitHolder->getProductHolder()->getProduct();
-            if ($product) {
-                foreach ($product->getUnitPrecisions() as $unitPrecision) {
-                    $choices[] = $unitPrecision->getUnit();
-                }
-            }
-            $productUnit = $productUnitHolder->getProductUnit();
-            if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
-                $emptyValueTitle = $this->translator->trans($this->options['empty_label'], [
-                    '{title}' => $productUnitHolder->getProductUnitCode(),
-                ]);
-                $productUnitOptions['empty_value'] =  $emptyValueTitle;
-            }
-            $productUnitOptions['choices'] = $choices;
-        }
+        $this->addOptions($productUnitHolder, $productUnitOptions);
 
         $form->add(
             'productUnit',
@@ -144,5 +127,35 @@ class ProductUnitRemovedSelectionType extends AbstractType
                 'label' => $this->options['label'],
             ]
         );
+    }
+
+    /**
+     * @param ProductUnitHolderInterface $productUnitHolder
+     * @param array $productUnitOptions
+     */
+    protected function addOptions(ProductUnitHolderInterface $productUnitHolder = null, array &$productUnitOptions = [])
+    {
+        if (!$productUnitHolder || !$productUnitHolder->getEntityIdentifier()) {
+            return;
+        }
+
+        $choices = [];
+
+        $product = $productUnitHolder->getProductHolder()->getProduct();
+        if ($product) {
+            foreach ($product->getUnitPrecisions() as $unitPrecision) {
+                $choices[] = $unitPrecision->getUnit();
+            }
+        }
+
+        $productUnit = $productUnitHolder->getProductUnit();
+        if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
+            $emptyValueTitle = $this->translator->trans($this->options['empty_label'], [
+                '{title}' => $productUnitHolder->getProductUnitCode(),
+            ]);
+            $productUnitOptions['empty_value'] =  $emptyValueTitle;
+        }
+
+        $productUnitOptions['choices'] = $choices;
     }
 }
