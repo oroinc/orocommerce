@@ -12,6 +12,17 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block breadcrumbs %}
+    {{ parent() }}
+    <div class="pull-left">
+        {% if entity.locked %}
+            <div class="badge badge-disabled status-disabled"><i class="icon-lock"></i>{{ 'orob2b.sale.quote.locked.label'|trans }}</div>
+        {% else %}
+            <div class="badge badge-enabled status-enabled"><i class="icon-unlock"></i>{{ 'orob2b.sale.quote.not_locked.label'|trans }}</div>
+        {% endif %}
+    </div>
+{% endblock breadcrumbs %}
+
 {% block navButtons %}
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
@@ -27,6 +38,40 @@
             'dataId': entity.id,
             'id': 'btn-remove-account',
             'entity_label': 'orob2b.sale.quote.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('oro_email_email_create') %}
+        {% set customerNotificationHtml %}
+            <li>
+                {{ UI.clientLink({
+                    'dataUrl': path('quote_notification_email', {'id': entity.id}) ,
+                    'aCss': 'no-hash',
+                    'iCss': 'icon-envelope',
+                    'label' : 'orob2b.sale.quote.notify_customer.by_email.link.text'|trans,
+                    'widget' : {
+                        'type' : 'dialog',
+                        'multiple' : true,
+                        'reload-grid-name' : 'activity-list-grid',
+                        'options' : {
+                            'alias': 'notification-email-dialog',
+                            'dialogOptions' : {
+                                'title' : 'orob2b.sale.quote.notify_customer.by_email.link.text'|trans,
+                                'allowMaximize': true,
+                                'allowMinimize': true,
+                                'dblclick': 'maximize',
+                                'maximizedHeightDecreaseBy': 'minimize-bar',
+                                'width': 1000
+                            }
+                        }
+                    }
+                }) }}
+            </li>
+        {% endset %}
+
+        {{ UI.dropdownButton({
+            'label': 'orob2b.sale.quote.notify_customer.label'|trans,
+            'aCss': 'pull-right',
+            'html': customerNotificationHtml
         }) }}
     {% endif %}
 {% endblock navButtons %}
@@ -153,4 +198,12 @@
     {% endif %}
 
     {{ parent() }}
+    <script type="text/javascript">
+        require(['underscore', 'orotranslation/js/translator', 'oroui/js/mediator'],
+        function (_, __, mediator) {
+            mediator.on('widget_success:notification-email-dialog', function () {
+                mediator.execute('refreshPage');
+            });
+        });
+    </script>
 {% endblock content_data %}

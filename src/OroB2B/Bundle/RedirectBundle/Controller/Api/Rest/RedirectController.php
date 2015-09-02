@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\RedirectBundle\Controller\Api\Rest;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -45,6 +44,6 @@ class RedirectController extends FOSRestController
     public function slugifyAction($string)
     {
         $slug = ['slug' => $this->get('orob2b_redirect.slug.generator')->slugify($string)];
-        return new Response(json_encode($slug), Codes::HTTP_OK);
+        return new Response(json_encode($slug), Response::HTTP_OK);
     }
 }
