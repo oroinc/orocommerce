@@ -1,7 +1,6 @@
 orob2b:
     order:
         orderlineitem:
-            count: 'Please add at least one Line Item'
             product:
                 blank: 'Please choose Product.'
             product_unit:

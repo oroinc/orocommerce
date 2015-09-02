@@ -1,7 +1,6 @@
 OroB2B\Bundle\OrderBundle\Entity\Order:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
-        - OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderLineItemCount: ~
     properties:
         owner:
             - NotBlank: ~
@@ -20,6 +19,9 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
         account:
             - NotBlank: ~
         lineItems:
+            - Count:
+                min: 1
+                minMessage: "You must add at least one Line Item"
             - Valid: ~
 
 OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:

@@ -15,8 +15,6 @@ parameters:
     orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
 
-    orob2b_order.validator.order_line_items_count.class: OroB2B\Bundle\OrderBundle\Validator\Constraints\OrderLineItemCountValidator
-
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -79,8 +77,3 @@ services:
         class: %orob2b_order.model.order_currency_handler.class%
         arguments:
             - @oro_locale.settings
-
-    orob2b_order.validator.order_line_items_count:
-        class: %orob2b_order.validator.order_line_items_count.class%
-        tags:
-            - { name: validator.constraint_validator, alias: orob2b_order_line_items_count_validator }
