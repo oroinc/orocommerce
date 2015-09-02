@@ -121,7 +121,6 @@ datagrid:
     products-select-grid-frontend:
         extends: products-select-grid-base
         options:
-            # TODO: Remove this after BB-1008
             skip_acl_check: true
         source:
             acl_resource: orob2b_product_view_products
@@ -180,7 +179,6 @@ datagrid:
         options:
             entityHint:        product
             entity_pagination: true
-            skip_acl_check: true
         source:
             type:         orm
             query:
