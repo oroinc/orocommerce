@@ -138,8 +138,15 @@ define(function(require) {
                 params = _.extend(params, {pricelist: priceList});
             }
 
-            $.get(routing.generate(this.options.matchedPricesRoute, params), function(response) {
-                callback(response);
+            $.ajax({
+                url: routing.generate(this.options.matchedPricesRoute, params),
+                type: 'GET',
+                success: function(response) {
+                    callback(response);
+                },
+                error: function(response) {
+                    callback();
+                }
             });
         },
 

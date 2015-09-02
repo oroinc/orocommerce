@@ -67,6 +67,16 @@ define(function(require) {
         matchedPrice: {},
 
         /**
+         * @property {Object}
+         */
+        change: {},
+
+        /**
+         * @property {String}
+         */
+        lastMatchedPriceIdentifier: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
@@ -217,27 +227,47 @@ define(function(require) {
         },
 
         initMatchedPrices: function() {
-            var fields = [
-                this.fieldsByName.product,
-                this.fieldsByName.productUnit,
-                this.fieldsByName.quantity
-            ];
-
-            var self = this;
-            _.each(fields, function(field) {
-                if (field) {
-                    field.change(_.bind(self.updateMatchedPrices, self));
-                }
-            });
+            //skip product, productUnit always changed after product change
+            this.fieldsByName.productUnit.change(_.bind(this.updateMatchedPrices, this));
+            this.addFieldEvents('quantity', this.updateMatchedPrices);
 
             mediator.trigger('order:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             mediator.on('order:refresh:line-items-matched-prices', this.setMatchedPrices, this);
         },
 
         /**
+         * @param {String} field
+         * @param {Function} callback
+         */
+        addFieldEvents: function(field, callback) {
+            this.fieldsByName[field].change(_.bind(function() {
+                if (this.change[field]) {
+                    clearTimeout(this.change[field]);
+                }
+
+                callback.call(this);
+            }, this));
+
+            this.fieldsByName[field].keyup(_.bind(function() {
+                if (this.change[field]) {
+                    clearTimeout(this.change[field]);
+                }
+
+                this.change[field] = setTimeout(_.bind(callback, this), 1500);
+            }, this));
+        },
+
+        /**
          * Trigger subtotals update
          */
         updateMatchedPrices: function() {
+            if (this.lastMatchedPriceIdentifier &&
+                this.lastMatchedPriceIdentifier === this._getMatchedPriceIdentifier()
+            ) {
+                this.setMatchedPrices();
+                return;
+            }
+
             var productId = this._getProductId();
             var unitCode = this.fieldsByName.productUnit.val();
             var quantity = this.fieldsByName.quantity.val();
@@ -257,12 +287,17 @@ define(function(require) {
          * @param {Object} matchedPrices
          */
         setMatchedPrices: function(matchedPrices) {
+            if (matchedPrices === undefined) {
+                return;
+            }
             var identifier = this._getMatchedPriceIdentifier();
             if (identifier) {
                 this.matchedPrice = matchedPrices[identifier] || {};
             } else {
                 this.matchedPrice = {};
             }
+
+            this.lastMatchedPriceIdentifier = identifier;
         },
 
         /**
