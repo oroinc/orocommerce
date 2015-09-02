@@ -357,7 +357,6 @@ datagrid:
                 link:          view_product_link
                 icon:          eye-open
                 rowAction:     true
-                acl_resource:  orob2b_product_view_products
             update:
                 type:          dialog
                 label:         oro.grid.action.update

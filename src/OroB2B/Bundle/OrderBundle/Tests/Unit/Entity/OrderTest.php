@@ -46,6 +46,17 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollection($order, 'lineItems', new OrderLineItem());
     }
 
+    public function testGetEmail()
+    {
+        $email = 'test@test.com';
+        $order = new Order();
+        $this->assertEmpty($order->getEmail());
+        $accountUser = new AccountUser();
+        $accountUser->setEmail($email);
+        $order->setAccountUser($accountUser);
+        $this->assertEquals($email, $order->getEmail());
+    }
+
     public function testAccountUserToAccountRelation()
     {
         $order = new Order();

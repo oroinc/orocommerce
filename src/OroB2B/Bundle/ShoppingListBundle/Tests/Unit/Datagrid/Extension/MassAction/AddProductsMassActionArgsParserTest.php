@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionArgsParser as ArgsParser;
 
-class AddProductsMassActionHandlerArgsParserTest extends \PHPUnit_Framework_TestCase
+class AddProductsMassActionArgsParserTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetProductIds()
     {
@@ -22,27 +22,33 @@ class AddProductsMassActionHandlerArgsParserTest extends \PHPUnit_Framework_Test
         $this->assertEquals(1, $parser->getShoppingListId());
         $parser = new ArgsParser($this->getArgs(1, '1,2', 'current'));
         $this->assertNull($parser->getShoppingListId());
+        $parser = new ArgsParser($this->getArgs(1, '1,2'));
+        $this->assertNull($parser->getShoppingListId());
     }
 
     /**
-     * @param int    $inset
-     * @param string $values
-     * @param int    $shoppingList
+     * @param int      $inset
+     * @param string   $values
+     * @param int|null $shoppingList
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|MassActionHandlerArgs
      */
-    protected function getArgs($inset, $values, $shoppingList)
+    protected function getArgs($inset, $values, $shoppingList = null)
     {
+        $result = [
+            'inset' => $inset,
+            'values' => $values
+        ];
+        if ($shoppingList) {
+            $result['shoppingList'] = $shoppingList;
+        }
+
         $args = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs')
             ->disableOriginalConstructor()
             ->getMock();
         $args->expects($this->once())
             ->method('getData')
-            ->willReturn([
-                'inset' => $inset,
-                'values' => $values,
-                'shoppingList' => $shoppingList
-            ]);
+            ->willReturn($result);
 
         return $args;
     }
