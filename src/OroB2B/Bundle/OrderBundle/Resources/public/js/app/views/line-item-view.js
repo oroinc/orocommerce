@@ -105,6 +105,14 @@ define(function(require) {
             }, this));
         },
 
+        resetData: function() {
+            LineItemView.__super__.resetData.apply(this, arguments);
+
+            if (this.fieldsByName.hasOwnProperty('priceValue')) {
+                this.fieldsByName.priceValue.val(null);
+            }
+        },
+
         initMatchedPrices: function() {
             LineItemView.__super__.initMatchedPrices.apply(this, arguments);
 
