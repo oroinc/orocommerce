@@ -62,4 +62,12 @@ class AccountUserController extends RestController implements ClassResourceInter
     {
         throw new \LogicException('This method should not be called');
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getDeleteHandler()
+    {
+        return $this->get('oro_user.handler.delete');
+    }
 }
