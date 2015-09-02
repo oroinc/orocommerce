@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\AbstractAccountUserAwareExtensionTest;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Extension\FrontendProductSelectExtension;
+use OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension;
 
 class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensionTest
 {
