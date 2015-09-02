@@ -87,14 +87,10 @@ define(function(require) {
         },
 
         resetData: function() {
-            var initialized = this.initialized;
-            this.initialized = false;
-
             FrontendLineItemView.__super__.resetData.apply(this, arguments);
 
             this.$priceValueText.data('price', null);
             this.$priceValueText.html('');
-            this.initialized = initialized;
         }
     });
 
