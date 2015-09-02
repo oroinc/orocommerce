@@ -440,12 +440,10 @@ datagrid:
             id: ~
             update_link:
                 type: url
-                route: orob2b_account_account_user_role_update
                 params:
                     - id
             delete_link:
                 type: url
-                route: orob2b_api_account_delete_accountuserrole
                 params:
                     - id
         columns:
@@ -484,14 +482,12 @@ datagrid:
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_account_account_user_role_update
                 rowAction:     true
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_account_account_user_role_delete
 
     account-account-user-roles-grid:
         extends: basic-account-account-user-roles-grid
@@ -500,17 +496,34 @@ datagrid:
             entity_pagination: true
         source:
             acl_resource: orob2b_account_account_user_role_view
+        properties:
+            update_link:
+                route: orob2b_account_account_user_role_update
+            delete_link:
+                route: orob2b_api_account_delete_accountuserrole
+        actions:
+            update:
+                acl_resource:  orob2b_account_account_user_role_update
+            delete:
+                acl_resource:  orob2b_account_account_user_role_delete
 
     frontend-account-account-user-roles-grid:
         extends: basic-account-account-user-roles-grid
         extended_entity_name: %orob2b_account.entity.account_user_role.class%
         options:
             skip_acl_check: true
+        properties:
+            update_link:
+                route: orob2b_account_account_user_role_frontend_update
+            delete_link:
+                route: orob2b_api_account_delete_accountuserrole
+        actions:
+            delete:
+                acl_resource: orob2b_account_account_user_role_delete
 
-    account-account-users-grid-update:
+    account-account-users-grid-update-basic:
         source:
             type: orm
-            acl_resource: orob2b_account_account_user_view
             query:
                 select:
                     - user.id
@@ -601,3 +614,14 @@ datagrid:
                 selectors:
                     included: '#roleAppendUsers'
                     excluded: '#roleRemoveUsers'
+
+    account-account-users-grid-update:
+        extends: account-account-users-grid-update-basic
+        source:
+            acl_resource: orob2b_account_account_user_view
+
+
+    account-account-users-grid-frontend-update:
+        extends: account-account-users-grid-update-basic
+        source:
+            acl_resource: orob2b_account_account_user_frontend_view

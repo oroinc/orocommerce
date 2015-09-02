@@ -9,3 +9,9 @@ orob2b_account_register_account_user:
     label: orob2b.account.security.permission.register_account_user
     type: action
     group_name: "commerce"
+
+orob2b_account_account_user_frontend_view:
+    type: entity
+    permission: VIEW
+    class: OroB2BAccountBundle:AccountUser
+    group_name: "commerce"

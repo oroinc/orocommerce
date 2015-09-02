@@ -16,6 +16,7 @@ parameters:
     orob2b_account.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType
 
     orob2b_account.form.handler.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler
+    orob2b_account.form.handler.account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleFrontendHandler
 
     orob2b_account.form.type.account_user_typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
@@ -116,6 +117,14 @@ services:
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
+
+    orob2b_account.form.handler.account_user_role_frontend:
+        parent: orob2b_account.form.handler.account_user_role
+        class: %orob2b_account.form.handler.account_user_role_frontend.class%
+        scope: prototype
+        calls:
+            - [setSecurityFacade, [@oro_security.security_facade]]
+
 
     orob2b_account.form.type.typed_address:
         class: %orob2b_account.form.type.typed_address.class%

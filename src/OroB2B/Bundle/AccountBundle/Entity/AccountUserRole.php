@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -48,9 +50,10 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class AccountUserRole extends AbstractRole
+class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
 {
     const PREFIX_ROLE = 'ROLE_FRONTEND_';
+    const SECURITY_GROUP = 'commerce';
 
     /**
      * @var int
@@ -223,7 +226,7 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * @return Organization
+     * {@inheritdoc}
      */
     public function getOrganization()
     {
@@ -231,10 +234,9 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * @param Organization $organization
-     * @return AccountUserRole
+     * {@inheritdoc}
      */
-    public function setOrganization($organization)
+    public function setOrganization(OrganizationInterface $organization)
     {
         $this->organization = $organization;
 
@@ -247,5 +249,12 @@ class AccountUserRole extends AbstractRole
     public function isPredefined()
     {
         return !$this->getAccount();
+    }
+
+    public function __clone()
+    {
+        $this->id = null;
+        $this->setRole($this->getLabel());
+        $this->websites = new ArrayCollection();
     }
 }
