@@ -14,6 +14,7 @@ services:
             - @oro_security.security_facade
             - @orob2b_order.order.provider.order_address_security
             - @orob2b_payment.provider.payment_term
+            - @orob2b_order.model.order_currency_handler
         tags:
             - { name: form.type, alias: orob2b_order_type }
         calls:
@@ -26,6 +27,7 @@ services:
             - @oro_security.security_facade
             - @orob2b_payment.provider.payment_term
             - @orob2b_pricing.provider.product_price
+            - @orob2b_order.model.order_currency_handler
         tags:
             - { name: form.type, alias: orob2b_order_frontend_type }
         calls:
@@ -50,8 +52,12 @@ services:
 
     orob2b_order.form.type.order_line_item:
         class: %orob2b_order.form.type.order_line_item.class%
+        arguments:
+            - @doctrine
+            - @orob2b_product.formatter.product_unit_label
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
+            - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: form.type, alias: "orob2b_order_line_item" }
 
@@ -64,7 +70,7 @@ services:
         class: %orob2b_order.form.type.frontend.order_line_item.class%
         arguments:
             - @doctrine
-            - @orob2b_pricing.model.price_list_request_handler
+            - @orob2b_pricing.model.frontend.price_list_request_handler
             - %orob2b_pricing.entity.product_price.class%
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]

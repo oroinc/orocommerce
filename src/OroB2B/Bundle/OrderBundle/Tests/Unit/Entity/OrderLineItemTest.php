@@ -71,4 +71,97 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('SKU', $entity->getProductSku());
         $this->assertEquals('kg', $entity->getProductUnitCode());
     }
+
+    /**
+     * @dataProvider isRequirePriceRecalculationDataProvider
+     *
+     * @param OrderLineItem $entity
+     * @param string $method
+     * @param mixed $value
+     * @param bool $expectedResult
+     */
+    public function testIsRequirePriceRecalculation(OrderLineItem $entity, $method, $value, $expectedResult)
+    {
+        $this->assertFalse($entity->isRequirePriceRecalculation());
+
+        $entity->$method($value);
+        $this->assertEquals($expectedResult, $entity->isRequirePriceRecalculation());
+    }
+
+    /**
+     * @return array
+     */
+    public function isRequirePriceRecalculationDataProvider()
+    {
+        $lineItemWithProduct = $this->getEntity(
+            'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'product',
+            $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 'id', 42)
+        );
+
+        $lineItemWithProductUnit = $this->getEntity(
+            'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'product',
+            $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'kg')
+        );
+
+        $lineItemWithQuantity = $this->getEntity('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem', 'quantity', 21);
+
+        return [
+            [
+                new OrderLineItem(),
+                'setProduct',
+                new Product(),
+                true
+            ],
+            [
+                new OrderLineItem(),
+                'setProductUnit',
+                new ProductUnit(),
+                true
+            ],
+            [
+                new OrderLineItem(),
+                'setQuantity',
+                1,
+                true
+            ],
+            [
+                $lineItemWithProduct,
+                'setProduct',
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 'id', 21),
+                true
+            ],
+            [
+                $lineItemWithProductUnit,
+                'setProductUnit',
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'code', 'item'),
+                true
+            ],
+            [
+                $lineItemWithQuantity,
+                'setQuantity',
+                1,
+                true
+            ]
+        ];
+    }
+
+    /**
+     * @param string $className
+     * @param string $property
+     * @param mixed $value
+     * @return object
+     */
+    protected function getEntity($className, $property, $value)
+    {
+        $entity = new $className();
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty($property);
+        $method->setAccessible(true);
+        $method->setValue($entity, $value);
+
+        return $entity;
+    }
 }

@@ -14,18 +14,12 @@
     width: 257px !important;
 }
 
-/* order-line-items */
-table.order-line-items td {
-    vertical-align: top;
+.order-line-items table.grid {
+    overflow: auto;
 }
 
-table.order-line-items td, table.order-line-items th {
-    border: 1px solid #e5e5e5;
-    padding: 10px;
-}
-
-table.order-line-items th {
-    text-align: left;
+.order-line-items .add-list-item {
+    margin-top: 10px;
 }
 
 .order-line-item-tier-prices {
@@ -37,9 +31,14 @@ table.order-line-items th {
     min-width: 100px;
 }
 
+.order-line-item-tier-prices table tr:hover > td {
+    background-color: #fff;
+}
+
 .order-line-item-tier-prices table td {
     border: none;
     padding: 2px;
+    height: 19px !important;
 }
 
 .order-line-item-tier-prices i {
@@ -78,8 +77,12 @@ table.order-line-items th {
     text-align: right;
 }
 
+.order-line-item-quantity input[type="number"] {
+    margin-right: 3px;
+}
+
 .order-line-item-quantity {
-    width: 207px;
+    width: 210px;
 }
 
 .order-line-item-ship_by {
@@ -115,8 +118,8 @@ table.order-line-items th {
 
 .order-line-item-price-overridden {
     position: absolute;
-    top: 8px;
-    left: 9px;
+    top: 4px;
+    left: 10px;
 }
 
 .order-line-item-price-overridden i {
@@ -132,7 +135,7 @@ table.order-line-items th {
 }
 
 .order-line-item-price-value,
-.order-line-item-sku.order-line-item-type-product {
+.order-line-item-type-product {
     line-height: 31px;
 }
 
@@ -141,7 +144,13 @@ table.order-line-items th {
     margin-right: 10px;
 }
 
+.order-line-item-remove {
+    padding-top: 7px !important;
+    text-align: right !important;
+}
+
 .notes-widget {
     width: 280px;
     word-wrap: break-word;
+    line-height: 31px;
 }

@@ -5,6 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var layout = require('oroui/js/layout');
+    var NumberFormatter = require('orolocale/js/formatter/number');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
@@ -26,7 +27,8 @@ define(function(require) {
                 selectors: {
                     productType: '.order-line-item-type-product',
                     freeFormType: '.order-line-item-type-free-form'
-                }
+                },
+                bundledPriceTypeValue: '20'
             }, this.options);
 
             LineItemView.__super__.initialize.apply(this, arguments);
@@ -85,10 +87,30 @@ define(function(require) {
             LineItemView.__super__.initTierPrices.apply(this, arguments);
 
             this.$tierPrices.on('click', 'a[data-price]', _.bind(function(e) {
+                var $target = $(e.currentTarget);
+                var priceType = this.fieldsByName.priceType.val();
+                var priceValue = $target.data('price');
+                var quantity = 1;
+
+                if (priceType === this.options.bundledPriceTypeValue) {
+                    quantity = parseFloat(this.fieldsByName.quantity.val());
+                }
+
+                this.fieldsByName.productUnit
+                    .val($target.data('unit'))
+                    .change();
                 this.fieldsByName.priceValue
-                    .val($(e.currentTarget).data('price'))
+                    .val(priceValue * quantity)
                     .change();
             }, this));
+        },
+
+        resetData: function() {
+            LineItemView.__super__.resetData.apply(this, arguments);
+
+            if (this.fieldsByName.hasOwnProperty('priceValue')) {
+                this.fieldsByName.priceValue.val(null);
+            }
         },
 
         initMatchedPrices: function() {

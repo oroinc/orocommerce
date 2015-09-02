@@ -30,7 +30,7 @@ class SubtotalsProvider
      *
      * @param Order $order
      *
-     * @return ArrayCollection
+     * @return ArrayCollection|Subtotal[]
      */
     public function getSubtotals(Order $order)
     {

@@ -32,7 +32,8 @@ define(function(require) {
                 unitSelector: '.order-line-item-quantity select',
                 productSku: '.order-line-item-sku .order-line-item-type-product'
             },
-            disabled: false
+            disabled: false,
+            freeFormUnits: null
         },
 
         /**
@@ -91,7 +92,8 @@ define(function(require) {
                 quantitySelector: this.options.selectors.quantitySelector,
                 unitSelector: this.options.selectors.unitSelector,
                 loadingMaskEnabled: false,
-                dropQuantityOnLoad: false
+                dropQuantityOnLoad: false,
+                defaultValues: this.options.freeFormUnits
             };
 
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));
@@ -151,6 +153,8 @@ define(function(require) {
 
             if (this.fieldsByName.hasOwnProperty('product')) {
                 this.fieldsByName.product.change(_.bind(function(e) {
+                    this.resetData();
+
                     var productId = this._getProductId();
                     if (productId.length === 0) {
                         this.setTierPrices({});
@@ -166,6 +170,12 @@ define(function(require) {
 
             mediator.trigger('order:get:products-tier-prices', _.bind(this.setTierPrices, this));
             mediator.on('order:refresh:products-tier-prices', this.setTierPrices, this);
+        },
+
+        resetData: function() {
+            if (this.fieldsByName.hasOwnProperty('quantity')) {
+                this.fieldsByName.quantity.val(1);
+            }
         },
 
         /**

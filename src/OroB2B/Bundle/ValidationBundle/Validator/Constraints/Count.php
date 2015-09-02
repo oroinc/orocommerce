@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Validator\Constraints;
+namespace OroB2B\Bundle\ValidationBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraints\Count as BaseConstraint;
 
