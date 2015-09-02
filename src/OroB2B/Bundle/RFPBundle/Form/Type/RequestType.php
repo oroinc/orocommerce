@@ -9,8 +9,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
-
 class RequestType extends AbstractType
 {
     const NAME = 'orob2b_rfp_request';

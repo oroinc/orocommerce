@@ -161,7 +161,6 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
     }
 
-
     /**
      * @return array
      */

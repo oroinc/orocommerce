@@ -50,6 +50,11 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
         );
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Replaced by testProcessValidShoppingList
+     */
     public function testProcessValidData()
     {
     }
