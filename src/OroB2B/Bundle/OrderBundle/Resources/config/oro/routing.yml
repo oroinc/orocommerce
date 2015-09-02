@@ -6,7 +6,7 @@ orob2b_order:
 orob2b_order_frontend:
     resource:     "@OroB2BOrderBundle/Controller/Frontend/OrderController.php"
     type:         annotation
-    prefix:       /order
+    prefix:       /account/order
     options:
         frontend: true
 
@@ -18,7 +18,7 @@ orob2b_order_ajax:
 orob2b_order_frontend_ajax:
     resource:     "@OroB2BOrderBundle/Controller/Frontend/AjaxOrderController.php"
     type:         annotation
-    prefix:       /order
+    prefix:       /account/order
     options:
         frontend: true
 
