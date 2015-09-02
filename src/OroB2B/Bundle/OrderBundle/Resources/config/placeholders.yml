@@ -1,0 +1,8 @@
+placeholders:
+    scripts_before:
+        items:
+            line_item_templates: ~
+
+items:
+    line_item_templates:
+        template: OroB2BOrderBundle:Js:line_item_templates.js.twig

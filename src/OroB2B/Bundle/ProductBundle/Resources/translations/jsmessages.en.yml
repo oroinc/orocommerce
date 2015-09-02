@@ -2,3 +2,13 @@ orob2b:
     product:
         productunit:
             delete.confirmation: Are you sure you want to delete this unit precision?
+
+        product_unit.kg:
+            label:
+                full: kilogram
+                short: kg
+
+        product_unit.item:
+            label:
+                full: item
+                short: item
