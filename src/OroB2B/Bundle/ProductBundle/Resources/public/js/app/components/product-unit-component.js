@@ -77,6 +77,7 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         onProductChange: function(e) {
+            this.unitSelector.trigger('value:changing');
             var value = e.target.value;
             var self = this;
 
@@ -178,6 +179,7 @@ define(function(require) {
             } else {
                 this.unitSelector.parent('.selector').removeClass('disabled');
             }
+            this.unitSelector.trigger('value:changed');
         },
 
         dispose: function() {

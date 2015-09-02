@@ -45,7 +45,7 @@ define(function(require) {
             LineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
             this.subtotalFields([
-                //skip product, productUnit always changed after product change
+                this.fieldsByName.product,
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,
                 this.fieldsByName.priceValue,
@@ -123,6 +123,14 @@ define(function(require) {
         /**
          * @inheritdoc
          */
+        updateMatchedPrices: function() {
+            this.fieldsByName.priceValue.trigger('value:changing');
+            LineItemView.__super__.updateMatchedPrices.apply(this, arguments);
+        },
+
+        /**
+         * @inheritdoc
+         */
         setMatchedPrices: function(matchedPrices) {
             LineItemView.__super__.setMatchedPrices.apply(this, arguments);
 
@@ -136,6 +144,7 @@ define(function(require) {
             }
 
             this.renderTierPrices();
+            this.fieldsByName.priceValue.trigger('value:changed');
         },
 
         renderPriceOverridden: function() {

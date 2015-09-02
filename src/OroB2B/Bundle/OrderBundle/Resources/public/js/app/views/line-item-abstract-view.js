@@ -256,6 +256,7 @@ define(function(require) {
             if (this.lastMatchedPriceIdentifier &&
                 this.lastMatchedPriceIdentifier === this._getMatchedPriceIdentifier()
             ) {
+                this.setMatchedPrices();
                 return;
             }
 
@@ -278,6 +279,9 @@ define(function(require) {
          * @param {Object} matchedPrices
          */
         setMatchedPrices: function(matchedPrices) {
+            if (matchedPrices === undefined) {
+                return;
+            }
             var identifier = this._getMatchedPriceIdentifier();
             if (identifier) {
                 this.matchedPrice = matchedPrices[identifier] || {};
