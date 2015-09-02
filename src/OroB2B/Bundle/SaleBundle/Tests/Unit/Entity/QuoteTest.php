@@ -36,6 +36,28 @@ class QuoteTest extends AbstractTest
         ]);
     }
 
+    public function testToString()
+    {
+        $id = '123';
+        $quote = new Quote();
+        $class = new \ReflectionClass($quote);
+        $prop = $class->getProperty('id');
+        $prop->setAccessible(true);
+        $prop->setValue($quote, $id);
+
+        $this->assertEquals($id, (string)$quote);
+    }
+
+    public function testGetEmail()
+    {
+        $quote = new Quote();
+        $this->assertEmpty($quote->getEmail());
+        $accountUser = new AccountUser();
+        $accountUser->setEmail('test');
+        $quote->setAccountUser($accountUser);
+        $this->assertEquals('test', $quote->getEmail());
+    }
+
     public function testPrePersist()
     {
         $quote = new Quote();
