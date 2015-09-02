@@ -28,12 +28,10 @@ use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeS
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
-
     /**
      * @var FrontendAccountUserType
      */
     protected $formType;
-
 
     /**
      * {@inheritdoc}
@@ -59,36 +57,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         $account = $this->getAccount(1);
         $user = new AccountUser();
         $user->setAccount($account);
-        /** @var $query AbstractQuery | \PHPUnit_Framework_MockObject_MockObject */
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $query->expects($this->any())->method('execute')->willReturn($this->getRoles());
-        /** @var $qb QueryBuilder | \PHPUnit_Framework_MockObject_MockObject */
-        $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $qb->expects($this->any())->method('getQuery')->willReturn($query);
         $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn($user);
-        /** @var $registry Registry | \PHPUnit_Framework_MockObject_MockObject */
-        $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        /** @var $repo AccountUserRoleRepository | \PHPUnit_Framework_MockObject_MockObject */
-        $repo = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->any())
-            ->method('getAvailableRolesByAccountUserQueryBuilder')
-            ->with($user)
-            ->willReturn($qb);
-        /** @var $em ObjectManager | \PHPUnit_Framework_MockObject_MockObject */
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->with('OroB2BAccountBundle:AccountUserRole')
-            ->willReturn($repo);
-        $registry->expects($this->any())->method('getManager')->willReturn($em);
 
         $frontendUserRoleSelectType = new EntitySelectTypeStub(
             $this->getRoles(),
@@ -126,8 +95,12 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      * @param AccountUser $expectedData
      * @param bool $roleGranted
      */
-    public function testSubmit(AccountUser $defaultData, array $submittedData, AccountUser $expectedData, $roleGranted = true)
-    {
+    public function testSubmit(
+        AccountUser $defaultData,
+        array $submittedData,
+        AccountUser $expectedData,
+        $roleGranted = true
+    ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
