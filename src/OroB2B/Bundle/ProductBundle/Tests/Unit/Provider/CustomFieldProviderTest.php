@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 use OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider;
@@ -21,14 +21,9 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     protected $extendConfigProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Config
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
      */
-    protected $extendConfig;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityFieldProvider
-     */
-    protected $entityFieldProvider;
+    protected $entityConfigProvider;
 
     /**
      * @var string
@@ -41,24 +36,17 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->extendConfigProvider = $this->getMockShortcut('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider');
-        $this->extendConfig = $this->getMockShortcut('Oro\Bundle\EntityConfigBundle\Config\Config');
-        $this->entityFieldProvider = $this->getMockShortcut('Oro\Bundle\EntityBundle\Provider\EntityFieldProvider');
+        $this->entityConfigProvider = $this->getMockShortcut('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider');
 
-        $this->provider = new CustomFieldProvider($this->extendConfigProvider, $this->entityFieldProvider);
+        $this->provider = new CustomFieldProvider($this->extendConfigProvider, $this->entityConfigProvider);
     }
 
     public function testGetEntityCustomFields()
     {
         $allFields = [
-            ['name' => 'size', 'label' => 'Size Label', 'type' => 'string'],
-            ['name' => 'color', 'label' => 'Color Label', 'type' => 'string'],
-            ['name' => 'id', 'label' => 'Id Label', 'type' => 'integer'],
-        ];
-
-        $customFieldsFromConfig = [
-            'size' => 'size',
-            'color' => 'color',
-            'serialized_data' => 'serialized_data'
+            'size' => ['owner' => 'Custom', 'label' => 'Size Label','type' => 'string'],
+            'color' => ['owner' => 'Custom', 'label' => 'Color Label', 'type' => 'string'],
+            'id' => ['owner' => 'System', 'label' => 'Id Label', 'type' => 'string'],
         ];
 
         $expectedResult = [
@@ -66,23 +54,30 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
             'color' => ['name' => 'color', 'label' => 'Color Label', 'type' => 'string']
         ];
 
-        $this->extendConfig
-            ->expects($this->once())
-            ->method('get')
-            ->with('schema')
-            ->willReturn(['property' => $customFieldsFromConfig]);
+        $extendsConfigs = [];
+        foreach ($allFields as $fieldName => $fieldData) {
+            $extendsConfigs[$fieldName] = $this->createExtendConfig($fieldName, $fieldData);
+        }
+
+        $entityConfigs = [];
+        foreach ($allFields as $fieldName => $fieldData) {
+            $entityConfigs[$fieldName] =  $this->createEntityConfig($fieldName, $fieldData);
+        }
 
         $this->extendConfigProvider
             ->expects($this->once())
-            ->method('getConfig')
+            ->method('getConfigs')
             ->with($this->className)
-            ->willReturn($this->extendConfig);
+            ->willReturn($extendsConfigs);
 
-        $this->entityFieldProvider
-            ->expects($this->once())
-            ->method('getFields')
-            ->with($this->className)
-            ->willReturn($allFields);
+        $this->entityConfigProvider
+            ->expects($this->any())
+            ->method('getConfigById')
+            ->willReturnCallback(
+                function (FieldConfigId $configId) use ($entityConfigs) {
+                    return $entityConfigs[$configId->getFieldName()];
+                }
+            );
 
         $this->assertEquals($expectedResult, $this->provider->getEntityCustomFields($this->className));
     }
@@ -96,5 +91,37 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
         return $this->getMockBuilder($className)
             ->disableOriginalConstructor()
             ->getMock();
+    }
+
+    /**
+     * @param string $scope
+     * @param string $fieldName
+     * @param string $fieldType
+     * @param array $values
+     * @return Config
+     */
+    private function createConfig($scope, $fieldName, $fieldType, array $values = [])
+    {
+        return new Config(new FieldConfigId($scope, $this->className, $fieldName, $fieldType), $values);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param array $fieldData
+     * @return Config
+     */
+    private function createEntityConfig($fieldName, $fieldData)
+    {
+        return $this->createConfig('entity', $fieldName, $fieldData['type'], $fieldData);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param array $fieldData
+     * @return Config
+     */
+    private function createExtendConfig($fieldName, $fieldData)
+    {
+        return $this->createConfig('extend', $fieldName, $fieldData['type'], $fieldData);
     }
 }

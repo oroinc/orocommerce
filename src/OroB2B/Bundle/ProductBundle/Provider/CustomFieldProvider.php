@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 
 class CustomFieldProvider
@@ -13,18 +13,18 @@ class CustomFieldProvider
     protected $extendConfigProvider;
 
     /**
-     * @var EntityFieldProvider
+     * @var ConfigProvider
      */
-    protected $entityFieldProvider;
+    protected $entityConfigProvider;
 
     /**
      * @param ConfigProvider $extendConfigProvider
-     * @param EntityFieldProvider $entityFieldProvider
+     * @param ConfigProvider $entityConfigProvider
      */
-    public function __construct(ConfigProvider $extendConfigProvider, EntityFieldProvider $entityFieldProvider)
+    public function __construct(ConfigProvider $extendConfigProvider, ConfigProvider $entityConfigProvider)
     {
         $this->extendConfigProvider = $extendConfigProvider;
-        $this->entityFieldProvider = $entityFieldProvider;
+        $this->entityConfigProvider = $entityConfigProvider;
     }
 
     /**
@@ -33,44 +33,22 @@ class CustomFieldProvider
      */
     public function getEntityCustomFields($entityName)
     {
-        $result = [];
-        $allFields = $this->getEntityFields($entityName);
-        $configCustomFields = $this->getEntityCustomFieldsFromConfig($entityName);
+        $customFields = [];
+        $extendConfigs = $this->extendConfigProvider->getConfigs($entityName);
 
-        foreach ($configCustomFields as $field) {
-            if (array_key_exists($field, $allFields)) {
-                $result[$field] = $allFields[$field];
+        foreach ($extendConfigs as $extendConfig) {
+            if ($extendConfig->get('owner') === 'Custom') {
+                /** @var FieldConfigId $configId */
+                $configId = $extendConfig->getId();
+                $entityConfig = $this->entityConfigProvider->getConfigById($configId);
+
+                $customFields[$configId->getFieldName()] = [
+                    'name' => $configId->getFieldName(),
+                    'type' => $configId->getFieldType(),
+                    'label' => $entityConfig->get('label')
+                ];
             }
         }
-
-        return $result;
-    }
-
-    /**
-     * @param string $entityName
-     * @return array
-     */
-    private function getEntityFields($entityName)
-    {
-        $result = [];
-        $fields = $this->entityFieldProvider->getFields($entityName);
-
-        foreach ($fields as $field) {
-            $result[$field['name']] = $field;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param string $entityName
-     * @return array
-     */
-    private function getEntityCustomFieldsFromConfig($entityName)
-    {
-        $extendConfig = $this->extendConfigProvider->getConfig($entityName);
-        $schema = $extendConfig->get('schema');
-        $customFields = $schema['property'];
 
         return $customFields;
     }
