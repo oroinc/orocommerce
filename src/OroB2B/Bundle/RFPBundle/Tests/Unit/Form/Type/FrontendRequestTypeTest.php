@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Validator\ConstraintViolationList;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -14,13 +15,14 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 
 class FrontendRequestTypeTest extends AbstractTest
 {
@@ -38,6 +40,7 @@ class FrontendRequestTypeTest extends AbstractTest
     protected function setUp()
     {
         $requestStatus = new RequestStatus();
+        $requestStatus->setName(RequestStatus::DRAFT);
 
         $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
@@ -134,6 +137,22 @@ class FrontendRequestTypeTest extends AbstractTest
     }
 
     /**
+     * Test postSubmit
+     */
+    public function testPostSubmit()
+    {
+        $request = new Request();
+        $form = $this->factory->create($this->formType, $request);
+
+        static::assertEmpty($request->getStatus());
+
+        $this->formType->postSubmit(new FormEvent($form, $request));
+
+        static::assertNotNull($request->getStatus());
+        static::assertEquals(RequestStatus::DRAFT, $request->getStatus()->getName());
+    }
+
+    /**
      * @return array
      */
     public function submitProvider()
@@ -170,7 +189,9 @@ class FrontendRequestTypeTest extends AbstractTest
                 ],
                 'expectedData'  => $this
                     ->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '+38 (044) 247-68-00')
-                    ->addRequestProduct($requestProduct)->setStatus(new RequestStatus()),
+                    ->addRequestProduct($requestProduct)->setStatus(
+                        (new RequestStatus())->setName(RequestStatus::DRAFT)
+                    ),
                 'defaultData'   => $this->getRequest(),
             ],
         ];
