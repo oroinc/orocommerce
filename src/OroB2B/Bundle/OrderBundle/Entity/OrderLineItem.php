@@ -26,6 +26,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class OrderLineItem extends ExtendOrderLineItem
 {
