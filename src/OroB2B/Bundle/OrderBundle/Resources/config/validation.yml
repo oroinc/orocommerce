@@ -19,9 +19,9 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
         account:
             - NotBlank: ~
         lineItems:
-            - Count:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
                 min: 1
-                minMessage: "You must add at least one Line Item"
+                minMessage: 'orob2b.order.orderlineitem.count'
             - Valid: ~
 
 OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
