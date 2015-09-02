@@ -9,6 +9,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
+use Oro\Component\Testing\Fixtures\LoadAccountUserData as UserData;
+
 class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface
 {
     const FIRST_NAME = 'Grzegorz';
@@ -71,10 +73,11 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
                 /** @var Account $account */
                 $account = $this->getReference($user['account']);
             } else {
-                $account = $manager->getRepository('OroB2BAccountBundle:Account')
-                    ->findOneBy([], ['id' => 'DESC']);
+                $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
+                    ->findOneBy(['username' => UserData::AUTH_USER]);
+                $account = $accountUser->getAccount();
             }
-
+            $role = $manager->getRepository('OroB2BAccountBundle:AccountUserRole')->findOneBy([]);
             $entity = new AccountUser();
             $entity
                 ->setAccount($account)
@@ -83,6 +86,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
                 ->setEmail($user['email'])
                 ->setEnabled($user['enabled'])
                 ->setOrganization($account->getOrganization())
+                ->addRole($role)
                 ->setPassword($user['password']);
 
             $this->setReference($entity->getEmail(), $entity);

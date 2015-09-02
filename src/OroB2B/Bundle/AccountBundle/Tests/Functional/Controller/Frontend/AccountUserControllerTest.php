@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
+use OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
 
-use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 /**
  * @dbIsolation
  */
-class AccountUserControllerTest extends WebTestCase
+class AccountUserControllerTest extends AbstractUserControllerTest
 {
     const NAME_PREFIX = 'NamePrefix';
     const MIDDLE_NAME = 'MiddleName';
@@ -58,13 +58,9 @@ class AccountUserControllerTest extends WebTestCase
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\Account $account */
-        $account = $this->getAccountRepository()->findOneBy([]);
-
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
         $role = $this->getUserRoleRepository()->findOneBy([]);
 
-        $this->assertNotNull($account);
         $this->assertNotNull($role);
 
         $form = $crawler->selectButton('Save and Close')->form();
@@ -78,13 +74,11 @@ class AccountUserControllerTest extends WebTestCase
         $form['orob2b_account_frontend_account_user[birthday]'] = date('Y-m-d');
         $form['orob2b_account_frontend_account_user[plainPassword][first]'] = $password;
         $form['orob2b_account_frontend_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_account_frontend_account_user[account]'] = $account->getId();
         $form['orob2b_account_frontend_account_user[passwordGenerate]'] = $isPasswordGenerate;
         $form['orob2b_account_frontend_account_user[sendEmail]'] = $isSendEmail;
         $form['orob2b_account_frontend_account_user[roles]'] = [$role->getId()];
 
         $this->client->submit($form);
-
         /** @var MessageDataCollector $collector */
         $collector = $this->client->getProfile()->getCollector('swiftmailer');
         $collectedMessages = $collector->getMessages();
@@ -100,91 +94,6 @@ class AccountUserControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Account User has been saved', $crawler->html());
-    }
-
-    /**
-     * @return array
-     */
-    public function createDataProvider()
-    {
-        return [
-            'simple create' => [
-                'email' => self::EMAIL,
-                'password' => '123456',
-                'isPasswordGenerate' => false,
-                'isSendEmail' => false,
-                'emailsCount' => 0
-            ],
-            'create with email and without password generator' => [
-                'email' => 'second@example.com',
-                'password' => '123456',
-                'isPasswordGenerate' => false,
-                'isSendEmail' => true,
-                'emailsCount' => 1
-            ],
-            'create with email and password generator' => [
-                'email' => 'third@example.com',
-                'password' => '',
-                'isPasswordGenerate' => true,
-                'isSendEmail' => true,
-                'emailsCount' => 1
-            ]
-        ];
-    }
-
-    /**
-     * @param string $email
-     * @param \Swift_Message $message
-     */
-    protected function assertMessage($email, \Swift_Message $message)
-    {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => $email]);
-
-        $this->assertNotNull($user);
-
-        $this->assertInstanceOf('\Swift_Message', $message);
-
-        $this->assertEquals($email, key($message->getTo()));
-        $this->assertEquals(
-            $this->getContainer()->get('oro_config.manager')->get('oro_notification.email_notification_sender_email'),
-            key($message->getFrom())
-        );
-
-        $this->assertContains($email, $message->getSubject());
-        $this->assertContains($email, $message->getBody());
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return $this->getContainer()->get('doctrine')->getManager();
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getUserRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getUserRoleRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUserRole');
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getAccountRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Account');
     }
 
     /**
@@ -291,6 +200,13 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertContains(self::UPDATED_FIRST_NAME, $result->getContent());
         $this->assertContains(self::UPDATED_LAST_NAME, $result->getContent());
         $this->assertContains(self::UPDATED_EMAIL, $result->getContent());
-        $this->assertContains($user->getAccount()->getName(), $result->getContent());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEmail()
+    {
+        return self::EMAIL;
     }
 }
