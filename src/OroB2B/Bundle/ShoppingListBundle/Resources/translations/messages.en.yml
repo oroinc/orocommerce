@@ -30,7 +30,7 @@ orob2b:
             view: view shopping list
             add_to_shopping_list: Add to
             add_to_new_shopping_list: Create New Shopping List
-            add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added."
+            add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
 
         menu:
             sales_tab.label: Sales
@@ -51,8 +51,8 @@ orob2b:
             shopping_list.saved.message: Shopping List has been saved
 
         lineitem:
-            entity_label: Line Item
-            entity_plural_label: Line Items
+            entity_label: Shopping List Line Item
+            entity_plural_label: Shopping List Line Items
             id.label: ID
             notes.label: Notes
             product_sku.label: Product SKU
@@ -65,7 +65,6 @@ orob2b:
             add_line_item: Add Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
-            new_shopping_list_label.empty: Shopping List label must not be empty
             grid:
                 action:
                     view:
