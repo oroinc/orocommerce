@@ -68,7 +68,7 @@ orob2b_account_bundle_api:
     defaults:
         version:  latest
 
-orob2b_account_frontend_account_user_datagrid_index:
+orob2b_account_frontend_datagrid_index:
     path: /datagrid/{gridName}
     defaults: { _controller: OroDataGridBundle:Grid:get }
     requirements:
@@ -76,7 +76,7 @@ orob2b_account_frontend_account_user_datagrid_index:
     options:
         frontend: true
 
-orob2b_account_frontend_account_user_datagrid_widget:
+orob2b_account_frontend_datagrid_widget:
     path: /datagrid/widget/{gridName}
     defaults: { _controller: OroDataGridBundle:Grid:widget }
     requirements:
@@ -87,6 +87,12 @@ orob2b_account_frontend_account_user_datagrid_widget:
 orob2b_account_pinbar_help:
     pattern: /pinbar/help
     defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
+    options:
+        frontend: true
+
+orob2b_frontend_autocomplete_search:
+    pattern: /autocomplete/search
+    defaults: { _controller: OroFormBundle:Autocomplete:search }
     options:
         frontend: true
 
