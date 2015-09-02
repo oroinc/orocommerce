@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -47,7 +48,7 @@ use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
  * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Order extends ExtendOrder implements OrganizationAwareInterface
+class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface
 {
     /**
      * @var integer
@@ -591,5 +592,17 @@ class Order extends ExtendOrder implements OrganizationAwareInterface
         $this->account = $account;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (null !== $this->getAccountUser()) {
+            return $this->getAccountUser()->getEmail();
+        }
+
+        return '';
     }
 }
