@@ -96,25 +96,25 @@ orob2b_frontend_autocomplete_search:
     options:
         frontend: true
 
-orob2b_account_entity_pagination_first:
+orob2b_account_frontend_entity_pagination_first:
     pattern: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
     options:
         frontend: true
 
-orob2b_account_entity_pagination_previous:
+orob2b_account_frontend_entity_pagination_previous:
     pattern: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
     options:
         frontend: true
 
-orob2b_account_entity_pagination_next:
+orob2b_account_frontend_entity_pagination_next:
     pattern: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
     options:
         frontend: true
 
-orob2b_account_entity_pagination_last:
+orob2b_account_frontend_entity_pagination_last:
     pattern: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
