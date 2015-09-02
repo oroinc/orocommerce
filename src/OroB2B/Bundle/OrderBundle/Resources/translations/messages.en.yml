@@ -18,6 +18,8 @@ orob2b:
         payment_term.label: Payment Term
         billing_address.label: Billing Address
         shipping_address.label: Shipping Address
+        price_list.label: 'Price List'
+        line_items.label: Line Items
 
         orderaddress:
             entity_label: Order Address
@@ -40,6 +42,50 @@ orob2b:
             street.label: Street
             street2.label: Street 2
 
+        orderlineitem:
+            entity_label: 'Order Line Item'
+            entity_plural_label: 'Order Line Items'
+            add_label: 'Add Product'
+            id.label: 'ID'
+            product.label: 'Product'
+            product_sku.label: 'Product SKU'
+            order.label: 'Order'
+            order_product_items.label: 'Order Product Items'
+            order_product_requests.label: 'Order Product Requests'
+            request_product_item.label: 'Requested Item'
+            comment.label: 'Notes'
+            product_unit.empty: 'Choose Unit...'
+            column_summary: 'Summary'
+            item: '{units}, {price} per {unit}'
+            item_bundled: '{units}, {price} for every {units}'
+            quantity.label: 'Quantity'
+            product_unit.label: 'Product Unit'
+            product_unit_code.label: 'Product Unit Code'
+            price.label: 'Price'
+            value.label: 'Price Value'
+            currency.label: 'Price Currency'
+            quote_product_offer.label: 'Quote Product Offer'
+            fromExternalSource.label: 'Created from External Source'
+            ship_by.label: 'Ship By'
+            free_form_product.label: Product (free-form)
+            from_external_source.label: Created from External Source
+            price_type:
+                label: 'Price Type'
+                bundled: 'bundle'
+                unit: 'per unit'
+            select:
+                product: Select product
+                free_form: Free-form entry
+            price_is_overridden.label: Price is overridden
+            reset_price.label: Reset price
+
+            column:
+                product: 'Product'
+
+        btn:
+            add_seller_notes: 'Add Notes'
+            remove_seller_notes: 'Remove Seller Notes'
+
         menu:
             sales_tab.label: Sales
             orders_list.description: List of existing orders
@@ -57,6 +103,7 @@ orob2b:
             general: General
             additional: Additional
             subtotals: Order Totals
+            order_line_items: 'Line Items'
 
         security:
             permission:

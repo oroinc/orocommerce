@@ -10,7 +10,7 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
 class AccountUserExtension extends AbstractExtension implements ContainerAwareInterface
 {
-    const ROUTE = 'orob2b_account_frontend_account_user_datagrid_index';
+    const ROUTE = 'orob2b_account_frontend_datagrid_index';
 
     /**
      * @var ContainerInterface

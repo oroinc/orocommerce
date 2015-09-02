@@ -4,17 +4,16 @@ namespace OroB2B\Bundle\AccountBundle\Migrations\Data\ORM;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
+use Symfony\Component\Yaml\Yaml;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\SecurityBundle\Acl\Extension\AclExtensionInterface;
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -59,128 +58,109 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->container->get('oro_security.acl.manager');
-
-        $administrator = $this->createAdministratorRole($aclManager);
-        $buyer = $this->createBuyerRole($manager, $aclManager);
-
-        $manager->persist($administrator);
-        $manager->persist($buyer);
-
-        $manager->flush();
-        $aclManager->flush();
-    }
-
-    /**
-     * @param AclManager $aclManager
-     * @return AccountUserRole
-     */
-    protected function createAdministratorRole(AclManager $aclManager)
-    {
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
 
-        $allowedEntities = $this->getFrontendOwnedEntities();
-        $allowedAcls = ['VIEW_LOCAL', 'CREATE_LOCAL', 'EDIT_LOCAL', 'DELETE_LOCAL', 'ASSIGN_LOCAL'];
+        $roleData = $this->loadRolesData();
 
-        $role = $this->createEntity(self::ADMINISTRATOR, $this->defaultRoles[self::ADMINISTRATOR]);
+        $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-        if ($aclManager->isAclEnabled()) {
+        foreach ($roleData as $roleName => $roleConfigData) {
+            $role = $this->createEntity($roleName, $roleConfigData['label']);
+            if (!empty($roleConfigData['website_default_role'])) {
+                $this->setWebsiteDefaultRoles($role);
+            }
+
+            $manager->persist($role);
+
+            if (!$aclManager->isAclEnabled()) {
+                continue;
+            }
+
             $sid = $aclManager->getSid($role);
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-                    foreach ($allowedEntities as $className) {
-                        $oid = $aclManager->getOid('entity:' . $className);
-                        $builder = $aclManager->getMaskBuilder($oid);
-                        $mask = $builder->reset()->get();
-                        foreach ($allowedAcls as $acl) {
-                            $mask = $builder->add($acl)->get();
-                        }
-                        $aclManager->setPermission($sid, $oid, $mask);
-                    }
+            if (!empty($roleConfigData['max_permissions'])) {
+                $this->setPermissionGroup($aclManager, $sid);
+            }
 
-                    $chainMetadataProvider->stopProviderEmulation();
-                } else {
-                    $this->setPermissionGroup($aclManager, $extension, $sid, 'GROUP_ALL');
+            if (empty($roleConfigData['permissions']) || !is_array($roleConfigData['permissions'])) {
+                continue;
+            }
+
+            $this->setPermissions($aclManager, $sid, $roleConfigData['permissions']);
+        }
+
+        $chainMetadataProvider->stopProviderEmulation();
+
+        $aclManager->flush();
+        $manager->flush();
+    }
+
+    /**
+     * @param AclManager $aclManager
+     * @param SecurityIdentityInterface $sid
+     * @param array $permissions
+     */
+    protected function setPermissions(AclManager $aclManager, SecurityIdentityInterface $sid, array $permissions)
+    {
+        foreach ($permissions as $permission => $acls) {
+            $oid = $aclManager->getOid(str_replace('|', ':', $permission));
+            $builder = $aclManager->getMaskBuilder($oid);
+            $builder->reset();
+            if ($acls) {
+                foreach ($acls as $acl) {
+                    $builder->add($acl);
                 }
             }
-        }
-
-        return $role;
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param AclManager $aclManager
-     * @return AccountUserRole
-     */
-    protected function createBuyerRole(ObjectManager $manager, AclManager $aclManager)
-    {
-        $role = $this->createEntity(self::BUYER, $this->defaultRoles[self::BUYER]);
-
-        $this->setWebsiteDefaultRoles($manager, $role);
-
-        if ($aclManager->isAclEnabled()) {
-            $sid = $aclManager->getSid($role);
-
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                $this->setPermissionGroup($aclManager, $extension, $sid, 'GROUP_NONE');
-            }
-        }
-
-        return $role;
-    }
-
-    /**
-     * @param AclManager $aclManager
-     * @param AclExtensionInterface $extension
-     * @param SecurityIdentityInterface $sid
-     * @param string $group
-     */
-    protected function setPermissionGroup(
-        AclManager $aclManager,
-        AclExtensionInterface $extension,
-        SecurityIdentityInterface $sid,
-        $group
-    ) {
-        $rootOid = $aclManager->getRootOid($extension->getExtensionKey());
-        foreach ($extension->getAllMaskBuilders() as $maskBuilder) {
-            if ($maskBuilder->hasConst($group)) {
-                $mask = $maskBuilder->getConst($group);
-                $aclManager->setPermission($sid, $rootOid, $mask, true);
-                break;
-            }
+            $mask = $builder->get();
+            $aclManager->setPermission($sid, $oid, $mask);
         }
     }
 
     /**
      * @return array
      */
-    protected function getFrontendOwnedEntities()
+    protected function loadRolesData()
     {
-        $securityConfigProvider = $this->container->get('oro_entity_config.provider.security');
-        $ownershipConfigProvider = $this->container->get('oro_entity_config.provider.ownership');
-
-        $classes = [];
-
-        foreach ($securityConfigProvider->getConfigs() as $config) {
-            if ($config->has('group_name') && $config->get('group_name') == AccountUser::SECURITY_GROUP) {
-                $classes[] = $config->getId()->getClassName();
+        $rolesData = [];
+        /** @var Kernel $kernel */
+        $kernel = $this->container->get('kernel');
+        $bundles = array_keys($this->container->getParameter('kernel.bundles'));
+        foreach ($bundles as $bundle) {
+            $fileName = $this->getFileName($bundle);
+            try {
+                $file = $kernel->locateResource($fileName);
+                $rolesData = array_merge_recursive($rolesData, Yaml::parse($file));
+            } catch (\InvalidArgumentException $e) {
             }
         }
 
-        foreach ($classes as $key => $class) {
-            if ($ownershipConfigProvider->hasConfig($class)) {
-                $config = $ownershipConfigProvider->getConfig($class);
-                if (!$config->has('frontend_owner_type')) {
-                    unset($classes[$key]);
-                }
-            } else {
-                unset($classes[$key]);
+        return $rolesData;
+    }
+
+    /**
+     * @param string $bundle
+     * @return string
+     */
+    protected function getFileName($bundle)
+    {
+        return sprintf('@%s%s', $bundle, '/Migrations/Data/ORM/data/frontend_roles.yml');
+    }
+
+    /**
+     * @param AclManager $aclManager
+     * @param SecurityIdentityInterface $sid
+     */
+    protected function setPermissionGroup(AclManager $aclManager, SecurityIdentityInterface $sid)
+    {
+        foreach ($aclManager->getAllExtensions() as $extension) {
+            $rootOid = $aclManager->getRootOid($extension->getExtensionKey());
+            foreach ($extension->getAllMaskBuilders() as $maskBuilder) {
+                $fullAccessMask = $maskBuilder->hasConst('GROUP_SYSTEM')
+                    ? $maskBuilder->getConst('GROUP_SYSTEM')
+                    : $maskBuilder->getConst('GROUP_ALL');
+                $aclManager->setPermission($sid, $rootOid, $fullAccessMask, true);
             }
         }
-
-        return $classes;
     }
 
     /**
@@ -197,12 +177,14 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     }
 
     /**
-     * @param ObjectManager $manager
      * @param AccountUserRole $role
      */
-    protected function setWebsiteDefaultRoles(ObjectManager $manager, AccountUserRole $role)
+    protected function setWebsiteDefaultRoles(AccountUserRole $role)
     {
-        $websites = $manager->getRepository('OroB2BWebsiteBundle:Website')->findAll();
+        $websites = $this->container->get('doctrine')
+            ->getManagerForClass('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->findAll();
 
         foreach ($websites as $website) {
             $role->addWebsite($website);

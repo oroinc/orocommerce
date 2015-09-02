@@ -7,7 +7,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -50,7 +49,7 @@ class AccountUserAddressController extends RestController implements ClassResour
             $addressData = $this->getPreparedItem($address);
         }
         $responseData = $addressData ? json_encode($addressData) : '';
-        return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
+        return new Response($responseData, $address ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -79,7 +78,7 @@ class AccountUserAddressController extends RestController implements ClassResour
             }
         }
 
-        return new JsonResponse($result, $accountUser ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
+        return new JsonResponse($result, $accountUser ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -105,7 +104,7 @@ class AccountUserAddressController extends RestController implements ClassResour
             $accountUser->removeAddress($address);
             return $this->handleDeleteRequest($addressId);
         } else {
-            return $this->handleView($this->view(null, Codes::HTTP_NOT_FOUND));
+            return $this->handleView($this->view(null, Response::HTTP_NOT_FOUND));
         }
     }
 
@@ -135,7 +134,7 @@ class AccountUserAddressController extends RestController implements ClassResour
 
         $responseData = $address ? json_encode($this->getPreparedItem($address)) : '';
 
-        return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
+        return new Response($responseData, $address ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -163,7 +162,7 @@ class AccountUserAddressController extends RestController implements ClassResour
 
         $responseData = $address ? json_encode($this->getPreparedItem($address)) : '';
 
-        return new Response($responseData, $address ? Codes::HTTP_OK : Codes::HTTP_NOT_FOUND);
+        return new Response($responseData, $address ? Response::HTTP_OK : Response::HTTP_NOT_FOUND);
     }
 
     /**

@@ -81,20 +81,32 @@ define(function(require) {
         /**
          * Get and render subtotals
          */
-        updateSubtotals: function() {
+        updateSubtotals: function(e) {
             this.loadingMaskView.show();
 
-            var self = this;
-            this.getSubtotals(function(subtotals) {
+            if (this.getSubtotals.timeoutId) {
+                clearTimeout(this.getSubtotals.timeoutId);
+            }
 
-                self.loadingMaskView.hide();
+            this.getSubtotals.timeoutId = setTimeout(_.bind(function() {
+                this.getSubtotals.timeoutId = null;
 
-                if (!subtotals) {
-                    return null;
+                var promises = [];
+                mediator.trigger('order:changing', promises);
+
+                if (promises.length) {
+                    $.when.apply($, promises).done(_.bind(this.updateSubtotals, this, e));
+                } else {
+                    this.getSubtotals(_.bind(function(subtotals) {
+                        this.loadingMaskView.hide();
+                        if (!subtotals) {
+                            return;
+                        }
+
+                        this.render(subtotals);
+                    }, this));
                 }
-
-                self.render(subtotals);
-            });
+            }, this), 100);
         },
 
         /**
@@ -103,7 +115,7 @@ define(function(require) {
          * @param {Function} callback
          */
         getSubtotals: function(callback) {
-            var formData = this.$form.serialize();
+            var formData = this.$form.find(':input[data-ftid]').serialize();
 
             if (formData === this.formData) {
                 callback();//nothing changed
