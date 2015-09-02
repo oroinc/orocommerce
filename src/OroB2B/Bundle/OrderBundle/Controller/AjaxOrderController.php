@@ -46,17 +46,16 @@ class AjaxOrderController extends AbstractAjaxOrderController
     public function getRelatedDataAction()
     {
         $order = new Order();
-        $account = $this->getOrderHandler()->getAccount();
         $accountUser = $this->getOrderHandler()->getAccountUser();
-
-        if ($account && $accountUser) {
-            $this->validateRelation($accountUser, $account);
-        }
+        $account = $this->getAccount($accountUser);
 
         $order->setAccount($account);
         $order->setAccountUser($accountUser);
 
-        $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        $accountPaymentTerm = null;
+        if ($account) {
+            $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        }
         $accountGroupPaymentTerm = null;
         if ($account->getGroup()) {
             $accountGroupPaymentTerm = $this->getPaymentTermProvider()
@@ -125,5 +124,22 @@ class AjaxOrderController extends AbstractAjaxOrderController
     protected function getOrderFormTypeName()
     {
         return OrderType::NAME;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return null|Account
+     */
+    protected function getAccount(AccountUser $accountUser = null)
+    {
+        $account = $this->getOrderHandler()->getAccount();
+        if (!$account && $accountUser) {
+            $account = $accountUser->getAccount();
+        }
+        if ($account && $accountUser) {
+            $this->validateRelation($accountUser, $account);
+        }
+
+        return $account;
     }
 }
