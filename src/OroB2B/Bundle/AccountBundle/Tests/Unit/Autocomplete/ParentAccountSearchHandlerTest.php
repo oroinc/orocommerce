@@ -323,9 +323,8 @@ class ParentAccountSearchHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('where')
             ->with($expr)
             ->will($this->returnSelf());
-        $this->aclHelper->expects($this->once())
-            ->method('apply')
-            ->with($queryBuilder, 'VIEW')
+        $queryBuilder->expects($this->once())
+            ->method('getQuery')
             ->will($this->returnValue($query));
         $this->entityRepository
             ->expects($this->any())

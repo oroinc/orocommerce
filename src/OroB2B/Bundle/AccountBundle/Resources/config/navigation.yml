@@ -148,7 +148,7 @@ oro_titles:
     orob2b_account_account_user_update:  '%%username%% - Edit'
     orob2b_account_account_user_create:  oro.ui.create_entity
 
-    orob2b_account_frontend_account_user_index:   ~
+    orob2b_account_frontend_account_user_index:   orob2b.account.accountuser.entity_plural_label
     orob2b_account_frontend_account_user_view:    '%%username%%'
     orob2b_account_frontend_account_user_update:  '%%username%% - Edit'
     orob2b_account_frontend_account_user_create:  oro.ui.create_entity
