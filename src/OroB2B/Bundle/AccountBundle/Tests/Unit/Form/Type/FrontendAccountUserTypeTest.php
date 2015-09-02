@@ -124,8 +124,9 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      * @param AccountUser $defaultData
      * @param array $submittedData
      * @param AccountUser $expectedData
+     * @param bool $roleGranted
      */
-    public function testSubmit(AccountUser $defaultData, array $submittedData, AccountUser $expectedData)
+    public function testSubmit(AccountUser $defaultData, array $submittedData, AccountUser $expectedData, $roleGranted = true)
     {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
