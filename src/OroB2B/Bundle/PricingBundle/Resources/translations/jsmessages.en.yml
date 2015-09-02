@@ -6,3 +6,4 @@ orob2b:
         filter:
             product_price:
                 per: '/'
+        click_to_select: Click to select price per unit

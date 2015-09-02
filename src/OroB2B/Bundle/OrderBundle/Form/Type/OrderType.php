@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,10 +11,13 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Form\Type\PaymentTermSelectType;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class OrderType extends AbstractType
 {
@@ -33,19 +35,25 @@ class OrderType extends AbstractType
     /** @var SecurityFacade */
     protected $securityFacade;
 
+    /** @var OrderCurrencyHandler */
+    protected $orderCurrencyHandler;
+
     /**
      * @param SecurityFacade $securityFacade
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param PaymentTermProvider $paymentTermProvider
+     * @param OrderCurrencyHandler $orderCurrencyHandler
      */
     public function __construct(
         SecurityFacade $securityFacade,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
-        PaymentTermProvider $paymentTermProvider
+        PaymentTermProvider $paymentTermProvider,
+        OrderCurrencyHandler $orderCurrencyHandler
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentTermProvider = $paymentTermProvider;
+        $this->orderCurrencyHandler = $orderCurrencyHandler;
     }
 
     /**
@@ -55,6 +63,7 @@ class OrderType extends AbstractType
     {
         /** @var Order $order */
         $order = $options['data'];
+        $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
             ->add('account', AccountSelectType::NAME, ['label' => 'orob2b.order.account.label', 'required' => true])
@@ -68,7 +77,28 @@ class OrderType extends AbstractType
             )
             ->add('poNumber', 'text', ['required' => false, 'label' => 'orob2b.order.po_number.label'])
             ->add('shipUntil', OroDateType::NAME, ['required' => false, 'label' => 'orob2b.order.ship_until.label'])
-            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label']);
+            ->add('customerNotes', 'textarea', ['required' => false, 'label' => 'orob2b.order.customer_notes.label'])
+            ->add(
+                'priceList',
+                PriceListSelectType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'orob2b.order.price_list.label',
+                ]
+            )
+            ->add(
+                'currency',
+                'hidden'
+            )
+            ->add(
+                'lineItems',
+                OrderLineItemsCollectionType::NAME,
+                [
+                    'add_label' => 'orob2b.order.orderlineitem.add_label',
+                    'cascade_validation' => true,
+                    'options' => ['currency' => $order->getCurrency()]
+                ]
+            );
 
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
@@ -123,6 +153,7 @@ class OrderType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
+                'intention' => 'order',
             ]
         );
     }
@@ -163,6 +194,7 @@ class OrderType extends AbstractType
         }
 
         $paymentTerm = $this->paymentTermProvider->getAccountPaymentTerm($account);
+
         return $paymentTerm ? $paymentTerm->getId() : null;
     }
 
@@ -178,6 +210,7 @@ class OrderType extends AbstractType
         }
 
         $paymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTerm($account->getGroup());
+
         return $paymentTerm ? $paymentTerm->getId() : null;
     }
 }

@@ -1,0 +1,46 @@
+<script type="text/template" id="order-line-item-tier-prices-template">
+    <table>
+        <% if (clickable) { %>
+            <tr>
+                <td colspan="2">
+                    <%= _.__('orob2b.pricing.click_to_select') %>
+                </td>
+            </tr>
+        <% } %>
+    <% _.each(tierPrices, function(prices, unit) { %>
+        <tr>
+            <td colspan="2">
+                <b><%= _.__('orob2b.product.product_unit.' + unit + '.label.full') %></b>
+            </td>
+        </tr>
+        <% _.each(prices, function(price) { %>
+            <tr class="<% if (!_.isNull(matchedPrice) && unit === unitCode && parseFloat(price.price) === parseFloat(matchedPrice)) { %>matched-tier-price<% } %>">
+                <td><div class="text-right"><%= price.qty %>:</div></td>
+                <td>
+                    <div class="text-left">
+                        <% if (clickable) { %>
+                            <a
+                                href="javascript: void(0);"
+                                data-price="<%= parseFloat(price.price) %>"
+                                data-unit="<%= unit %>"
+                            ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                        <% } else { %>
+                            <%= formatter.formatCurrency(price.price, price.currency) %>
+                        <% } %>
+                    </div>
+                </td>
+            </tr>
+        <% }) %>
+    <% }) %>
+    </table>
+</script>
+
+<script type="text/template" id="order-notes-widget">
+    <div class="notes-widget">
+        <div class="notes-widget-preview"></div>
+        <div class="notes-widget-edit"></div>
+        <a class="notes-widget-edit-btn" href="javascript: void(0);"><%= _.__('orob2b.order.notes_widget.edit') %></a>
+        <a class="notes-widget-add-btn" href="javascript: void(0);"><%= _.__('orob2b.order.notes_widget.add') %></a>
+        <a class="notes-widget-remove-btn" href="javascript: void(0);"><%= _.__('orob2b.order.notes_widget.remove') %></a>
+    </div>
+</script>

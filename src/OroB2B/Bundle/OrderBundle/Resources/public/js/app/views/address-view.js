@@ -124,16 +124,16 @@ define(function(require) {
             this.$address = $address;
 
             var self = this;
-            this.$address.change(function() {
+            this.$address.change(function(e) {
                 self.useDefaultAddress = false;
-                self.accountAddressChange();
+                self.accountAddressChange(e);
             });
         },
 
         /**
          * Implement account address change logic
          */
-        accountAddressChange: function() {
+        accountAddressChange: function(e) {
             if (this.$address.val() !== this.options.enterManuallyValue) {
                 this.$fields.each(function() {
                     var $field = $(this);
@@ -162,7 +162,7 @@ define(function(require) {
                         }
                     });
 
-                    SubtotalsListener.updateSubtotals();
+                    SubtotalsListener.updateSubtotals(e);
                 }
             } else {
                 this.$fields.each(function() {
@@ -211,8 +211,7 @@ define(function(require) {
                 .replaceWith(this.$address);
 
             if (this.useDefaultAddress) {
-                this.$address.val(this.$address.data('default'));
-                this.accountAddressChange();
+                this.$address.val(this.$address.data('default')).change();
             }
 
             this.initLayout().done(_.bind(this.loadingEnd, this));

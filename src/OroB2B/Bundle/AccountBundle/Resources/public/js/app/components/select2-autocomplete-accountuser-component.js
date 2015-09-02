@@ -35,7 +35,7 @@ define(function(require) {
          * @inheritDoc
          */
         makeQuery: function(query) {
-            return [this.$accountSelect.val(), query].join(this.options.delimiter);
+            return [query, this.$accountSelect.val()].join(this.options.delimiter);
         }
     });
 

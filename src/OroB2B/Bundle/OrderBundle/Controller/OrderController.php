@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\Common\Util\ClassUtils;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,9 +18,9 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
-use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use OroB2B\Bundle\OrderBundle\Form\Handler\OrderHandler;
 
-class OrderController extends Controller
+class OrderController extends AbstractOrderController
 {
     /**
      * @Route("/view/{id}", name="orob2b_order_view", requirements={"id"="\d+"})
@@ -84,11 +85,12 @@ class OrderController extends Controller
      *      permission="CREATE"
      * )
      *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new Order());
+        return $this->update(new Order(), $request);
     }
 
     /**
@@ -105,24 +107,35 @@ class OrderController extends Controller
      *
      * @param Order $order
      *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Order $order)
+    public function updateAction(Order $order, Request $request)
     {
-        return $this->update($order);
+        return $this->update($order, $request);
     }
 
     /**
      * @param Order $order
+     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    protected function update(Order $order)
+    protected function update(Order $order, Request $request)
     {
-        if (in_array($this->get('request')->getMethod(), ['POST', 'PUT'], true)) {
+        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $order->setAccount($this->getOrderHandler()->getAccount());
             $order->setAccountUser($this->getOrderHandler()->getAccountUser());
         }
+
+        $form = $this->createForm(OrderType::NAME, $order);
+
+        $handler = new OrderHandler(
+            $form,
+            $request,
+            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order)),
+            $this->get('orob2b_order.provider.subtotals')
+        );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
@@ -140,7 +153,7 @@ class OrderController extends Controller
                 ];
             },
             $this->get('translator')->trans('orob2b.order.controller.order.saved.message'),
-            null,
+            $handler,
             function (Order $order, FormInterface $form, Request $request) {
                 return [
                     'form' => $form->createView(),
@@ -150,17 +163,11 @@ class OrderController extends Controller
                         ->isAddressGranted($order, AddressType::TYPE_SHIPPING),
                     'isBillingAddressGranted' => $this->getOrderAddressSecurityProvider()
                         ->isAddressGranted($order, AddressType::TYPE_BILLING),
+                    'tierPrices' => $this->getTierPrices($order),
+                    'matchedPrices' => $this->getMatchedPrices($order),
                 ];
             }
         );
-    }
-
-    /**
-     * @return OrderAddressSecurityProvider
-     */
-    protected function getOrderAddressSecurityProvider()
-    {
-        return $this->get('orob2b_order.order.provider.order_address_security');
     }
 
     /**

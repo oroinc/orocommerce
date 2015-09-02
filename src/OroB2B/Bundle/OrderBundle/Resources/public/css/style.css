@@ -5,3 +5,152 @@
 .subtotals-container .controls .control-label {
     font-weight: bold !important;
 }
+
+.order-order-accountuser-select .entity-select-btn {
+    display: none;
+}
+
+.order-order-accountuser-select .select2-container {
+    width: 257px !important;
+}
+
+.order-line-items table.grid {
+    overflow: auto;
+}
+
+.order-line-items .add-list-item {
+    margin-top: 10px;
+}
+
+.order-line-item-tier-prices {
+    float: left;
+    position: relative;
+}
+
+.order-line-item-tier-prices table {
+    min-width: 100px;
+}
+
+.order-line-item-tier-prices table tr:hover > td {
+    background-color: #fff;
+}
+
+.order-line-item-tier-prices table td {
+    border: none;
+    padding: 2px;
+    height: 19px !important;
+}
+
+.order-line-item-tier-prices i {
+    padding-top: 5px;
+    cursor: pointer;
+}
+
+.order-line-item-tier-prices i.disabled {
+    cursor: default;
+    opacity: 0.4;
+}
+
+.order-line-item-tier-prices i:before {
+    font-size: 20px;
+}
+
+.order-line-item-sku {
+    width: 134px;
+}
+
+.order-line-item-sku input,
+.order-line-item-ship_by input{
+    width: 120px !important;
+}
+
+.order-line-item-type {
+    width: 290px;
+}
+
+.order-line-item-type input[type="text"]{
+    width: 279px !important;
+}
+
+.order-line-item-quantity input[type="number"],
+.order-line-item-price input[type="text"] {
+    text-align: right;
+}
+
+.order-line-item-quantity input[type="number"] {
+    margin-right: 3px;
+}
+
+.order-line-item-quantity {
+    width: 210px;
+}
+
+.order-line-item-ship_by {
+    width: 155px;
+}
+
+.order-line-item-price {
+    width: 243px;
+    position: relative;
+}
+
+.order-line-item-price input[type="text"] {
+    padding-left: 17px;
+}
+
+.order-line-item-quantity input[type="number"],
+.order-line-item-quantity select,
+.order-line-item-price input[type="text"],
+.order-line-item-price select {
+    width: 80px !important;
+}
+
+.order-line-item-quantity input[type="number"],
+.order-line-item-quantity .selector,
+.order-line-item-price input[type="text"],
+.order-line-item-price .selector {
+    float: left;
+}
+
+.order-line-item-price input.matched-price {
+    background-color: #eee;
+}
+
+.order-line-item-price-overridden {
+    position: absolute;
+    top: 4px;
+    left: 10px;
+}
+
+.order-line-item-price-overridden i {
+    cursor: pointer;
+}
+
+.order-line-item-price-overridden div.popover {
+    min-width: 130px;
+}
+
+.order-line-item-tier-prices div.popover tr.matched-tier-price > td {
+    font-weight: bold;
+}
+
+.order-line-item-price-value,
+.order-line-item-type-product {
+    line-height: 31px;
+}
+
+.order-line-item-price-value {
+    float: left;
+    margin-right: 10px;
+}
+
+.order-line-item-remove {
+    padding-top: 7px !important;
+    text-align: right !important;
+}
+
+.notes-widget {
+    width: 280px;
+    word-wrap: break-word;
+    line-height: 31px;
+}

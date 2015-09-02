@@ -11,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -47,24 +46,23 @@ class AjaxOrderController extends AbstractAjaxOrderController
     public function getRelatedDataAction()
     {
         $order = new Order();
-        $account = $this->getOrderHandler()->getAccount();
         $accountUser = $this->getOrderHandler()->getAccountUser();
-
-        if ($account && $accountUser) {
-            $this->validateRelation($accountUser, $account);
-        }
+        $account = $this->getAccount($accountUser);
 
         $order->setAccount($account);
         $order->setAccountUser($accountUser);
 
-        $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        $accountPaymentTerm = null;
+        if ($account) {
+            $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        }
         $accountGroupPaymentTerm = null;
         if ($account->getGroup()) {
             $accountGroupPaymentTerm = $this->getPaymentTermProvider()
                 ->getAccountGroupPaymentTerm($account->getGroup());
         }
 
-        $orderForm = $this->createForm(OrderType::NAME, $order);
+        $orderForm = $this->createForm($this->getOrderFormTypeName(), $order);
 
         return new JsonResponse(
             [
@@ -118,5 +116,30 @@ class AjaxOrderController extends AbstractAjaxOrderController
     {
         return $this->get('orob2b_order.model.order_request_handler');
 
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getOrderFormTypeName()
+    {
+        return OrderType::NAME;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return null|Account
+     */
+    protected function getAccount(AccountUser $accountUser = null)
+    {
+        $account = $this->getOrderHandler()->getAccount();
+        if (!$account && $accountUser) {
+            $account = $accountUser->getAccount();
+        }
+        if ($account && $accountUser) {
+            $this->validateRelation($accountUser, $account);
+        }
+
+        return $account;
     }
 }
