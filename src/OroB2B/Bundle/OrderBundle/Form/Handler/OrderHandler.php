@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
@@ -15,7 +15,6 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 class OrderHandler
 {
     /**
-     *
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
@@ -69,7 +68,7 @@ class OrderHandler
         foreach ($subtotals as $subtotal) {
             try {
                 $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
-            } catch (InvalidArgumentException $e) {
+            } catch (NoSuchPropertyException $e) {
             }
         }
     }
