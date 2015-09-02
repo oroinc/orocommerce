@@ -63,6 +63,7 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
         $roleData = $this->loadRolesData();
 
         $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
+
         foreach ($roleData as $roleName => $roleConfigData) {
             $role = $this->createEntity($roleName, $roleConfigData['label']);
             if (!empty($roleConfigData['website_default_role'])) {
@@ -81,27 +82,38 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
                 $this->setPermissionGroup($aclManager, $sid);
             }
 
-            if (!is_array($roleConfigData['permissions'])) {
+            if (empty($roleConfigData['permissions']) || !is_array($roleConfigData['permissions'])) {
                 continue;
             }
 
-            foreach ($roleConfigData['permissions'] as $permission => $acls) {
-                $oid = $aclManager->getOid(str_replace('|', ':', $permission));
-                $builder = $aclManager->getMaskBuilder($oid);
-                $builder->reset();
-                if ($acls) {
-                    foreach ($acls as $acl) {
-                        $builder->add($acl);
-                    }
-                }
-                $mask = $builder->get();
-                $aclManager->setPermission($sid, $oid, $mask);
-            }
+            $this->setPermissions($aclManager, $sid, $roleConfigData['permissions']);
         }
+
         $chainMetadataProvider->stopProviderEmulation();
 
         $aclManager->flush();
         $manager->flush();
+    }
+
+    /**
+     * @param AclManager $aclManager
+     * @param SecurityIdentityInterface $sid
+     * @param array $permissions
+     */
+    protected function setPermissions(AclManager $aclManager, SecurityIdentityInterface $sid, array $permissions)
+    {
+        foreach ($permissions as $permission => $acls) {
+            $oid = $aclManager->getOid(str_replace('|', ':', $permission));
+            $builder = $aclManager->getMaskBuilder($oid);
+            $builder->reset();
+            if ($acls) {
+                foreach ($acls as $acl) {
+                    $builder->add($acl);
+                }
+            }
+            $mask = $builder->get();
+            $aclManager->setPermission($sid, $oid, $mask);
+        }
     }
 
     /**

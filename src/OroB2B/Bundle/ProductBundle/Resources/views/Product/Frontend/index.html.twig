@@ -2,6 +2,10 @@
 
 {% set pageTitle = 'orob2b.product.entity_plural_label'|trans %}
 
+{% block navButtons %}
+    {% placeholder frontend_products_navButtons %}
+{% endblock %}
+
 {% block content_datagrid %}
     <div class="product-container">
         {% set componentOptions = {
