@@ -563,7 +563,7 @@ datagrid:
                 params: [ id ]
             delete_link:
                 type:   url
-                route:  orob2b_api_account_delete_account_user
+                route:  orob2b_api_account_frontend_delete_account_user
                 params: [ id ]
             enable_link:
                 type:   url
@@ -579,11 +579,13 @@ datagrid:
                 label:        orob2b.account.action.account_user.enable
                 icon:         ok
                 link:         enable_link
+                acl_resource:  orob2b_account_frontend_account_user_update
             disable:
                 type:         ajax
                 label:        orob2b.account.action.account_user.disable
                 icon:         remove
                 link:         disable_link
+                acl_resource:  orob2b_account_frontend_account_user_update
             view:
                 type:          navigate
                 label:         oro.grid.action.view

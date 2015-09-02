@@ -26,22 +26,14 @@
             {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
-            {% if entity.account %}
-                {% if resource_granted('VIEW', entity.account) %}
-                    {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account.name) %}
-                {% else %}
-                    {% set accountView = entity.account.name|escape %}
-                {% endif %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.account.label'|trans, accountView) }}
-            {% endif %}
-
-            {% if resource_granted('orob2b_account_account_user_role_view') %}
+            {#TODO: Uncomment after BB-777 complete#}
+            {#{% if resource_granted('orob2b_account_frontend_account_user_role_view') %}#}
                 {% set roles = [] %}
                 {% for entityRole in entity.roles %}
                     {% set roles = roles|merge([entityRole.label]) %}
                 {% endfor %}
                 {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
-            {% endif %}
+            {#{% endif %}#}
         </div>
     </div>
 </div>

@@ -63,6 +63,12 @@ oro_menu_config:
             extras:
                 description: 'orob2b.account.menu.shortcut_list_account_users.description'
 
+        frontend_shortcut_list_account_users:
+            label: 'orob2b.account.menu.shortcut_list_account_users.label'
+            route: 'orob2b_account_frontend_account_user_index'
+            extras:
+                description: 'orob2b.account.menu.shortcut_list_account_users.description'
+
         account_user_roles:
             label: 'orob2b.account.accountuserrole.entity_plural_label'
             route: 'orob2b_account_account_user_role_index'
