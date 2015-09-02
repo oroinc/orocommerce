@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Constraint;
 
 class LineItem extends Constraint
 {
-    public $message = 'Line Item with the same product and unit already exists';
+    public $message = 'orob2b.shoppinglist.lineitem.already_exists';
 
     /**
      * {@inheritDoc}

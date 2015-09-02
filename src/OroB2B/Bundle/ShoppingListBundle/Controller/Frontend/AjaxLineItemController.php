@@ -60,7 +60,12 @@ class AjaxLineItemController extends Controller
 
         $form = $this->createForm(FrontendLineItemWidgetType::NAME, $lineItem);
 
-        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+        $handler = new LineItemHandler(
+            $form,
+            $request,
+            $this->getDoctrine(),
+            $this->get('orob2b_shopping_list.shopping_list.manager')
+        );
         $result = $this->get('oro_form.model.update_handler')
             ->handleUpdate($lineItem, $form, null, null, null, $handler);
 
@@ -92,8 +97,8 @@ class AjaxLineItemController extends Controller
      */
     public function addProductFromViewAction(Request $request, Product $product)
     {
-        $shoppingList = $this->get('orob2b_shopping_list.shopping_list.manager')
-            ->getForCurrentUser($request->get('shoppingListId'));
+        $shoppingListManager = $this->get('orob2b_shopping_list.shopping_list.manager');
+        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         $lineItem = (new LineItem())
             ->setProduct($product)
@@ -103,7 +108,7 @@ class AjaxLineItemController extends Controller
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
 
-        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+        $handler = new LineItemHandler($form, $request, $this->getDoctrine(), $shoppingListManager);
         $isFormHandled = $handler->process($lineItem);
 
         if (!$isFormHandled) {

@@ -117,6 +117,16 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create($this->type, $defaultData, []);
 
+        $repo = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())
+            ->method('getProductUnitsQueryBuilder')
+            ->will($this->returnValue(null));
+
+        $closure = $form->get('unit')->getConfig()->getOptions()['query_builder'];
+        $this->assertNull($closure($repo));
+
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
 

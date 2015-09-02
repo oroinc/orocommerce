@@ -18,8 +18,9 @@ define(function(require) {
             options.dialogOptions = {
                 'modal': true,
                 'resizable': false,
-                'width': '460',
-                'autoResize': true
+                'width': '480',
+                'autoResize': true,
+                'dialogClass': 'shopping-list-dialog'
             };
 
             ShoppingListWidget.__super__.initialize.apply(this, arguments);

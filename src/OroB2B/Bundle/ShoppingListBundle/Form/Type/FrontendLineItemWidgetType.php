@@ -3,8 +3,6 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
@@ -13,12 +11,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class FrontendLineItemWidgetType extends AbstractType
 {
@@ -40,26 +36,13 @@ class FrontendLineItemWidgetType extends AbstractType
     protected $shoppingListClass;
 
     /**
-     * @var TranslatorInterface
+     * @param ManagerRegistry $registry
+     * @param TokenStorage    $tokenStorage
      */
-    protected $translator;
-
-    /**
-     * @param ManagerRegistry     $registry
-     * @param ShoppingListManager $shoppingListManager
-     * @param TokenStorage        $tokenStorage
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(
-        ManagerRegistry $registry,
-        ShoppingListManager $shoppingListManager,
-        TokenStorage $tokenStorage,
-        TranslatorInterface $translator
-    ) {
+    public function __construct(ManagerRegistry $registry, TokenStorage $tokenStorage)
+    {
         $this->registry = $registry;
-        $this->shoppingListManager = $shoppingListManager;
         $this->accountUser = $tokenStorage->getToken()->getUser();
-        $this->translator = $translator;
     }
 
     /**
@@ -67,8 +50,6 @@ class FrontendLineItemWidgetType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $accountUser = $this->accountUser;
-
         $builder
             ->add(
                 'shoppingList',
@@ -77,8 +58,8 @@ class FrontendLineItemWidgetType extends AbstractType
                     'required' => false,
                     'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
-                    'query_builder' => function (ShoppingListRepository $repository) use ($accountUser) {
-                        return $repository->createFindForAccountUserQueryBuilder($accountUser);
+                    'query_builder' => function (ShoppingListRepository $repository) {
+                        return $repository->createFindForAccountUserQueryBuilder($this->accountUser);
                     },
                     'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
                 ]
@@ -88,12 +69,10 @@ class FrontendLineItemWidgetType extends AbstractType
                 'text',
                 [
                     'mapped' => false,
-                    'required' => false,
+                    'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.new_shopping_list_label'
                 ]
             );
-
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
     /**
@@ -108,20 +87,6 @@ class FrontendLineItemWidgetType extends AbstractType
         $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->accountUser);
 
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSubmit(FormEvent $event)
-    {
-        $data = $event->getData();
-
-        if (empty($data['shoppingList']) && !empty($data['shoppingListLabel'])) {
-            $shoppingList = $this->shoppingListManager->createCurrent($data['shoppingListLabel']);
-            $data['shoppingList'] = $shoppingList->getId();
-            $event->setData($data);
-        }
     }
 
     /**
@@ -148,9 +113,7 @@ class FrontendLineItemWidgetType extends AbstractType
     public function checkShoppingListLabel($data, ExecutionContextInterface $context)
     {
         if (!$data->getShoppingList()) {
-            $context->buildViolation(
-                $this->translator->trans('orob2b.shoppinglist.lineitem.new_shopping_list_label.empty')
-            )
+            $context->buildViolation('orob2b.shoppinglist.not_empty')
                 ->atPath('shoppingListLabel')
                 ->addViolation();
         }
