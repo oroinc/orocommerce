@@ -81,7 +81,7 @@ define(function(require) {
         /**
          * Get and render subtotals
          */
-        updateSubtotals: function() {
+        updateSubtotals: function(e) {
             this.loadingMaskView.show();
 
             if (this.getSubtotals.timeoutId) {
@@ -91,14 +91,21 @@ define(function(require) {
             this.getSubtotals.timeoutId = setTimeout(_.bind(function() {
                 this.getSubtotals.timeoutId = null;
 
-                this.getSubtotals(_.bind(function(subtotals) {
-                    this.loadingMaskView.hide();
-                    if (!subtotals) {
-                        return;
-                    }
+                var promises = [];
+                mediator.trigger('order:changing', promises);
 
-                    this.render(subtotals);
-                }, this));
+                if (promises.length) {
+                    $.when.apply($, promises).done(_.bind(this.updateSubtotals, this, e));
+                } else {
+                    this.getSubtotals(_.bind(function(subtotals) {
+                        this.loadingMaskView.hide();
+                        if (!subtotals) {
+                            return;
+                        }
+
+                        this.render(subtotals);
+                    }, this));
+                }
             }, this), 100);
         },
 
