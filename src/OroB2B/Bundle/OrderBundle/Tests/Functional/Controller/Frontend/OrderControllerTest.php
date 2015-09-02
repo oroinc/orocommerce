@@ -154,10 +154,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'quantity' => 10,
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $this->getContainer()->get('oro_locale.formatter.number')->formatCurrency(
-                    $productPrice->getPrice()->getValue(),
-                    $productPrice->getPrice()->getCurrency()
-                ),
+                'price' => $productPrice->getPrice()->getValue(),
                 'shipBy' => $date,
             ],
         ];
