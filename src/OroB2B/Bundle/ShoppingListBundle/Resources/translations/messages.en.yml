@@ -51,8 +51,8 @@ orob2b:
             shopping_list.saved.message: Shopping List has been saved
 
         lineitem:
-            entity_label: Line Item
-            entity_plural_label: Line Items
+            entity_label: Shopping List Line Item
+            entity_plural_label: Shopping List Line Items
             id.label: ID
             notes.label: Notes
             product_sku.label: Product SKU
