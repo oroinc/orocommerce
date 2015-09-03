@@ -48,6 +48,7 @@ class LoadRequestDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
