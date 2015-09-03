@@ -12,6 +12,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListCreateRfpHandler
@@ -37,6 +38,11 @@ class ShoppingListCreateRfpHandler
     protected $user;
 
     /**
+     * @var RequestStatus
+     */
+    protected $requestStatus;
+
+    /**
      * @var RFPRequest
      */
     protected $rfpRequest;
@@ -51,13 +57,20 @@ class ShoppingListCreateRfpHandler
      * @param Request $request
      * @param ObjectManager $manager
      * @param AccountUser $user
+     * @param RequestStatus $requestStatus
      */
-    public function __construct(FormInterface $form, Request $request, ObjectManager $manager, AccountUser $user)
-    {
+    public function __construct(
+        FormInterface $form,
+        Request $request,
+        ObjectManager $manager,
+        AccountUser $user,
+        RequestStatus $requestStatus
+    ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
         $this->user = $user;
+        $this->requestStatus = $requestStatus;
     }
 
     /**
@@ -114,6 +127,7 @@ class ShoppingListCreateRfpHandler
             ->setCompany($this->user->getOrganization() ? $this->user->getOrganization()->getName() : '')
             ->setAccountUser($this->user)
             ->setAccount($this->user->getAccount())
+            ->setStatus($this->requestStatus)
         ;
 
         foreach ($entity->getLineItems() as $shoppingListLineItem) {

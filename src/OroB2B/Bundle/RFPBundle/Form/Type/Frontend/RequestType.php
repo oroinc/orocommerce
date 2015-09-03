@@ -108,7 +108,7 @@ class RequestType extends AbstractType
     {
         /** @var Request $request */
         $request = $event->getData();
-        $defaultStatus = $this->getDraftRequestStatus();
+        $defaultStatus = $this->getDefaultRequestStatus();
         if ($defaultStatus && !$request->getStatus()) {
             $request->setStatus($defaultStatus);
         }
@@ -117,13 +117,13 @@ class RequestType extends AbstractType
     /**
      * @return RequestStatus
      */
-    protected function getDraftRequestStatus()
+    protected function getDefaultRequestStatus()
     {
         return $this->registry
             ->getManagerForClass($this->requestStatusClass)
             ->getRepository($this->requestStatusClass)
             ->findOneBy([
-                'name' => RequestStatus::DRAFT,
+                'name' => $this->configManager->get('oro_b2b_rfp.default_request_status')
             ]);
     }
 

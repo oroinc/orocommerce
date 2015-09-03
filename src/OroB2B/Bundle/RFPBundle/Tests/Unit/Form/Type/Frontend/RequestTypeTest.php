@@ -41,7 +41,7 @@ class RequestTypeTest extends AbstractTest
     protected function setUp()
     {
         $requestStatus = new RequestStatus();
-        $requestStatus->setName(RequestStatus::DRAFT);
+        $requestStatus->setName(RequestStatus::OPEN);
 
         $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
@@ -49,7 +49,7 @@ class RequestTypeTest extends AbstractTest
 
         $repository->expects(static::any())
             ->method('findOneBy')
-            ->with(['name' => RequestStatus::DRAFT])
+            ->with(['name' => RequestStatus::OPEN])
             ->willReturn($requestStatus);
 
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
@@ -86,6 +86,11 @@ class RequestTypeTest extends AbstractTest
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $configManager->expects(static::any())
+            ->method('get')
+            ->with('oro_b2b_rfp.default_request_status')
+            ->willReturn(RequestStatus::OPEN);
 
         /**
          * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
@@ -150,7 +155,7 @@ class RequestTypeTest extends AbstractTest
         $this->formType->postSubmit(new FormEvent($form, $request));
 
         static::assertNotNull($request->getStatus());
-        static::assertEquals(RequestStatus::DRAFT, $request->getStatus()->getName());
+        static::assertEquals(RequestStatus::OPEN, $request->getStatus()->getName());
     }
 
     /**
@@ -191,7 +196,7 @@ class RequestTypeTest extends AbstractTest
                 'expectedData'  => $this
                     ->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '+38 (044) 247-68-00')
                     ->addRequestProduct($requestProduct)->setStatus(
-                        (new RequestStatus())->setName(RequestStatus::DRAFT)
+                        (new RequestStatus())->setName(RequestStatus::OPEN)
                     ),
                 'defaultData'   => $this->getRequest(),
             ],

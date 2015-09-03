@@ -21,6 +21,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListHandler;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListCreateRfpHandler;
@@ -188,7 +189,13 @@ class ShoppingListController extends Controller
         /** @var ObjectManager $em */
         $em = $this->getDoctrine()->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $form = $this->getCreateRfpForm($shoppingList);
-        $handler = new ShoppingListCreateRfpHandler($form, $request, $em, $this->getUser());
+        $handler = new ShoppingListCreateRfpHandler(
+            $form,
+            $request,
+            $em,
+            $this->getUser(),
+            $this->getDefaultRequestStatus()
+        );
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate(
                 $shoppingList,
@@ -283,5 +290,21 @@ class ShoppingListController extends Controller
             $this->get('translator')->trans('orob2b.shoppinglist.controller.shopping_list.saved.message'),
             $handler
         );
+    }
+
+    /**
+     * @return RequestStatus
+     */
+    protected function getDefaultRequestStatus()
+    {
+        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
+
+        return $this
+            ->getDoctrine()
+            ->getManagerForClass($requestStatusClass)
+            ->getRepository($requestStatusClass)
+            ->findOneBy(['name' => $defaultRequestStatusName])
+        ;
     }
 }

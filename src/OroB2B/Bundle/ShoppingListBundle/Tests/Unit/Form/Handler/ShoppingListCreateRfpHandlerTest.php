@@ -12,6 +12,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListCreateRfpHandler;
@@ -45,7 +46,8 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
             $this->form,
             $this->request,
             $this->manager,
-            $this->getUser()
+            $this->getUser(),
+            (new RequestStatus)->setName(RequestStatus::OPEN)
         );
     }
 
@@ -125,13 +127,18 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
             ->setProduct($product)
             ->addRequestProductItem($requestProductItem)
         ;
+        $requestStatus = (new RequestStatus)
+            ->setName(RequestStatus::OPEN)
+        ;
         $request = (new Request())
             ->setAccountUser($this->getUser())
             ->addRequestProduct($requestProduct)
+            ->setStatus($requestStatus)
         ;
 
         $emptyRequest = (new Request())
             ->setAccountUser($this->getUser())
+            ->setStatus($requestStatus)
         ;
 
         return [
