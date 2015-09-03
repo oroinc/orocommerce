@@ -7,8 +7,6 @@ parameters:
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
 
-    orob2b_product.form.extension.frontend_product_select.class: OroB2B\Bundle\ProductBundle\Form\Extension\FrontendProductSelectExtension
-
 services:
     # Product form types
     orob2b_product.form.type.product:
@@ -55,10 +53,3 @@ services:
         class: %orob2b_product.form.type.product_default_visibility_type.class%
         tags:
             - { name: form.type, alias: orob2b_product_default_visibility }
-
-    orob2b_product.form.extension.frontend_product_select:
-        class: %orob2b_product.form.extension.frontend_product_select.class%
-        arguments:
-            - @security.token_storage
-        tags:
-            - { name: form.type_extension, alias: orob2b_product_select }

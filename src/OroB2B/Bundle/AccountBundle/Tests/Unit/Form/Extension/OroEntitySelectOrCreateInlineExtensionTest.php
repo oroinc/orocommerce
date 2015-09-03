@@ -56,7 +56,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
             ->getMock();
         $resolver->expects($this->once())
             ->method('setDefault')
-            ->with('grid_widget_route', 'orob2b_account_frontend_datagrid_widget');
+            ->with('grid_widget_route', 'orob2b_frontend_datagrid_widget');
 
         $this->extension->configureOptions($resolver);
     }
