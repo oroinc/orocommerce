@@ -75,52 +75,6 @@ class OrderControllerTest extends WebTestCase
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Account $orderAccount */
-        $orderAccount = $this->getReference('account.level_1');
-
-        $form = $crawler->selectButton('Save and Close')->form(
-            [
-                'orob2b_order_type[owner]' => $this->getCurrentUser()->getId(),
-                'orob2b_order_type[account]' => $orderAccount->getId(),
-                'orob2b_order_type[poNumber]' => self::ORDER_PO_NUMBER
-            ]
-        );
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $html = $crawler->html();
-
-        $this->assertContains('Order has been saved', $html);
-
-        $html = $crawler->html();
-        $this->assertContains(self::ORDER_PO_NUMBER, $html);
-    }
-
-    /**
-     * @depends testCreate
-     * @return int
-     */
-    public function testUpdate()
-    {
-        $response = $this->client->requestGrid(
-            'orders-grid',
-            [
-                'orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER
-            ]
-        );
-
-        $result = $this->getJsonResponseContent($response, 200);
-        $result = reset($result['data']);
-
-        $id      = $result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_update', ['id' => $result['id']]));
-
-        $result  = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
@@ -149,7 +103,7 @@ class OrderControllerTest extends WebTestCase
                 '_token' => $form['orob2b_order_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
                 'account' => $orderAccount->getId(),
-                'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
+                'poNumber' => self::ORDER_PO_NUMBER,
                 'lineItems' => $lineItems
             ]
         ];
@@ -163,7 +117,7 @@ class OrderControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->assertEquals(
-            self::ORDER_PO_NUMBER_UPDATED,
+            self::ORDER_PO_NUMBER,
             $crawler->filter('input[name="orob2b_order_type[poNumber]"]')->extract('value')[0]
         );
 
@@ -185,11 +139,22 @@ class OrderControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
-        return $id;
+
+        $response = $this->client->requestGrid(
+            'orders-grid',
+            [
+                'orders-grid[_filter][poNumber][value]' => self::ORDER_PO_NUMBER
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        return $result['id'];
     }
 
     /**
-     * @depends testUpdate
+     * @depends testCreate
      * @param int $id
      */
     public function testUpdateLineItems($id)
@@ -287,7 +252,7 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testUpdate
+     * @depends testCreate
      * @param int $id
      */
     public function testUpdateBillingAddress($id)
@@ -296,7 +261,7 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testUpdate
+     * @depends testCreate
      * @param int $id
      */
     public function testUpdateShippingAddress($id)
@@ -369,7 +334,7 @@ class OrderControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testUpdate
+     * @depends testCreate
      *
      * @param int $id
      */
