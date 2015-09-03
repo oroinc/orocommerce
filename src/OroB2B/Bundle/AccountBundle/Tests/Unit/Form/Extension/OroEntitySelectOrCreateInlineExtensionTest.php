@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
@@ -14,16 +13,6 @@ use OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExte
 
 class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwareExtensionTest
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @var OroEntitySelectOrCreateInlineExtension
-     */
-    protected $extension;
-
     protected function setUp()
     {
         parent::setUp();
@@ -43,13 +32,8 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
 
     public function testConfigureOptionsAccountUser()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->once())
-            ->method('getUser')
-            ->will($this->returnValue(new AccountUser()));
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $this->assertAccountUserTokenCall();
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
@@ -69,13 +53,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
      */
     public function testBuildView($user, $route, $expectedRoute)
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())
-            ->method('getUser')
-            ->will($this->returnValue($user));
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $this->assertAccountUserTokenCall($user);
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
