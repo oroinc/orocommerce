@@ -1,0 +1,15 @@
+{% extends bap.layout %}
+
+{% block content_data %}
+    {% set id = 'product-edit' %}
+
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ formAction }}" {{ form_enctype(form) }}
+        method="{{ form.vars.method }}">
+                form_row(form.products),
+                form_row(form.component),
+                form_row(form.additional),
+            ]
+        }
+    } %}
+    </form>
+{% endblock content_data %}
