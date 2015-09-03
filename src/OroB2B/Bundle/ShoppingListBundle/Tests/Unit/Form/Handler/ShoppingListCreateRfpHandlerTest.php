@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\DBAL\DBALException;
 
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -168,7 +167,7 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
     }
 
     /**
-     * @return User
+     * @return AccountUser
      */
     protected function getUser()
     {
