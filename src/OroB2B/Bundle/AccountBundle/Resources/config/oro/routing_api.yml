@@ -45,3 +45,9 @@ orob2b_account_pagestate_api:
     type:     rest
     options:
         frontend: true
+
+orob2b_account_country_region_api:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/CountryRegionsController.php"
+    type:     rest
+    options:
+        frontend: true
