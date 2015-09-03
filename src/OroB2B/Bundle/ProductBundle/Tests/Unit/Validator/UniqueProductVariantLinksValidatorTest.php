@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Validator;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
@@ -73,37 +75,21 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
 
     private function prepareProduct(array $variantLinkFields)
     {
-        $product = $this->getMock('OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct');
-
-        $product->expects($this->once())
-            ->method('getVariantFields')
-            ->willReturn(array_keys($variantLinkFields[0]));
+        $product = new StubProduct();
+        $product->setVariants(true);
+        $product->setVariantFields(array_keys($variantLinkFields[0]));
 
         $variantLinks = [];
 
         foreach ($variantLinkFields as $fields) {
-            $variantLink = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink')
-                ->disableOriginalConstructor()
-                ->getMock();
-            $variantProduct = $this->getMock('OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct');
+            $variantProduct = new StubProduct();
+            $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
+            $variantProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
 
-            $variantLink->expects($this->once())
-                ->method('getProduct')
-                ->willReturn($variantProduct);
-
-            $variantProduct->expects($this->once())
-                ->method('getSize')
-                ->willReturn($fields[self::VARIANT_FIELD_KEY_SIZE]);
-            $variantProduct->expects($this->once())
-                ->method('getColor')
-                ->willReturn($fields[self::VARIANT_FIELD_KEY_COLOR]);
-
+            $variantLink =  new ProductVariantLink($product, $variantProduct);
             $variantLinks[] = $variantLink;
+            $product->addVariantLink($variantLink);
         }
-
-        $product->expects($this->once())
-            ->method('getVariantLinks')
-            ->willReturn($variantLinks);
 
         return $product;
     }
