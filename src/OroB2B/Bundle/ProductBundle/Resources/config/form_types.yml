@@ -63,8 +63,8 @@ services:
 
     orob2b_product.form.type.product_removed_select:
         class: %orob2b_product.form.type.product_removed_select.class%
-        arguments:
-            - @translator
+        calls:
+            - [setTranslator, [@translator]]
         tags:
             - { name: form.type, alias: orob2b_product_removed_select }
 

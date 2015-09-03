@@ -50,7 +50,7 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 
         $this->formType = new ProductUnitRemovedSelectionType();
         $this->formType->setEntityClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
-        $this->formType ->setTranslator($this->translator);
+        $this->formType->setTranslator($this->translator);
 
         parent::setUp();
     }

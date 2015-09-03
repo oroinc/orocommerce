@@ -45,7 +45,10 @@ class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
             }))
         ;
 
-        $this->formType = new ProductRemovedSelectType($this->translator);
+        $this->formType = new ProductRemovedSelectType();
+        $this->formType->setTranslator($this->translator);
+
+        parent::setUp();
     }
 
     public function testGetName()
@@ -90,14 +93,11 @@ class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
      */
     public function testPreSetData(ProductHolderInterface $productHolder = null, array $expectedData = [])
     {
-        $this->factory = Forms::createFormFactoryBuilder()
-            ->addExtensions($this->getExtensions())
-            ->getFormFactory();
-
         $formParent = $this->factory->create(new StubProductHolderType(), $productHolder);
 
         $form = $this->factory->create($this->formType);
         $form->setParent($formParent);
+
         $this->formType->preSetData(new FormEvent($form, $productHolder));
         $options = $formParent->get('product')->getConfig()->getOptions();
 
@@ -183,7 +183,8 @@ class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $productSelectType = new ProductSelectTypeStub();
-        $productRemovedSelectType = new ProductRemovedSelectType($this->translator);
+        $productRemovedSelectType = new ProductRemovedSelectType();
+        $productRemovedSelectType->setTranslator($this->translator);
         $entityType = new EntityType(['1']);
 
         return [
