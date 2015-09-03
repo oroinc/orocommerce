@@ -27,6 +27,11 @@ class ComponentProcessorPassTest extends \PHPUnit_Framework_TestCase
         $this->compilerPass = new ComponentProcessorPass();
     }
 
+    protected function tearDown()
+    {
+        unset($this->container, $this->compilerPass);
+    }
+
     public function testServiceNotExists()
     {
         $this->container->expects($this->once())
