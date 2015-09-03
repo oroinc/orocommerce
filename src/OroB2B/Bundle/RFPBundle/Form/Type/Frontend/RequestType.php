@@ -1,21 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace OroB2B\Bundle\RFPBundle\Form\Type\Frontend;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
-class FrontendRequestType extends AbstractType
+class RequestType extends AbstractType
 {
     const NAME = 'orob2b_rfp_frontend_request_type';
 
@@ -130,7 +130,7 @@ class FrontendRequestType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass

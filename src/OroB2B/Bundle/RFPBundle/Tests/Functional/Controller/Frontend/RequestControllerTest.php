@@ -63,6 +63,7 @@ class RequestControllerTest extends WebTestCase
         $data = $result['data'];
 
         if (isset($expectedData['columns'])) {
+            static::assertNotEmpty($data);
             $testedColumns = array_keys($data[0]);
             $expectedColumns = $expectedData['columns'];
 
