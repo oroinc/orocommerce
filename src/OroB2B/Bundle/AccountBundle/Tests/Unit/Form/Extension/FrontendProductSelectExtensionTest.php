@@ -1,27 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\AbstractAccountUserAwareExtensionTest;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Extension\FrontendProductSelectExtension;
+use OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension;
 
 class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensionTest
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
-     */
-    protected $tokenStorage;
-
-    /**
-     * @var FrontendProductSelectExtension
-     */
-    protected $extension;
-
     protected function setUp()
     {
         parent::setUp();
@@ -41,13 +28,7 @@ class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensi
 
     public function testConfigureOptionsAccountUser()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->once())
-            ->method('getUser')
-            ->will($this->returnValue(new AccountUser()));
-        $this->tokenStorage->expects($this->once())
-            ->method('getToken')
-            ->will($this->returnValue($token));
+        $this->assertAccountUserTokenCall();
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()
