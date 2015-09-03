@@ -1,9 +1,12 @@
 <?php
+
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 
 class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
@@ -28,8 +31,6 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
-                'property_path' => 'roles',
-                'label' => 'orob2b.account.accountuser.roles.label',
                 'class' => $this->roleClass,
                 'property' => 'label',
                 'multiple' => true,

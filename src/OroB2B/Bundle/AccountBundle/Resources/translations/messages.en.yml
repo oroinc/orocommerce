@@ -98,8 +98,8 @@ orob2b.account:
         label.label:                     'Label'
         role.label:                      'Role'
         websites.label:                  'Websites'
-        account.label:                   'User Role Account'
-        organization.label:              'User Role Organization'
+        account.label:                   'Account'
+        organization.label:              'Organization'
 
     accountuseraddress:
         city.label:                 City

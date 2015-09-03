@@ -171,7 +171,9 @@ class AccountUserType extends AbstractType
             );
 
         if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
-            $builder->add('roles', AccountUserRoleSelectType::NAME);
+            $builder->add('roles',
+                AccountUserRoleSelectType::NAME,
+                ['label' => 'orob2b.account.accountuser.roles.label']);
         }
     }
 

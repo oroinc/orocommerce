@@ -6,10 +6,10 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Component\Testing\Fixtures\LoadAccountUserData as UserData;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
-use Oro\Component\Testing\Fixtures\LoadAccountUserData as UserData;
 
 class LoadAccountUserData extends AbstractFixture implements DependentFixtureInterface
 {

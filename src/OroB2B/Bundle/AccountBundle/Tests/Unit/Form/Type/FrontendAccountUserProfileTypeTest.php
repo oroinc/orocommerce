@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -13,6 +12,7 @@ use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 
 class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
 {
@@ -37,6 +37,9 @@ class FrontendAccountUserProfileTypeTest extends FormIntegrationTestCase
         $this->formType->setDataClass('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         parent::tearDown();

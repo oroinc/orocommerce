@@ -113,7 +113,7 @@ class FrontendAccountUserProfileType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

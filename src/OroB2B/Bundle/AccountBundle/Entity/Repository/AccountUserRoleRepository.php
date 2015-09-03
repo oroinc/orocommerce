@@ -77,13 +77,15 @@ class AccountUserRoleRepository extends EntityRepository
     public function getAvailableRolesByAccountUserQueryBuilder(AccountUser $accountUser)
     {
         $qb = $this->createQueryBuilder('accountUserRole');
-        $qb->where($qb->expr()->orX(
-            $qb->expr()->isNull('accountUserRole.account'),
+        $qb->where(
             $qb->expr()->andX(
-                $qb->expr()->eq('accountUserRole.account', ':account'),
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('accountUserRole.account'),
+                    $qb->expr()->eq('accountUserRole.account', ':account')
+                ),
                 $qb->expr()->eq('accountUserRole.organization', ':organization')
             )
-        ));
+        );
         $qb->setParameter('account', $accountUser->getAccount());
         $qb->setParameter('organization', $accountUser->getOrganization());
         return $qb;

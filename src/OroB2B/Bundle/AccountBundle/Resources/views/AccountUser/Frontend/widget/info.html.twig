@@ -5,7 +5,7 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {% if  entity.namePrefix is defined %}
+            {% if  entity.namePrefix|default('N/A'|trans) %}
                 {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, entity.namePrefix) }}
             {% endif %}
             {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, entity.firstName) }}
@@ -28,11 +28,11 @@
 
             {#TODO: Uncomment after BB-777 complete#}
             {#{% if resource_granted('orob2b_account_frontend_account_user_role_view') %}#}
-                {% set roles = [] %}
-                {% for entityRole in entity.roles %}
-                    {% set roles = roles|merge([entityRole.label]) %}
-                {% endfor %}
-                {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+            {% set roles = [] %}
+            {% for entityRole in entity.roles %}
+                {% set roles = roles|merge([entityRole.label]) %}
+            {% endfor %}
+            {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
             {#{% endif %}#}
         </div>
     </div>

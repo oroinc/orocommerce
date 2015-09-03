@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
-use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
+use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+
+use OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 
 /**
  * @dbIsolation

@@ -55,7 +55,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     {
         $entity = new AccountUserRole();
         $entity->setLabel($roleLabel);
-
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+        $entity->setOrganization($organization);
         /** @var Website $website */
         $website = $this->getReference($websiteName);
         $entity->addWebsite($website);
@@ -74,7 +75,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     {
         $entity = new AccountUserRole();
         $entity->setLabel($roleLabel);
-
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+        $entity->setOrganization($organization);
         /** @var AccountUser $accountUser */
         $accountUser = $this->getReference($accountUser);
         $accountUser->addRole($entity);
@@ -111,8 +113,9 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     protected function loadRoleWithoutUserAndWebsite(ObjectManager $manager, $roleLabel)
     {
         $entity = new AccountUserRole();
+        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
         $entity->setLabel($roleLabel);
-
+        $entity->setOrganization($organization);
         $this->setReference($entity->getLabel(), $entity);
 
         $manager->persist($entity);

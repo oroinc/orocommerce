@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
+use Symfony\Component\Routing\Annotation\Route;
+
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Controller\AbstractAjaxAccountUserController;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
-use Symfony\Component\Routing\Annotation\Route;
 
 class AjaxAccountUserController extends AbstractAjaxAccountUserController
 {

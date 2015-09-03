@@ -75,6 +75,7 @@ class AccountUserRole extends AbstractRole
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $account;
+
     /**
      * @var Organization
      *

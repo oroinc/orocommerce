@@ -2,14 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
@@ -18,9 +16,10 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
-
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
@@ -34,7 +33,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var SecurityFacade| \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var SecurityFacade| \PHPUnit_Framework_MockObject_MockObject
      */
     protected $securityFacade;
 
@@ -104,7 +103,8 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         array $submittedData,
         AccountUser $expectedData,
         $rolesGranted = true
-    ) {
+    )
+    {
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')

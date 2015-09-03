@@ -35,8 +35,6 @@ class AccountUserRoleSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'property_path' => 'roles',
-            'label' => 'orob2b.account.accountuser.roles.label',
             'class' => $this->roleClass,
             'property' => 'label',
             'multiple' => true,

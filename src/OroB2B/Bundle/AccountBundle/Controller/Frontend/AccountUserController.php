@@ -2,18 +2,19 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
 class AccountUserController extends Controller
 {
@@ -64,11 +65,12 @@ class AccountUserController extends Controller
      *      permission="CREATE",
      *      group_name="commerce"
      * )
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new AccountUser());
+        return $this->update(new AccountUser(),$request);
     }
 
     /**
@@ -84,25 +86,27 @@ class AccountUserController extends Controller
      *      group_name="commerce"
      * )
      * @param AccountUser $accountUser
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(AccountUser $accountUser)
+    public function updateAction(AccountUser $accountUser,Request $request)
     {
-        return $this->update($accountUser);
+        return $this->update($accountUser,$request);
     }
 
     /**
      * @param AccountUser $accountUser
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(AccountUser $accountUser)
+    protected function update(AccountUser $accountUser,Request $request)
     {
         $form = $this->createForm(FrontendAccountUserType::NAME, $accountUser);
         $handler = new AccountUserHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->get('orob2b_account_user.manager'),
-            $this->get('security.context')
+            $this->get('oro_security.security_facade')
         );
         //TODO: set correct owner in task BB-929
         if (!$accountUser->getOwner()) {

@@ -2,28 +2,23 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+
+use Doctrine\ORM\Query;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
-
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest

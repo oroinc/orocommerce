@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
-use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
+use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 /**
  * @dbIsolation

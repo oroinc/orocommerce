@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -16,9 +14,12 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
 class AccountUserProfileController extends Controller
 {
@@ -28,9 +29,23 @@ class AccountUserProfileController extends Controller
      * @Route("/register", name="orob2b_account_frontend_account_user_register")
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:register.html.twig")
      *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function registerAction()
+    public function registerAction(Request $request)
+    {
+        $checkPermissions=$this->checkPermissions();
+        if ($checkPermissions instanceof RedirectResponse)
+            return $checkPermissions;
+        $accountUser = new AccountUser();
+        $this->setUserData($accountUser);
+        return $this->handleForm($accountUser, $request);
+    }
+
+    /**
+     * @return bool|RedirectResponse
+     */
+    private function checkPermissions()
     {
         if ($this->getUser()) {
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
@@ -39,7 +54,14 @@ class AccountUserProfileController extends Controller
         if (!$isRegistrationAllowed) {
             throw new AccessDeniedException();
         }
-        $accountUser = new AccountUser();
+        return true;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     */
+    private function setUserData(AccountUser $accountUser)
+    {
         /** @var WebsiteManager $websiteManager */
         $websiteManager = $this->get('orob2b_website.manager');
         $website = $websiteManager->getCurrentWebsite();
@@ -58,9 +80,19 @@ class AccountUserProfileController extends Controller
             ->addOrganization($websiteOrganization)
             ->setOrganization($websiteOrganization)
             ->addRole($defaultRole);
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @param Request $request
+     * @return array|RedirectResponse
+     */
+    private function handleForm(AccountUser $accountUser, Request $request)
+    {
+        /** @var $userManager AccountUserManager */
         $userManager = $this->get('orob2b_account_user.manager');
         $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        $handler = new FrontendAccountUserHandler($form, $this->getRequest(), $userManager);
+        $handler = new FrontendAccountUserHandler($form, $request, $userManager);
         if ($userManager->isConfirmationRequired()) {
             $registrationMessage = 'orob2b.account.controller.accountuser.registered_with_confirmation.message';
         } else {
@@ -75,13 +107,14 @@ class AccountUserProfileController extends Controller
             $handler
         );
     }
+
     /**
      * @Route("/confirm-email", name="orob2b_account_frontend_account_user_confirmation")
+     * @param Request $request
      * @return RedirectResponse
      */
-    public function confirmEmailAction()
+    public function confirmEmailAction(Request $request)
     {
-        $request = $this->getRequest();
         $userManager = $this->get('orob2b_account_user.manager');
         /** @var AccountUser $accountUser */
         $accountUser = $userManager->findUserByUsernameOrEmail($request->get('username'));
@@ -103,6 +136,7 @@ class AccountUserProfileController extends Controller
         $this->get('session')->getFlashBag()->add($messageType, $message);
         return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
     }
+
     /**
      * @Route("/profile", name="orob2b_account_frontend_account_user_profile")
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:viewProfile.html.twig")
@@ -122,16 +156,18 @@ class AccountUserProfileController extends Controller
      *
      * @Route("/profile/update", name="orob2b_account_frontend_account_user_profile_update")
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:updateProfile.html.twig")
+     * @AclAncestor("orob2b_account_frontend_account_user_update")
      *
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction()
+    public function updateAction(Request $request)
     {
         $accountUser = $this->getUser();
         $form = $this->createForm(FrontendAccountUserProfileType::NAME, $accountUser);
         $handler = new FrontendAccountUserHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->get('orob2b_account_user.manager')
         );
         return $this->get('oro_form.model.update_handler')->handleUpdate(

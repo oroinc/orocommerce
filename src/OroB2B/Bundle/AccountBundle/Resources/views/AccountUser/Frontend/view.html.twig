@@ -120,14 +120,15 @@
     {% endset %}
 
     {% set dataBlocks = [
-    {
-    'title': 'orob2b.account.sections.general'|trans,
-    'class': 'active',
-    'subblocks': [
-    {'data' : [accountUserInformationWidget]},
-    {'data' : [addressBookWidget]},
-    ]
-    }
+        {
+            'title': 'orob2b.account.sections.general'|trans,
+            'class': 'active',
+            'subblocks':
+            [
+                {'data' : [accountUserInformationWidget]},
+                {'data' : [addressBookWidget]},
+            ]
+        }
     ] %}
 
     {% set id = 'account-user-view' %}

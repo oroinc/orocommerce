@@ -404,7 +404,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('label', 'string', ['length' => 64]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
-        $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');
+        $table->addUniqueIndex(['account_id', 'label'], 'orob2b_acc_role_idx');
 
         $this->noteExtension->addNoteAssociation($schema, static::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
     }
@@ -715,7 +715,6 @@ class OroB2BAccountBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
-
 
     /**
      * Add orob2b_account_role_to_website foreign keys.

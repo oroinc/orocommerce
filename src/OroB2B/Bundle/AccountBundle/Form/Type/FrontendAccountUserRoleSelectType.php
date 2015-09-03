@@ -1,14 +1,18 @@
 <?php
+
 namespace OroB2B\Bundle\AccountBundle\Form\Type;
-
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Symfony\Bridge\Doctrine\Form\ChoiceList\ORMQueryBuilderLoader;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
+
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
 class FrontendAccountUserRoleSelectType extends AbstractType
 {
@@ -59,11 +63,14 @@ class FrontendAccountUserRoleSelectType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setOptional(['loader']);
+        if (!$this->securityFacade->getLoggedUser())
+            return;
         $resolver->setNormalizer('loader', function () {
-            $qb = $this->registry->getManager()
-                ->getRepository('OroB2BAccountBundle:AccountUserRole')
-                ->getAvailableRolesByAccountUserQueryBuilder($this->securityFacade->getLoggedUser());
+            /** @var $repo AccountUserRoleRepository */
+            $repo = $this->registry->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+                ->getRepository('OroB2BAccountBundle:AccountUserRole');
+            /** @var  $qb QueryBuilder */
+            $qb = $repo->getAvailableRolesByAccountUserQueryBuilder($this->securityFacade->getLoggedUser());
             return new ORMQueryBuilderLoader($qb);
         });
     }

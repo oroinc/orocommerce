@@ -546,7 +546,7 @@ datagrid:
                 selectors:
                     included: '#roleAppendUsers'
                     excluded: '#roleRemoveUsers'
-#Frontend:
+
     frontend-account-account-user-grid:
         extends: account-account-user-grid-base
         source:
@@ -575,16 +575,16 @@ datagrid:
                 params: [ id ]
         actions:
             enable:
-                type:         ajax
-                label:        orob2b.account.action.account_user.enable
-                icon:         ok
-                link:         enable_link
+                type:          ajax
+                label:         orob2b.account.action.account_user.enable
+                icon:          ok
+                link:          enable_link
                 acl_resource:  orob2b_account_frontend_account_user_update
             disable:
-                type:         ajax
-                label:        orob2b.account.action.account_user.disable
-                icon:         remove
-                link:         disable_link
+                type:          ajax
+                label:         orob2b.account.action.account_user.disable
+                icon:          remove
+                link:          disable_link
                 acl_resource:  orob2b_account_frontend_account_user_update
             view:
                 type:          navigate
