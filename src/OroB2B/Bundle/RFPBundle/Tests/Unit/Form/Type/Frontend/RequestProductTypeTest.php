@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Frontend\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -8,12 +8,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Stub\StubProductPriceListAwareSelectType;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -44,11 +46,11 @@ class RequestProductTypeTest extends AbstractTest
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
+        $resolver->expects(static::once())
             ->method('setDefaults')
             ->with([
                 'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct',
-                'intention'  => 'rfp_request_product',
+                'intention'  => 'rfp_frontend_request_product',
                 'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
             ])
         ;
@@ -58,7 +60,7 @@ class RequestProductTypeTest extends AbstractTest
 
     public function testGetName()
     {
-        $this->assertEquals(RequestProductType::NAME, $this->formType->getName());
+        static::assertEquals(RequestProductType::NAME, $this->formType->getName());
     }
 
     /**
@@ -83,14 +85,6 @@ class RequestProductTypeTest extends AbstractTest
                 'expectedData'  => $this->getRequestProduct(),
                 'defaultData'   => $this->getRequestProduct(),
             ],
-            'empty items' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'product' => 1,
-                ],
-                'expectedData'  => $this->getRequestProduct(1),
-                'defaultData'   => $this->getRequestProduct(1),
-            ],
             'empty request' => [
                 'isValid'       => false,
                 'submittedData' => [
@@ -109,6 +103,14 @@ class RequestProductTypeTest extends AbstractTest
                 ],
                 'expectedData'  => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(null),
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(null),
+            ],
+            'empty items' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'product' => 1,
+                ],
+                'expectedData'  => $this->getRequestProduct(1),
+                'defaultData'   => $this->getRequestProduct(1),
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -140,7 +142,6 @@ class RequestProductTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
@@ -151,10 +152,10 @@ class RequestProductTypeTest extends AbstractTest
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    ProductPriceListAwareSelectType::NAME   => new StubProductPriceListAwareSelectType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
-                    $productRemovedSelectType->getName()    => $productRemovedSelectType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,

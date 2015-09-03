@@ -19,7 +19,7 @@ define(function(require) {
         options: {
             productSelect:  '.rfp-requestproduct-product-select input[type="hidden"]',
             unitsSelect:    '.rfp-requestproductitem-productunit-select',
-            unitsRoute:     'orob2b_product_unit_product_units',
+            unitsRoute:     'orob2b_product_frontend_unit_product_units',
             addItemButton:  '.add-list-item',
             itemsContainer: '.rfp-requestproductitem-collection .oro-item-collection',
             itemWidget:     '.rfp-requestproductitem-widget',

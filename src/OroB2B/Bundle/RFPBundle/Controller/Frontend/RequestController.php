@@ -17,7 +17,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
@@ -139,7 +139,7 @@ class RequestController extends Controller
 
         return $handler->handleUpdate(
             $rfpRequest,
-            $this->createForm(FrontendRequestType::NAME, $rfpRequest),
+            $this->createForm(RequestType::NAME, $rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
                 if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
                     $route = $this->getSecurityFacade()->isGranted('EDIT', $rfpRequest)

@@ -171,6 +171,35 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @param int $id
+     * @param RequestProduct $product
+     * @param string $productSku
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     */
+    protected function createRequestProduct($id, $product, $productSku)
+    {
+        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProduct
+            ->expects(static::any())
+            ->method('getId')
+            ->will(static::returnValue($id))
+        ;
+        $requestProduct
+            ->expects(static::any())
+            ->method('getProduct')
+            ->will(static::returnValue($product))
+        ;
+        $requestProduct
+            ->expects(static::any())
+            ->method('getProductSku')
+            ->will(static::returnValue($productSku))
+        ;
+
+        return $requestProduct;
+    }
+
+    /**
      * @param string $className
      * @param int $id
      * @param string $primaryKey

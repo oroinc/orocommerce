@@ -1,36 +1,37 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
+use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Stub\StubProductPriceListAwareSelectType;
 
-class FrontendRequestTypeTest extends AbstractTest
+class RequestTypeTest extends AbstractTest
 {
     const DATA_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\Request';
     const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus';
 
     /**
-     * @var FrontendRequestType
+     * @var RequestType
      */
     protected $formType;
 
@@ -46,7 +47,7 @@ class FrontendRequestTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $repository->expects($this->any())
+        $repository->expects(static::any())
             ->method('findOneBy')
             ->with(['name' => RequestStatus::DRAFT])
             ->willReturn($requestStatus);
@@ -55,7 +56,7 @@ class FrontendRequestTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager->expects($this->any())
+        $manager->expects(static::any())
             ->method('getRepository')
             ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($repository);
@@ -67,7 +68,7 @@ class FrontendRequestTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $registry->expects($this->any())
+        $registry->expects(static::any())
             ->method('getManagerForClass')
             ->with('OroUserBundle:User')
             ->willReturn($manager);
@@ -76,7 +77,7 @@ class FrontendRequestTypeTest extends AbstractTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $registry->expects($this->any())
+        $registry->expects(static::any())
             ->method('getManagerForClass')
             ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($manager);
@@ -91,16 +92,16 @@ class FrontendRequestTypeTest extends AbstractTest
          */
         $validator = $this->getMock('\Symfony\Component\Validator\ValidatorInterface');
 
-        $validator->expects($this->any())
+        $validator->expects(static::any())
             ->method('validate')
-            ->will($this->returnValue(new ConstraintViolationList()));
+            ->will(static::returnValue(new ConstraintViolationList()));
 
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
             ->addTypeExtension(new FormTypeValidatorExtension($validator))
             ->getFormFactory();
 
-        $this->formType = new FrontendRequestType($configManager, $registry);
+        $this->formType = new RequestType($configManager, $registry);
         $this->formType->setDataClass(self::DATA_CLASS);
         $this->formType->setRequestStatusClass(self::REQUEST_STATUS_CLASS);
 
@@ -108,16 +109,16 @@ class FrontendRequestTypeTest extends AbstractTest
     }
 
     /**
-     * Test setDefaultOptions
+     * Test configureOptions
      */
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
         /**
-         * @var OptionsResolverInterface|\PHPUnit_Framework_MockObject_MockObject $resolver
+         * @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver
          */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
 
-        $resolver->expects($this->once())
+        $resolver->expects(static::once())
             ->method('setDefaults')
             ->with(
                 [
@@ -125,7 +126,7 @@ class FrontendRequestTypeTest extends AbstractTest
                 ]
             );
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     /**
@@ -133,7 +134,7 @@ class FrontendRequestTypeTest extends AbstractTest
      */
     public function testGetName()
     {
-        $this->assertEquals(FrontendRequestType::NAME, $this->formType->getName());
+        static::assertEquals(RequestType::NAME, $this->formType->getName());
     }
 
     /**
@@ -208,8 +209,7 @@ class FrontendRequestTypeTest extends AbstractTest
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-
-        $requestProductType = new RequestProductType();
+        $requestProductType         = new RequestProductType();
         $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
@@ -218,7 +218,7 @@ class FrontendRequestTypeTest extends AbstractTest
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
+                    ProductPriceListAwareSelectType::NAME   => new StubProductPriceListAwareSelectType(),
                     ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
