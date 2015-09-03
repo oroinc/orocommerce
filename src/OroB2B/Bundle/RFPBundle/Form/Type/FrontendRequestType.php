@@ -109,7 +109,7 @@ class FrontendRequestType extends AbstractType
         /** @var Request $request */
         $request = $event->getData();
         $defaultStatus = $this->getDraftRequestStatus();
-        if (!$request->getStatus() && $defaultStatus) {
+        if ($defaultStatus && !$request->getStatus()) {
             $request->setStatus($defaultStatus);
         }
     }
