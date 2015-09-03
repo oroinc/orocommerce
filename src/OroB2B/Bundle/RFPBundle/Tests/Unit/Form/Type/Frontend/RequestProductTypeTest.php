@@ -12,7 +12,6 @@ use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
@@ -86,14 +85,6 @@ class RequestProductTypeTest extends AbstractTest
                 'expectedData'  => $this->getRequestProduct(),
                 'defaultData'   => $this->getRequestProduct(),
             ],
-            'empty items' => [
-                'isValid'       => false,
-                'submittedData' => [
-                    'product' => 1,
-                ],
-                'expectedData'  => $this->getRequestProduct(1),
-                'defaultData'   => $this->getRequestProduct(1),
-            ],
             'empty request' => [
                 'isValid'       => false,
                 'submittedData' => [
@@ -112,6 +103,14 @@ class RequestProductTypeTest extends AbstractTest
                 ],
                 'expectedData'  => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(null),
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem])->setRequest(null),
+            ],
+            'empty items' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'product' => 1,
+                ],
+                'expectedData'  => $this->getRequestProduct(1),
+                'defaultData'   => $this->getRequestProduct(1),
             ],
             'valid data' => [
                 'isValid'       => true,
@@ -133,35 +132,6 @@ class RequestProductTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem]),
             ],
         ];
-    }
-
-    /**
-     * @param int $id
-     * @param RequestProduct $product
-     * @param string $productSku
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
-     */
-    protected function createRequestProduct($id, $product, $productSku)
-    {
-        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
-        $requestProduct
-            ->expects(static::any())
-            ->method('getId')
-            ->will(static::returnValue($id))
-        ;
-        $requestProduct
-            ->expects(static::any())
-            ->method('getProduct')
-            ->will(static::returnValue($product))
-        ;
-        $requestProduct
-            ->expects(static::any())
-            ->method('getProductSku')
-            ->will(static::returnValue($productSku))
-        ;
-
-        return $requestProduct;
     }
 
     /**

@@ -12,7 +12,6 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
@@ -131,35 +130,6 @@ class RequestProductTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequestProduct(2, 'comment', [$requestProductItem]),
             ],
         ];
-    }
-
-    /**
-     * @param int $id
-     * @param RequestProduct $product
-     * @param string $productSku
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
-     */
-    protected function createRequestProduct($id, $product, $productSku)
-    {
-        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
-        $requestProduct
-            ->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue($id))
-        ;
-        $requestProduct
-            ->expects($this->any())
-            ->method('getProduct')
-            ->will($this->returnValue($product))
-        ;
-        $requestProduct
-            ->expects($this->any())
-            ->method('getProductSku')
-            ->will($this->returnValue($productSku))
-        ;
-
-        return $requestProduct;
     }
 
     /**
