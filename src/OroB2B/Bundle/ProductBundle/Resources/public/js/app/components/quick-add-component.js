@@ -12,7 +12,7 @@ define(function(require) {
          */
         options: {
             'componentSelector': '[name$="[component]"]',
-            'additionalDataSelector': '[name$="[additional]"]',
+            'additionalSelector': '[name$="[additional]"]',
             'componentButtonSelector': '.component-button'
         },
 
@@ -34,9 +34,9 @@ define(function(require) {
                 this.options._sourceElement.find(this.options.componentSelector).val(component);
             }
 
-            var additionalData = $element.data('component-additional-data');
-            if (additionalData) {
-                this.options._sourceElement.find(this.options.additionalDataSelector).val(additionalData);
+            var additional = $element.data('component-additional');
+            if (additional) {
+                this.options._sourceElement.find(this.options.additionalSelector).val(additional);
             }
         }
     });
