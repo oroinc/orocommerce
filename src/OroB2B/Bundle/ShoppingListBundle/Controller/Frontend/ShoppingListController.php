@@ -194,7 +194,7 @@ class ShoppingListController extends Controller
             $request,
             $em,
             $this->getUser(),
-            $this->getDefaultRequestStatus()
+            $this->getDraftRequestStatus()
         );
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate(
@@ -295,16 +295,15 @@ class ShoppingListController extends Controller
     /**
      * @return RequestStatus
      */
-    protected function getDefaultRequestStatus()
+    protected function getDraftRequestStatus()
     {
         $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
-        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_b2b_rfp.default_request_status');
 
         return $this
             ->getDoctrine()
             ->getManagerForClass($requestStatusClass)
             ->getRepository($requestStatusClass)
-            ->findOneBy(['name' => $defaultRequestStatusName])
+            ->findOneBy(['name' => RequestStatus::DRAFT])
         ;
     }
 }

@@ -47,7 +47,7 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
             $this->request,
             $this->manager,
             $this->getUser(),
-            (new RequestStatus)->setName(RequestStatus::OPEN)
+            (new RequestStatus)->setName(RequestStatus::DRAFT)
         );
     }
 
@@ -128,7 +128,7 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
             ->addRequestProductItem($requestProductItem)
         ;
         $requestStatus = (new RequestStatus)
-            ->setName(RequestStatus::OPEN)
+            ->setName(RequestStatus::DRAFT)
         ;
         $request = (new Request())
             ->setAccountUser($this->getUser())
