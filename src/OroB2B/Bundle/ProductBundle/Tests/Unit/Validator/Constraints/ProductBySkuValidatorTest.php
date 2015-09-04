@@ -21,11 +21,6 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository
-     */
-    protected $repository;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
      */
     protected $context;
@@ -35,19 +30,24 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $constraint;
 
+    /**
+     * @var ProductBySkuValidator
+     */
+    protected $validator;
+
     protected function setUp()
     {
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->repository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+
         $this->context = $this->getMock('Symfony\Component\Validator\ExecutionContextInterface');
         $this->constraint = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->validator = new ProductBySkuValidator($this->registry);
+        $this->validator->initialize($this->context);
     }
 
     public function testValidateNoValue()
@@ -58,9 +58,7 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
         $this->context->expects($this->never())
             ->method('addViolation');
 
-        $validator = new ProductBySkuValidator($this->registry);
-        $validator->initialize($this->context);
-        $validator->validate('', $this->constraint);
+        $this->validator->validate('', $this->constraint);
     }
 
     /**
@@ -70,7 +68,13 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidate($sku, $product)
     {
-        $this->repository->expects($this->once())
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
+        $repository = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $repository->expects($this->once())
             ->method('findOneBySku')
             ->with($sku)
             ->will($this->returnValue($product));
@@ -78,15 +82,13 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->once())
             ->method('getRepository')
             ->with(self::PRODUCT_CLASS)
-            ->will($this->returnValue($this->repository));
+            ->will($this->returnValue($repository));
 
         $this->context->expects($product ? $this->never() : $this->once())
             ->method('addViolation')
             ->with($this->constraint->message);
 
-        $validator = new ProductBySkuValidator($this->registry);
-        $validator->initialize($this->context);
-        $validator->validate($sku, $this->constraint);
+        $this->validator->validate($sku, $this->constraint);
     }
 
     /**
