@@ -8,19 +8,17 @@
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    // TODO: add delete action to frontend api controller
-
-    {#{% if entity.id and resource_granted('DELETE', entity) %}#}
-        {#{{ UI.deleteButton({#}
-            {#'dataUrl': path('orob2b_api_account_delete_accountuserrole', {'id': entity.id}),#}
-            {#'dataRedirect': path('orob2b_account_account_user_role_index'),#}
-            {#'aCss': 'no-hash remove-button',#}
-            {#'dataId': entity.id,#}
-            {#'id': 'btn-remove-attribute',#}
-            {#'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans,#}
-        {#}) }}#}
-        {#{{ UI.buttonSeparator() }}#}
-    {#{% endif %}#}
+    {% if entity.id and resource_granted('FRONTEND_ACCOUNT_ROLE_DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_frontend_account_delete_accountuserrole', {'id': entity.id}),
+            'dataRedirect': path('orob2b_account_account_user_role_frontend_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans,
+        }) }}
+        {{ UI.buttonSeparator() }}
+    {% endif %}
     {{ UI.cancelButton(path('orob2b_account_account_user_role_frontend_index')) }}
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_account_account_user_role_frontend_update') %}

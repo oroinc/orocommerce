@@ -45,3 +45,9 @@ orob2b_account_pagestate_api:
     type:     rest
     options:
         frontend: true
+
+orob2b_account_account_user_role_frontend_api:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/Api/Rest/AccountUserRoleController.php"
+    type:     rest
+    options:
+        frontend: true

@@ -74,4 +74,12 @@ class AccountUserRoleProvider
 
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function isGrantedDeleteAccountUserRole($object)
+    {
+        return $this->securityFacade->isGranted(BasicPermissionMap::PERMISSION_DELETE, $object);
+    }
 }

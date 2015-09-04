@@ -516,10 +516,7 @@ datagrid:
             update_link:
                 route: orob2b_account_account_user_role_frontend_update
             delete_link:
-                route: orob2b_api_account_delete_accountuserrole
-        actions:
-            delete:
-                acl_resource: orob2b_account_account_user_role_delete
+                route: orob2b_api_frontend_account_delete_accountuserrole
 
     account-account-users-grid-update-basic:
         source:

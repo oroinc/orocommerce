@@ -19,6 +19,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     const ATTRIBUTE_DELETE = 'DELETE';
     const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE = 'FRONTEND_ACCOUNT_ROLE_UPDATE';
     const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW = 'FRONTEND_ACCOUNT_ROLE_VIEW';
+    const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE = 'FRONTEND_ACCOUNT_ROLE_DELETE';
 
     const VIEW = 'view';
     const UPDATE = 'update';
@@ -30,6 +31,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
         self::ATTRIBUTE_DELETE,
         self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE,
         self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW,
+        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE,
     ];
 
     /**
@@ -41,6 +43,11 @@ class AccountUserRoleVoter extends AbstractEntityVoter
      * @var ContainerInterface
      */
     protected $container;
+
+    /**
+     * @var AccountUserRoleProvider
+     */
+    protected $accountUserRoleProvider;
 
     /**
      * @param DoctrineHelper     $doctrineHelper
@@ -74,12 +81,12 @@ class AccountUserRoleVoter extends AbstractEntityVoter
         switch ($attribute) {
             case static::ATTRIBUTE_DELETE:
                 return $this->getPermissionForDelete();
-
             case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW:
                 return $this->getPermissionForAccountRole(self::VIEW);
-
             case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE:
                 return $this->getPermissionForAccountRole(self::UPDATE);
+            case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE:
+                return $this->getFrontendPermissionForDelete();
             default:
                 return self::ACCESS_ABSTAIN;
         }
@@ -109,12 +116,8 @@ class AccountUserRoleVoter extends AbstractEntityVoter
      */
     protected function getPermissionForAccountRole($type)
     {
-
-        /** @var AccountUserRoleProvider $accountUserRoleProvider */
-        $accountUserRoleProvider = $this->container->get('orob2b_account.security.account_user_role_provider');
-
         /* @var $user AccountUser */
-        $user = $accountUserRoleProvider->getLoggedUser();
+        $user = $this->getAccountUserRoleProvider()->getLoggedUser();
 
         /** @var Account $account */
         $account = $this->object->getAccount();
@@ -125,10 +128,10 @@ class AccountUserRoleVoter extends AbstractEntityVoter
 
         switch ($type) {
             case self::VIEW:
-                $isGranted = $accountUserRoleProvider->isGrantedViewAccountUserRole();
+                $isGranted = $this->getAccountUserRoleProvider()->isGrantedViewAccountUserRole();
                 break;
             case self::UPDATE:
-                $isGranted = $accountUserRoleProvider->isGrantedUpdateAccountUserRole();
+                $isGranted = $this->getAccountUserRoleProvider()->isGrantedUpdateAccountUserRole($this->object);
                 break;
             default:
                 $isGranted = false;
@@ -139,5 +142,31 @@ class AccountUserRoleVoter extends AbstractEntityVoter
         }
 
         return self::ACCESS_ABSTAIN;
+    }
+
+    /**
+     * @return int
+     */
+    protected function getFrontendPermissionForDelete()
+    {
+        if ($this->object->isPredefined()) {
+            return self::ACCESS_DENIED;
+        }
+
+        return $this->getAccountUserRoleProvider()
+            ->isGrantedDeleteAccountUserRole($this->object) ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
+    }
+
+    /**
+     * @return AccountUserRoleProvider
+     */
+    protected function getAccountUserRoleProvider()
+    {
+        if (!$this->accountUserRoleProvider) {
+            $this->accountUserRoleProvider = $this->container
+                ->get('orob2b_account.security.account_user_role_provider');
+        }
+
+        return $this->accountUserRoleProvider;
     }
 }

@@ -67,15 +67,7 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        $accountUserRoleClass = $this->container->getParameter('orob2b_account.entity.account_user_role.class');
-
-        /** @var AccountUserRole $accountUserRole */
-        $accountUserRole = new $accountUserRoleClass();
-
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $accountUserRole->setAccount($accountUser->getAccount())
-            ->setOrganization($accountUser->getOrganization());
+        $accountUserRole = $this->createNewRole();
 
         return $this->update($accountUserRole);
     }
@@ -83,39 +75,41 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/update/{id}", name="orob2b_account_account_user_role_frontend_update", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
-     * @Acl(
-     *      id="orob2b_account_account_user_role_frontend_update",
-     *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
-     *      permission="FRONTEND_ACCOUNT_ROLE_UPDATE",
-     *      group_name="commerce"
-     * )
      * @param AccountUserRole $role
      * @return array
      */
     public function updateAction(AccountUserRole $role)
     {
+        $securityFacade = $this->get('oro_security.security_facade');
+
         if ($role->isPredefined()) {
-            $newRole = clone $role;
-            /** @var AccountUser $accountUser */
-            $accountUser = $this->getUser();
-            $newRole->setAccount($accountUser->getAccount())
-                ->setOrganization($accountUser->getOrganization());
+            $mask = 'CREATE';
+            $this->addFlash(
+                'warning',
+                $this->get('translator')->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
+            );
         } else {
-            $newRole = $role;
+            $mask = 'orob2b_account_account_user_role_frontend_update';
         }
-        return $this->update($role, $newRole);
+
+        if ($securityFacade->isGranted($mask)) {
+            return $this->update($role);
+        }
+        throw $this->createAccessDeniedException();
     }
 
     /**
      * @param AccountUserRole $role
-     * @param AccountUserRole $newRole
      * @return array|RedirectResponse
      */
-    protected function update(AccountUserRole $role, AccountUserRole $newRole)
+    protected function update(AccountUserRole $role)
     {
         $handler = $this->get('orob2b_account.form.handler.account_user_role_frontend');
-
+        if ($role->isPredefined()) {
+            $newRole = $this->createNewRole($role);
+        } else {
+            $newRole = $role;
+        }
         $form = $handler->createForm($newRole);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -135,7 +129,27 @@ class AccountUserRoleController extends Controller
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
             $handler
         );
-
     }
 
+    /**
+     * @param AccountUserRole $role
+     * @return AccountUserRole
+     */
+    protected function createNewRole(AccountUserRole $role = null)
+    {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUser();
+
+        if ($role) {
+            $newRole = clone $role;
+        } else {
+            $accountUserClass = $this->container->getParameter('orob2b_account.entity.account_user_role.class');
+            $newRole = new $accountUserClass();
+        }
+
+        $newRole->setAccount($accountUser->getAccount())
+            ->setOrganization($accountUser->getOrganization());
+
+        return $newRole;
+    }
 }
