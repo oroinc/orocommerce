@@ -103,8 +103,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         array $submittedData,
         AccountUser $expectedData,
         $rolesGranted = true
-    )
-    {
+    ) {
         if ($rolesGranted) {
             $this->securityFacade->expects($this->once())
                 ->method('isGranted')

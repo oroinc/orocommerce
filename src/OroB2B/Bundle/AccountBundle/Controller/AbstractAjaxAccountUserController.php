@@ -115,4 +115,17 @@ abstract class AbstractAjaxAccountUserController extends Controller
             'message' => $successMessage
         ]);
     }
+
+    /**
+     * @return JsonResponse
+     */
+    protected function renderDisableYourselfError()
+    {
+        $deniedMassage = $this->get('translator')
+            ->trans('orob2b.account.controller.accountuser.disable_yourself_denied.message');
+        return new JsonResponse([
+            'successful' => false,
+            'message' => $deniedMassage
+        ]);
+    }
 }

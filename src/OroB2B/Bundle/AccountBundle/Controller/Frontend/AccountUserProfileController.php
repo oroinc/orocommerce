@@ -34,9 +34,10 @@ class AccountUserProfileController extends Controller
      */
     public function registerAction(Request $request)
     {
-        $checkPermissions=$this->checkPermissions();
-        if ($checkPermissions instanceof RedirectResponse)
+        $checkPermissions = $this->checkPermissions();
+        if ($checkPermissions instanceof RedirectResponse) {
             return $checkPermissions;
+        }
         $accountUser = new AccountUser();
         $this->setUserData($accountUser);
         return $this->handleForm($accountUser, $request);

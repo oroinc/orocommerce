@@ -50,8 +50,9 @@ class FrontendAccountUserType extends AbstractType
     {
         /** @var $user AccountUser */
         $user = $this->securityFacade->getLoggedUser();
-        if (!$user)
+        if (!($user instanceof AccountUser)) {
             return;
+        }
         /** @var $account Account */
         $account = $user->getAccount();
         /** @var AccountUser $data */

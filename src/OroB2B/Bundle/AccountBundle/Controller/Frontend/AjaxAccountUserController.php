@@ -66,6 +66,11 @@ class AjaxAccountUserController extends AbstractAjaxAccountUserController
      */
     public function disableAction(AccountUser $accountUser)
     {
+        /** @var $user AccountUser */
+        $user = $this->getUser();
+        if ($user->getId() == $accountUser->getId()) {
+            return $this->renderDisableYourselfError();
+        }
         return parent::disableAction($accountUser);
     }
 

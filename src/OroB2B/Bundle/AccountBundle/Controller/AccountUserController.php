@@ -83,7 +83,7 @@ class AccountUserController extends Controller
      */
     public function createAction(Request $request)
     {
-        return $this->update(new AccountUser(),$request);
+        return $this->update(new AccountUser(), $request);
     }
 
     /**
@@ -101,9 +101,9 @@ class AccountUserController extends Controller
      * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(AccountUser $accountUser,Request $request)
+    public function updateAction(AccountUser $accountUser, Request $request)
     {
-        return $this->update($accountUser,$request);
+        return $this->update($accountUser, $request);
     }
 
     /**
@@ -111,7 +111,7 @@ class AccountUserController extends Controller
      * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(AccountUser $accountUser,Request $request)
+    protected function update(AccountUser $accountUser, Request $request)
     {
         $form = $this->createForm(AccountUserType::NAME, $accountUser);
         $handler = new AccountUserHandler(

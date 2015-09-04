@@ -34,7 +34,7 @@
 
 {% block content_data %}
     {% set accountUserInformationWidget %}
-        {% include 'OroB2BAccountBundle:AccountUser/widget:info.html.twig' %}
+        {% include '@OroB2BAccount/AccountUser/Frontend/widget/info.html.twig' %}
     {% endset %}
 
     {% set dataBlocks = [
@@ -50,5 +50,7 @@
     {% set id = 'frontend-account-user-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
-    {{ parent() }}
+    {{ UI.scrollData(id, data) }}
+    {% block pageActions %}
+    {% endblock %}
 {% endblock content_data %}

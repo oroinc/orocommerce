@@ -63,8 +63,9 @@ class FrontendAccountUserRoleSelectType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        if (!$this->securityFacade->getLoggedUser())
+        if (!$this->securityFacade->getLoggedUser()) {
             return;
+        }
         $resolver->setNormalizer('loader', function () {
             /** @var $repo AccountUserRoleRepository */
             $repo = $this->registry->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
