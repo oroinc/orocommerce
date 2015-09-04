@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-use OroB2B\Bundle\ProductBundle\Exception\ComponentProcessorNotFoundException;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 
 class QuickAddController extends Controller
 {
@@ -25,30 +25,55 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = $this->createForm(QuickAddType::NAME);
-
+        $form = null;
         $response = null;
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form->submit($request);
 
-            if ($form->isValid()) {
-                try {
-                    $response = $this->get('orob2b_product.form.handler.quick_add')->handleRequest($form);
-                } catch (ComponentProcessorNotFoundException $e) {
-                    $this->get('session')->getFlashBag()->add(
-                        'error',
-                        $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
-                    );
+        $formData = $request->get(QuickAddType::NAME);
+
+        $processor = $this->getProcessor(isset($formData['component']) ? $formData['component'] : null);
+        if (!$processor) {
+            $form = $this->createForm(
+                QuickAddType::NAME,
+                null,
+                ['validation_required' => true/*$processor->isValidationRequired()*/]
+            );
+
+            if ($request->isMethod(Request::METHOD_POST)) {
+                $form->submit($request);
+
+                if ($form->isValid()) {
+                    $products = $form->get('products')->getData();
+                    $response = $processor->process(is_array($products) ? $products : [], $request);
                 }
             }
+        } else {
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
+            );
         }
 
         if ($response) {
             return $response;
-        } else {
-            return [
-                'form' => $form->createView()
-            ];
         }
+
+        if (!$form) {
+            $form = $this->createForm(QuickAddType::NAME);
+        }
+
+        return [
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
+     * @param string $name
+     * @return null|ComponentProcessorInterface
+     */
+    protected function getProcessor($name)
+    {
+        $processorsRegistry = $this->get('orob2b_product.component_processor.registry');
+
+        return $processorsRegistry->getProcessorByName($name);
     }
 }
