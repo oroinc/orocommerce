@@ -116,6 +116,7 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
         $quoteProductOffer = (new QuoteProductOffer())
             ->setQuantity(10)
             ->setPrice(OptionalPrice::create(20, 'USD'))
+            ->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT)
             ->setProductUnit($productUnit)
         ;
         $quoteProduct = (new QuoteProduct())
@@ -132,7 +133,10 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
             ->setQuantity(10)
             ->setPrice(OptionalPrice::create(20, 'USD'))
             ->setProductUnit($productUnit)
-            ->setFromQuote(true)
+            ->setProduct($product)
+            ->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT)
+            ->setFromExternalSource(true)
+            ->setComment('comment1')
         ;
         $order = (new Order())
             ->setOwner($this->getAdminUser())

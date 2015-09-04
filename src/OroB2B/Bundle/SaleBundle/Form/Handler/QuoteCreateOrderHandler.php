@@ -104,7 +104,6 @@ class QuoteCreateOrderHandler
     {
         $order = new Order();
         $order->setOwner($entity->getOwner())
-            ->setQuote($entity)
             ->setAccountUser($this->user)
             ->setAccount($this->user->getAccount());
 
@@ -118,7 +117,6 @@ class QuoteCreateOrderHandler
                     ->setQuantity($quoteProductOffer->getQuantity())
                     ->setPrice($quoteProductOffer->getPrice())
                     ->setProductUnit($quoteProductOffer->getProductUnit())
-                    ->setQuoteProductOffer($quoteProductOffer)
                     ->setPriceType($quoteProductOffer->getPriceType());
 
                 $order->addLineItem($lineItem);

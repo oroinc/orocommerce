@@ -114,6 +114,8 @@ orob2b:
 
     frontend:
         sale:
+            menu:
+                label: 'Sales'
             quote:
                 entity_plural_label: Quotes
                 qid.label: 'ID'
@@ -127,7 +129,7 @@ orob2b:
 
             quoteproduct:
                 comment.label: 'Seller Notes'
-                comment_account.label: 'Account Notes'
+                comment_customer.label: 'Customer Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'
@@ -143,3 +145,10 @@ orob2b:
                 quantity.label: 'Requested Qty'
                 price.label: 'Requested Price'
                 column_summary: 'Summary'
+
+            btn:
+                accept_quote_create_order: 'Accept and Submit to Order'
+
+            message:
+                quote.create_order.success: 'Your sales order was submitted successfully'
+                quote.create_order.error: 'Can not create new Order'
