@@ -123,4 +123,14 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
         $this->newRole = $role;
         return parent::createForm($role);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function processPrivileges(AbstractRole $role)
+    {
+        parent::processPrivileges($this->newRole);
+    }
+
+
 }

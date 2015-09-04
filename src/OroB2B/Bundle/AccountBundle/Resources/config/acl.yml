@@ -19,5 +19,5 @@ orob2b_account_account_user_frontend_view:
 orob2b_account_account_user_role_frontend_update:
     type: entity
     class: OroB2BAccountBundle:AccountUserRole
-    permission: FRONTEND_ACCOUNT_ROLE_ UPDATE,
+    permission: FRONTEND_ACCOUNT_ROLE_UPDATE
     group_name: "commerce"
