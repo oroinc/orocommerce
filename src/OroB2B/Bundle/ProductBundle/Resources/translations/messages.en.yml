@@ -5,6 +5,7 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
+        quantity.label: Quantity
         inventory_status.label: Inventory Status
         visibility.label: Visible to Accounts
         status.label: Status
@@ -87,6 +88,7 @@ orob2b:
 
         frontend:
             quick_add.title: Quick Add
+            component_not_found.message: Can't process request, component not found
 
     product_unit.kg:
         label:

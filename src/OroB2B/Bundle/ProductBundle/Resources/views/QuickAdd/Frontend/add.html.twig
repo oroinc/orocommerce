@@ -31,12 +31,14 @@
                             >
 
                             <fieldset class="form-horizontal">
+                                {{ form_row(form._token) }}
                                 {{ form_widget(form.products) }}
                                 {{ form_row(form.component) }}
                                 {{ form_row(form.additional) }}
 
                                 {% placeholder orob2b_product_quick_add_buttons with {'form': form} %}
                             </fieldset>
+                            <input type="submit">
                         </form>
                     </div>
                 </div>

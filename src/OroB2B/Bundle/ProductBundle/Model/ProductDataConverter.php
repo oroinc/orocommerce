@@ -4,23 +4,16 @@ namespace OroB2B\Bundle\ProductBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductDataConverter
 {
-    const PRODUCT_KEY = 'id';
-    const QUANTITY_KEY = 'qty';
-
     /** @var ManagerRegistry */
     protected $registry;
 
     /** @var string */
     protected $dataClass;
-
-    /** @var EntityManager */
-    protected $manager;
 
     /** @var array */
     protected $products = [];
@@ -42,41 +35,29 @@ class ProductDataConverter
     }
 
     /**
-     * @param array $data
-     * @return array|QuickAddProductInformation[]
-     */
-    public function getProductsInfoByStoredData(array $data)
-    {
-        $manager = $this->getEntityManager();
-        $result = [];
-        foreach ($data as $dataRow) {
-            /** @var Product $product */
-            $product = $manager->getReference($this->dataClass, $dataRow[self::PRODUCT_KEY]);
-            $result[] = (new QuickAddProductInformation())
-                ->setProduct($product)
-                ->setQuantity((float)$dataRow[self::QUANTITY_KEY]);
-        }
-
-        return $result;
-    }
-
-    /**
      * @return ObjectRepository
      */
     protected function getRepository()
     {
-        return $this->getEntityManager()->getRepository($this->dataClass);
+        return $this->registry->getManagerForClass($this->dataClass)->getRepository($this->dataClass);
     }
 
     /**
-     * @return EntityManager|null
+     * @param string $sku
+     * @return null|Product
      */
-    protected function getEntityManager()
+    public function convertSkuToProduct($sku)
     {
-        if (!$this->manager) {
-            $this->manager = $this->registry->getManagerForClass($this->dataClass);
+        if (!array_key_exists($sku, $this->products)) {
+            $product = null;
+
+            if ($sku) {
+                $product = $this->getRepository()->findOneBy(['sku' => $sku]);
+            }
+
+            $this->products[$sku] = $product;
         }
 
-        return $this->manager;
+        return $this->products[$sku];
     }
 }

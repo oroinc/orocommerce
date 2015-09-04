@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use OroB2B\Bundle\ProductBundle\Exception\ComponentProcessorNotFoundException;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 
 class QuickAddController extends Controller
@@ -30,7 +31,16 @@ class QuickAddController extends Controller
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->submit($request);
 
-            // TODO: Add handler call here BB-1058
+            if ($form->isValid()) {
+                try {
+                    $response = $this->get('orob2b_product.form.handler.quick_add')->handleRequest($form);
+                } catch (ComponentProcessorNotFoundException $e) {
+                    $this->get('session')->getFlashBag()->add(
+                        'error',
+                        $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
+                    );
+                }
+            }
         }
 
         if ($response) {
